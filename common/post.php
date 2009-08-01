@@ -5,7 +5,7 @@ require_once('common/includes/class.kill.php');
 
 $page = new Page('Post killmail');
 $kb = new Killboard(KB_SITE);
-
+global $smarty;
 if (isset($_POST['killmail']))
 {
     if ($_POST['password'] == config::get('post_password') || $page->isAdmin())
@@ -104,32 +104,11 @@ if (isset($_POST['killmail']))
         $html = "Invalid password.";
     }
 }
-elseif (!config::get('post_forbid') && !config::get('post_oog_forbid'))
-{
-    $html .= "Paste the killmail from your EVEMail inbox into the box below. Make sure you post the <b>ENTIRE</b> mail.<br>Posting fake or otherwise edited mails is not allowed. All posts are logged.";
-    $html .= "<br><br>Remember to post your losses as well.<br><br>";
-    $html .= "<b>Killmail:</b><br>";
-    $html .= "<form id=postform name=postform class=f_killmail method=post action=\"?a=post\">";
-    $html .= "<textarea name=killmail id=killmail class=f_killmail cols=\"70\" rows=\"24\"></textarea>";
-    if (!$page->isAdmin())
-    {
-        $html .= "<br><br><b>Password:</b><br><input id=password name=password type=password></input>";
-    }
-    $html .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id=submit name=submit type=submit value=\"Process !\"></input>";
-    $html .= "</form>";
-}
-else
-{
-	if (config::get('post_oog_forbid'))
-	{
-		$html .= 'Out of game posting is disabled, please use the ingame browser.<br/>';
-	}
-	else
-	{
-   		$html .= 'Posting killmails is disabled<br/>';
-	}
-}
+if($html) $smarty->assign('error', $html);
+$smarty->assign('isadmin', $page->isAdmin());
+$smarty->assign('post_forbid', config::get('post_forbid'));
+$smarty->assign('post_oog_forbid', config::get('post_oog_forbid'));
 
-$page->setContent($html);
+$page->setContent($smarty->fetch(get_tpl(post)));
 $page->generate();
 ?>

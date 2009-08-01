@@ -6,10 +6,10 @@ if(function_exists("set_time_limit"))
 define('DB_HALTONERROR', true);
 
 require_once('kbconfig.php');
-require_once('common/includes/globals.php');
 require_once('common/includes/db.php');
 require_once('common/includes/class.config.php');
 require_once('common/includes/class.session.php');
+require_once('upgrade/012/update.php');
 
 $config = new Config(KB_SITE);
 session::init();
@@ -78,7 +78,7 @@ You must log in as admin to complete an upgrade.
 }
 $qry=new DBQuery(true);
 define('CURRENT_DB_UPDATE', config::get("DBUpdate"));
-define('LASTEST_DB_UPDATE', "011");
+define('LASTEST_DB_UPDATE', "012");
 if (CURRENT_DB_UPDATE >= LASTEST_DB_UPDATE )
 {
 	echo $header1.$header2;
@@ -109,6 +109,7 @@ function updateDB(){
 		update009();
 		update010();
 		update011();
+		update012();
 	}
 }
 
@@ -491,7 +492,7 @@ function update007()
 		while($testresult = $qry->getRow())
 			if($testresult['Column_name'] == 'ind_crp_id')
 				$indexcexists = true;
-			if($testresult['Column_name'] == 'ind_all_id')
+			elseif($testresult['Column_name'] == 'ind_all_id')
 				$indexaexists = true;
 		if(config::get('007updatestatus') <12)
 		{
@@ -1038,4 +1039,3 @@ function killCache()
 	}
 }
 
-?>

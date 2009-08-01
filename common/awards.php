@@ -41,9 +41,7 @@ else
 
 $monthname = kbdate("F", strtotime("2000-".$month."-2"));
 
-$html .= "<div class=block-header2>Awards for ".$monthname." ".$year."</div>";
-// main table
-$html .= "<table height=600 width=\"100%\"><tr>";
+$awardboxes = array();
 // top killers
 $tklist = new TopKillsList();
 $tklist->setMonth($month);
@@ -52,7 +50,7 @@ involved::load($tklist,'kill');
 
 $tklist->generate();
 $tkbox = new AwardBox($tklist, "Top killers", "kills", "kills", "eagle");
-$html .= "<td valign=top align=center>".$tkbox->generate()."</td>";
+$awardboxes[] = $tkbox->generate();
 // top scorers
 if (config::get('kill_points'))
 {
@@ -63,7 +61,7 @@ if (config::get('kill_points'))
 
     $tklist->generate();
     $tkbox = new AwardBox($tklist, "Top scorers", "points", "points", "redcross");
-    $html .= "<td valign=top align=center>".$tkbox->generate()."</td>";
+	$awardboxes[] = $tkbox->generate();
 }
 // top solo killers
 $tklist = new TopSoloKillerList();
@@ -73,7 +71,7 @@ involved::load($tklist,'kill');
 
 $tklist->generate();
 $tkbox = new AwardBox($tklist, "Top solokillers", "solo kills", "kills", "cross");
-$html .= "<td valign=top align=center>".$tkbox->generate()."</td>";
+$awardboxes[] = $tkbox->generate();
 // top damage dealers
 $tklist = new TopDamageDealerList();
 $tklist->setMonth($month);
@@ -82,7 +80,7 @@ involved::load($tklist,'kill');
 
 $tklist->generate();
 $tkbox = new AwardBox($tklist, "Top damagedealers", "kills w/ most damage", "kills", "wing1");
-$html .= "<td valign=top align=center>".$tkbox->generate()."</td>";
+$awardboxes[] = $tkbox->generate();
 
 $html .= "</tr><tr>";
 // top final blows
@@ -93,7 +91,7 @@ involved::load($tklist,'kill');
 
 $tklist->generate();
 $tkbox = new AwardBox($tklist, "Top finalblows", "final blows", "kills", "skull");
-$html .= "<td valign=top align=center>".$tkbox->generate()."</td>";
+$awardboxes[] = $tkbox->generate();
 // top podkillers
 $tklist = new TopPodKillerList();
 $tklist->setMonth($month);
@@ -102,7 +100,7 @@ involved::load($tklist,'kill');
 
 $tklist->generate();
 $tkbox = new AwardBox($tklist, "Top podkillers", "podkills", "kills", "globe");
-$html .= "<td valign=top align=center>".$tkbox->generate()."</td>";
+$awardboxes[] = $tkbox->generate();
 // top griefers
 $tklist = new TopGrieferList();
 $tklist->setMonth($month);
@@ -111,7 +109,7 @@ involved::load($tklist,'kill');
 
 $tklist->generate();
 $tkbox = new AwardBox($tklist, "Top griefers", "carebear kills", "kills", "star");
-$html .= "<td valign=top align=center>".$tkbox->generate()."</td>";
+$awardboxes[] = $tkbox->generate();
 // top capital killers
 $tklist = new TopCapitalShipKillerList();
 $tklist->setMonth($month);
@@ -120,9 +118,12 @@ involved::load($tklist,'kill');
 
 $tklist->generate();
 $tkbox = new AwardBox($tklist, "Top ISK killers", "capital shipkills", "kills", "wing2");
-$html .= "<td valign=top align=center>".$tkbox->generate()."</td>";
+$awardboxes[] = $tkbox->generate();
 
-$html .= "</td></tr></table>";
+$smarty->assign_by_ref('awardboxes', $awardboxes);
+$smarty->assign('month', $monthname);
+$smarty->assign('year', $year);
+$smarty->assign('boxcount', count($awardboxes));
 
 $menubox = new Box("Menu");
 $menubox->setIcon("menu-item.gif");
@@ -132,6 +133,6 @@ if (! ($month == kbdate("m") - 1 && $year == kbdate("Y")))
     $menubox->addOption("link", "Next month", "?a=awards&m=".$nmonth."&y=".$nyear);
 $page->addContext($menubox->generate());
 
-$page->setContent($html);
+$page->setContent($smarty->fetch(get_tpl('awards')));
 $page->generate();
 ?>

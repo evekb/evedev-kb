@@ -11,11 +11,51 @@ if (!$kll_id = intval($_GET['kll_id']))
     exit;
 }
 $kill = new Kill($kll_id);
+$kill->setDetailedInvolved();
+if(!$kill->exists())
+{
+    echo 'No valid kill id specified';
+    exit;
+}
 if($kill->isClassified())
 {
 	Header("Location: ".KB_HOST."/?a=kill_detail&kll_id=".$kll_id);
 	die();
 }
+$victimAll = array();
+$invAll = array();
+$victimCorp = array();
+$invCorp = array();
+
+foreach ($kill->involvedparties_ as $inv)
+{
+	if($inv->getAlliance()->getName() != 'None' 
+            && $inv->getAllianceID() != $kill->getVictimAllianceID())
+                $invAll[$inv->getAllianceID()] = $inv->getAllianceID();
+	elseif($inv->getCorpID() != $kill->getVictimCorpID())
+            $invCrp[$inv->getCorpID()] = $inv->getCorpID();
+}
+if($kill->getVictimAllianceName() != 'None' ) $victimAll[$kill->getVictimAllianceID()] = $kill->getVictimAllianceID();
+else $victimCorp[$kill->getVictimCorpID()] = $kill->getVictimCorpID();
+
+if(CORP_ID == $kill->getVictimCorpID() || ALLIANCE_ID == $kill->getVictimAllianceID())
+{
+	$tmp = $victimAll;
+	$victimAll = $invAll;
+	$invAll = $tmp;
+	$tmp = $victimCorp;
+	$victimCorp = $invCorp;
+	$invCorp = $tmp;
+}
+
+// Check which side board owner is on and make that the kill side. The other
+// side is the loss side. If board own is on neither then victim is the loss
+// side.
+// Check if killlist works like this.
+//
+// Profit
+
+
 $page = new Page('Related kills & losses');
 
 // this is a fast query to get the system and timestamp
@@ -25,10 +65,10 @@ $rqry->execute($rsql);
 $rrow = $rqry->getRow();
 $system = new SolarSystem($rrow['kll_system_id']);
 
-        // now we get all kills in that system for +-1 hours
+        // now we get all kills in that system for +-4 hours
 $query = 'SELECT kll.kll_timestamp AS ts FROM kb3_kills kll WHERE kll.kll_system_id='.$rrow['kll_system_id'].
-            ' AND kll.kll_timestamp <= "'.(date('Y-m-d H:i:s',strtotime($rrow['kll_timestamp']) + 60 * 60)).'"'.
-            ' AND kll.kll_timestamp >= "'.(date('Y-m-d H:i:s',strtotime($rrow['kll_timestamp']) - 60 * 60)).'"'.
+            ' AND kll.kll_timestamp <= "'.(date('Y-m-d H:i:s',strtotime($rrow['kll_timestamp']) +  4 * 60 * 60)).'"'.
+            ' AND kll.kll_timestamp >= "'.(date('Y-m-d H:i:s',strtotime($rrow['kll_timestamp']) -  4 * 60 * 60)).'"'.
             ' ORDER BY kll.kll_timestamp ASC';
 $qry = new DBQuery();
 $qry->execute($query);
@@ -83,14 +123,18 @@ $kslist->setOrdered(true);
 $kslist->addSystem($system);
 $kslist->setStartDate($firstts);
 $kslist->setEndDate($lastts);
-involved::load($kslist,'kill');
+//involved::load($kslist,'kill');
+foreach($invCorp as $ic) $kslist->addInvolvedCorp($ic);
+foreach($invAll as $ia) $kslist->addInvolvedAlliance($ia);
 
 $lslist = new KillList();
 $lslist->setOrdered(true);
 $lslist->addSystem($system);
 $lslist->setStartDate($firstts);
 $lslist->setEndDate($lastts);
-involved::load($lslist,'loss');
+//involved::load($lslist,'loss');
+foreach($invCorp as $ic) $lslist->addVictimCorp($ic);
+foreach($invAll as $ia) $lslist->addVictimAlliance($ia);
 
 $summarytable = new KillSummaryTable($kslist, $lslist);
 $summarytable->setBreak(config::get('summarytable_rowcount'));
@@ -103,7 +147,9 @@ $klist->setCountInvolved(true);
 $klist->addSystem($system);
 $klist->setStartDate($firstts);
 $klist->setEndDate($lastts);
-involved::load($klist,'kill');
+//involved::load($klist,'kill');
+foreach($invCorp as $ic) $klist->addInvolvedCorp($ic);
+foreach($invAll as $ia) $klist->addInvolvedAlliance($ia);
 
 $llist = new KillList();
 $llist->setOrdered(true);
@@ -112,7 +158,9 @@ $llist->setCountInvolved(true);
 $llist->addSystem($system);
 $llist->setStartDate($firstts);
 $llist->setEndDate($lastts);
-involved::load($llist,'loss');
+//involved::load($llist,'loss');
+foreach($invCorp as $ic) $llist->addVictimCorp($ic);
+foreach($invAll as $ia) $llist->addVictimAlliance($ia);
 
 if ($_GET['scl_id'])
 {

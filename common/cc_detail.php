@@ -16,100 +16,75 @@ else
 
 $page = new Page($title.' - '.$contract->getName());
 
-$html .= "<table align=center class=kb-table width=\"100%\" height=\"80\" border=\"0\" cellspacing=1><tr class=kb-table-row-even><td rowspan=5 align=center width=80 height=80>";
-// table class=kb-subtable cellspacing=0><tr class=kb-table-row-even><td width=80 height=80 align=center>";
 if ($contract->getCampaign())
-    $html .= "<img src=\"".IMG_URL."/campaign-big.gif\" align=center>";
+    $smarty->assign('campaign', true);
 else
-    $html .= "<img src=\"".IMG_URL."/contract-big.gif\" align=center>";
-
-$html .= "</td>";
-// $html .= "<td valign=top align=left height=80>";
-// $html .= "<table class=kb-subtable width=\"100%\" height=\"100%\" cellspacing=1 border=\"0\">";
+    $smarty->assign('campaign', false);
 if ($contract->getEndDate() == "")
-    $ended = "Active";
+    $smarty->assign('contract_enddate', "Active");
 else
-    $ended = substr($contract->getEndDate(), 0, 10);
-$html .= "<td class=kb-table-cell><b>Start date:</b></td><td class=kb-table-cell width=120><b>".substr($contract->getStartDate(), 0, 10)."</b></td><td class=kb-table-cell><b>End date:</b></td><td class=kb-table-cell width=120><b>".$ended."</b></td></tr>";
-$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Kills:</b></td><td class=kl-kill>".$contract->getKills()."</td><td class=kb-table-cell><b>Losses:</b></td><td class=kl-loss>".$contract->getLosses()."</td></tr>";
-$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Damage done (ISK):</b></td><td class=kl-kill>".round($contract->getKillISK()/1000000000, 2)."B</td><td class=kb-table-cell><b>Damage received (ISK):</b></td><td class=kl-loss>".round($contract->getLossISK()/1000000000, 2)."B</td></tr>";
-$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Runtime:</b></td><td class=kb-table-cell><b>".$contract->getRunTime()." days</b></td><td class=kb-table-cell><b>Efficiency:</b></td><td class=kb-table-cell><b>".$contract->getEfficiency()."%</b></td></tr>";
-$html .= "</table>";
-// $html .= "</td></tr></table>";
+    $smarty->assign('contract_enddate', substr($contract->getEndDate(), 0, 10));
+$smarty->assign('contract_startdate', substr($contract->getStartDate(), 0, 10));
+$smarty->assign('kill_count', $contract->getKills());
+$smarty->assign('loss_count', $contract->getLosses());
+$smarty->assign('kill_isk', round($contract->getKillISK()/1000000000, 2));
+$smarty->assign('loss_isk', round($contract->getLossISK()/1000000000, 2));
+$smarty->assign('contract_runtime', $contract->getRunTime());
+$smarty->assign('contract_efficiency', $contract->getEfficiency());
+
 $klist = $contract->getKillList();
 $llist = $contract->getLossList();
 $killsummary = new KillSummaryTable($klist, $llist);
 $killsummary->setBreak(config::get('summarytable_rowcount'));
-if ($_GET['view'] == "")
-    $killsummary->setFilter(false);
+if ($_GET['view'] == "") $killsummary->setFilter(false);
 
-$html .= "<br>";
-$html .= $killsummary->generate();
-
+$smarty->assign('contract_summary', $killsummary->generate());
+$smarty->assign('view',$_GET['view']);
 switch ($_GET['view'])
 {
     case "":
+		$qrylength=new DBQuery();
+		// set break at half of the number of valid classes - excludes noob ships, drones and unknown
+		$qrylength->execute("SELECT count(*) - 3 AS cnt FROM kb3_ship_classes");
+		if($qrylength->recordCount())
+		{
+			$res = $qrylength->getRow();
+			$breaklen =$res['cnt']/2;
+		}
+		else $breaklen = 15;
+		unset($qrylength);
+		$targets = array();
+		$curtarget = array();
         while ($target = &$contract->getContractTarget())
         {
             $kl = &$target->getKillList();
             $ll = &$target->getLossList();
             $summary = new KillSummaryTable($kl, $ll);
             $summary->setVerbose(true);
-			$qrylength=new DBQuery();
-			// set break at half of the number of valid classes - excludes noob ships, drones and unknown
-			$qrylength->execute("SELECT count(*) - 3 AS cnt FROM kb3_ship_classes");
-			if($qrylength->recordCount())
-			{
-				$res = $qrylength->getRow();
-				$summary->setBreak($res['cnt']/2);
-			}
-			else $summary->setBreak(15);
+			$summary->setBreak($breaklen);
             $summary->setView('combined');
 
-            $html .= "<br><div class=kb-contract-target-header>Target ".$target->getType()." - ";
-            switch ($target->getType()) {
-                case "corp":
-                    $html .= "<a class=kb-contract href=\"?a=".$target->getType()."_detail&crp_id=".$target->getID()."\">".$target->getName()."</a>";
-                    break;
-                case "alliance":
-                    $html .= "<a class=kb-contract href=\"?a=".$target->getType()."_detail&all_id=".$target->getID()."\">".$target->getName()."</a>";
-                    break;
-                case "system":
-                    $html .= "<a class=kb-contract href=\"?a=" .$target->getType()."_detail&sys_id=".$target->getID()."\">".$target->getName()."</a>";
-                    break;
-                case "region":
-                    $html .= $target->getName();
-                    break;
-            }
-            $html .= "</div>";
-            $html .= $summary->generate();
-
-            $html .= "<br><table class=kb-subtable border=\"0\" cellspacing=0 width=\"100%\"><tr><td>";
+			$curtargets['type'] = $target->getType();
+			$curtargets['id'] = $target->getID();
+			$curtargets['name'] = $target->getName();
+			$curtargets['summary'] = $summary->generate();
 
             if ($summary->getTotalKillISK())
-                $efficiency = round($summary->getTotalKillISK() / ($summary->getTotalKillISK() + $summary->getTotalLossISK()) * 100, 2);
+                $curtargets['efficiency'] = round($summary->getTotalKillISK() / ($summary->getTotalKillISK() + $summary->getTotalLossISK()) * 100, 2);
             else
-                $efficiency = 0;
-
-            $bar = new BarGraph($efficiency, 100, 120);
-            $html .= "<table class=kb-table cellspacing=1 border=\"0\" width=\"100%\"><tr class=kb-table-row-even>";
-            $html .= "<td class=kb-table-cell width=108><b>Totals:</b></td><td class=kl-kill-bg width=60 align=center>".$summary->getTotalKills()."</td><td class=kl-kill-bg width=60 align=center>".round($summary->getTotalKillISK()/1000000000, 2)."B</td>";
-            $html .= "<td class=kl-loss-bg width=64 align=center>".$summary->getTotalLosses()."</td><td class=kl-loss-bg width=60 align=center>".round($summary->getTotalLossISK()/1000000000, 2)."B</td></tr></table>";
-
-            $html .= "</td><td align=left>";
-
-            $html .= "<table class=kb-table cellspacing=1 border=\"0\"><tr class=kb-table-row-even>";
-            $html .= "<td class=kb-table-cell width=108><b>Efficiency:</b></td><td class=kb-table-cell align=center colspan=2 width=120><b>".$efficiency."%</b></td>";
-            $html .= "<td class=kb-table-cell colspan=2 width=120>".$bar->generate()."</td></tr>";
-            $html .= "</tr></table>";
-
-            $html .= "</td></tr></table>";
+                $curtargets['efficiency'] = 0;
+			$curtargets['total_kills'] = $summary->getTotalKills();
+			$curtargets['total_losses'] = $summary->getTotalLosses();
+			$curtargets['total_kill_isk'] = round($summary->getTotalKillISK()/1000000000, 2);
+			$curtargets['total_loss_isk'] = round($summary->getTotalLossISK()/1000000000, 2);
+            $bar = new BarGraph($curtargets['efficiency'], 100, 120);
+			$curtargets['bar'] = $bar->generate();
+			$targets[] = $curtargets;
         }
-
+		$smarty->assign_by_ref('targets', $targets);
+		$html .= $smarty->fetch(get_tpl('cc_detail'));
         break;
     case "recent_activity":
-        $html .= "<div class=kb-kills-header>10 Most recent kills</div>";
-
         $contract = new Contract($ctr_id);
         $klist = $contract->getKillList();
         $klist->setOrdered(true);
@@ -121,9 +96,8 @@ switch ($_GET['view'])
         $table = new KillListTable($klist);
         $table->setLimit(10);
         $table->setDayBreak(false);
-        $html .= $table->generate();
+        $smarty->assign('killtable', $table->generate());
 
-        $html .= "<div class=kb-losses-header>10 Most recent losses</div>";
         $llist = $contract->getLossList();
         $llist->setOrdered(true);
         if ($_GET['scl_id'])
@@ -134,70 +108,38 @@ switch ($_GET['view'])
         $table = new KillListTable($llist);
         $table->setLimit(10);
         $table->setDayBreak(false);
-        $html .= $table->generate();
+        $smarty->assign('losstable', $table->generate());
+		$html .= $smarty->fetch(get_tpl('cc_detail'));
         break;
     case "kills":
-        $html .= "<div class=kb-kills-header>All kills</div>";
-
         $contract = new Contract($ctr_id);
         $list = $contract->getKillList();
         $list->setOrdered(true);
         if ($_GET['scl_id'])
             $list->addVictimShipClass(new ShipClass($_GET['scl_id']));
 
-        $pagesplitter = new PageSplitter($list->getCount(), 30);
-        $list->setPageSplitter($pagesplitter);
+		$list->setPageSplitter(config::get('killcount'));
+		$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
         $table = new KillListTable($list);
         $table->setDayBreak(false);
-        $html .= $table->generate();
-        $html .= $pagesplitter->generate();
+        $smarty->assign('killtable', $table->generate());
+        $smarty->assign('splitter', $pagesplitter->generate());
+		$html .= $smarty->fetch(get_tpl('cc_detail'));
         break;
     case "losses":
-        $html .= "<div class=kb-losses-header>All losses</div>";
-
         $contract = new Contract($ctr_id);
         $llist = $contract->getLossList();
         $llist->setOrdered(true);
         if ($_GET['scl_id'])
             $llist->addVictimShipClass(new ShipClass($_GET['scl_id']));
 
-        $pagesplitter = new PageSplitter($llist->getCount(), 30);
-        $llist->setPageSplitter($pagesplitter);
+		$list->setPageSplitter(config::get('killcount'));
+		$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
         $table = new KillListTable($llist);
         $table->setDayBreak(false);
-        $html .= $table->generate();
-        $html .= $pagesplitter->generate();
-        break;
-    case "combined":
-        $html .= "<div class=kb-kills-header>All kills</div>";
-
-        $contract = new Contract($ctr_id);
-        $list = $contract->getKillList();
-        $list->setOrdered(true);
-        if ($_GET['scl_id'])
-            $list->addVictimShipClass(new ShipClass($_GET['scl_id']));
-
-        $pagesplitter = new PageSplitter($list->getCount(), 20);
-        $list->setPageSplitter($pagesplitter);
-        $table = new KillListTable($list);
-        $table->setDayBreak(false);
-        $html .= $table->generate();
-        $html .= $pagesplitter->generate();
-
-        $html .= "<div class=kb-losses-header>All losses</div>";
-
-        $contract = new Contract($ctr_id);
-        $llist = $contract->getLossList();
-        $llist->setOrdered(true);
-        if ($_GET['scl_id'])
-            $llist->addVictimShipClass(new ShipClass($_GET['scl_id']));
-
-        $pagesplitter = new PageSplitter($llist->getCount(), 20);
-        $llist->setPageSplitter($pagesplitter);
-        $table = new KillListTable($llist);
-        $table->setDayBreak(false);
-        $html .= $table->generate();
-        $html .= $pagesplitter->generate();
+        $smarty->assign('losstable', $table->generate());
+        $smarty->assign('splitter', $pagesplitter->generate());
+		$html .= $smarty->fetch(get_tpl('cc_detail'));
         break;
 }
 

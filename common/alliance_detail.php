@@ -145,19 +145,19 @@ switch ($_GET['view'])
 
         break;
     case "kills":
-        $html .= "<div class=kb-kills-header>All kills</div>";
+		$html .= "<div class=kb-kills-header>All kills</div>";
 
-        $list = new KillList();
-        $list->setOrdered(true);
+		$list = new KillList();
+		$list->setOrdered(true);
 		$list->addInvolvedAlliance($alliance);
-        if ($_GET['scl_id'])
-            $list->addVictimShipClass(new ShipClass($_GET['scl_id']));
-        $pagesplitter = new PageSplitter($list->getCount(), 30);
-        $list->setPageSplitter($pagesplitter);
-        $table = new KillListTable($list);
-        $table->setDayBreak(false);
-        $html .= $table->generate();
-        $html .= $pagesplitter->generate();
+		if ($_GET['scl_id'])
+			$list->addVictimShipClass(new ShipClass($_GET['scl_id']));
+		$list->setPageSplit(config::get('killcount'));
+		$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
+		$table = new KillListTable($list);
+		$table->setDayBreak(false);
+		$html .= $table->generate();
+		$html .= $pagesplitter->generate();
 
         break;
     case "losses":
@@ -169,8 +169,8 @@ switch ($_GET['view'])
         $list->addVictimAlliance($alliance);
         if ($_GET['scl_id'])
             $list->addVictimShipClass(new ShipClass($_GET['scl_id']));
-        $pagesplitter = new PageSplitter($list->getCount(), 30);
-        $list->setPageSplitter($pagesplitter);
+		$list->setPageSplit(config::get('killcount'));
+		$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 
         $table = new KillListTable($list);
         $table->setDayBreak(false);

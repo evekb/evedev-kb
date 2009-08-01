@@ -8,7 +8,7 @@ if (trim($_POST['usrpass']))
     {
         session::create(true);
 
-        header('Location: ?a=admin');
+		header('Location: ?a=admin');
     }
     else
     {

@@ -81,7 +81,7 @@ if (config::get('item_values'))
 			{
 				$SID = intval($_POST['SID']);
 				$Val = preg_replace('/[^0-9]/','',$_POST[$SID]);
-				$qry->execute("INSERT INTO kb3_ships_values (shp_id, shp_value) VALUES ('".$SID."', '".$Val."') ON DUPLICATE KEY UPDATE shp_value = '".$Val."'");
+				$qry->execute("INSERT INTO kb3_item_price (typeID, price) VALUES ('".$SID."', '".$Val."') ON DUPLICATE KEY UPDATE price = '".$Val."'");
 				$victimship = $kill->getVictimShip();
 				$kill->setVictimShip(new Ship($victimship->getID() ));
 			}

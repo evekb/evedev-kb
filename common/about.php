@@ -19,15 +19,10 @@ $contributor = array('JaredC01',
 	'EDG',
 	'Duncan - Shailo Koljas');
 sort($contributor);
+$smarty->assign_by_ref('developer', $developer);
+$smarty->assign('contributor', $contributor);
 
-$html .= '<div class=block-header2>The Killboard</div>';
-
-// Please leave the information on the next line as is so that other people can easily find the EVE-Dev website.
-// Remember to share any modifications to the EVE-Dev Killboard.
-$html .= "This is the EVE Development Network Killboard running version ".KB_VERSION." ".KB_RELEASE." rev ".SVN_REV.", created for <a href=\"http://www.eve-online.com/\">EVE Online</a> corporations and alliances. Based on the EVE-Killboard created by rig0r, it is now developed and maintained by the <a href=\"http://www.eve-dev.net/\">EVE-Dev</a> group.<br/>"
-	."All EVE graphics and data used are property of <a href=\"http://www.ccpgames.com/\">CCP</a>.<br/><br/>";
-$html .= '<a href="http://www.eve-dev.net/" target="_blank"><img src="http://www.eve-dev.net/logo.png" border="0"/></a><br/><br/>';
-
+$smarty->assign('version', KB_VERSION." ".KB_RELEASE." rev ".SVN_REV);
 $html .= '<b>Staff:</b><br/>';
 $html .= join(', ', $developer);
 $html .= '<br/><br/><b>Contributors:</b><br/>';
@@ -51,23 +46,12 @@ $qry->execute("select count(*) as cnt from kb3_alliances");
 $row = $qry->getRow();
 $alliances = $row['cnt'];
 
-// $html .= "<div class=block-header2>Killboard stats</div>";
-$html .= "This killboard currently contains: <b>" . number_format($kills, 0, ',', '.') . "</b> killmails, <b>" . number_format($items, 0, ',', '.') . "</b> destroyed items, <b>" . number_format($pilots, 0, ',', '.') . "</b> pilots, <b>" . number_format($corps, 0, ',', '.') . "</b> corporations and <b>" . number_format($alliances, 0, ',', '.') . "</b> alliances.<br><br>";
+$smarty->assign('kills', $kills);
+$smarty->assign('items', $items);
+$smarty->assign('pilots', $pilots);
+$smarty->assign('corps', $corps);
+$smarty->assign('alliances', $alliances);
 
-$html .= "<div class=block-header2>Kills & Real kills</div>";
-$html .= "'Kills' -    The count of all kills by an entity. <br>'Real kills' - This is the count of recorded kills minus any pod, shuttle and noobship kills. <br><p> The 'Real kills' value is used throughout all award and statistic pages.<br><br>";
-
-$html .= "<div class=block-header2>Kill points</div>";
-$html .= "Administrator option.<br><br>";
-$html .= "If enabled, every kill is assigned a point value. Based on the shiptype destroyed, and the number and types of ships involved in the kill, the number of points indicates the difficulty of the kill... As a result, a gank will get a lot less points awarded than a kill in a small engagement.<br><br>";
-
-$html .= "<div class=block-header2>Efficiency</div>";
-$html .= "Each shipclass has an ISK value assigned. These are based on the average amount of ISK that would have been lost if the ship was destroyed, taking current average market prices, insurance costs and insurance payouts into account. ";
-$html .= "Any modules that may have been fitted, contained within the destroyed cargo or confiscated are not included within this value.<br><br>";
-$html .= "Efficiency is calculated as the ratio of damage done in ISK versus the damage received in ISK. This comes down to <i>damagedone / (damagedone + damagereceived ) * 100</i>.<br><br>";
-
-$html .= "<div class=block-header2>Ship values</div>";
-$html .= "The shipclasses and average ISK value are as follows:<br><br>";
 $sql = "select scl_id
             from kb3_ship_classes
 	   where scl_class not in ( 'Drone', 'Unknown' )
@@ -75,14 +59,20 @@ $sql = "select scl_id
 
 $qry = new DBQuery();
 $qry->execute($sql);
-$html .= "<table class=kb-table cellspacing=1>";
-$html .= "<tr class=kb-table-header><td width=160>Ship class</td><td>Value in ISK</td><td>Points</td><td align=center>Indicator</td></tr>";
+
+$shipcl = array();
 while ($row = $qry->getRow())
 {
 	$shipclass = new ShipClass($row['scl_id']);
-	$html .= "<tr class=kb-table-row-odd><td>".$shipclass->getName()."</td><td align=\"right\">".number_format($shipclass->getValue()*1000000,0,',','.')."</td><td align=\"right\">".number_format($shipclass->getPoints(),0,',','.')."</td><td align=center><img class=ship src=\"" . $shipclass->getValueIndicator() . "\" border=\"0\"></td></tr>";
+	$class = array();
+	$class['name']=$shipclass->getName();
+	$class['value']=number_format($shipclass->getValue() * 1000000,0,',','.');
+	$class['points']=number_format($shipclass->getPoints(),0,',','.');
+	$class['valind']=$shipclass->getValueIndicator();
+	$shipcl[]=$class;
 }
-$html .= "</table>";
+number_format($shipclass->getPoints(),0,',','.')."</td><td align=center><img class=ship src=\"" . $shipclass->getValueIndicator() . "\" border=\"0\"></td></tr>";
+$smarty->assign('shipclass', $shipcl);
 
 function getVictimShipValueIndicator($value)
 {
@@ -115,19 +105,23 @@ if (config::get('ship_values'))
 	$html .= "<br/>Custom shipvalues which override the value from shipclasses:<br><br>";
 	$qry = new DBQuery();
 	$qry->execute($sql);
-	$html .= "<table class=kb-table cellspacing=1>";
-	$html .= "<tr class=kb-table-header><td width=160>Ship Name</td><td>Ship Class</td><td>Points</td><td align=\"right\">Value in ISK</td></tr>";
+	$shipval = array();
 	while ($row = $qry->getRow())
 	{
 		if ($row['shp_techlevel'] == 2)
 		{
-			$row['shp_name'] = '<img src="'.IMG_URL.'/items/32_32/t2.gif">'.$row['shp_name'];
+			$row['t2'] = IMG_URL.'/items/32_32/t2.gif';
 		}
-		$html .= "<tr class=kb-table-row-odd><td>".$row['shp_name']."&nbsp;</td><td>".$row['scl_class']."&nbsp;</td><td align=\"right\">".number_format($row['scl_points'],0,',','.')."</td><td align=\"right\">&nbsp;".number_format($row['shp_value'],0,',','.')."&nbsp;<img src=\"".getVictimShipValueIndicator($row['shp_value']/1000000)."\"></td></tr>";
+		else $row['t2'] = '';
+		$row['scl_points'] = number_format($row['scl_points'],0,',','.');
+		$row['valind'] = getVictimShipValueIndicator($row['shp_value']/1000000);
+		$row['shp_value'] = number_format($row['shp_value'],0,',','.');
+		$shipval[] = $row;
+
 	}
-	$html .= "</table>";
+	$smarty->assign('shipval', $shipval);
 }
 
-$page->setContent($html);
+$page->setContent($smarty->fetch(get_tpl('about')));
 $page->generate();
 ?>
