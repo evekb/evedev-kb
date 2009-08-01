@@ -41,15 +41,14 @@ class Item
 		$img = IMG_URL.'/blueprints/'.$size.'_'.$size.'/'.$this->row_['itm_externalid'].'.png';
 	}
 	else
-        {
-		 
+	{
 		// fix for new db structure, just make sure old clients dont break
-		if (!strstr($this->row_['itm_icon'], 'icon')) 
+		if (!strstr($this->row_['itm_icon'], 'icon'))
 		{
 			$this->row_['itm_icon'] = 'icon'.$this->row_['itm_icon'];
 		}
 		$img = IMG_URL.'/items/'.$size.'_'.$size.'/'.$this->row_['itm_icon'].'.png';
-        }  
+	}
 
         
 	if ($size == 24)

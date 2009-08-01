@@ -101,5 +101,27 @@ class Alliance
 		$factions = array("Amarr Empire", "Minmatar Republic", "Caldari State", "Gallente Federation");
 		return (in_array($this->getName(), $factions));
 	}
+
+	function getFactionID()
+	{
+		if(!$this->isFaction()) return 0;
+		switch($this->getName())
+		{
+			//needs less magic.
+			case "Caldari State":
+				return 500001;
+				break;
+			case "Minmatar Republic":
+				return 500002;
+				break;
+			case "Amarr Empire":
+				return 500003;
+				break;
+			case "Gallente Federation":
+				return 500004;
+				break;
+		}
+		return 0;
+	}
 }
 ?>

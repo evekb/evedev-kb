@@ -12,7 +12,7 @@ $page->setAdmin();
 
 if (!$_POST['killmail'])
 {
-    $html .= '<b>Killmails in same format as export (Comma Seperated - csv):</b><br>';
+    $html .= '<b>Killmails in same format as export (Comma Separated - csv):</b><br>';
     $html .= '<form id=postform name=postform class=f_killmail method=post action="?a=admin_kill_import_csv">';
     $html .= '<textarea class=killmail id=killmail name=killmail cols="55" rows="35"></textarea><br><br>';
     $html .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id=submit name=submit type=submit value="Process !"></input>';
@@ -80,10 +80,10 @@ else
         }
         elseif ($killid >= 1)
         {
-            $html .= "Killmail imported succesfully <a href=\"?a=kill_detail&kll_id=" . $parser->dupeid_ . "\">here</a>.<br>";
+            $html .= "Killmail imported successfully <a href=\"?a=kill_detail&kll_id=" . $killid . "\">here</a>.<br>";
+			}
         }
     }
-}
 
 $page->setContent($html);
 $page->addContext($menubox->generate());

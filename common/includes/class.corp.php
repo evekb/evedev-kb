@@ -19,9 +19,9 @@ class Corporation
     {
         global $corp_npc;
         if (in_array($this->getName(), $corp_npc))
-        {
             return true;
-		}
+		if($this->externalid_ > 1000001 && $this->externalid_ < 1000183)
+			return true;
     }
 
     //! Return the corporation name stripped of all non-ASCII non-alphanumeric characters.
@@ -35,7 +35,15 @@ class Corporation
     {
         if ($this->isNPCCorp() || file_exists('img/corps/'.$this->getUnique().'.jpg'))
         {
-            return '?a=thumb&amp;type=corp&amp;id='.$this->getUnique().'&amp;size='.$size;
+			if($size == 128)
+			{
+				if($this->externalid_ > 1000001 && $this->externalid_ < 1000183)
+					return 'img/corps/c'.$this->externalid_.'.jpg';
+				else return 'img/corps/'.$this->getUnique().'.jpg';
+			}
+			if($this->externalid_ > 1000001 && $this->externalid_ < 1000183)
+				return '?a=thumb&amp;type=corp&amp;id=c'.$this->externalid_.'&amp;size='.$size;
+			else return '?a=thumb&amp;type=corp&amp;id='.$this->getUnique().'&amp;size='.$size;
         }
         return '?a=thumb&amp;type=corp&amp;id='.$this->id_.'&amp;size='.$size;
     }

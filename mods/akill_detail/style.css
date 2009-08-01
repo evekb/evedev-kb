@@ -1,0 +1,71 @@
+.kb_table_involved, .kb_table_involved_big
+{
+  font-family: "georgia", "verdana", "arial", "sans-serif";
+  font-size: 10px;
+  color: #e0e0e0;
+  padding: 0px;
+  border: 1px solid #444444;
+  border-collapse: separate;
+  border-spacing: 1px;
+}
+
+.kb-table-header
+{
+  font-size: 11px;
+}
+
+.kb_table_involved_big
+{
+  font-size: 11px;
+}
+
+.kb-table-row-kill
+{
+  background: #003000;
+}
+
+.kb-table-row-kill-hover
+{
+  /*color: #012201;*/
+  background: #849DD4;
+  cursor: pointer;
+}
+
+.kb-table-row-loss
+{
+  background: #300000;
+}
+
+.kb-table-row-loss-hover
+{
+  /*color: #220101;*/
+  background: #849DD4;
+  cursor: pointer;
+}
+
+.killcount
+{
+  color: #00aa00;
+  float:right;
+  font-weight: bold;
+  font-size:9px;
+  padding-right:4px;
+}
+.losscount
+{
+  color: #dd0000;
+  float:center;
+  font-weight: bold;
+  font-size:9px;
+}
+.efficency
+{
+  color: #ffffff;
+  float:left;
+  font-weight: bold;
+  font-size:9px;
+  padding-right:4px;
+ }
+#pilots_and_ships, #related_kills, #related_losses, #balance_of_power {
+  display:block;
+}

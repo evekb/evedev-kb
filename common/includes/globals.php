@@ -6,7 +6,7 @@ if (file_exists('cache/svnrev.php'))
 }
 else
 {
-	$svn_rev = '439';
+	$svn_rev = '435dev';
 }
 define('SVN_REV', $svn_rev);
 
@@ -49,17 +49,43 @@ function roundsec($sec)
 
 	return number_format(round($s, 1), 1);
 }
-//! Check if a version of this template for the igb exists and return that if so.
+//! Check if a version of this template exists in this theme or for the igb.
+
+/*! If client is igb check if theme has an igb version. If not check in default
+ *  theme for one. If client is not igb check if the theme has the template.
+ *  If not then again return the default template.
+ *
+ *  \param $name string containing the name of the template.
+ */
 function get_tpl($name)
 {
+	if(config::get('theme_name')== 'default')
+	{
+		if (IS_IGB)
+		{
+			if (file_exists('./themes/default/templates/igb_'.$name.'.tpl'))
+			{
+				return 'igb_'.$name.'.tpl';
+			}
+		}
+		return $name.'.tpl';
+	}
 	if (IS_IGB)
 	{
-		if (file_exists('./templates/igb_'.$name.'.tpl'))
+		if(file_exists('./themes/'.config::get('theme_name').'/templates/igb_'.$name.'.tpl'))
 		{
 			return 'igb_'.$name.'.tpl';
 		}
+		elseif(file_exists('./themes/default/templates/igb_'.$name.'.tpl'))
+		{
+			return '../../default/templates/igb_'.$name.'.tpl';
+		}
 	}
-	return $name.'.tpl';
+	if(file_exists('./themes/'.config::get('theme_name').'/templates/'.$name.'.tpl'))
+	{
+		return $name.'.tpl';
+	}
+	return '../../default/templates/'.$name.'.tpl';
 }
 
 // this is currently only a wrapper but might get

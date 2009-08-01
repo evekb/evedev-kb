@@ -35,6 +35,7 @@ class role
         while ($row = $db->getRow())
         {
             role::_put($row['rol_name'], $row['rol_descr']);
+            role::_put($row['rol_name'], $row['rol_descr'], true);
         }
         role::register('admin', 'Basic Admin Role');
     }
@@ -80,9 +81,9 @@ class role
     	        // insert it into the database
 	            $db = new DBQuery();
     	        $db->execute('INSERT INTO `kb3_roles` VALUES("'.$id.'", "'.KB_SITE.'", "'.$key.'", "'.$data.'");');
-    	    }
-    	}
-        $cache['keys'][$key] = $data;
+			}
+		}
+		$cache['keys'][$key] = $data;
     }
 
     function _get($key)
@@ -102,10 +103,15 @@ class role
 
     	if (!isset($cache))
         {
-    	    $cache['keys'] = array();
-    	    $cache['hard'] = array();
-    	}
-    	return $cache;
+			$qry = new DBQuery();
+			$qry->execute('select rol_id,rol_name, rol_descr from kb3_roles where rol_site=\''.KB_SITE."' order by rol_name");
+			while ($row = $qry->getRow())
+			{
+				$cache['keys'][$row['rol_name']] = $row['rol_descr'];
+				$cache['hard'][$row['rol_name']] = $row['rol_descr'];
+    		}
+		}
+		return $cache;
     }
 }
 ?>

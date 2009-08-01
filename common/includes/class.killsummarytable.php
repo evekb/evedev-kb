@@ -122,32 +122,23 @@ class KillSummaryTable
 		$this->view_ = $string;
 	}
 
-	function addInvolvedPilot($pilot)
-	{
-		$this->inv_plt_[] = $pilot->getID();
-		if ($this->inv_crp_ || $this->inv_all_)
-		{
-			$this->mixedinvolved_ = true;
-		}
-	}
+    function addInvolvedPilot($pilot)
+    {
+        if(is_numeric($pilot)) $this->inv_plt_[] = $pilot;
+            else $this->inv_plt_[] = $pilot->getID();
+    }
 
-	function addInvolvedCorp($corp)
-	{
-		$this->inv_crp_[] = $corp->getID();
-		if ($this->inv_plt_ || $this->inv_all_)
-		{
-			$this->mixedinvolved_ = true;
-		}
-	}
+    function addInvolvedCorp($corp)
+    {
+        if(is_numeric($corp)) $this->inv_crp_[] = $corp;
+            else $this->inv_crp_[] = $corp->getID();
+    }
 
-	function addInvolvedAlliance($alliance)
-	{
-		$this->inv_all_[] = $alliance->getID();
-		if ($this->inv_plt_ || $this->inv_crp_)
-		{
-			$this->mixedinvolved_ = true;
-		}
-	}
+    function addInvolvedAlliance($alliance)
+    {
+        if(is_numeric($alliance)) $this->inv_all_[] = $alliance;
+        else $this->inv_all_[] = $alliance->getID();
+    }
 
 	// do it faster, baby!
 	function getkills()
@@ -214,6 +205,8 @@ class KillSummaryTable
 		// i'll keep it in php
 		$sql = "select scl_id, scl_class from kb3_ship_classes
                where scl_class not in ('Drone','Unknown') order by scl_class";
+		$startdate = makeStartDate($this->weekno_, $this->yearno_, $this->monthno_, $this->startweekno_, $this->startDate_);
+		$enddate = makeEndDate($this->weekno_, $this->yearno_, $this->monthno_, $this->endDate_);
 
 		$qry = new DBQuery();
 		$qry->execute($sql);
@@ -229,38 +222,29 @@ class KillSummaryTable
                     INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )';
 		$sql .= ' INNER JOIN kb3_ship_classes scl ON ( scl.scl_id = shp.shp_class )';
 
-		// Force MySQL to first filter by date if a date range is given.
-		if($this->setDateFilter())
+		
+		if ($this->inv_plt_)
 		{
-			$sql.= 'WHERE '.$this->setDateFilter();
-			if ($this->inv_plt_)
-			{
-				$sql .= ' AND EXISTS (SELECT 1 FROM kb3_inv_detail ind WHERE kll.kll_id = ind.ind_kll_id AND ind.ind_plt_id in ( '.implode(',', $this->inv_plt_).' ) LIMIT 1)';
-			}
-			if ($this->inv_crp_)
-			{
-				$sql .= ' AND EXISTS (SELECT 1 FROM kb3_inv_detail ind WHERE kll.kll_id = ind.ind_kll_id AND ind.ind_crp_id in ( '.implode(',', $this->inv_crp_).' ) AND ind.ind_crp_id != kll.kll_crp_id LIMIT 1)';
-			}
-			if ($this->inv_all_)
-			{
-				$sql .= ' AND EXISTS (SELECT 1 FROM kb3_inv_detail ind WHERE kll.kll_id = ind.ind_kll_id and ind.ind_all_id in ( '.implode(',', $this->inv_all_).' ) and ind.ind_all_id != kll.kll_all_id LIMIT 1) ';
-			}
+			$sql .= " INNER JOIN kb3_inv_detail inv ON (inv.ind_kll_id = kll.kll_id)
+					WHERE inv.ind_plt_id in (".implode(',', $this->inv_plt_)." ) ";
+				if($startdate) $sql .=" AND inv.ind_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+				if($enddate) $sql .=" AND inv.ind_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
 		}
-		else
+		elseif ($this->inv_crp_)
 		{
-			if ($this->inv_plt_)
-			{
-				$sql .= ' INNER JOIN (SELECT distinct a.ind_kll_id FROM kb3_inv_detail a WHERE a.ind_plt_id in ( '.implode(',', $this->inv_plt_).' ) ) ind ON (ind.ind_kll_id = kll.kll_id) ';
-			}
-			elseif ($this->inv_crp_)
-			{
-				$sql .= ' INNER JOIN (SELECT distinct b.ind_kll_id, b.ind_crp_id FROM kb3_inv_detail b WHERE b.ind_crp_id in ( '.implode(',', $this->inv_crp_).' ) ) ind  ON (ind.ind_kll_id = kll.kll_id AND ind.ind_crp_id != kll.kll_crp_id) ';
-			}
-			elseif ($this->inv_all_)
-			{
-				$sql .= ' INNER JOIN (SELECT distinct c.ind_kll_id, c.ind_all_id FROM kb3_inv_detail c WHERE c.ind_all_id in ( '.implode(',', $this->inv_all_).' ) ) ind  ON (ind.ind_kll_id = kll.kll_id AND ind.ind_all_id != kll.kll_all_id) ';
-			}
+				$sql .= " INNER JOIN kb3_inv_crp inv ON (inv.inc_kll_id = kll.kll_id)
+					WHERE inv.inc_crp_id in (".implode(',', $this->inv_crp_)." ) ";
+				if($startdate) $sql .=" AND inv.inc_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+				if($enddate) $sql .=" AND inv.inc_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
 		}
+		elseif ($this->inv_all_)
+		{
+			$sql .= " INNER JOIN kb3_inv_all inv ON (inv.ina_kll_id = kll.kll_id)
+				WHERE inv.ina_all_id in (".implode(',', $this->inv_all_)." ) ";
+			if($startdate) $sql .=" AND inv.ina_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+			if($enddate) $sql .=" AND inv.ina_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+		}
+
 
 		$sql .= 'GROUP BY scl_class order by scl_class';
 
@@ -295,12 +279,12 @@ class KillSummaryTable
 		elseif ($this->inv_crp_)
 		{
 			$sql .= $sqlop.' kll.kll_crp_id IN ( '.implode(',', $this->inv_crp_).' ) ';
-			$sql .= 'AND EXISTS (SELECT 1 FROM kb3_inv_detail ind WHERE kll.kll_id = ind_kll_id AND ind.ind_crp_id NOT IN ( '.implode(',', $this->inv_crp_).' ) limit 0,1) ';
+			$sql .= 'AND EXISTS (SELECT 1 FROM kb3_inv_crp inc WHERE kll.kll_id = inc_kll_id AND inc.inc_crp_id NOT IN ( '.implode(',', $this->inv_crp_).' ) limit 0,1) ';
 		}
 		elseif ($this->inv_all_)
 		{
 			$sql .= $sqlop.' kll.kll_all_id IN ( '.implode(',', $this->inv_all_).' ) ';
-			$sql .= 'AND EXISTS (SELECT 1 FROM kb3_inv_detail ind WHERE kll.kll_id = ind_kll_id AND ind.ind_all_id NOT IN ( '.implode(',', $this->inv_all_).' ) limit 0,1) ';
+			$sql .= 'AND EXISTS (SELECT 1 FROM kb3_inv_all ina WHERE kll.kll_id = ina_kll_id AND ina.ina_all_id NOT IN ( '.implode(',', $this->inv_all_).' ) limit 0,1) ';
 		}
 		$sql .= 'GROUP BY scl_class order by scl_class';
 

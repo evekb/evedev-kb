@@ -46,75 +46,196 @@ class KillList
         if (!$this->qry_->executed_)
         {
 			$datefilter=$this->getDateFilter();
+			$startdate = makeStartDate($this->weekno_, $this->yearno_, $this->monthno_, $this->startweekno_, $this->startDate_);
+			$enddate = makeEndDate($this->weekno_, $this->yearno_, $this->monthno_, $this->endDate_);
             $this->sql_ = '';
-            if (!count($this->groupby_) && ($this->comments_ || $this->involved_))
+
+			// Construct inner query with kb3_inv_detail, kb3_kills and kb3_ships
+			// combined kills and losses are constructed with a union.
+			// combined limits both parts of the union then limits the result.
+			// This avoids including the whole db before a limit is applied.
+			// other tables that add information are then added in the outer query.
+            if($this->comb_plt_ || $this->comb_crp_ || $this->comb_all_)
             {
-                $this->sql_ .= 'SELECT list.* ';
-                if($this->comments_) $this->sql_ .= ', count(distinct com.id) as comments';
-                if($this->involved_) $this->sql_ .= ', max(ind.ind_order) + 1 as inv';
-                $this->sql_ .= ' FROM (';
+				$this->sqlinner_ = "((SELECT kll.* FROM kb3_kills kll ";
+				// excluded ship filter
+				if (count($this->exclude_scl_) || count($this->vic_scl_id_))
+					$this->sqlinner_ .= " INNER JOIN kb3_ships shp on kll.kll_ship_id = shp.shp_id ";
+				if($this->comb_plt_ )
+				{
+					$this->sqlinner_ .= "INNER JOIN kb3_inv_detail ind ON ind.ind_kll_id = kll.kll_id ";
+					$this->sqlinner_ .= " WHERE ind.ind_plt_id IN (".
+						implode(',', $this->comb_plt_)." ) ";
+					if($startdate) $this->sqlinner_ .=" AND ind.ind_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+					if($enddate) $this->sqlinner_ .=" AND ind.ind_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+				}
+				elseif($this->comb_crp_ )
+				{
+					$this->sqlinner_ .= "INNER JOIN kb3_inv_crp ind ON ind.inc_kll_id = kll.kll_id ";
+					$this->sqlinner_ .= $invop." WHERE ind.inc_crp_id IN (".
+						implode(',', $this->comb_crp_)." ) ";
+					if($startdate) $this->sqlinner_ .=" AND ind.inc_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+					if($enddate) $this->sqlinner_ .=" AND ind.inc_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+				}
+				else
+				{
+					$this->sqlinner_ .= "INNER JOIN kb3_inv_all ind ON ind.ina_kll_id = kll.kll_id ";
+					$this->sqlinner_ .= $invop." WHERE ind.ina_all_id IN (".
+						implode(',', $this->comb_all_)." ) ";
+					if($startdate) $this->sqlinner_ .=" AND ind.ina_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+					if($enddate) $this->sqlinner_ .=" AND ind.ina_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+				}
+
+				if($this->apikill_)
+					$this->sqlinner_ .= " AND kll.kll_external_id IS NOT NULL ";
+
+				// System filter
+				if (count($this->systems_))
+					$this->sqlinner_ .= " AND kll.kll_system_id in ( ".implode($this->systems_, ",").")";
+
+				// Get all kills after given kill id (used for feed syndication)
+				if ($this->minkllid_)
+					$this->sqlinner_ .= ' AND kll.kll_id >= '.$this->minkllid_.' ';
+
+				// Get all kills before given kill id (used for feed syndication)
+				if ($this->maxkllid_)
+					$this->sqlinner_ .= ' AND kll.kll_id <= '.$this->maxkllid_.' ';
+
+				// excluded ship filter
+				if (count($this->exclude_scl_))
+					$this->sqlinner_ .= " AND shp.shp_class not in ( ".implode(",", $this->exclude_scl_)." )";
+				// included ship filter
+				if (count($this->vic_scl_id_))
+					$this->sqlinner_ .= " AND shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
+
+				if ($this->ordered_)
+				{
+					if (!$this->orderby_)
+					{
+						if($this->comb_plt_ ) $this->sqlinner_ .= " order by ind.ind_timestamp desc";
+						elseif($this->comb_crp_ ) $this->sqlinner_ .= " order by ind.inc_timestamp desc";
+						else $this->sqlinner_ .= " order by ind.ina_timestamp desc";
+					}
+					else $this->sqlinner_ .= " order by ".$this->orderby_;
+				}
+				if ($this->limit_) $this->sqlinner_ .= " limit ".$this->limit_." OFFSET ".$this->offset_;
+				$this->sqlinner_ .= " )";
+				$this->sqlinner_ .= " UNION ";
+				$this->sqlinner_ .= "(SELECT kll.* FROM kb3_kills kll ";
+				// excluded ship filter
+				if (count($this->exclude_scl_) || count($this->vic_scl_id_))
+					$this->sqlinner_ .= " INNER JOIN kb3_ships shp on kll.kll_ship_id = shp.shp_id ";
+				$sqlwhereop = " WHERE ";
+
+				$this->sqlinner_ .= $sqlwhereop." ( ";
+				$sqlwhereop = '';
+
+				if ($this->comb_plt_)
+					{$this->sqlinner_ .= " ".$sqlwhereop." kll.kll_victim_id in ( ".implode(',', $this->comb_plt_)." )"; $sqlwhereop = " OR ";}
+				if ($this->comb_crp_)
+					{$this->sqlinner_ .= " ".$sqlwhereop." kll.kll_crp_id in ( ".implode(',', $this->comb_crp_)." )"; $sqlwhereop = " OR ";}
+				if ($this->comb_all_)
+					$this->sqlinner_ .= " ".$sqlwhereop." kll.kll_all_id in ( ".implode(',', $this->comb_all_)." )";
+
+				$this->sqlinner_ .= " ) ";
+
+				if($startdate)
+					$this->sqlinner_ .= " AND kll.kll_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+				if($enddate)
+					$this->sqlinner_ .= " AND kll.kll_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+
+				if($this->apikill_)
+					$this->sqlinner_ .= " AND kll.kll_external_id IS NOT NULL ";
+
+				// System filter
+				if (count($this->systems_))
+					$this->sqlinner_ .= " AND kll.kll_system_id in ( ".implode($this->systems_, ",").")";
+
+				// Get all kills after given kill id (used for feed syndication)
+				if ($this->minkllid_)
+					$this->sqlinner_ .= ' AND kll.kll_id >= '.$this->minkllid_.' ';
+
+				// Get all kills before given kill id (used for feed syndication)
+				if ($this->maxkllid_)
+					$this->sqlinner_ .= ' AND kll.kll_id <= '.$this->maxkllid_.' ';
+
+				// excluded ship filter
+				if (count($this->exclude_scl_))
+					$this->sqlinner_ .= " AND shp.shp_class not in ( ".implode(",", $this->exclude_scl_)." )";
+				// included ship filter
+				if (count($this->vic_scl_id_))
+					$this->sqlinner_ .= " AND shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
+
+				if ($this->ordered_)
+				{
+					if (!$this->orderby_)
+						$this->sqlinner_ .= " order by kll.kll_timestamp desc";
+					else $this->sqlinner_ .= " order by ".$this->orderby_;
+				}
+				if ($this->limit_) $this->sqlinner_ .= " limit ".$this->limit_." OFFSET ".$this->offset_;
+				$this->sqlinner_ .= " ) ) kll ";
+			}
+			elseif ( $this->inv_plt_ || $this->inv_crp_ || $this->inv_all_)
+			{
+				$this->sqlinner_ = " kb3_kills kll ";
+			}
+			else
+			{
+				$this->sqlinner_ = " kb3_kills kll ";
+			}
+
+
+
+
+			if (!count($this->groupby_) && ($this->comments_ || $this->involved_))
+            {
+                $this->sqloutertop_ .= 'SELECT list.* ';
+                if($this->comments_) $this->sqloutertop_ .= ', count(distinct com.id) as comments';
+                if($this->involved_) $this->sqloutertop_ .= ', max(ind.ind_order) + 1 as inv';
+                $this->sqloutertop_ .= ' FROM (';
             }
             if (!count($this->groupby_))
             {
-                if($this->summary_)
-                {
-					$this->sql_ .= 'select distinct kll.kll_id, kll.kll_ship_id,
-							kll.kll_points, kll.kll_isk_loss,
-						shp.shp_class, shp.shp_name,
-					shp.shp_externalid, shp.shp_id,
-					scl.scl_id, scl.scl_class, scl.scl_value';
-                    if(count($this->systems_))
-                      $this->sql_ .= ', sys.sys_name, sys.sys_sec';
-                }
-                else
-				{
-					$this->sql_ .= 'select distinct kll.kll_id, kll.kll_timestamp, kll.kll_external_id,
-								plt.plt_name, crp.crp_name, crp.crp_id,
-								ali.all_name, ali.all_id,
-								kll.kll_system_id, kll.kll_ship_id,
-								kll.kll_victim_id, plt.plt_externalid,
-								kll.kll_crp_id, kll.kll_points, kll.kll_isk_loss,
-								shp.shp_class, shp.shp_name,
-								shp.shp_externalid, shp.shp_id,
-								scl.scl_id, scl.scl_class, scl.scl_value,
-								sys.sys_name, sys.sys_sec,
-								fbplt.plt_name as fbplt_name,
-								fbplt.plt_externalid as fbplt_externalid,
-								fbcrp.crp_name as fbcrp_name,
-								fbali.all_name as fball_name';
-				}
+				$this->sqltop_ .= 'select kll.kll_id, kll.kll_timestamp, kll.kll_external_id,
+							plt.plt_name, crp.crp_name, crp.crp_id,
+							ali.all_name, ali.all_id,
+							kll.kll_system_id, kll.kll_ship_id,
+							kll.kll_victim_id, plt.plt_externalid,
+							kll.kll_crp_id, kll.kll_points, kll.kll_isk_loss,
+							shp.shp_class, shp.shp_name,
+							shp.shp_externalid, shp.shp_id,
+							scl.scl_id, scl.scl_class, scl.scl_value,
+							sys.sys_name, sys.sys_sec,
+							fbplt.plt_name as fbplt_name,
+							fbplt.plt_externalid as fbplt_externalid,
+							fbcrp.crp_name as fbcrp_name,
+							fbali.all_name as fball_name';
             }
 
 
             if (count($this->groupby_))
             {
-                $this->sql_ .= "SELECT COUNT(1) as cnt, ".implode(",", $this->groupby_);
+                $this->sqltop_ .= "SELECT COUNT(1) as cnt, ".implode(",", $this->groupby_);
             }
             if (config::get('ship_values'))
             {
-                $this->sql_ .= ', ksv.shp_value';
+                $this->sqltop_ .= ', ksv.shp_value';
             }
 
-            $this->sql_ .= "    FROM kb3_kills kll ";
-            // MySQL tends to pick an index for this query poorly so specify one.
-            //if($this->ordered_ && !$this->orderby_) $this->sql_ .= "use index (".$timeindex.") ";
+            $this->sqltop_ .= "    FROM ".$this->sqlinner_." ";
 
-            $this->sql_ .= "INNER JOIN kb3_ships shp
-	  		      ON ( shp.shp_id = kll.kll_ship_id )
-	  		   INNER JOIN kb3_ship_classes scl
-	  		      ON ( scl.scl_id = shp.shp_class )";
             if (config::get('ship_values'))
             {
-                $this->sql_ .= ' left join kb3_ships_values ksv ON (kll.kll_ship_id = ksv.shp_id) ';
+                $this->sqllong_ .= ' left join kb3_ships_values ksv ON (kll.kll_ship_id = ksv.shp_id) ';
             }
 
-            if (!$this->summary_) $this->sql_ .= "INNER JOIN kb3_pilots plt
+            $this->sqllong_ .= "INNER JOIN kb3_pilots plt
 								ON ( plt.plt_id = kll.kll_victim_id )
 							INNER JOIN kb3_corps crp
 								ON ( crp.crp_id = kll.kll_crp_id )
 							INNER JOIN kb3_alliances ali
 								ON ( ali.all_id = kll.kll_all_id )
-							INNER JOIN kb3_pilots fbplt
+							LEFT JOIN kb3_pilots fbplt
 								ON ( fbplt.plt_id = kll.kll_fb_plt_id )
 							INNER JOIN kb3_inv_detail fb
 								ON ( fb.ind_kll_id = kll.kll_id AND fb.ind_plt_id = kll.kll_fb_plt_id )
@@ -123,8 +244,7 @@ class KillList
 							INNER JOIN kb3_alliances fbali
 								ON ( fbali.all_id = fb.ind_all_id )
                            ";
-            if(!$this->summary_ || count($this->systems_))
-              $this->sql_ .= " INNER JOIN kb3_systems sys
+            $this->sqllong_ .= " INNER JOIN kb3_systems sys
                               ON ( sys.sys_id = kll.kll_system_id )";
 
             // regions
@@ -135,213 +255,186 @@ class KillList
 			   con.con_reg_id in ( ".implode($this->regions_, ",")." ) )";
             }
 
-            if( $datefilter == "" && ( $this->inv_plt_ || $this->inv_crp_ || $this->inv_all_))
-            {
-				$this->sql_ .= " INNER JOIN kb3_inv_detail ind ON (kll.kll_id = ind.ind_kll_id AND (";
-				$invop = "";
-				if($this->inv_plt_ )
+            $this->sql_ .= "INNER JOIN kb3_ships shp
+	  		      ON ( shp.shp_id = kll.kll_ship_id )
+	  		   INNER JOIN kb3_ship_classes scl
+	  		      ON ( scl.scl_id = shp.shp_class )";
+            if($this->comb_plt_ || $this->comb_crp_ || $this->comb_all_)
+			{
+				// GROUP BY
+				if ($this->groupby_) $this->sql_ .= " GROUP BY ".implode(",", $this->groupby_);
+				// order/limit
+				if ($this->ordered_)
 				{
-					$this->sql_ .= " ind.ind_plt_id IN (".
-						implode(',', $this->inv_plt_)." ) ";
-					$invop = "OR";
+					if (!$this->orderby_)
+						$this->sql_ .= " order by kll.kll_timestamp desc";
+					else $this->sql_ .= " order by ".$this->orderby_;
 				}
-				if($this->inv_crp_ )
-				{
-					$this->sql_ .= $invop." ind.ind_crp_id IN (".
-						implode(',', $this->inv_crp_)." ) ";
-					$invop = "OR";
-				}
+			}
+			elseif ( $this->inv_plt_ || $this->inv_crp_ || $this->inv_all_)
+			{
 				if($this->inv_all_ )
 				{
-					$this->sql_ .= $invop." ind.ind_all_id IN (".
-						implode(',', $this->inv_all_)." ) ";
+					$this->sql_ .= " INNER JOIN kb3_inv_all inv ON (inv.ina_kll_id = kll.kll_id)
+						WHERE inv.ina_all_id in (".implode(',', $this->inv_all_)." ) ";
+					if($startdate) $this->sql_ .=" AND inv.ina_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+					if($enddate) $this->sql_ .=" AND inv.ina_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+
 				}
-				$this->sql_ .= ") ) ";
-            }
-            // The first argument after WHERE affects sql optimisation so check
-            // each possible argument to see whether it should use AND or WHERE
-            // rather than start with WHERE 1
-            $sqlwhereop = ' WHERE ';
-            // Date filter
-            if($datefilter != "")
-            {
-                $this->sql_ .= $sqlwhereop.$datefilter;
-                $sqlwhereop = ' AND ';
-            }
+				elseif($this->inv_crp_ )
+				{
+					$this->sql_ .= " INNER JOIN kb3_inv_crp inv ON (inv.inc_kll_id = kll.kll_id)
+						WHERE inv.inc_crp_id in (".implode(',', $this->inv_crp_)." ) ";
+					if($startdate) $this->sql_ .=" AND inv.inc_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+					if($enddate) $this->sql_ .=" AND inv.inc_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+				}
+				else
+				{
+					$this->sql_ .= " INNER JOIN kb3_inv_detail inv ON (inv.ind_kll_id = kll.kll_id)
+						WHERE inv.ind_plt_id in (".implode(',', $this->inv_plt_)." ) ";
+					if($startdate) $this->sql_ .=" AND inv.ind_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+					if($enddate) $this->sql_ .=" AND inv.ind_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+				}
 
-			if($this->apikill_)
-			{
-                $this->sql_ .= $sqlwhereop." kll.kll_external_id IS NOT NULL ";
-                $sqlwhereop = ' AND ';
+				// victim filter
+				if($this->vic_plt_ || $this->vic_crp_ || $this->vic_all_)
+				{
+					$this->sql_ .= " AND ( ";
+
+					if ($this->vic_plt_)
+						{$this->sql_ .= " ".$sqlwhereop." kll.kll_victim_id in ( ".implode(',', $this->vic_plt_)." )"; $sqlwhereop = " OR ";}
+					if ($this->vic_crp_)
+						{$this->sql_ .= " ".$sqlwhereop." kll.kll_crp_id in ( ".implode(',', $this->vic_crp_)." )"; $sqlwhereop = " OR ";}
+					if ($this->vic_all_)
+						{$this->sql_ .= " ".$sqlwhereop." kll.kll_all_id in ( ".implode(',', $this->vic_all_)." )"; $sqlwhereop = " OR ";}
+
+					$this->sql_ .= " ) ";
+				}
+				if($this->apikill_)
+					$this->sql_ .= " AND kll.kll_external_id IS NOT NULL ";
+
+				// System filter
+				if (count($this->systems_))
+					$this->sql_ .= " AND kll.kll_system_id in ( ".implode($this->systems_, ",").")";
+
+				// Get all kills after given kill id (used for feed syndication)
+				if ($this->minkllid_)
+					$this->sql_ .= ' AND kll.kll_id >= '.$this->minkllid_.' ';
+
+				// Get all kills before given kill id (used for feed syndication)
+				if ($this->maxkllid_)
+					$this->sql_ .= ' AND kll.kll_id <= '.$this->maxkllid_.' ';
+
+				// excluded ship filter
+				if (count($this->exclude_scl_))
+					$this->sql_ .= " AND shp.shp_class not in ( ".implode(",", $this->exclude_scl_)." )";
+				// included ship filter
+				if (count($this->vic_scl_id_))
+					$this->sql_ .= " AND shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
+				if ($this->ordered_)
+				{
+					if (!$this->orderby_)
+					{
+						$this->sql_ .= " order by inv.in";
+						if($this->inv_all_ ) $this->sql_ .= "a";
+						elseif($this->inv_crp_ ) $this->sql_ .= "c";
+						else $this->sql_ .= "d";
+						$this->sql_ .= "_timestamp desc";
+					}
+					else $this->sql_ .= " order by ".$this->orderby_;
+				}
 			}
+			else
+			{
+				$sqlwhereop = " WHERE ";
 
-            // System filter
-            if (count($this->systems_))
-            {
-                $this->sql_ .= $sqlwhereop." kll.kll_system_id in ( ".implode($this->systems_, ",").")";
-                $sqlwhereop = ' AND ';
-            }
-            // victim filter
-            if($this->vic_plt_ || $this->vic_crp_ || $this->vic_all_)
-            {
-				$this->sql_ .= $sqlwhereop." ( ";
-				$sqlwhereop = "";
+				if($startdate)
+				{
+					$this->sql_ .= $sqlwhereop." kll.kll_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+					$sqlwhereop = " AND ";
+				}
+				if($enddate)
+				{
+					$this->sql_ .=" AND kll.kll_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+					$sqlwhereop = " AND ";
+				}
 
-				if ($this->vic_plt_)
-					{$this->sql_ .= " ".$sqlwhereop." kll.kll_victim_id in ( ".implode(',', $this->vic_plt_)." )"; $sqlwhereop = " OR ";}
-				if ($this->vic_crp_)
-					{$this->sql_ .= " ".$sqlwhereop." kll.kll_crp_id in ( ".implode(',', $this->vic_crp_)." )"; $sqlwhereop = " OR ";}
-				if ($this->vic_all_)
-					{$this->sql_ .= " ".$sqlwhereop." kll.kll_all_id in ( ".implode(',', $this->vic_all_)." )"; $sqlwhereop = " OR ";}
-					
-				$sqlwhereop = ' AND ';
-				$this->sql_ .= " ) ";
-            }
-
-            // related kills
-            if ($this->related_)
-            {
-                $rqry = new DBQuery();
-                $rsql = "select kll_timestamp, kll_system_id from kb3_kills where kll_id = ".$this->related_;
-
-                $rqry->execute($rsql);
-                $rrow = $rqry->getRow();
-
-                $this->sql_ .= $sqlwhereop."kll.kll_timestamp <=
-			       ".(date('Y-m-d H:i:s',strtotime($rrow['kll_timestamp']) + 60 * 60)).
-	                   " and kll.kll_timestamp >=
-			       ".(date('Y-m-d H:i:s',strtotime($rrow['kll_timestamp']) - 60 * 60)).
-                            " and kll.kll_system_id = ".$rrow['kll_system_id'];
-                $sqlwhereop = " AND ";
-            }
-            // Get all kills after given kill id (used for feed syndication)
-            if ($this->minkllid_)
-            {
-                $this->sql_ .= $sqlwhereop.'kll.kll_id >= '.$this->minkllid_.' ';
-                $sqlwhereop = ' AND ';
-            }
-
-            // Get all kills before given kill id (used for feed syndication)
-            if ($this->maxkllid_)
-            {
-                $this->sql_ .= $sqlwhereop.'kll.kll_id <= '.$this->maxkllid_.' ';
-                $sqlwhereop = ' AND ';
-            }
-
-            // excluded ship filter
-            if (count($this->exclude_scl_))
-            {
-                $this->sql_ .= $sqlwhereop." shp.shp_class not in ( ".implode(",", $this->exclude_scl_)." )";
-                $sqlwhereop = ' AND ';
-            }
-            // included ship filter
-            if (count($this->vic_scl_id_))
-            {
-                $this->sql_ .= $sqlwhereop." shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
-                $sqlwhereop = ' AND ';
-            }
-            // involved filter
-            // involved parties who aren't also the victim
-            // Only use a join if no other limits are used.
-            if($this->inv_plt_ || $this->inv_crp_ || $this->inv_all_)
-            {
-				if($this->inv_all_ && $this->inv_crp_)
+				// victim filter
+				if($this->vic_plt_ || $this->vic_crp_ || $this->vic_all_)
 				{
 					$this->sql_ .= $sqlwhereop." ( ";
 					$sqlwhereop = '';
-				}
-				// No need to check the involved pilot since they can't shoot themself and get a killmail.
-                if ($this->inv_all_)
-                {
-                    $this->sql_ .= $sqlwhereop." kll.kll_all_id NOT IN ( ".implode(',', $this->inv_all_)." )";
-                    $sqlwhereop = ' AND ';
-                }
-                if ($this->inv_crp_)
-                {
-                    $this->sql_ .= $sqlwhereop." kll.kll_crp_id NOT IN ( ".implode(',', $this->inv_crp_)." )";
-                    $sqlwhereop = ' AND ';
-                }
-				if($this->inv_all_ && $this->inv_crp_) $this->sql_ .= ") ";
-                if( $datefilter != "")
-                {
-                    $this->sql_ .= $sqlwhereop." EXISTS (SELECT 1 FROM kb3_inv_detail exind ".
-						 "WHERE kll.kll_id = exind.ind_kll_id AND (";
-					$sqlwhereop = "";
-                    if ($this->inv_all_)
-                        {$this->sql_ .= $sqlwhereop." exind.ind_all_id in ( ".implode(',', $this->inv_all_)." ) ";$sqlwhereop = " OR ";}
-                    if ($this->inv_crp_)
-                        {$this->sql_ .= $sqlwhereop." exind.ind_crp_id in ( ".implode(',', $this->inv_crp_)." ) ";$sqlwhereop = " OR ";}
-                    if ($this->inv_plt_)
-                        $this->sql_ .= $sqlwhereop." exind.ind_plt_id in ( ".implode(',', $this->inv_plt_)." ) ";
-                    $this->sql_ .= " ) ) ";
-                    $sqlwhereop = " AND ";
-                }
-            }
-            // This may scan the entire table if LIMIT or a date filter are not used.
-			// Some queries combining groups will be slow on mysql versions < 5 without index merge.
-            if($this->comb_plt_ || $this->comb_crp_ || $this->comb_all_)
-            {
-                $this->sql_ .= $sqlwhereop." ( ";
-                $sqlwhereop = " OR ";
-				$sqlexistop = "EXISTS ( SELECT 1 FROM kb3_inv_detail cind WHERE kll.kll_id = cind.ind_kll_id AND (";
-                if($this->comb_plt_)
-                {
-                        $this->sql_ .= $sqlexistop." cind.ind_plt_id in ( ".implode(',', $this->comb_plt_)." )";
-                        $sqlexistop = " OR ";
-                }
-                if($this->comb_crp_)
-                {
-                        $this->sql_ .= $sqlexistop." cind.ind_crp_id in ( ".implode(',', $this->comb_crp_)." )";
-                        $sqlexistop = " OR ";
-                }
-                if($this->comb_all_)
-                {
-                        $this->sql_ .= $sqlexistop." cind.ind_all_id in ( ".implode(',', $this->comb_all_)." )";
-                }
-				$this->sql_ .= " ) )";
-                if($this->comb_plt_)
-                {
-                        $this->sql_ .= $sqlwhereop."kll.kll_victim_id in ( ".implode(',', $this->comb_plt_)." ) ";
-                        $sqlwhereop = " OR ";
-                }
-                if($this->comb_crp_)
-                {
-                        $this->sql_ .= $sqlwhereop."kll.kll_crp_id in ( ".implode(',', $this->comb_crp_)." ) ";
-                        $sqlwhereop = " OR ";
-                }
-                if($this->comb_all_)
-                {
-                        $this->sql_ .= $sqlwhereop."kll.kll_all_id in ( ".implode(',', $this->comb_all_)." ) ";
-                }
-                $this->sql_ .= " )";
-                $sqlwhereop = " AND ";
-            }
 
-            // GROUP BY
-            if ($this->groupby_) $this->sql_ .= " GROUP BY ".implode(",", $this->groupby_);
-            // order/limit
-            if ($this->ordered_)
-            {
-                if (!$this->orderby_) $this->sql_ .= " order by kll_timestamp desc";
-                else $this->sql_ .= " order by ".$this->orderby_;
-            }
-            if ($this->limit_) $this->sql_ .= " limit ".$this->limit_." OFFSET ".$this->offset_;
+					if ($this->vic_plt_)
+						{$this->sql_ .= " ".$sqlwhereop." kll.kll_victim_id in ( ".implode(',', $this->vic_plt_)." )"; $sqlwhereop = " OR ";}
+					if ($this->vic_crp_)
+						{$this->sql_ .= " ".$sqlwhereop." kll.kll_crp_id in ( ".implode(',', $this->vic_crp_)." )"; $sqlwhereop = " OR ";}
+					if ($this->vic_all_)
+						$this->sql_ .= " ".$sqlwhereop." kll.kll_all_id in ( ".implode(',', $this->vic_all_)." )";
+
+					$this->sql_ .= " ) ";
+					$sqlwhereop = ' AND ';
+				}
+				if($this->apikill_)
+					$this->sql_ .= " AND kll.kll_external_id IS NOT NULL ";
+
+				// System filter
+				if (count($this->systems_))
+					$this->sql_ .= " AND kll.kll_system_id in ( ".implode($this->systems_, ",").")";
+
+				// Get all kills after given kill id (used for feed syndication)
+				if ($this->minkllid_)
+					$this->sql_ .= ' AND kll.kll_id >= '.$this->minkllid_.' ';
+
+				// Get all kills before given kill id (used for feed syndication)
+				if ($this->maxkllid_)
+					$this->sql_ .= ' AND kll.kll_id <= '.$this->maxkllid_.' ';
+
+				// excluded ship filter
+				if (count($this->exclude_scl_))
+					$this->sql_ .= " AND shp.shp_class not in ( ".implode(",", $this->exclude_scl_)." )";
+				// included ship filter
+				if (count($this->vic_scl_id_))
+					$this->sql_ .= " AND shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
+				if ($this->ordered_)
+				{
+					if (!$this->orderby_)
+						$this->sql_ .= " order by kll.kll_timestamp desc";
+					else $this->sql_ .= " order by ".$this->orderby_;
+				}
+				//$this->sql_ .= " kll ";
+
+			}
             // Enclose query in another to fetch comments and involved parties
             if(!count($this->groupby_) && ($this->comments_ || $this->involved_))
             {
-                $this->sql_ .= ") list";
-                if($this->involved_) $this->sql_ .= ' join kb3_inv_detail ind ON (ind.ind_kll_id = list.kll_id)';
-                if($this->comments_) $this->sql_ .= ' left join kb3_comments com ON (list.kll_id = com.kll_id)';
-                $this->sql_ .= " group by list.kll_id";
+                $this->sqlouterbottom_ .= ") list";
+                if($this->involved_) $this->sqlouterbottom_ .= ' join kb3_inv_detail ind ON (ind.ind_kll_id = list.kll_id)';
+                if($this->comments_) $this->sqlouterbottom_ .= ' left join kb3_comments com ON (list.kll_id = com.kll_id)';
+                $this->sqlouterbottom_ .= " group by list.kll_id";
                 // Outer query also needs to be ordered, if there's an order
                 if ($this->ordered_)
                 {
-                    if (!$this->orderby_) $this->sql_ .= " order by kll_timestamp desc";
-                    else $this->sql_ .= " order by ".$this->orderby_;
+                    if (!$this->orderby_) $this->sqlouterbottom_ .= " order by kll_timestamp desc";
+                    else $this->sqlouterbottom_ .= " order by ".$this->orderby_;
                 }
             }
-            $this->sql_ .= " -- kill list";
+			// If the killlist will be split then only return kills in the range needed.
+			if ($this->limit_) $this->sql_ .= " limit ".$this->limit_." OFFSET ".$this->offset_;
+			elseif ($this->plimit_)
+			{
+				$splitq = new DBQuery();
+				$ssql = 'SELECT COUNT(1) as cnt FROM '.$this->sqlinner_.$this->sql_;
+
+				$splitq->execute($ssql);
+				$splitr = $splitq->getRow();
+				$this->count_ = $splitr['cnt'];
+				$this->sql_ .= " limit ".$this->plimit_." OFFSET ".$this->poffset_;
+			}
+			$this->sql_ = $this->sqloutertop_.$this->sqltop_.$this->sqllong_.$this->sql_.$this->sqlouterbottom_;
+            $this->sql_ .= " /* kill list */";
             $this->qry_->execute($this->sql_);
+			if(!$this->plimit_ || $this->limit_) $this->count_ = $this->qry_->recordcount();
         }
     }
 
@@ -378,7 +471,8 @@ class KillList
             return null;
         }
 
-        $skip = $this->poffset_ - $this->killpointer_;
+        if($this->count_ == $this->qry_->recordCount() ) $skip = $this->poffset_ - $this->killpointer_;
+		else $skip = 0;
         if ($skip > 0)
         {
             for ($i = 0; $i < $skip; $i++)
@@ -560,6 +654,14 @@ class KillList
         $this->poffset_ = ($page * $this->plimit_) - $this->plimit_;
     }
 
+    function setPageSplit($split)
+    {
+        if (isset($_GET['page'])) $page = $_GET['page'];
+        else $page = 1;
+        $this->plimit_ = $split;
+        $this->poffset_ = ($page * $this->plimit_) - $this->plimit_;
+    }
+
     //! Filter results by week. Requires the year to also be set.
     function setWeek($weekno)
     {
@@ -610,9 +712,20 @@ class KillList
     {
 		$qstartdate = makeStartDate($this->weekno_, $this->yearno_, $this->monthno_, $this->startweekno_, $this->startDate_);
 		$qenddate = makeEndDate($this->weekno_, $this->yearno_, $this->monthno_, $this->endDate_);
-		if($qstartdate) $sql .= " kll.kll_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
-		if($qstartdate && $qenddate) $sql .= " AND ";
-		if($qenddate) $sql .= " kll.kll_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
+		if($this->inv_all_ || $this->inv_crp_ || $this->inv_plt_)
+		{
+			if($qstartdate) $sql .= " kll.kll_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' AND ";
+			if($qenddate) $sql .= " kll.kll_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' AND ";
+			if($qstartdate) $sql .= " ind.ind_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
+			if($qstartdate && $qenddate) $sql .= " AND ";
+			if($qenddate) $sql .= " ind.ind_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
+		}
+		else
+		{
+			if($qstartdate) $sql .= " kll.kll_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
+			if($qstartdate && $qenddate) $sql .= " AND ";
+			if($qenddate) $sql .= " kll.kll_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
+		}
 		return $sql;
     }
 
@@ -646,21 +759,15 @@ class KillList
         $this->maxkllid_ = $id;
     }
 
-    function setSummary($summary = false)
-    {
-        $this->summary_ = $summary;
-    }
-
     function getCount()
     {
         $this->execQuery();
-        return $this->qry_->recordCount();
+        return $this->count_;
     }
 
     function getRealCount()
     {
-        $this->execQuery();
-        return $this->qry_->recordCount();
+        return $this->getCount();
     }
 
     function getISK()

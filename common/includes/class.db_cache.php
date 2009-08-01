@@ -14,7 +14,7 @@ class DBCachedQuery
 
         // this is the minimum runtime a query has to run to be
         // eligible for caching in seconds
-        $this->_minruntime = 0.05;
+        $this->_minruntime = 0.1;
 
         // maximum size of a cached result set (512kB)
         $this->_maxcachesize = 524288;
@@ -282,6 +282,8 @@ class DBCachedQuery
 
         if (!$this->resid_ || mysql_errno($this->dbconn_->id()))
         {
+            // Clear the cache to prevent errors spreading.
+			DBDebug::killCache();
             if(defined('KB_PROFILE'))
 			{
 				DBDebug::recordError("Database error: ".mysql_error($this->dbconn_->id()));

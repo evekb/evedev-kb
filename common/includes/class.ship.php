@@ -20,6 +20,12 @@ class Ship
         return $this->id_;
     }
 
+    function getExternalID()
+    {
+		if(!$this->externalid_) $this->execQuery();
+        return $this->externalid_;
+    }
+
     function getName()
     {
         if ($this->shipname_ == "") $this->execQuery();

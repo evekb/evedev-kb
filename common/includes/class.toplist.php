@@ -201,12 +201,12 @@ class TopList
             $this->sql_ .= " inner join kb3_inv_detail inp
                                  on ( inp.ind_plt_id in ( ".$this->inv_plt_." ) and kll.kll_id = inp.ind_kll_id ) ";
         if ($this->inv_crp_)
-            $this->sql_ .= " inner join kb3_inv_detail inc
-	                         on ( inc.ind_crp_id in ( ".$this->inv_crp_." ) and kll.kll_id = inc.ind_kll_id ) ";
+            $this->sql_ .= " inner join kb3_inv_crp inc
+	                         on ( inc.inc_crp_id in ( ".$this->inv_crp_." ) and kll.kll_id = inc.inc_kll_id ) ";
 
         if ($this->inv_all_)
-            $this->sql_ .= " inner join kb3_inv_detail ina
-                                 on ( ina.ind_all_id in ( ".$this->inv_all_." ) and kll.kll_id = ina.ind_kll_id ) ";
+            $this->sql_ .= " inner join kb3_inv_all ina
+                                 on ( ina.ina_all_id in ( ".$this->inv_all_." ) and kll.kll_id = ina.ina_kll_id ) ";
 */
         if (count($this->exclude_scl_))
         {
@@ -264,8 +264,33 @@ class TopList
             $this->sql_ .= " AND ind.ind_all_id in ( ".$this->inv_all_." ) ";
 
         // timestamp filter
-        $this->sql_ .= $this->getDateFilter();
-
+        //$this->sql_ .= $this->getDateFilter();
+		$qstartdate = makeStartDate($this->weekno_, $this->yearno_, $this->monthno_, $this->startweekno_, $this->startDate_);
+		$qenddate = makeEndDate($this->weekno_, $this->yearno_, $this->monthno_, $this->endDate_);
+        if ($this->vic_plt_ || $this->vic_crp_ || $this->vic_all_)
+            $this->sql_ .= $this->getDateFilter();
+		if($this->inv_plt_ || $this->inv_crp_ || $this->inv_all_)
+		{
+			if($qstartdate) $this->sql_ .= " AND ind.ind_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
+			if($qenddate) $this->sql_ .= " AND ind.ind_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
+		}
+/*
+		if($this->inv_plt_)
+		{
+			if($qstartdate) $this->sql_ .= " AND ind.ind_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
+			if($qenddate) $this->sql_ .= " AND ind.ind_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
+		}
+        if ($this->inv_crp_)
+		{
+			if($qstartdate) $this->sql_ .= " AND inc_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
+			if($qenddate) $this->sql_ .= " AND inc_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
+		}
+        if ($this->inv_all_)
+		{
+			if($qstartdate) $this->sql_ .= " AND ina_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
+			if($qenddate) $this->sql_ .= " AND ina_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
+		}
+ */
         $this->sql_ .= " ".$this->sqlbottom_;
         // echo $this->sql_."<br/><br/>";
         $this->qry_->execute($this->sql_);

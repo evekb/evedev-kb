@@ -326,7 +326,7 @@ class corpSummary extends allianceSummary
 			$ship = $kill->getVictimShip();
 			$class = $ship->getClass();
 			$sql = "INSERT INTO kb3_sum_corp (csm_crp_id, csm_shp_id, csm_loss_count, csm_loss_isk) ".
-				"VALUES ( ".$kill->getVictimcorpID().", ".$class->getID().", 1, ".
+				"VALUES ( ".$kill->getVictimCorpID().", ".$class->getID().", 1, ".
 				$kill->getISKLoss().") ON DUPLICATE KEY UPDATE ".
 				"csm_loss_count = csm_loss_count + 1, ".
 				"csm_loss_isk = csm_loss_isk + ".$kill->getISKLoss();
@@ -334,16 +334,16 @@ class corpSummary extends allianceSummary
 		}
 		foreach($kill->involvedparties_ as $inv)
 		{
-			if(intval($alls[$inv->getcorpID()])) continue;
-			$alls[$inv->getcorpID()] = 1;
-			$qry->execute("SELECT 1 FROM kb3_sum_corp WHERE csm_crp_id = ".$inv->getcorpID());
+			if(intval($alls[$inv->getCorpID()])) continue;
+			$alls[$inv->getCorpID()] = 1;
+			$qry->execute("SELECT 1 FROM kb3_sum_corp WHERE csm_crp_id = ".$inv->getCorpID());
 			//if(!$qry->recordCount()) corpSummary::buildSummary($inv->getcorpID());
 			if(!$qry->recordCount()) continue;
 			// php4 doesn't handle indirect references so specify each one.
 			$ship = $kill->getVictimShip();
 			$class = $ship->getClass();
 			$sql = "INSERT INTO kb3_sum_corp (csm_crp_id, csm_shp_id, csm_kill_count, csm_kill_isk) ".
-				"VALUES ( ".$inv->getcorpID().", ".$class->getID().", 1, ".
+				"VALUES ( ".$inv->getCorpID().", ".$class->getID().", 1, ".
 				$kill->getISKLoss().") ON DUPLICATE KEY UPDATE ".
 				"csm_kill_count = csm_kill_count + 1, ".
 				"csm_kill_isk = csm_kill_isk + ".$kill->getISKLoss();

@@ -5,6 +5,8 @@ require_once('common/admin/admin_menu.php');
 $page = new Page();
 $page->setAdmin();
 
+/* Causes long delays on some systems. Rely on globals.php
+
 $svn_revNew = @exec('svnversion');
 if (!empty($svn_revNew))
 {
@@ -12,7 +14,7 @@ if (!empty($svn_revNew))
     $data = '<'.'?php $svn_rev = "'.$svn_revNew.'";';
     file_put_contents('cache/svnrev.php', $data);
 }
-
+*/
 if (!$_REQUEST['field'] && !$_REQUEST['sub'])
 {
     $_REQUEST['field'] = 'Advanced';

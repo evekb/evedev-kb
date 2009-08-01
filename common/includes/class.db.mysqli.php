@@ -450,6 +450,8 @@ class DBCachedQuery_mysqli
 
         if (!$this->resid_ || $this->dbconn_->id()->errno)
         {
+			// Clear the cache to prevent errors spreading.
+			DBDebug::killCache();
             if(defined('KB_PROFILE'))
 			{
 				DBDebug::recordError("Database error: ".$this->dbconn_->id()->error);

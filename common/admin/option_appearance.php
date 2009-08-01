@@ -3,6 +3,7 @@
 options::cat('Appearance', 'Global Options', 'Global Look');
 options::fadd('Banner', 'style_banner', 'select', array('admin_appearance', 'createSelectBanner'));
 options::fadd('Style', 'style_name', 'select', array('admin_appearance', 'createSelectStyle'));
+options::fadd('Theme', 'theme_name', 'select', array('admin_appearance', 'createSelectTheme'));
 
 options::cat('Appearance', 'Global Options', 'Global Options');
 options::fadd('Display standings', 'show_standings', 'checkbox');
@@ -54,7 +55,7 @@ options::fadd('Ammo Highlight Style', 'fp_ammostyle', 'select', array('admin_app
 options::fadd('Highlight Tech II items', 'fp_ttag', 'checkbox');
 options::fadd('Highlight Faction items', 'fp_ftag', 'checkbox');
 options::fadd('Highlight Deadspace items', 'fp_dtag', 'checkbox');
-options::fadd('Highloght Officer items', 'fp_otag', 'checkbox');
+options::fadd('Highlight Officer items', 'fp_otag', 'checkbox');
 
 class admin_appearance
 {
@@ -196,7 +197,39 @@ class admin_appearance
 
     function createSelectStyle()
     {
-        $dir = "style/";
+        $dir = "themes/".config::get('theme_name')."/";
+        if (is_dir($dir))
+        {
+            if ($dh = opendir($dir))
+            {
+                while (($file = readdir($dh)) !== false)
+                {
+                    if (!is_dir($dir.$file))
+                    {
+                        if (substr($file, -4) != ".css")
+                        {
+                            continue;
+                        }
+                        if (config::get('style_name').'.css' == $file)
+                        {
+                            $state = 1;
+                        }
+                        else
+                        {
+                            $state = 0;
+                        }
+
+                        $options[] = array('value' => substr($file,0,-4), 'descr' => substr($file,0,-4), 'state' => $state);
+                    }
+                }
+                closedir($dh);
+            }
+        }
+        return $options;
+    }
+	function createSelectTheme()
+    {
+        $dir = "themes/";
         if (is_dir($dir))
         {
             if ($dh = opendir($dir))
@@ -209,7 +242,7 @@ class admin_appearance
                         {
                             continue;
                         }
-                        if (config::get('style_name') == $file)
+                        if (config::get('theme_name') == $file)
                         {
                             $state = 1;
                         }

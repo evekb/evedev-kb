@@ -142,7 +142,10 @@ class Pilot
      */
     function add($name, $corp, $timestamp, $externalID = 0)
     {
-        $qry = new DBQuery();
+		// Check if pilot exists with a non-cached query.
+        $qry = new DBQuery(true);
+		// Insert or update a pilot with a cached query to update cache.
+		$qryI = new DBQuery();
         $qry->execute("select *
                         from kb3_pilots
                        where plt_name = '".slashfix($name)."'");
@@ -170,7 +173,7 @@ class Pilot
 				if ($qry->recordCount() > 0)
 				{
 					$row = $qry->getRow();
-					$qry->execute("UPDATE kb3_pilots SET plt_name = '".slashfix($name)."' WHERE plt_externalid = ".$externalid);
+					$qryI->execute("UPDATE kb3_pilots SET plt_name = '".slashfix($name)."' WHERE plt_externalid = ".$externalid);
 
 					$this->id_ = $row['plt_id'];
 					$this->name_ = slashfix($name);
@@ -180,14 +183,14 @@ class Pilot
 					// Now check if the corp needs to be updated.
 					if ($row['plt_crp_id'] != $corp->getID() && $this->isUpdatable($timestamp))
 					{
-						$qry->execute("update kb3_pilots
+						$qryI->execute("update kb3_pilots
 									 set plt_crp_id = ".$corp->getID().",
-										 plt_updated = date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s') where plt_id = ".$this->id_);
+										 plt_updated = date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s') WHERE plt_externalid = ".$externalid);
 					}
 					return $this->id_;
 				}
 			}
-            $qry->execute("insert into kb3_pilots (plt_id, plt_name, plt_crp_id, plt_externalid, plt_updated) values ( null,
+            $qryI->execute("insert into kb3_pilots (plt_id, plt_name, plt_crp_id, plt_externalid, plt_updated) values ( null,
                                                         '".slashfix($name)."',
                                                         ".$corp->getID().",
                                                         ".$externalID.",
@@ -200,7 +203,7 @@ class Pilot
             $this->id_ = $row['plt_id'];
             if ($this->isUpdatable($timestamp) && $row['plt_crp_id'] != $corp->getID())
             {
-                $qry->execute("update kb3_pilots
+                $qryI->execute("update kb3_pilots
                              set plt_crp_id = ".$corp->getID().",
                                  plt_updated = date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s') where plt_id = ".$this->id_);
             }

@@ -340,6 +340,23 @@ class DBDebug
 		}
 
 	}
+	function killCache()
+    {
+		if(!is_dir(KB_CACHEDIR)) return;
+		$dir = opendir(KB_CACHEDIR);
+		while ($line = readdir($dir))
+		{
+			if (strstr($line, 'qcache_qry') !== false)
+			{
+				@unlink(KB_CACHEDIR.'/'.$line);
+			}
+			elseif (strstr($line, 'qcache_tbl') !== false)
+			{
+				@unlink(KB_CACHEDIR.'/'.$line);
+			}
+		}
+	}
+
 }
 
 ?>

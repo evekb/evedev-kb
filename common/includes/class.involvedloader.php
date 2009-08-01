@@ -28,6 +28,15 @@ class involved
             elseif (ALLIANCE_ID)
                 $killlist->addVictimAlliance(ALLIANCE_ID);
         }
+		elseif ($type == 'combined')
+			{
+				if(PILOT_ID)
+					$killlist->addCombinedPilot(PILOT_ID);
+				elseif(CORP_ID)
+					$killlist->addCombinedCorp(CORP_ID);
+				elseif(ALLIANCE_ID)
+					$killlist->addCombinedAlliance(ALLIANCE_ID);
+			}
     }
 
 }

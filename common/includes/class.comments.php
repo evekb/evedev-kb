@@ -29,7 +29,7 @@ class Comments
         while ($row = $qry->getRow()) 
         { 
             $this->comments_[] = array('time' => $row['posttime'], 'name' => $row['name'],
-              'comment' => stripslashes($row['comment']), 'id' => $row['id']); 
+              'comment' => stripslashes($row['comment']), 'id' => $row['id'], 'ip' => $row['ip']);
         } 
         $smarty->assign_by_ref('comments', $this->comments_);
 		$smarty->assign('norep', time()%3700);
@@ -48,8 +48,8 @@ class Comments
 
         $name = slashfix(strip_tags($name)); 
         $qry = new DBQuery(true); 
-        $qry->execute("INSERT INTO kb3_comments (`kll_id`,`comment`,`name`,`posttime`) 
-                       VALUES ('".$this->id_."','".$comment."','".$name."','".kbdate('Y-m-d H:i:s')."')"); 
+        $qry->execute("INSERT INTO kb3_comments (`kll_id`,`comment`,`name`,`posttime`, `ip`)
+                       VALUES ('".$this->id_."','".$comment."','".$name."','".kbdate('Y-m-d H:i:s')."', '".$_SERVER['REMOTE_ADDR']."')");
         $id = $qry->getInsertID(); 
         $this->comments_[] = array('time' => kbdate('Y-m-d H:i:s'), 
             'name' => $name, 'comment' => stripslashes($comment), 'id' => $id); 

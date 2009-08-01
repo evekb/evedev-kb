@@ -434,14 +434,16 @@ class Kill
 		$qry = new DBQuery(true);
 		if (!$this->getFBPilotID() || !$this->victimid_)
 			return 0;
-		$qry->execute("select kll_id
-                    from kb3_kills
-                    where kll_timestamp ='".$this->timestamp_."'
-                    and kll_victim_id = ".$this->victimid_."
-                    and kll_ship_id = ".$this->victimship_->getID()."
-                    and kll_system_id = ".$this->solarsystem_->getID()."
-                    and kll_fb_plt_id = ".$this->getFBPilotID()."
-                    and kll_id != ".$this->id_);
+		$sql = "SELECT kll_id
+                    FROM kb3_kills
+                    WHERE kll_timestamp ='".$this->timestamp_."'
+                    AND kll_victim_id = ".$this->victimid_."
+                    AND kll_ship_id = ".$this->victimship_->getID()."
+                    AND kll_system_id = ".$this->solarsystem_->getID()."
+                    AND kll_fb_plt_id = ".$this->getFBPilotID();
+		if($this->externalid_) $sql .= " AND (kll_external_id = ".$this->externalid_." OR kll_external_id IS NULL)";
+        $sql .= "             AND kll_id != ".$this->id_;
+		$qry->execute($sql);
 
 		$row = $qry->getRow();
 		if ($row)
@@ -523,7 +525,7 @@ class Kill
 				$sql = "select ind_plt_id, ind_crp_id, ind_all_id, ind_sec_status,
 					ind_shp_id, ind_wep_id, typeName, ind_dmgdone,
 					shp_id, shp_name, shp_externalid, shp_class, scl_class,
-					plt_name, plt_externalid, crp_name, all_name
+					plt_name, plt_externalid, crp_name, crp_external_id, all_name, all_external_id
 					from kb3_inv_detail
 					join kb3_pilots on ind_plt_id = plt_id
 					join kb3_corps on ind_crp_id = crp_id
@@ -545,9 +547,11 @@ class Kill
 					$corp = new Corporation($row['ind_crp_id']);
 					$corp->name_ = $row['crp_name'];
 					$corp->alliance_ = $row['ind_all_id'];
+					$corp->externalid_ = $row['crp_external_id'];
 
 					$alliance = new Alliance($row['ind_all_id']);
 					$alliance->name_ = $row['all_name'];
+					$alliance->externalid_ = $row['all_external_id'];
 
 					$ship = new Ship($row['shp_id']);
 					$ship->externalid_ = $row['shp_externalid'];
@@ -695,30 +699,41 @@ class Kill
 		// No details for classified kills.
 		if($this->isClassified()) return 0;
 		if($this->relatedkillcount_) return $this->relatedkillcount_;
-		$sql="SELECT COUNT(kll.kll_id) AS kills FROM kb3_kills kll WHERE ";
-		$sql.="kll.kll_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
-                                                   AND kll.kll_timestamp >=
-                                                           '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
-                                                   AND kll.kll_system_id = ".$this->solarsystem_->getID();
-		if(ALLIANCE_ID <>0)
+		if(ALLIANCE_ID)
 		{
-			$sql .=" AND EXISTS (SELECT 1 FROM kb3_inv_detail ind".
-				" WHERE ( ind.ind_all_id = ".ALLIANCE_ID." AND kll.kll_id = ind.ind_kll_id".
-				" AND ind.ind_all_id != kll.kll_all_id ) LIMIT 1)";
+			$sql .="SELECT COUNT(ina_kll_id) FROM kb3_inv_all INNER JOIN
+				kb3_kills ON (kll_id = ina_kll_id) WHERE 
+				ina_all_id = ".ALLIANCE_ID." AND 
+				ina_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
+				AND ina_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
+				AND kll_system_id = ".$this->solarsystem_->getID();
 		}
-		else if(CORP_ID <>0)
+		else if(CORP_ID)
 		{
-			$sql .=" AND EXISTS (SELECT 1 FROM kb3_inv_detail".
-				" WHERE ( ind_crp_id = ".CORP_ID."  AND kll.kll_id = ind_kll_id".
-				" AND ind_crp_id != kll.kll_crp_id ) LIMIT 1) ";
+			$sql .="SELECT COUNT(inc_kll_id) FROM kb3_inv_crp INNER JOIN
+				kb3_kills ON (kll_id = inc_kll_id) WHERE 
+				inc_crp_id = ".CORP_ID." AND 
+				inc_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
+				AND inc_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
+				AND kll_system_id = ".$this->solarsystem_->getID();
 		}
-		else if(PILOT_ID <>0)
+		else if(PILOT_ID)
 		{
-			$sql .=" AND EXISTS (SELECT 1 FROM kb3_inv_detail".
-				" WHERE ( ind_plt_id = ".PILOT_ID."  AND kll.kll_id = ind_kll_id".
-				" AND ind_plt_id != kll.kll_victim_id ) LIMIT 1) ";
+			$sql .="SELECT COUNT(ind_kll_id) FROM kb3_inv_detail INNER JOIN
+				kb3_kills ON (kll_id = ind_kll_id) WHERE 
+				ind_plt_id = ".PILOT_ID." AND 
+				ind_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
+				AND ind_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
+				AND kll_system_id = ".$this->solarsystem_->getID();
 		}
-		$sql .= "/* related kill count */";
+		else
+		{
+			$sql .="SELECT COUNT(ind_kll_id) FROM kb3_kills WHERE 
+				kll_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
+				AND kll_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
+				AND kll_system_id = ".$this->solarsystem_->getID();
+		}
+		$sql .= " /* related kill count */ ";
 		$qry = new DBQuery();
 		if(!$qry->execute($sql)) return 0;
 		$res=$qry->getRow();
@@ -733,32 +748,26 @@ class Kill
 		if($this->isClassified()) return 0;
 		if($this->relatedlosscount_) return $this->relatedlosscount_;
 		$sql="SELECT count(kll.kll_id) as losses FROM kb3_kills kll ";
+		if(ALLIANCE_ID <>0)
+		{
+			$sql .="INNER JOIN kb3_inv_all ina ON ( kll.kll_id = ina.ina_kll_id".
+				" AND ina.ina_all_id != ".ALLIANCE_ID." ) ";
+		}
+		else if(CORP_ID <>0)
+		{
+			$sql .="INNER JOIN kb3_inv_crp inc ON ( kll.kll_id = inc.inc_kll_id".
+				" AND ina.ina_crp_id != ".CORP_ID." ) ";
+		}
+		else if(PILOT_ID <>0)
+		{
+			$sql .="INNER JOIN kb3_inv_detail ind ON ( kll.kll_id = ind.ind_kll_id".
+				" AND ind.ind_plt_id != ".PILOT_ID." ) ";
+		}
 		$sql.="WHERE kll.kll_system_id = ".$this->solarsystem_->getID().
 			" AND kll.kll_timestamp <= '".
 				(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60)).
 			"' AND kll.kll_timestamp >= '".
 				(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'";
-		if(ALLIANCE_ID <>0)
-		{
-			$sql .="AND kll.kll_all_id = ".ALLIANCE_ID.
-				" AND EXISTS (SELECT 1 FROM kb3_inv_detail ind".
-				" WHERE ( kll.kll_id = ind.ind_kll_id".
-				" AND ind.ind_all_id != ".ALLIANCE_ID." ) ) ";
-		}
-		else if(CORP_ID <>0)
-		{
-			$sql .="AND kll_crp_id = ".CORP_ID."  AND".
-				" EXISTS (SELECT 1 FROM kb3_inv_detail".
-				" WHERE ( kll.kll_id = ind_kll_id".
-				" AND ind_crp_id != ".CORP_ID." ) ) ";
-		}
-		else if(PILOT_ID <>0)
-		{
-			$sql .="AND kll_victim_id = ".PILOT_ID." AND".
-				" EXISTS (SELECT 1 FROM kb3_inv_detail".
-				" WHERE ( kll.kll_id = ind_kll_id".
-				" AND ind_plt_id != ".PILOT_ID." ) ) ";
-		}
 		$sql .= "/* related loss count */";
 		$qry = new DBQuery();
 		if(!$qry->execute($sql)) return 0;
@@ -919,12 +928,12 @@ class Kill
 	{
 		$this->killpoints_ = $killpoints;
 	}
-	//! Set the ISK loss value for this kill.
+
 	function setISKLoss($isk)
 	{
 		$this->iskloss_ = $isk;
 	}
-	//! Calculate the current cost of a ship loss excluding blueprints.
+
 	function calculateISKLoss()
 	{
 		$value = 0;
@@ -1062,11 +1071,16 @@ class Kill
 		$order = 0;
 		$invall = array();
 		$invcrp = array();
-		$invplt = array();
 		$involveddsql = 'insert into kb3_inv_detail
-                    (ind_kll_id, ind_plt_id, ind_sec_status, ind_all_id, ind_crp_id, ind_shp_id, ind_wep_id, ind_order, ind_dmgdone )
+                    (ind_kll_id, ind_timestamp, ind_plt_id, ind_sec_status, ind_all_id, ind_crp_id, ind_shp_id, ind_wep_id, ind_order, ind_dmgdone )
                     values ';
+		$involvedasql = 'insert into kb3_inv_all
+                    (ina_kll_id, ina_all_id, ina_timestamp) values ';
+		$involvedcsql = 'insert into kb3_inv_crp
+                    (inc_kll_id, inc_crp_id, inc_timestamp) values ';
 		$notfirstd = false;
+		$notfirsta = false;
+		$notfirstc = false;
 		foreach ($this->involvedparties_ as $inv)
 		{
 			$ship = $inv->getShip();
@@ -1082,13 +1096,42 @@ class Kill
 				$inv->dmgdone_ = 0;
 			}
 			if($notfirstd) $involveddsql .= ", ";
-			$involveddsql .= "( ".$this->getID().", ".$inv->getPilotID().", '".$inv->getSecStatus()."', "
+			$involveddsql .= "( ".$this->getID().", date_format('".$this->timestamp_."', '%Y.%m.%d %H:%i:%s'), "
+				.$inv->getPilotID().", '".$inv->getSecStatus()."', "
 				.$inv->getAllianceID().", ".$inv->getCorpID().", ".$ship->getID().", "
 				.$weapon->getID().", ".$order++.", ".$inv->dmgdone_.")";
 			$notfirstd = true;
+			if(!in_array($inv->getAllianceID(), $invall))
+			{
+				if($notfirsta) $involvedasql .= ", ";
+				$involvedasql .= "( ".$this->getID().", ".$inv->getAllianceID()
+					.", date_format('".$this->timestamp_."', '%Y.%m.%d %H:%i:%s'))";
+				$notfirsta = true;
+				$invall[] = $inv->getAllianceID();
+			}
+			if(!in_array($inv->getCorpID(), $invcrp))
+			{
+				if($notfirstc) $involvedcsql .= ", ";
+				$involvedcsql .= "( ".$this->getID().", ".$inv->getCorpID()
+				.", date_format('".$this->timestamp_."', '%Y.%m.%d %H:%i:%s'))";
+				$notfirstc = true;
+				$invcrp[] = $inv->getCorpID();
+			}
 
 		}
 		if($notfirstd && !$qry->execute($involveddsql))
+		{
+			$qry->rollback();
+			$qry->autocommit(true);
+			return false;
+		}
+		if($notfirsta && !$qry->execute($involvedasql))
+		{
+			$qry->rollback();
+			$qry->autocommit(true);
+			return false;
+		}
+		if($notfirstc && !$qry->execute($involvedcsql))
 		{
 			$qry->rollback();
 			$qry->autocommit(true);

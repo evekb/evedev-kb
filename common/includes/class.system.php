@@ -14,6 +14,12 @@ class SolarSystem
         return $this->id_;
     }
 
+    function getExternalID()
+    {
+        $this->execQuery();
+        return $this->row_['sys_eve_id'];
+    }
+
     function getName()
     {
         $this->execQuery();

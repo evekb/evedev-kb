@@ -14,12 +14,12 @@ class user
         {
             return true;
         }
-        $db = new DBQuery();
+        $db = new DBQuery(true);
         $db->execute('select * from kb3_user
                       left join kb3_user_extra on kb3_user.usr_id = kb3_user_extra.use_usr_id
                       left join kb3_user_titles on kb3_user.usr_id = kb3_user_titles.ust_usr_id
                       left join kb3_user_roles on kb3_user.usr_id = kb3_user_roles.uro_usr_id
-                      WHERE usr_login='."'".slashfix($login)."' and usr_site='".KB_SITE."'");
+                      WHERE usr_login='."'".slashfix($login)."'  and usr_state=0 and usr_site='".KB_SITE."'");
         if (!$row = $db->getRow())
         {
             return false;
@@ -30,51 +30,49 @@ class user
         }
         $user = $row;
         $titles = $roles = array();
-        if ($row['use_key'])
-        {
-            $user[$row['use_key']] = $row['use_value'];
-        }
 
-        // user titles
-        if ($row['ust_ttl_id'])
-        {
-            $titles[] = $row['ust_ttl_id'];
-        }
-
-        // user roles
-        if ($row['uro_rol_id'])
-        {
-            $roles[] = $row['uro_rol_id'];
-        }
 
         Session::create();
-        while ($row = $db->getRow())
-        {
-            // user extra information
-            if ($row['use_key'])
-            {
-                $user[$row['use_key']] = $row['use_value'];
-            }
 
-            // user titles
-            if ($row['ust_ttl_id'])
-            {
-                $titles[] = $row['ust_ttl_id'];
-            }
+		// user extra information
+		if ($row['use_key'])
+		{
+			$user[$row['use_key']] = $row['use_value'];
+		}
+		// user roles
+		if ($row['uro_rol_id'])
+		{
+			$roles[] = $row['uro_rol_id'];
+		}
+	// user titles
 
-            // user roles
-            if ($row['uro_rol_id'])
-            {
-                $roles[] = $row['uro_rol_id'];
-            }
-        }
+		if ($row['ust_ttl_id'])
+		{
+			$db2 = new DBQuery(true);
+			$db2->execute('select distinct rol_name from kb3_titles_roles a,kb3_roles b where a.rol_id=b.rol_id and  a.ttl_id='.$row['ust_ttl_id']);
+			while ($ttle = $db2->getRow())
+			{
+				$roles[$ttle['rol_name']] = 1;
+			}
+		}
+		$user['uro_rol_id']=$roles;
+		if ($row['usr_state'])
+			$user['usr_state']=$row['usr_state'];
         $_SESSION['user'] = $user;
+
         user::loggedin(true);
         return true;
     }
 
     function role($role)
     {
+
+        if (!isset($_SESSION['user']))
+        {
+            return null;
+        }
+		if (isset($_SESSION['user']['uro_rol_id'][$role]))
+	        return true;
         return false;
     }
 
@@ -132,7 +130,7 @@ class user
     // login,pass,pilot
     function register($login, $password, $pilot = null, $p_charid = null)
     {
-        $db = new DBQuery();
+        $db = new DBQuery(true);
 
         $values[] = KB_SITE;
         $values[] = $login;

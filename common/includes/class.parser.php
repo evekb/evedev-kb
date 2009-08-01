@@ -562,6 +562,11 @@ class Parser
                     $kill->setFBPilotID($ipilot->getID());
                     $kill->setFBCorpID($icorp->getID());
                     $kill->setFBAllianceID($ialliance->getID());
+					if($id = $kill->getDupe(true))
+					{
+						$this->dupeid_ = $id;
+						return -1;
+					}
                 }
             }
         }
