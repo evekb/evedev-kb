@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_navigation</name>
+  <rows>0</rows>
+  <structure>CREATE TABLE `kb3_navigation` (
+  `ID` int(11) NOT NULL auto_increment,
+  `nav_type` tinytext NOT NULL,
+  `intern` int(1) NOT NULL,
+  `descr` tinytext NOT NULL,
+  `url` tinytext NOT NULL,
+  `target` char(10) NOT NULL,
+  `posnr` int(11) NOT NULL,
+  `page` tinytext NOT NULL,
+  `hidden` tinyint(1) NOT NULL default &#039;0&#039;,
+  `KBSITE` char(16) NOT NULL,
+  PRIMARY KEY  (`ID`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>
+

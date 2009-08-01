@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_apilog</name>
+  <rows>0</rows>
+  <structure>CREATE TABLE kb3_apilog (
+			log_site VARCHAR( 20 ) NOT NULL ,
+			log_keyname VARCHAR( 20 ) NOT NULL ,
+			log_posted INT NOT NULL ,
+			log_errors INT NOT NULL ,
+			log_ignored INT NOT NULL ,
+			log_verified INT NOT NULL ,
+			log_totalmails INT NOT NULL ,
+			log_source VARCHAR( 20 ) NOT NULL ,
+			log_type VARCHAR( 20 ) NOT NULL ,
+			log_timestamp DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'
+			) ENGINE = InnoDB  DEFAULT CHARSET=utf8;</structure>
+</kb3>
+ 

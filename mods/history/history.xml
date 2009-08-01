@@ -1,0 +1,1740 @@
+<?xml version="1.0" ?>
+<history>
+<changeset>
+<rev>426</rev>
+<date>Jul 15 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: kill_detail item prices work
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>425</rev>
+<date>Jul 15 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: page cache improved for shared boards, deleted kills correctly deleted from summaries, db errors introduced last patch are removed.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>424</rev>
+<date>Jul 15 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: killlists with both involved corps and alliances work. Memory use reduced.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>423</rev>
+<date>Jul 14 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: missing code in rankmod located. logo code detects missing gd function, api_alliance labels Faction a Faction
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>422</rev>
+<date>Jul 14 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: Rank mod toplists correctly limit by plt/crp/all, install not incorrectly called automatically. Modifying the cost of a kill updates the summary tables.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>421</rev>
+<date>Jul 13 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Alliance page is named Faction if showing a Faction. Cache options clarified. Page specific cache times re-enabled.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>420</rev>
+<date>Jul 13 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: php4 errors fixed. Pricing formula fixed.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>419</rev>
+<date>Jul 12 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: some php4 errors fixed. The great commenting project continues.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>418</rev>
+<date>Jul 12 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: rank mod incorporates corplogo generation
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>417</rev>
+<date>Jul 12 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: ship value column now bigint, rss feed html matches doctype. install db updated to 1.2:v1.4, faction correctly shown on raw mails, factions stored as alliance
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>416</rev>
+<date>Jul 11 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: upgrade no longer relies on install directory existing, upgrade variables correctly named, legacy code removed, error notices reduced.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>415</rev>
+<date>Jul 10 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Upgrade allows admin to log in if not already logged in.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>414</rev>
+<date>Jul 10 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Latest upgrades incorporated into install. Install is automatically started on boards with no config.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>413</rev>
+<date>Jul 9 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: Upgrade upgrades. Install style added to upgrade.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>412</rev>
+<date>Jul 9 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: Upgrade correctly calculates ship loss value
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>411</rev>
+<date>Jul 9 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Upgrade uses smaller upgrade steps if installation fails.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>410</rev>
+<date>Jul 9 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: summary tables correctly filter by ship type
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>409</rev>
+<date>Jul 9 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: Feed syndication password debug code properly removed.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>408</rev>
+<date>Jul 9 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Feed syndication supports usernames &amp; passwords more than 8 characters long
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>407</rev>
+<date>Jul 9 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Feed syndication supports http password protected sites (by Icebreaker)
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>406</rev>
+<date>Jul 8 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: Feed version correctly shown. Extra white space in class.comments removed.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>405</rev>
+<date>Jul 7 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: deleted kills correctly removed from summaries.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>404</rev>
+<date>Jul 7 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: db debug code no longer errors on some setups. upgrade now gives updates on progress. apicache returned to index.php for better eve api compatibility. cache options now has clear summary cache option. siglist shows correct urls. summary cache correctly updates. feedfetcher excludes kills before exclude date. exclude date on kills works
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>403</rev>
+<date>Jul 5 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: Parser updated with FriedRoadKill's, troubleshooting now correctly uses mysql connection, .htaccess set to disallow viewing of indexes, removed unused code from autoupgrade.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>402</rev>
+<date>Jul 5 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: Removing two install files incorrectly added.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>401</rev>
+<date>Jul 3 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: missing kill_export include included, troubleshooting shell_exec replaced, db.php allows >=4.1 instead of >4.1, apiuser mod comments update kill_details cache, ships names updated.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>400</rev>
+<date>Jul 2 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: install is locked after first run, private cache files made inaccesible, initial summary caching removed from kill posting, board will not attempt to run on MySQL &lt; 4.1, PILOT_ID cannot be set, legacy option removed from admin panel, pos values added to installation defaults
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>399</rev>
+<date>Jul 1 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: autoupgrade smoother, Rare errors in db classes reduced, api login problems reduced, page cache notifications check if cache is active. admin mod list sorted. alliance and corp details pages load faster. all-time summary tables cached. killlist performance on large databases improved
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>398</rev>
+<date>Jun 29 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Upgrades now force admin page to be run. Admin menu has an option to list settings for error reporting.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>397</rev>
+<date>Jun 29 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: autoupgrade works, problem with db.php includes removed. Admin cache menu now has option to clear caches. Install hides passwords
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>396</rev>
+<date>Jun 28 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: HTML, killlists with multiple involved, thumbnail creation delays, mods using short php tags corrected (Tribalize) . Autoupgrade adds missing indexes on upgraded boards. page cache updating algorithm improved, feed log information cleaned up (Oleg)
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>395</rev>
+<date>Jun 27 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: Incorrect indexing on installation files &amp; surplus ')'
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>394</rev>
+<date>Jun 26 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: summary tables have correct width, kb3_config correctly indexed, feed fetcher records foreign address in log
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>393</rev>
+<date>Jun 26 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Summary table template.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>392</rev>
+<date>Jun 26 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: rss feed no longer shows classified kills, default banner corrected. Derelict code removed. Code streamlined. Summary tables moved to a template.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>391</rev>
+<date>Jun 24 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: kill_detail comment posting works and non-existent kll_id gives correct error, t3 subsystems have correct location, potential conflicts with old mods and db classes removed.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>390</rev>
+<date>Jun 23 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fixes: sig mod works, apikill setting saved on admin panel, page cache does not attempt to double gzip, banner and award images have size set.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>389</rev>
+<date>Jun 22 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Feed marks api-only feeds. Fetcher properly stores api flag for feed. Searches are trimmed of whitespace. html fix.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>388</rev>
+<date>Jun 22 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Page cache fixes for comments.
+refresh no longer reposts comment.
+comments display again.
+304 sent for refresh of cached pages.
+html fixes
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>387</rev>
+<date>Jun 21 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Missing file from page cache update
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>386</rev>
+<date>Jun 21 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fetch properly ignores non-api kills when requested.
+missing subsystem slot icon
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>385</rev>
+<date>Jun 21 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Updated installation pilot tables
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>384</rev>
+<date>Jun 21 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+removing old db install files
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>383</rev>
+<date>Jun 21 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+page cache enables properly.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>382</rev>
+<date>Jun 21 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Admin setting clarifications, autoupgrade uses existing kill settings.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>381</rev>
+<date>Jun 21 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+kill class can constructs all involved pilot/ship/etc objects
+kill_detail reduced load using new kill method.
+display fixes.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>380</rev>
+<date>Jun 21 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Feedfetch 1.7 external id support. Reduces potential load problems. Feed fetcher is identified.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>379</rev>
+<date>Jun 21 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Improved support for constructing multiple corp/pilot/etc objects. External ID functions added
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>378</rev>
+<date>Jun 21 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+API feed caches date properly. Rank mod has missing TopLists. Parser has better spelling.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>377</rev>
+<date>Jun 20 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Improve summary efficiency display - select millions or billions depending on isk value
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>376</rev>
+<date>Jun 18 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+MyISAM can be selected again on install
+duplicate item descriptions removed from install
+alliance/corp/pilot optional installs now have external id and correct structure
+alliance/corp/pilot/kill details can be selected by external id
+corp/alliance/kill now have get and set methods for external ids
+killlist has method to select only kills with an external id set
+monthly views mod now shows clock and combined kills if selected
+optimisations and fixes to killlists and toplists
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>375</rev>
+<date>Jun 15 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+Fix apicache problem in the admin panel
+Fix initial display of apoc fitting panel
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>374</rev>
+<date>Jun 14 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+kills posted with external id of null, not 0
+kb3_pilots unique index on external id changed to index (default is 0, not null)
+kb3_kills columns created in correct order
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>373</rev>
+<date>Jun 14 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+further installation xml files corrections.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>372</rev>
+<date>Jun 14 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+further installation xml files corrections.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>371</rev>
+<date>Jun 14 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+installation xml files corrected.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>370</rev>
+<date>Jun 14 2009</date>
+<author>kovell</author>
+<comment>
+<type>UPD</type>
+<text>
+
+- SQL queries optimised for speed and error protection.
+- feed syndication optimised
+- front page includes optional clock and optional kill/loss display
+- mysqli support added
+- transaction protection of kills added where supported (mysqli and InnoDB)
+- summary tables and contracts show total destroyed value instead of ship value
+- html errors reduced
+- related kill calculation improved
+- query caching errors reduced
+- minor bugfixes
+- Smarty 2.6.25 added
+- apoc fitting mod added and modded
+- code optimisations
+- code comments added (doxygen format)
+- conflicting mods are now identified
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>369</rev>
+<date>Jan 16 2009</date>
+<author>exi</author>
+<comment>
+<type>UPD</type>
+<text>
+Updated smarty to 2.6.22.
+Fixed the killsummarytable layout problem.
+Implemented internal registry, its a place to put temporary variables without polluting the global namespace.
+Implemented a fix to db_cache::markAffectedTables() from Kovell
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>368</rev>
+<date>Jan 4 2009</date>
+<author>exi</author>
+<comment>
+<type>UPD</type>
+<text>
+Fixed the pre PHP 5.1.0 issue with the current year, it will run on php4 again but stil has the week 52/1 issue (kindof).
+Removed debug content from globals.php.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>367</rev>
+<date>Jan 3 2009</date>
+<author>exi</author>
+<comment>
+<type>UPD</type>
+<text>
+Added option for efficiency in KillSummaryTables.
+The board is now able to get the checked out revision on svn capable systems.
+Fix for the week 52/1 problem.
+Added a first draft of the pageAssembly class together with a rework of how home.php would look like.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>366</rev>
+<date>Dec 17 2008</date>
+<author>exi</author>
+<comment>
+<type>UPD</type>
+<text>
+Fixed apiuser to not enable xajax on all pages
+Added a html tweak for opera on killsummarytables
+Reworked ajcron::getNextRun(), it didnt work on values greater than 60 minutes
+Now no xajax code is inserted when board is in IGB mode
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>365</rev>
+<date>Dec 17 2008</date>
+<author>exi</author>
+<comment>
+<type>UPD</type>
+<text>
+Updated included EVEAPI to 2.71
+Included a mod_xajax compatible apiuser mod
+Tweaked some code of the apiuser mod (menu, xajax, templates)
+Removed the post.php from the xajax mod.
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>364</rev>
+<date>Dec 16 2008</date>
+<author>exi</author>
+<comment>
+<type>UPD</type>
+<text>
+First working version of ajcron, see http://eve-id.net/forum/viewtopic.php?f=505&amp;t=13513 for details
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>363</rev>
+<date>Dec 14 2008</date>
+<author>exi</author>
+<comment>
+<type>UPD</type>
+<text>
+Commit of the reworked ajax mod
+Preview of the new ajcron mod (80% done)
+
+</text>
+</comment>
+</changeset>
+<changeset>
+<rev>362</rev>
+<date>Dec 6 2008</date>
+<author>exi</author>
+<comment>
+<type>UPD</type>
+<text>
+Update of the supplied Smarty library to 2.6.21 (02.12.2008)
+
+</text>
+</comment>
+</changeset>
+	<changeset>
+		<rev>361</rev>
+		<author>beans</author>
+		<date>01.11.2008</date>
+		<comment>
+			<type>UPD</type>
+			<text> 
+				Updated the admin panel. Should now be more "easy" to use.
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>360</rev>
+		<author>beans</author>
+		<date>01.11.2008</date>
+		<comment>
+			<type>UPD</type>
+			<text> 
+				T2 item shows on T2 blueprints
+			</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text> 
+				You can now click on an item in the kill_detail
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>359</rev>
+		<author>beans</author>
+		<date>27.10.2008</date>
+		<comment>
+			<type>FIX</type>
+			<text> 
+				Fixed the missing items...
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>358</rev>
+		<author>Ralle030583</author>
+		<date>27.10.2008</date>
+		<comment>
+			<type>DEL</type>
+			<text> 
+				removing of unused 24x24 and 48x48 blueprint icons
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>357</rev>
+		<author>Ralle030583</author>
+		<date>27.10.2008</date>
+		<comment>
+			<type>FIX</type>
+			<text>
+				linking in history-mod about page rev numbers to beansmans trac,
+				cause trac.eve-dev.net is currenty down
+			</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>
+				removing some old queris from preior CCP dump use 
+				(DB_USE_CCP stuff)
+			</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>
+				path for swf-banner corrected to banner/{banner}
+			</text>
+		</comment>
+		<comment>
+			<type>UPD</type>
+			<text>
+				Changed inserts into name adressed ones
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+                <rev>355/356</rev>
+                <author>beans</author>
+                <date>24.10.2008</date>
+		 <comment>
+                        <type>UPD</type>
+                        <text>
+				Added blueprint icons to the img folder and to template.
+			</text>
+                </comment>
+		 <comment>
+                        <type>UPD</type>
+                        <text>
+				Autoupgrade updated, updates blueprint info. Go to admin->Database to run it.
+			</text>
+                </comment>
+	</changeset>
+	<changeset>
+                <rev>353</rev>
+                <author>beans</author>
+                <date>21.10.2008</date>
+		 <comment>
+                        <type>FIX</type>
+                        <text>
+				Parser fix from FriedRoadKill
+			</text>
+                </comment>
+	</changeset>
+	<changeset>
+                <rev>352</rev>
+                <author>beans</author>
+                <date>20.10.2008</date>
+		 <comment>
+                        <type>FIX</type>
+                        <text>
+				Forgot to remove some personal code ;) Sorry Thunk
+			</text>
+                </comment>
+	</changeset>
+	<changeset>
+                <rev>351</rev>
+                <author>beans</author>
+                <date>19.10.2008</date>
+		 <comment>
+                        <type>UPD</type>
+                        <text>
+                        	Added better support for master killboard sync in the feed.php file (master=1 switch)
+			</text>
+                </comment>
+	</changeset>
+	<changeset>
+                <rev>350</rev>
+                <author>beans</author>
+                <date>19.10.2008</date>
+		 <comment>
+                        <type>FIX</type>
+                        <text>
+                        	Fixed boolean ===
+			</text>
+                </comment>
+	</changeset>
+	<changeset>
+                <rev>349</rev>
+                <author>beans</author>
+                <date>19.10.2008</date>
+		 <comment>
+                        <type>FIX</type>
+                        <text>
+                        	Fixed the cron scripts
+			</text>
+                </comment>
+	</changeset>
+	<changeset>
+                <rev>348</rev>
+                <author>beans</author>
+                <date>19.10.2008</date>
+		 <comment>
+                        <type>FIX</type>
+                        <text>
+				Updated comments class without IP
+			</text>
+                </comment>
+	</changeset>
+	<changeset>
+                <rev>347</rev>
+                <author>exi</author>
+                <date>18.10.2008</date>
+		 <comment>
+                        <type>FIX</type>
+                        <text>
+				Removed some gfx by owner request.
+			</text>
+                </comment>
+	</changeset>
+	<changeset>
+                <rev>346</rev>
+                <author>beans</author>
+                <date>17.10.2008</date>
+		 <comment>
+                        <type>FIX</type>
+                        <text>
+				Removed fitting mod, built in the core now
+			</text>
+                </comment>
+	</changeset>
+	<changeset>
+                <rev>345</rev>
+                <author>beans</author>
+                <date>17.10.2008</date>
+		 <comment>
+                        <type>FIX</type>
+                        <text>
+				Updated some install data
+			</text>
+                </comment>
+	</changeset>
+	<changeset>
+                <rev>344</rev>
+                <author>beans</author>
+                <date>17.10.2008</date>
+		 <comment>
+                        <type>FIX</type>
+                        <text>
+                        	Small fixes to make everything work after large update earlier.
+			</text>
+                </comment>
+	</changeset>
+	<changeset>
+                <rev>343</rev>
+                <author>karbowiak</author>
+                <date>17.10.2008</date>
+		 <comment>
+                        <type>FIX</type>
+                        <text>
+                                Fixed Memcached caching on Comments and the Admin panel (so it dont cache those things)
+                        </text>
+                </comment>
+                <comment>
+                        <type>ADD</type>
+                        <text>
+                                Changed Millions to Billions
+                        </text>
+                </comment>
+                <comment>
+                        <type>ADD</type>
+                        <text>
+                                Added seperate password for comments
+                        </text>
+                </comment>
+                <comment>
+                        <type>FIX</type>
+                        <text>
+                                Fixed banner types (SFV is now working)
+                        </text>
+                </comment>
+                <comment>
+                        <type>ADD</type>
+                        <text>
+                                Integrated Fitting Mod
+                	</text>
+		</comment>
+		<comment>
+			<type>UPD</type>
+			<text>
+				Gave appearance related stuff own menu under admin
+			</text>
+		</comment>
+		<comment>
+			<type>ADD</type>
+			<text>
+				Possible to turn on/off Summarytables
+			</text>
+		</comment>	
+		<comment>
+			<type>ADD</type>
+			<text>
+				Capability to change ammount of shown kills/losses on home, kills and losses
+			</text>
+		</comment>
+		<comment>
+			<type>ADD</type>
+			<text>
+				Memcached integrated into KB Core
+			</text>
+		</comment>
+		<comment>
+			<type>ADD</type>
+			<text>
+				Moved API Mod and Feed Syndication into KB Core and Added Cron Scripts
+			</text>
+		</comment>
+		<comment>
+			<type>UPD</type>
+			<text>
+				Moved Banner location from '/img/logo/' to '/banner/'
+			</text>
+                </comment>
+		<comment>
+			<type>FIX</type>
+			<text>
+				Fixed bug on Comment box (Where it'd show odd on Firefox under Linux) (bunjiboys)
+			</text>
+               </comment>
+        </changeset>
+        <changeset>
+                <rev>342</rev>
+                <author>beans</author>
+                <date>16.10.2008</date>
+                <comment>
+                        <type>UPD</type>
+                        <text>
+                        	Fixed some typos and leftover debug in ralles code
+			</text>
+                </comment>
+        </changeset>
+        <changeset>
+                <rev>341</rev>
+                <author>ralle</author>
+                <date>15.10.2008</date>
+                <comment>
+                        <type>UPD</type>
+                        <text>
+                                InnoDB Engine is now chooseable in installer (inclusive server check for selected Engine)
+                        </text>
+                </comment>
+        </changeset>
+		<changeset>
+                <rev>340</rev>
+                <author>beans</author>
+                <date>14.10.2008</date>
+                <comment>
+                        <type>ADD</type>
+                        <text>
+                                Possibility to cache killmails (Admin->Cache)
+                        </text>
+                </comment>
+                <comment>
+                        <type>FIX</type>
+                        <text>
+                                Changed installer step2 sitecheck
+                        </text>
+                </comment>
+        </changeset>
+	<changeset>
+                <rev>338</rev>
+                <author>beans</author>
+                <date>09.10.2008</date>
+                <comment>
+                        <type>ADD</type>
+                        <text>
+                                MOD: Value fetcher
+                        </text>
+                </comment>
+                <comment>
+                        <type>ADD</type>
+                        <text>
+                                MOD: API_Mod (and class.eveapi.php in common/includes)
+                        </text>
+                </comment>
+                <comment>
+                        <type>ADD</type>
+                        <text>
+                                admin_troubleshooting and images
+                        </text>
+                </comment>
+        </changeset>
+	<changeset>
+                <rev>337</rev>
+                <author>beans</author>
+                <date>09.10.2008</date>
+                <comment>
+                        <type>UPD</type>
+                        <text>
+                                Killboard fetches character id from api
+                        </text>
+                </comment>
+        </changeset>
+	<changeset>
+		<rev>336</rev>
+		<author>beans</author>
+		<date>09.10.2008</date>
+		<comment>
+			<type>FIX</type>
+			<text>
+				Fixed logo and T2 icon on about pages
+			</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>
+				Fixed session, now using siteid also
+			</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>
+				Removed Syncronization from administration menu
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>326</rev>
+		<author>ralle030583</author>
+		<date>13.05.2008</date>
+		<comment>
+			<type>ADD</type>
+			<text>
+				Possiblity to browse through old months different alliance and corp detail stats
+			</text>
+		</comment>
+		<comment>
+			<type>ADD</type>
+			<text>
+				Optinal to killist: count of involved pilots (by sheezaa)
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>325</rev>
+		<author>ralle030583</author>
+		<date>31.03.2008</date>
+		<comment>
+			<type>FIX</type>
+			<text>
+				Ticket #81 : German Killmails (Im Container)=>(In Container) problem solved
+			</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>
+				fix of forum mod, that it didnt break related kills anymore and some other things
+			</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>
+				small fixes in known member mod so get it up to date
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>324</rev>
+		<author>ralle030583</author>
+		<date>17.03.2008</date>
+		<comment>
+			<type>FIX</type>
+			<text>
+				Ticket #80 : moving more colours to style.css instead of
+				inline HTML in templates, to make easier to customize.
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>323</rev>
+		<author>ralle030583</author>
+		<date>17.03.2008</date>
+		<comment>
+			<type>ADD</type>
+			<text>pagesplitter to kill/loss page</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>
+				Parser: new German killmail with Allianz: Nichts
+			</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>
+				DB Update004: trinity ships had wrong tech level, wasnt
+				actived...
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>320-322</rev>
+		<author>beansman</author>
+		<date>06.02.2008</date>
+		<comment>
+			<type>FIX</type>
+			<text>
+				Feed Syndication didn't filter corp/ally correctly
+			</text>
+		</comment>
+		<comment>
+			<type>UPD</type>
+			<text>Fitting Mod Update</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>318-319</rev>
+		<author>ralle030583</author>
+		<date>31.01.2008</date>
+		<comment>
+			<type>UPD</type>
+			<text>
+				Advanced Fitting Mod with Ammo/Slotlayout (made by Wes
+				Lave)
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>317</rev>
+		<author>ralle030583</author>
+		<date>24.01.2008</date>
+		<comment>
+			<type>ADD</type>
+			<text>
+				EVE-Api class (beta), see pilot getCharId(), only for
+				testing, its atm commented out
+			</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>Ticket #74 pilot portrait issues with img url</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>
+				Ticket #77 small fix in igb template with kb_host
+			</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>
+				DB Update004: trinity ships had wrong tech level
+			</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>
+				Ticket #75 Reinforced mode generated errors if
+				/proc/loadavg cannot be read
+			</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>
+				Mailer sends now the killmail and not the msg that mail
+				is classified, when classification for x hours is
+				enabled.
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>316</rev>
+		<author>ralle030583</author>
+		<date>23.01.2008</date>
+		<comment>
+			<type>FIX</type>
+			<text>Ticket #73 Typo in portrait_grab + reformat</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>
+				Ticket #72 KB_HOST wasn't available in $smarty by
+				default
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>314-315</rev>
+		<author>ralle030583</author>
+		<date>21.01.2008</date>
+		<comment>
+			<type>FIX</type>
+			<text>
+				DB Update003: Warefare Links fixed from mid to highslot
+			</text>
+		</comment>
+		<comment>
+			<type>ADD</type>
+			<text>
+				Ticket #71 Kill_detail.tpl Slot,Destroyed,Dropped items
+				has own table-row styles in the style.css's)
+			</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>Ticket #70 (KB_VERSION not a number)</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>Ticket #69 (Update Portrait Update)</text>
+		</comment>
+		<comment>
+			<type>ADD</type>
+			<text>
+				Ticket #68 (possibility to disabe out of game posting)
+			</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>
+				Ticket #64 (Problem with IGB links when KB not in web
+				root)
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>313</rev>
+		<author>ralle030583</author>
+		<date>07.01.2008</date>
+		<comment>
+			<type>FIX</type>
+			<text>
+				Fitting Mod, preparing slots caused a timeout. related
+				to :
+				http://www.eve-dev.net/e107_plugins/forum/forum_viewtopic.php?7976
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>312</rev>
+		<author>ralle030583</author>
+		<date>02.01.2008</date>
+		<comment>
+			<type>FIX</type>
+			<text>
+				DB Update002: status of update wasn't saved before
+			</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>
+				default settings of feed_sync mod changed to year 2008
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>311</rev>
+		<author>ralle030583</author>
+		<date>31.12.2007</date>
+		<comment>
+			<type>FIX</type>
+			<text>
+				Ticket 62 (Update items value for dropped items)
+			</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>
+				in kill detail templates (base / fitting mod) for update
+				value submit button for dropped items
+			</text>
+		</comment>
+		<comment>
+			<type>ADD</type>
+			<text>
+				"Adjust Values" Link, to leave Fix Slot mode as admin in
+				kill detail
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>308-310</rev>
+		<author>ralle030583</author>
+		<date>31.12.2007</date>
+		<comment>
+			<type>FIX</type>
+			<text>
+				DB Update002: fixing slot of already posted Salvager I
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>307</rev>
+		<author>ralle030583</author>
+		<date>31.12.2007</date>
+		<comment>
+			<type>FIX</type>
+			<text>
+				merged the last few changes into kill_detail (slotfix)
+				into fitting mod
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>306</rev>
+		<author>ralle030583</author>
+		<date>31.12.2007</date>
+		<comment>
+			<type>ADD</type>
+			<text>
+				DB update via autoupgrade.php to fix some slot probs
+			</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>
+				an error in item->getSlot so always numeric values are
+				given back and not an empty blank
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>305</rev>
+		<author>beansman</author>
+		<date>29.12.2007</date>
+		<comment>
+			<type>FIX</type>
+			<text>
+				Fixed the export problem:
+				http://www.eve-dev.net/e107_plugins/forum/forum_viewtopic.php?6624
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>304</rev>
+		<author>beansman</author>
+		<date>29.12.2007</date>
+		<comment>
+			<type>FIX</type>
+			<text>
+				Fixed the version checking from tomx.org, since it's now
+				a commercial ad site!
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>301-303</rev>
+		<author>ralle030583</author>
+		<date>27.12.2007</date>
+		<comment>
+			<type>FIX</type>
+			<text>
+				First rig in fitting window wasnt shown, cause of false
+				index usage
+			</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>
+				Items without slotID used slot of partent items
+				(attribute used_with..)
+			</text>
+		</comment>
+		<comment>
+			<type>DEL</type>
+			<text>
+				Settings of fitting mod, not needed anymore, if already
+				set, you can delete it in the kb3_config
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>300</rev>
+		<author>exi</author>
+		<date>23.12.2007</date>
+		<comment>
+			<type>FIX</type>
+			<text>update of item values</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>297-299</rev>
+		<author>Ralle030583</author>
+		<date>22.12.2007</date>
+		<comment>
+			<type>ADD</type>
+			<text>fitting mod</text>
+		</comment>
+		<comment>
+			<type>ADD</type>
+			<text>item name as tooltip on icons</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>296</rev>
+		<author>Ralle030583</author>
+		<date>21.12.2007</date>
+		<comment>
+			<type>NEW</type>
+			<text>This changeset history you are reading atm</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>295</rev>
+		<author>Ralle030583</author>
+		<date>20.12.2007</date>
+		<comment>
+			<type>FIX</type>
+			<text>CCP's new german translation for Drone Bay</text>
+		</comment>
+		<comment>
+			<type>NEW</type>
+			<text>
+				Alliance logo in killlist show alliance name as tool tip
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>294</rev>
+		<author>Ralle030583</author>
+		<date>20.12.2007</date>
+		<comment>
+			<type>FIX</type>
+			<text>
+				not able to post comments when logged in as admin
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>293</rev>
+		<author>Ralle030583</author>
+		<date>19.12.2007</date>
+		<comment>
+			<type>FIX</type>
+			<text>
+				showing dropped items when nothing else was destroyed
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>292</rev>
+		<author>Ralle030583</author>
+		<date>17.12.2007</date>
+		<comment>
+			<type>ADD</type>
+			<text>Admin can fix slot in kill_detail</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>291</rev>
+		<author>knifee</author>
+		<date>16.12.2007</date>
+		<comment>
+			<type>FIX</type>
+			<text>
+				added admin_ to the urls that needed it to get the move
+				pilot working again.
+			</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>isk readout in the known members mod.</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>290</rev>
+		<author>knifee</author>
+		<date>16.12.2007</date>
+		<comment>
+			<type>FIX</type>
+			<text>
+				corrected a few kill_import -> admin_kill_import
+				problems
+			</text>
+		</comment>
+		<comment>
+			<type>ADD</type>
+			<text>
+				Added a list of malformed files at the end of the import
+				process
+			</text>
+		</comment>
+	</changeset>
+	<changeset>
+		<rev>289</rev>
+		<author>exi</author>
+		<date>16.12.2007</date>
+		<comment>
+			<type>ADD</type>
+			<text>customizable rowcount on KillSummaryTable</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>ship classes shouldnt wrap anymore.</text>
+		</comment>
+		<comment>
+			<type>FIX</type>
+			<text>proper png output by the signature generator.</text>
+		</comment>
+	</changeset>
+</history>

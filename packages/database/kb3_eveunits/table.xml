@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_eveunits</name>
+  <rows>46</rows>
+  <structure>CREATE TABLE `kb3_eveunits` (
+  `unitID` int(5) NOT NULL default &#039;0&#039;,
+  `unitName` char(100) default NULL,
+  `displayName` char(20) default NULL,
+  `description` text,
+  PRIMARY KEY  (`unitID`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>
+
+ 

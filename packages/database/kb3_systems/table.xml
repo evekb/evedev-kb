@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_systems</name>
+  <rows>7929</rows>
+  <structure>CREATE TABLE `kb3_systems` (
+  `sys_id` int(11) NOT NULL auto_increment,
+  `sys_eve_id` int(11) NOT NULL default &#039;0&#039;,
+  `sys_con_id` int(11) NOT NULL default &#039;0&#039;,
+  `sys_name` char(128) NOT NULL,
+  `sys_x` float NOT NULL default &#039;0&#039;,
+  `sys_y` float NOT NULL default &#039;0&#039;,
+  `sys_z` float NOT NULL default &#039;0&#039;,
+  `sys_sec` decimal(12,5) NOT NULL default &#039;0.00000&#039;,
+  PRIMARY KEY  (`sys_id`),
+  KEY `sys_eve_id` (`sys_eve_id`),
+  KEY `sys_con_id` (`sys_con_id`),
+  KEY `sys_name` (`sys_name`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>
+

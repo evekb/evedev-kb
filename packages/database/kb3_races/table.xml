@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_races</name>
+  <rows>6</rows>
+  <structure>CREATE TABLE `kb3_races` (
+  `rce_id` int(11) NOT NULL auto_increment,
+  `rce_race` char(30) NOT NULL,
+  PRIMARY KEY  (`rce_id`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>

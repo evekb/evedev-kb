@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_inv_plt</name>
+  <rows>0</rows>
+  <structure>CREATE TABLE `kb3_inv_plt` (
+  `inp_kll_id` int(6) NOT NULL default &#039;0&#039;,
+  `inp_plt_id` int(6) NOT NULL default &#039;0&#039;,
+  KEY `inp_plt_id` (`inp_plt_id`),
+  KEY `inp_kll_id` (`inp_kll_id`,`inp_plt_id`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>
+

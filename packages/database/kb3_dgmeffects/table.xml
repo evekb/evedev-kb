@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_dgmeffects</name>
+  <rows>2507</rows>
+  <structure>CREATE TABLE `kb3_dgmeffects` (
+  `effectID` smallint(5) NOT NULL default &#039;0&#039;,
+  `effectName` text NOT NULL,
+  `effectCategory` smallint(5) NOT NULL default &#039;0&#039;,
+  `preExpression` int(11) default NULL,
+  `postExpression` int(11) default NULL,
+  `description` text,
+  `guid` char(60) default NULL,
+  `graphicID` smallint(5) default NULL,
+  `isOffensive` enum(&#039;true&#039;,&#039;false&#039;) NOT NULL default &#039;false&#039;,
+  `isAssistance` enum(&#039;true&#039;,&#039;false&#039;) NOT NULL default &#039;false&#039;,
+  `durationAttributeID` smallint(5) default NULL,
+  `trackingSpeedAttributeID` smallint(5) default NULL,
+  `dischargeAttributeID` smallint(5) default NULL,
+  `rangeAttributeID` smallint(5) default NULL,
+  `falloffAttributeID` smallint(5) default NULL,
+  `disallowAutoRepeat` enum(&#039;true&#039;,&#039;false&#039;) NOT NULL default &#039;false&#039;,
+  `published` enum(&#039;true&#039;,&#039;false&#039;) NOT NULL default &#039;true&#039;,
+  `displayName` char(100) NOT NULL,
+  `isWarpSafe` enum(&#039;true&#039;,&#039;false&#039;) NOT NULL default &#039;false&#039;,
+  `rangeChance` enum(&#039;true&#039;,&#039;false&#039;) NOT NULL default &#039;false&#039;,
+  `electronicChance` enum(&#039;true&#039;,&#039;false&#039;) NOT NULL default &#039;false&#039;,
+  `propulsionChance` enum(&#039;true&#039;,&#039;false&#039;) NOT NULL default &#039;false&#039;,
+  `distribution` int(11) default NULL,
+  `sfxName` char(20) NOT NULL,
+  `npcUsageChanceAttributeID` smallint(5) default NULL,
+  `npcActivationChanceAttributeID` smallint(5) default NULL,
+  `fittingUsageChanceAttributeID` smallint(5) default NULL,
+  PRIMARY KEY  (`effectID`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>

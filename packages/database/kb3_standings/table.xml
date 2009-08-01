@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_standings</name>
+  <rows>0</rows>
+  <structure>CREATE TABLE `kb3_standings` (
+  `sta_from` int(11) NOT NULL default &#039;0&#039;,
+  `sta_to` int(11) NOT NULL default &#039;0&#039;,
+  `sta_from_type` enum(&#039;a&#039;,&#039;c&#039;) NOT NULL default &#039;a&#039;,
+  `sta_to_type` enum(&#039;a&#039;,&#039;c&#039;) NOT NULL default &#039;a&#039;,
+  `sta_value` float NOT NULL default &#039;0&#039;,
+  `sta_comment` char(200) NOT NULL,
+  KEY `sta_from` (`sta_from`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>

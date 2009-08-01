@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_contracts</name>
+  <rows>0</rows>
+  <structure>CREATE TABLE `kb3_contracts` (
+  `ctr_id` int(11) NOT NULL auto_increment,
+  `ctr_name` char(128) NOT NULL,
+  `ctr_site` char(64) NOT NULL,
+  `ctr_campaign` int(6) NOT NULL default &#039;0&#039;,
+  `ctr_started` datetime NOT NULL default &#039;0000-00-00 00:00:00&#039;,
+  `ctr_ended` datetime default &#039;0000-00-00 00:00:00&#039;,
+  PRIMARY KEY  (`ctr_id`),
+  KEY `ctr_id` (`ctr_id`,`ctr_site`,`ctr_campaign`,`ctr_ended`),
+  KEY `ctr_site` (`ctr_site`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>

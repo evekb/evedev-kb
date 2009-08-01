@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_system_jumps</name>
+  <rows>14334</rows>
+  <structure>CREATE TABLE `kb3_system_jumps` (
+  `sjp_from` int(11) NOT NULL default &#039;0&#039;,
+  `sjp_to` int(11) NOT NULL default &#039;0&#039;,
+  KEY `sjp_from` (`sjp_from`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>

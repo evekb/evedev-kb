@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_sum_pilot</name>
+  <rows>0</rows>
+  <structure>CREATE TABLE `kb3_sum_pilot` (
+		  `psm_plt_id` int(11) NOT NULL DEFAULT '0',
+		  `psm_shp_id` int(3) NOT NULL DEFAULT '0',
+		  `psm_kill_count` int(11) NOT NULL DEFAULT '0',
+		  `psm_kill_isk` float NOT NULL DEFAULT '0',
+		  `psm_loss_count` int(11) NOT NULL DEFAULT '0',
+		  `psm_loss_isk` float NOT NULL DEFAULT '0',
+		  PRIMARY KEY (`psm_plt_id`,`psm_shp_id`)
+		) ENGINE=MyISAM;</structure>
+</kb3>

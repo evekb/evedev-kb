@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_item_price</name>
+  <rows>8992</rows>
+  <structure>CREATE TABLE `kb3_item_price` (
+  `typeID` int(11) NOT NULL,
+  `price` bigint(11) NOT NULL,
+  PRIMARY KEY  (`typeID`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>
+

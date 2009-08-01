@@ -1,0 +1,182 @@
+        body {
+                margin: 0px;
+                padding:0px;
+                /* background:url('/i/right_shader.gif') repeat-y right #4D4D57;        */
+                font-family:Verdana,Arial;
+                font-size: 8pt;
+                color:white;
+                vertical-align: top;
+        }
+
+        td {
+                font-family:Verdana,Arial;
+                font-size: 8pt;
+                color:white;
+        }
+
+        A:link{color: #ffa500;text-decoration: none}
+        A:visited{color: #ffa500;text-decoration: none}
+        A:active{color: #ffa500;text-decoration: none}
+        A:hover{color: #ffa500;text-decoration: underline}
+
+	.no_link:hover{text-decoration: none}
+
+        #contentarea{
+		//border-right:    1px solid #8D8D94;
+                padding: 3px;
+        }
+
+	.top_menu
+	{
+		background-color: #666666;
+		border-top:1px solid #ffffff;
+		border-bottom:1px solid #ffffff;
+		height:48px;
+		padding-left:110px;
+	}
+
+        .character_photo
+        {
+		left:	25px;
+		top:	15px;
+		border:	1px solid #a8a8a8;
+		position: absolute;
+		float: left;
+		z-index: 50;
+	}
+
+	.newsTitleImage
+	{
+		left: 5px;
+		float: left;
+		margin-right: -40px;
+		position: relative;
+	}
+
+        .mbHead {
+           BACKGROUND-COLOR:#4D4D57;
+           COLOR:white;
+           FONT-FAMILY:Verdana;
+           FONT-SIZE:11px;
+         }
+
+        .mbForum{
+           BACKGROUND-COLOR:#2C2C38;
+           COLOR:white;
+           FONT-FAMILY:Verdana;
+           FONT-SIZE:11px;
+         }
+
+        tr.tr_matrix:hover
+        {
+                background: #3f3f3f;
+        }
+
+        .null { }
+
+        .text_orange {
+                color: #ffa500;
+        }
+
+#nav {
+        /* background-color: #3D6197; */
+        clear: both;
+        padding-top: 5px;
+        padding-left: 10px;
+        border-bottom: 1px solid #000000;
+        padding-bottom: 1px;
+}
+
+#nav a {
+        /* font-size: .85em; */
+        font-size: 1.2em;
+        border-top: 1px solid #FFFFFF;
+        border-left: 1px solid #FFFFFF;
+        border-right: 1px solid #FFFFFF;
+        border-bottom: 1px solid #4B4B4B;
+        padding: .2em;
+        padding-left: .5em;
+        padding-right: .5em;
+        padding-bottom: 0px;
+        text-decoration: none;
+        color: #ffffff;
+        background-color: #4B4B4B;
+}
+
+#nav a:hover, #nav a.current {
+        color: #000000;
+        background-color: #E2E7F0;
+        font-size: 1.2em;
+        border-top: 1px solid #000000;
+        border-left: 1px solid #000000;
+        border-right: 1px solid #000000;
+        border-bottom: 1px solid #E2E7F0;
+}
+
+.div_box0 {
+        border:1px solid #ffffff;
+        padding: 10px;
+	font-size: 1.1em;
+}
+
+.div_box1 {
+	background-color: #666666;
+	background-repeat: no-repeat;
+	border:1px solid #ffffff;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+        font-size: 1.1em;
+	line-height:1.4em;
+}
+
+.div_ad_half_banner {
+	width: 234px;
+	padding: 6px;
+/*	height: 60px;				*/
+	border:1px solid #ffffff;
+/*	background:url('/i/bg_234x60.gif');	*/
+}
+
+/* CSS needed for the tooltip script */
+
+#ajax_tooltipObj{
+        z-index:1000000;
+        text-align:left;
+}
+#ajax_tooltipObj div{
+        position:relative;
+}
+
+/* If you don't want the arrow - Just set the width of this div to 1 or something
+like that and drop the background selectors from the CSS below */
+
+
+#ajax_tooltipObj .ajax_tooltip_arrow{   /* Left div for the small arrow */
+        background-image:url('/skills/tooltip/images/arrow.gif');
+        width:0px;
+        position:absolute;
+        left:0px;
+        top:0px;
+        background-repeat:no-repeat;
+        background-position:center left;
+        z-index:1000005;
+        height:60px;
+}
+
+#ajax_tooltipObj .ajax_tooltip_content{
+        border:1px solid orange;       /* Border width */
+        left:18px;      /* Same as border thickness */
+        top:0px;
+        position:absolute;
+        width:290px;    /* Width of tooltip content */
+        height:420px;   /* Height of tooltip content */
+        background-color:#000000;  /* Background color */
+        padding:5px;    /* Space between border and content */
+        font-size:0.8em;        /* Font size of content */
+        overflow:auto;  /* Hide overflow content */
+        z-index:1000001;
+}
+
+/*	end of tooltip css	*/

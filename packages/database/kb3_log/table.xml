@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_log</name>
+  <rows>0</rows>
+  <structure>CREATE TABLE `kb3_log` (
+  `log_kll_id` int(11) NOT NULL default &#039;0&#039;,
+  `log_site` char(20) NOT NULL,
+  `log_ip_address` char(20) NOT NULL,
+  `log_timestamp` datetime NOT NULL default &#039;0000-00-00 00:00:00&#039;,
+  UNIQUE KEY `log_kll_id` (`log_kll_id`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>
+

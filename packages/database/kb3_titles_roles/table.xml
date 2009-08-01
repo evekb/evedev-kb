@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_titles_roles</name>
+  <rows>0</rows>
+  <structure>CREATE TABLE `kb3_titles_roles` (
+  `ttl_id` int(11) NOT NULL,
+  `rol_id` int(11) NOT NULL,
+  KEY `ttl_id` (`ttl_id`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>

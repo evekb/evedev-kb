@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_dgmattributetypes</name>
+  <rows>1406</rows>
+  <structure>CREATE TABLE `kb3_dgmattributetypes` (
+  `attributeID` int(11) NOT NULL default &#039;0&#039;,
+  `attributeName` char(100) NOT NULL,
+  `icon` char(5) NOT NULL,
+  `defaultValue` int(11) NOT NULL default &#039;0&#039;,
+  `published` enum(&#039;true&#039;,&#039;false&#039;) NOT NULL default &#039;true&#039;,
+  `displayName` char(100) NOT NULL,
+  `unitID` int(11) default NULL,
+  `stackable` enum(&#039;true&#039;,&#039;false&#039;) NOT NULL default &#039;true&#039;,
+  `highIsGood` enum(&#039;true&#039;,&#039;false&#039;) NOT NULL default &#039;true&#039;,
+  PRIMARY KEY  (`attributeID`),
+  KEY `attributeName` (`attributeName`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_constellations</name>
+  <rows>1109</rows>
+  <structure>CREATE TABLE `kb3_constellations` (
+  `con_id` int(11) NOT NULL default &#039;0&#039;,
+  `con_name` char(128) NOT NULL default &#039;&#039;,
+  `con_reg_id` int(11) NOT NULL default &#039;0&#039;,
+  PRIMARY KEY  (`con_id`),
+  KEY `con_reg_id` (`con_reg_id`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>

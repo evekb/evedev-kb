@@ -1,0 +1,50 @@
+div.kb-shiptype
+{
+  float: left;
+  margin-top: 3px;
+  padding-left: 3px;
+}
+
+div.kb-shipicon
+{
+  float: right;
+  height: 32px;
+}
+
+td.kb-shipfilter
+{
+  font-family: Verdana, Tahoma;
+  font-size: 12px;
+}
+
+a.kb-shipclass:visited {
+  color: #dddddd;
+}
+
+a.kb-shipclass:link {
+  color: #dddddd;
+}
+
+a.kb-shipclass-hl:link {
+  color: #FFA500;
+  text-decoration: underline;
+}
+
+a.kb-shipclass-hl:active {
+  color: #FFA500;
+  text-decoration: underline;
+}
+
+a.kb-shipclass-hl:visited {
+  color: #FFA500;
+  text-decoration: underline;
+}
+
+a.kb-shipclass:active {
+  color: #dddddd;
+}
+
+a.kb-shipclass:hover {
+  color: #dddddd;
+  text-decoration: underline;
+}

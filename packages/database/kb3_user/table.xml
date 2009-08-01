@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_user</name>
+  <rows>0</rows>
+  <structure>CREATE TABLE `kb3_user` (
+  `usr_id` int(11) NOT NULL auto_increment,
+  `usr_site` char(16) NOT NULL,
+  `usr_login` char(40) NOT NULL,
+  `usr_pass` char(32) NOT NULL,
+  `usr_pilot_id` int(11) NOT NULL default &#039;0&#039;,
+  `usr_state` tinyint(1) NOT NULL default &#039;0&#039;,
+  PRIMARY KEY  (`usr_id`),
+  UNIQUE KEY `sitelogin` (`usr_site`,`usr_login`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>

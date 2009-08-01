@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_inv_all</name>
+  <rows>0</rows>
+  <structure>CREATE TABLE `kb3_inv_all` (
+  `ina_kll_id` int(6) NOT NULL default &#039;0&#039;,
+  `ina_all_id` int(3) NOT NULL default &#039;0&#039;,
+  KEY `ina_all_id` (`ina_all_id`),
+  KEY `ina_kll_id` (`ina_kll_id`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_ship_classes</name>
+  <rows>39</rows>
+  <structure>CREATE TABLE `kb3_ship_classes` (
+  `scl_id` int(11) NOT NULL auto_increment,
+  `scl_class` char(32) NOT NULL,
+  `scl_value` bigint(4) NOT NULL default &#039;0&#039;,
+  `scl_points` int(11) NOT NULL default &#039;0&#039;,
+  PRIMARY KEY  (`scl_id`),
+  UNIQUE KEY `scl_class` (`scl_class`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>

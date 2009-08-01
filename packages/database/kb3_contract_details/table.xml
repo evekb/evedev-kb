@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_contract_details</name>
+  <rows>0</rows>
+  <structure>CREATE TABLE `kb3_contract_details` (
+  `ctd_ctr_id` int(11) NOT NULL default &#039;0&#039;,
+  `ctd_crp_id` int(11) NOT NULL default &#039;0&#039;,
+  `ctd_all_id` int(11) NOT NULL default &#039;0&#039;,
+  `ctd_reg_id` int(11) NOT NULL default &#039;0&#039;,
+  `ctd_sys_id` int(11) NOT NULL default &#039;0&#039;,
+  KEY `ctd_ctr_id` (`ctd_ctr_id`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>

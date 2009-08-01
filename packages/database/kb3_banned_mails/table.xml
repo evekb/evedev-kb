@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_banned_mails</name>
+  <rows>0</rows>
+  <structure>CREATE TABLE `kb3_banned_mails` (
+  `bml_timestamp` datetime NOT NULL default &#039;0000-00-00 00:00:00&#039;,
+  `bml_ip` char(32) NOT NULL,
+  `bml_mail` text NOT NULL,
+  PRIMARY KEY  (`bml_timestamp`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>

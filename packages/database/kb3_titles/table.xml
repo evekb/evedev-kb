@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_titles</name>
+  <rows>0</rows>
+  <structure>CREATE TABLE `kb3_titles` (
+  `ttl_id` int(11) NOT NULL auto_increment,
+  `ttl_name` char(100) NOT NULL,
+  `ttl_descr` char(200) NOT NULL,
+  `ttl_site` char(16) NOT NULL,
+  PRIMARY KEY  (`ttl_id`),
+  UNIQUE KEY `ttl_name` (`ttl_name`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_item_locations</name>
+  <rows>6</rows>
+  <structure>CREATE TABLE `kb3_item_locations` (
+  `itl_id` int(11) NOT NULL auto_increment,
+  `itl_location` char(24) NOT NULL,
+  PRIMARY KEY  (`itl_id`),
+  KEY `itl_id` (`itl_location`,`itl_id`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>

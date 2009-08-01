@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_corps</name>
+  <rows>8258</rows>
+  <structure>CREATE TABLE `kb3_corps` (
+  `crp_id` int(11) NOT NULL auto_increment,
+  `crp_name` char(64) NOT NULL default &#039;&#039;,
+  `crp_all_id` int(11) NOT NULL default &#039;0&#039;,
+  `crp_external_id` int(11) unsigned default NULL,
+  `crp_updated` datetime default NULL,
+  PRIMARY KEY  (`crp_id`),
+  UNIQUE KEY `crp_name` (`crp_name`),
+  UNIQUE KEY `crp_external_id` (`crp_external_id`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_regions</name>
+  <rows>97</rows>
+  <structure>CREATE TABLE `kb3_regions` (
+  `reg_id` int(11) NOT NULL default &#039;0&#039;,
+  `reg_name` char(64) NOT NULL,
+  `reg_x` float NOT NULL default &#039;0&#039;,
+  `reg_y` float NOT NULL default &#039;0&#039;,
+  `reg_z` float NOT NULL default &#039;0&#039;,
+  PRIMARY KEY  (`reg_id`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>

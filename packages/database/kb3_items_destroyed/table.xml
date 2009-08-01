@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_items_destroyed</name>
+  <rows>0</rows>
+  <structure>CREATE TABLE `kb3_items_destroyed` (
+  `itd_kll_id` int(11) NOT NULL default &#039;0&#039;,
+  `itd_itm_id` int(11) NOT NULL default &#039;0&#039;,
+  `itd_quantity` int(11) NOT NULL default &#039;1&#039;,
+  `itd_itl_id` smallint(11) NOT NULL default &#039;0&#039;,
+  KEY `itd_kll_id` (`itd_kll_id`),
+  KEY `itd_itl_id` (`itd_itl_id`,`itd_kll_id`,`itd_itm_id`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>

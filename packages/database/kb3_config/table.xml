@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_config</name>
+  <rows>0</rows>
+  <structure>CREATE TABLE `kb3_config` (
+  `cfg_site` char(16) NOT NULL,
+  `cfg_key` char(32) NOT NULL,
+  `cfg_value` text NOT NULL,
+  PRIMARY KEY (`cfg_site`,`cfg_key`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_dgmtypeattributes</name>
+  <rows>137107</rows>
+  <structure>CREATE TABLE `kb3_dgmtypeattributes` (
+  `typeID` smallint(5) NOT NULL default &#039;0&#039;,
+  `attributeID` smallint(5) NOT NULL default &#039;0&#039;,
+  `value` double NOT NULL,
+  KEY `typeID` (`typeID`),
+  KEY `attributeID` (`attributeID`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>

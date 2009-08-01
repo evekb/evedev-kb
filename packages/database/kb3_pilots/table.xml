@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_pilots</name>
+  <rows>39009</rows>
+  <structure>CREATE TABLE `kb3_pilots` (
+  `plt_id` int(11) NOT NULL auto_increment,
+  `plt_name` char(64) NOT NULL,
+  `plt_crp_id` int(11) NOT NULL default &#039;0&#039;,
+  `plt_externalid` int(11) default NULL,
+  `plt_updated` datetime default NULL,
+  PRIMARY KEY  (`plt_id`),
+  UNIQUE KEY `plt_name` (`plt_name`),
+  KEY `plt_externalid` (`plt_externalid`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>

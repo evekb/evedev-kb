@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_comments</name>
+  <rows>0</rows>
+  <structure>CREATE TABLE `kb3_comments` (
+  `id` int(11) NOT NULL auto_increment,
+  `kll_id` int(11) NOT NULL,
+  `comment` text NOT NULL,
+  `name` tinytext NOT NULL,
+  `posttime` timestamp NOT NULL default &#039;0000-00-00 00:00:00&#039;,
+  PRIMARY KEY  (`id`),
+  KEY `kll_id` (`kll_id`,`posttime`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>

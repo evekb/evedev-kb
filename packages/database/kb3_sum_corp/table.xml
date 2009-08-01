@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_sum_corp</name>
+  <rows>0</rows>
+  <structure>CREATE TABLE `kb3_sum_corp` (
+		  `csm_crp_id` int(11) NOT NULL DEFAULT '0',
+		  `csm_shp_id` int(3) NOT NULL DEFAULT '0',
+		  `csm_kill_count` int(11) NOT NULL DEFAULT '0',
+		  `csm_kill_isk` float NOT NULL DEFAULT '0',
+		  `csm_loss_count` int(11) NOT NULL DEFAULT '0',
+		  `csm_loss_isk` float NOT NULL DEFAULT '0',
+		  PRIMARY KEY (`csm_crp_id`,`csm_shp_id`)
+		) ENGINE=MyISAM;</structure>
+</kb3>
