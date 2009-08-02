@@ -94,40 +94,43 @@ class allianceSummary
 		$all_id = intval($all_id);
 		if(!$all_id) return false;
 		$qry = new DBQuery();
-		$sql = 'INSERT INTO kb3_sum_alliance (asm_all_id, asm_shp_id, asm_kill_count, asm_kill_isk)
-			SELECT '.$all_id.', shp_class, COUNT(distinct kll.kll_id) AS knb,
+		$qry->autocommit(false);
+		$sql = "CREATE TEMPORARY TABLE `tmp_all_summary` (
+		  `asm_all_id` int(11) NOT NULL DEFAULT '0',
+		  `asm_shp_id` int(3) NOT NULL DEFAULT '0',
+		  `asm_kill_count` int(11) NOT NULL DEFAULT '0',
+		  `asm_kill_isk` float NOT NULL DEFAULT '0',
+		  `asm_loss_count` int(11) NOT NULL DEFAULT '0',
+		  `asm_loss_isk` float NOT NULL DEFAULT '0',
+		  PRIMARY KEY (`asm_all_id`,`asm_shp_id`)
+		) ENGINE = MEMORY";
+		$qry->execute($sql);
+
+		$sql = 'INSERT INTO tmp_all_summary (asm_all_id, asm_shp_id, asm_kill_count, asm_kill_isk)
+			SELECT '.$all_id.', shp_class, COUNT(kll.kll_id) AS knb,
 				sum(kll_isk_loss) AS kisk
 			FROM kb3_kills kll
 				INNER JOIN kb3_ships shp
 					ON ( shp.shp_id = kll.kll_ship_id )
-				INNER JOIN (SELECT distinct c.ind_kll_id, c.ind_all_id
-							FROM kb3_inv_detail c
-							WHERE c.ind_all_id ='.$all_id.'  ) ind
-					ON (ind.ind_kll_id = kll.kll_id
+				INNER JOIN kb3_inv_all ina ON (ina.ina_all_id ='.$all_id.'
+						AND ina.ina_kll_id = kll.kll_id
 						AND kll.kll_all_id <> '.$all_id.')
 			GROUP BY shp_class';
 		$qry->execute($sql);
-		$sql = "CREATE TEMPORARY TABLE tmp_summary (shp_id INT NOT NULL DEFAULT '0',
-			loss_count INT NOT NULL DEFAULT '0',
-			loss_isk FLOAT NOT NULL DEFAULT '0')
-			ENGINE = MEMORY";
-		$qry->execute($sql);
-
-		$sql = 'INSERT INTO tmp_summary (shp_id, loss_count, loss_isk)
-			SELECT shp_class, count(distinct kll_id) AS lnb, sum(kll_isk_loss) AS lisk
+		$sql = 'INSERT INTO tmp_all_summary (asm_all_id, asm_shp_id, asm_loss_count, asm_loss_isk)
+			SELECT '.$all_id.', shp_class, count(distinct kll_id) AS lnb, sum(kll_isk_loss) AS lisk
 			FROM kb3_kills kll
 				INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )
+				INNER JOIN kb3_inv_all ina ON ( kll.kll_id = ina.ina_kll_id
+							AND ina.ina_all_id <> '.$all_id.')
 			WHERE  kll.kll_all_id = '.$all_id.'
-				AND EXISTS (SELECT 1
-							FROM kb3_inv_detail ind
-							WHERE kll.kll_id = ind_kll_id
-							AND ind.ind_all_id <> '.$all_id.' limit 0,1)
-			GROUP BY shp_class';
+			GROUP BY shp_class
+			ON DUPLICATE KEY UPDATE asm_loss_count = values(asm_loss_count),
+				asm_loss_isk = values(asm_loss_isk)';
 		$qry->execute($sql);
-		$qry->execute("INSERT INTO kb3_sum_alliance (asm_all_id, asm_shp_id, asm_loss_count, asm_loss_isk)
-			SELECT ".$all_id.", shp_id, loss_count, loss_isk FROM tmp_summary
-			ON DUPLICATE KEY UPDATE asm_loss_count = loss_count, asm_loss_isk = loss_isk");
-		$qry->execute("DROP TEMPORARY TABLE tmp_summary");
+		$qry->execute("INSERT IGNORE INTO kb3_sum_alliance SELECT * FROM tmp_all_summary");
+		$qry->execute("DROP TEMPORARY TABLE tmp_all_summary");
+		$qry->autocommit(true);
 	}
 	//! Add a Kill and its value to the summary.
 	function addKill($kill)
@@ -279,40 +282,42 @@ class corpSummary extends allianceSummary
 		$crp_id = intval($crp_id);
 		if(!$crp_id) return false;
 		$qry = new DBQuery();
-		$sql = 'INSERT INTO kb3_sum_corp (csm_crp_id, csm_shp_id, csm_kill_count, csm_kill_isk)
+		$qry->autocommit(false);
+		$sql = "CREATE TEMPORARY TABLE `tmp_sum_corp` (
+		  `csm_crp_id` int(11) NOT NULL DEFAULT '0',
+		  `csm_shp_id` int(3) NOT NULL DEFAULT '0',
+		  `csm_kill_count` int(11) NOT NULL DEFAULT '0',
+		  `csm_kill_isk` float NOT NULL DEFAULT '0',
+		  `csm_loss_count` int(11) NOT NULL DEFAULT '0',
+		  `csm_loss_isk` float NOT NULL DEFAULT '0',
+		  PRIMARY KEY (`csm_crp_id`,`csm_shp_id`)
+		) ENGINE = MEMORY";
+		$qry->execute($sql);
+
+		$sql = 'INSERT INTO tmp_sum_corp (csm_crp_id, csm_shp_id, csm_kill_count, csm_kill_isk)
 			SELECT '.$crp_id.', shp_class, COUNT(distinct kll.kll_id) AS knb,
 				sum(kll_isk_loss) AS kisk
 			FROM kb3_kills kll
 				INNER JOIN kb3_ships shp
 					ON ( shp.shp_id = kll.kll_ship_id )
-				INNER JOIN (SELECT distinct c.ind_kll_id, c.ind_crp_id
-							FROM kb3_inv_detail c
-							WHERE c.ind_crp_id ='.$crp_id.'  ) ind
-					ON (ind.ind_kll_id = kll.kll_id
-						AND kll.kll_crp_id <> '.$crp_id.')
+				INNER JOIN kb3_inv_crp inc
+					ON (inc.inc_kll_id = kll.kll_id)
+			WHERE inc.inc_crp_id ='.$crp_id.' AND kll.kll_crp_id <> '.$crp_id.'
 			GROUP BY shp_class';
 		$qry->execute($sql);
-		$sql = "CREATE TEMPORARY TABLE tmp_summary (shp_id INT NOT NULL DEFAULT '0',
-			loss_count INT NOT NULL DEFAULT '0',
-			loss_isk FLOAT NOT NULL DEFAULT '0')
-			ENGINE = MEMORY";
-		$qry->execute($sql);
-
-		$sql = 'INSERT INTO tmp_summary (shp_id, loss_count, loss_isk)
-			SELECT shp_class, count(distinct kll_id) AS lnb, sum(kll_isk_loss) AS lisk
+		$sql = 'INSERT INTO tmp_sum_corp (csm_crp_id, csm_shp_id, csm_loss_count, csm_loss_isk)
+			SELECT '.$crp_id.', shp_class, count(kll_id) AS lnb, sum(kll_isk_loss) AS lisk
 			FROM kb3_kills kll
 				INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )
-			WHERE  kll.kll_crp_id = '.$crp_id.'
-				AND EXISTS (SELECT 1
-							FROM kb3_inv_detail ind
-							WHERE kll.kll_id = ind_kll_id
-							AND ind.ind_crp_id <> '.$crp_id.' limit 0,1)
-			GROUP BY shp_class';
+				INNER JOIN kb3_inv_crp inc ON ( kll.kll_id = inc.inc_kll_id)
+			WHERE  kll.kll_crp_id = '.$crp_id.' AND inc.inc_crp_id <> '.$crp_id.'
+			GROUP BY shp_class
+			ON DUPLICATE KEY UPDATE csm_loss_count = values(csm_loss_count),
+				csm_loss_isk = values(csm_loss_isk)';
 		$qry->execute($sql);
-		$qry->execute("INSERT INTO kb3_sum_corp (csm_crp_id, csm_shp_id, csm_loss_count, csm_loss_isk)
-			SELECT ".$crp_id.", shp_id, loss_count, loss_isk FROM tmp_summary
-			ON DUPLICATE KEY UPDATE csm_loss_count = loss_count, csm_loss_isk = loss_isk");
-		$qry->execute("DROP TEMPORARY TABLE tmp_summary");
+		$qry->execute("INSERT INTO kb3_sum_corp SELECT * FROM tmp_sum_corp");
+		$qry->execute("DROP TEMPORARY TABLE tmp_sum_corp");
+		$qry->autocommit(true);
 	}
 	//! Add a Kill and its value to the summary.
 	function addKill($kill)
@@ -462,40 +467,42 @@ class pilotSummary extends allianceSummary
 		$plt_id = intval($plt_id);
 		if(!$plt_id) return false;
 		$qry = new DBQuery();
-		$sql = 'INSERT INTO kb3_sum_pilot (psm_plt_id, psm_shp_id, psm_kill_count, psm_kill_isk)
+		$qry->autocommit(false);
+		$sql = "CREATE TEMPORARY TABLE `tmp_sum_pilot` (
+		  `psm_plt_id` int(11) NOT NULL DEFAULT '0',
+		  `psm_shp_id` int(3) NOT NULL DEFAULT '0',
+		  `psm_kill_count` int(11) NOT NULL DEFAULT '0',
+		  `psm_kill_isk` float NOT NULL DEFAULT '0',
+		  `psm_loss_count` int(11) NOT NULL DEFAULT '0',
+		  `psm_loss_isk` float NOT NULL DEFAULT '0',
+		  PRIMARY KEY (`psm_plt_id`,`psm_shp_id`)
+		) ENGINE = MEMORY";
+		$qry->execute($sql);
+
+		$sql = 'INSERT INTO tmp_sum_pilot (psm_plt_id, psm_shp_id, psm_kill_count, psm_kill_isk)
 			SELECT '.$plt_id.', shp_class, COUNT(distinct kll.kll_id) AS knb,
 				sum(kll_isk_loss) AS kisk
 			FROM kb3_kills kll
 				INNER JOIN kb3_ships shp
 					ON ( shp.shp_id = kll.kll_ship_id )
-				INNER JOIN (SELECT distinct c.ind_kll_id, c.ind_plt_id
-							FROM kb3_inv_detail c
-							WHERE c.ind_plt_id ='.$plt_id.'  ) ind
-					ON (ind.ind_kll_id = kll.kll_id
-						AND kll.kll_victim_id <> '.$plt_id.')
+				INNER JOIN kb3_inv_plt inc
+					ON (inp.inp_kll_id = kll.kll_id)
+			WHERE inp.inp_plt_id ='.$plt_id.' AND kll.kll_plt_id <> '.$plt_id.'
 			GROUP BY shp_class';
 		$qry->execute($sql);
-		$sql = "CREATE TEMPORARY TABLE tmp_summary (shp_id INT NOT NULL DEFAULT '0',
-			loss_count INT NOT NULL DEFAULT '0',
-			loss_isk FLOAT NOT NULL DEFAULT '0')
-			ENGINE = MEMORY";
-		$qry->execute($sql);
-
-		$sql = 'INSERT INTO tmp_summary (shp_id, loss_count, loss_isk)
-			SELECT shp_class, count(distinct kll_id) AS lnb, sum(kll_isk_loss) AS lisk
+		$sql = 'INSERT INTO tmp_sum_pilot (psm_plt_id, psm_shp_id, psm_loss_count, psm_loss_isk)
+			SELECT '.$plt_id.', shp_class, count(kll_id) AS lnb, sum(kll_isk_loss) AS lisk
 			FROM kb3_kills kll
 				INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )
-			WHERE  kll.kll_victim_id = '.$plt_id.'
-				AND EXISTS (SELECT 1
-							FROM kb3_inv_detail ind
-							WHERE kll.kll_id = ind_kll_id
-							AND ind.ind_plt_id <> '.$plt_id.' limit 0,1)
-			GROUP BY shp_class';
+				INNER JOIN kb3_inv_plt inc ON ( kll.kll_id = inp.inp_kll_id)
+			WHERE  kll.kll_plt_id = '.$plt_id.' AND inp.inp_plt_id <> '.$plt_id.'
+			GROUP BY shp_class
+			ON DUPLICATE KEY UPDATE psm_loss_count = values(psm_loss_count),
+				psm_loss_isk = values(psm_loss_isk)';
 		$qry->execute($sql);
-		$qry->execute("INSERT INTO kb3_sum_pilot (psm_plt_id, psm_shp_id, psm_loss_count, psm_loss_isk)
-			SELECT ".$plt_id.", shp_id, loss_count, loss_isk FROM tmp_summary
-			ON DUPLICATE KEY UPDATE psm_loss_count = loss_count, psm_loss_isk = loss_isk");
-		$qry->execute("DROP TEMPORARY TABLE tmp_summary");
+		$qry->execute("INSERT INTO kb3_sum_pilot SELECT * FROM tmp_sum_pilot");
+		$qry->execute("DROP TEMPORARY TABLE tmp_sum_pilot");
+		$qry->autocommit(true);
 	}
 	//! Add a Kill and its value to the summary.
 	function addKill($kill)
