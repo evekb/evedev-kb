@@ -138,8 +138,6 @@ class allianceSummary
 		$alls = array();
 		$qry = new DBQuery();
 		$qry->execute("SELECT 1 FROM kb3_sum_alliance WHERE asm_all_id = ".$kill->getVictimAllianceID());
-// Causes big slowdowns for feeds so just return and leave summary creation until the page is viewed.
-//		if(!$qry->recordCount()) allianceSummary::buildSummary($kill->getVictimAllianceID());
 		if($qry->recordCount())
 		{
 			// php4 doesn't handle indirect references so specify each one.
@@ -325,7 +323,7 @@ class corpSummary extends allianceSummary
 		$alls = array();
 		$qry = new DBQuery();
 		$qry->execute("SELECT 1 FROM kb3_sum_corp WHERE csm_crp_id = ".$kill->getVictimcorpID());
-		if(!$qry->recordCount())
+		if($qry->recordCount())
 		{
 			// php4 doesn't handle indirect references so specify each one.
 			$ship = $kill->getVictimShip();
@@ -510,8 +508,7 @@ class pilotSummary extends allianceSummary
 		$alls = array();
 		$qry = new DBQuery();
 		$qry->execute("SELECT 1 FROM kb3_sum_pilot WHERE psm_plt_id = ".$kill->getVictimID());
-//		if(!$qry->recordCount()) pilotSummary::buildSummary($kill->getVictimpilotID());
-		if(!$qry->recordCount())
+		if($qry->recordCount())
 		{
 			// php4 doesn't handle indirect references so specify each one.
 			$ship = $kill->getVictimShip();
