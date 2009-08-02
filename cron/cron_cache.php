@@ -12,7 +12,7 @@ if(function_exists("set_time_limit"))
 
 // current working directory minus last 5 letters of string ("/cron")
 //$KB_HOME = substr(getcwd(), 0, strlen(getcwd())-5); // current working directory minus last 5 letters of string ("/cron")
-$KB_HOME = ereg_replace('[/\\]cron$', '', getcwd());
+$KB_HOME = preg_replace('/[\/\\\\]cron$/', '', getcwd());
 
 
 chdir($KB_HOME); 

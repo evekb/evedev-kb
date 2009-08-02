@@ -8,7 +8,11 @@ remove_old(1 * 24, "cache/templates_c/");
 remove_old(7 * 24, "cache/mails/");
 remove_old(30 * 24, "cache/", true);
 
+//! Remove old files from the given directory.
 
+/*! \param $hours The oldest a file can be before being removed.
+ *  \param $dir The directory to remove files from.
+ *  \param $recurse Whether to clear subdirectories.
 function remove_old($hours, $dir, $recurse = false)
 {
 	$seconds = $hours*60*60;

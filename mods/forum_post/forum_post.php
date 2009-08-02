@@ -9,7 +9,7 @@ require_once('common/includes/class.corp.php');
 require_once('common/includes/class.alliance.php');
 
 if(isset($_GET['ctr_id'])){
-$ctr_id = $_GET['ctr_id'];
+$ctr_id = intval($_GET['ctr_id']);
 $contract = new Contract($ctr_id);
 $klist = $contract->getKillList();
 $llist = $contract->getLossList();
@@ -23,6 +23,7 @@ $name = $contract->getName();
 
 if(isset($_GET['kll_id']))
 {
+$kll_id = intval($_GET['kll_id']);
 // this is a fast query to get the system and timestamp
 $rqry = new DBQuery();
 $rsql = 'SELECT kll_timestamp, kll_system_id from kb3_kills where kll_id = '.$kll_id;

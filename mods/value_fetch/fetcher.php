@@ -14,8 +14,9 @@ Class Fetcher
 	var $sell_median;
 	var $buy_median;
 	var $factionPrice;
-	var $compfile = "http://svn.nsbit.dk/itemfetch/items.xml.gzphp.php";
-	var $uncompfile = "http://svn.nsbit.dk/itemfetch/items.xml.php";
+//	var $compfile = "http://svn.nsbit.dk/itemfetch/items.xml.gzphp.php";
+//	var $uncompfile = "http://svn.nsbit.dk/itemfetch/items.xml.php";
+	var $uncompfile = "http://eve.no-ip.de/prices/30d/prices-all.xml";
 
 	function updateShips()
 	{
@@ -41,28 +42,28 @@ Class Fetcher
 	{
 		$this->faction = $factionin;
 		// Fetch the gzip file.
-// Switch fopen to cURL if it exists
-if (function_exists('curl_init'))
-{
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $this->compfile);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
-    $content = curl_exec($ch);
-    curl_close($ch);
-    if(strlen($content)==0) return 0;
-}
-else
-{
-    $file = fopen($this->compfile , "r");
+		// Switch fopen to cURL if it exists
+		if (function_exists('curl_init'))
+		{
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL, $this->uncompfile);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
+			$content = curl_exec($ch);
+			curl_close($ch);
+			if(strlen($content)==0) return 0;
+		}
+		else
+		{
+			$file = fopen($this->uncompfile , "r");
 
-		if (! $file) {
-        	        return 0;
-      	 	}
-	       	$content = stream_get_contents($file);
-		fclose($file);
-}	
-                $content = gzinflate($content);
+				if (! $file) {
+							return 0;
+					}
+					$content = stream_get_contents($file);
+				fclose($file);
+		}
+        //$content = gzinflate($content);
 		// Old style, direct, no gzip!
 		// $sxe = simplexml_load_file("http://svn.nsbit.dk/itemfetch/items.xml");
 		$sxe = new SimpleXMLElement($content);
@@ -70,39 +71,40 @@ else
 		$i = 0;
 		// New query
 		$qry = new DBQuery();
-
-		foreach($sxe->market_stat as $stat)
+		//$sxe2 = $sxe->result[0]->rowset[0];
+		if(!count($sxe->result[0]->rowset[0])) return 0;
+		foreach($sxe->result[0]->rowset[0]->row as $stat)
 		{
 			// If there is almost nothing for sale, AT ALL, don't include!
-			// if ($stat->total_sell_volume < 5) continue;
+			if ($stat['vol'] < 5) continue;
 			// Same average as used in value_editor (eve_central_sync)
 			//$weighted_average = round(((1.6 * $stat->avg_buy_price + 0.8 * $stat->avg_sell_price) / 2),0);
 			// Use global sell prices
 			//$weighted_average = round($stat->avg_sell_price,0);
 			// Use sell median
-			if (($stat->sell_median != null) && ($stat->sell_median != 0))
-				$weighted_average = round($stat->sell_median,0);
-			else
-				$weighted_average = round($stat->avg_sell_price,0);
+			$weighted_average = round($stat['median'],0);
 
-			if (($this->faction == true) && ($stat->factionPrice > 0))
-				$weighted_average = round($stat->factionPrice,0);
-//			if (!$weighted_average) continue;	
+			//if (($this->faction == true) && ($stat->factionPrice > 0))
+			//	$weighted_average = round($stat->factionPrice,0);
+			if (!$weighted_average) continue;
 			// Insert new values into the database and update the old
 			// For the first item start the query. For later items add ','
 			if($i) $querytext .=",";
 			else $querytext="INSERT INTO kb3_item_price (typeID, price) VALUES ";
-			$querytext .= "(".$stat->typeid.",".number_format($weighted_average, 0, '', '').")";
+			$querytext .= "(".$stat['typeID'].",".number_format($weighted_average, 0, '', '').")";
 			$i++;
 		}
 		// Finish query with a check for duplicates. If so, just update
 		$querytext .= " ON DUPLICATE KEY UPDATE price = VALUES(price);";
 		$qry->execute($querytext);
-		return "Count: ".$i." <br><br>Cached on: ".date('H:i:s - j/m/Y',(int)($sxe->timestamp));
+		//return "Count: ".$i." <br><br>Cached on: ".date('H:i:s - j/m/Y',(int)($sxe->timestamp));
+		return "Count: ".$i;
 	}
 
 	function fetch_values_php4($factionin)
 	{
+		// PHP4 section still needs rewriting for the new feed.
+		return 0;
 		$this->faction = $factionin;
 		$this->sell_median = null;
 		$this->buy_median = null;
