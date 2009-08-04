@@ -2,10 +2,11 @@
 <kb3>
   <name>kb3_inv_crp</name>
   <rows>0</rows>
-  <structure>CREATE TABLE `kb3_inv_crp` (
-  `inc_kll_id` int(6) NOT NULL default &#039;0&#039;,
-  `inc_crp_id` int(6) NOT NULL default &#039;0&#039;,
-  KEY `inc_crp_id` (`inc_crp_id`),
-  KEY `inc_kll_id` (`inc_kll_id`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+  <structure>CREATE TABLE IF NOT EXISTS `kb3_inv_crp` (
+  `inc_kll_id` int(6) NOT NULL DEFAULT '0',
+  `inc_crp_id` int(3) NOT NULL DEFAULT '0',
+  `inc_timestamp` datetime NOT NULL,
+  PRIMARY KEY (`inc_kll_id`,`inc_crp_id`),
+  KEY `inc_crp_time` (`inc_crp_id`,`inc_timestamp`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;</structure>
 </kb3>

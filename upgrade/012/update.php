@@ -1,6 +1,6 @@
 <?php
-// Add unique name indices to alliance, corp and pilot
-// Check kb3_inv_detail has correct indices
+// Add timestamp to kb3_inv_detail
+// Create kb3_inv_all, kb3_inv_crp with timestamps
 function update012()
 {
 	global $url, $header, $footer;
@@ -33,7 +33,7 @@ function update012()
 			$indextexists = false;
 			while($testresult = $qry->getRow())
 			{
-				if($testresult['Key_name'] == 'ind_timestamp')
+				if($testresult['Column_name'] == 'ind_timestamp')
 					$indextexists = true;
 			}
 			if(!$indextexists)
@@ -48,7 +48,7 @@ function update012()
 		}
 		if(config::get('012updatestatus') <3)
 		{
-			// Add timestamp column to kb3_inv_detail
+			// Add pilot,timestamp index to kb3_inv_detail
 			$qry->execute("SHOW INDEX FROM kb3_inv_detail");
 			$indexpexists = false;
 			while($testresult = $qry->getRow())
@@ -100,33 +100,101 @@ function update012()
 		}
 		if(config::get('012updatestatus') <5)
 		{
+			$step = 10000;
+			$qry->execute("SELECT COUNT(*) as cnt FROM kb3_kills");
+			$result = $qry->getRow();
+			$max = $result['cnt'];
+			if(!config::get('012_5_status')) config::set('012_5_status','0');
 			// add times to kb3_inv_detail.
-			$qry->execute("UPDATE kb3_inv_detail join kb3_kills on ind_kll_id = kll_id SET ind_timestamp = kll_timestamp WHERE ind_timestamp < '0001-01-01'");
-			config::set('012updatestatus',5);
-			echo $header;
-			echo "12. kb3_inv_detail timestamp added.";
-			echo $footer;
-			die();
+			$qry->execute("UPDATE kb3_inv_detail join kb3_kills on ind_kll_id = kll_id
+				SET ind_timestamp = kll_timestamp
+				WHERE ind_timestamp < '0001-01-01'
+				AND kll_id >= ".config::get('012_5_status')."
+				AND kll_id < ".(config::get('012_5_status') + $step));
+			if($max < config::get('012_5_status') + $step)
+			{
+				config::set('012updatestatus',5);
+				config::del('012_5_status');
+				echo $header;
+				echo "12. kb3_inv_detail timestamp added.";
+				echo $footer;
+				die();
+			}
+			else
+			{
+				config::set('012_5_status', config::get('012_5_status') + $step);
+				echo $header;
+				echo "12. kb3_inv_detail timestamp updated rows ".(config::get('012_5_status') - $step)." - ".config::get('012_5_status');
+				echo $footer;
+				die();
+			}
 		}
 		if(config::get('012updatestatus') <6)
 		{
+			$step = 10000;
+			$qry->execute("SELECT COUNT(*) as cnt FROM kb3_kills");
+			$result = $qry->getRow();
+			$max = $result['cnt'];
+			if(!config::get('012_6_status')) config::set('012_6_status','0');
 			// add times to kb3_inv_detail.
-			$qry->execute("INSERT IGNORE INTO kb3_inv_all SELECT ind_kll_id, ind_all_id, ind_timestamp FROM kb3_inv_detail GROUP BY ind_kll_id, ind_all_id");
-			config::set('012updatestatus',6);
-			echo $header;
-			echo "12. kb3_inv_all filled.";
-			echo $footer;
-			die();
+			$qry->execute("INSERT IGNORE INTO kb3_inv_all
+				SELECT ind_kll_id, ind_all_id, ind_timestamp
+				FROM kb3_inv_detail
+				WHERE ind_kll_id >= ".config::get('012_6_status')."
+					AND ind_kll_id < ".(config::get('012_6_status') + $step)."
+				GROUP BY ind_kll_id, ind_all_id");
+			if($max < config::get('012_6_status') + $step)
+			{
+				config::del('012_6_status');
+				config::set('012updatestatus',6);
+				echo $header;
+				echo "12. kb3_inv_all filled.";
+				echo $footer;
+				die();
+			}
+			else
+			{
+				config::set('012_6_status', config::get('012_6_status') + $step);
+				echo $header;
+				echo "12. kb3_inv_all rows ".(config::get('012_6_status') - $step);
+				echo " - ".config::get('012_6_status')." added.";
+				echo $footer;
+				die();
+			}
 		}
 		if(config::get('012updatestatus') <7)
 		{
+			$step = 10000;
 			// add times to kb3_inv_detail.
-			$qry->execute("INSERT IGNORE INTO kb3_inv_crp SELECT ind_kll_id, ind_crp_id, ind_timestamp FROM kb3_inv_detail GROUP BY ind_kll_id, ind_crp_id");
-			config::set('012updatestatus',7);
-			echo $header;
-			echo "12. kb3_inv_crp filled.";
-			echo $footer;
-			die();
+			$qry->execute("SELECT COUNT(*) as cnt FROM kb3_kills");
+			$result = $qry->getRow();
+			$max = $result['cnt'];
+			if(!config::get('012_7_status')) config::set('012_7_status','0');
+
+			$qry->execute("INSERT IGNORE INTO kb3_inv_crp
+				SELECT ind_kll_id, ind_crp_id, ind_timestamp
+				FROM kb3_inv_detail
+				WHERE ind_kll_id >= ".config::get('012_7_status')."
+					AND ind_kll_id < ".(config::get('012_7_status') + $step)."
+				GROUP BY ind_kll_id, ind_crp_id");
+			if($max < config::get('012_7_status') + $step)
+			{
+				config::del('012_7_status');
+				config::set('012updatestatus',7);
+				echo $header;
+				echo "12. kb3_inv_crp filled.";
+				echo $footer;
+				die();
+			}
+			else
+			{
+				config::set('012_7_status', config::get('012_7_status') + $step);
+				echo $header;
+				echo "12. kb3_inv_crp rows ".(config::get('012_7_status') - $step);
+				echo " - ".config::get('012_7_status')." added.";
+				echo $footer;
+				die();
+			}
 		}
 		if(config::get('012updatestatus') <8)
 		{

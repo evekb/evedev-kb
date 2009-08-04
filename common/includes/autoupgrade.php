@@ -17,7 +17,7 @@ function updateDB(){
 		// Check db is installed.
 		if(config::get('cfg_kbhost'))
 		{
-			header('Location: '.KB_HOST."/upgrade.php");
+			header('Location: '.KB_HOST."/upgrade/");
 			die;
 		}
 	}

@@ -13,10 +13,6 @@
     <version>1.1</version>
   </table>
   <table>
-    <name>kb3_banned_mails</name>
-    <version>1.1</version>
-  </table>
-  <table>
     <name>kb3_comments</name>
     <version>1.1</version>
   </table>
@@ -73,15 +69,7 @@
     <version>1.1</version>
   </table>
   <table>
-    <name>kb3_inv_plt</name>
-    <version>1.1</version>
-  </table>
-  <table>
     <name>kb3_invtypes</name>
-    <version>1.1</version>
-  </table>
-  <table>
-    <name>kb3_ip_bans</name>
     <version>1.1</version>
   </table>
   <table>
