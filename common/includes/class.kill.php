@@ -928,13 +928,15 @@ class Kill
 	{
 		$this->killpoints_ = $killpoints;
 	}
-
+	//! Set the ISK loss value for this kill.
 	function setISKLoss($isk)
 	{
 		$this->iskloss_ = $isk;
 	}
+	//! Calculate the current cost of a ship loss excluding blueprints.
 
-	function calculateISKLoss()
+	//! \param $update set true to update all-time summaries.
+	function calculateISKLoss($update = true)
 	{
 		$value = 0;
 		foreach($this->destroyeditems_ as $itd)
@@ -951,7 +953,7 @@ class Kill
 			}
 		}
 		$value += $this->victimship_->getPrice();
-		if($this->iskloss_) summaryCache::update($this, $value - $this->iskloss_);
+		if($this->iskloss_ && $update) summaryCache::update($this, $value - $this->iskloss_);
 		$this->iskloss_ = $value;
 		return $value;
 	}
@@ -988,6 +990,9 @@ class Kill
 			var_dump($this->solarsystemname_);
 			return 0;
 		}
+		// If value isn't already calculated then do so now. Don't update the
+		// stored value since at this point it does not exist.
+		if(!is_numeric($this->iskloss_)) $this->calculateISKLoss(false);
 
 		$dupe = $this->getDupe(true);
 		if ($dupe == 0)
@@ -1043,7 +1048,7 @@ class Kill
             ".$this->dmgtaken.", ";
 		if($this->externalid_) $sql .= $this->externalid_.", ";
 		else $sql .= "NULL, ";
-        $sql .= $this->calculateISKLoss()." )";
+        $sql .= $this->getISKLoss()." )";
 		$qry->autocommit(false);
 		if(!$qry->execute($sql))
 		{
@@ -1208,9 +1213,8 @@ class Kill
 
 		$qry->execute("delete from kb3_kills where kll_id = ".$this->id_);
 		$qry->execute("delete from kb3_inv_detail where ind_kll_id = ".$this->id_);
-//		$qry->execute("delete from kb3_inv_all where ina_kll_id = ".$this->id_);
-//		$qry->execute("delete from kb3_inv_crp where inc_kll_id = ".$this->id_);
-//		$qry->execute("delete from kb3_inv_plt where inp_kll_id = ".$this->id_);
+		$qry->execute("delete from kb3_inv_all where ina_kll_id = ".$this->id_);
+		$qry->execute("delete from kb3_inv_crp where inc_kll_id = ".$this->id_);
 		$qry->execute("delete from kb3_items_destroyed where itd_kll_id = ".$this->id_);
 		$qry->execute("delete from kb3_items_dropped where itd_kll_id = ".$this->id_);
 		// Don't remove comments when readding a kill
