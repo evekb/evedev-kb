@@ -104,9 +104,10 @@ function updateDB()
 	killCache();
 	chdir('upgrade');
 	$dir = opendir('.');
+	$updatedirs = array();
 	while ($file = readdir($dir))
     {
-		$updatedirs = array();
+		
         if ($file[0] == '.' || !is_dir($file))
         {
             continue;
@@ -116,7 +117,7 @@ function updateDB()
 	asort($updatedirs);
 	foreach($updatedirs as $curdir)
 	{
-		if(!preg_match('/[0-9]+/')) continue;
+		if(!preg_match("/[0-9]+/",$curdir)) continue;
 		if(CURRENT_DB_UPDATE >= $curdir) continue;
 		require_once($curdir.'/update.php');
 		$func = 'update'.$curdir;

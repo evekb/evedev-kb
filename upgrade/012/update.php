@@ -7,7 +7,6 @@ function update012()
 	//Checking if this Update already done
 	if (CURRENT_DB_UPDATE < "012" )
 	{
-
 		if(is_null(config::get('012updatestatus'))) config::set('012updatestatus',0);
 		$qry = new DBQuery(true);
 
@@ -217,6 +216,16 @@ function update012()
 			config::set('012updatestatus',9);
 			echo $header;
 			echo "12. kb3_comments ip field added.";
+			echo $footer;
+			die();
+		}
+		if(config::get('012updatestatus') <10)
+		{
+			config::set('theme_name', 'default');
+			config::set('style_name', 'default');
+			config::set('012updatestatus',10);
+			echo $header;
+			echo "12. theme set to default.";
 			echo $footer;
 			die();
 		}
