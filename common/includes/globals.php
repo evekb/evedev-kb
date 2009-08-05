@@ -14,7 +14,7 @@ define('LASTEST_DB_UPDATE',"012");
 
 // current version: major.minor.sub
 // unpair numbers for minor = development version
-define('KB_VERSION', '2.0.1');
+define('KB_VERSION', '2.1 alpha');
 define('KB_RELEASE', '(Apocrypha)');
 
 // set the running-server for id-syncs here

@@ -10,7 +10,7 @@
  * Requirements:
 
  * - Webserver (apache)
- * - PHP 4.0.9+
+ * - PHP 5.0.0+
  * - Mysql 4.1 +
  * - GD 2 or higher
  */

@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v2.0.0
+Eve Development Network Killboard v2.1 alpha
 -------------------------------------------
 
 Incorporates changes and additional mods from Alvar's EDK Full Package v150.13Apoc.33.2622.0
@@ -94,7 +94,7 @@ of this killboard, sign up for the EVE-Dev forums!
 // REQUIREMENTS            
 -------------------------------------------
 - Webserver (apache)
-- PHP 4.0.9+
+- PHP 5.0.0+
 - Mysql 4.10.+
 - GD 2 or higher
 
