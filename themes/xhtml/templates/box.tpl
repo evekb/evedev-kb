@@ -13,9 +13,9 @@
 			{elseif $i.type == "link"}
 				<div class="menu-item">
                 {if isset($icon)}
-                    <img src="{$icon}" border="0" alt="menu item">
+                    <img src="{$icon}" border="0" alt="menu item" />
                 {/if}
-                &nbsp;<a href="{$i.url}">{$i.name}</a><br/>
+                &nbsp;<a href="{$i.url}">{$i.name}</a><br />
 				</div>
 			{elseif $i.type == "img"}
                 <img src="{$i.name}" border="0" alt="">
@@ -28,5 +28,5 @@
         </td>
 	</tr>
 </table>
-<br>
+<br />
 <!-- /box.tpl -->

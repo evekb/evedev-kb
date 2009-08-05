@@ -1,11 +1,12 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" dir="ltr">
 <head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>{$kb_title}</title>
-<link rel="stylesheet" type="text/css" href="{$theme_url}/{$style}.css">
+<link rel="stylesheet" type="text/css" href="{$theme_url}/{$style}.css" />
 {$page_headerlines}
-<script type="text/javascript" language=javascript src="{$kb_host}/themes/generic.js"></script>
+<script type="text/javascript" src="{$kb_host}/themes/generic.js"></script>
 <!--[if lt IE 7]>
 <script defer type="text/javascript" src="{$kb_host}/themes/generic.js"></script>
 <![endif]-->
@@ -27,9 +28,9 @@
 {else}
 {if $banner_link}
 <a href="{$banner_link}">
-<img src="{$kb_host}/banner/{$banner}" border="0" alt="Banner" width = "950" height="125"></a>
+<img src="{$kb_host}/banner/{$banner}" border="0" alt="Banner" width = "950" height="125" /></a>
 {else}
-<a href="?a=home"><img src="{$kb_host}/banner/{$banner}" border="0" alt="Banner" width = "950" height="125"></a>
+<a href="?a=home"><img src="{$kb_host}/banner/{$banner}" border="0" alt="Banner" width = "950" height="125" /></a>
 {/if}
 {/if}
 </div>

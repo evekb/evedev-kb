@@ -69,5 +69,5 @@ onmouseover="this.className='kb-table-row-hover';" onClick="window.location.href
     {/section}
 </table></div>
 {sectionelse}
-<p>No data.
+<p>No data.</p>
 {/section} <!-- /killlistable.tpl -->
