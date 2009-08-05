@@ -17,7 +17,8 @@ $contributor = array('JaredC01',
 	'bunjiboys',
 	'Karbowiak',
 	'EDG',
-	'Duncan - Shailo Koljas');
+	'Duncan - Shailo Koljas',
+	'mastergamer');
 sort($contributor);
 $smarty->assign_by_ref('developer', $developer);
 $smarty->assign('contributor', $contributor);
@@ -71,7 +72,7 @@ while ($row = $qry->getRow())
 	$class['valind']=$shipclass->getValueIndicator();
 	$shipcl[]=$class;
 }
-number_format($shipclass->getPoints(),0,',','.')."</td><td align=center><img class=ship src=\"" . $shipclass->getValueIndicator() . "\" border=\"0\"></td></tr>";
+number_format($shipclass->getPoints(),0,',','.')."</td><td align='center'><img class='ship' alt='' src=\"" . $shipclass->getValueIndicator() . "\" border=\"0\" /></td></tr>";
 $smarty->assign('shipclass', $shipcl);
 
 function getVictimShipValueIndicator($value)
@@ -102,7 +103,7 @@ if (config::get('ship_values'))
                  inner join kb3_ships shp on (kbs.shp_id = shp.shp_id)
                  inner join kb3_ship_classes scl on (shp.shp_class = scl.scl_id)
                  order by shp.shp_name asc';
-	$html .= "<br/>Custom shipvalues which override the value from shipclasses:<br><br>";
+	$html .= "<br />Custom shipvalues which override the value from shipclasses:<br /><br />";
 	$qry = new DBQuery();
 	$qry->execute($sql);
 	$shipval = array();

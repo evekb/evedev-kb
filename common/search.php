@@ -1,13 +1,13 @@
 <?php
 $page = new Page('Search');
 
-$html .= "<form id=search action=\"?a=search\" method=post>";
-$html .= "<table class=kb-subtable><tr>";
+$html .= "<form id='search' action=\"?a=search\" method='post'>";
+$html .= "<table class='kb-subtable'><tr>";
 $html .= "<td>Type:</td><td>Text: (3 letters minimum)</td>";
 $html .= "</tr><tr>";
-$html .= "<td><select id=searchtype name=searchtype><option value=pilot>Pilot</option><option value=corp>Corporation</option><option value=alliance>Alliance</option><option value=system>System</option><option value=item>Items</option></select></td>";
-$html .= "<td><input id=searchphrase name=searchphrase type=text size=30/></td>";
-$html .= "<td><input type=submit name=submit value=Search></td>";
+$html .= "<td><select id='searchtype' name='searchtype'><option value='pilot'>Pilot</option><option value='corp'>Corporation</option><option value='alliance'>Alliance</option><option value='system'>System</option><option value='item'>Items</option></select></td>";
+$html .= "<td><input id='searchphrase' name='searchphrase' type='text' size='30' /></td>";
+$html .= "<td><input type='submit' name='submit' value='Search' /></td>";
 $html .= "</tr></table>";
 $html .= "</form>";
 $html .= "<div>Searches for all names beginning with the search phrase. To search for the phrase anywhere in the name use *yourquery.</div>";
@@ -59,12 +59,12 @@ if ($searchphrase != "" && strlen($searchphrase) >= 3)
         die ($qry->getErrorMsg());
     }
 
-    $html .= "<div class=block-header>Search results</div>";
+    $html .= "<div class='block-header'>Search results</div>";
 
     if ($qry->recordCount() > 0)
     {
-        $html .= "<table class=kb-table width=450 cellspacing=1>";
-        $html .= "<tr class=kb-table-header>".$header."</tr>";
+        $html .= "<table class='kb-table' width='450' cellspacing='1'>";
+        $html .= "<tr class='kb-table-header'>".$header."</tr>";
     }
     else
     {
@@ -73,7 +73,7 @@ if ($searchphrase != "" && strlen($searchphrase) >= 3)
 
     while ($row = $qry->getRow())
     {
-        $html .= "<tr class=kb-table-row-even>";
+        $html .= "<tr class='kb-table-row-even'>";
         switch ($_REQUEST['searchtype'])
         {
             case "pilot":
