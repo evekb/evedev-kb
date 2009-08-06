@@ -19,7 +19,7 @@ class BarGraph
             $width = $this->width_ / ($this->max_ / $this->value_);
         else
             $width = 0;
-        $html = "<div class=".$this->class_." style=\"width: ".$width."px;\">".$this->text_."</div>";
+        $html = "<div class=\"".$this->class_."\" style=\"width: ".$width."px;\">".$this->text_."</div>";
         return $html;
     }
 

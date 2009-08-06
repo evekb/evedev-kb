@@ -89,10 +89,10 @@ $page->setContent($html);
 $menubox = new box("Menu");
 $menubox->setIcon("menu-item.gif");
 $menubox->addOption("caption", "Navigation");
-$menubox->addOption("link", "Previous week ", "?a=kills&w=".$pweek."&y=".$pyear);
+$menubox->addOption("link", "Previous week ", "?a=kills&amp;w=".$pweek."&amp;y=".$pyear);
 if ($week != kbdate("W"))
 {
-    $menubox->addOption('link', "Next week", "?a=kills&w=".$nweek."&y=".$nyear);
+    $menubox->addOption('link', "Next week", "?a=kills&amp;w=".$nweek."&amp;y=".$nyear);
 }
 $page->addContext($menubox->generate());
 

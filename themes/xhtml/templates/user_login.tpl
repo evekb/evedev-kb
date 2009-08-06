@@ -1,3 +1,4 @@
+<!-- user_login.tpl -->
 <form method="post" action="?a=login">
 {if $error}
 {include file=error.tpl}
@@ -10,11 +11,12 @@
 </tr>-->
 <tr>
   <td width="160"><b>Password:</b></td>
-  <td><input type="password" name="usrpass" maxlength="32"></td>
+  <td><input type="password" name="usrpass" maxlength="32" /></td>
 </tr>
 <tr>
   <td width="160">&nbsp;</td>
-  <td><input type="submit" name="submit" value="Login"></td>
+  <td><input type="submit" name="submit" value="Login" /></td>
 </tr>
 </table>
 </form>
+<!-- /user_login.tpl -->
