@@ -3,7 +3,7 @@
 options::cat('Appearance', 'Global Options', 'Global Look');
 options::fadd('Banner', 'style_banner', 'select', array('admin_appearance', 'createSelectBanner'));
 options::fadd('Style', 'style_name', 'select', array('admin_appearance', 'createSelectStyle'));
-options::fadd('Theme', 'theme_name', 'select', array('admin_appearance', 'createSelectTheme'));
+options::fadd('Theme', 'theme_name', 'select', array('admin_appearance', 'createSelectTheme'), array('admin_appearance', 'changeTheme'));
 
 options::cat('Appearance', 'Global Options', 'Global Options');
 options::fadd('Display standings', 'show_standings', 'checkbox');
@@ -259,5 +259,35 @@ class admin_appearance
         }
         return $options;
     }
+	function changeTheme()
+	{
+		config::set('style_name', config::get('theme_name'));
+		admin_appearance::removeOld(0, 'cache/templates_c', false);
+	}
+	function removeOld($hours, $dir, $recurse = false)
+	{
+		if(!session::isAdmin()) return false;
+		if(strpos($dir, '.') !== false) return false;
+		//$dir = KB_CACHEDIR.'/'.$dir;
+		if(!is_dir($dir)) return false;
+		if(substr($dir,-1) != '/') $dir = $dir.'/';
+		$seconds = $hours*60*60;
+		$files = scandir($dir);
+
+		foreach ($files as $num => $fname)
+		{
+			if (file_exists("{$dir}{$fname}") && !is_dir("{$dir}{$fname}") && substr($fname,0,1) != "." && ((time() - filemtime("{$dir}{$fname}")) > $seconds))
+			{
+				$mod_time = filemtime("{$dir}{$fname}");
+				if (unlink("{$dir}{$fname}")) $del = $del + 1;
+			}
+			if ($recurse && file_exists("{$dir}{$fname}") && is_dir("{$dir}{$fname}")
+				 && substr($fname,0,1) != "." && $fname !== ".." )
+			{
+				$del = $del + admin_acache::remove_old($hours, $dir.$fname."/");
+			}
+		}
+		return $del;
+	}
 }
 ?>

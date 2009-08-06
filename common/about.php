@@ -103,7 +103,6 @@ if (config::get('ship_values'))
                  inner join kb3_ships shp on (kbs.shp_id = shp.shp_id)
                  inner join kb3_ship_classes scl on (shp.shp_class = scl.scl_id)
                  order by shp.shp_name asc';
-	$html .= "<br />Custom shipvalues which override the value from shipclasses:<br /><br />";
 	$qry = new DBQuery();
 	$qry->execute($sql);
 	$shipval = array();

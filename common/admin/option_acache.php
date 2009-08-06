@@ -26,10 +26,10 @@ options::fadd('Cached Killmails', 'none', 'custom', array('admin_acache', 'getKi
 options::cat('Advanced', 'Cache', 'Reinforce Control');
 options::fadd('Enable Reinforced Management', 'auto_reinforced', 'checkbox', '', array('admin_acache', 'setNotReinforced'));
 options::fadd('Current Load', 'none', 'custom', array('admin_acache', 'showLoad'));
-options::fadd('Reinforcement threshold', 'reinforced_threshold', 'edit:size:4');
-options::fadd('Disabling threshold', 'reinforced_disable_threshold', 'edit:size:4');
-options::fadd('Reinforcement chance (1/x)', 'reinforced_prob', 'edit:size:4');
-options::fadd('Reinforcement end chance (1/x)', 'reinforced_rf_prob', 'edit:size:4');
+options::fadd('Reinforcement threshold', 'reinforced_threshold', 'edit:size:4', '', '', 'load above this threshold triggers reinforced mode');
+options::fadd('Disabling threshold', 'reinforced_disable_threshold', 'edit:size:4', '', '', 'load below this threshold exits reinforced mode');
+options::fadd('Reinforcement chance', 'reinforced_prob', 'edit:size:4', '', '', '1/x chance each page view');
+options::fadd('Reinforcement end chance', 'reinforced_rf_prob', 'edit:size:4','','','1/x chance each page view');
 
 options::cat('Advanced', 'Cache', 'Clear Caches');
 options::fadd('Page Cache', 'none', 'custom', array('admin_acache', 'optionClearPage'), array('admin_acache', 'clearCaches'));
