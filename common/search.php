@@ -25,7 +25,8 @@ if ($searchphrase != "" && strlen($searchphrase) >= 3)
                  where plt.plt_name  like '".$searchphrase."%'
                    and plt.plt_crp_id = crp.crp_id
                  order by plt.plt_name";
-            $header = "<td>Pilot</td><td>Corporation</td>";
+			$smarty->assign('result_header', 'Pilot');
+			$smarty->assign('result_header_group', 'Corporation');
             break;
         case "corp":
             $sql = "select crp.crp_id, crp.crp_name, ali.all_name
@@ -33,21 +34,24 @@ if ($searchphrase != "" && strlen($searchphrase) >= 3)
                  where lower( crp.crp_name ) like lower( '".$searchphrase."%' )
                    and crp.crp_all_id = ali.all_id
                  order by crp.crp_name";
-            $header = "<td>Corporation</td><td>Alliance</td>";
+			$smarty->assign('result_header', 'Corporation');
+			$smarty->assign('result_header_group', 'Alliance');
             break;
         case "alliance":
             $sql = "select ali.all_id, ali.all_name
                   from kb3_alliances ali
                  where lower( ali.all_name ) like lower( '%".$searchphrase."%' )
                  order by ali.all_name";
-            $header = "<td>Alliance</td><td></td>";
+			$smarty->assign('result_header', 'Alliance');
+			$smarty->assign('result_header_group', '');
             break;
         case "system":
             $sql = "select sys.sys_id, sys.sys_name
                   from kb3_systems sys
                  where lower( sys.sys_name ) like lower( '%".$searchphrase."%' )
                  order by sys.sys_name";
-            $header = "<td>System</td><td></td>";
+			$smarty->assign('result_header', 'System');
+			$smarty->assign('result_header_group', '');
             break;
         case "item":
             $sql = "select typeID, typeName from kb3_invtypes where typeName like ('%".$searchphrase."%')";
@@ -58,58 +62,60 @@ if ($searchphrase != "" && strlen($searchphrase) >= 3)
     {
         die ($qry->getErrorMsg());
     }
-
-    $html .= "<div class='block-header'>Search results</div>";
-
-    if ($qry->recordCount() > 0)
+	$smarty->assign('searched', 1);
+	if ($qry->recordCount() == 0)
     {
-        $html .= "<table class='kb-table' width='450' cellspacing='1'>";
-        $html .= "<tr class='kb-table-header'>".$header."</tr>";
+        $smarty->assign('results', 0);
     }
     else
     {
-        $html .= "No results.";
-    }
-
-    while ($row = $qry->getRow())
-    {
-        $html .= "<tr class='kb-table-row-even'>";
-        switch ($_REQUEST['searchtype'])
-        {
-            case "pilot":
-                $link = "?a=pilot_detail&plt_id=".$row['plt_id'];
-                $html .= "<td><a href=\"$link\">".$row['plt_name']."</a></td><td>".$row['crp_name']."</td>";
-                break;
-            case "corp":
-                $link = "?a=corp_detail&crp_id=".$row['crp_id'];
-                $html .= "<td><a href=\"$link\">".$row['crp_name']."</a></td><td>".$row['all_name']."</td>";
-                break;
-            case "alliance":
-                $link = "?a=alliance_detail&all_id=".$row['all_id'];
-                $html .= "<td><a href=\"$link\">".$row['all_name']."</a></td><td></td>";
-                break;
-            case "system":
-                $link = "?a=system_detail&sys_id=".$row['sys_id'];
-                $html .= "<td><a href=\"$link\">".$row['sys_name']."</a></td><td></td>";
-                break;
-            case 'item':
-                $link =  "?a=invtype&id=".$row['typeID'];
-                $html .= "<td><a href=\"$link\">".$row['typeName']."</a></td><td></td>";
-                break;
-        }
-        $html .= "</tr>";
-        if ($qry->recordCount() == 1)
-        {
-            // if there is only one entry we redirect the user directly
-            header("Location: $link");
-        }
-    }
-    if ($qry->recordCount() > 0)
-    {
-        $html .= "</table>";
-    }
+		$results = array();
+		while ($row = $qry->getRow())
+		{
+			$result = array();
+			switch ($_REQUEST['searchtype'])
+			{
+				case "pilot":
+					$result['link'] = "?a=pilot_detail&plt_id=".$row['plt_id'];
+					$result['name'] = $row['plt_name'];
+					$result['type'] = $row['crp_name'];
+					$results[] = $result;
+					break;
+				case "corp":
+					$result['link'] = "?a=corp_detail&crp_id=".$row['crp_id'];
+					$result['name'] = $row['crp_name'];
+					$result['type'] = $row['all_name'];
+					$results[] = $result;
+					break;
+				case "alliance":
+					$result['link'] = "?a=alliance_detail&all_id=".$row['all_id'];
+					$result['name'] = $row['all_name'];
+					$result['type'] = '';
+					$results[] = $result;
+					break;
+				case "system":
+					$result['link'] = "?a=system_detail&sys_id=".$row['sys_id'];
+					$result['name'] = $row['sys_name'];
+					$result['type'] = '';
+					$results[] = $result;
+					break;
+				case 'item':
+					$result['link'] = "?a=invtype&id=".$row['typeID'];
+					$result['name'] = $row['typeName'];
+					$result['type'] = '';
+					$results[] = $result;
+					break;
+			}
+			if ($qry->recordCount() == 1)
+			{
+				// if there is only one entry we redirect the user
+				header("Location: http://".$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME']."/".$result['link']);
+				die;
+			}
+		}
+		$smarty->assign_by_ref('results', $results);
+	}
 }
-
-$page->setContent($html);
+$page->setContent($smarty->fetch(get_tpl('search')));
 $page->generate();
 ?>
