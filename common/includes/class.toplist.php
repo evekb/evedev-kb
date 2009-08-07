@@ -274,6 +274,8 @@ class TopList
 			if($qstartdate) $this->sql_ .= " AND ind.ind_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
 			if($qenddate) $this->sql_ .= " AND ind.ind_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
 		}
+		else if (!($this->vic_plt_ || $this->vic_crp_ || $this->vic_all_))
+			$this->sql_ .= $this->getDateFilter();
 /*
 		if($this->inv_plt_)
 		{

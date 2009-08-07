@@ -110,7 +110,7 @@ function ec_update_value($item_id) {
     verify_sync_table();
     // The destroyed items etc feed in the -internal- killboard item ID.
     // EVE Central needs the external ID if we have it.
-    $query->execute("SELECT typeID FROM kb3_invTypes WHERE typeID=$item_id");
+    $query->execute("SELECT typeID FROM kb3_invtypes WHERE typeID=$item_id");
     $data = $query->getRow();
     $e_item_id = $data['typeID'];
     // Don't try if the item id isn't an integer or it's 0.
@@ -121,11 +121,11 @@ function ec_update_value($item_id) {
 
     $value = ec_get_value($e_item_id);
     if (-99 != $value) {
-            $query->execute("update kb3_item_price set price='$value' WHERE typeID=$item_id");
-            return true;
+		$query->execute("update kb3_item_price set price='$value' WHERE typeID=$item_id");
+		return true;
     } else {
             file_put_contents(KB_CACHEDIR.'/evecentral/activity.log', "Failed to find it.\n", FILE_APPEND);
-    }
+	}
     return false;
 }
 
@@ -133,7 +133,7 @@ class XMLParser {
     private $allKinds = 0;
     private $data = array();
     private $tagName = "";
-    private $singluar = "";
+    private $singular = "";
     private $parser = null;
 
     function preparseXML() {
@@ -153,28 +153,28 @@ class XMLParser {
             case "BUY": { $this->allKinds = 2; break; }
             case "SELL": { $this->allKinds = 3; break; }
         }
-        $this->singluar = null;
+        $this->singular = null;
         $this->tagName = $tag;
     }
 
     /*The space between tags is interpreted here.*/
     function cdata($parser, $cdata) {
-        $this->singluar .= $cdata;
+        $this->singular .= $cdata;
     }
 
     /*Runs through the closing XML tags  */
     function tag_close($parser, $tag) {
         switch($this->allKinds) {
             case 2: {
-                if($tag == "AVG") {
-                    $this->data['BUY_AVG'] = $this->singluar;
+                if($tag == "MEDIAN") {
+                    $this->data['BUY_MED'] = $this->singular;
                 }
                 break;
             }
             case 3: {
-                if($tag == "AVG") {
-                    $this->data['SELL_AVG'] = $this->singluar;
-                    $this->data['WEIGHTED'] = round(((($this->data['BUY_AVG'] * 1.6) + ($this->data['SELL_AVG'] + 0.8))) / 2, 2);
+                if($tag == "MEDIAN") {
+                    $this->data['SELL_MED'] = $this->singular;
+                    $this->data['WEIGHTED'] = round(((($this->data['BUY_MED'] * 1.4) + ($this->data['SELL_MED'] * 0.6))) / 2, 2);
                 }
                 break;
             }

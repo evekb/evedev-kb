@@ -28,7 +28,7 @@
 <tr class="{cycle advance=false name=ccl}" onmouseout="this.className='{cycle name=ccl}';" style="height: 34px; cursor: pointer;"
 onmouseover="this.className='kb-table-row-hover';" onClick="window.location.href='?a=kill_detail&amp;kll_id={$k.id}';">
 {/if}
-        <td style="width: 32px" align="center"><img src="{$k.victimshipimage}" style="border-width: 0; width: 32px; height: 32;" alt=""></td>
+        <td style="width: 32px" align="center"><img src="{$k.victimshipimage}" style="border-width: 0; width:32px; height: 32px;" alt=""></td>
         <td style="height: 34px; width: 180px; vertical-align: middle;"><div class="kb-shiptype"><b>{$k.victimshipname|truncate:21:"...":true}</b><br>{$k.victimshipclass|truncate:24:"...":true}</div><div class="kb-shipicon"><img src="{$k.victimshipindicator}" style="border-width: 0px;" alt=""></div></td>
         {if $config->get('killlist_alogo')}
             {if $k.allianceexists}

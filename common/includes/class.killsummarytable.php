@@ -223,27 +223,39 @@ class KillSummaryTable
 		$sql .= ' INNER JOIN kb3_ship_classes scl ON ( scl.scl_id = shp.shp_class )';
 
 		
-		if ($this->inv_plt_)
-		{
-			$sql .= " INNER JOIN kb3_inv_detail inv ON (inv.ind_kll_id = kll.kll_id)
-					WHERE inv.ind_plt_id in (".implode(',', $this->inv_plt_)." ) ";
-				if($startdate) $sql .=" AND inv.ind_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
-				if($enddate) $sql .=" AND inv.ind_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
-		}
-		elseif ($this->inv_crp_)
-		{
-				$sql .= " INNER JOIN kb3_inv_crp inv ON (inv.inc_kll_id = kll.kll_id)
-					WHERE inv.inc_crp_id in (".implode(',', $this->inv_crp_)." ) ";
-				if($startdate) $sql .=" AND inv.inc_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
-				if($enddate) $sql .=" AND inv.inc_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
-		}
-		elseif ($this->inv_all_)
+		if ($this->inv_all_)
 		{
 			$sql .= " INNER JOIN kb3_inv_all inv ON (inv.ina_kll_id = kll.kll_id)
 				WHERE inv.ina_all_id in (".implode(',', $this->inv_all_)." ) ";
 			if($startdate) $sql .=" AND inv.ina_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
 			if($enddate) $sql .=" AND inv.ina_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
 		}
+		elseif ($this->inv_crp_)
+		{
+			$sql .= " INNER JOIN kb3_inv_crp inv ON (inv.inc_kll_id = kll.kll_id)
+				WHERE inv.inc_crp_id in (".implode(',', $this->inv_crp_)." ) ";
+			if($startdate) $sql .=" AND inv.inc_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+			if($enddate) $sql .=" AND inv.inc_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+		}
+		elseif ($this->inv_plt_)
+		{
+			$sql .= " INNER JOIN kb3_inv_detail inv ON (inv.ind_kll_id = kll.kll_id)
+					WHERE inv.ind_plt_id in (".implode(',', $this->inv_plt_)." ) ";
+			if($startdate) $sql .=" AND inv.ind_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+			if($enddate) $sql .=" AND inv.ind_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+		}
+		else
+		{
+			$sql .= " INNER JOIN kb3_inv_detail inv ON (inv.ind_kll_id = kll.kll_id) ";
+			$sqlop = " WHERE ";
+			if($startdate)
+			{
+				$sql .= $sqlop." inv.ind_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+				$sqlop = " AND ";
+			}
+			if($enddate) $sql .= $sqlop." inv.ind_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+		}
+
 
 
 		$sql .= 'GROUP BY scl_class order by scl_class';
