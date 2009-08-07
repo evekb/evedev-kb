@@ -18,7 +18,7 @@
                 &nbsp;<a href="{$i.url}">{$i.name}</a><br />
 				</div>
 			{elseif $i.type == "img"}
-                <img src="{$i.name}" border="0" alt="">
+                <img src="{$i.name}" border="0" alt="" />
             {elseif $i.type == "points"}
 				<div class="kill-points">{$i.name}</div>
 			{/if}
