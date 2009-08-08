@@ -83,7 +83,17 @@ class KillListTable
             if (config::get('killlist_alogo'))
             {
                 $kll['victimallianceicon'] = preg_replace('/[^a-zA-Z0-9]/', '', $kll['victimalliancename']);
-                $kll['allianceexists'] = file_exists('img/alliances/'.$kll['victimallianceicon'].'.png');
+				if(file_exists('cache/corps/all'.$kll['victimallianceicon'].'_32.png'))
+				{
+					$kll['allianceexists'] = true;
+					$kll['victimallianceicon'] = 'cache/corps/all'.$kll['victimallianceicon'].'_32.png';
+				}
+				elseif(file_exists('img/alliances/'.$kll['victimallianceicon'].'.png'))
+				{
+					$kll['allianceexists'] = true;
+					$kll['victimallianceicon'] = '?a=thumb&type=alliance&id='.$kll['victimallianceicon'];
+				}
+				else $kll['allianceexists'] = false;
             }
 
             if (isset($kill->_tag))

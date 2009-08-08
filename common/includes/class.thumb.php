@@ -215,7 +215,7 @@ class thumb
         {
             $this->_id = 0;
         }
-        $img = imagecreatefromjpeg('img/alliances/'.$this->_id.'.png');
+        $img = imagecreatefrompng('img/alliances/'.$this->_id.'.png');
         if ($img)
         {
             $newimg = imagecreatetruecolor($this->_size, $this->_size);

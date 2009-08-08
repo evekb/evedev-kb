@@ -32,9 +32,9 @@ onmouseover="this.className='kb-table-row-hover';" onClick="window.location.href
         <td style="height: 34px; width: 180px; vertical-align: middle;"><div class="kb-shiptype"><b>{$k.victimshipname|truncate:21:"...":true}</b><br>{$k.victimshipclass|truncate:24:"...":true}</div><div class="kb-shipicon"><img src="{$k.victimshipindicator}" style="border-width: 0px;" alt=""></div></td>
         {if $config->get('killlist_alogo')}
             {if $k.allianceexists}
-            <td style="width: 32px" align="center"><img src="{$img_url}/alliances/{$k.victimallianceicon}.png" style="border-width: 0px; width: 32px; height: 32px;" title="{$k.victimalliancename}" alt="{$k.victimalliancename}"></td>
+            <td style="width: 32px" align="center"><img src="{$k.victimallianceicon}" style="border-width: 0px; width: 32px; height: 32px;" title="{$k.victimalliancename}" alt="{$k.victimalliancename}"></td>
             {elseif $k.victimalliancename != "None"}
-            <td style="width: 32px" align="center"><img src="{$img_url}/alliances/default.gif" style="border-width: 0px; width: 32px; height:32px;" title="{$k.victimalliancename}" alt="{$k.victimalliancename}"></td>
+            <td style="width: 32px" align="center"><img src="{$img_url}/alliances/default_32.png" style="border-width: 0px; width: 32px; height:32px;" title="{$k.victimalliancename}" alt="{$k.victimalliancename}"></td>
             {else}
             <td style="width: 32px" align="center">&nbsp;</td>
             {/if}
