@@ -389,7 +389,7 @@ class KillSummaryTable
 			$qrystring = preg_replace("/&/", "&amp;", $qrystring);
 			if ($this->view_)
 			{
-				$qrystring .= '&view='.$this->view_;
+				$qrystring .= '&amp;view='.$this->view_;
 			}
 			$v['qry'] = $qrystring;
 			$v['kisk'] = round($v['kills_isk']/1000000, 2);

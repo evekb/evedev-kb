@@ -146,11 +146,11 @@ switch ($_GET['view'])
 $menubox = new box("Menu");
 $menubox->setIcon("menu-item.gif");
 $menubox->addOption("caption","Overview");
-$menubox->addOption("link","Target overview", "?a=cc_detail&ctr_id=".$_GET['ctr_id']);
-$menubox->addOption("caption","Kills & losses");
-$menubox->addOption("link","Recent activity", "?a=cc_detail&ctr_id=".$_GET['ctr_id']."&view=recent_activity");
-$menubox->addOption("link","All kills", "?a=cc_detail&ctr_id=".$_GET['ctr_id']."&view=kills");
-$menubox->addOption("link","All losses", "?a=cc_detail&ctr_id=".$_GET['ctr_id']."&view=losses");
+$menubox->addOption("link","Target overview", "?a=cc_detail&amp;ctr_id=".$_GET['ctr_id']);
+$menubox->addOption("caption","Kills &amp; losses");
+$menubox->addOption("link","Recent activity", "?a=cc_detail&amp;ctr_id=".$_GET['ctr_id']."&amp;view=recent_activity");
+$menubox->addOption("link","All kills", "?a=cc_detail&amp;ctr_id=".$_GET['ctr_id']."&amp;view=kills");
+$menubox->addOption("link","All losses", "?a=cc_detail&amp;ctr_id=".$_GET['ctr_id']."&amp;view=losses");
 
 $page->addContext($menubox->generate());
 

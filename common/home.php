@@ -111,7 +111,7 @@ class Home
 		// Display campaigns, if any.
 		if ($this->killboard->hasCampaigns(true))
 		{
-			$html .= "<div class=kb-campaigns-header>Active campaigns</div>";
+			$html .= "<div class=\"kb-campaigns-header\">Active campaigns</div>";
 			$list = new ContractList();
 			$list->setActive("yes");
 			$list->setCampaigns(true);
@@ -126,7 +126,7 @@ class Home
 		// Display contracts, if any.
 		if ($this->killboard->hasContracts(true))
 		{
-			$html .= "<div class=kb-campaigns-header>Active contracts</div>";
+			$html .= "<div class=\"kb-campaigns-header\">Active contracts</div>";
 			$list = new ContractList();
 			$list->setActive("yes");
 			$list->setCampaigns(false);

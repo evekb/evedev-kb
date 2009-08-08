@@ -91,11 +91,11 @@ if ($result == "Corporation is not part of alliance.")
 } else {
 	$page = new Page('Corporation details - '.$corp->getName() . " [" . $myAPI->getTicker() . "]");
 }	
-$html .= "<table class=kb-table width=\"100%\" border=\"0\" cellspacing=1><tr class=kb-table-row-even><td rowspan=8 width=128 align=center bgcolor=black>";
+$html .= '<table class="kb-table" width="100%" border="0" cellspacing="1"><tr class="kb-table-row-even"><td rowspan="8" width="128" align="center" bgcolor="black">';
 
 if (file_exists("img/corps/".$corp->getID().".jpg") || file_exists("img/corps/".$corp->getUnique().".jpg"))
 {
-    $html .= "<img src=\"".$corp->getPortraitURL(128)."\" border=\"0\" alt=\"\"></td>";
+    $html .= "<img src=\"".$corp->getPortraitURL(128)."\" border=\"0\" alt=\"\" /></td>";
 }
 else
 {
@@ -105,7 +105,7 @@ else
 		
 		if ($result == "Corporation is not part of alliance.")
 		{
-			$html .= "<img src=\"".IMG_URL."/campaign-big.gif\" border=\"0\" alt=\"\"></td>";
+			$html .= "<img src=\"".IMG_URL."/campaign-big.gif\" border=\"0\" alt=\"\" /></td>";
 		} elseif ($result == "") {
 			// create two sized logo's in 2 places - this allows checks already in place not to keep requesting corp logos each time page is viewed
 			// class.thumb.php cannot work with png (although saved as jpg these are actually pngs) therefore we have to create the 128 size for it
@@ -113,20 +113,20 @@ else
 			CorporationLogo( $mylogo, 64, $corp->getID() );
 			CorporationLogo( $mylogo, 128, $corp->getID() );
 			
-			$html .= "<img src=\"".$corp->getPortraitURL(128)."\" border=\"0\" alt=\"\"></td>";
+			$html .= "<img src=\"".$corp->getPortraitURL(128)."\" border=\"0\" alt=\"\" /></td>";
 		} else {
 			// some kind of error getting details from CCP so abort writing file(s) allowing us to try again later - in the meantime, lets print trusty default
 			// error text will also appear where the picture is, which is nice
-			$html .= "<img src=\"".IMG_URL."/campaign-big.gif\" border=\"0\" alt=\"\"></td>";
+			$html .= "<img src=\"".IMG_URL."/campaign-big.gif\" border=\"0\" alt=\"\" /></td>";
 		}	
 	} else {
-		$html .= "<img src=\"".IMG_URL."/campaign-big.gif\" border=\"0\" alt=\"\"></td>";
+		$html .= "<img src=\"".IMG_URL."/campaign-big.gif\" border=\"0\" alt=\"\" /></td>";
 	}
 }
 
 if ($result == "Corporation is not part of alliance.")
 {
-	$html .= "<td class=kb-table-cell width=180><b>Alliance:</b></td><td class=kb-table-cell>";
+	$html .= '<td class="kb-table-cell" width="180"><b>Alliance:</b></td><td class="kb-table-cell">';
 	if ($alliance->getName() == "Unknown" || $alliance->getName() == "None")
 	{
    		$html .= "<b>".$alliance->getName()."</b>";
@@ -136,10 +136,10 @@ if ($result == "Corporation is not part of alliance.")
     	$html .= "<a href=\"?a=alliance_detail&amp;all_id=".$alliance->getID()."\">".$alliance->getName()."</a>";
 	}
 	$html .= "</td></tr>";
-	$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Kills:</b></td><td class=kl-kill>".$kill_summary->getTotalKills()."</td></tr>";
-	$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Losses:</b></td><td class=kl-loss>".$kill_summary->getTotalLosses()."</td></tr>";
-	$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Damage done (ISK):</b></td><td class=kl-kill>".round($kill_summary->getTotalKillISK()/1000000000, 2)."B</td></tr>";
-	$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Damage received (ISK):</b></td><td class=kl-loss>".round($kill_summary->getTotalLossISK()/1000000000, 2)."B</td></tr>";
+	$html .= "<tr class=\"kb-table-row-even\"><td class=\"kb-table-cell\"><b>Kills:</b></td><td class=\"kl-kill\">".$kill_summary->getTotalKills()."</td></tr>";
+	$html .= "<tr class=\"kb-table-row-even\"><td class=\"kb-table-cell\"><b>Losses:</b></td><td class=\"kl-loss\">".$kill_summary->getTotalLosses()."</td></tr>";
+	$html .= "<tr class=\"kb-table-row-even\"><td class=\"kb-table-cell\"><b>Damage done (ISK):</b></td><td class=\"kl-kill\">".round($kill_summary->getTotalKillISK()/1000000000, 2)."B</td></tr>";
+	$html .= "<tr class=\"kb-table-row-even\"><td class=\"kb-table-cell\"><b>Damage received (ISK):</b></td><td class=\"kl-loss\">".round($kill_summary->getTotalLossISK()/1000000000, 2)."B</td></tr>";
 	if ($kill_summary->getTotalKillISK())
 	{
     	$efficiency = round($kill_summary->getTotalKillISK() / ($kill_summary->getTotalKillISK() + $kill_summary->getTotalLossISK()) * 100, 2);
@@ -149,11 +149,11 @@ if ($result == "Corporation is not part of alliance.")
    		$efficiency = 0;
 	}
 
-	$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Efficiency:</b></td><td class=kb-table-cell><b>" . $efficiency . "%</b></td></tr>";
+	$html .= "<tr class=\"kb-table-row-even\"><td class=\"kb-table-cell\"><b>Efficiency:</b></td><td class=\"kb-table-cell\"><b>" . $efficiency . "%</b></td></tr>";
 	$html .= "</table>";
 	$html .= "<br/>";
 } else {
-	$html .= "<td class=kb-table-cell width=150><b>Alliance:</b></td><td class=kb-table-cell>";
+	$html .= "<td class=\"kb-table-cell\" width=\"150\"><b>Alliance:</b></td><td class=\"kb-table-cell\">";
 	if ($alliance->getName() == "Unknown" || $alliance->getName() == "None")
 	{
    		$html .= "<b>".$alliance->getName()."</b>";
@@ -162,15 +162,15 @@ if ($result == "Corporation is not part of alliance.")
 	{
     	$html .= "<a href=\"?a=alliance_detail&amp;all_id=".$alliance->getID()."\">".$alliance->getName()."</a>";
 	}
-	$html .= "</td><td class=kb-table-cell width=65><b>CEO:</b></td><td class=kb-table-cell><a href=\"?a=search&amp;searchtype=pilot&amp;searchphrase=" . urlencode($myAPI->getCeoName()) . "\">" . $myAPI->getCeoName() . "</a></td></tr>";
-	$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Kills:</b></td><td class=kl-kill>".$kill_summary->getTotalKills()."</td>";
-	$html .= "<td class=kb-table-cell><b>HQ:</b></td><td class=kb-table-cell>" . $myAPI->getStationName() . "</td></tr>";
-	$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Losses:</b></td><td class=kl-loss>".$kill_summary->getTotalLosses()."</td>";
-	$html .= "<td class=kb-table-cell><b>Members:</b></td><td class=kb-table-cell>" . $myAPI->getMemberCount() . "</td></tr>";
-	$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Damage done (ISK):</b></td><td class=kl-kill>".round($kill_summary->getTotalKillISK()/1000000000, 2)."B</td>";
-	$html .= "<td class=kb-table-cell><b>Shares:</b></td><td class=kb-table-cell>" . $myAPI->getShares() . "</td></tr>";
-	$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Damage received (ISK):</b></td><td class=kl-loss>".round($kill_summary->getTotalLossISK()/1000000000, 2)."B</td>";
-	$html .= "<td class=kb-table-cell><b>Tax Rate:</b></td><td class=kb-table-cell>" . $myAPI->getTaxRate() . "%</td></tr>";
+	$html .= "</td><td class=\"kb-table-cell\" width=\"65\"><b>CEO:</b></td><td class=\"kb-table-cell\"><a href=\"?a=search&amp;searchtype=pilot&amp;searchphrase=" . urlencode($myAPI->getCeoName()) . "\">" . $myAPI->getCeoName() . "</a></td></tr>";
+	$html .= "<tr class=\"kb-table-row-even\"><td class=\"kb-table-cell\"><b>Kills:</b></td><td class=\"kl-kill\">".$kill_summary->getTotalKills()."</td>";
+	$html .= "<td class=\"kb-table-cell\"><b>HQ:</b></td><td class=\"kb-table-cell\">" . $myAPI->getStationName() . "</td></tr>";
+	$html .= "<tr class=\"kb-table-row-even\"><td class=\"kb-table-cell\"><b>Losses:</b></td><td class=\"kl-loss\">".$kill_summary->getTotalLosses()."</td>";
+	$html .= "<td class=\"kb-table-cell\"><b>Members:</b></td><td class=\"kb-table-cell\">" . $myAPI->getMemberCount() . "</td></tr>";
+	$html .= "<tr class=\"kb-table-row-even\"><td class=\"kb-table-cell\"><b>Damage done (ISK):</b></td><td class=\"kl-kill\">".round($kill_summary->getTotalKillISK()/1000000000, 2)."B</td>";
+	$html .= "<td class=\"kb-table-cell\"><b>Shares:</b></td><td class=\"kb-table-cell\">" . $myAPI->getShares() . "</td></tr>";
+	$html .= "<tr class=\"kb-table-row-even\"><td class=\"kb-table-cell\"><b>Damage received (ISK):</b></td><td class=\"kl-loss\">".round($kill_summary->getTotalLossISK()/1000000000, 2)."B</td>";
+	$html .= "<td class=\"kb-table-cell\"><b>Tax Rate:</b></td><td class=\"kb-table-cell\">" . $myAPI->getTaxRate() . "%</td></tr>";
 	if ($kill_summary->getTotalKillISK())
 	{
     	$efficiency = round($kill_summary->getTotalKillISK() / ($kill_summary->getTotalKillISK() + $kill_summary->getTotalLossISK()) * 100, 2);
@@ -180,12 +180,12 @@ if ($result == "Corporation is not part of alliance.")
    		$efficiency = 0;
 	}
 
-	$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Efficiency:</b></td><td class=kb-table-cell><b>" . $efficiency . "%</b></td>";
-	$html .= "<td class=kb-table-cell><b>Website:</b></td><td class=kb-table-cell><a href=\"" . $myAPI->getUrl() . "\">" . $myAPI->getUrl() . "</a></td></tr>";
+	$html .= "<tr class=\"kb-table-row-even\"><td class=\"kb-table-cell\"><b>Efficiency:</b></td><td class=\"kb-table-cell\"><b>" . $efficiency . "%</b></td>";
+	$html .= "<td class=\"kb-table-cell\"><b>Website:</b></td><td class=\"kb-table-cell\"><a href=\"" . $myAPI->getUrl() . "\">" . $myAPI->getUrl() . "</a></td></tr>";
 	$html .= "</table>";
 	//$html .= "Corporation Description:";
-	$html .= "<div class=kb-table-row-even style='width:100%;height:100px;overflow:auto'>";
-	$html .= $myAPI->getDescription();
+	$html .= "<div class=\"kb-table-row-even\" style='width:100%;height:100px;overflow:auto'>";
+	$html .= str_replace( "<br>", "<br />", $myAPI->getDescription() );
 	$html .= "</div>";
 	$html .= "<br/>";
 }
@@ -198,7 +198,7 @@ if ($_GET['view'] == "" || $_GET['view'] == "kills" || $_GET['view'] == "losses"
 switch ($_GET['view'])
 {
     case "":
-        $html .= "<div class=kb-kills-header>10 Most recent kills in the last 30 days</div>";
+        $html .= "<div class=\"kb-kills-header\">10 Most recent kills in the last 30 days</div>";
 
         $list = new KillList();
         $list->setOrdered(true);
@@ -214,7 +214,7 @@ switch ($_GET['view'])
         $ktab->setDayBreak(false);
         $html .= $ktab->generate();
 
-        $html .= "<div class=kb-losses-header>10 Most recent losses in the last 30 days</div>";
+        $html .= "<div class=\"kb-losses-header\">10 Most recent losses in the last 30 days</div>";
 
         $list = new KillList();
         $list->setOrdered(true);
@@ -232,7 +232,7 @@ switch ($_GET['view'])
 
         break;
     case "kills":
-        $html .= "<div class=kb-kills-header>All kills</div>";
+        $html .= "<div class=\"kb-kills-header\">All kills</div>";
 
         $list = new KillList();
         $list->setOrdered(true);
@@ -248,7 +248,7 @@ switch ($_GET['view'])
 
         break;
     case "losses":
-        $html .= "<div class=kb-losses-header>All losses</div>";
+        $html .= "<div class=\"kb-losses-header\">All losses</div>";
 
         $list = new KillList();
         $list->setOrdered(true);
@@ -266,10 +266,10 @@ switch ($_GET['view'])
 
         break;
     case "pilot_kills":
-        $html .= "<div class=block-header2>Top killers</div>";
+        $html .= "<div class=\"block-header2\">Top killers</div>";
 
-        $html .= "<table class=kb-subtable><tr><td valign=top width=440>";
-        $html .= "<div class=block-header>$monthname $year</div>";
+        $html .= "<table class=\"kb-subtable\"><tr><td valign=\"top\" width=\"440\">";
+        $html .= "<div class=\"block-header\">$monthname $year</div>";
 
         $list = new TopKillsList();
         $list->addInvolvedCorp($corp);
@@ -279,11 +279,11 @@ switch ($_GET['view'])
         $table = new TopPilotTable($list, "Kills");
         $html .= $table->generate();
 
-        $html .= "<table width=300 cellspacing=1><tr><td><a href='?a=corp_detail&amp;view=pilot_kills&amp;m=$pmonth&amp;crp_id=$crp_id&amp;y=$pyear'>previous</a></td>";
+        $html .= "<table width=\"300\" cellspacing=\"1\"><tr><td><a href='?a=corp_detail&amp;view=pilot_kills&amp;m=$pmonth&amp;crp_id=$crp_id&amp;y=$pyear'>previous</a></td>";
         $html .= "<td align='right'><a href='?a=corp_detail&amp;view=pilot_kills&amp;crp_id=$crp_id&amp;m=$nmonth&amp;y=$nyear'>next</a></p></td></tr></table>";
         
-        $html .= "</td><td valign=top width=400>";
-        $html .= "<div class=block-header>All time</div>";
+        $html .= "</td><td valign=\"top\" width=\"400\">";
+        $html .= "<div class=\"block-header\">All time</div>";
 
         $list = new TopKillsList();
         $list->addInvolvedCorp($corp);
@@ -295,10 +295,10 @@ switch ($_GET['view'])
 
         break;
     case "pilot_scores":
-        $html .= "<div class=block-header2>Top scorers</div>";
+        $html .= "<div class=\"block-header2\">Top scorers</div>";
 
-        $html .= "<table class=kb-subtable><tr><td valign=top width=440>";
-        $html .= "<div class=block-header>$monthname $year</div>";
+        $html .= "<table class=\"kb-subtable\"><tr><td valign=\"top\" width=\"440\">";
+        $html .= "<div class=\"block-header\">$monthname $year</div>";
 
         $list = new TopScoreList();
         $list->addInvolvedCorp($corp);
@@ -308,11 +308,11 @@ switch ($_GET['view'])
         $table = new TopPilotTable($list, "Points");
         $html .= $table->generate();
 
-        $html .= "<table width=300 cellspacing=1><tr><td><a href='?a=corp_detail&amp;view=pilot_scores&amp;m=$pmonth&amp;crp_id=$crp_id&amp;y=$pyear'>previous</a></td>";
+        $html .= "<table width=\"300\" cellspacing=\"1\"><tr><td><a href='?a=corp_detail&amp;view=pilot_scores&amp;m=$pmonth&amp;crp_id=$crp_id&amp;y=$pyear'>previous</a></td>";
         $html .= "<td align='right'><a href='?a=corp_detail&amp;view=pilot_scores&amp;crp_id=$crp_id&amp;m=$nmonth&amp;y=$nyear'>next</a></p></td></tr></table>";
         
-        $html .= "</td><td valign=top width=400>";
-        $html .= "<div class=block-header>All time</div>";
+        $html .= "</td><td valign=\"top\" width=\"400\">";
+        $html .= "<div class=\"block-header\">All time</div>";
 
         $list = new TopScoreList();
         $list->addInvolvedCorp($corp);
@@ -324,10 +324,10 @@ switch ($_GET['view'])
 
         break;
     case "pilot_solo":
-        $html .= "<div class=block-header2>Top solokillers</div>";
+        $html .= "<div class=\"block-header2\">Top solokillers</div>";
 
-        $html .= "<table class=kb-subtable><tr><td valign=top width=440>";
-        $html .= "<div class=block-header>$monthname $year</div>";
+        $html .= "<table class=\"kb-subtable\"><tr><td valign=\"top\" width=\"440\">";
+        $html .= "<div class=\"block-header\">$monthname $year</div>";
 
         $list = new TopSoloKillerList();
         $list->addInvolvedCorp($corp);
@@ -337,11 +337,11 @@ switch ($_GET['view'])
         $table = new TopPilotTable($list, "Solokills");
         $html .= $table->generate();
 
-        $html .= "<table width=300 cellspacing=1><tr><td><a href='?a=corp_detail&amp;view=pilot_solo&amp;m=$pmonth&amp;crp_id=$crp_id&amp;y=$pyear'>previous</a></td>";
+        $html .= "<table width=\"300\" cellspacing=\"1\"><tr><td><a href='?a=corp_detail&amp;view=pilot_solo&amp;m=$pmonth&amp;crp_id=$crp_id&amp;y=$pyear'>previous</a></td>";
         $html .= "<td align='right'><a href='?a=corp_detail&amp;view=pilot_solo&amp;crp_id=$crp_id&amp;m=$nmonth&amp;y=$nyear'>next</a></p></td></tr></table>";
         
-        $html .= "</td><td valign=top width=400>";
-        $html .= "<div class=block-header>All time</div>";
+        $html .= "</td><td valign=\"top\" width=\"400\">";
+        $html .= "<div class=\"block-header\">All time</div>";
 
         $list = new TopSoloKillerList();
         $list->addInvolvedCorp($corp);
@@ -354,10 +354,10 @@ switch ($_GET['view'])
         break;
 
     case "pilot_damage":
-        $html .= "<div class=block-header2>Top damagedealers</div>";
+        $html .= "<div class=\"block-header2\">Top damagedealers</div>";
 
-        $html .= "<table class=kb-subtable><tr><td valign=top width=440>";
-        $html .= "<div class=block-header>$monthname $year</div>";
+        $html .= "<table class=\"kb-subtable\"><tr><td valign=\"top\" width=\"440\">";
+        $html .= "<div class=\"block-header\">$monthname $year</div>";
 
         $list = new TopDamageDealerList();
         $list->addInvolvedCorp($corp);
@@ -367,11 +367,11 @@ switch ($_GET['view'])
         $table = new TopPilotTable($list, "Kills");
         $html .= $table->generate();
 
-        $html .= "<table width=300 cellspacing=1><tr><td><a href='?a=corp_detail&amp;view=pilot_damage&amp;m=$pmonth&amp;crp_id=$crp_id&amp;y=$pyear'>previous</a></td>";
+        $html .= "<table width=\"300\" cellspacing=\"1\"><tr><td><a href='?a=corp_detail&amp;view=pilot_damage&amp;m=$pmonth&amp;crp_id=$crp_id&amp;y=$pyear'>previous</a></td>";
         $html .= "<td align='right'><a href='?a=corp_detail&amp;view=pilot_damage&amp;crp_id=$crp_id&amp;m=$nmonth&amp;y=$nyear'>next</a></p></td></tr></table>";
         
-        $html .= "</td><td valign=top width=400>";
-        $html .= "<div class=block-header>All time</div>";
+        $html .= "</td><td valign=\"top\" width=\"400\">";
+        $html .= "<div class=\"block-header\">All time</div>";
 
         $list = new TopDamageDealerList();
         $list->addInvolvedCorp($corp);
@@ -384,10 +384,10 @@ switch ($_GET['view'])
         break;
 
     case "pilot_griefer":
-        $html .= "<div class=block-header2>Top griefers</div>";
+        $html .= "<div class=\"block-header2\">Top griefers</div>";
 
-        $html .= "<table class=kb-subtable><tr><td valign=top width=440>";
-        $html .= "<div class=block-header>$monthname $year</div>";
+        $html .= "<table class=\"kb-subtable\"><tr><td valign=\"top\" width=\"440\">";
+        $html .= "<div class=\"block-header\">$monthname $year</div>";
 
         $list = new TopGrieferList();
         $list->addInvolvedCorp($corp);
@@ -396,11 +396,11 @@ switch ($_GET['view'])
         $table = new TopPilotTable($list, "Kills");
         $html .= $table->generate();
 
-        $html .= "<table width=300 cellspacing=1><tr><td><a href='?a=corp_detail&amp;view=pilot_griefer&amp;m=$pmonth&amp;crp_id=$crp_id&amp;y=$pyear'>previous</a></td>";
+        $html .= "<table width=\"300\" cellspacing=\"1\"><tr><td><a href='?a=corp_detail&amp;view=pilot_griefer&amp;m=$pmonth&amp;crp_id=$crp_id&amp;y=$pyear'>previous</a></td>";
         $html .= "<td align='right'><a href='?a=corp_detail&amp;view=pilot_griefer&amp;crp_id=$crp_id&amp;m=$nmonth&amp;y=$nyear'>next</a></p></td></tr></table>";
         
-        $html .= "</td><td valign=top width=400>";
-        $html .= "<div class=block-header>All time</div>";
+        $html .= "</td><td valign=\"top\" width=\"400\">";
+        $html .= "<div class=\"block-header\">All time</div>";
 
         $list = new TopGrieferList();
         $list->addInvolvedCorp($corp);
@@ -412,10 +412,10 @@ switch ($_GET['view'])
         break;
 
     case "pilot_losses":
-        $html .= "<div class=block-header2>Top losers</div>";
+        $html .= "<div class=\"block-header2\">Top losers</div>";
 
-        $html .= "<table class=kb-subtable><tr><td valign=top width=440>";
-        $html .= "<div class=block-header>$monthname $year</div>";
+        $html .= "<table class=\"kb-subtable\"><tr><td valign=\"top\" width=\"440\">";
+        $html .= "<div class=\"block-header\">$monthname $year</div>";
 
         $list = new TopLossesList();
         $list->addVictimCorp($corp);
@@ -425,11 +425,11 @@ switch ($_GET['view'])
         $table = new TopPilotTable($list, "Losses");
         $html .= $table->generate();
 
-        $html .= "<table width=300 cellspacing=1><tr><td><a href='?a=corp_detail&amp;view=pilot_losses&amp;m=$pmonth&amp;crp_id=$crp_id&amp;y=$pyear'>previous</a></td>";
+        $html .= "<table width=\"300\" cellspacing=\"1\"><tr><td><a href='?a=corp_detail&amp;view=pilot_losses&amp;m=$pmonth&amp;crp_id=$crp_id&amp;y=$pyear'>previous</a></td>";
         $html .= "<td align='right'><a href='?a=corp_detail&amp;view=pilot_losses&amp;crp_id=$crp_id&amp;m=$nmonth&amp;y=$nyear'>next</a></p></td></tr></table>";
         
-        $html .= "</td><td valign=top width=400>";
-        $html .= "<div class=block-header>All time</div>";
+        $html .= "</td><td valign=\"top\" width=\"400\">";
+        $html .= "<div class=\"block-header\">All time</div>";
 
         $list = new TopLossesList();
         $list->addVictimCorp($corp);
@@ -441,14 +441,14 @@ switch ($_GET['view'])
 
         break;
     case "ships_weapons":
-        $html .= "<div class=block-header2>Ships &amp; weapons used</div>";
+        $html .= "<div class=\"block-header2\">Ships &amp; weapons used</div>";
 
-        $html .= "<table class=kb-subtable><tr><td valign=top width=400>";
+        $html .= "<table class=\"kb-subtable\"><tr><td valign=\"top\" width=\"400\">";
         $shiplist = new TopShipList();
         $shiplist->addInvolvedCorp($corp);
         $shiplisttable = new TopShipListTable($shiplist);
         $html .= $shiplisttable->generate();
-        $html .= "</td><td valign=top align=right width=400>";
+        $html .= "</td><td valign=\"top\" align=\"right\" width=\"400\">";
 
         $weaponlist = new TopWeaponList();
         $weaponlist->addInvolvedCorp($corp);
@@ -458,12 +458,12 @@ switch ($_GET['view'])
 
         break;
     case 'violent_systems':
-        $html .= "<div class=block-header2>Most violent systems</div>";
-        $html .= "<table width=\"99%\"><tr><td align=center valign=top>";
+        $html .= "<div class=\"block-header2\">Most violent systems</div>";
+        $html .= "<table width=\"99%\"><tr><td align=\"center\" valign=\"top\">";
 
-        $html .= "<div class=block-header>This month</div>";
-        $html .= "<table class=kb-table>";
-        $html .= "<tr class=kb-table-header><td>#</td><td width=180>System</td><td width=40 align=center >Kills</td></tr>";
+        $html .= "<div class=\"block-header\">This month</div>";
+        $html .= "<table class=\"kb-table\">";
+        $html .= "<tr class=\"kb-table-header\"><td>#</td><td width=\"180\">System</td><td width=\"40\" align=\"center\">Kills</td></tr>";
 
         $sql = "select sys.sys_name, sys.sys_sec, sys.sys_id, count(distinct kll.kll_id) as kills
                     from kb3_systems sys, kb3_kills kll, kb3_inv_detail inv
@@ -498,16 +498,16 @@ switch ($_GET['view'])
                 $rowclass = 'kb-table-row-even';
             }
 
-            $html .= "<tr class=".$rowclass."><td><b>".$counter.".</b></td><td class=kb-table-cell width=180><b><a href=\"?a=system_detail&amp;sys_id=".$row['sys_id']."\">".$row['sys_name']."</a></b> (".roundsec($row['sys_sec']).")</td><td align=center>".$row['kills']."</td></tr>";
+            $html .= "<tr class=\"".$rowclass."\"><td><b>".$counter.".</b></td><td class=\"kb-table-cell\" width=\"180\"><b><a href=\"?a=system_detail&amp;sys_id=".$row['sys_id']."\">".$row['sys_name']."</a></b> (".roundsec($row['sys_sec']).")</td><td align=\"center\">".$row['kills']."</td></tr>";
             $counter++;
         }
 
         $html .= "</table>";
 
-        $html .= "</td><td align=center valign=top>";
-        $html .= "<div class=block-header>All-Time</div>";
-        $html .= "<table class=kb-table>";
-        $html .= "<tr class=kb-table-header><td>#</td><td width=180>System</td><td width=40 align=center>Kills</td></tr>";
+        $html .= "</td><td align=\"center\" valign=\"top\">";
+        $html .= "<div class=\"block-header\">All-Time</div>";
+        $html .= "<table class=\"kb-table\">";
+        $html .= "<tr class=\"kb-table-header\"><td>#</td><td width=\"180\">System</td><td width=\"40\" align=\"center\">Kills</td></tr>";
 
         $sql = "select sys.sys_name, sys.sys_id, sys.sys_sec, count(distinct kll.kll_id) as kills
                     from kb3_systems sys, kb3_kills kll, kb3_inv_detail inv
@@ -540,7 +540,7 @@ switch ($_GET['view'])
                 $rowclass = 'kb-table-row-even';
             }
 
-            $html .= "<tr class=".$rowclass."><td><b>".$counter.".</b></td><td class=kb-table-cell><b><a href=\"?a=system_detail&amp;sys_id=".$row['sys_id']."\">".$row['sys_name']."</a></b> (".roundsec($row['sys_sec']).")</td><td align=center>".$row['kills']."</td></tr>";
+            $html .= "<tr class=\"".$rowclass."\"><td><b>".$counter.".</b></td><td class=\"kb-table-cell\"><b><a href=\"?a=system_detail&amp;sys_id=".$row['sys_id']."\">".$row['sys_name']."</a></b> (".roundsec($row['sys_sec']).")</td><td align=\"center\">".$row['kills']."</td></tr>";
             $counter++;
         }
         $html .= "</table>";
@@ -548,7 +548,7 @@ switch ($_GET['view'])
         break;
 }
 
-$html .= "<hr><b>Extended Corp Detail " . EVELOGOVERSION . " by " . FindThunk() . ". Logo generation by Entity. Thanks to Arkady and Exi.</b><br/>";
+$html .= "<hr /><b>Extended Corp Detail " . EVELOGOVERSION . " by " . FindThunk() . ". Logo generation by Entity. Thanks to Arkady and Exi.</b><br/>";
 
 $menubox = new box("Menu");
 $menubox->setIcon("menu-item.gif");

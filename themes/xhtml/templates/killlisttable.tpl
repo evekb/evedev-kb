@@ -60,7 +60,7 @@ onmouseover="this.className='kb-table-row-hover';" onclick="window.location.href
         {if $daybreak}
         <td class="kb-table-cell" align="center"><b>{$k.timestamp|date_format:"%H:%M"}</b></td>
         {else}
-        <td class="kb-table-cell" align="center" width=80><b>{$k.timestamp|date_format:"%Y-%m-%d"}<br />{$k.timestamp|date_format:"%H:%M"}</b></td>
+        <td class="kb-table-cell" align="center" width="80"><b>{$k.timestamp|date_format:"%Y-%m-%d"}<br />{$k.timestamp|date_format:"%H:%M"}</b></td>
         {/if}
         {if $comments_count}
         <td style="width: 10px" class="kb-table-cell" align="center"><b>{$k.commentcount}</b></td>
