@@ -19,12 +19,12 @@ function updateClock ( )
 
 // -->
 </script>{/literal}
-<table class=kb-table width=150 cellspacing="1">
-	<tr><td class=kb-table-header align=center>Eve Time</td></tr>
-	<tr class=kb-table-row-even>
+<table class="kb-table" width="150" cellspacing="1">
+	<tr><td class="kb-table-header" align="center">Eve Time</td></tr>
+	<tr class="kb-table-row-even">
 		<td>
-			<table class=kb-subtable cellspacing=0 border=0 width="100%">
-				<tr class=kb-table-row-odd  style="text-align: center; font-weight: bold;">
+			<table class="kb-subtable" cellspacing="0" border="0" width="100%">
+				<tr class="kb-table-row-odd"  style="text-align: center; font-weight: bold;">
 					<td id="clock">{$clocktime}</td>
 				</tr></table></td>
 	</tr>
