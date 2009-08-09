@@ -246,14 +246,13 @@ class KillSummaryTable
 		}
 		else
 		{
-			$sql .= " INNER JOIN kb3_inv_detail inv ON (inv.ind_kll_id = kll.kll_id) ";
 			$sqlop = " WHERE ";
 			if($startdate)
 			{
-				$sql .= $sqlop." inv.ind_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+				$sql .= $sqlop." kll.kll_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
 				$sqlop = " AND ";
 			}
-			if($enddate) $sql .= $sqlop." inv.ind_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+			if($enddate) $sql .= $sqlop." kll.kll_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
 		}
 
 		$sql .= 'GROUP BY scl_class order by scl_class';
