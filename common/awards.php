@@ -128,9 +128,9 @@ $smarty->assign('boxcount', count($awardboxes));
 $menubox = new Box("Menu");
 $menubox->setIcon("menu-item.gif");
 $menubox->addOption("caption", "Navigation");
-$menubox->addOption("link", "Previous month ", "?a=awards&m=".$pmonth."&y=".$pyear);
+$menubox->addOption("link", "Previous month ", "?a=awards&amp;m=".$pmonth."&amp;y=".$pyear);
 if (! ($month == kbdate("m") - 1 && $year == kbdate("Y")))
-    $menubox->addOption("link", "Next month", "?a=awards&m=".$nmonth."&y=".$nyear);
+    $menubox->addOption("link", "Next month", "?a=awards&amp;m=".$nmonth."&amp;y=".$nyear);
 $page->addContext($menubox->generate());
 
 $page->setContent($smarty->fetch(get_tpl('awards')));
