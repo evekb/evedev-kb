@@ -15,8 +15,8 @@ options::fadd('Remove Losses Page', 'public_losses', 'checkbox');
 options::fadd('Stats Page', 'public_stats', 'select',array('admin_config', 'createSelectStats'));
 
 options::cat('Advanced', 'Configuration', 'Corp/Alliance ID');
-options::fadd('CORP_ID', 'cfg_corpid', 'custom', array('admin_config', 'createCorp'));
-options::fadd('ALLIANCE_ID', 'cfg_allianceid', 'custom', array('admin_config', 'createAlliance'));
+options::fadd('CORP_ID', 'cfg_corpid', 'custom', array('admin_config', 'createCorp'),array('admin_config', 'reload'));
+options::fadd('ALLIANCE_ID', 'cfg_allianceid', 'custom', array('admin_config', 'createAlliance'), array('admin_config', 'reload'));
 
 class admin_config
 {
@@ -79,6 +79,10 @@ class admin_config
 		if(!$qry->recordCount()) return $html;
 		$res = $qry->getRow();
 		return $html . ' &nbsp;('.$res['all_name'].')';
+	}
+	function reload()
+	{
+		header("Location: http://".$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'?'.$_SERVER['QUERY_STRING']);
 	}
 }
 ?>
