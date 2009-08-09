@@ -82,10 +82,7 @@ class Parser
     function parse($checkauth = true)
     {
         //trim out any multiple spaces that may exist
-        $check = 1;
-        while($check > 0) {
-            $this->killmail_ = str_replace('  ', ' ', $this->killmail_, $check);
-        }
+        $this->killmail_ = preg_replace('/ +/', ' ', $this->killmail_);
 
         // header section
         $involvedpos = strpos($this->killmail_, "Involved parties:");
