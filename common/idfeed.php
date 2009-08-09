@@ -3,23 +3,19 @@
  * Create a syndication feed of kills stored on this board.
  *
  * Flags
- * week = week
- * year = year
- * lastkllid = return all kills lastkllid on (ordered by kll_id)
- * range = return all kills with lastkllid <= id <= lastkllid + range
- * APIkills = restrict results to kills with an external id set
- * pilot = pilot to retrieve kills for
- * corp = corp_name = corp to retrieve kills for
- * alli = alli_name = alliance to retrieve kills for
- * master = retrieve all kills
- * friend = set pilot/corp/alli as involved killer (default is victim)
- * combined = return both kills and losses
+ * startdate = unix timestamp for start date
+ * enddate = unix timestamp for end date
+ * lastID = return all kills from lastID on (ordered by kll_id)
+ * allkills = also return results without an external id set
+ * pilot = pilot id to retrieve kills for
+ * corp =  corp id to retrieve kills for
+ * alliance = alliance id to retrieve kills for
  *
  */
 require_once('common/includes/class.killlist.php');
 $list = new KillList();
-$list->setAPIKill();
-$list->setLimit(10);
+if(!isset($_REQUEST['allkills'])) $list->setAPIKill();
+$list->setLimit(100);
 $list->setOrdered(true);
 $list->setOrderBy(' kll.kll_external_id DESC ');
 $qry = new DBQuery();
@@ -42,8 +38,8 @@ if(isset($_REQUEST['pilot']))
 	$list->addCombinedPilot($row['plt_id']);
 }
 if(isset($_REQUEST['lastID'])) $list->setMinExtID(intval($_REQUEST['lastID']));
-
-//$list->addCombinedPilot(2916);
+if(isset($_REQUEST['startdate'])) $list->setStartDate(intval($_REQUEST['startdate']));
+if(isset($_REQUEST['enddate'])) $list->setStartDate(intval($_REQUEST['enddate']));
 $date = gmdate('Y-m-d H:i:s');
 $text = "<?xml version='1.0' encoding='UTF-8'?>
 <eveapi version='2'>
@@ -70,7 +66,8 @@ while($kill1 = $list->getKill())
 	$kill = new Kill($kill1->getID());
 	$kill->setDetailedInvolved();
 	$row = $kills->addChild('row');
-	$row->addAttribute('killID', $kill->getExternalID());
+	$row->addAttribute('killID', intval($kill->getExternalID()));
+	if(isset($_REQUEST['allkills'])) $row->addAttribute('killInternalID', intval($kill->getID()));
 	$row->addAttribute('solarSystemID', $kill->getSystem()->getExternalID());
 	$row->addAttribute('killTime', $kill->getTimeStamp());
 	$row->addAttribute('moonID', '0');

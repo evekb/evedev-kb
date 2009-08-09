@@ -58,23 +58,3 @@ The shipclasses and average ISK value are as follows:<br>
 </tr>
 {/section}
 </table>
-<br/>
-Custom shipvalues which override the value from shipclasses:<br>
-<br>
-<table class=kb-table cellspacing=1>
-<tr class=kb-table-header>
-	<td width=160>Ship Name</td>
-	<td>Ship Class</td>
-	<td>Points</td>
-	<td align="right">Value in ISK</td>
-</tr>
-{section name=i loop=$shipval}
-<tr class=kb-table-row-odd>
-	<td>{if $shipval[i].t2}<img src="{$shipval[i].t2}" alt="t2"/>{/if}{$shipval[i].shp_name}&nbsp;</td>
-	<td>{$shipval[i].scl_class}&nbsp;</td>
-	<td align="right">{$shipval[i].scl_points}</td>
-	<td align="right">&nbsp;{$shipval[i].shp_value}&nbsp;<img src="{$shipval[i].valind}" alt=""/></td>
-</tr>
-{/section}
-</table>
-

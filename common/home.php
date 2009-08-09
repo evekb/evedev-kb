@@ -206,10 +206,11 @@ class Home
 
 		if(isset($_REQUEST['kills'])) $suffix = '&amp;kills';
 		elseif(isset($_REQUEST['losses'])) $suffix .= '&amp;losses';
+		if($_REQUEST['scl_id']) $suffixscl = '&amp;scl_id='.intval($_REQUEST['scl_id']);
 		if($this->prevweek)
 		{
 			$menubox->addOption("link","Previous week",
-				"?a=home&amp;w=" . $this->pweek . "&amp;y=" . $this->pyear . $suffix);
+				"?a=home&amp;w=" . $this->pweek . "&amp;y=" . $this->pyear . $suffix.$suffixscl);
 
 			if(kbdate('W') != $this->week || getYear() != $this->year)
 			{
@@ -225,23 +226,23 @@ class Home
 					$nyear = $this->year;
 				}
 				$menubox->addOption("link","Next week",
-					"?a=home&amp;w=" . $nweek . "&amp;y=" . $nyear . $suffix);
+					"?a=home&amp;w=" . $nweek . "&amp;y=" . $nyear . $suffix.$suffixscl);
 			}
 		}
 		else
 		{
 			$menubox->addOption("link","Previous week",
-				"?a=home&amp;w=" . $this->pweek . "&amp;y=" . $this->pyear . $suffix);
+				"?a=home&amp;w=" . $this->pweek . "&amp;y=" . $this->pyear . $suffix.$suffixscl);
 		}
 		if(kbdate('W') != $this->week || getYear() != $this->year) $weektext = $this->week . ", " . $this->year;
 		else $weektext = "This Week's";
 		if(!isset($_REQUEST['kills'])) $menubox->addOption("link", $weektext." Kills",
-				"?a=home&amp;w=" . $this->week . "&amp;y=" . $this->year . '&amp;kills');
+				"?a=home&amp;w=" . $this->week . "&amp;y=" . $this->year . '&amp;kills'.$suffixscl);
 		if(!isset($_REQUEST['losses'])) $menubox->addOption("link", $weektext." Losses",
-				"?a=home&amp;w=" . $this->week . "&amp;y=" . $this->year . '&amp;losses');
+				"?a=home&amp;w=" . $this->week . "&amp;y=" . $this->year . '&amp;losses'.$suffixscl);
 		if((isset($_REQUEST['losses']) || isset($_REQUEST['kills']) || !$this->prevweek) && config::get('show_comb_home')) $menubox->addOption("link",
 			 $weektext." All Kills",
-				"?a=home&amp;w=" . $this->week . "&amp;y=" . $this->year);
+				"?a=home&amp;w=" . $this->week . "&amp;y=" . $this->year.$suffixscl);
 		return $menubox->generate();
 	}
 
@@ -306,6 +307,7 @@ class Home
 			$smarty->assign('contracts', $this->contracts());
 		}
 		$smarty->assign('kills', $this->kills());
+		$smarty->assign('prevweek', $this->prevweek);
 		return $smarty->fetch(get_tpl('home'));
 	}
 

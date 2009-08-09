@@ -8,7 +8,7 @@ options::fadd('Theme', 'theme_name', 'select', array('admin_appearance', 'create
 options::cat('Appearance', 'Global Options', 'Global Options');
 options::fadd('Display standings', 'show_standings', 'checkbox');
 options::fadd('Enable lost item values', 'item_values', 'checkbox');
-options::fadd('Use custom shipvalues', 'ship_values', 'checkbox');
+//options::fadd('Use custom shipvalues', 'ship_values', 'checkbox');
 options::fadd('Display a link instead of POD on Battlesummary', 'bs_podlink', 'checkbox');
 options::fadd('Split up fitted items on Killmails', 'kill_splitfit', 'checkbox');
 options::fadd('Use gmdate instead of date', 'date_gmtime', 'checkbox');

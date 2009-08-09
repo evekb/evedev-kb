@@ -47,13 +47,13 @@ class DBQuery
 	{
 		if (DB_TYPE_USED === 'mysqli' )
 		{
-			if (defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE === true && !$forceNormal)
+			if (defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE === true)
 			{
-				$object = new DBMemCachedQuery_mysqli();
+				$object = new DBMemCachedQuery_mysqli($forceNormal);
 			}
-			elseif (defined('DB_USE_QCACHE') && DB_USE_QCACHE === true && !$forceNormal)
+			elseif (defined('DB_USE_QCACHE') && DB_USE_QCACHE === true)
 			{
-				$object = new DBCachedQuery_mysqli();
+				$object = new DBCachedQuery_mysqli($forceNormal);
 			}
 			else
 			{

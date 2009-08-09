@@ -73,34 +73,24 @@ class Ship
     {
         if (!$this->qry_)
         {
-            $this->qry_ = new DBQuery();
+			$this->qry_ = new DBQuery();
 
-            $this->sql_ = "select * from kb3_ships shp
-                           inner join kb3_ship_classes scl on shp.shp_class = scl.scl_id";
-            if (config::get('ship_values'))
-            {
-                $this->sql_ .= ' left join kb3_ships_values ksv on (shp.shp_id = ksv.shp_id) ';
-            }
-            $this->sql_ .= " where shp.shp_id = ".$this->id_;
+			$this->sql_ = "select * from kb3_ships shp
+						   inner join kb3_ship_classes scl on shp.shp_class = scl.scl_id";
+			$this->sql_ .= ' left join kb3_item_price itm on (shp.shp_externalid = itm.typeID) ';
+			$this->sql_ .= " where shp.shp_id = ".$this->id_;
 
-            $this->qry_->execute($this->sql_);
-            $row = $this->qry_->getRow();
-            $this->shipname_ = $row['shp_name'];
-            $this->shipclass_ = new ShipClass($row['scl_id']);
-            $this->shiptechlevel_ = $row['shp_techlevel'];
-            $this->externalid_ = $row['shp_externalid'];
+			$this->qry_->execute($this->sql_);
+			$row = $this->qry_->getRow();
+			$this->shipname_ = $row['shp_name'];
+			$this->shipclass_ = new ShipClass($row['scl_id']);
+			$this->shiptechlevel_ = $row['shp_techlevel'];
+			$this->externalid_ = $row['shp_externalid'];
 
-            if (config::get('ship_values'))
-            {
-                if (!$this->value_ = $row['shp_value'])
-                {
-                    $this->value_ = $row['shp_baseprice'];
-                }
-            }
-            else
-            {
-                $this->value_ = $row['shp_baseprice'];
-            }
+			if (!$this->value_ = $row['price'])
+			{
+				$this->value_ = $row['shp_baseprice'];
+			}
         }
     }
 

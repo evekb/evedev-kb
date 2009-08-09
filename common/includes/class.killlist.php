@@ -28,19 +28,22 @@ class KillList
     function execQuery()
     {
         /* Killlist philosophy
-         * For EDK the most common uses of a killlist require date ordering
-         * based on kb3_kills. This is then restricted by joins with other
-         * tables. MySQL will decide on a query interpretation based on rows
-         * returned in each step. For EDK this can be very suboptimal as the
-         * most important restriction is by date or number of kills - both
-         * based on kb3_kills - which is usually followed by ordering by date.
-         *
-         * The killlist is constructed so as to give MySQL the least opportunity
-         * to carry out the query in a slow manner. kb3_kills is used as the
-         * main table. Where possible it is only joined with tables that do not
-         * restrict the output. Comment count and involved count are in an outer
-         * query to avoid the use of distinct on the whole kb3_kills table and
-         * the potential ordering of a query with kb3_inv_detail first.
+		 *
+		 * Killlists are constructed based on whether they set involved parties,
+		 * victims or combined. Combined lists look for a party as either
+		 * involved or victim. The combined list uses the union of involved
+		 * and victim, both limited if a limit is set. Other parts of a killlist
+		 * are then added on to this core.
+		 *
+		 * MySQL will sometimes try to construct the query with alliance, corp,
+		 * system or ship class first. Now that timestamp order is removed it
+		 * will add every kill to the result, sort and return the top few. To
+		 * avoid this the secondary tables use a left join which forces
+		 * evaluation after the main tables. Since the result is never null the
+		 * result is the same.
+		 *
+		 * Comments and involved count are added in an outer query. This returns
+		 * the counts in a single query
          *
          */
         if (!$this->qry_->executed_)
@@ -217,23 +220,14 @@ class KillList
             {
                 $this->sqltop_ .= "SELECT COUNT(1) as cnt, ".implode(",", $this->groupby_);
             }
-            if (config::get('ship_values'))
-            {
-                $this->sqltop_ .= ', ksv.shp_value';
-            }
 
             $this->sqltop_ .= "    FROM ".$this->sqlinner_." ";
 
-            if (config::get('ship_values'))
-            {
-                $this->sqllong_ .= ' left join kb3_ships_values ksv ON (kll.kll_ship_id = ksv.shp_id) ';
-            }
-
-            $this->sqllong_ .= "INNER JOIN kb3_pilots plt
+            $this->sqllong_ .= "LEFT JOIN kb3_pilots plt
 								ON ( plt.plt_id = kll.kll_victim_id )
-							INNER JOIN kb3_corps crp
+							LEFT JOIN kb3_corps crp
 								ON ( crp.crp_id = kll.kll_crp_id )
-							INNER JOIN kb3_alliances ali
+							LEFT JOIN kb3_alliances ali
 								ON ( ali.all_id = kll.kll_all_id )
 							LEFT JOIN kb3_pilots fbplt
 								ON ( fbplt.plt_id = kll.kll_fb_plt_id )
@@ -255,10 +249,11 @@ class KillList
 			   con.con_reg_id in ( ".implode($this->regions_, ",")." ) )";
             }
 
-            $this->sql_ .= "INNER JOIN kb3_ships shp
+            $this->sql_ .= "LEFT JOIN kb3_ships shp
 	  		      ON ( shp.shp_id = kll.kll_ship_id )
-	  		   INNER JOIN kb3_ship_classes scl
+	  		   LEFT JOIN kb3_ship_classes scl
 	  		      ON ( scl.scl_id = shp.shp_class )";
+
             if($this->comb_plt_ || $this->comb_crp_ || $this->comb_all_)
 			{
 				// GROUP BY
@@ -376,26 +371,44 @@ class KillList
 					$sqlwhereop = ' AND ';
 				}
 				if($this->apikill_)
-					$this->sql_ .= " AND kll.kll_external_id IS NOT NULL ";
+				{
+					$this->sql_ .= $sqlwhereop." kll.kll_external_id IS NOT NULL ";
+					$sqlwhereop = ' AND ';
+				}
 
 				// System filter
 				if (count($this->systems_))
-					$this->sql_ .= " AND kll.kll_system_id in ( ".implode($this->systems_, ",").")";
+				{
+					$this->sql_ .= $sqlwhereop." kll.kll_system_id in ( ".implode($this->systems_, ",").")";
+					$sqlwhereop = ' AND ';
+				}
 
 				// Get all kills after given kill id (used for feed syndication)
 				if ($this->minkllid_)
-					$this->sql_ .= ' AND kll.kll_id >= '.$this->minkllid_.' ';
+				{
+					$this->sql_ .= $sqlwhereop.' kll.kll_id >= '.$this->minkllid_.' ';
+					$sqlwhereop = ' AND ';
+				}
 
 				// Get all kills before given kill id (used for feed syndication)
 				if ($this->maxkllid_)
-					$this->sql_ .= ' AND kll.kll_id <= '.$this->maxkllid_.' ';
+				{
+					$this->sql_ .= $sqlwhereop.' kll.kll_id <= '.$this->maxkllid_.' ';
+					$sqlwhereop = ' AND ';
+				}
 
 				// excluded ship filter
 				if (count($this->exclude_scl_))
-					$this->sql_ .= " AND shp.shp_class not in ( ".implode(",", $this->exclude_scl_)." )";
+				{
+					$this->sql_ .= $sqlwhereop." shp.shp_class not in ( ".implode(",", $this->exclude_scl_)." )";
+					$sqlwhereop = ' AND ';
+				}
 				// included ship filter
 				if (count($this->vic_scl_id_))
-					$this->sql_ .= " AND shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
+				{
+					$this->sql_ .= $sqlwhereop." shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
+					$sqlwhereop = ' AND ';
+				}
 				if ($this->ordered_)
 				{
 					if (!$this->orderby_)
@@ -433,6 +446,7 @@ class KillList
 			}
 			$this->sql_ = $this->sqloutertop_.$this->sqltop_.$this->sqllong_.$this->sql_.$this->sqlouterbottom_;
             $this->sql_ .= " /* kill list */";
+//			die($this->sql_);
             $this->qry_->execute($this->sql_);
 			if(!$this->plimit_ || $this->limit_) $this->count_ = $this->qry_->recordcount();
         }
@@ -488,15 +502,17 @@ class KillList
             $this->killcounter_++;
             if ($row['scl_class'] != 2 && $row['scl_class'] != 3 && $row['scl_class'] != 11)
                 $this->realkillcounter_++;
-
-           if (config::get('ship_values'))
-            {
-                if ($row['shp_value'])
-                {
-                    $row['scl_value'] = $row['shp_value'];
-                }
-            }
-
+/*
+			// Should this be total value, ship value or class value?
+			// Leaving as class value for now.
+			if (config::get('ship_values'))
+			{
+				if ($row['shp_value'])
+				{
+					$row['scl_value'] = $row['shp_value'];
+				}
+			}
+*/
             if ($this->walked == false)
             {
                 $this->killisk_ += $row['kll_isk_loss'];
@@ -619,14 +635,6 @@ class KillList
     {
             if(is_numeric($shipclass)) $this->vic_scl_id_[] = $shipclass;
             else $this->vic_scl_id_[] = $shipclass->getID();
-    }
-
-    function addVictimShip($ship)
-    {
-    }
-
-    function addItemDestroyed($item)
-    {
     }
 
     function addRegion($region)

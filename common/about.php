@@ -95,33 +95,6 @@ function getVictimShipValueIndicator($value)
 	return IMG_URL . "/ships/ship-" . $color . ".gif";
 }
 
-if (config::get('ship_values'))
-{
-	$sql = 'select kbs.shp_id as id, shp.shp_name, kbs.shp_value,
-                 shp.shp_techlevel, scl.scl_class, scl.scl_points
-                 from kb3_ships_values kbs
-                 inner join kb3_ships shp on (kbs.shp_id = shp.shp_id)
-                 inner join kb3_ship_classes scl on (shp.shp_class = scl.scl_id)
-                 order by shp.shp_name asc';
-	$qry = new DBQuery();
-	$qry->execute($sql);
-	$shipval = array();
-	while ($row = $qry->getRow())
-	{
-		if ($row['shp_techlevel'] == 2)
-		{
-			$row['t2'] = IMG_URL.'/items/32_32/t2.gif';
-		}
-		else $row['t2'] = '';
-		$row['scl_points'] = number_format($row['scl_points'],0,',','.');
-		$row['valind'] = getVictimShipValueIndicator($row['shp_value']/1000000);
-		$row['shp_value'] = number_format($row['shp_value'],0,',','.');
-		$shipval[] = $row;
-
-	}
-	$smarty->assign('shipval', $shipval);
-}
-
 $page->setContent($smarty->fetch(get_tpl('about')));
 $page->generate();
 ?>

@@ -187,13 +187,14 @@ class DBNormalQuery_mysqli
 class DBCachedQuery_mysqli
 {
     //! Set up a mysqli cached query object with default values.
-    function DBCachedQuery_mysqli()
+    function DBCachedQuery_mysqli($nocache = false)
     {
         static $totalexectime = 0;
 		$this->totalexectime_ = &$totalexectime;
         $this->executed_ = false;
         $this->_cache = array();
         $this->_cached = false;
+		$this->_nocache = $nocache;
 
         // this is the minimum runtime a query has to run to be
         // eligible for caching in seconds
@@ -220,6 +221,7 @@ class DBCachedQuery_mysqli
             return false;
         }
 
+		if($this->_nocache) return false;
         if (file_exists(KB_CACHEDIR.'/qcache_qry_'.$this->_hash))
         {
             $this->_mtime = filemtime(KB_CACHEDIR.'/qcache_qry_'.$this->_hash);
@@ -623,13 +625,14 @@ class DBCachedQuery_mysqli
 //! mysqli memcached query class. Manages SQL queries to a MySQL DB using mysqli.
 class DBMemcachedQuery_mysqli
 {
-    function DBMemcachedQuery_mysqli()
+    function DBMemcachedQuery_mysqli($nocache = false)
     {
         static $totalexectime = 0;
 		$this->totalexectime_ = &$totalexectime;
         $this->executed_ = false;
         $this->_cache = array();
         $this->_cached = false;
+		$this->_nocache = $nocache;
 
         // this is the minimum runtime a query has to run to be
         // eligible for caching in seconds
@@ -647,6 +650,7 @@ class DBMemcachedQuery_mysqli
      */
     function checkCache()
     {
+		if($this->_nocache) return false;
         global $mc;
 
         // only cache selects

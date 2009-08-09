@@ -217,7 +217,7 @@ class KillSummaryTable
 				'losses' => 0, 'losses_isk' => 0);
 		}
 
-		$sql = 'SELECT count(distinct kll.kll_id) AS knb, scl_id, scl_class,';
+		$sql = 'SELECT count(kll.kll_id) AS knb, scl_id, scl_class,';
 		$sql .= ' sum(kll_isk_loss) AS kisk FROM kb3_kills kll
                     INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )';
 		$sql .= ' INNER JOIN kb3_ship_classes scl ON ( scl.scl_id = shp.shp_class )';
@@ -256,8 +256,6 @@ class KillSummaryTable
 			if($enddate) $sql .= $sqlop." inv.ind_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
 		}
 
-
-
 		$sql .= 'GROUP BY scl_class order by scl_class';
 
 		$qry = new DBQuery();
@@ -271,7 +269,7 @@ class KillSummaryTable
 		}
 
 
-		$sql = 'SELECT count(distinct kll_id) AS lnb, scl_id, scl_class,';
+		$sql = 'SELECT count( kll_id) AS lnb, scl_id, scl_class,';
 		$sql .= ' sum(kll_isk_loss) AS lisk FROM kb3_kills kll
                     INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )';
 		$sql .= ' INNER JOIN kb3_ship_classes scl ON ( scl.scl_id = shp.shp_class )';
@@ -283,20 +281,20 @@ class KillSummaryTable
 			$sqlop = " AND ";
 		}
 
-		if ($this->inv_plt_)
+		if ($this->inv_all_)
 		{
-			$sql .= $sqlop.' kll.kll_victim_id IN ( '.implode(',', $this->inv_plt_).' ) ';
-			$sql .= ' AND EXISTS (SELECT 1 FROM kb3_inv_detail ind WHERE kll.kll_id = ind_kll_id AND ind.ind_plt_id NOT IN ( '.implode(',', $this->inv_plt_).' ) limit 0,1) ';
+			$sql .= $sqlop.' kll.kll_all_id IN ( '.implode(',', $this->inv_all_).' ) ';
+			$sql .= 'AND EXISTS (SELECT 1 FROM kb3_inv_all ina WHERE kll.kll_id = ina_kll_id AND ina.ina_all_id NOT IN ( '.implode(',', $this->inv_all_).' ) limit 0,1) ';
 		}
 		elseif ($this->inv_crp_)
 		{
 			$sql .= $sqlop.' kll.kll_crp_id IN ( '.implode(',', $this->inv_crp_).' ) ';
 			$sql .= 'AND EXISTS (SELECT 1 FROM kb3_inv_crp inc WHERE kll.kll_id = inc_kll_id AND inc.inc_crp_id NOT IN ( '.implode(',', $this->inv_crp_).' ) limit 0,1) ';
 		}
-		elseif ($this->inv_all_)
+		elseif ($this->inv_plt_)
 		{
-			$sql .= $sqlop.' kll.kll_all_id IN ( '.implode(',', $this->inv_all_).' ) ';
-			$sql .= 'AND EXISTS (SELECT 1 FROM kb3_inv_all ina WHERE kll.kll_id = ina_kll_id AND ina.ina_all_id NOT IN ( '.implode(',', $this->inv_all_).' ) limit 0,1) ';
+			$sql .= $sqlop.' kll.kll_victim_id IN ( '.implode(',', $this->inv_plt_).' ) ';
+			$sql .= ' AND EXISTS (SELECT 1 FROM kb3_inv_detail ind WHERE kll.kll_id = ind_kll_id AND ind.ind_plt_id NOT IN ( '.implode(',', $this->inv_plt_).' ) limit 0,1) ';
 		}
 		$sql .= 'GROUP BY scl_class order by scl_class';
 

@@ -36,17 +36,10 @@ class KillSummaryTablePublic extends KillSummaryTable
         }
 
         $sql = 'SELECT count(*) AS knb, scl_id, scl_class,';
-        if (config::get('ship_values'))
-        {
-            $sql .= ' sum(ifnull(ksv.shp_value,scl.scl_value)) AS kisk FROM kb3_kills kll
-                    INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )
-                    left join kb3_ships_values ksv on (shp.shp_id = ksv.shp_id)';
-        }
-        else
-        {
-            $sql .= ' sum(scl.scl_value) AS kisk FROM kb3_kills kll
+
+		$sql .= ' sum(kll_isk_loss) AS kisk FROM kb3_kills kll
                     INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )';
-        }
+		
         $sql .= ' INNER JOIN kb3_ship_classes scl ON ( scl.scl_id = shp.shp_class )';
 
         if ($this->inv_crp_)

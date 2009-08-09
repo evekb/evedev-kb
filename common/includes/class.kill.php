@@ -701,7 +701,7 @@ class Kill
 		if($this->relatedkillcount_) return $this->relatedkillcount_;
 		if(ALLIANCE_ID)
 		{
-			$sql .="SELECT COUNT(ina_kll_id) FROM kb3_inv_all INNER JOIN
+			$sql .="SELECT COUNT(ina_kll_id) AS kills FROM kb3_inv_all INNER JOIN
 				kb3_kills ON (kll_id = ina_kll_id) WHERE 
 				ina_all_id = ".ALLIANCE_ID." AND 
 				ina_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
@@ -710,7 +710,7 @@ class Kill
 		}
 		else if(CORP_ID)
 		{
-			$sql .="SELECT COUNT(inc_kll_id) FROM kb3_inv_crp INNER JOIN
+			$sql .="SELECT COUNT(inc_kll_id) AS kills FROM kb3_inv_crp INNER JOIN
 				kb3_kills ON (kll_id = inc_kll_id) WHERE 
 				inc_crp_id = ".CORP_ID." AND 
 				inc_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
@@ -719,7 +719,7 @@ class Kill
 		}
 		else if(PILOT_ID)
 		{
-			$sql .="SELECT COUNT(ind_kll_id) FROM kb3_inv_detail INNER JOIN
+			$sql .="SELECT COUNT(ind_kll_id) AS kills FROM kb3_inv_detail INNER JOIN
 				kb3_kills ON (kll_id = ind_kll_id) WHERE 
 				ind_plt_id = ".PILOT_ID." AND 
 				ind_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
@@ -728,7 +728,7 @@ class Kill
 		}
 		else
 		{
-			$sql .="SELECT COUNT(ind_kll_id) FROM kb3_kills WHERE 
+			$sql .="SELECT COUNT(kll_id) AS kills FROM kb3_kills WHERE
 				kll_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
 				AND kll_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
 				AND kll_system_id = ".$this->solarsystem_->getID();
@@ -747,27 +747,23 @@ class Kill
 		// No details for classified kills.
 		if($this->isClassified()) return 0;
 		if($this->relatedlosscount_) return $this->relatedlosscount_;
-		$sql="SELECT count(kll.kll_id) as losses FROM kb3_kills kll ";
-		if(ALLIANCE_ID <>0)
-		{
-			$sql .="INNER JOIN kb3_inv_all ina ON ( kll.kll_id = ina.ina_kll_id".
-				" AND ina.ina_all_id != ".ALLIANCE_ID." ) ";
-		}
-		else if(CORP_ID <>0)
-		{
-			$sql .="INNER JOIN kb3_inv_crp inc ON ( kll.kll_id = inc.inc_kll_id".
-				" AND ina.ina_crp_id != ".CORP_ID." ) ";
-		}
-		else if(PILOT_ID <>0)
-		{
-			$sql .="INNER JOIN kb3_inv_detail ind ON ( kll.kll_id = ind.ind_kll_id".
-				" AND ind.ind_plt_id != ".PILOT_ID." ) ";
-		}
+		$sql="SELECT count(kll.kll_id) AS losses FROM kb3_kills kll ";
 		$sql.="WHERE kll.kll_system_id = ".$this->solarsystem_->getID().
 			" AND kll.kll_timestamp <= '".
 				(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60)).
 			"' AND kll.kll_timestamp >= '".
 				(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'";
+		if(ALLIANCE_ID <>0)
+		{
+			$sql .=" AND EXISTS (SELECT * FROM kb3_inv_all WHERE ina_kll_id = kll.kll_id".
+				" AND ina_all_id != ".ALLIANCE_ID." LIMIT 1) AND kll.kll_all_id = ".ALLIANCE_ID;
+		}
+		else if(CORP_ID <>0)
+		{
+			$sql .=" AND  EXISTS (SELECT * FROM kb3_inv_crp WHERE inc_kll_id = kll.kll_id".
+				" AND inc_crp_id != ".CORP_ID." LIMIT 1)  AND kll.kll_crp_id = ".CORP_ID;
+		}
+
 		$sql .= "/* related loss count */";
 		$qry = new DBQuery();
 		if(!$qry->execute($sql)) return 0;
