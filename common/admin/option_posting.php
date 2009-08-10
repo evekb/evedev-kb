@@ -28,8 +28,8 @@ class admin_posting
         {
     		$date = getdate();
     	}
-    	$html = "<input type=\"text\" name=\"option[filter_day]\" id=\"option[filter_day]\" style=\"width:20px\" value=\"{$date['mday']}\"/>&nbsp;";
-    	$html .= "<select name=\"option[filter_month]\" id=\"option[filter_month]\">";
+    	$html = "<input type=\"text\" name=\"option_filter_day\" id=\"option_filter_day\" style=\"width:20px\" value=\"{$date['mday']}\"/>&nbsp;";
+    	$html .= "<select name=\"option_filter_month\" id=\"option_filter_month\">";
     	for ($i = 1; $i <= 12; $i++)
         {
     		$t = mktime(0, 0, 0, $i, 1, 1980);
@@ -47,7 +47,7 @@ class admin_posting
     	}
     	$html .= "</select>&nbsp;";
 
-    	$html .= "<select name=\"option[filter_year]\" id=\"option[filter_year]\">";
+    	$html .= "<select name=\"option_filter_year\" id=\"option_filter_year\">";
     	for ($i = gmdate("Y")-7; $i <= gmdate("Y"); $i++)
         {
     		if ($date['year'] == $i)
@@ -61,7 +61,7 @@ class admin_posting
     		$html .= "<option value=\"$i\"$selected>$i</option>";
     	}
     	$html .= "</select>&nbsp;";
-    	$html .= "<input type=\"checkbox\" name=\"option[filter_apply]\" id=\"option[filter_apply]\"";
+    	$html .= "<input type=\"checkbox\" name=\"option_filter_apply\" id=\"option_filter_apply\"";
     	if ($apply)
         {
             $html .= " checked=\"checked\"";
@@ -72,10 +72,10 @@ class admin_posting
 
     function postDateSelector()
     {
-        if ($_POST['option']['filter_apply'] == 'on')
+        if ($_POST['option_filter_apply'] == 'on')
         {
             config::set('filter_apply', '1');
-            config::set('filter_date', mktime(0, 0, 0, $_POST['option']['filter_month'], ($_POST['option']['filter_day'] > 31 ? 31 : $_POST['option']['filter_day']), $_POST['option']['filter_year']));
+            config::set('filter_date', mktime(0, 0, 0, $_POST['option_filter_month'], ($_POST['option_filter_day'] > 31 ? 31 : $_POST['option_filter_day']), $_POST['option_filter_year']));
         }
         else
         {

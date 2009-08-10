@@ -100,46 +100,46 @@ class admin_acache
     }
 	function optionClearPage()
 	{
-		return '<input type="checkbox" name="option[clear_page]">Clear cache ?';
+		return '<input type="checkbox" name="option_clear_page">Clear cache ?';
 	}
 	function optionClearMail()
 	{
-		return '<input type="checkbox" name="option[clear_mail]">Clear cache ?';
+		return '<input type="checkbox" name="option_clear_mail">Clear cache ?';
 	}
 	function optionClearSum()
 	{
-		return '<input type="checkbox" name="option[clear_sum]">Clear cache ?';
+		return '<input type="checkbox" name="option_clear_sum">Clear cache ?';
 	}
 	function optionClearSQL()
 	{
-		return '<input type="checkbox" name="option[clear_sql]">Clear cache ?';
+		return '<input type="checkbox" name="option_clear_sql">Clear cache ?';
 	}
 	function optionClearTemplate()
 	{
-		return '<input type="checkbox" name="option[clear_template]">Clear cache ?';
+		return '<input type="checkbox" name="option_clear_template">Clear cache ?';
 	}
 	function optionClearAll()
 	{
-		return '<input type="checkbox" name="option[clear_all]">Clear cache ?';
+		return '<input type="checkbox" name="option_clear_all">Clear cache ?';
 	}
 	function clearCaches()
 	{
-        if ($_POST['option']['clear_page'] == 'on')
+        if ($_POST['option_clear_page'] == 'on')
         {
 			admin_acache::removeOld(0, KB_CACHEDIR.'/'.KB_SITE, false);
-			$_POST['option']['clear_page'] = 'off';
+			$_POST['option_clear_page'] = 'off';
         }
-        if ($_POST['option']['clear_template'] == 'on')
+        if ($_POST['option_clear_template'] == 'on')
         {//hardcoded in index.php
 			admin_acache::removeOld(0, 'cache/templates_c', false);
-			$_POST['option']['clear_template'] == 'off';
+			$_POST['option_clear_template'] == 'off';
         }
-        if ($_POST['option']['clear_mail'] == 'on')
+        if ($_POST['option_clear_mail'] == 'on')
         {
 			admin_acache::removeOld(0, config::get('km_cache_dir'), false);
-			$_POST['option']['clear_mail'] == 'off';
+			$_POST['option_clear_mail'] == 'off';
         }
-        if ($_POST['option']['clear_sum'] == 'on')
+        if ($_POST['option_clear_sum'] == 'on')
         {
 			$qry = new DBQuery();
 			$qry->execute("DELETE FROM kb3_sum_alliance");
@@ -149,17 +149,17 @@ class admin_acache
 			// summaries.
 			admin_acache::clearQCache();
 			admin_acache::removeOld(0, KB_CACHEDIR.'/'.KB_SITE, false);
-			$_POST['option']['clear_sum'] == 'off';
+			$_POST['option_clear_sum'] == 'off';
         }
-        if ($_POST['option']['clear_sql'] == 'on')
+        if ($_POST['option_clear_sql'] == 'on')
         {
 			admin_acache::clearQCache();
 			// Also clear the page cache since it will have cached the results
 			// of the file cache
 			admin_acache::removeOld(0, KB_CACHEDIR.'/'.KB_SITE, false);
-			$_POST['option']['clear_sql'] == 'off';
+			$_POST['option_clear_sql'] == 'off';
         }
-        if ($_POST['option']['clear_all'] == 'on')
+        if ($_POST['option_clear_all'] == 'on')
         {
 			admin_acache::removeOld(0, KB_CACHEDIR.'/'.KB_SITE, false);
 			admin_acache::removeOld(0, 'cache/templates_c', false);
@@ -174,7 +174,7 @@ class admin_acache
 			$qry->execute("DELETE FROM kb3_sum_alliance");
 			$qry->execute("DELETE FROM kb3_sum_corp");
 			$qry->execute("DELETE FROM kb3_sum_pilot");
-			$_POST['option']['clear_all'] == 'off';
+			$_POST['option_clear_all'] == 'off';
         }
 		return;
 	}

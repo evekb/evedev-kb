@@ -77,7 +77,7 @@ class options
                 elseif($element['type'])
                 {
                     // edits and options will be set directly
-                    config::set($element['name'], $_POST['option'][$element['name']]);
+                    config::set($element['name'], $_POST['option_'.$element['name']]);
                 }
                 // for callbacks we check their callback function on postdata to deal with it
                 if ($element['onchange'])

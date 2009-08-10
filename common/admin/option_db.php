@@ -31,19 +31,19 @@ class admin_db
 
         // GB
         if (($size / 1073741824) > 1){
-        	return round($size/1073741824, 4).' GB <input type="checkbox" name="option[sql_clearcache]">Clear cache ?';
+        	return round($size/1073741824, 4).' GB <input type="checkbox" name="option_sql_clearcache">Clear cache ?';
         // MB
         }elseif (($size / 1048576) > 1){
-        	return round($size/1048576, 4).' MB <input type="checkbox" name="option[sql_clearcache]">Clear cache ?';
+        	return round($size/1048576, 4).' MB <input type="checkbox" name="option_sql_clearcache">Clear cache ?';
 		// KB
     	}else{
-	        return round($size/1024, 2).' KB <input type="checkbox" name="option[sql_clearcache]">Clear cache ?';
+	        return round($size/1024, 2).' KB <input type="checkbox" name="option_sql_clearcache">Clear cache ?';
         }
     }
 
     function killCache()
     {
-        if ($_POST['option']['sql_clearcache'] != 'on')
+        if ($_POST['option_sql_clearcache'] != 'on')
         {
             return;
         }
