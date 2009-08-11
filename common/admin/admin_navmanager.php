@@ -50,23 +50,23 @@ elseif ($_POST['show'])
 	chgHideStatus($_POST['show'],0);
 }
 
-$html .= "<div class=block-header2>Navigation for intern pages</div>";
+$html .= '<div class="block-header2">Navigation for intern pages</div>';
 $qry = new DBQuery();
 $query = "select * from kb3_navigation WHERE intern = 1 AND KBSITE = '".KB_SITE."' AND descr <> 'About';";
 $result = $qry->execute($query);
 
 if ($result)
 {
-    $html .= "<table class=kb-table>";
-    $html .= "<tr><td width=100><u><b>Page</b></u></td><th colspan=2><u>Actions</u></th><th>Hidden</th></tr>";
+    $html .= '<table class="kb-table">';
+    $html .= "<tr><td width='100'><u><b>Page</b></u></td><th colspan='2'><u>Actions</u></th><th>Hidden</th></tr>";
     $odd = false;
     while ($row = $qry->getRow())
     {
-        $html .= "<tr class=$class><td>".$row['descr']."</td><form action ='?a=admin_navmanager' method='POST'><td><input name='name' type='text' value='".$row['descr']."'></td><td><input type='hidden' name='id' value='".$row['ID']."'><input type='submit' value='rename'></td></form>";
+        $html .= "<tr class='$class'><td>".$row['descr']."</td><form action ='?a=admin_navmanager' method='post'><td><input name='name' type='text' value='".$row['descr']."' /></td><td><input type='hidden' name='id' value='".$row['ID']."' /><input type='submit' value='rename' /></td></form>";
         if ($row['hidden']==0){
-	        $html .= "<form action ='?a=admin_navmanager' method='POST'><td><input type='hidden' name='hide' value='".$row['ID']."'><input type='submit' value='hide'></td></form>";
+	        $html .= "<form action ='?a=admin_navmanager' method='post'><td><input type='hidden' name='hide' value='".$row['ID']."' /><input type='submit' value='hide' /></td></form>";
         }else{
-    	    $html .= "<form action ='?a=admin_navmanager' method='POST'><td><input type='hidden' name='show' value='".$row['ID']."'><input type='submit' value='show'></td></form>";
+    	    $html .= "<form action ='?a=admin_navmanager' method='post'><td><input type='hidden' name='show' value='".$row['ID']."' /><input type='submit' value='show' /></td></form>";
         }
         $html .= "</tr>";
         if (!$odd)
@@ -80,7 +80,7 @@ if ($result)
             $class = 'kb-table-row-even';
         }
     }
-    $html .= "<tr class=$class>";
+    $html .= "<tr class='$class'>";
     if (!$odd)
     {
         $odd = true;
@@ -91,25 +91,25 @@ if ($result)
         $odd = false;
         $class = 'kb-table-row-even';
     }
-    $html .= "<tr class=$class><form action ='?a=admin_navmanager' method='POST'><td  colspan=3>Statlink must have the name \"Stats\"<br> during repair</td><td><input type='hidden' name='syncStat' value='1'><center><input type='submit' value='Repair Stats'></center></td></form></tr>";
+    $html .= "<tr class='$class'><form action ='?a=admin_navmanager' method='post'><td colspan='3'>Statlink must have the name \"Stats\"<br /> during repair</td><td><input type='hidden' name='syncStat' value='1' /><center><input type='submit' value='Repair Stats' /></center></td></form></tr>";
     $html .= "</table>";
 }
-$html .= "<div class=block-header2>Navigation for extern pages</div>";
+$html .= "<div class='block-header2'>Navigation for extern pages</div>";
 $qry = new DBQuery();
 $query = "select * from kb3_navigation WHERE intern = 0 AND KBSITE = '".KB_SITE."';";
 $result = $qry->execute($query);
 
 if ($result)
 {
-    $html .= "<table class=kb-table>";
-    $html .= "<tr><td width=100><u><b>Page</b></u></td><th colspan=2>Rename</th><th colspan=2>URL</th><th colspan=2>Target</th></tr>";
+    $html .= "<table class='kb-table'>";
+    $html .= "<tr><td width='100'><u><b>Page</b></u></td><th colspan='2'>Rename</th><th colspan='2'>URL</th><th colspan='2'>Target</th></tr>";
     $odd = false;
     while ($row = $qry->getRow())
     {
-        $html .= "<tr class=$class><td>".$row['descr']."</td>";
-        $html .= "<form action ='?a=admin_navmanager' method='POST'><td><input name='name' type='text' value='".$row['descr']."'></td><td><input type='hidden' name='id' value='".$row['ID']."'><input type='submit' value='rename'></td></form>";
-        $html .= "<form action ='?a=admin_navmanager' method='POST'><td><input name='newUrl' type='text' value='".$row['url']."'></td><td><input type='hidden' name='id' value='".$row['ID']."'><input type='submit' value='change'></td></form>";
-        $html .= "<form action ='?a=admin_navmanager' method='POST'><td><select name='target'>";
+        $html .= "<tr class='$class'><td>".$row['descr']."</td>";
+        $html .= "<form action ='?a=admin_navmanager' method='post'><td><input name='name' type='text' value='".$row['descr']."' /></td><td><input type='hidden' name='id' value='".$row['ID']."' /><input type='submit' value='rename'></td></form>";
+        $html .= "<form action ='?a=admin_navmanager' method='post'><td><input name='newUrl' type='text' value='".$row['url']."' /></td><td><input type='hidden' name='id' value='".$row['ID']."' /><input type='submit' value='change'></td></form>";
+        $html .= "<form action ='?a=admin_navmanager' method='post'><td><select name='target'>";
         $html .= "<option value='_self' ";
         if ($row['target'] == '_self')
         {
@@ -122,8 +122,8 @@ if ($result)
             $html .= "selected";
         }
         $html .= ">_blank</option></select>";
-        $html .= "</td><td><input type='hidden' name='id' value='".$row['ID']."'><input type='submit' value='change'></td></form>";
-        $html .= "<form action ='?a=admin_navmanager' method='POST'><td><input name='delete' type='hidden' value='1'><input type='hidden' name='id' value='".$row['ID']."'><input type='submit' value='delete'></td></form>";
+        $html .= "</td><td><input type='hidden' name='id' value='".$row['ID']."' /><input type='submit' value='change' /></td></form>";
+        $html .= "<form action ='?a=admin_navmanager' method='post'><td><input name='delete' type='hidden' value='1' /><input type='hidden' name='id' value='".$row['ID']."' /><input type='submit' value='delete' /></td></form>";
         $html .= "</tr>";
         if (!$odd)
         {
@@ -136,7 +136,7 @@ if ($result)
             $class = 'kb-table-row-even';
         }
     }
-    $html .= "<tr class=$class><td colspan=10><b><u>New Page:</b></u></td></tr>";
+    $html .= "<tr class='$class'><td colspan='10'><b><u>New Page:</b></u></td></tr>";
     if (!$odd)
     {
         $odd = true;
@@ -147,24 +147,24 @@ if ($result)
         $odd = false;
         $class = 'kb-table-row-even';
     }
-    $html .= "<tr class=$class><td>Description:</td>";
-    $html .= "<form action ='?a=admin_navmanager' method='POST'><td><input name='name' type='text'></td>";
-    $html .= "<td>URL:</td><td><input name='url' type='text' value='http://'></td><td>Target:</td>";
+    $html .= "<tr class='$class'><td>Description:</td>";
+    $html .= "<form action ='?a=admin_navmanager' method='post'><td><input name='name' type='text'></td>";
+    $html .= "<td>URL:</td><td><input name='url' type='text' value='http://' /></td><td>Target:</td>";
     $html .= "<td><select name='target'><option value='_self'>_self</option><option value='_blank'>_blank</option></select>";
-    $html .= "</td><td><input type='hidden' name='new' value='1'><input type='submit' value='add'></td></form>";
+    $html .= "</td><td><input type='hidden' name='new' value='1' /><input type='submit' value='add' /></td></form>";
     $html .= "</tr>";
     $html .= "</table>";
 }
 
-$html .= "<div class=block-header2>Order of the pages in Top Navigation Bar</div>";
+$html .= "<div class='block-header2'>Order of the pages in Top Navigation Bar</div>";
 $qry = new DBQuery();
 $query = "select * from kb3_navigation WHERE nav_type = 'top' AND KBSITE = '".KB_SITE."' ORDER BY posnr ;";
 $result = $qry->execute($query);
 
 if ($result)
 {
-    $html .= "<table class=kb-table>";
-    $html .= "<tr><th><u>Nr</u></th><td><u><b>Page</b></u></td><th colspan=2><u>Actions</u></th></tr>";
+    $html .= "<table class='kb-table'>";
+    $html .= "<tr><th><u>Nr</u></th><td><u><b>Page</b></u></td><th colspan='2'><u>Actions</u></th></tr>";
     $odd = false;
     while ($row = $qry->getRow())
     {
@@ -178,7 +178,7 @@ if ($result)
             $odd = false;
             $class = 'kb-table-row-even';
         }
-        $html .= "<tr class=$class><td align=right>".$row['posnr']."</td><td>".$row['descr']."</td>";
+        $html .= "<tr class='$class'><td align='right'>".$row['posnr']."</td><td>".$row['descr']."</td>";
         $html .= "<td><a href='?a=admin_navmanager&decPrio=".$row['ID']."'><b> move up </b></a></td>";
         $html .= "<td><a href='?a=admin_navmanager&incPrio=".$row['ID']."'><b> down </b></a></td>";
         $html .= "<tr>" ;

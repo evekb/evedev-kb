@@ -61,7 +61,7 @@ class admin_config
 		if(isset($_POST['option']['cfg_corpid'])) $crp_id=intval($_POST['option']['cfg_corpid']);
 		else $crp_id = CORP_ID;
 		$qry->execute("SELECT crp_name FROM kb3_corps WHERE crp_id = ".$crp_id);
-		$html = '<input type="edit" id="option_cfg_corpid" name="option_cfg_corpid" value="'.$crp_id.'" size="5" maxlength="15" />';
+		$html = '<input type="text" id="option_cfg_corpid" name="option_cfg_corpid" value="'.$crp_id.'" size="5" maxlength="15" />';
 		if(!$qry->recordCount()) return $html;
 		$res = $qry->getRow();
 		return $html . ' &nbsp;('.$res['crp_name'].')';
@@ -75,7 +75,7 @@ class admin_config
 		elseif($_POST['option']['cfg_allianceid']) $all_id=intval($_POST['option']['cfg_allianceid']);
 		else $all_id = ALLIANCE_ID;
 		$qry->execute("SELECT all_name FROM kb3_alliances WHERE all_id = ".$all_id);
-		$html = '<input type="edit" id="option_cfg_allianceid" name="option_cfg_allianceid" value="'.$all_id.'" size="5" maxlength="15" />';
+		$html = '<input type="text" id="option_cfg_allianceid" name="option_cfg_allianceid" value="'.$all_id.'" size="5" maxlength="15" />';
 		if(!$qry->recordCount()) return $html;
 		$res = $qry->getRow();
 		return $html . ' &nbsp;('.$res['all_name'].')';

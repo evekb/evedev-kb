@@ -20,7 +20,7 @@ if ($_REQUEST['opt'] == 'search')
         {
             // value already added
             unset($_REQUEST['opt']);
-            $html .= 'Error: That id is already on the list.<br/>';
+            $html .= 'Error: That id is already on the list.<br />';
         }
         else
         {
@@ -36,7 +36,7 @@ if ($_REQUEST['opt'] == 'search')
     else
     {
         unset($_REQUEST['opt']);
-        $html .= 'Error: No id or name specified.<br/>';
+        $html .= 'Error: No id or name specified.<br />';
     }
     if ($search)
     {
@@ -52,17 +52,17 @@ if ($_REQUEST['opt'] == 'search')
             if (!$c)
             {
                 $html .= '<form id="search" action="?a=admin_shp_val" method=post>';
-                $html .= '<table class=kb-table width="99%" align=center cellspacing="1">';
-                $html .= '<input type="hidden" name="opt" value="add"/>';
-                $html .= '<tr class=kb-table-header>';
-                $html .= '<td class=kb-table-header align="center">Ship</td>';
-                $html .= '<td class=kb-table-header align="center">Ship id</td>';
-                $html .= '<td class=kb-table-header>Ship Name</td>';
-                $html .= '<td class=kb-table-header>Ship type</td>';
-                $html .= '<td class=kb-table-header align="center">Techlevel</td>';
-                $html .= '<td class=kb-table-header align="right">Baseprice</td>';
-                $html .= '<td class=kb-table-header align="right">Classvalue</td>';
-                $html .= '<td class=kb-table-header align="right">Shipvalue</td></tr>';
+                $html .= '<table class="kb-table" width="99%" align="center" cellspacing="1">';
+                $html .= '<input type="hidden" name="opt" value="add" />';
+                $html .= '<tr class="kb-table-header">';
+                $html .= '<td class="kb-table-header" align="center">Ship</td>';
+                $html .= '<td class="kb-table-header" align="center">Ship id</td>';
+                $html .= '<td class="kb-table-header">Ship Name</td>';
+                $html .= '<td class="kb-table-header">Ship type</td>';
+                $html .= '<td class="kb-table-header" align="center">Techlevel</td>';
+                $html .= '<td class="kb-table-header" align="right">Baseprice</td>';
+                $html .= '<td class="kb-table-header" align="right">Classvalue</td>';
+                $html .= '<td class="kb-table-header" align="right">Shipvalue</td></tr>';
             }
             $c++;
             if (!$odd)
@@ -75,25 +75,25 @@ if ($_REQUEST['opt'] == 'search')
                 $odd = false;
                 $class = 'kb-table-row-even';
             }
-            $html .= "<tr class=".$class." style=\"height: 66px;\">";
-            $html .= '<td width="64" align="center"><img src="'.IMG_URL.'/ships/64_64/'.$data['ext'].'.png"></td>';
+            $html .= "<tr class=\"".$class."\" style=\"height: 66px;\">";
+            $html .= '<td width="64" align="center"><img src="'.IMG_URL.'/ships/64_64/'.$data['ext'].'.png" alt="" /></td>';
             $html .= '<td align="center">'.$data['id'].'</td>';
             $html .= '<td>'.$data['shp_name'].'</td>';
             $html .= '<td>'.$data['scl_class'].'</td>';
             $html .= '<td width="64" align="center">'.$data['shp_techlevel'].'</td>';
             $html .= '<td align="right">'.number_format($data['shp_baseprice'], 0, ',', '.').'</td>';
             $html .= '<td align="right">'.number_format($data['scl_value'], 0, ',', '.').'</td>';
-            $html .= '<td width="180" align="right"><input type="text" name="ship['.$data['id'].']" value="'.$data['scl_value'].'"></td></tr>';
+            $html .= '<td width="180" align="right"><input type="text" name="ship['.$data['id'].']" value="'.$data['scl_value'].'" /></td></tr>';
         }
         if ($c)
         {
             $html .= '</table>';
-            $html .= '<br/><input type="submit" name="submit" value="Save">&nbsp;Note: Only values different from classvalue and zero will be saved.';
+            $html .= '<br /><input type="submit" name="submit" value="Save" />&nbsp;Note: Only values different from classvalue and zero will be saved.';
             $html .= '</form>';
         }
         else
         {
-            $html .= 'No Ships found to be added.<br/>';
+            $html .= 'No Ships found to be added.<br />';
             unset($_REQUEST['opt']);
         }
     }
@@ -137,26 +137,26 @@ if ($_REQUEST['opt'] == 'add')
             $qry->execute('insert into kb3_ships_values (shp_id, shp_value) values ('.$id.',\''.$value.'\')');
         }
     }
-    $html .= 'Shipvalues added/changed<br/>';
+    $html .= 'Shipvalues added/changed<br />';
     unset($_REQUEST['opt']);
 }
 if (!isset($_REQUEST['opt']))
 {
     $page->setTitle("Administration - Shipvalues");
 
-    $html .= '<div class=block-header2>Add a Shipvalue</div>';
+    $html .= '<div class="block-header2">Add a Shipvalue</div>';
     $html .= '<form id="search" action="?a=admin_shp_val" method=post>';
-    $html .= '<input type="hidden" name="opt" value="search"/>';
+    $html .= '<input type="hidden" name="opt" value="search" />';
     $html .= '<table class="kb-subtable"><tr>';
     $html .= '<td>ShipID</td><td>or Shipname</td>';
     $html .= '</tr><tr>';
-    $html .= '<td><input id="searchid" name="searchid" type="text" size="4"/></td>';
-    $html .= '<td><input id="searchname" name="searchname" type="text" size="30"/></td>';
-    $html .= '<td><input type="submit" name="submit" value="Search"/></td>';
+    $html .= '<td><input id="searchid" name="searchid" type="text" size="4" /></td>';
+    $html .= '<td><input id="searchname" name="searchname" type="text" size="30" /></td>';
+    $html .= '<td><input type="submit" name="submit" value="Search" /></td>';
     $html .= '</tr></table>';
-    $html .= '</form><br/>';
+    $html .= '</form><br />';
 
-    $html .= "<div class=block-header2>View/Change Shipvalues</div>";
+    $html .= "<div class='block-header2'>View/Change Shipvalues</div>";
     $qry = new DBQuery();
     $query = 'select kbs.shp_id as id, shp.shp_externalid as ext, shp.shp_name, shp.shp_class, kbs.shp_value,
                      shp.shp_baseprice, scl.scl_class, shp.shp_techlevel, scl.scl_value
@@ -168,10 +168,10 @@ if (!isset($_REQUEST['opt']))
     {
         if (!$c)
         {
-            $html .= '<form id="search" action="?a=admin_shp_val" method=post>';
-            $html .= '<table class="kb-table" width="99%" align=center cellspacing="1">';
-            $html .= '<input type="hidden" name="opt" value="add"/>';
-            $html .= '<script language="javascript">
+            $html .= '<form id="search" action="?a=admin_shp_val" method="post">';
+            $html .= '<table class="kb-table" width="99%" align="center" cellspacing="1">';
+            $html .= '<input type="hidden" name="opt" value="add" />';
+            $html .= '<script type="text/javascript">
                         function geninput(object,id,value,orgval)
                         {
                           if (document.getElementById(\'ship_\'+id)) return;
@@ -186,15 +186,15 @@ if (!isset($_REQUEST['opt']))
                           }
                         }
                         </script>';
-            $html .= '<tr class=kb-table-header>';
-            $html .= '<td class=kb-table-header align="center">Ship</td>';
-            $html .= '<td class=kb-table-header align="center">Ship id</td>';
-            $html .= '<td class=kb-table-header>Ship Name</td>';
-            $html .= '<td class=kb-table-header>Ship type</td>';
-            $html .= '<td class=kb-table-header align="center">Techlevel</td>';
-            $html .= '<td class=kb-table-header align="right">Baseprice</td>';
-            $html .= '<td class=kb-table-header align="right">Classvalue</td>';
-            $html .= '<td class=kb-table-header align="right">Shipvalue</td></tr>';
+            $html .= '<tr class="kb-table-header">';
+            $html .= '<td class="kb-table-header" align="center">Ship</td>';
+            $html .= '<td class="kb-table-header" align="center">Ship id</td>';
+            $html .= '<td class="kb-table-header">Ship Name</td>';
+            $html .= '<td class="kb-table-header">Ship type</td>';
+            $html .= '<td class="kb-table-header" align="center">Techlevel</td>';
+            $html .= '<td class="kb-table-header" align="right">Baseprice</td>';
+            $html .= '<td class="kb-table-header" align="right">Classvalue</td>';
+            $html .= '<td class="kb-table-header" align="right">Shipvalue</td></tr>';
         }
         $c++;
         if (!$odd)
@@ -207,8 +207,8 @@ if (!isset($_REQUEST['opt']))
             $odd = false;
             $class = 'kb-table-row-even';
         }
-        $html .= "<tr class=".$class." style=\"height: 34px;\">";
-        $html .= '<td width="32" align="center"><img src="'.IMG_URL.'/ships/32_32/'.$data['ext'].'.png"></td>';
+        $html .= "<tr class=\"".$class."\" style=\"height: 34px;\">";
+        $html .= '<td width="32" align="center"><img src="'.IMG_URL.'/ships/32_32/'.$data['ext'].'.png" alt="" /></td>';
         $html .= '<td align="center">'.$data['id'].'</td>';
         $html .= '<td>'.$data['shp_name'].'</td>';
         $html .= '<td>'.$data['scl_class'].'</td>';
@@ -221,12 +221,12 @@ if (!isset($_REQUEST['opt']))
     if ($c)
     {
         $html .= '</table>';
-        $html .= '<br/><input type="submit" name="submit" value="Save">&nbsp;Note: Only values different from classvalue and zero will be saved. Hint: click into the Shipvalue field.';
+        $html .= '<br /><input type="submit" name="submit" value="Save" />&nbsp;Note: Only values different from classvalue and zero will be saved. Hint: click into the Shipvalue field.';
         $html .= '</form>';
     }
     else
     {
-        $html .= 'No Data.<br/>';
+        $html .= 'No Data.<br />';
     }
 }
 $page->addContext($menubox->generate());

@@ -14,7 +14,7 @@ $qry = new DBQuery();
 $qry->execute($sql) or die($qry->getErrorMsg());
 
 $html .= '<table class="kb-table">';
-$html .= "<tr class=kb-table-header><td align=center width=60>ID</td><td width=150>Killmail date</td><td width=150>Posted</td><td width=120>IP Address</td><td width=150>Final Blow</td></tr>";
+$html .= "<tr class='kb-table-header'><td align='center' width='60'>ID</td><td width='150'>Killmail date</td><td width='150'>Posted</td><td width='120'>IP Address</td><td width='150'>Final Blow</td></tr>";
 $odd = false;
 while ($row = $qry->getRow())
 {
@@ -28,8 +28,8 @@ while ($row = $qry->getRow())
         $class = "kb-table-row-odd";
         $odd = true;
     }
-    $html .= "<tr class=" . $class . " onmouseover=\"this.className='kb-table-row-hover';\" onmouseout=\"this.className='" . $class . "';\" onClick=\"window.location.href='?a=kill_detail&kll_id=" . $row['log_kll_id'] . "';\">";
-    $html .= "<td align=center><b>" . $row['log_kll_id'] . "</b></td>";
+    $html .= "<tr class='" . $class . "' onmouseover=\"this.className='kb-table-row-hover';\" onmouseout=\"this.className='" . $class . "';\" onclick=\"window.location.href='?a=kill_detail&amp;kll_id=" . $row['log_kll_id'] . "';\">";
+    $html .= "<td align='center'><b>" . $row['log_kll_id'] . "</b></td>";
     $html .= "<td>" . $row['kll_timestamp'] . "</td>";
     $html .= "<td>" . $row['log_timestamp'] . "</td>";
     $html .= "<td>" . $row['log_ip_address'] . "</td>";

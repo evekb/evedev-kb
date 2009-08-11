@@ -24,7 +24,7 @@
 <br/>
 {if $config->get('post_permission')=='all'}
 Authorization checking is disabled, people still need to know the postpassword, though.<br/>
-<a href="?a=admin_postperm&authall=0">Enable authorization checking.</a>
+<a href="?a=admin_postperm&amp;authall=0">Enable authorization checking.</a>
 {else}
 <div class="block-header2">Granted Permissions</div>
 <table class="kb-table">
@@ -38,5 +38,5 @@ Authorization checking is disabled, people still need to know the postpassword, 
 {/section}
 </table>
 <br/>
-<a href="?a=admin_postperm&authall=1">Disable authorization checking (and delete all granted permissions).</a>
+<a href="?a=admin_postperm&amp;authall=1">Disable authorization checking (and delete all granted permissions).</a>
 {/if}

@@ -100,27 +100,27 @@ class admin_acache
     }
 	function optionClearPage()
 	{
-		return '<input type="checkbox" name="option_clear_page">Clear cache ?';
+		return '<input type="checkbox" name="option_clear_page" />Clear cache ?';
 	}
 	function optionClearMail()
 	{
-		return '<input type="checkbox" name="option_clear_mail">Clear cache ?';
+		return '<input type="checkbox" name="option_clear_mail" />Clear cache ?';
 	}
 	function optionClearSum()
 	{
-		return '<input type="checkbox" name="option_clear_sum">Clear cache ?';
+		return '<input type="checkbox" name="option_clear_sum" />Clear cache ?';
 	}
 	function optionClearSQL()
 	{
-		return '<input type="checkbox" name="option_clear_sql">Clear cache ?';
+		return '<input type="checkbox" name="option_clear_sql" />Clear cache ?';
 	}
 	function optionClearTemplate()
 	{
-		return '<input type="checkbox" name="option_clear_template">Clear cache ?';
+		return '<input type="checkbox" name="option_clear_template" />Clear cache ?';
 	}
 	function optionClearAll()
 	{
-		return '<input type="checkbox" name="option_clear_all">Clear cache ?';
+		return '<input type="checkbox" name="option_clear_all" />Clear cache ?';
 	}
 	function clearCaches()
 	{

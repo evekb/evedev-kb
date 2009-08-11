@@ -23,16 +23,16 @@ if ($_GET['op'] == 'view')
     if ($type == 'campaign') $list->setCampaigns(true);
     if ($list->getCount() > 0)
     {
-        $html = '<table class=kb-table cellspacing=1>';
-        $html .= "<tr class=kb-table-header><td class=kb-table-cell width=160>Name</td><td class=kb-table-cell width=80>Startdate</td><td class=kb-table-cell width=80>Enddate</td><td class=kb-table-cell width=140 colspan=2 align=center>Action</td></tr>";
+        $html = '<table class="kb-table" cellspacing="1">';
+        $html .= "<tr class='kb-table-header'><td class='kb-table-cell' width='160'>Name</td><td class='kb-table-cell' width='80'>Startdate</td><td class='kb-table-cell' width='80'>Enddate</td><td class='kb-table-cell' width='140' colspan='2' align='center'>Action</td></tr>";
     }
     while ($contract = $list->getContract())
     {
-        $html .= "<tr class=kb-table-row-odd>";
-        $html .= "<td class=kb-table-cell>".$contract->getName()."</td>";
-        $html .= "<td class=kb-table-cell>".substr($contract->getStartDate(), 0, 10)."</td>";
-        $html .= "<td class=kb-table-cell>".substr($contract->getEndDate(), 0, 10)."</td>";
-        $html .= "<td  class=kb-table-cell align=center width=70><a href=\"?a=admin_cc&amp;ctr_id=".$contract->getID()."&amp;op=edit&amp;type=".$type."\">Edit</a></td><td align=center><a href=\"?a=admin_cc&amp;ctr_id=".$contract->getID()."&amp;op=del&amp;type=".$type."\">Delete</a></td>";
+        $html .= "<tr class='kb-table-row-odd'>";
+        $html .= "<td class='kb-table-cell'>".$contract->getName()."</td>";
+        $html .= "<td class='kb-table-cell'>".substr($contract->getStartDate(), 0, 10)."</td>";
+        $html .= "<td class='kb-table-cell'>".substr($contract->getEndDate(), 0, 10)."</td>";
+        $html .= "<td class='kb-table-cell' align='center' width='70'><a href=\"?a=admin_cc&amp;ctr_id=".$contract->getID()."&amp;op=edit&amp;type=".$type."\">Edit</a></td><td align='center'><a href=\"?a=admin_cc&amp;ctr_id=".$contract->getID()."&amp;op=del&amp;type=".$type."\">Delete</a></td>";
         $html .= "</tr>";
     }
     if ($list->getCount() > 0)
@@ -54,8 +54,8 @@ if ($_GET['op'] == "del")
     {
         $page->setTitle("Administration - Delete ".$_GET['type']);
         $html .= "Confirm deletion:&nbsp;";
-        $html .= "<button onClick=\"window.location.href='?a=admin_cc&ctr_id=".$_GET['ctr_id']."&op=del&amp;type=".$_GET['type']."&amp;confirm=yes'\">Yes</button>&nbsp;&nbsp;&nbsp;";
-        $html .= "<button onClick=\"window.history.back();\">No</button>";
+        $html .= "<button onclick=\"window.location.href='?a=admin_cc&amp;ctr_id=".$_GET['ctr_id']."&amp;op=del&amp;type=".$_GET['type']."&amp;confirm=yes'\">Yes</button>&nbsp;&nbsp;&nbsp;";
+        $html .= "<button onclick=\"window.history.back();\">No</button>";
     }
 }
 // edit
@@ -68,7 +68,7 @@ if ($_GET['op'] == "edit")
         $contract->add($_POST['ctr_name'], $_GET['type'],
             $_POST['ctr_started'], $_POST['ctr_ended']);
 
-        Header("Location: ?a=admin_cc&op=view&amp;type=".$_GET['type']);
+        Header("Location: ?a=admin_cc&amp;op=view&amp;type=".$_GET['type']);
     }
 
     if ($_GET['sop'])
@@ -92,7 +92,7 @@ if ($_GET['op'] == "edit")
         $contracttarget = new ContractTarget($contract, $crp_id, $all_id, $reg_id, $sys_id);
         $contracttarget->remove();
 
-        header("Location: ?a=admin_cc&ctr_id=".$_GET['ctr_id']."&op=edit&type=".$_GET['type']);
+        header("Location: ?a=admin_cc&amp;ctr_id=".$_GET['ctr_id']."&amp;op=edit&amp;type=".$_GET['type']);
     }
 
     if ($_GET['add_id'])
@@ -116,7 +116,7 @@ if ($_GET['op'] == "edit")
         $contracttarget = new ContractTarget($contract, $crp_id, $all_id, $reg_id, $sys_id);
         $contracttarget->add();
 
-        header("Location: ?a=admin_cc&ctr_id=".$_GET['ctr_id']."&op=edit&type=".$_GET['type']);
+        header("Location: ?a=admin_cc&amp;ctr_id=".$_GET['ctr_id']."&amp;op=edit&amp;type=".$_GET['type']);
     }
     if ($_POST['add_name'])
     {
@@ -154,22 +154,22 @@ if ($_GET['op'] == "edit")
 
             if ($qry->recordCount() > 0)
             {
-                $html .= "<table class=kb-table width=450>";
-                $html .= "<tr class=kb-table-header><td width=340>Name</td><td width=80 align=center>Action</td></tr>";
+                $html .= "<table class='kb-table' width='450'>";
+                $html .= "<tr class='kb-table-header'><td width='340'>Name</td><td width='80' align='center'>Action</td></tr>";
             }
             else
                 $html .= "No matches found for '".$_POST['add_name']."'.";
 
             while ($row = $qry->getRow())
             {
-                $html .= "<tr class=kb-table-row-even>";
+                $html .= "<tr class='kb-table-row-even'>";
                 switch ($_POST['add_type'])
                 {
                     case 0:
-                        $html .= "<td><a href=\"?a=corp_detail&crp_id=".$row['id']."\">".$row['name']."</a></td><td align=center><button id=submit name=submit onClick=\"window.location.href='?a=admin_cc&ctr_id=".$_GET['ctr_id']."&op=edit&type=".$_GET['type']."&add_type=".$_POST['add_type']."&add_id=".$row['id']."'\">Select</button></td>";
+                        $html .= "<td><a href=\"?a=corp_detail&amp;crp_id=".$row['id']."\">".$row['name']."</a></td><td align='center'><button id='submit' name='submit' onclick=\"window.location.href='?a=admin_cc&amp;ctr_id=".$_GET['ctr_id']."&amp;op=edit&amp;type=".$_GET['type']."&amp;add_type=".$_POST['add_type']."&amp;add_id=".$row['id']."'\">Select</button></td>";
                         break;
                     case 1:
-                        $html .= "<td><a href=\"?a=alliance_detail&all_id=".$row['id']."\">".$row['name']."</a></td><td align=center><button id=submit name=submit onClick=\"window.location.href='?a=admin_cc&ctr_id=".$_GET['ctr_id']."&op=edit&type=".$_GET['type']."&add_type=".$_POST['add_type']."&add_id=".$row['id']."'\">Select</button></td>";
+                        $html .= "<td><a href=\"?a=alliance_detail&amp;all_id=".$row['id']."\">".$row['name']."</a></td><td align='center'><button id='submit' name='submit' onclick=\"window.location.href='?a=admin_cc&amp;ctr_id=".$_GET['ctr_id']."&amp;op=edit&amp;type=".$_GET['type']."&amp;add_type=".$_POST['add_type']."&amp;add_id=".$row['id']."'\">Select</button></td>";
                         break;
                     case 2:
                         $html .= "<td>".$row['name']."</td><td align=center><button id=submit name=submit onClick=\"window.location.href='?a=admin_cc&ctr_id=".$_GET['ctr_id']."&op=edit&type=".$_GET['type']."&add_type=".$_POST['add_type']."&add_id=".$row['id']."'\">Select</button></td>";

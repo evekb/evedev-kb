@@ -10,16 +10,16 @@ You can omit the 'x' if you're using A-F in the number. It also accepts html cod
 <table class="kb-subtable">
     {section name=opt loop=$options[id].option}
         {assign var="o" value=$options[id].option[opt]}
-        <tr><td width="120"><b>{$o.descr}:</b></td><td><input type="checkbox" name="{$o.name}" id="{$o.name}"{if $config->get($o.name)}checked="checked"{/if}></td></tr>
+        <tr><td width="120"><b>{$o.descr}:</b></td><td><input type="checkbox" name="{$o.name}" id="{$o.name}"{if $config->get($o.name)} checked="checked"{/if} /></td></tr>
     {/section}
     {section name=opt loop=$options[id].color}
         {assign var="o" value=$options[id].color[opt]}
-        <tr><td width="120"><b>{$o.descr}:</b></td><td><input type="edit" name="{$o.name}" id="{$o.name}"{if $config->get($o.name)} value="{$config->get($o.name)}"{/if}></td></tr>
+        <tr><td width="120"><b>{$o.descr}:</b></td><td><input type="text" name="{$o.name}" id="{$o.name}"{if $config->get($o.name)} value="{$config->get($o.name)}"{/if} /></td></tr>
     {/section}
 </table>
 {/section}
 <div class="block-header2">Save changes</div>
 <table class="kb-subtable">
-<tr><td width=120></td><td><input type="submit" name="submit" value="Save"></td></tr>
+<tr><td width="120"></td><td><input type="submit" name="submit" value="Save" /></td></tr>
 </table>
 </form>

@@ -22,11 +22,11 @@ if ($_POST['set_mods'] != '')
 $activemods = explode(",", config::get("mods_active"));
 $html = <<<HTML
 	<form action="?a=admin_mods" method="post">
-		<input type="hidden" name="set_mods" value="1"/>
-     <table class=kb-table width="99%" align=center cellspacing="1">
-				<tr class=kb-table-header>
-				<td class=kb-table-header>Name</td>
-				<td class=kb-table-header align="center">Active</td>
+		<input type="hidden" name="set_mods" value="1" />
+     <table class="kb-table" width="99%" align="center" cellspacing="1">
+				<tr class="kb-table-header">
+				<td class="kb-table-header">Name</td>
+				<td class="kb-table-header" align="center">Active</td>
 				</tr>
 HTML;
 if ($handle = opendir('mods'))
@@ -36,12 +36,12 @@ if ($handle = opendir('mods'))
     {
         if (is_dir("mods/$file") && $file != ".." &$file != "." &$file != ".svn")
         {
-            $modhtml = "<tr class=kb-table-row-odd style=\"height: 34px;\">";
+            $modhtml = "<tr class='kb-table-row-odd' style=\"height: 34px;\">";
             $id = $file;
 
             if (in_array($id, $activemods))
             {
-                $checked = "checked=\"checked\"";
+                $checked = " checked=\"checked\"";
             }
             else
             {
@@ -51,7 +51,7 @@ if ($handle = opendir('mods'))
             {
                 $file .= " [<a href=\"?a=settings_$file\">settings</a>]";
             }
-            $modhtml .= "<td>$file</td><td align=center><input name=\"mod_$id\" type=\"checkbox\"$checked/></td></tr>";
+            $modhtml .= "<td>$file</td><td align='center'><input name=\"mod_$id\" type=\"checkbox\"$checked /></td></tr>";
 			$modlist[] = $modhtml;
         }
     }
@@ -60,7 +60,7 @@ if ($handle = opendir('mods'))
 
     closedir($handle);
 }
-$html .= "<tr><td colspan=2 align=center><input type=submit name=submit value=\"Save\"></table></form>";
+$html .= "<tr><td colspan='2' align='center'><input type='submit' name='submit' value=\"Save\" /></td></tr></table></form>";
 $page->setContent($html);
 $page->addContext($menubox->generate());
 $page->generate();
