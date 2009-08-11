@@ -4,7 +4,7 @@
 require_once('common/includes/class.db.php');
 require_once('common/includes/class.config.php');
 
-if(!defined('DB_TYPE')) define('DB_TYPE', 'mysql');
+if(!defined('DB_TYPE')) define('DB_TYPE', 'mysqli');
 if(DB_TYPE == 'mysqli' and function_exists('mysqli_connect')) define('DB_TYPE_USED', 'mysqli');
 else define('DB_TYPE_USED', 'mysql');
 if(DB_TYPE_USED == 'mysqli') require_once('common/includes/class.db.mysqli.php');
