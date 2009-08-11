@@ -98,7 +98,7 @@ if ($searchphrase != "" && strlen($searchphrase) >= 3)
 			if ($qry->recordCount() == 1)
 			{
 				// if there is only one entry we redirect the user
-				header("Location: http://".$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME']."/".$result['link']);
+				header("Location: ".KB_HOST.$result['link']);
 				die;
 			}
 		}
