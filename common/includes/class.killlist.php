@@ -223,6 +223,7 @@ class KillList
 
             $this->sqltop_ .= "    FROM ".$this->sqlinner_." ";
 
+			// LEFT JOIN is used to force processing after the main tables.
             $this->sqllong_ .= "LEFT JOIN kb3_pilots plt
 								ON ( plt.plt_id = kll.kll_victim_id )
 							LEFT JOIN kb3_corps crp
@@ -238,8 +239,13 @@ class KillList
 							INNER JOIN kb3_alliances fbali
 								ON ( fbali.all_id = fb.ind_all_id )
                            ";
-            $this->sqllong_ .= " INNER JOIN kb3_systems sys
-                              ON ( sys.sys_id = kll.kll_system_id )";
+			// System
+			if(count($this->systems_) || count($this->regions_))
+				$this->sql_ .= " INNER JOIN kb3_systems sys
+					ON ( sys.sys_id = kll.kll_system_id )";
+			else
+				$this->sqllong_ .= " LEFT JOIN kb3_systems sys
+					ON ( sys.sys_id = kll.kll_system_id )";
 
             // regions
             if (count($this->regions_))
@@ -248,11 +254,16 @@ class KillList
 	                      ON ( con.con_id = sys.sys_con_id and
 			   con.con_reg_id in ( ".implode($this->regions_, ",")." ) )";
             }
-
-            $this->sql_ .= "LEFT JOIN kb3_ships shp
-	  		      ON ( shp.shp_id = kll.kll_ship_id )
-	  		   LEFT JOIN kb3_ship_classes scl
-	  		      ON ( scl.scl_id = shp.shp_class )";
+			if(count($this->exclude_scl_) || count($this->vic_scl_id_))
+				$this->sql_ .= "INNER JOIN kb3_ships shp
+					ON ( shp.shp_id = kll.kll_ship_id )
+					LEFT JOIN kb3_ship_classes scl
+					ON ( scl.scl_id = shp.shp_class )";
+			else
+				$this->sqllong_ .= "LEFT JOIN kb3_ships shp
+					ON ( shp.shp_id = kll.kll_ship_id )
+					LEFT JOIN kb3_ship_classes scl
+					ON ( scl.scl_id = shp.shp_class )";
 
             if($this->comb_plt_ || $this->comb_crp_ || $this->comb_all_)
 			{
