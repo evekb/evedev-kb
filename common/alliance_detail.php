@@ -62,70 +62,58 @@ else
     $pyear = $year;
 }
 $monthname = kbdate("F", strtotime("2000-".$month."-2"));
-
+$smarty->assign('monthname', $monthname);
+$smarty->assign('year', $year);
+$smarty->assign('pmonth', $nmonth);
+$smarty->assign('pyear', $pyear);
+$smarty->assign('nmonth', $nmonth);
+$smarty->assign('nyear', $nyear);
 $alliance = new Alliance($all_id);
 if($alliance->isFaction()) $page = new Page('Faction details - '.$alliance->getName());
 else $page = new Page('Alliance details - '.$alliance->getName());
 
-$html .= "<table class=kb-table width=\"100%\" border=\"0\" cellspacing=1><tr class=kb-table-row-even><td rowspan=8 width=128 align=center bgcolor=black>";
+$smarty->assign('all_name', $alliance->getName());
+$smarty->assign('all_id', $alliance->getID());
 
 if (file_exists("img/alliances/".$alliance->getUnique().".png"))
-{
-    $html .= "<img src=\"".IMG_URL."/alliances/".$alliance->getUnique().".png\" border=\"0\" alt=\"$alliance->getName()\"></td>";
-}
+    $smarty->assign('all_img', $alliance->getUnique());
 else
-{
-    $html .= "<img src=\"".IMG_URL."/alliances/default.gif\" border=\"0\" alt=\"$alliance->getName()\"></td>";
-}
+    $smarty->assign('all_img', 'default');
+
 $kill_summary = new KillSummaryTable();
 $kill_summary->addInvolvedAlliance($alliance);
 $kill_summary->setBreak(config::get('summarytable_rowcount'));
-$summary_html = $kill_summary->generate();
+$smarty->assign('summary', $kill_summary->generate());
 
-$html .= "<td class=kb-table-cell width=180><b>Kills:</b></td><td class=kl-kill>".$kill_summary->getTotalKills()."</td></tr>";
-$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Losses:</b></td><td class=kl-loss>".$kill_summary->getTotalLosses()."</td></tr>";
-$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Damage done (ISK):</b></td><td class=kl-kill>".round($kill_summary->getTotalKillISK()/1000000000, 2)."B</td></tr>";
-$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Damage received (ISK):</b></td><td class=kl-loss>".round($kill_summary->getTotalLossISK()/1000000000, 2)."B</td></tr>";
+$smarty->assign('totalkills', $kill_summary->getTotalKills());
+$smarty->assign('totallosses', $kill_summary->getTotalLosses());
+$smarty->assign('totalkisk', round($kill_summary->getTotalKillISK()/1000000000, 2));
+$smarty->assign('totallisk', round($kill_summary->getTotalLossISK()/1000000000, 2));
 if ($kill_summary->getTotalKillISK())
-{
-    $efficiency = round($kill_summary->getTotalKillISK() / ($kill_summary->getTotalKillISK() + $kill_summary->getTotalLossISK()) * 100, 2);
-}
+    $smarty->assign('efficiency', round($kill_summary->getTotalKillISK() / ($kill_summary->getTotalKillISK() + $kill_summary->getTotalLossISK()) * 100, 2));
 else
-{
-    $efficiency = 0;
-}
-
-$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Efficiency:</b></td><td class=kb-table-cell><b>" . $efficiency . "%</b></td></tr>";
-
-$html .= "</table>";
-$html .= "<br/>";
-
-if ($_GET['view'] == "" || $_GET['view'] == "kills" || $_GET['view'] == "losses")
-{
-    $html .= $summary_html;
-}
-
+    $smarty->assign('efficiency', '0');
+if($_GET['view'] == '')
+	$smarty->assign('view', 'recent_activity');
+else
+	$smarty->assign('view', $_GET['view']);
 switch ($_GET['view'])
 {
     case "":
-        $html .= "<div class=kb-kills-header>10 Most recent kills in the last 30 days</div>";
-
-        $list = new KillList();
+		$list = new KillList();
         $list->setOrdered(true);
 		if (config::get('comments_count')) $list->setCountComments(true);
 		if (config::get('killlist_involved')) $list->setCountInvolved(true);
         $list->setLimit(10);
         $list->setPodsNoobships(true);
         $list->addInvolvedAlliance($alliance);
-        if ($_GET['scl_id'])
-            $list->addVictimShipClass(new ShipClass($_GET['scl_id']));
-		$list->setStartDate(date('Y-m-d H:i',strtotime('- 30 days')));
+        if (intval($_GET['scl_id']))
+            $list->addVictimShipClass(new ShipClass(intval($_GET['scl_id'])));
+		//$list->setStartDate(date('Y-m-d H:i',strtotime('- 30 days')));
         $ktab = new KillListTable($list);
         $ktab->setLimit(10);
         $ktab->setDayBreak(false);
-        $html .= $ktab->generate();
-
-        $html .= "<div class=kb-losses-header>10 Most recent losses in the last 30 days</div>";
+        $smarty->assign('killtable', $ktab->generate());
 
         $list = new KillList();
         $list->setOrdered(true);
@@ -134,19 +122,17 @@ switch ($_GET['view'])
         $list->setLimit(10);
         $list->setPodsNoobships(true);
         $list->addVictimAlliance($alliance);
-        if ($_GET['scl_id'])
-            $list->addVictimShipClass(new ShipClass($_GET['scl_id']));
-		$list->setStartDate(date('Y-m-d H:i',strtotime('- 30 days')));
+        if (intval($_GET['scl_id']))
+            $list->addVictimShipClass(new ShipClass(intval($_GET['scl_id'])));
+		//$list->setStartDate(date('Y-m-d H:i',strtotime('- 30 days')));
 
         $ltab = new KillListTable($list);
         $ltab->setLimit(10);
         $ltab->setDayBreak(false);
-        $html .= $ltab->generate();
+        $smarty->assign('losstable', $ltab->generate());
 
         break;
     case "kills":
-		$html .= "<div class=kb-kills-header>All kills</div>";
-
 		$list = new KillList();
 		$list->setOrdered(true);
 		$list->addInvolvedAlliance($alliance);
@@ -156,13 +142,11 @@ switch ($_GET['view'])
 		$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 		$table = new KillListTable($list);
 		$table->setDayBreak(false);
-		$html .= $table->generate();
-		$html .= $pagesplitter->generate();
+		$smarty->assign('killtable', $table->generate());
+		$smarty->assign('splitter', $pagesplitter->generate());
 
         break;
     case "losses":
-        $html .= "<div class=kb-losses-header>All losses</div>";
-
         $list = new KillList();
         $list->setOrdered(true);
 		$list->setPodsNoobships(true);
@@ -174,8 +158,8 @@ switch ($_GET['view'])
 
         $table = new KillListTable($list);
         $table->setDayBreak(false);
-        $html .= $table->generate();
-        $html .= $pagesplitter->generate();
+		$smarty->assign('losstable', $table->generate());
+		$smarty->assign('splitter', $pagesplitter->generate());
 
         break;
     case "corp_kills":
@@ -205,7 +189,7 @@ switch ($_GET['view'])
         $html .= $table->generate();
 
         $html .= "</td></tr></table>";
-
+		$smarty->assign('html', $html);
         break;
     case "corp_kills_class":
         $html .= "<div class=block-header2>Destroyed ships</div>";
@@ -243,6 +227,7 @@ switch ($_GET['view'])
 
         }
         $html .= "</tr></table>";        
+		$smarty->assign('html', $html);
         break;
     case "kills_class":
         $html .= "<div class=block-header2>Destroyed ships</div>";
@@ -280,6 +265,7 @@ switch ($_GET['view'])
 
         }
         $html .= "</tr></table>";
+		$smarty->assign('html', $html);
 
         break;
     case "corp_losses_class":
@@ -317,6 +303,7 @@ switch ($_GET['view'])
             }
         }
         $html .= "</tr></table>";
+		$smarty->assign('html', $html);
 
         break;
     case "losses_class":
@@ -354,6 +341,7 @@ switch ($_GET['view'])
             }
         }
         $html .= "</tr></table>";
+		$smarty->assign('html', $html);
 
         break;
     case "corp_losses":
@@ -383,6 +371,7 @@ switch ($_GET['view'])
         $html .= $table->generate();
 
         $html .= "</td></tr></table>";
+		$smarty->assign('html', $html);
 
         break;
     case "pilot_kills":
@@ -412,6 +401,7 @@ switch ($_GET['view'])
         $html .= $table->generate();
 
         $html .= "</td></tr></table>";
+		$smarty->assign('html', $html);
 
         break;
     case "pilot_scores":
@@ -441,52 +431,36 @@ switch ($_GET['view'])
         $html .= $table->generate();
 
         $html .= "</td></tr></table>";
+		$smarty->assign('html', $html);
 
         break;
     case "pilot_losses":
-        $html .= "<div class=block-header2>Top losers</div>";
-
-        $html .= "<table class=kb-subtable><tr><td valign=top width=440>";
-        $html .= "<div class=block-header>$monthname $year</div>";
-
         $list = new TopLossesList();
         $list->addVictimAlliance($alliance);
         $list->setPodsNoobShips(false);
         $list->setMonth($month);
         $list->setYear($year);
         $table = new TopPilotTable($list, "Losses");
-        $html .= $table->generate();
-
-		$html .= "<table width=300 cellspacing=1><tr><td><a href='?a=alliance_detail&amp;view=pilot_losses&amp;m=$pmonth&amp;all_id=$all_id&amp;y=$pyear'>previous</a></td>";
-        $html .= "<td align='right'><a href='?a=alliance_detail&amp;view=pilot_losses&amp;all_id=$all_id&amp;m=$nmonth&amp;y=$nyear'>next</a></p></td></tr></table>";
-        
-        $html .= "</td><td valign=top width=400>";
-        $html .= "<div class=block-header>All time</div>";
+        $smarty->assign('losstable', $table->generate());
 
         $list = new TopLossesList();
         $list->addVictimAlliance($alliance);
         $list->setPodsNoobShips(false);
         $table = new TopPilotTable($list, "Losses");
-        $html .= $table->generate();
-
-        $html .= "</td></tr></table>";
+        $smarty->assign('totallosstable', $table->generate());
 
         break;
     case "ships_weapons":
-        $html .= "<div class=block-header2>Ships &amp; weapons used</div>";
-
-        $html .= "<table class=kb-subtable><tr><td valign=top width=400>";
+		$view = "ships_weapons";
         $shiplist = new TopShipList();
         $shiplist->addInvolvedAlliance($alliance);
         $shiplisttable = new TopShipListTable($shiplist);
-        $html .= $shiplisttable->generate();
-        $html .= "</td><td valign=top align=right width=400>";
+        $smarty->assign('shiplisttable', $shiplisttable->generate());
 
         $weaponlist = new TopWeaponList();
         $weaponlist->addInvolvedAlliance($alliance);
         $weaponlisttable = new TopWeaponListTable($weaponlist);
-        $html .= $weaponlisttable->generate();
-        $html .= "</td></tr></table>";
+		$smarty->assign('weaponlisttable', $weaponlisttable->generate());
 
         break;
     case 'violent_systems':
@@ -577,6 +551,7 @@ switch ($_GET['view'])
         }
         $html .= "</table>";
         $html .= "</td></tr></table>";
+		$smarty->assign('html', $html);
     break;
 }
 
@@ -605,6 +580,6 @@ $menubox->addOption("link","Ships &amp; weapons", "?a=alliance_detail&amp;all_id
 $menubox->addOption("link","Most violent systems", "?a=alliance_detail&amp;all_id=" . $alliance->getID() . "&amp;view=violent_systems");
 $page->addContext($menubox->generate());
 
-$page->setContent($html);
+$page->setContent($smarty->fetch(get_tpl('alliance_detail')));
 $page->generate();
 ?>
