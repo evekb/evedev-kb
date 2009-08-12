@@ -159,7 +159,9 @@ class cache
 	//! \return string of path and filename for the current page's cachefile.
 	function genCacheName()
 	{
-		return KB_CACHEDIR.'/'.KB_SITE.'/'.md5($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].@implode($_SESSION)).'.cache';
+		// Security mods can add access specific cache names here
+//		return KB_CACHEDIR.'/'.KB_SITE.'/'.md5($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].@implode($_SESSION)).'.cache';
+		return KB_CACHEDIR.'/'.KB_SITE.'/'.md5($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']).'.cache';
 	}
 	//! Remove the cache of the current page.
 	function deleteCache()
