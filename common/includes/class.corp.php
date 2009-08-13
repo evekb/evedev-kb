@@ -1,5 +1,6 @@
 <?php
 require_once('class.alliance.php');
+require_once('class.pilot.php');
 
 //! Creates a new Corporation or fetches an existing one from the database.
 class Corporation
@@ -239,6 +240,27 @@ class Corporation
 			}
 		}
 		return false;
+	}
+	
+	//! Returns an array of pilots we know to be in this corp.
+	function getMemberList()
+	{
+        $qry = new DBQuery();
+        $qry->execute("SELECT plt_id FROM kb3_pilots
+                       WHERE plt_crp_id = " . $this->id_);
+
+        if ($qry->recordCount() < 1)
+            return null;
+        else
+        {
+            $list = array();
+            while ($row = $qry->getRow())
+            {
+                $pilot = new Pilot($row['plt_id']);
+                $list[] = $pilot;
+            }
+        }
+        return $list;
 	}
 }
 ?>
