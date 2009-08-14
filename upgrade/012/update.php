@@ -229,6 +229,16 @@ function update012()
 			echo $footer;
 			die();
 		}
+		if(config::get('012updatestatus') <11)
+		{
+			$qry->execute("UPDATE `kb3_navigation` SET url = '?a=self_detail' WHERE descr = 'Stats';");
+			$qry->execute("DELETE FROM `kb3_navigation` WHERE url = '?a=losses';");
+			$qry->execute("DELETE FROM `kb3_navigation` WHERE url = '?a=kills';");
+			echo $header;
+			echo "12. Navigation updated.";
+			echo $footer;
+			die();
+		}
 
 		killCache();
 		config::set("DBUpdate", "012");
