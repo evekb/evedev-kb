@@ -234,6 +234,7 @@ function update012()
 			$qry->execute("UPDATE `kb3_navigation` SET url = '?a=self_detail' WHERE descr = 'Stats';");
 			$qry->execute("DELETE FROM `kb3_navigation` WHERE url = '?a=losses';");
 			$qry->execute("DELETE FROM `kb3_navigation` WHERE url = '?a=kills';");
+			config::set('012updatestatus',11);
 			echo $header;
 			echo "12. Navigation updated.";
 			echo $footer;
