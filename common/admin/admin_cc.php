@@ -37,7 +37,7 @@ if ($_GET['op'] == 'view')
     }
     if ($list->getCount() > 0)
         $html .= "</table><br>";
-    $html .= "[<a href=\"?a=admin_cc&amp;op=add&type=".$type."\">Add ".$type."</a>]";
+    $html .= "[<a href=\"?a=admin_cc&op=add&type=".$type."\">Add ".$type."</a>]";
 }
 // delete
 if ($_GET['op'] == "del")
@@ -48,7 +48,7 @@ if ($_GET['op'] == "del")
         if (!$contract->validate()) exit;
         $contract->remove();
 
-        Header("Location: ?a=admin_cc&amp;op=view&amp;type=".$_GET['type']);
+        Header("Location: ?a=admin_cc&op=view&type=".$_GET['type']);
     }
     else
     {
@@ -68,7 +68,7 @@ if ($_GET['op'] == "edit")
         $contract->add($_POST['ctr_name'], $_GET['type'],
             $_POST['ctr_started'], $_POST['ctr_ended']);
 
-        Header("Location: ?a=admin_cc&amp;op=view&amp;type=".$_GET['type']);
+        header("Location: ?a=admin_cc&op=view&type=".$_GET['type']);
     }
 
     if ($_GET['sop'])
@@ -92,7 +92,7 @@ if ($_GET['op'] == "edit")
         $contracttarget = new ContractTarget($contract, $crp_id, $all_id, $reg_id, $sys_id);
         $contracttarget->remove();
 
-        header("Location: ?a=admin_cc&amp;ctr_id=".$_GET['ctr_id']."&amp;op=edit&amp;type=".$_GET['type']);
+        header("Location: ?a=admin_cc&ctr_id=".$_GET['ctr_id']."&op=edit&type=".$_GET['type']);
     }
 
     if ($_GET['add_id'])
@@ -116,7 +116,7 @@ if ($_GET['op'] == "edit")
         $contracttarget = new ContractTarget($contract, $crp_id, $all_id, $reg_id, $sys_id);
         $contracttarget->add();
 
-        header("Location: ?a=admin_cc&amp;ctr_id=".$_GET['ctr_id']."&amp;op=edit&amp;type=".$_GET['type']);
+        header("Location: ?a=admin_cc&ctr_id=".$_GET['ctr_id']."&op=edit&type=".$_GET['type']);
     }
     if ($_POST['add_name'])
     {
