@@ -5,7 +5,7 @@ require_once('common/includes/class.killsummarytable.php');
 require_once('common/includes/class.contract.php');
 require_once('common/includes/class.toplist.php');
 
-$ctr_id = $_GET['ctr_id'];
+$ctr_id = intval($_GET['ctr_id']);
 
 $contract = new Contract($ctr_id);
 
@@ -89,11 +89,11 @@ switch ($_GET['view'])
         $klist = $contract->getKillList();
         $klist->setOrdered(true);
         if ($_GET['scl_id'])
-            $klist->addVictimShipClass(new ShipClass($_GET['scl_id']));
+            $klist->addVictimShipClass(intval($_GET['scl_id']));
         else
             $klist->setPodsNoobShips(false);
 
-        $table = new KillListTable($klist);
+		$table = new KillListTable($klist);
         $table->setLimit(10);
         $table->setDayBreak(false);
         $smarty->assign('killtable', $table->generate());
@@ -116,9 +116,9 @@ switch ($_GET['view'])
         $list = $contract->getKillList();
         $list->setOrdered(true);
         if ($_GET['scl_id'])
-            $list->addVictimShipClass(new ShipClass($_GET['scl_id']));
+            $list->addVictimShipClass(intval($_GET['scl_id']));
 
-		$list->setPageSplitter(config::get('killcount'));
+		$list->setPageSplit(config::get('killcount'));
 		$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
         $table = new KillListTable($list);
         $table->setDayBreak(false);
@@ -131,10 +131,10 @@ switch ($_GET['view'])
         $llist = $contract->getLossList();
         $llist->setOrdered(true);
         if ($_GET['scl_id'])
-            $llist->addVictimShipClass(new ShipClass($_GET['scl_id']));
+            $llist->addVictimShipClass(intval($_GET['scl_id']));
 
-		$list->setPageSplitter(config::get('killcount'));
-		$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
+		$llist->setPageSplit(config::get('killcount'));
+		$pagesplitter = new PageSplitter($llist->getCount(), config::get('killcount'));
         $table = new KillListTable($llist);
         $table->setDayBreak(false);
         $smarty->assign('losstable', $table->generate());
