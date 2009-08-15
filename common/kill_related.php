@@ -26,16 +26,18 @@ $victimAll = array();
 $invAll = array();
 $victimCorp = array();
 $invCorp = array();
-
+// Find all involved parties not in the same corp/alliance as the victim. If
+// the board has an owner swap sides if necessary so board owner is the killer
 foreach ($kill->involvedparties_ as $inv)
 {
 	if($inv->getAlliance()->getName() != 'None' 
             && $inv->getAllianceID() != $kill->getVictimAllianceID())
                 $invAll[$inv->getAllianceID()] = $inv->getAllianceID();
 	elseif($inv->getCorpID() != $kill->getVictimCorpID())
-            $invCrp[$inv->getCorpID()] = $inv->getCorpID();
+            $invCorp[$inv->getCorpID()] = $inv->getCorpID();
 }
-if($kill->getVictimAllianceName() != 'None' ) $victimAll[$kill->getVictimAllianceID()] = $kill->getVictimAllianceID();
+if($kill->getVictimAllianceName() != 'None' )
+	$victimAll[$kill->getVictimAllianceID()] = $kill->getVictimAllianceID();
 else $victimCorp[$kill->getVictimCorpID()] = $kill->getVictimCorpID();
 
 if(CORP_ID == $kill->getVictimCorpID() || ALLIANCE_ID == $kill->getVictimAllianceID())
@@ -49,7 +51,7 @@ if(CORP_ID == $kill->getVictimCorpID() || ALLIANCE_ID == $kill->getVictimAllianc
 }
 
 // Check which side board owner is on and make that the kill side. The other
-// side is the loss side. If board own is on neither then victim is the loss
+// side is the loss side. If board owner is on neither then victim is the loss
 // side.
 // Check if killlist works like this.
 //
