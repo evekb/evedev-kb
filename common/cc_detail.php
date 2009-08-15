@@ -141,6 +141,34 @@ switch ($_GET['view'])
         $smarty->assign('splitter', $pagesplitter->generate());
 		$html .= $smarty->fetch(get_tpl('cc_detail'));
         break;
+    case "combined":
+        $contract = new Contract($ctr_id);
+        $list = $contract->getKillList();
+        $list->setOrdered(true);
+        if ($_GET['scl_id'])
+            $list->addVictimShipClass(intval($_GET['scl_id']));
+
+		$list->setPageSplit(config::get('killcount'));
+		$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
+        $table = new KillListTable($list);
+        $table->setDayBreak(false);
+        $smarty->assign('killtable', $table->generate());
+        $smarty->assign('killsplitter', $pagesplitter->generate());
+
+        $contract = new Contract($ctr_id);
+        $llist = $contract->getLossList();
+        $llist->setOrdered(true);
+        if ($_GET['scl_id'])
+            $llist->addVictimShipClass(intval($_GET['scl_id']));
+
+		$llist->setPageSplit(config::get('killcount'));
+		$pagesplitter = new PageSplitter($llist->getCount(), config::get('killcount'));
+        $table = new KillListTable($llist);
+        $table->setDayBreak(false);
+        $smarty->assign('losstable', $table->generate());
+        $smarty->assign('losssplitter', $pagesplitter->generate());
+		$html .= $smarty->fetch(get_tpl('cc_detail'));
+        break;
 }
 
 $menubox = new box("Menu");

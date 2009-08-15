@@ -34,6 +34,13 @@
 {$killtable}
 <div class=kb-losses-header>10 Most recent losses</div>
 {$losstable}
+{elseif $view == 'combined'}
+<div class=kb-kills-header>All kills</div>
+{$killtable}
+{$killsplitter}
+<div class=kb-losses-header>All losses</div>
+{$losstable}
+{$losssplitter}
 {elseif $view == 'kills'}
 <div class=kb-kills-header>All kills</div>
 {$killtable}
