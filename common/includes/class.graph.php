@@ -19,8 +19,14 @@ class BarGraph
             $width = $this->width_ / ($this->max_ / $this->value_);
         else
             $width = 0;
-        $html = "<div class=\"".$this->class_."\" style=\"width: ".$width."px;\">".$this->text_."</div>";
-        return $html;
+        
+        global $smarty;
+        $smarty->assign('class', $this->class_);
+        $smarty->assign('width', $width);
+        $smarty->assign('maxwidth', $this->width_);
+        $smarty->assign('text', $this->text_);
+        
+        return $smarty->fetch(get_tpl("bargraph"));
     }
 
     function setLow($low, $class)

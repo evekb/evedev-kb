@@ -79,6 +79,13 @@ div.bar
   font-size: 4px;
 }
 
+div.bar-background
+{
+    height: 6px;
+    background: #7F0F1E;
+    font-size: 4px;
+}
+
 div.bar-red
 {
   height: 8px;
