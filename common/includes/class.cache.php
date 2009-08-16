@@ -50,7 +50,7 @@ class cache
         }
 
         $cacheignore = explode(',', config::get('cache_ignore'));
-		if (KB_CACHE == 1 && count($_POST) == 0 && !($page != '' && in_array($page, $cacheignore)))
+		if (config::get('cache_enabled') == 1 && count($_POST) == 0 && !($page != '' && in_array($page, $cacheignore)))
         {
             return true;
         }
@@ -172,7 +172,7 @@ class cache
 	//! Mark the cached page as still current without rebuilding it.
 	function touchCache()
 	{
-		if(! KB_CACHE ) return;
+		if(! config::get('cache_enabled') ) return;
 		if (!file_exists(KB_CACHEDIR.'/'.KB_SITE))
 			mkdir(KB_CACHEDIR.'/'.KB_SITE);
 		touch(cache::genCacheName());
@@ -180,7 +180,7 @@ class cache
 	//! Notify the cache that a kill has been added.
 	function notifyKillAdded()
 	{
-		if(! KB_CACHE ) return;
+		if(! config::get('cache_enabled') ) return;
 		if (!file_exists(KB_CACHEDIR))
 			mkdir(KB_CACHEDIR);
 		touch(KB_CACHEDIR.'/killadded.mk');
