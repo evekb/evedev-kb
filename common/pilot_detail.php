@@ -125,7 +125,7 @@ switch ($_GET['view'])
 		$list->addInvolvedPilot($pilot);
 		if ($_GET['scl_id'])
 			$list->addVictimShipClass(new ShipClass($_GET['scl_id']));
-		$list->setPageSplitter(config::get('killcount'));
+		$list->setPageSplit(config::get('killcount'));
 		$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 		$table = new KillListTable($list);
 		$table->setDayBreak(false);
@@ -142,7 +142,7 @@ switch ($_GET['view'])
 		$list->addVictimPilot($pilot);
 		if ($_GET['scl_id'])
 			$list->addVictimShipClass(new ShipClass($_GET['scl_id']));
-		$list->setPageSplitter(config::get('killcount'));
+		$list->setPageSplit(config::get('killcount'));
 		$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 
 		$table = new KillListTable($list);
