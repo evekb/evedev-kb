@@ -356,7 +356,7 @@ class TopKillsList extends TopList
 
 class TopCorpKillsList extends TopList
 {
-    function TopKillsList()
+    function TopCorpKillsList()
     {
         $this->TopList();
     }
@@ -369,8 +369,8 @@ class TopCorpKillsList extends TopList
 		      on ( ind.ind_kll_id = kll.kll_id )
               inner join kb3_corps crp
 	 	      on ( crp.crp_id = ind.ind_crp_id ";
-        if ($this->inv_all_)
-            $sql .= " and crp.crp_all_id in ( ".$this->inv_all_." )";
+//        if ($this->inv_all_)
+//            $sql .= " and crp.crp_all_id in ( ".$this->inv_all_." )";
 
         $sql .= ")";
 

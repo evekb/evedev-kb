@@ -9,7 +9,7 @@ class pageAssembly
 
     function assemble()
     {
-        event::call('pageAssembly_assemble', &$this);
+        event::call('pageAssembly_assemble', $this);
 
         $output = '';
         foreach ($this->assemblyQueue as $id => $object)

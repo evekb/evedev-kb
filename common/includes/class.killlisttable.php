@@ -86,7 +86,7 @@ class KillListTable
 				if(file_exists('cache/corps/all'.$kll['victimallianceicon'].'_32.png'))
 				{
 					$kll['allianceexists'] = true;
-					$kll['victimallianceicon'] = KB_HOST.'cache/corps/all'.$kll['victimallianceicon'].'_32.png';
+					$kll['victimallianceicon'] = KB_HOST.'/cache/corps/all'.$kll['victimallianceicon'].'_32.png';
 				}
 				elseif(file_exists('img/alliances/'.$kll['victimallianceicon'].'.png'))
 				{

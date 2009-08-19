@@ -152,7 +152,7 @@ class allianceSummary
 		}
 		foreach($kill->involvedparties_ as $inv)
 		{
-			if(intval($alls[$inv->getAllianceID()])) continue;
+			if(isset($alls[$inv->getAllianceID()])) continue;
 			$alls[$inv->getAllianceID()] = 1;
 			$qry->execute("SELECT 1 FROM kb3_sum_alliance WHERE asm_all_id = ".$inv->getAllianceID());
 			//if(!$qry->recordCount()) allianceSummary::buildSummary($inv->getAllianceID());
@@ -337,7 +337,7 @@ class corpSummary extends allianceSummary
 		}
 		foreach($kill->involvedparties_ as $inv)
 		{
-			if(intval($alls[$inv->getCorpID()])) continue;
+			if(isset($alls[$inv->getCorpID()])) continue;
 			$alls[$inv->getCorpID()] = 1;
 			$qry->execute("SELECT 1 FROM kb3_sum_corp WHERE csm_crp_id = ".$inv->getCorpID());
 			//if(!$qry->recordCount()) corpSummary::buildSummary($inv->getcorpID());
@@ -522,7 +522,7 @@ class pilotSummary extends allianceSummary
 		}
 		foreach($kill->involvedparties_ as $inv)
 		{
-			if(intval($alls[$inv->getPilotID()])) continue;
+			if(isset($alls[$inv->getPilotID()])) continue;
 			$alls[$inv->getPilotID()] = 1;
 			$qry->execute("SELECT 1 FROM kb3_sum_pilot WHERE psm_plt_id = ".$inv->getPilotID());
 			if(!$qry->recordCount()) continue;
