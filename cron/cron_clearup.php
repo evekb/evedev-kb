@@ -3,7 +3,13 @@
 $KB_HOME = preg_replace('/[\/\\\\]cron$/', '', getcwd());
 chdir($KB_HOME);
 
-remove_old(1 * 24, "cache/cache/", true);
+require_once('kbconfig.php');
+require_once('common/includes/globals.php');
+require_once('common/includes/class.config.php');
+require_once('common/includes/db.php');
+
+remove_old(1 * 24, config::get('cache_dir').'/');
+remove_old(1 * 24, config::get('cache_dir').'/'.KB_SITE.'/');
 remove_old(1 * 24, "cache/templates_c/");
 remove_old(7 * 24, "cache/mails/");
 remove_old(30 * 24, "cache/", true);
@@ -13,6 +19,7 @@ remove_old(30 * 24, "cache/", true);
 /*! \param $hours The oldest a file can be before being removed.
  *  \param $dir The directory to remove files from.
  *  \param $recurse Whether to clear subdirectories.
+ */
 function remove_old($hours, $dir, $recurse = false)
 {
 	$seconds = $hours*60*60;
@@ -39,4 +46,3 @@ function remove_old($hours, $dir, $recurse = false)
 		}
 	}
 }
-?>
