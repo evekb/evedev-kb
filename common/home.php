@@ -1,14 +1,27 @@
 <?php
+require_once('common/includes/class.killsummarytable.public.php');
 require_once('common/includes/class.killlist.php');
 require_once('common/includes/class.killlisttable.php');
 require_once('common/includes/class.contract.php');
 require_once('common/includes/class.toplist.php');
+require_once('common/includes/class.pageAssembly.php');
 if(config::get('show_clock')) require_once('common/includes/class.clock.php');
 
-class Home
+class pHome extends pageAssembly
 {
-	function Home()
-	{
+    function __construct()
+    {
+        parent::__construct();
+        $this->queue('start');
+        $this->queue('summaryTable');
+        $this->queue('campaigns');
+        $this->queue('contracts');
+        $this->queue('kills');
+        $this->queue('context');
+    }
+
+    function start()
+    {
 		$this->killboard = new Killboard();
 		$this->killcount = config::get('killcount');
 		$this->hourlimit = config::get('limit_hours');
@@ -18,11 +31,19 @@ class Home
 			&& !isset($_REQUEST['kills'])
 			&& !isset($_REQUEST['losses'])
 			&& (ALLIANCE_ID || CORP_ID || PILOT_ID);
-		$this->prevweek = false;
-		$this->week = kbdate('W');
-		$this->month = kbdate('m');
-		$this->year = getYear();
-
+		// Set week.
+		if($_GET['w'] && $_GET['y'])
+		{
+			$this->setWeek($_GET['w'], $_GET['y']);
+			$this->prevweek = true;
+		}
+		else
+		{
+			$this->week = kbdate('W');
+			$this->month = kbdate('m');
+			$this->year = getYear();
+			$this->prevweek = false;
+		}
 		if ($this->week == 1)
 		{
 			$this->pyear = $this->year - 1;
@@ -33,53 +54,14 @@ class Home
 			$this->pyear = $this->year;
 			$this->pweek = $this->week - 1;
 		}
-	}
 
-	function setWeek($week, $year)
-	{
-		// If a valid week and year are given then show that week.
-		if(((int)$week) < 1 || ((int)$week) > 53 || ((int)$year) < 2000) return false;
-
-		$this->prevweek = true;
-		$this->week = (int)$week;
-		if($this->week < 10) $this->week = '0'.$this->week;
-		$this->year = (int)$year;
-
-		if ($this->week == 1)
-		{
-			$this->pyear = $this->year - 1;
-			$this->pweek = 53;
-		}
-		else
-		{
-			$this->pyear = $this->year;
-			$this->pweek = $this->week - 1;
-		}
-		return true;
-	}
-
-	function setMonth($month, $year)
-	{
-		$month = (int)$month;
-		$year = (int)$year;
-		if($month < 1 || $month > 12 || $year < 2000) return false;
-		$this->month = $month;
-		$this->year = $year;
-		if($month == 1)
-		{
-			$this->pyear = $year - 1;
-			$this->pmonth = 12;
-		}
-		else
-		{
-			$this->pyear = $year;
-			$this->pmonth = $month - 1;
-		}
-		return true;
-	}
-
-	function SummaryTable()
-	{
+		if(isset($_REQUEST['kills'])) $this->page = new Page('Kills - Week '.$this->getWeek().', '.$this->getYear());
+		elseif(isset($_REQUEST['losses'])) $this->page = new Page('Losses - Week '.$this->getWeek().', '.$this->getYear());
+		else $this->page = new Page('Week '.$this->getWeek().', '.$this->getYear());
+    }
+	//! Check if summary tables are enabled and if so return a table for this week.
+    function summaryTable()
+    {
 		// Display the summary table.
 		if (config::get('summarytable'))
 		{
@@ -101,15 +83,17 @@ class Home
 				involved::load($summarytable, 'kill');
 			}
 			$summarytable->setBreak(config::get('summarytable_rowcount'));
-			$html .= $summarytable->generate();
+			return $summarytable->generate();
 		}
-		return $html;
-	}
+    }
 
-	function campaigns()
-	{
+    function campaigns()
+    {
 		// Display campaigns, if any.
-		if ($this->killboard->hasCampaigns(true))
+		if ($this->killboard->hasCampaigns(true) &&
+			!isset($_REQUEST['losses']) &&
+			!isset($_REQUEST['kills']) &&
+			(kbdate('W') == $this->week && getYear() == $this->year))
 		{
 			$html .= "<div class=\"kb-campaigns-header\">Active campaigns</div>";
 			$list = new ContractList();
@@ -119,10 +103,10 @@ class Home
 			$html .= $table->generate();
 			return $html;
 		}
-	}
+    }
 
-	function contracts()
-	{
+    function contracts()
+    {
 		// Display contracts, if any.
 		if ($this->killboard->hasContracts(true))
 		{
@@ -134,68 +118,61 @@ class Home
 			$html .= $table->generate();
 			return $html;
 		}
-	}
+    }
 
-	function kills()
-	{
+    function kills()
+    {
 		global $smarty;
 		$smarty->assign('kill_count', $this->killcount);
 		// bad hax0ring, we really need mod callback stuff
 		if (strpos(config::get('mods_active'), 'rss_feed') !== false)
-		{
 			$smarty->assign('rss_feed', true);
-		}
 		else
-		{
 			$smarty->assign('rss_feed', false);
-		}
+		$smarty->assign('prevweek', $this->prevweek);
+		$html = $smarty->fetch(get_tpl('home'));
+		// Retrieve kills to be displayed limited by the date. If too few are returned
+		// extend the date range. If too many are returned reduce the date range.
+		$klist = new KillList();
+		$klist->setOrdered(true);
+		// We'll be needing comment counts so set the killlist to retrieve them
+		if (config::get('comments_count')) $klist->setCountComments(true);
+		// We'll be needing involved counts so set the killlist to retrieve them
+		if (config::get('killlist_involved')) $klist->setCountInvolved(true);
 
-			// Retrieve kills to be displayed limited by the date. If too few are returned
-			// extend the date range. If too many are returned reduce the date range.
-			$klist = new KillList();
-			$klist->setOrdered(true);
-			// We'll be needing comment counts so set the killlist to retrieve them
-			if (config::get('comments_count')) $klist->setCountComments(true);
-			// We'll be needing involved counts so set the killlist to retrieve them
-			if (config::get('killlist_involved')) $klist->setCountInvolved(true);
+		// Select between kills, losses or both.
+		if($this->showcombined) involved::load($klist,'combined');
+		elseif(isset($_REQUEST['losses'])) involved::load($klist,'loss');
+		else involved::load($klist,'kill');
 
-			if (!$this->prevweek) $klist->setLimit($this->killcount);
-			else
-			{
-					$klist->setWeek($this->week);
-					$klist->setYear($this->year);
-			}
-			// Select between combined kills and losses or just kills.
-			if($this->showcombined) involved::load($klist,'combined');
-			elseif(isset($_REQUEST['losses'])) involved::load($klist,'loss');
-			else involved::load($klist,'kill');
-
-			if ($_GET['scl_id'])
-				$klist->addVictimShipClass(intval($_GET['scl_id']));
-			else
-				$klist->setPodsNoobShips(false);
+		if ($_GET['scl_id'])
+			$klist->addVictimShipClass(intval($_GET['scl_id']));
+		else
+			$klist->setPodsNoobShips(false);
 
 		// If this is the current week then show the most recent kills. If a previous
 		// week show all kills for the week using the page splitter.
 		if($this->prevweek)
 		{
-				$klist->setPageSplit($this->killcount);
-				$pagesplitter = new PageSplitter($klist->getCount(), $this->killcount);
-				$table = new KillListTable($klist);
-				if($this->showcombined)
-					$table->setCombined(true);
-				$html .= $table->generate();
-				$html .= $pagesplitter->generate();
+			$klist->setWeek($this->week);
+			$klist->setYear($this->year);
+			$klist->setPageSplit($this->killcount);
+			$pagesplitter = new PageSplitter($klist->getCount(), $this->killcount);
+			$table = new KillListTable($klist);
+			if($this->showcombined) $table->setCombined(true);
+			$html .= $table->generate();
+			$html .= $pagesplitter->generate();
 		}
 		else
 		{
-				$table = new KillListTable($klist);
-				if($this->showcombined) $table->setCombined(true);
-				$table->setLimit($this->killcount);
-				$html .= $table->generate();
+			$klist->setLimit($this->killcount);
+			$table = new KillListTable($klist);
+			if($this->showcombined) $table->setCombined(true);
+			$table->setLimit($this->killcount);
+			$html .= $table->generate();
 		}
 		return $html;
-	}
+    }
 
 	function menu()
 	{
@@ -236,11 +213,11 @@ class Home
 		}
 		if(kbdate('W') != $this->week || getYear() != $this->year) $weektext = $this->week . ", " . $this->year;
 		else $weektext = "This Week's";
-		if(!isset($_REQUEST['kills'])) $menubox->addOption("link", $weektext." Kills",
+		$menubox->addOption("link", $weektext." Kills",
 				"?a=home&amp;w=" . $this->week . "&amp;y=" . $this->year . '&amp;kills'.$suffixscl);
-		if(!isset($_REQUEST['losses'])) $menubox->addOption("link", $weektext." Losses",
+		$menubox->addOption("link", $weektext." Losses",
 				"?a=home&amp;w=" . $this->week . "&amp;y=" . $this->year . '&amp;losses'.$suffixscl);
-		if((isset($_REQUEST['losses']) || isset($_REQUEST['kills']) || !$this->prevweek) && config::get('show_comb_home')) $menubox->addOption("link",
+		if(config::get('show_comb_home')) $menubox->addOption("link",
 			 $weektext." All Kills",
 				"?a=home&amp;w=" . $this->week . "&amp;y=" . $this->year.$suffixscl);
 		return $menubox->generate();
@@ -295,31 +272,13 @@ class Home
 		return $html;
 	}
 
-	function generateContent()
-	{
-		global $smarty;
-		$smarty->assign('summary', $this->SummaryTable());
-		// Only show campaigns/contracts if on home page and current week.
-		if(!isset($_REQUEST['losses']) && !isset($_REQUEST['kills']) &&
-			(kbdate('W') == $this->week && getYear() == $this->year))
-		{
-			$smarty->assign('campaigns', $this->campaigns());
-			$smarty->assign('contracts', $this->contracts());
-		}
-		$smarty->assign('kills', $this->kills());
-		$smarty->assign('prevweek', $this->prevweek);
-		return $smarty->fetch(get_tpl('home'));
-	}
-
-	function generateContext()
-	{
-		$html = '';
-		$html .= $this->menu();
+    function context()
+    {
+		$html = $this->menu();
 		$html .= $this->clock();
 		$html .= $this->topLists();
-		return $html;
-	}
-
+		$this->page->addContext($html);
+    }
 	function getWeek()
 	{
 		return $this->week;
@@ -334,17 +293,53 @@ class Home
 	{
 		return $this->year;
 	}
+	function setWeek($week, $year)
+	{
+		// If a valid week and year are given then show that week.
+		if(((int)$week) < 1 || ((int)$week) > 53 || ((int)$year) < 2000) return false;
+
+		$this->prevweek = true;
+		$this->week = (int)$week;
+		if($this->week < 10) $this->week = '0'.$this->week;
+		$this->year = (int)$year;
+
+		if ($this->week == 1)
+		{
+			$this->pyear = $this->year - 1;
+			$this->pweek = 53;
+		}
+		else
+		{
+			$this->pyear = $this->year;
+			$this->pweek = $this->week - 1;
+		}
+		return true;
+	}
+
+	function setMonth($month, $year)
+	{
+		$month = (int)$month;
+		$year = (int)$year;
+		if($month < 1 || $month > 12 || $year < 2000) return false;
+		$this->month = $month;
+		$this->year = $year;
+		if($month == 1)
+		{
+			$this->pyear = $year - 1;
+			$this->pmonth = 12;
+		}
+		else
+		{
+			$this->pyear = $year;
+			$this->pmonth = $month - 1;
+		}
+		return true;
+	}
+
 }
 
-$home = new Home();
+$pageAssembly = new pHome();
+$html = $pageAssembly->assemble();
 
-if($_GET['w'] && $_GET['y']) $home->setWeek($_GET['w'], $_GET['y']);
-// Show complete week for kills and losses pages.
-if(isset($_REQUEST['losses']) || isset($_REQUEST['kills'])) $home->prevweek=true;;
-if(isset($_REQUEST['kills'])) $page = new Page('Kills - Week '.$home->getWeek().', '.$home->getYear());
-elseif(isset($_REQUEST['losses'])) $page = new Page('Losses - Week '.$home->getWeek().', '.$home->getYear());
-else $page = new Page('Week '.$home->getWeek().', '.$home->getYear());
-$page->setContent($home->generateContent());
-$page->addContext($home->generateContext());
-$page->generate();
-?>
+$pageAssembly->page->setContent($html);
+$pageAssembly->page->generate();
