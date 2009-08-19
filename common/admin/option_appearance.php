@@ -271,7 +271,6 @@ class admin_appearance
 	{
 		if(!session::isAdmin()) return false;
 		if(strpos($dir, '.') !== false) return false;
-		//$dir = KB_CACHEDIR.'/'.$dir;
 		if(!is_dir($dir)) return false;
 		if(substr($dir,-1) != '/') $dir = $dir.'/';
 		$seconds = $hours*60*60;

@@ -74,7 +74,6 @@ class Page
         $style = config::get('style_name');
         $smarty->assign('style', $style);
 
-        $smarty->assign('common_url', COMMON_URL);
         if ($this->onload_)
         {
             $smarty->assign('on_load', ' onload="'.$this->onload_.'"');

@@ -77,7 +77,6 @@ $ApiCache = new ApiCache(KB_SITE);
 define('KB_HOST', config::get('cfg_kbhost'));
 define('MAIN_SITE', config::get('cfg_mainsite'));
 define('THEME_URL', config::get('cfg_kbhost').'/themes/'.config::get('theme_name'));
-define('COMMON_URL', config::get('cfg_common'));
 define('IMG_URL', config::get('cfg_img'));
 define('KB_TITLE', config::get('cfg_kbtitle'));
 
@@ -106,6 +105,7 @@ $smarty = new Smarty();
 if(is_dir('./themes/'.config::get('theme_name').'/templates'))
 	$smarty->template_dir = './themes/'.config::get('theme_name').'/templates';
 else $smarty->template_dir = './themes/default/templates';
+
 $smarty->compile_dir = './cache/templates_c';
 $smarty->cache_dir = './cache/data';
 $smarty->assign('theme_url', THEME_URL);

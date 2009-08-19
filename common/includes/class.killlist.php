@@ -748,11 +748,6 @@ class KillList
 		return $sql;
     }
 
-    function setRelated($killid)
-    {
-        $this->related_ = $killid;
-    }
-
     function setLimit($limit)
     {
         $this->limit_ = $limit;
