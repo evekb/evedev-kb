@@ -99,9 +99,10 @@ function ec_update_value($item_id) {
     $query = new DBQuery();
 
     // Don't try if we can't open URLs with fopen.
-    if (1 != function_exists('curl_init')) {
-            return;
-    }
+	// Do to!
+//    if (1 != function_exists('curl_init')) {
+//            return;
+//    }
     // Don't try if the item id isn't an integer.
     if (!is_numeric($item_id)) {
             return;
