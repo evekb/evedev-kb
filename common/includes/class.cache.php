@@ -50,7 +50,7 @@ class cache
         }
 
         $cacheignore = explode(',', config::get('cache_ignore'));
-		if (config::get('cache_enabled') == 1 && count($_POST) == 0 && !($page != '' && in_array($page, $cacheignore)))
+		if (KB_CACHE == 1 && count($_POST) == 0 && !($page != '' && in_array($page, $cacheignore)))
         {
             return true;
         }
@@ -59,15 +59,11 @@ class cache
 	//! Check if the current page is cached and valid then send it if so.
     function check($page)
     {
-        if (cache::shouldCache($page))
+		// If the cache doesn't exist then we don't need to check times.
+        if (cache::shouldCache($page) && file_exists(cache::genCacheName()))
         {
-            if (!file_exists(KB_CACHEDIR.'/'.KB_SITE))
-            {
-                mkdir(KB_CACHEDIR.'/'.KB_SITE);
-            }
-
 			$cachefile = cache::genCacheName();
-			
+
             $times = explode(',', config::get('cache_times'));
             foreach ($times as $string)
             {
@@ -83,7 +79,7 @@ class cache
             {
                 $cachetime = config::get('cache_time');
             }
-			
+
 			$cachetime = config::get('cache_time');
             $cachetime = $cachetime * 60;
 
@@ -96,7 +92,7 @@ class cache
             }
 			if(file_exists($cachefile)) $timestamp = @filemtime($cachefile);
 			else $timestamp = 0;
-			
+
 			if(config::get('cache_update') == '*')
 				if(file_exists(KB_CACHEDIR.'/killadded.mk'))
 					if($timestamp < @filemtime(KB_CACHEDIR.'/killadded.mk'))
@@ -126,7 +122,7 @@ class cache
 					exit;
 				}
 
-                ob_start();
+				ob_start();
                 @readfile($cachefile);
                 ob_end_flush();
                 exit();
@@ -145,23 +141,36 @@ class cache
         if (cache::shouldCache())
         {
             $cachefile = cache::genCacheName();
+			
+			// Create directories if needed.
+			if (!file_exists(KB_CACHEDIR.'/'.KB_SITE))
+            {
+                mkdir(KB_CACHEDIR.'/'.KB_SITE);
+            }
+			if (!file_exists(KB_CACHEDIR.'/'.KB_SITE.'/'.cache::genCacheName(true)))
+            {
+                mkdir(KB_CACHEDIR.'/'.KB_SITE.'/'.cache::genCacheName(true));
+            }
             $fp = @fopen($cachefile, 'w');
-			//@fwrite($fp, ob_get_contents());
 
             @fwrite($fp, preg_replace('/profile -->.*<!-- \/profile/','profile -->Cached '.gmdate("d M Y H:i:s").'<!-- /profile',ob_get_contents()));
-            //if(!strpos($_SERVER['REQUEST_URI'], 'feed')) @fwrite($fp, '<!-- Generated from cache -->');
             @fclose($fp);
             ob_end_flush();
         }
     }
 	//! Generate the cache filename.
 
-	//! \return string of path and filename for the current page's cachefile.
-	function genCacheName()
+	/*!
+	 * Security modification could change this function to generate access
+	 * level specific cache files.
+	 * 
+	 *  \return string of path and filename for the current page's cachefile.
+	 */
+	function genCacheName($subdir = false)
 	{
-		// Security mods can add access specific cache names here
-//		return KB_CACHEDIR.'/'.KB_SITE.'/'.md5($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].@implode($_SESSION)).'.cache';
-		return KB_CACHEDIR.'/'.KB_SITE.'/'.md5($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']).'.cache';
+		$filename = md5($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].@implode($_SESSION)).'.cache';
+		if($subdir) return substr($filename,0,1);
+		else return KB_CACHEDIR.'/'.KB_SITE.'/'.substr($filename,0,1).'/'.$filename;
 	}
 	//! Remove the cache of the current page.
 	function deleteCache()
