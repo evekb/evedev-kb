@@ -8,8 +8,8 @@ require_once('common/includes/globals.php');
 require_once('common/includes/class.config.php');
 require_once('common/includes/db.php');
 
-remove_old(1 * 24, config::get('cache_dir').'/');
-remove_old(1 * 24, config::get('cache_dir').'/'.KB_SITE.'/');
+remove_old(7 * 24, config::get('cache_dir').'/');
+remove_old(7 * 24, config::get('cache_dir').'/'.KB_SITE.'/');
 remove_old(1 * 24, "cache/templates_c/");
 remove_old(7 * 24, "cache/mails/");
 remove_old(30 * 24, "cache/", true);
@@ -26,7 +26,7 @@ function remove_old($hours, $dir, $recurse = false)
 
 	$files = scandir($dir);
 
-//	echo $dir."<br>".$hours." hours<br>\n";
+	echo $dir."<br>".$hours." hours<br>\n";
 	foreach ($files as $num => $fname)
 	{
 		if (file_exists("{$dir}{$fname}") && !is_dir("{$dir}{$fname}") && substr($fname,0,1) != "." && ((time() - filemtime("{$dir}{$fname}")) > $seconds))
@@ -35,7 +35,7 @@ function remove_old($hours, $dir, $recurse = false)
 			if (unlink("{$dir}{$fname}"))
 			{
 				$del = $del + 1; 
-//				echo "Deleted: {$del} - {$fname} --- ".(round((time()-$mod_time)/3600))." hours old<br>\n";
+				echo "Deleted: {$del} - {$fname} --- ".(round((time()-$mod_time)/3600))." hours old<br>\n";
 			}
 		}
 		// Clear subdirectories if $recurse is true.
