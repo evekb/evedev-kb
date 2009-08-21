@@ -339,6 +339,7 @@ class pHome extends pageAssembly
 }
 
 $pageAssembly = new pHome();
+event::call("home_assembling", $pageAssembly);
 $html = $pageAssembly->assemble();
 
 $pageAssembly->page->setContent($html);
