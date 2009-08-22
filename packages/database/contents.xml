@@ -5,11 +5,11 @@
     <version>1.1</version>
   </table>
   <table>
-    <name>kb3_apilog</name>
+    <name>kb3_apicache</name>
     <version>1.1</version>
   </table>
   <table>
-    <name>kb3_apicache</name>
+    <name>kb3_apilog</name>
     <version>1.1</version>
   </table>
   <table>
@@ -54,14 +54,6 @@
   </table>
   <table>
     <name>kb3_eveunits</name>
-    <version>1.1</version>
-  </table>
-  <table>
-    <name>kb3_inv_all</name>
-    <version>1.1</version>
-  </table>
-  <table>
-    <name>kb3_inv_crp</name>
     <version>1.1</version>
   </table>
   <table>

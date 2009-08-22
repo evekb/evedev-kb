@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kb3>
   <name>kb3_ships_values</name>
-  <rows>330</rows>
+  <rows>341</rows>
   <structure>CREATE TABLE `kb3_ships_values` (
   `shp_id` int(11) NOT NULL,
   `shp_value` bigint(4) NOT NULL,

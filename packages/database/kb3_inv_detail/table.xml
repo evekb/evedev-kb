@@ -2,22 +2,19 @@
 <kb3>
   <name>kb3_inv_detail</name>
   <rows>0</rows>
-  <structure>CREATE TABLE IF NOT EXISTS `kb3_inv_detail` (
-  `ind_kll_id` int(6) NOT NULL DEFAULT '0',
-  `ind_timestamp` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `ind_plt_id` int(6) NOT NULL DEFAULT '0',
-  `ind_sec_status` float NOT NULL DEFAULT '0',
-  `ind_all_id` int(3) NOT NULL DEFAULT '0',
-  `ind_crp_id` int(5) NOT NULL DEFAULT '0',
-  `ind_shp_id` int(3) NOT NULL DEFAULT '0',
-  `ind_wep_id` int(5) NOT NULL DEFAULT '0',
-  `ind_order` int(2) NOT NULL DEFAULT '0',
+  <structure>CREATE TABLE `kb3_inv_detail` (
+  `ind_kll_id` int(6) NOT NULL default 0,
+  `ind_plt_id` int(6) NOT NULL default 0,
+  `ind_sec_status` char(15) default NULL,
+  `ind_all_id` int(3) NOT NULL default 0,
+  `ind_crp_id` int(5) NOT NULL default 0,
+  `ind_shp_id` int(3) NOT NULL default 0,
+  `ind_wep_id` int(5) NOT NULL default 0,
+  `ind_order` int(2) NOT NULL default 0,
   `ind_dmgdone` int(11) NOT NULL,
-  PRIMARY KEY (`ind_kll_id`, `ind_order`),
-  KEY `timestamp` (`ind_timestamp`),
-  KEY `ind_all_id` (`ind_all_id`),
+  PRIMARY KEY `ind_kll_id` (`ind_kll_id`,`ind_order`),
   KEY `ind_crp_id` (`ind_crp_id`),
-  KEY `ind_plt_time` (`ind_plt_id`,`ind_timestamp`),
-  KEY `ind_kll_plt` (`ind_kll_id`,`ind_plt_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;</structure>
+  KEY `ind_all_id` (`ind_all_id`),
+  KEY `ind_plt_id` (`ind_plt_id`)
+) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

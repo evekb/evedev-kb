@@ -3,10 +3,10 @@
   <name>kb3_cache</name>
   <rows>0</rows>
   <structure>CREATE TABLE IF NOT EXISTS `kb3_apicache` (
-        	 `cfg_site` varchar(16) NOT NULL default '',
- 			 `cfg_key` varchar(32) NOT NULL default '',
-  			 `cfg_value` text NOT NULL,
-  			 PRIMARY KEY  (`cfg_site`,`cfg_key`))
-			 ENGINE = InnoDB  DEFAULT CHARSET=utf8;</structure>
+    `cfg_site` varchar(16) NOT NULL default &#039;&#039;,
+    `cfg_key` varchar(32) NOT NULL default &#039;&#039;,
+    `cfg_value` text NOT NULL,
+    PRIMARY KEY  (`cfg_site`,`cfg_key`))
+    TYPE=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>
  

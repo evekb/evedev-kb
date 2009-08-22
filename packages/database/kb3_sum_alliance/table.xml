@@ -3,12 +3,12 @@
   <name>kb3_sum_alliance</name>
   <rows>0</rows>
   <structure>CREATE TABLE `kb3_sum_alliance` (
-		  `asm_all_id` int(11) NOT NULL DEFAULT '0',
-		  `asm_shp_id` int(3) NOT NULL DEFAULT '0',
-		  `asm_kill_count` int(11) NOT NULL DEFAULT '0',
-		  `asm_kill_isk` float NOT NULL DEFAULT '0',
-		  `asm_loss_count` int(11) NOT NULL DEFAULT '0',
-		  `asm_loss_isk` float NOT NULL DEFAULT '0',
-		  PRIMARY KEY (`asm_all_id`,`asm_shp_id`)
-		) ENGINE=MyISAM;</structure>
+      `asm_all_id` int(11) NOT NULL DEFAULT &#039;0&#039;,
+      `asm_shp_id` int(3) NOT NULL DEFAULT &#039;0&#039;,
+      `asm_kill_count` int(11) NOT NULL DEFAULT &#039;0&#039;,
+      `asm_kill_isk` float NOT NULL DEFAULT &#039;0&#039;,
+      `asm_loss_count` int(11) NOT NULL DEFAULT &#039;0&#039;,
+      `asm_loss_isk` float NOT NULL DEFAULT &#039;0&#039;,
+      PRIMARY KEY (`asm_all_id`,`asm_shp_id`)
+    ) ENGINE=MyISAM DEFAULT CHARSET=utf8;</structure>
 </kb3>
