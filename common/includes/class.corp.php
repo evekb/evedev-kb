@@ -97,7 +97,7 @@ class Corporation
                        where crp_name = '".slashfix($name)."'");
         $row = $qry->getRow();
         if ($row['crp_id']) $this->id_ = $row['crp_id'];
-		$this->name = $row['crp_name'];
+		$this->name_ = $row['crp_name'];
 		$this->externalid_ = intval($row['crp_external_id']);
 		$this->alliance_ = $row['crp_all_id'];
     }
@@ -159,7 +159,8 @@ class Corporation
 					$this->name_ = slashfix($name);
 					$this->externalid_ = $row['crp_external_id'];
 					$this->alliance_ = $row['crp_all_id'];
-
+					$this->updated_ = strtotime($row['crp_updated']." UTC");
+					if(!$this->updated_) $this->updated_ = 0;
 					// Now check if the alliance needs to be updated.
 					if ($row['crp_all_id'] != $alliance->getID() && $this->isUpdatable($timestamp))
 					{
@@ -217,6 +218,9 @@ class Corporation
      */
     function isUpdatable($timestamp)
     {
+		if(isset($this->updated_))
+			if(is_null($this->updated_) || strtotime($timestamp." UTC") > $this->updated_) return true;
+			else return false;
         $qry = new DBQuery();
         $qry->execute("select crp_id from kb3_corps
 		               where crp_id = ".$this->id_."
@@ -263,4 +267,49 @@ class Corporation
         return $list;
 	}
 }
-?>
+
+class Corporations
+{
+	//! Add an array of pilots to be checked.
+
+	//! \param $names array of corp names indexed by pilot name.
+	function addNames($names)
+	{
+		$qry = new DBQuery(true);
+		$checklist = array();
+		foreach($names as $corp =>$all)
+		{
+			$qry->execute("SELECT 1 FROM kb3_corps WHERE crp_name = '".$corp."'");
+			if(!$qry->recordCount()) $checklist[] = $corp;
+		}
+		if(!count($checklist)) return;
+		require_once("common/includes/class.eveapi.php");
+		$position = 0;
+		$myNames = array();
+		while($position < count($checklist))
+		{
+			$namestring = str_replace(" ", "%20", implode(',',array_slice($checklist,$position, 500, true)));
+			$namestring = str_replace("\'", "'", $namestring);
+			$position +=500;
+			$myID = new API_NametoID();
+			$myID->setNames($namestring);
+			$myID->fetchXML();
+			$tempNames = $myID->getNameData();
+			if(!is_array($tempNames)) continue;
+			$myNames = array_merge($myNames, $tempNames);
+		}
+		$newcorp = new Corporation();
+		//$sql = '';
+		foreach($myNames as $name)
+		{
+			if(isset($names[slashfix($name['name'])]) && $name['characterID'])
+			{
+				$newcorp->add(slashfix($name['name']), $names[slashfix($name['name'])], '0000-00-00', $name['characterID']);
+				// Adding all at once is faster but skips checks for name/id clashes.
+				//if($sql == '') $sql = "INSERT INTO kb3_corps (crp_name, crp_all_id, crp_updated, crp_external_id) VALUES ('".slashfix($name['name'])."', ".$names[slashfix($name['name'])]->getID().", '0000-00-00', ".$name['characterID'].")";
+				//else $sql .= ",\n ('".slashfix($name['name'])."', ".$names[slashfix($name['name'])]->getID().", '0000-00-00', ".$name['characterID'].")";
+			}
+		}
+		if($sql) $qry->execute($sql);
+	}
+}

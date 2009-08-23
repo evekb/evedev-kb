@@ -12,6 +12,8 @@ $feedversion = "v1.7";
 require_once( "common/includes/class.kill.php" );
 require_once( "common/includes/class.parser.php" );
 require_once( "common/includes/class.comments.php" );
+require_once( "common/includes/class.corp.php" );
+require_once( "common/includes/class.pilot.php" );
 
 //! EDK Feed Syndication fetcher class.
 
@@ -102,6 +104,76 @@ class Fetcher
 				$cprs = "GZip compressed stream";
 			}
 			file_put_contents($this->feedfilename, $data);
+			// Process all new pilots and corps
+			$pos = 0;
+			$namelist = array();
+			$newcorp = new Corporation();
+			$newall = new Alliance();
+			$newall->add("None");
+			// Corps
+			while($pos = strpos($data, 'Corp: ', $pos + 1))
+			{
+				$endpos = strpos($data, "\n", $pos);
+				$name = substr($data, $pos + 6, $endpos - ($pos + 6));
+				$name = trim(str_replace("\r", '', $name));
+				$name = preg_replace("/ \(laid the final blow\)/", "", $name);
+				if(strpos($name, '/')) continue;
+				$namelist[slashfix($name)] = $newall;
+			}
+			Corporations::addNames($namelist);
+
+			$pos = 0;
+			$namelist = array();
+			// Corps will repeat a lot so store the ones we find for reuse.
+			$corps = array();
+			// Victims
+			while($pos = strpos($data, 'Victim: ', $pos))
+			{
+				$endpos = strpos($data, "\n", $pos);
+				$name = substr($data, $pos + 8, $endpos - ($pos + 8));
+				$name = trim(str_replace("\r", '', $name));
+
+				$pos = strpos($data, "Corp: ",$pos);
+				if(!$pos) break;
+				if(strpos($name, "/")) continue;
+				$endpos = strpos($data, "\n", $pos);
+				$cname = substr($data, $pos + 6, $endpos - ($pos + 6));
+				$cname = trim(str_replace("\r", "", $cname));
+				if(!isset($corps[$cname]))
+				{
+					$newcorp = new Corporation();
+					$newcorp->lookup($cname);
+					$corps[$cname] = $newcorp;
+				}
+				$namelist[slashfix($name)] = $corps[$cname];
+			}
+			// Involved parties
+			$pos = 0;
+			while($pos = strpos($data, 'Name: ', $pos))
+			{
+				$endpos = strpos($data, "\n", $pos);
+				$name = substr($data, $pos + 6, $endpos - ($pos + 6));
+				$name = trim(str_replace("\r", '', $name));
+				$name = preg_replace("/ \(laid the final blow\)/", "", $name);
+
+				$pos = strpos($data, "Corp: ",$pos);
+				if(!$pos) break;
+				// Skip NPC names with a '/' in them.
+				if(strpos($name, "/")) continue;
+				$endpos = strpos($data, "\n", $pos);
+				$cname = substr($data, $pos + 6, $endpos - ($pos + 6));
+				$cname = trim(str_replace("\r", "", $cname));
+				if(!isset($corps[$cname]))
+				{
+					$newcorp = new Corporation();
+					$newcorp->lookup($cname);
+					$corps[$cname] = $newcorp;
+				}
+				$namelist[slashfix($name)] = $corps[$cname];
+			}
+			Pilots::addNames($namelist);
+			unset ($corps);
+			unset ($namelist);
 		}
 		else
 		{
@@ -174,20 +246,21 @@ class Fetcher
 
 		if ($name == "ITEM")
 		{
-			if ( isset( $this->description ))
+			if ( $this->description !="")
 			{
 				$this->description = trim(str_replace("\r", '', $this->description));
 				$year = substr($this->description, 0, 4);
 				$month = substr($this->description, 5, 2);
 				$day = substr($this->description, 8, 2);
 				$killstamp = mktime(0, 0, 0, $month, $day, $year);
-				if ( $this->idordered && $this->tracklast_ > intval($this->title))
+				// Not working as intended so removing for now.
+				if ( 0 && $this->idordered && $this->tracklast_ > intval($this->title))
 				{
-					$this->html .= "Killmail ".intval($this->title)." already processed <br>";
+					$this->html .= "Killmail ID ".intval($this->title)." already processed <br>";
 				}
-				elseif (!$this->idordered && $this->tracktime_ > $killstamp)
+				elseif (0 && !$this->idordered && $this->tracktime_ > $killstamp)
 				{
-					$this->html .= "Killmail ".intval($this->title)." already processed. <br>";
+					$this->html .= "Killmail date ".intval($this->title)." already processed. <br>";
 				}
 				else
 				{
@@ -294,6 +367,6 @@ class Fetcher
 			$this->combined_ = true;
 		}
 	}
-
+	
 }
 ?>

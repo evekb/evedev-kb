@@ -152,9 +152,9 @@ class Pilot
 
         if ($qry->recordCount() == 0)
         {
-			$externalid = intval($externalid);
+			$externalID = intval($externalID);
 			// If no external id is given then look it up.
-			if(!$externalid)
+			if(!$externalID)
 			{
 				$pilotname = str_replace(" ", "%20", $name );
 				require_once("common/includes/class.eveapi.php");
@@ -162,18 +162,18 @@ class Pilot
 				$myID->setNames($pilotname);
 				$myID->fetchXML();
 				$myNames = $myID->getNameData();
-				$externalid = $myNames[0]['characterID'];
+				$externalID = intval($myNames[0]['characterID']);
 			}
 			// If we have an external id then check it isn't already in use.
 			// If we find it then update the old corp with the new name and
 			// return.
-			if($externalid)
+			if($externalID)
 			{
-				$qry->execute("SELECT * FROM kb3_pilots WHERE plt_externalid = ".$externalid);
+				$qry->execute("SELECT * FROM kb3_pilots WHERE plt_externalid = ".$externalID);
 				if ($qry->recordCount() > 0)
 				{
 					$row = $qry->getRow();
-					$qryI->execute("UPDATE kb3_pilots SET plt_name = '".slashfix($name)."' WHERE plt_externalid = ".$externalid);
+					$qryI->execute("UPDATE kb3_pilots SET plt_name = '".slashfix($name)."' WHERE plt_externalid = ".$externalID);
 
 					$this->id_ = $row['plt_id'];
 					$this->name_ = slashfix($name);
@@ -185,7 +185,7 @@ class Pilot
 					{
 						$qryI->execute("update kb3_pilots
 									 set plt_crp_id = ".$corp->getID().",
-										 plt_updated = date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s') WHERE plt_externalid = ".$externalid);
+										 plt_updated = date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s') WHERE plt_externalid = ".$externalID);
 					}
 					return $this->id_;
 				}
@@ -201,7 +201,9 @@ class Pilot
         {
             $row = $qry->getRow();
             $this->id_ = $row['plt_id'];
-            if ($this->isUpdatable($timestamp) && $row['plt_crp_id'] != $corp->getID())
+			$this->updated_ = strtotime($row['plt_updated']." UTC");
+			if(!$this->updated_) $this->updated_ = 0;
+			if ($this->isUpdatable($timestamp) && $row['plt_crp_id'] != $corp->getID())
             {
                 $qryI->execute("update kb3_pilots
                              set plt_crp_id = ".$corp->getID().",
@@ -220,6 +222,9 @@ class Pilot
      */
     function isUpdatable($timestamp)
     {
+		if(isset($this->updated_))
+			if(is_null($this->updated_) || strtotime($timestamp." UTC") > $this->updated_) return true;
+			else return false;
         $qry = new DBQuery();
         $qry->execute("select plt_id
                         from kb3_pilots
@@ -246,4 +251,51 @@ class Pilot
                        where plt_id = ".$this->id_);
     }
 }
-?>
+
+class Pilots
+{
+	//! Add an array of pilots to be checked.
+
+	//! \param $names array of corp names indexed by pilot name.
+	function addNames($names)
+	{
+		$qry = new DBQuery(true);
+		$checklist = array();
+		foreach($names as $pilot =>$corp)
+		{
+			$qry->execute("SELECT 1 FROM kb3_pilots WHERE plt_name = '".$pilot."'");
+			if(!$qry->recordCount()) $checklist[] = $pilot;
+		}
+		if(!count($checklist)) return;
+		require_once("common/includes/class.eveapi.php");
+		$position = 0;
+		$myNames = array();
+		$myID = new API_NametoID();
+		while($position < count($checklist))
+		{
+			$namestring = str_replace(" ", "%20", implode(',',array_slice($checklist,$position, 500, true)));
+			$namestring = str_replace("\'", "'", $namestring);
+			$position +=500;
+			$myID->setNames($namestring);
+			$myID->fetchXML();
+			$tempNames = $myID->getNameData();
+			$myID->clear();
+			if(!is_array($tempNames)) continue;
+			$myNames = array_merge($myNames, $tempNames);
+		}
+		$newpilot = new Pilot();
+		//$sql = '';
+		if(!is_array($myNames)) {echo $myNames;die("name fetch error");}
+		foreach($myNames as $name)
+		{
+			if(isset($names[slashfix($name['name'])]))
+			{
+				$newpilot->add(slashfix($name['name']), $names[slashfix($name['name'])], '0000-00-00', $name['characterID']);
+				// Adding all at once is faster but skips checks for name/id clashes.
+				//if($sql == '') $sql = "INSERT INTO kb3_pilots (plt_name, plt_crp_id, plt_externalid, plt_updated) values ('".slashfix($name['name'])."', ".$names[slashfix($name['name'])]->getID().', '.$name['characterID'].", '0000-00-00')";
+				//else $sql .= ", ('".slashfix($name['name'])."', ".$names[slashfix($name['name'])]->getID().', '.$name['characterID'].", '0000-00-00')";
+			}
+		}
+		if($sql) $qry->execute($sql);
+	}
+}
