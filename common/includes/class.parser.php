@@ -59,6 +59,13 @@ class Parser
             $this->preparse('apoc');
         }
 
+        $apoc15_release = '2009-08-20 12:00:00';
+
+        if(strtotime($timestamp) < strtotime($apoc15_release))
+        {
+            $this->preparse('apoc15');
+        }
+
         $qr_release = '2008-11-11 00:00:00';
 
         if(strtotime($timestamp) < strtotime($qr_release))

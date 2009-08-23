@@ -165,6 +165,47 @@ class Translate
             $this->killmail_ = str_replace($search, $replace, $this->killmail_);
         }
 
+        if($this->language_ == 'apoc15')
+        {
+            $search = array('Anti-EM Pump', 'Anti-Explosive Pump', 'Anti-Kinetic Pump',
+                'Anti-Thermic Pump', 'Trimark Armor Pump', 'Auxiliary Nano Pump',
+                'Nanobot Accelerator', 'Remote Repair Augmentor', 'Salvage Tackle',
+                'Core Defence Capacitor Safeguard', 'Anti-EM Screen Reinforcer',
+                'Anti-Explosive Screen Reinforcer', 'Anti-Kinetic Screen Reinforcer',
+                'Anti-Thermal Screen Reinforcer', 'Core Defence Field Purger',
+                'Core Defence Operational Solidifier', 'Core Defence Field Extender',
+                'Core Defence Charge Economizer', 'Shield Transporter Rig', 'Energy Discharge Elutriation',
+                'Energy Ambit Extension', 'Energy Locus Coordinator', 'Energy Metastasis Adjuster',
+                'Algid Energy Administrations Unit', 'Energy Burst Aerator', 'Energy Collision Accelerator',
+                'Hybrid Discharge Elutriation', 'Hybrid Ambit Extension', 'Hybrid Locus Coordinator',
+                'Hybrid Metastasis Adjuster', 'Algid Hybrid Administrations Unit', 'Hybrid Burst Aerator',
+                'Hybrid Collision Accelerator', 'Projectile Cache Distributor', 'Projectile Ambit Extension',
+                'Projectile Locus Coordinator', 'Projectile Metastasis Adjuster', 'Projectile Consumption Elutriator',
+                'Projectile Burst Aerator', 'Projectile Collision Accelerator', 'Drone Control Range Augmentor',
+                'Drone Repair Augmentor', 'Drone Scope Chip', 'Drone Speed Augmentor', 'Drone Durability Enhancer',
+                'Drone Mining Augmentor', 'Sentry Damage Augmentor', 'EW Drone Range Augmentor',
+                'Stasis Drone Augmentor', 'Drone Damage Rig', 'Hydraulic Bay Thrusters',
+                'Launcher Processor Rig', 'Warhead Rigor Catalyst', 'Rocket Fuel Cache Partition',
+                'Missile Guidance System Rig', 'Bay Loading Accelerator', 'Warhead Flare Catalyst',
+                'Warhead Calefaction Catalyst', 'Signal Disruption Amplifier', 'Emission Scope Sharpener',
+                'Memetic Algorithm Bank', 'Liquid Cooled Electronics', 'Gravity Capacitor Upgrade',
+                'Processor Overclocking Unit', 'Capacitor Control Circuit', 'Egress Port Maximizer',
+                'Powergrid Subroutine Maximizer', 'Semiconductor Memory Cell', 'Ancillary Current Router',
+                'Dynamic Fuel Valve', 'Low Friction Nozzle Joints', 'Auxiliary Thrusters',
+                'Engine Thermal Shielding', 'Propellant Injection Vent', 'Warp Core Optimizer',
+                'Hyperspatial Velocity Optimizer', 'Polycarbon Engine Housing', 'Cargohold Optimization',
+                'Targeting Systems Stabilizer', 'Targeting System Subcontroller', 'Ionic Field Projector',
+                'Signal Focusing Kit', 'Particle Dispersion Augmentor', 'Particle Dispersion Projector',
+                'Inverted Signal Field Projector', 'Tracking Diagnostic Subroutines', 'Sensor Strength Rig');
+
+            $replace = array();
+            for($i = 0; $i < count($search); $i++) {
+                $replace[$i] = 'Large '. $search[$i];
+            }
+
+            $this->killmail_ = str_replace($search, $replace, $this->killmail_);
+        }
+
         return $this->killmail_;
     }
 }
