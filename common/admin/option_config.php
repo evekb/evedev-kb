@@ -56,7 +56,7 @@ class admin_config
 	function createCorp()
 	{
 		$qry = new DBQuery();
-		if(isset($_POST['option']['cfg_corpid'])) $crp_id=intval($_POST['option']['cfg_corpid']);
+		if(isset($_POST['option_cfg_corpid'])) $crp_id=intval($_POST['option_cfg_corpid']);
 		else $crp_id = CORP_ID;
 		$qry->execute("SELECT crp_name FROM kb3_corps WHERE crp_id = ".$crp_id);
 		$html = '<input type="text" id="option_cfg_corpid" name="option_cfg_corpid" value="'.$crp_id.'" size="5" maxlength="15" />';
@@ -67,10 +67,10 @@ class admin_config
 	function createAlliance()
 	{
 		$qry = new DBQuery();
-		if(isset($_POST['option']['cfg_corpid'])) $crp_id=intval($_POST['option']['cfg_corpid']);
+		if(isset($_POST['option_cfg_corpid'])) $crp_id=intval($_POST['option_cfg_corpid']);
 		else $crp_id = CORP_ID;
 		if($crp_id) $all_id=0;
-		elseif($_POST['option']['cfg_allianceid']) $all_id=intval($_POST['option']['cfg_allianceid']);
+		elseif($_POST['option_cfg_allianceid']) $all_id=intval($_POST['option_cfg_allianceid']);
 		else $all_id = ALLIANCE_ID;
 		$qry->execute("SELECT all_name FROM kb3_alliances WHERE all_id = ".$all_id);
 		$html = '<input type="text" id="option_cfg_allianceid" name="option_cfg_allianceid" value="'.$all_id.'" size="5" maxlength="15" />';

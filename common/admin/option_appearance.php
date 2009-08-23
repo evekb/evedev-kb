@@ -261,7 +261,7 @@ class admin_appearance
     }
 	function changeTheme()
 	{
-		if(!isset($_REQUEST['theme_name'])) return;
+		if(!isset($_REQUEST['option_theme_name'])) return;
 		config::set('style_name', config::get('theme_name'));
 		admin_appearance::removeOld(0, 'cache/templates_c', false);
 		header("Location: http://".$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'?'.$_SERVER['QUERY_STRING']);
