@@ -163,33 +163,19 @@ switch ($_GET['view'])
 
         break;
     case "corp_kills":
-        $html .= "<div class=block-header2>Top killers</div>";
-
-        $html .= "<table class=kb-subtable><tr><td valign=top width=440>";
-        $html .= "<div class=block-header>$monthname $year</div>";
-
         $list = new TopCorpKillsList();
         $list->addInvolvedAlliance($alliance);
         $list->setPodsNoobShips(false);
         $list->setMonth($month);
         $list->setYear($year);
         $table = new TopCorpTable($list, "Kills");
-        $html .= $table->generate();
+        $smarty->assign('killtable', $table->generate());
         
-		$html .= "<table width=300 cellspacing=1><tr><td><a href='?a=alliance_detail&amp;view=corp_kills&amp;m=$pmonth&amp;all_id=$all_id&amp;y=$pyear'>previous</a></td>";
-        $html .= "<td align='right'><a href='?a=alliance_detail&amp;view=corp_kills&amp;all_id=$all_id&amp;m=$nmonth&amp;y=$nyear'>next</a></p></td></tr></table>";
-        
-        $html .= "</td><td valign=top width=400>";
-        $html .= "<div class=block-header>All time</div>";
-
         $list = new TopCorpKillsList();
         $list->addInvolvedAlliance($alliance);
         $list->setPodsNoobShips(false);
         $table = new TopCorpTable($list, "Kills");
-        $html .= $table->generate();
-
-        $html .= "</td></tr></table>";
-		$smarty->assign('html', $html);
+        $smarty->assign('allkilltable', $table->generate());
         break;
     case "corp_kills_class":
         $html .= "<div class=block-header2>Destroyed ships</div>";
@@ -345,34 +331,19 @@ switch ($_GET['view'])
 
         break;
     case "corp_losses":
-        $html .= "<div class=block-header2>Top losers</div>";
-
-        $html .= "<table class=kb-subtable><tr><td valign=top width=440>";
-        $html .= "<div class=block-header>$monthname $year</div>";
-
         $list = new TopCorpLossesList();
         $list->addVictimAlliance($alliance);
         $list->setPodsNoobShips(false);
         $list->setMonth($month);
         $list->setYear($year);
         $table = new TopCorpTable($list, "Losses");
-        $html .= $table->generate();
-
-		$html .= "<table width=300 cellspacing=1><tr><td><a href='?a=alliance_detail&amp;view=corp_losses&amp;m=$pmonth&amp;all_id=$all_id&amp;y=$pyear'>previous</a></td>";
-        $html .= "<td align='right'><a href='?a=alliance_detail&amp;view=corp_losses&amp;all_id=$all_id&amp;m=$nmonth&amp;y=$nyear'>next</a></p></td></tr></table>";
-         
-        $html .= "</td><td valign=top width=400>";
-        $html .= "<div class=block-header>All time</div>";
+        $smarty->assign('losstable', $table->generate());
 
         $list = new TopCorpLossesList();
         $list->addVictimAlliance($alliance);
         $list->setPodsNoobShips(false);
         $table = new TopCorpTable($list, "Losses");
-        $html .= $table->generate();
-
-        $html .= "</td></tr></table>";
-		$smarty->assign('html', $html);
-
+        $smarty->assign('alllosstable', $table->generate());
         break;
     case "pilot_kills":
         $html .= "<div class=block-header2>Top killers</div>";

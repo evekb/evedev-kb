@@ -1,77 +1,93 @@
-<table align=center class=kb-table width="100%" height="80" border="0" cellspacing=1>
-	<tr class=kb-table-row-even>
-		<td rowspan=5 align=center width=80 height=80>
-			<img src="{$img_url}/{if $campaign}campaign{else}contract{/if}-big.gif" align=center>
+<table class="kb-table" width="100%" border="0" cellspacing="1">
+	<tr class="kb-table-row-even">
+		<td rowspan="8" width="128" align="center" bgcolor="black">
+			<img src="{$img_url}/alliances/{if $all_img == 'default'}default.gif{else}{$all_img}.png{/if}" alt="{$all_name}" width="128" height="128" border="0" />
 		</td>
-		<td class=kb-table-cell><b>Start date:</b></td>
-		<td class=kb-table-cell width=120><b>{$contract_startdate}</b></td>
-		<td class=kb-table-cell><b>End date:</b></td>
-		<td class=kb-table-cell width=120><b>{$contract_enddate}</b></td>
+		<td class="kb-table-cell" width="180"><b>Kills:</b></td>
+		<td class="kl-kill">{$totalkills}</td>
 	</tr>
-	<tr class=kb-table-row-even>
-		<td class=kb-table-cell><b>Kills:</b></td>
-		<td class=kl-kill>{$kill_count}</td>
-		<td class=kb-table-cell><b>Losses:</b></td>
-		<td class=kl-loss>{$loss_count}</td>
+	<tr class="kb-table-row-even">
+		<td class="kb-table-cell"><b>Losses:</b></td>
+		<td class="kl-loss">{$totallosses}</td>
 	</tr>
-	<tr class=kb-table-row-even>
-		<td class=kb-table-cell><b>Damage done (ISK):</b></td>
-		<td class=kl-kill>{$kill_isk}B</td>
-		<td class=kb-table-cell><b>Damage received (ISK):</b></td>
-		<td class=kl-loss>{$loss_isk}B</td>
-</tr>
-<tr class=kb-table-row-even>
-		<td class=kb-table-cell><b>Runtime:</b></td>
-		<td class=kb-table-cell><b>{$contract_runtime} days</b></td>
-		<td class=kb-table-cell><b>Efficiency:</b></td>
-		<td class=kb-table-cell><b>{$contract_efficiency}%</b></td>
+	<tr class="kb-table-row-even">
+		<td class="kb-table-cell"><b>Damage done (ISK):</b></td>
+		<td class="kl-kill">{$totalkisk}B</td>
+	</tr>
+	<tr class="kb-table-row-even">
+		<td class="kb-table-cell"><b>Damage received (ISK):</b></td>
+		<td class="kl-loss">{$totallisk}B</td>
+	</tr>
+	<tr class="kb-table-row-even">
+		<td class="kb-table-cell"><b>Efficiency:</b></td>
+		<td class="kb-table-cell"><b>{$efficiency}</b></td>
 	</tr>
 </table>
-<br>
-{$contract_summary}
+<br/>
+
 {if $view == 'recent_activity'}
-<div class=kb-kills-header>10 Most recent kills</div>
+{$summary}
+<div class="kb-kills-header">10 Most recent kills</div>
 {$killtable}
-<div class=kb-losses-header>10 Most recent losses</div>
+<div class="kb-losses-header">10 Most recent losses</div>
 {$losstable}
 {elseif $view == 'kills'}
-<div class=kb-kills-header>All kills</div>
+{$summary}
+<div class="kb-kills-header">All kills</div>
 {$killtable}
 {$splitter}
 {elseif $view == 'losses'}
-<div class=kb-kills-header>All losses</div>
+{$summary}
+<div class="kb-kills-header">All losses</div>
 {$losstable}
 {$splitter}
-{else}
-{section name=i loop=$targets}
-<br>
-<div class=kb-contract-target-header>Target {$targets[i].type} - {if $targets[i].type == 'region'}{$targets[i].name}{else}<a class=kb-contract href="?a={$targets[i].type}_detail&{if $targets[i].type == 'system'}sys{elseif $targets[i].type == 'corp'}crp{elseif $targets[i].type == 'alliance'}alliance{/if}_id={$targets[i].id}">{$targets[i].name}</a>{/if}
-</div>
-{$targets[i].summary}
-<br>
-<table class=kb-subtable border="0" cellspacing=0 width="100%">
+{elseif $view=='ships_weapons'}
+<div class="block-header2">Ships &amp; weapons used</div>
+<table class="kb-subtable">
 	<tr>
-		<td>
-			<table class=kb-table cellspacing=1 border="0" width="100%">
-				<tr class=kb-table-row-even>
-					<td class=kb-table-cell width=108><b>Totals:</b></td>
-					<td class=kl-kill-bg width=60 align=center>{$targets[i].total_kills}</td>
-					<td class=kl-kill-bg width=60 align=center>{$targets[i].total_kill_isk}B</td>
-					<td class=kl-loss-bg width=64 align=center>{$targets[i].total_losses}</td>
-					<td class=kl-loss-bg width=60 align=center>{$targets[i].total_loss_isk}B</td>
-				</tr>
-			</table>
+		<td valign="top" width="400">
+{$shiplisttable}
 		</td>
-		<td align=left>
-			<table class=kb-table cellspacing=1 border="0">
-				<tr class=kb-table-row-even>
-					<td class=kb-table-cell width=108><b>Efficiency:</b></td>
-					<td class=kb-table-cell align=center colspan=2 width=120><b>{$targets[i].efficiency}%</b></td>
-					<td class=kb-table-cell colspan=2 width=120>{$targets[i].bar}</td>
-				</tr>
-			</table>
+		<td valign="top" align="right" width="400">
+{$weaponlisttable}
 		</td>
 	</tr>
 </table>
-{/section}
+{elseif $view=='pilot_losses'}
+<div class="block-header2">Top losers</div>
+<table class="kb-subtable">
+<tr>
+<td valign="top" width="440">
+<div class="block-header">{$monthname} {$year}</div>
+{$losstable}
+<table width="300" cellspacing="1"><tr><td><a href='?a=alliance_detail&amp;view=pilot_losses&amp;m={$pmonth}&amp;all_id={$all_id}&amp;y={$pyear}'>previous</a></td>
+<td align='right'><a href='?a=alliance_detail&amp;view=pilot_losses&amp;all_id={$all_id}&amp;m={$nmonth}&amp;y={$nyear}'>next</a></td></tr></table>
+</td><td valign="top" width="400">
+<div class="block-header">All time</div>
+{$totallosstable}
+</td></tr></table>
+{elseif $view=='corp_kills'}
+<div class="block-header2">Top killers</div>
+<table class="kb-subtable"><tr><td valign="top" width="440">
+<div class="block-header">{$monthname} {$year}</div>
+{$killtable}
+<table width="300" cellspacing="1"><tr><td><a href='?a=alliance_detail&amp;view=corp_kills&amp;m={$pmonth}&amp;all_id={$all_id}&amp;y={$pyear}'>previous</a></td>
+<td align='right'><a href='?a=alliance_detail&amp;view=corp_kills&amp;all_id={$all_id}&amp;m={$nmonth}&amp;y={$nyear}'>next</a></p></td></tr></table>
+</td><td valign="top" width="400">
+<div class="block-header">All time</div>
+{$allkilltable}
+</td></tr></table>
+{elseif $view=='corp_losses'}
+<div class="block-header2">Top losers</div>
+<table class="kb-subtable"><tr><td valign="top" width="440">
+<div class="block-header">{$monthname} {$year}</div>
+{$losstable}
+<table width="300" cellspacing="1"><tr><td><a href='?a=alliance_detail&amp;view=corp_kills&amp;m={$pmonth}&amp;all_id={$all_id}&amp;y={$pyear}'>previous</a></td>
+<td align='right'><a href='?a=alliance_detail&amp;view=corp_kills&amp;all_id={$all_id}&amp;m={$nmonth}&amp;y={$nyear}'>next</a></p></td></tr></table>
+</td><td valign="top" width="400">
+<div class="block-header">All time</div>
+{$alllosstable}
+</td></tr></table>
+{else}
+{$html}
 {/if}
