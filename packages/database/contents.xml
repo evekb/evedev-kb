@@ -57,6 +57,14 @@
     <version>1.1</version>
   </table>
   <table>
+    <name>kb3_inv_all</name>
+    <version>1.1</version>
+  </table>
+  <table>
+    <name>kb3_inv_crp</name>
+    <version>1.1</version>
+  </table>
+  <table>
     <name>kb3_inv_detail</name>
     <version>1.1</version>
   </table>
