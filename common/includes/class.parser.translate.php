@@ -200,10 +200,15 @@ class Translate
 
             $replace = array();
             for($i = 0; $i < count($search); $i++) {
-                $replace[$i] = 'Large '. $search[$i];
+                $replace[$i] = '\1Large '. $search[$i];
             }
 
-            $this->killmail_ = str_replace($search, $replace, $this->killmail_);
+            $ssearch = array();
+            for($i = 0; $i < count($search); $i++) {
+                $ssearch[$i] = '/([^ ])'. $search[$i].'/';
+            }
+
+            $this->killmail_ = str_replace($ssearch, $replace, $this->killmail_);
         }
 
         return $this->killmail_;
