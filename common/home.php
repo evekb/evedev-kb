@@ -20,7 +20,7 @@ class pHome extends pageAssembly
         $this->queue('context');
     }
 
-    function start()
+	function start()
     {
 		$this->killboard = new Killboard();
 		$this->killcount = config::get('killcount');
@@ -68,12 +68,13 @@ class pHome extends pageAssembly
 			require_once('common/includes/class.killsummarytable.php');
 			if (config::get('public_summarytable'))
 			{
-			$kslist = new KillList();
-			involved::load($kslist,'kill');
-			$kslist->setWeek($this->week);
-			$kslist->setYear($this->year);
 				require_once('common/includes/class.killsummarytable.public.php');
-				$summarytable = new KillSummaryTablePublic($kslist);
+				//$kslist = new KillList();
+				$summarytable = new KillSummaryTablePublic();
+				involved::load($summarytable,'kill');
+				$summarytable->setWeek($this->week);
+				$summarytable->setYear($this->year);
+				//$summarytable = new KillSummaryTablePublic($kslist);
 			}
 			else
 			{

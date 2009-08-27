@@ -34,8 +34,10 @@ class KillSummaryTablePublic extends KillSummaryTable
             $this->entry_[$row['scl_class']] = array('id' => $row['scl_id'],
                                                      'kills' => 0, 'kills_isk' => 0);
         }
+		$startdate = makeStartDate($this->weekno_, $this->yearno_, $this->monthno_, $this->startweekno_, $this->startDate_);
+		$enddate = makeEndDate($this->weekno_, $this->yearno_, $this->monthno_, $this->endDate_);
 
-        $sql = 'SELECT count(*) AS knb, scl_id, scl_class,';
+        $sql = 'SELECT count(kll.kll_id) AS knb, scl_id, scl_class,';
 
 		$sql .= ' sum(kll_isk_loss) AS kisk FROM kb3_kills kll
                     INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )';
@@ -50,7 +52,16 @@ class KillSummaryTablePublic extends KillSummaryTable
         {
             $sql .= ' inner join kb3_inv_detail ind on ( ind.ind_all_id in ( '.join(',', $this->inv_all_).' ) and kll.kll_id = ind.ind_kll_id ) ';
         }
-        $sql .= 'GROUP BY scl_class order by scl_class';
+		$sqlop = " WHERE ";
+		if($startdate)
+		{
+			$sql .= $sqlop." kll.kll_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+			$sqlop = " AND ";
+		}
+		if($enddate) $sql .= $sqlop." kll.kll_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+        $sql .= 'GROUP BY shp.shp_class';
+		if($this->inv_crp_ || $this->inv_all_) $sql .= ', kll.kll_id';
+		$sql .= ' order by scl.scl_class';
 
         $qry = new DBQuery();
         $qry->execute($sql);
