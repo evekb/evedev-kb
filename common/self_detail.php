@@ -11,4 +11,8 @@ elseif(ALLIANCE_ID)
 {
 	header("Location: ".KB_HOST."?a=alliance_detail&all_id=".ALLIANCE_ID);
 }
+else
+{
+	header("Location: ".KB_HOST."?a=about");
+}
 die;
