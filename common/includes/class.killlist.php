@@ -809,6 +809,16 @@ class KillList
 			array_push($this->exclude_scl_, 3);
 			array_push($this->exclude_scl_, 11);
 		}
+		
+		if ($flag)
+        {
+            if (($idx = array_search(2, $this->exclude_scl_)) !== FALSE)
+                unset($this->exclude_scl_[$idx]);
+            if (($idx = array_search(3, $this->exclude_scl_)) !== FALSE)
+                unset($this->exclude_scl_[$idx]);
+            if (($idx = array_search(11, $this->exclude_scl_)) !== FALSE)
+                unset($this->exclude_scl_[$idx]);
+        }
 	}
 
 	function setOrdered($flag)
