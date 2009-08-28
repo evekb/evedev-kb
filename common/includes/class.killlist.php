@@ -238,7 +238,7 @@ class KillList
 								ON ( fbcrp.crp_id = fb.ind_crp_id )
 							STRAIGHT_JOIN kb3_alliances fbali
 								ON ( fbali.all_id = fb.ind_all_id )
-                           ";
+						   ";
 			// System
 			if(count($this->systems_) || count($this->regions_))
 				$this->sql_ .= " INNER JOIN kb3_systems sys
@@ -811,14 +811,14 @@ class KillList
 		}
 		
 		if ($flag)
-        {
-            if (($idx = array_search(2, $this->exclude_scl_)) !== FALSE)
-                unset($this->exclude_scl_[$idx]);
-            if (($idx = array_search(3, $this->exclude_scl_)) !== FALSE)
-                unset($this->exclude_scl_[$idx]);
-            if (($idx = array_search(11, $this->exclude_scl_)) !== FALSE)
-                unset($this->exclude_scl_[$idx]);
-        }
+		{
+			if (($idx = array_search(2, $this->exclude_scl_)) !== FALSE)
+				unset($this->exclude_scl_[$idx]);
+			if (($idx = array_search(3, $this->exclude_scl_)) !== FALSE)
+				unset($this->exclude_scl_[$idx]);
+			if (($idx = array_search(11, $this->exclude_scl_)) !== FALSE)
+				unset($this->exclude_scl_[$idx]);
+		}
 	}
 
 	function setOrdered($flag)
