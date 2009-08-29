@@ -2,8 +2,8 @@
 options::cat('Advanced', 'Configuration', 'Killboard Configuration');
 options::fadd('Display profiling information', 'cfg_profile', 'checkbox');
 options::fadd('KB_TITLE', 'cfg_kbtitle', 'edit:size:50');
-options::fadd('KB_HOST', 'cfg_kbhost', 'edit:size:50');
-options::fadd('IMG URL', 'cfg_img', 'edit:size:50');
+options::fadd('KB_HOST', 'cfg_kbhost', 'edit:size:50','', array('admin_config', 'checkHost'));
+options::fadd('IMG URL', 'cfg_img', 'edit:size:50','', array('admin_config', 'checkImg'));
 options::fadd('Main Webpage Link', 'cfg_mainsite', 'edit:size:50');
 options::fadd('Allow Masterfeed', 'feed_allowmaster', 'checkbox');
 
@@ -18,6 +18,20 @@ options::fadd('ALLIANCE_ID', 'cfg_allianceid', 'custom', array('admin_config', '
 
 class admin_config
 {
+	function checkHost()
+	{
+		if(!isset($_REQUEST['option_cfg_kbhost'])) return;
+		$newhost = preg_replace('/\/+$/','',$_REQUEST['option_cfg_kbhost']);
+		config::set('cfg_kbhost', $newhost);
+		$_REQUEST['option_cfg_kbhost'] = $newhost;
+	}
+	function checkImg()
+	{
+		if(!isset($_REQUEST['option_cfg_img'])) return;
+		$newimg = preg_replace('/\/+$/','',$_REQUEST['option_cfg_img']);
+		config::set('cfg_img', $newimg);
+		$_REQUEST['option_cfg_img'] = $newimg;
+	}
 	function createSelectStats()
     {
     	$options = array();

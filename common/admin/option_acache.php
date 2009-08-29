@@ -126,7 +126,7 @@ class admin_acache
 	{
         if ($_POST['option_clear_page'] == 'on')
         {
-			admin_acache::removeOld(0, KB_CACHEDIR.'/'.KB_SITE, false);
+			admin_acache::removeOld(0, KB_CACHEDIR.'/'.KB_SITE, true);
 			$_POST['option_clear_page'] = 'off';
         }
         if ($_POST['option_clear_template'] == 'on')
@@ -148,7 +148,7 @@ class admin_acache
 			// Clear page and query cache as well since they also contain the
 			// summaries.
 			admin_acache::clearQCache();
-			admin_acache::removeOld(0, KB_CACHEDIR.'/'.KB_SITE, false);
+			admin_acache::removeOld(0, KB_CACHEDIR.'/'.KB_SITE, true);
 			$_POST['option_clear_sum'] == 'off';
         }
         if ($_POST['option_clear_sql'] == 'on')
@@ -156,12 +156,12 @@ class admin_acache
 			admin_acache::clearQCache();
 			// Also clear the page cache since it will have cached the results
 			// of the file cache
-			admin_acache::removeOld(0, KB_CACHEDIR.'/'.KB_SITE, false);
+			admin_acache::removeOld(0, KB_CACHEDIR.'/'.KB_SITE, true);
 			$_POST['option_clear_sql'] == 'off';
         }
         if ($_POST['option_clear_all'] == 'on')
         {
-			admin_acache::removeOld(0, KB_CACHEDIR.'/'.KB_SITE, false);
+			admin_acache::removeOld(0, KB_CACHEDIR.'/'.KB_SITE, true);
 			admin_acache::removeOld(0, 'cache/templates_c', false);
 			admin_acache::removeOld(0, config::get('km_cache_dir'), false);
 			admin_acache::clearQCache();
@@ -198,7 +198,7 @@ class admin_acache
 			if ($recurse && file_exists("{$dir}{$fname}") && is_dir("{$dir}{$fname}")
 				 && substr($fname,0,1) != "." && $fname !== ".." )
 			{
-				$del = $del + admin_acache::remove_old($hours, $dir.$fname."/");
+				$del = $del + admin_acache::removeOld($hours, $dir.$fname."/",$recurse);
 			}
 		}
 		return $del;
