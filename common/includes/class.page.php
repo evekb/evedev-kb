@@ -29,7 +29,6 @@ class Page
         $this->cachetime_ = 5;
 
         // if you have probs with missing tables uncomment this and
-        // require_once('common/includes/autoupgrade.php');
         // check_navigationtable();
     }
     //! Set the content html that is displayed in the main body panel.

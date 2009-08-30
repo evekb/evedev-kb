@@ -8,8 +8,6 @@ class admin_db
     function checkDatabase()
     {
         // nothing to do atm
-        require_once("common/includes/autoupgrade.php");
-        updateDB();
     }
 
     function none()

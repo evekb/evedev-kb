@@ -147,15 +147,39 @@ if (config::get('auto_reinforced'))
 if(config::get('cache_enabled')) define('KB_CACHE', 1);
 else define('KB_CACHE', 0);
 
-if(config::get('DBUpdate') < LASTEST_DB_UPDATE) $page = 'admin';
+if(config::get('DBUpdate') < LASTEST_DB_UPDATE)
+{
+	// Check db is installed.
+	if(config::get('cfg_kbhost'))
+	{
+		$url = preg_replace('/^http:\/\//','',KB_HOST."/upgrade/");
+		// Remove any erroneous double slashes
+		$url = preg_replace('/\/+/','/',$url);
+		header('Location: http://'.$url);
+		die;
+	}
+	// Should not be able to reach this point but have this just in case
+	else
+	{
+		$html = "<html><head><title>Board not configured</title></head>";
+		$html .= "<body>Killboard configuration not found. Go to ";
+		// Make URL from current script URL
+		$url = $_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
+		$url = substr($url, 0, strrpos($url, '/',1)).'/install/';
+		// Make sure no double slash has crept in.
+		$url = preg_replace('/\/+/','/',$url);
+		$url = "http://".$url;
+		$html .= "<a href='".$url."'>install</a> to install a new killboard";
+		$html .= "</body></html>";
+		die($html);
+	}
+}
 
 // all admin files are now in the admin directory and preload the menu
 if (substr($page, 0, 5) == 'admin')
 {
     require_once('common/admin/admin_menu.php');
 	// Check DB is up to date.
-	require_once("common/includes/autoupgrade.php");
-	updateDB();
     $page = 'admin/'.$page;
 }
 

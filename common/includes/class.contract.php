@@ -49,7 +49,6 @@ class Contract
         $caqry = new DBQuery();
         if (!$caqry->execute($sql))
         {
-            include_once('autoupgrade.php');
             check_contracts();
             $caqry->execute($sql);
         }
