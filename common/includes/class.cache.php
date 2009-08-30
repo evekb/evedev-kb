@@ -4,92 +4,92 @@
 //! Contains methods to create and retrieve a complete cache of the current page.
 class cache
 {
-	//! Check the server load using /proc/loadavg.
-    function checkLoad()
-    {
-        if (PHP_OS != 'Linux')
-        {
-            return false;
-        }
+//! Check the server load using /proc/loadavg.
+	function checkLoad()
+	{
+		if (PHP_OS != 'Linux')
+		{
+			return false;
+		}
 
-        $load = @file_get_contents('/proc/loadavg');
-        if (false === $load)
-        {
-            return false;
-        }
-        $array = explode(' ', $load);
-        if ((float)$array[0] > (float)config::get('reinforced_threshold'))
-        {
-            // put killboard into RF
-            config::set('is_reinforced', 1);
-        }
-        elseif ((float)$array[0] > (float)config::get('reinforced_disable_threshold') && config::get('is_reinforced'))
-        {
-            // do nothing, we are in RF, load is dropping but stil over disabling threshold
-        }
-        else
-        {
-            // load low, dont enter reinforced
-            config::set('is_reinforced', 0);
-        }
-    }
+		$load = @file_get_contents('/proc/loadavg');
+		if (false === $load)
+		{
+			return false;
+		}
+		$array = explode(' ', $load);
+		if ((float)$array[0] > (float)config::get('reinforced_threshold'))
+		{
+		// put killboard into RF
+			config::set('is_reinforced', 1);
+		}
+		elseif ((float)$array[0] > (float)config::get('reinforced_disable_threshold') && config::get('is_reinforced'))
+		{
+		// do nothing, we are in RF, load is dropping but stil over disabling threshold
+		}
+		else
+		{
+		// load low, dont enter reinforced
+			config::set('is_reinforced', 0);
+		}
+	}
 	//! Check if the current page should be cached.
-    function shouldCache($page = '')
-    {
-        // never cache for admins
-        if (session::isAdmin())
-        {
-            return false;
-        }
+	function shouldCache($page = '')
+	{
+	// never cache for admins
+		if (session::isAdmin())
+		{
+			return false;
+		}
 		// Don't cache the image files.
 		if (strpos($_SERVER['REQUEST_URI'],'thumb') ||
 			strpos($_SERVER['REQUEST_URI'],'mapview')) return false;
-        if (config::get('auto_reinforced') && config::get('is_reinforced') && count($_POST) == 0)
-        {
-            return true;
-        }
+		if (config::get('auto_reinforced') && config::get('is_reinforced') && count($_POST) == 0)
+		{
+			return true;
+		}
 
-        $cacheignore = explode(',', config::get('cache_ignore'));
+		$cacheignore = explode(',', config::get('cache_ignore'));
 		if (KB_CACHE == 1 && count($_POST) == 0 && !($page != '' && in_array($page, $cacheignore)))
-        {
-            return true;
-        }
+		{
+			return true;
+		}
 		return false;
-    }
+	}
 	//! Check if the current page is cached and valid then send it if so.
-    function check($page)
-    {
-		// If the cache doesn't exist then we don't need to check times.
-        if (cache::shouldCache($page) && file_exists(cache::genCacheName()))
-        {
+	function check($page)
+	{
+	// If the cache doesn't exist then we don't need to check times.
+		if (cache::shouldCache($page) && file_exists(cache::genCacheName()))
+		{
 			$cachefile = cache::genCacheName();
 
-            $times = explode(',', config::get('cache_times'));
-            foreach ($times as $string)
-            {
-                $array = explode(':', $string);
-                $cachetimes[$array[0]] = $array[1];
-            }
+			$times = explode(',', config::get('cache_times'));
+			foreach ($times as $string)
+			{
+				$array = explode(':', $string);
+				$cachetimes[$array[0]] = $array[1];
+			}
 
-            if ($cachetimes[$page])
-            {
-                $cachetime = $cachetimes[$page];
-            }
-            else
-            {
-                $cachetime = config::get('cache_time');
-            }
+			if ($cachetimes[$page])
+			{
+				$cachetime = $cachetimes[$page];
+			}
+			else
+			{
+				$cachetime = config::get('cache_time');
+			}
 
 			$cachetime = config::get('cache_time');
-            $cachetime = $cachetime * 60;
+			$cachetime = $cachetime * 60;
 
 			if (config::get('is_reinforced'))
-            {
-                global $smarty;
-                $smarty->assign('message', 'Note: This killboard has entered reinforced operation mode.');
+			{
+				global $smarty;
+				$smarty->assign('message', 'Note: This killboard has entered reinforced operation mode.');
 				// cache is extended in reinforced mode
 				$cachetime = $cachetime * 20;
-            }
+			}
 			if(file_exists($cachefile)) $timestamp = @filemtime($cachefile);
 			else $timestamp = 0;
 
@@ -97,20 +97,20 @@ class cache
 				if(file_exists(KB_CACHEDIR.'/killadded.mk'))
 					if($timestamp < @filemtime(KB_CACHEDIR.'/killadded.mk'))
 						$timestamp = 0;
-			else
+					else
+					{
+						$cacheupdate = explode(',', config::get('cache_update'));
+						if (($page != '' && in_array($page, $cacheupdate)))
+							if(file_exists(KB_CACHEDIR.'/killadded.mk'))
+								if($timestamp < @filemtime(KB_CACHEDIR.'/killadded.mk'))
+									$timestamp = 0;
+					}
+			if (time() - $cachetime < $timestamp)
 			{
-				$cacheupdate = explode(',', config::get('cache_update'));
-				if (($page != '' && in_array($page, $cacheupdate)))
-					if(file_exists(KB_CACHEDIR.'/killadded.mk'))
-						if($timestamp < @filemtime(KB_CACHEDIR.'/killadded.mk'))
-							$timestamp = 0;
-			}
-            if (time() - $cachetime < $timestamp)
-            {
 				$etag=md5($cachefile);
 				header("Last-Modified: ".gmdate("D, d M Y H:i:s", $timestamp)." GMT");
-// Breaks comment posting.
-//				header('Expires: ' . gmdate('D, d M Y H:i:s', $timestamp + $cachetime) . ' GMT');
+				// Breaks comment posting.
+				//				header('Expires: ' . gmdate('D, d M Y H:i:s', $timestamp + $cachetime) . ' GMT');
 				header("Etag: ".md5($etag));
 				header("Cache-Control:");
 				header('Pragma:');
@@ -124,46 +124,48 @@ class cache
 
 				ob_start();
                 @readfile($cachefile);
-                ob_end_flush();
-                exit();
-            }
-            ob_start();
-        }
+				ob_end_flush();
+				exit();
+			}
+			if(!ini_get('zlib.output_compression')) ob_start("ob_gzhandler");
+			else ob_start();
+		}
+		else if(!ini_get('zlib.output_compression')) ob_start("ob_gzhandler");
 		header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
-//		header('Expires: ' . gmdate('D, d M Y H:i:s', time()+60) . ' GMT');
+		//		header('Expires: ' . gmdate('D, d M Y H:i:s', time()+60) . ' GMT');
 		header("Etag: ".md5($cachefile));
 		header("Cache-Control:");
 		header('Pragma:');
-    }
+	}
 	//! Generate the cache for the current page.
-    function generate()
-    {
-        if (cache::shouldCache())
-        {
-            $cachefile = cache::genCacheName();
-			
+	function generate()
+	{
+		if (cache::shouldCache())
+		{
+			$cachefile = cache::genCacheName();
+
 			// Create directories if needed.
 			if (!file_exists(KB_CACHEDIR.'/'.KB_SITE))
-            {
-                mkdir(KB_CACHEDIR.'/'.KB_SITE);
-            }
+			{
+				mkdir(KB_CACHEDIR.'/'.KB_SITE);
+			}
 			if (!file_exists(KB_CACHEDIR.'/'.KB_SITE.'/'.cache::genCacheName(true)))
-            {
-                mkdir(KB_CACHEDIR.'/'.KB_SITE.'/'.cache::genCacheName(true));
-            }
+			{
+				mkdir(KB_CACHEDIR.'/'.KB_SITE.'/'.cache::genCacheName(true));
+			}
             $fp = @fopen($cachefile, 'w');
 
             @fwrite($fp, preg_replace('/profile -->.*<!-- \/profile/','profile -->Cached '.gmdate("d M Y H:i:s").'<!-- /profile',ob_get_contents()));
             @fclose($fp);
-            ob_end_flush();
-        }
-    }
+			ob_end_flush();
+		}
+	}
 	//! Generate the cache filename.
 
 	/*!
 	 * Security modification could change this function to generate access
 	 * level specific cache files.
-	 * 
+	 *
 	 *  \return string of path and filename for the current page's cachefile.
 	 */
 	function genCacheName($subdir = false)
