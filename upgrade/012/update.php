@@ -221,8 +221,8 @@ function update012()
 		}
 		if(config::get('012updatestatus') <10)
 		{
-			config::set('theme_name', 'default');
-			config::set('style_name', 'default');
+			$qry->execute("UPDATE kb3_config SET style_name = 'default'");
+			$qry->execute("INSERT IGNORE INTO kb3_config (cfg_site, cfg_key, cfg_value) SELECT cfg_site, 'theme_name', 'default' FROM kb3_config GROUP BY cfg_site");
 			config::set('012updatestatus',10);
 			echo $header;
 			echo "12. theme set to default.";
