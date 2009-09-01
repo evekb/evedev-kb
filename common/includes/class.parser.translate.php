@@ -208,7 +208,7 @@ class Translate
                 $ssearch[$i] = '/([^ ])'. $search[$i].'/';
             }
 
-            $this->killmail_ = str_replace($ssearch, $replace, $this->killmail_);
+            $this->killmail_ = preg_replace($ssearch, $replace, $this->killmail_);
         }
 
         return $this->killmail_;
