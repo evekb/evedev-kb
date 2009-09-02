@@ -17,7 +17,6 @@ class pHome extends pageAssembly
         $this->queue('campaigns');
         $this->queue('contracts');
         $this->queue('kills');
-        $this->queue('context');
     }
 
 	function start()
@@ -275,11 +274,12 @@ class pHome extends pageAssembly
 
     function context()
     {
-		$html = $this->menu();
-		$html .= $this->clock();
-		$html .= $this->topLists();
-		$this->page->addContext($html);
+		parent::__construct();
+		$this->queue('menu');
+		$this->queue('clock');
+		$this->queue('topLists');
     }
+    
 	function getWeek()
 	{
 		return $this->week;
@@ -342,6 +342,12 @@ class pHome extends pageAssembly
 $pageAssembly = new pHome();
 event::call("home_assembling", $pageAssembly);
 $html = $pageAssembly->assemble();
-
 $pageAssembly->page->setContent($html);
+
+$pageAssembly->context(); //This resets the queue and queues context items.
+event::call("home_context_assembling", $pageAssembly);
+$contextHTML = $pageAssembly->assemble();
+$pageAssembly->page->addContext($contextHTML);
+
+
 $pageAssembly->page->generate();
