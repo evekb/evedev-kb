@@ -11,7 +11,7 @@
 if(function_exists("set_time_limit"))
 	set_time_limit(0);
 
-$startTime = microtime();
+$cronStartTime = microtime(true);
 
 // current working directory minus last 5 letters of string ("/cron")
 $KB_HOME = preg_replace('/[\/\\\\]cron$/', '', getcwd());
@@ -84,4 +84,4 @@ if ($out)
     //print $outhead . strip_tags($out, '<a>');
     print $outhead . strip_tags($out);
 }
-echo "Time taken = ".($startTime - microtime)." seconds.";
+echo "Time taken = ".(microtime(true) - $cronStartTime)." seconds.";

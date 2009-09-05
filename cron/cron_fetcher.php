@@ -12,7 +12,7 @@ define('MASTER', 0);
 
 @set_time_limit(0);
 
-$startTime = microtime();
+$cronStartTime = microtime(true);
 
 // Has to be run from the KB main directory for nested includes to work
 $KB_HOME = preg_replace('/[\/\\\\]cron$/', '', getcwd());
@@ -139,4 +139,4 @@ if ($out)
     print $outhead . strip_tags($out);
 }
 
-echo "Time taken = ".($startTime - microtime)." seconds.";
+echo "Time taken = ".(microtime(true) - $cronStartTime)." seconds.";
