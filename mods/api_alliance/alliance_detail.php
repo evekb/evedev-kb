@@ -6,7 +6,7 @@ require_once('common/includes/class.killlisttable.php');
 require_once('common/includes/class.killsummarytable.php');
 require_once('common/includes/class.toplist.php');
 require_once("common/includes/class.eveapi.php");
-
+$page = new Page('testing');
 $all_id = intval($_GET['all_id']);
 $all_external_id = intval($_GET['all_external_id']);
 if (!$all_id && !$all_external_id)
@@ -17,7 +17,7 @@ if (!$all_id && !$all_external_id)
     }
     else
     {
-        echo 'no valid alliance id specified<br/>';
+        echo 'no valid alliance id specified<br />';
         return;
     }
 }
@@ -79,8 +79,8 @@ $myCorpAPI = new API_CorporationSheet();
 
 if ($myAlliance)
 {
-	if($alliance->isFaction()) $page = new Page('Faction details - '.$alliance->getName() . " [" . $myAlliance["shortName"] . "]");
-	else $page = new Page('Alliance details - '.$alliance->getName() . " [" . $myAlliance["shortName"] . "]");
+	//if($alliance->isFaction()) $page = new Page('Faction details - '.$alliance->getName() . " [" . $myAlliance["shortName"] . "]");
+	//else $page = new Page('Alliance details - '.$alliance->getName() . " [" . $myAlliance["shortName"] . "]");
 	
 	foreach ( (array)$myAlliance["memberCorps"] as $tempcorp)
 	{
@@ -113,29 +113,28 @@ if ($myAlliance)
 		unset($membercorp);
 	}
 	
-	$html .= "<table class=kb-table width=\"100%\" border=\"0\" cellspacing=1><tr class=kb-table-row-even><td rowspan=8 width=128 align=center bgcolor=black>";
+	$html .= "<table class='kb-table' width=\"100%\" border=\"0\" cellspacing='1'><tr class='kb-table-row-even'><td rowspan='8' width='128' align='center' bgcolor='black'>";
 
 	if (file_exists("img/alliances/".$alliance->getUnique().".png"))
 	{
-    	$html .= "<img src=\"".IMG_URL."/alliances/".$alliance->getUnique().".png\" border=\"0\"></td>";
+    	$html .= "<img src=\"".IMG_URL."/alliances/".$alliance->getUnique().".png\" border=\"0\" /></td>";
 	}
 	else
 	{
-    	$html .= "<img src=\"".IMG_URL."/alliances/default.gif\" border=\"0\"></td>";
+    	$html .= "<img src=\"".IMG_URL."/alliances/default.gif\" border=\"0\" /></td>";
 	}
 	$kill_summary = new KillSummaryTable();
 	$kill_summary->addInvolvedAlliance($alliance);
-	$kill_summary->setBreak(config::get('summarytable_rowcount'));
 	$summary_html = $kill_summary->generate();
 
-	$html .= "<td class=kb-table-cell width=150><b>Kills:</b></td><td class=kl-kill>".$kill_summary->getTotalKills()."</td>";
-	$html .= "<td class=kb-table-cell width=65><b>Executor:</b></td><td class=kb-table-cell><a href=\"?a=search&searchtype=corp&searchphrase=" . $ExecutorCorp . "\">" . $ExecutorCorp . "</a></td></tr>";
-	$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Losses:</b></td><td class=kl-loss>".$kill_summary->getTotalLosses()."</td>";
-	$html .= "<td class=kb-table-cell><b>Members:</b></td><td class=kb-table-cell>" . $myAlliance["memberCount"] . "</td></tr>";
-	$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Damage done (ISK):</b></td><td class=kl-kill>".round($kill_summary->getTotalKillISK()/1000000000, 2)."B</td>";
-	$html .= "<td class=kb-table-cell><b>Start Date:</b></td><td class=kb-table-cell>" . $myAlliance["startDate"] . "</td></tr>";
-	$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Damage received (ISK):</b></td><td class=kl-loss>".round($kill_summary->getTotalLossISK()/1000000000, 2)."B</td>";
-	$html .= "<td class=kb-table-cell><b>Number of Corps:</b></td><td class=kb-table-cell>" . count($myAlliance["memberCorps"]) . "</td></tr>";
+	$html .= "<td class='kb-table-cell' width='150'><b>Kills:</b></td><td class='kl-kill'>".$kill_summary->getTotalKills()."</td>";
+	$html .= "<td class='kb-table-cell' width='65'><b>Executor:</b></td><td class='kb-table-cell'><a href=\"?a=search&amp;searchtype=corp&amp;searchphrase=" . urlencode($ExecutorCorp) . "\">" . $ExecutorCorp . "</a></td></tr>";
+	$html .= "<tr class='kb-table-row-even'><td class='kb-table-cell'><b>Losses:</b></td><td class='kl-loss'>".$kill_summary->getTotalLosses()."</td>";
+	$html .= "<td class='kb-table-cell'><b>Members:</b></td><td class='kb-table-cell'>" . $myAlliance["memberCount"] . "</td></tr>";
+	$html .= "<tr class='kb-table-row-even'><td class='kb-table-cell'><b>Damage done (ISK):</b></td><td class='kl-kill'>".round($kill_summary->getTotalKillISK()/1000000000, 2)."B</td>";
+	$html .= "<td class='kb-table-cell'><b>Start Date:</b></td><td class='kb-table-cell'>" . $myAlliance["startDate"] . "</td></tr>";
+	$html .= "<tr class='kb-table-row-even'><td class='kb-table-cell'><b>Damage received (ISK):</b></td><td class='kl-loss'>".round($kill_summary->getTotalLossISK()/1000000000, 2)."B</td>";
+	$html .= "<td class='kb-table-cell'><b>Number of Corps:</b></td><td class='kb-table-cell'>" . count($myAlliance["memberCorps"]) . "</td></tr>";
 	if ($kill_summary->getTotalKillISK())
 	{
 		 $efficiency = round($kill_summary->getTotalKillISK() / ($kill_summary->getTotalKillISK() + $kill_summary->getTotalLossISK()) * 100, 2);
@@ -145,32 +144,33 @@ if ($myAlliance)
     	$efficiency = 0;
 	}
 
-	$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Efficiency:</b></td><td class=kb-table-cell><b>" . $efficiency . "%</b></td>";
-	$html .= "<td class=kb-table-cell></td><td class=kb-table-cell></td></tr>";
+	$html .= "<tr class='kb-table-row-even'><td class='kb-table-cell'><b>Efficiency:</b></td><td class='kb-table-cell'><b>" . $efficiency . "%</b></td>";
+	$html .= "<td class='kb-table-cell'></td><td class='kb-table-cell'></td></tr>";
 
 	$html .= "</table>";
-	$html .= "<br/>";
+	$html .= "<br />";
 
-	$html .= "<table class=kb-table width=\"100%\" border=\"0\" cellspacing=1><tr class=kb-table-header>";
-	$html .= "<td class=kb-table-cell><b>Corporation Name</b></td><td class=kb-table-cell align=center><b>Ticker</b></td><td class=kb-table-cell align=center><b>Members</b></td><td class=kb-table-cell align=center><b>Join Date</b></td><td class=kb-table-cell align=center><b>Tax Rate</b></td><td class=kb-table-cell><b>Website</b></td></tr>";
+	$html .= "<table class='kb-table' width=\"100%\" border=\"0\" cellspacing='1'><tr class='kb-table-header'>";
+	$html .= "<td class='kb-table-cell'><b>Corporation Name</b></td><td class='kb-table-cell' align='center'><b>Ticker</b></td><td class='kb-table-cell' align='center'><b>Members</b></td><td class='kb-table-cell' align='center'><b>Join Date</b></td><td class='kb-table-cell' align='center'><b>Tax Rate</b></td><td class='kb-table-cell'><b>Website</b></td></tr>";
 	foreach ( (array)$AllianceCorps as $tempcorp )
 	{
-		$html .= "<tr class=kb-table-row-even>";
-		$html .= "<td class=kb-table-cell><a href=\"?a=search&searchtype=corp&searchphrase=" . $tempcorp["corpName"] . "\">" . $tempcorp["corpName"] . "</a></td>";
-		$html .= "<td class=kb-table-cell align=center>" . $tempcorp["ticker"] . "</td>";
-		$html .= "<td class=kb-table-cell align=center>" . $tempcorp["members"] . "</td>";
-		$html .= "<td class=kb-table-cell align=center>" . $tempcorp["joinDate"] . "</td>";
-		$html .= "<td class=kb-table-cell align=center>" . $tempcorp["taxRate"] . "</td>";
-		$html .= "<td class=kb-table-cell><a href=\"" . $tempcorp["url"] . "\">" . $tempcorp["url"] . "</a></td>";
+		$html .= "<tr class='kb-table-row-even'>";
+		$html .= "<td class='kb-table-cell'><a href=\"?a=search&amp;searchtype=corp&amp;searchphrase=" . urlencode($tempcorp["corpName"]) . "\">" . $tempcorp["corpName"] . "</a></td>";
+		$html .= "<td class='kb-table-cell' align='center'>" . $tempcorp["ticker"] . "</td>";
+		$html .= "<td class='kb-table-cell' align='center'>" . $tempcorp["members"] . "</td>";
+		$html .= "<td class='kb-table-cell' align='center'>" . $tempcorp["joinDate"] . "</td>";
+		$html .= "<td class='kb-table-cell' align='center'>" . $tempcorp["taxRate"] . "</td>";
+		if($tempcorp["url"]) $html .= "<td class='kb-table-cell'><a href=\"" . $tempcorp["url"] . "\">" . $tempcorp["url"] . "</a></td>";
+		else $html .= "<td class='kb-table-cell'></td>";
 		$html .= "</tr>";
 	}
 	$html .= "</table>";
-	$html .= "<br/>";            
+	$html .= "<br />";
 } else {
-	if($alliance->isFaction()) $page = new Page('Faction details - '.$alliance->getName() . " [" . $myAlliance["shortName"] . "]");
-	else $page = new Page('Alliance details - '.$alliance->getName() . " [" . $myAlliance["shortName"] . "]");
+	//if($alliance->isFaction()) $page = new Page('Faction details - '.$alliance->getName() . " [" . $myAlliance["shortName"] . "]");
+	//else $page = new Page('Alliance details - '.$alliance->getName() . " [" . $myAlliance["shortName"] . "]");
 	
-	$html .= "<table class=kb-table width=\"100%\" border=\"0\" cellspacing=1><tr class=kb-table-row-even><td rowspan=8 width=128 align=center bgcolor=black>";
+	$html .= "<table class='kb-table' width=\"100%\" border=\"0\" cellspacing='1'><tr class='kb-table-row-even'><td rowspan='8' width='128' align='center' bgcolor='black'>";
 
 	if (file_exists("img/alliances/".$alliance->getUnique().".png"))
 	{
@@ -182,13 +182,12 @@ if ($myAlliance)
 	}
 	$kill_summary = new KillSummaryTable();
 	$kill_summary->addInvolvedAlliance($alliance);
-	$kill_summary->setBreak(config::get('summarytable_rowcount'));
 	$summary_html = $kill_summary->generate();
 
-	$html .= "<td class=kb-table-cell width=180><b>Kills:</b></td><td class=kl-kill>".$kill_summary->getTotalKills()."</td></tr>";
-	$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Losses:</b></td><td class=kl-loss>".$kill_summary->getTotalLosses()."</td></tr>";
-	$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Damage done (ISK):</b></td><td class=kl-kill>".round($kill_summary->getTotalKillISK()/1000000000, 2)."B</td></tr>";
-	$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Damage received (ISK):</b></td><td class=kl-loss>".round($kill_summary->getTotalLossISK()/1000000000, 2)."B</td></tr>";
+	$html .= "<td class='kb-table-cell' width='180'><b>Kills:</b></td><td class='kl-kill'>".$kill_summary->getTotalKills()."</td></tr>";
+	$html .= "<tr class='kb-table-row-even'><td class='kb-table-cell'><b>Losses:</b></td><td class='kl-loss'>".$kill_summary->getTotalLosses()."</td></tr>";
+	$html .= "<tr class='kb-table-row-even'><td class='kb-table-cell'><b>Damage done (ISK):</b></td><td class='kl-kill'>".round($kill_summary->getTotalKillISK()/1000000000, 2)."B</td></tr>";
+	$html .= "<tr class='kb-table-row-even'><td class='kb-table-cell'><b>Damage received (ISK):</b></td><td class='kl-loss'>".round($kill_summary->getTotalLossISK()/1000000000, 2)."B</td></tr>";
 	if ($kill_summary->getTotalKillISK())
 	{
     	$efficiency = round($kill_summary->getTotalKillISK() / ($kill_summary->getTotalKillISK() + $kill_summary->getTotalLossISK()) * 100, 2);
@@ -198,10 +197,10 @@ if ($myAlliance)
     	$efficiency = 0;
 	}
 
-	$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Efficiency:</b></td><td class=kb-table-cell><b>" . $efficiency . "%</b></td></tr>";
+	$html .= "<tr class='kb-table-row-even'><td class='kb-table-cell'><b>Efficiency:</b></td><td class='kb-table-cell'><b>" . $efficiency . "%</b></td></tr>";
 
 	$html .= "</table>";
-	$html .= "<br/>";
+	$html .= "<br />";
 }
 
 if ($_GET['view'] == "" || $_GET['view'] == "kills" || $_GET['view'] == "losses")
@@ -212,7 +211,7 @@ if ($_GET['view'] == "" || $_GET['view'] == "kills" || $_GET['view'] == "losses"
 switch ($_GET['view'])
 {
     case "":
-        $html .= "<div class=kb-kills-header>10 Most recent kills</div>";
+        $html .= "<div class='kb-kills-header'>10 Most recent kills</div>";
 
         $list = new KillList();
         $list->setOrdered(true);
@@ -227,7 +226,7 @@ switch ($_GET['view'])
         $ktab->setDayBreak(false);
         $html .= $ktab->generate();
 
-        $html .= "<div class=kb-losses-header>10 Most recent losses</div>";
+        $html .= "<div class='kb-losses-header'>10 Most recent losses</div>";
 
         $list = new KillList();
         $list->setOrdered(true);
@@ -244,7 +243,7 @@ switch ($_GET['view'])
 
         break;
     case "kills":
-        $html .= "<div class=kb-kills-header>All kills</div>";
+        $html .= "<div class='kb-kills-header'>All kills</div>";
 
         $list = new KillList();
         $list->setOrdered(true);
@@ -260,7 +259,7 @@ switch ($_GET['view'])
 
         break;
     case "losses":
-        $html .= "<div class=kb-losses-header>All losses</div>";
+        $html .= "<div class='kb-losses-header'>All losses</div>";
 
         $list = new KillList();
         $list->setOrdered(true);
@@ -278,10 +277,10 @@ switch ($_GET['view'])
 
         break;
     case "corp_kills":
-        $html .= "<div class=block-header2>Top killers</div>";
+        $html .= "<div class='block-header2'>Top killers</div>";
 
-        $html .= "<table class=kb-subtable><tr><td valign=top width=440>";
-        $html .= "<div class=block-header>$monthname $year</div>";
+        $html .= "<table class='kb-subtable'><tr><td valign='top' width='440'>";
+        $html .= "<div class='block-header'>$monthname $year</div>";
 
         $list = new TopCorpKillsList();
         $list->addInvolvedAlliance($alliance);
@@ -291,11 +290,11 @@ switch ($_GET['view'])
         $table = new TopCorpTable($list, "Kills");
         $html .= $table->generate();
         
-		$html .= "<table width=300 cellspacing=1><tr><td><a href='?a=alliance_detail&view=corp_kills&m=$pmonth&all_id=$all_id&y=$pyear'>previous</a></td>";
-        $html .= "<td align='right'><a href='?a=alliance_detail&view=corp_kills&all_id=$all_id&m=$nmonth&y=$nyear'>next</a></p></td></tr></table>";
+		$html .= "<table width='300' cellspacing='1'><tr><td><a href='?a=alliance_detail&amp;view=corp_kills&amp;m=$pmonth&amp;all_id=$all_id&amp;y=$pyear'>previous</a></td>";
+        $html .= "<td align='right'><a href='?a=alliance_detail&amp;view=corp_kills&amp;all_id=$all_id&amp;m=$nmonth&amp;y=$nyear'>next</a></p></td></tr></table>";
         
-        $html .= "</td><td valign=top width=400>";
-        $html .= "<div class=block-header>All time</div>";
+        $html .= "</td><td valign='top' width='400'>";
+        $html .= "<div class='block-header'>All time</div>";
 
         $list = new TopCorpKillsList();
         $list->addInvolvedAlliance($alliance);
@@ -307,7 +306,7 @@ switch ($_GET['view'])
 
         break;
     case "corp_kills_class":
-        $html .= "<div class=block-header2>Destroyed ships</div>";
+        $html .= "<div class='block-header2'>Destroyed ships</div>";
 
         // Get all ShipClasses
         $sql = "select scl_id, scl_class from kb3_ship_classes
@@ -319,7 +318,7 @@ switch ($_GET['view'])
         {
             $shipclass[] = new Shipclass($row['scl_id']);
         }
-        $html .= "<table class=kb-subtable>";
+        $html .= "<table class='kb-subtable'>";
         $html .= "<tr>";
         $newrow = true;
 
@@ -332,9 +331,9 @@ switch ($_GET['view'])
             $list->addVictimShipClass($shp);
             $table = new TopCorpTable($list, "Kills");
             $content = $table->generate();
-            if ($content != '<table class=kb-table cellspacing=1><tr class=kb-table-header><td class=kb-table-cell align=center>#</td><td class=kb-table-cell align=center>Corporation</td><td class=kb-table-cell align=center width=60>Kills</td></tr></table>'){
-            $html .= "<td valign=top width=440>";
-            $html .= "<div class=block-header>".$shp->getName()."</div>";
+            if ($content != "<table class='kb-table' cellspacing='1'><tr class='kb-table-header'><td class='kb-table-cell' align='center'>#</td><td class='kb-table-cell' align='center'>Corporation</td><td class='kb-table-cell' align='center' width='60'>Kills</td></tr></table>"){
+            $html .= "<td valign='top' width='440'>";
+            $html .= "<div class='block-header'>".$shp->getName()."</div>";
             $html .= $content;
             $html .= "</td>";
             $newrow = !$newrow;
@@ -344,7 +343,7 @@ switch ($_GET['view'])
         $html .= "</tr></table>";        
         break;
     case "kills_class":
-        $html .= "<div class=block-header2>Destroyed ships</div>";
+        $html .= "<div class='block-header2'>Destroyed ships</div>";
 
         // Get all ShipClasses
         $sql = "select scl_id, scl_class from kb3_ship_classes
@@ -356,7 +355,7 @@ switch ($_GET['view'])
         {
             $shipclass[] = new Shipclass($row['scl_id']);
         }
-        $html .= "<table class=kb-subtable>";
+        $html .= "<table class='kb-subtable'>";
         $html .= "<tr>";
         $newrow = true;
 
@@ -369,9 +368,9 @@ switch ($_GET['view'])
             $list->addVictimShipClass($shp);
             $table = new TopPilotTable($list, "Kills");
             $content = $table->generate();
-            if ($content != '<table class=kb-table cellspacing=1><tr class=kb-table-header><td class=kb-table-cell align=center colspan=2>Pilot</td><td class=kb-table-cell align=center width=60>Kills</td></tr></table>'){
-            $html .= "<td valign=top width=440>";
-            $html .= "<div class=block-header>".$shp->getName()."</div>";
+            if ($content != "<table class='kb-table' cellspacing='1'><tr class='kb-table-header'><td class='kb-table-cell' align='center' colspan='2'>Pilot</td><td class='kb-table-cell' align='center' width='60'>Kills</td></tr></table>"){
+            $html .= "<td valign='top' width='440'>";
+            $html .= "<div class='block-header'>".$shp->getName()."</div>";
             $html .= $content;
             $html .= "</td>";
             $newrow = !$newrow;
@@ -382,7 +381,7 @@ switch ($_GET['view'])
 
         break;
     case "corp_losses_class":
-        $html .= "<div class=block-header2>Lost ships</div>";
+        $html .= "<div class='block-header2'>Lost ships</div>";
 
             // Get all ShipClasses
         $sql = "select scl_id, scl_class from kb3_ship_classes
@@ -394,7 +393,7 @@ switch ($_GET['view'])
         {
             $shipclass[] = new Shipclass($row['scl_id']);
         }
-        $html .= "<table class=kb-subtable>";
+        $html .= "<table class='kb-subtable'>";
         $html .= "<tr>";
         $newrow = true;
 
@@ -407,9 +406,9 @@ switch ($_GET['view'])
             $list->addVictimShipClass($shp);
             $table = new TopCorpTable($list, "Losses");
             $content = $table->generate();
-            if ($content != '<table class=kb-table cellspacing=1><tr class=kb-table-header><td class=kb-table-cell align=center>#</td><td class=kb-table-cell align=center>Corporation</td><td class=kb-table-cell align=center width=60>Losses</td></tr></table>'){
-            $html .= "<td valign=top width=440>";
-                $html .= "<div class=block-header>".$shp->getName()."</div>";
+            if ($content != "<table class='kb-table' cellspacing='1'><tr class='kb-table-header'><td class='kb-table-cell' align='center'>#</td><td class='kb-table-cell' align='center'>Corporation</td><td class='kb-table-cell' align='center' width='60'>Losses</td></tr></table>"){
+            $html .= "<td valign='top' width='440'>";
+                $html .= "<div class='block-header'>".$shp->getName()."</div>";
                 $html .= $content;
             $html .= "</td>";
             $newrow = !$newrow;
@@ -419,7 +418,7 @@ switch ($_GET['view'])
 
         break;
     case "losses_class":
-        $html .= "<div class=block-header2>Lost ships</div>";
+        $html .= "<div class='block-header2'>Lost ships</div>";
 
             // Get all ShipClasses
         $sql = "select scl_id, scl_class from kb3_ship_classes
@@ -431,7 +430,7 @@ switch ($_GET['view'])
         {
             $shipclass[] = new Shipclass($row['scl_id']);
         }
-        $html .= "<table class=kb-subtable>";
+        $html .= "<table class='kb-subtable'>";
         $html .= "<tr>";
         $newrow = true;
 
@@ -444,9 +443,9 @@ switch ($_GET['view'])
             $list->addVictimShipClass($shp);
             $table = new TopPilotTable($list, "Losses");
             $content = $table->generate();
-            if ($content != '<table class=kb-table cellspacing=1><tr class=kb-table-header><td class=kb-table-cell align=center colspan=2>Pilot</td><td class=kb-table-cell align=center width=60>Losses</td></tr></table>'){
-            $html .= "<td valign=top width=440>";
-                $html .= "<div class=block-header>".$shp->getName()."</div>";
+            if ($content != "<table class='kb-table' cellspacing='1'><tr class='kb-table-header'><td class='kb-table-cell' align='center' colspan='2'>Pilot</td><td class='kb-table-cell' align='center' width='60'>Losses</td></tr></table>"){
+            $html .= "<td valign='top' width='440'>";
+                $html .= "<div class='block-header'>".$shp->getName()."</div>";
                 $html .= $content;
             $html .= "</td>";
             $newrow = !$newrow;
@@ -456,10 +455,10 @@ switch ($_GET['view'])
 
         break;
     case "corp_losses":
-        $html .= "<div class=block-header2>Top losers</div>";
+        $html .= "<div class='block-header2'>Top losers</div>";
 
-        $html .= "<table class=kb-subtable><tr><td valign=top width=440>";
-        $html .= "<div class=block-header>$monthname $year</div>";
+        $html .= "<table class='kb-subtable'><tr><td valign='top' width='440'>";
+        $html .= "<div class='block-header'>$monthname $year</div>";
 
         $list = new TopCorpLossesList();
         $list->addVictimAlliance($alliance);
@@ -469,11 +468,11 @@ switch ($_GET['view'])
         $table = new TopCorpTable($list, "Losses");
         $html .= $table->generate();
 
-		$html .= "<table width=300 cellspacing=1><tr><td><a href='?a=alliance_detail&view=corp_losses&m=$pmonth&all_id=$all_id&y=$pyear'>previous</a></td>";
-        $html .= "<td align='right'><a href='?a=alliance_detail&view=corp_losses&all_id=$all_id&m=$nmonth&y=$nyear'>next</a></p></td></tr></table>";
+		$html .= "<table width='300' cellspacing='1'><tr><td><a href='?a=alliance_detail&amp;view=corp_losses&amp;m=$pmonth&amp;all_id=$all_id&amp;y=$pyear'>previous</a></td>";
+        $html .= "<td align='right'><a href='?a=alliance_detail&amp;view=corp_losses&amp;all_id=$all_id&amp;m=$nmonth&amp;y=$nyear'>next</a></p></td></tr></table>";
          
-        $html .= "</td><td valign=top width=400>";
-        $html .= "<div class=block-header>All time</div>";
+        $html .= "</td><td valign='top' width='400'>";
+        $html .= "<div class='block-header'>All time</div>";
 
         $list = new TopCorpLossesList();
         $list->addVictimAlliance($alliance);
@@ -485,10 +484,10 @@ switch ($_GET['view'])
 
         break;
     case "pilot_kills":
-        $html .= "<div class=block-header2>Top killers</div>";
+        $html .= "<div class='block-header2'>Top killers</div>";
 
-        $html .= "<table class=kb-subtable><tr><td valign=top width=440>";
-        $html .= "<div class=block-header>$monthname $year</div>";
+        $html .= "<table class='kb-subtable'><tr><td valign='top' width='440'>";
+        $html .= "<div class='block-header'>$monthname $year</div>";
 
         $list = new TopKillsList();
         $list->addInvolvedAlliance($alliance);
@@ -498,11 +497,11 @@ switch ($_GET['view'])
         $table = new TopPilotTable($list, "Kills");
         $html .= $table->generate();
 
-		$html .= "<table width=300 cellspacing=1><tr><td><a href='?a=alliance_detail&view=pilot_kills&m=$pmonth&all_id=$all_id&y=$pyear'>previous</a></td>";
-        $html .= "<td align='right'><a href='?a=alliance_detail&view=pilot_kills&all_id=$all_id&m=$nmonth&y=$nyear'>next</a></p></td></tr></table>";
+		$html .= "<table width='300' cellspacing='1'><tr><td><a href='?a=alliance_detail&amp;view=pilot_kills&amp;m=$pmonth&amp;all_id=$all_id&amp;y=$pyear'>previous</a></td>";
+        $html .= "<td align='right'><a href='?a=alliance_detail&amp;view=pilot_kills&amp;all_id=$all_id&amp;m=$nmonth&amp;y=$nyear'>next</a></p></td></tr></table>";
         
-        $html .= "</td><td valign=top width=400>";
-        $html .= "<div class=block-header>All time</div>";
+        $html .= "</td><td valign='top' width='400'>";
+        $html .= "<div class='block-header'>All time</div>";
 
         $list = new TopKillsList();
         $list->addInvolvedAlliance($alliance);
@@ -514,10 +513,10 @@ switch ($_GET['view'])
 
         break;
     case "pilot_scores":
-        $html .= "<div class=block-header2>Top scorers</div>";
+        $html .= "<div class='block-header2'>Top scorers</div>";
 
-        $html .= "<table class=kb-subtable><tr><td valign=top width=440>";
-        $html .= "<div class=block-header>$monthname $year</div>";
+        $html .= "<table class='kb-subtable'><tr><td valign='top' width='440'>";
+        $html .= "<div class='block-header'>$monthname $year</div>";
 
         $list = new TopScoreList();
         $list->addInvolvedAlliance($alliance);
@@ -527,11 +526,11 @@ switch ($_GET['view'])
         $table = new TopPilotTable($list, "Points");
         $html .= $table->generate();
 
-		$html .= "<table width=300 cellspacing=1><tr><td><a href='?a=alliance_detail&view=pilot_scores&m=$pmonth&all_id=$all_id&y=$pyear'>previous</a></td>";
-        $html .= "<td align='right'><a href='?a=alliance_detail&view=pilot_scores&all_id=$all_id&m=$nmonth&y=$nyear'>next</a></p></td></tr></table>";
+		$html .= "<table width='300' cellspacing='1'><tr><td><a href='?a=alliance_detail&amp;view=pilot_scores&amp;m=$pmonth&amp;all_id=$all_id&amp;y=$pyear'>previous</a></td>";
+        $html .= "<td align='right'><a href='?a=alliance_detail&amp;view=pilot_scores&amp;all_id=$all_id&amp;m=$nmonth&amp;y=$nyear'>next</a></p></td></tr></table>";
           
-        $html .= "</td><td valign=top width=400>";
-        $html .= "<div class=block-header>All time</div>";
+        $html .= "</td><td valign='top' width='400'>";
+        $html .= "<div class='block-header'>All time</div>";
 
         $list = new TopScoreList();
         $list->addInvolvedAlliance($alliance);
@@ -543,10 +542,10 @@ switch ($_GET['view'])
 
         break;
     case "pilot_losses":
-        $html .= "<div class=block-header2>Top losers</div>";
+        $html .= "<div class='block-header2'>Top losers</div>";
 
-        $html .= "<table class=kb-subtable><tr><td valign=top width=440>";
-        $html .= "<div class=block-header>$monthname $year</div>";
+        $html .= "<table class='kb-subtable'><tr><td valign='top' width='440'>";
+        $html .= "<div class='block-header'>$monthname $year</div>";
 
         $list = new TopLossesList();
         $list->addVictimAlliance($alliance);
@@ -556,11 +555,11 @@ switch ($_GET['view'])
         $table = new TopPilotTable($list, "Losses");
         $html .= $table->generate();
 
-		$html .= "<table width=300 cellspacing=1><tr><td><a href='?a=alliance_detail&view=pilot_losses&m=$pmonth&all_id=$all_id&y=$pyear'>previous</a></td>";
-        $html .= "<td align='right'><a href='?a=alliance_detail&view=pilot_losses&all_id=$all_id&m=$nmonth&y=$nyear'>next</a></p></td></tr></table>";
+		$html .= "<table width='300' cellspacing='1'><tr><td><a href='?a=alliance_detail&amp;view=pilot_losses&amp;m=$pmonth&amp;all_id=$all_id&amp;y=$pyear'>previous</a></td>";
+        $html .= "<td align='right'><a href='?a=alliance_detail&amp;view=pilot_losses&amp;all_id=$all_id&amp;m=$nmonth&amp;y=$nyear'>next</a></p></td></tr></table>";
         
-        $html .= "</td><td valign=top width=400>";
-        $html .= "<div class=block-header>All time</div>";
+        $html .= "</td><td valign='top' width='400'>";
+        $html .= "<div class='block-header'>All time</div>";
 
         $list = new TopLossesList();
         $list->addVictimAlliance($alliance);
@@ -572,14 +571,14 @@ switch ($_GET['view'])
 
         break;
     case "ships_weapons":
-        $html .= "<div class=block-header2>Ships & weapons used</div>";
+        $html .= "<div class='block-header2'>Ships &amp; weapons used</div>";
 
-        $html .= "<table class=kb-subtable><tr><td valign=top width=400>";
+        $html .= "<table class='kb-subtable'><tr><td valign='top' width='400'>";
         $shiplist = new TopShipList();
         $shiplist->addInvolvedAlliance($alliance);
         $shiplisttable = new TopShipListTable($shiplist);
         $html .= $shiplisttable->generate();
-        $html .= "</td><td valign=top align=right width=400>";
+        $html .= "</td><td valign='top' align='right' width='400'>";
 
         $weaponlist = new TopWeaponList();
         $weaponlist->addInvolvedAlliance($alliance);
@@ -589,12 +588,12 @@ switch ($_GET['view'])
 
         break;
     case 'violent_systems':
-        $html .= "<div class=block-header2>Most violent systems</div>";
-        $html .= "<table width=\"99%\"><tr><td align=center valign=top>";
+        $html .= "<div class='block-header2'>Most violent systems</div>";
+        $html .= "<table width=\"99%\"><tr><td align='center' valign='top'>";
 
-        $html .= "<div class=block-header>This month</div>";
-        $html .= "<table class=kb-table>";
-        $html .= "<tr class=kb-table-header><td>#</td><td width=180>System</td><td width=40 align=center >Kills</td></tr>";
+        $html .= "<div class='block-header'>This month</div>";
+        $html .= "<table class='kb-table'>";
+        $html .= "<tr class='kb-table-header'><td>#</td><td width='180'>System</td><td width='40' align='center' >Kills</td></tr>";
 
         $sql = "select sys.sys_name, sys.sys_sec, sys.sys_id, count(distinct kll.kll_id) as kills
                     from kb3_systems sys, kb3_kills kll, kb3_inv_detail inv
@@ -629,16 +628,16 @@ switch ($_GET['view'])
                 $rowclass = 'kb-table-row-even';
             }
 
-            $html .= "<tr class=".$rowclass."><td><b>".$counter.".</b></td><td class=kb-table-cell width=180><b><a href=\"?a=system_detail&amp;sys_id=".$row['sys_id']."\">".$row['sys_name']."</a></b> (".roundsec($row['sys_sec']).")</td><td align=center>".$row['kills']."</td></tr>";
+            $html .= "<tr class='".$rowclass."'><td><b>".$counter.".</b></td><td class='kb-table-cell' width='180'><b><a href=\"?a=system_detail&amp;sys_id=".$row['sys_id']."\">".$row['sys_name']."</a></b> (".roundsec($row['sys_sec']).")</td><td align='center'>".$row['kills']."</td></tr>";
             $counter++;
         }
 
         $html .= "</table>";
 
-        $html .= "</td><td align=center valign=top>";
-        $html .= "<div class=block-header>All-Time</div>";
-        $html .= "<table class=kb-table>";
-        $html .= "<tr class=kb-table-header><td>#</td><td width=180>System</td><td width=40 align=center>Kills</td></tr>";
+        $html .= "</td><td align='center' valign='top'>";
+        $html .= "<div class='block-header'>All-Time</div>";
+        $html .= "<table class='kb-table'>";
+        $html .= "<tr class='kb-table-header'><td>#</td><td width='180'>System</td><td width='40' align='center'>Kills</td></tr>";
 
         $sql = "select sys.sys_name, sys.sys_id, sys.sys_sec, count(distinct kll.kll_id) as kills
                     from kb3_systems sys, kb3_kills kll, kb3_inv_detail inv
@@ -671,7 +670,7 @@ switch ($_GET['view'])
                 $rowclass = 'kb-table-row-even';
             }
 
-            $html .= "<tr class=".$rowclass."><td><b>".$counter.".</b></td><td class=kb-table-cell><b><a href=\"?a=system_detail&amp;sys_id=".$row['sys_id']."\">".$row['sys_name']."</a></b> (".roundsec($row['sys_sec']).")</td><td align=center>".$row['kills']."</td></tr>";
+            $html .= "<tr class='".$rowclass."'><td><b>".$counter.".</b></td><td class='kb-table-cell'><b><a href=\"?a=system_detail&amp;sys_id=".$row['sys_id']."\">".$row['sys_name']."</a></b> (".roundsec($row['sys_sec']).")</td><td align='center'>".$row['kills']."</td></tr>";
             $counter++;
         }
         $html .= "</table>";
@@ -679,31 +678,31 @@ switch ($_GET['view'])
     break;
 }
 
-$html .= "<hr><b>Extended Alliance Detail by " . FindThunk() . ".<b/></br>";
+//$html .= "<hr><b>Extended Alliance Detail by " . FindThunk() . ".<b/></br>";
 
 $menubox = new Box("Menu");
 $menubox->setIcon("menu-item.gif");
-$menubox->addOption("caption","Kills & losses");
-$menubox->addOption("link","Recent activity", "?a=alliance_detail&all_id=" . $alliance->getID());
-$menubox->addOption("link","Kills", "?a=alliance_detail&all_id=" . $alliance->getID() . "&view=kills");
-$menubox->addOption("link","Losses", "?a=alliance_detail&all_id=" . $alliance->getID() . "&view=losses");
+$menubox->addOption("caption","Kills &amp; losses");
+$menubox->addOption("link","Recent activity", "?a=alliance_detail&amp;all_id=" . $alliance->getID());
+$menubox->addOption("link","Kills", "?a=alliance_detail&amp;all_id=" . $alliance->getID() . "&amp;view=kills");
+$menubox->addOption("link","Losses", "?a=alliance_detail&amp;all_id=" . $alliance->getID() . "&amp;view=losses");
 $menubox->addOption("caption","Corp statistics");
-$menubox->addOption("link","Top killers", "?a=alliance_detail&all_id=" . $alliance->getID() . "&view=corp_kills");
-$menubox->addOption("link","Top losers", "?a=alliance_detail&all_id=" . $alliance->getID() . "&view=corp_losses");
-$menubox->addOption("link","Destroyed ships", "?a=alliance_detail&all_id=" . $alliance->getID() . "&view=corp_kills_class");
-$menubox->addOption("link","Lost ships", "?a=alliance_detail&all_id=" . $alliance->getID() . "&view=corp_losses_class");
+$menubox->addOption("link","Top killers", "?a=alliance_detail&amp;all_id=" . $alliance->getID() . "&amp;view=corp_kills");
+$menubox->addOption("link","Top losers", "?a=alliance_detail&amp;all_id=" . $alliance->getID() . "&amp;view=corp_losses");
+$menubox->addOption("link","Destroyed ships", "?a=alliance_detail&amp;all_id=" . $alliance->getID() . "&amp;view=corp_kills_class");
+$menubox->addOption("link","Lost ships", "?a=alliance_detail&amp;all_id=" . $alliance->getID() . "&amp;view=corp_losses_class");
 $menubox->addOption("caption","Pilot statistics");
-$menubox->addOption("link","Top killers", "?a=alliance_detail&all_id=" . $alliance->getID() . "&view=pilot_kills");
+$menubox->addOption("link","Top killers", "?a=alliance_detail&amp;all_id=" . $alliance->getID() . "&amp;view=pilot_kills");
 if (config::get('kill_points'))
 {
-    $menubox->addOption('link', "Top scorers", "?a=alliance_detail&all_id=" . $alliance->getID() . "&view=pilot_scores");
+    $menubox->addOption('link', "Top scorers", "?a=alliance_detail&amp;all_id=" . $alliance->getID() . "&amp;view=pilot_scores");
 }
-$menubox->addOption("link","Top losers", "?a=alliance_detail&all_id=" . $alliance->getID() . "&view=pilot_losses");
-$menubox->addOption("link","Destroyed ships", "?a=alliance_detail&all_id=" . $alliance->getID() . "&view=kills_class");
-$menubox->addOption("link","Lost ships", "?a=alliance_detail&all_id=" . $alliance->getID() . "&view=losses_class");
+$menubox->addOption("link","Top losers", "?a=alliance_detail&amp;all_id=" . $alliance->getID() . "&amp;view=pilot_losses");
+$menubox->addOption("link","Destroyed ships", "?a=alliance_detail&amp;all_id=" . $alliance->getID() . "&amp;view=kills_class");
+$menubox->addOption("link","Lost ships", "?a=alliance_detail&amp;all_id=" . $alliance->getID() . "&amp;view=losses_class");
 $menubox->addOption("caption","Global statistics");
-$menubox->addOption("link","Ships & weapons", "?a=alliance_detail&all_id=" . $alliance->getID() . "&view=ships_weapons");
-$menubox->addOption("link","Most violent systems", "?a=alliance_detail&all_id=" . $alliance->getID() . "&view=violent_systems");
+$menubox->addOption("link","Ships &amp; weapons", "?a=alliance_detail&amp;all_id=" . $alliance->getID() . "&amp;view=ships_weapons");
+$menubox->addOption("link","Most violent systems", "?a=alliance_detail&amp;all_id=" . $alliance->getID() . "&amp;view=violent_systems");
 $page->addContext($menubox->generate());
 
 $page->setContent($html);
