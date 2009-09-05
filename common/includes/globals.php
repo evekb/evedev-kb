@@ -10,7 +10,7 @@ else
 }
 define('SVN_REV', $svn_rev);
 
-define('LASTEST_DB_UPDATE',"012");
+define('LATEST_DB_UPDATE',"012");
 
 // current version: major.minor.sub
 // unpair numbers for minor = development version

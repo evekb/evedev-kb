@@ -25,10 +25,15 @@ include_once('kbconfig.php');
 // If there is no config then redirect to the install folder.
 if(!defined('KB_SITE'))
 {
-	$url = "http://".$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
-	$url = substr($url, 0, strrpos($url,'/')+1)."install/";
-	header("Location: ".$url);
-	die;
+	$html = "<html><head><title>Board not configured</title></head>";
+	$html .= "<body>Killboard configuration not found. Go to ";
+	$url = $_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
+	$url = substr($url, 0, strrpos($url, '/',1)).'/install/';
+	$url = preg_replace('/\/{2,}/','/',$url);
+	$url = "http://".$url;
+	$html .= "<a href='".$url."'>install</a> to install a new killboard";
+	$html .= "</body></html>";
+	die($html);
 }
 require_once('common/includes/globals.php');
 require_once('common/includes/php_compat.php');
@@ -39,7 +44,7 @@ require_once('common/includes/class.killboard.php');
 require_once('common/includes/class.page.php');
 require_once('common/includes/class.event.php');
 require_once('common/includes/class.roles.php');
-#require_once('common/includes/class.titles.php');
+//require_once('common/includes/class.titles.php');
 require_once('common/includes/class.user.php');
 require_once('common/includes/class.session.php');
 require_once('common/includes/class.cache.php');
@@ -116,7 +121,7 @@ $smarty->assign_by_ref('config', $config);
 
 // set up titles/roles
 role::init();
-#title::init();
+//title::init();
 
 // start session management
 session::init();
@@ -147,14 +152,13 @@ if (config::get('auto_reinforced'))
 if(config::get('cache_enabled')) define('KB_CACHE', 1);
 else define('KB_CACHE', 0);
 
-if(config::get('DBUpdate') < LASTEST_DB_UPDATE)
+if(config::get('DBUpdate') < LATEST_DB_UPDATE)
 {
 	// Check db is installed.
 	if(config::get('cfg_kbhost'))
 	{
 		$url = preg_replace('/^http:\/\//','',KB_HOST."/upgrade/");
-		// Remove any erroneous double slashes
-		$url = preg_replace('/\/+/','/',$url);
+		$url = preg_replace('/\/{2,}/','/',$url);
 		header('Location: http://'.$url);
 		die;
 	}
@@ -163,10 +167,8 @@ if(config::get('DBUpdate') < LASTEST_DB_UPDATE)
 	{
 		$html = "<html><head><title>Board not configured</title></head>";
 		$html .= "<body>Killboard configuration not found. Go to ";
-		// Make URL from current script URL
 		$url = $_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
 		$url = substr($url, 0, strrpos($url, '/',1)).'/install/';
-		// Make sure no double slash has crept in.
 		$url = preg_replace('/\/+/','/',$url);
 		$url = "http://".$url;
 		$html .= "<a href='".$url."'>install</a> to install a new killboard";
@@ -179,7 +181,6 @@ if(config::get('DBUpdate') < LASTEST_DB_UPDATE)
 if (substr($page, 0, 5) == 'admin')
 {
     require_once('common/admin/admin_menu.php');
-	// Check DB is up to date.
     $page = 'admin/'.$page;
 }
 
@@ -205,13 +206,6 @@ foreach ($mods_active as $mod)
     if (file_exists('mods/'.$mod.'/'.$page.'.php'))
     {
 		$modconflicts[] = $mod;
-		/*
-		if ($modOverrides)
-        {
-            die('Error: Two or more of the mods you have activated are conflicting');
-        }
-		 *
-		 */
         $modOverrides = true;
         $modOverride = $mod;
     }

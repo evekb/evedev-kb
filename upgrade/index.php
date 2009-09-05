@@ -83,8 +83,8 @@ You must log in as admin to complete an upgrade.
 }
 $qry=new DBQuery(true);
 define('CURRENT_DB_UPDATE', config::get("DBUpdate"));
-define('LASTEST_DB_UPDATE', "012");
-if (CURRENT_DB_UPDATE >= LASTEST_DB_UPDATE )
+define('LATEST_DB_UPDATE', "012");
+if (CURRENT_DB_UPDATE >= LATEST_DB_UPDATE )
 {
 	echo $header1.$header2;
 	echo"Board is up to date.<br><a href='".config::get('cfg_kbhost')."'>Return to your board</a>";
