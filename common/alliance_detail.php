@@ -189,7 +189,7 @@ switch ($_GET['view'])
         {
             $shipclass[] = new Shipclass($row['scl_id']);
         }
-        $html .= "<table class=kb-subtable>";
+        $html .= "<table class='kb-subtable'>";
         $html .= "<tr>";
         $newrow = true;
 
@@ -202,7 +202,7 @@ switch ($_GET['view'])
             $list->addVictimShipClass($shp);
             $table = new TopCorpTable($list, "Kills");
             $content = $table->generate();
-            if ($content != '<table class=kb-table cellspacing=1><tr class=kb-table-header><td class=kb-table-cell align=center>#</td><td class=kb-table-cell align=center>Corporation</td><td class=kb-table-cell align=center width=60>Kills</td></tr></table>'){
+            if ($content != '<table class="kb-table" cellspacing=1><tr class="kb-table-header"><td class="kb-table-cell" align=center>#</td><td class="kb-table-cell" align=center>Corporation</td><td class="kb-table-cell" align=center width=60>Kills</td></tr></table>'){
             $html .= "<td valign=top width=440>";
             $html .= "<div class=block-header>".$shp->getName()."</div>";
             $html .= $content;
@@ -227,7 +227,7 @@ switch ($_GET['view'])
         {
             $shipclass[] = new Shipclass($row['scl_id']);
         }
-        $html .= "<table class=kb-subtable>";
+        $html .= "<table class='kb-subtable'>";
         $html .= "<tr>";
         $newrow = true;
 
@@ -240,7 +240,7 @@ switch ($_GET['view'])
             $list->addVictimShipClass($shp);
             $table = new TopPilotTable($list, "Kills");
             $content = $table->generate();
-            if ($content != '<table class=kb-table cellspacing=1><tr class=kb-table-header><td class=kb-table-cell align=center colspan=2>Pilot</td><td class=kb-table-cell align=center width=60>Kills</td></tr></table>'){
+            if ($content != '<table class="kb-table" cellspacing=1><tr class="kb-table-header"><td class="kb-table-cell" align=center colspan=2>Pilot</td><td class="kb-table-cell" align=center width=60>Kills</td></tr></table>'){
             $html .= "<td valign=top width=440>";
             $html .= "<div class=block-header>".$shp->getName()."</div>";
             $html .= $content;
@@ -266,7 +266,7 @@ switch ($_GET['view'])
         {
             $shipclass[] = new Shipclass($row['scl_id']);
         }
-        $html .= "<table class=kb-subtable>";
+        $html .= "<table class='kb-subtable'>";
         $html .= "<tr>";
         $newrow = true;
 
@@ -279,7 +279,7 @@ switch ($_GET['view'])
             $list->addVictimShipClass($shp);
             $table = new TopCorpTable($list, "Losses");
             $content = $table->generate();
-            if ($content != '<table class=kb-table cellspacing=1><tr class=kb-table-header><td class=kb-table-cell align=center>#</td><td class=kb-table-cell align=center>Corporation</td><td class=kb-table-cell align=center width=60>Losses</td></tr></table>'){
+            if ($content != '<table class="kb-table" cellspacing=1><tr class="kb-table-header"><td class="kb-table-cell" align=center>#</td><td class="kb-table-cell" align=center>Corporation</td><td class="kb-table-cell" align=center width=60>Losses</td></tr></table>'){
             $html .= "<td valign=top width=440>";
                 $html .= "<div class=block-header>".$shp->getName()."</div>";
                 $html .= $content;
@@ -304,7 +304,7 @@ switch ($_GET['view'])
         {
             $shipclass[] = new Shipclass($row['scl_id']);
         }
-        $html .= "<table class=kb-subtable>";
+        $html .= "<table class='kb-subtable'>";
         $html .= "<tr>";
         $newrow = true;
 
@@ -317,7 +317,7 @@ switch ($_GET['view'])
             $list->addVictimShipClass($shp);
             $table = new TopPilotTable($list, "Losses");
             $content = $table->generate();
-            if ($content != '<table class=kb-table cellspacing=1><tr class=kb-table-header><td class=kb-table-cell align=center colspan=2>Pilot</td><td class=kb-table-cell align=center width=60>Losses</td></tr></table>'){
+            if ($content != '<table class="kb-table" cellspacing=1><tr class="kb-table-header"><td class="kb-table-cell" align=center colspan=2>Pilot</td><td class="kb-table-cell" align=center width=60>Losses</td></tr></table>'){
             $html .= "<td valign=top width=440>";
                 $html .= "<div class=block-header>".$shp->getName()."</div>";
                 $html .= $content;
@@ -347,7 +347,7 @@ switch ($_GET['view'])
     case "pilot_kills":
         $html .= "<div class=block-header2>Top killers</div>";
 
-        $html .= "<table class=kb-subtable><tr><td valign=top width=440>";
+        $html .= "<table class='kb-subtable'><tr><td valign=top width=440>";
         $html .= "<div class=block-header>$monthname $year</div>";
 
         $list = new TopKillsList();
@@ -377,7 +377,7 @@ switch ($_GET['view'])
     case "pilot_scores":
         $html .= "<div class=block-header2>Top scorers</div>";
 
-        $html .= "<table class=kb-subtable><tr><td valign=top width=440>";
+        $html .= "<table class='kb-subtable'><tr><td valign=top width=440>";
         $html .= "<div class=block-header>$monthname $year</div>";
 
         $list = new TopScoreList();
@@ -438,8 +438,8 @@ switch ($_GET['view'])
         $html .= "<table width=\"99%\"><tr><td align=center valign=top>";
 
         $html .= "<div class=block-header>This month</div>";
-        $html .= "<table class=kb-table>";
-        $html .= "<tr class=kb-table-header><td>#</td><td width=180>System</td><td width=40 align=center >Kills</td></tr>";
+        $html .= "<table class='kb-table'>";
+        $html .= "<tr class='kb-table-header'><td>#</td><td width=180>System</td><td width=40 align=center >Kills</td></tr>";
 
         $sql = "select sys.sys_name, sys.sys_sec, sys.sys_id, count(distinct kll.kll_id) as kills
                     from kb3_systems sys, kb3_kills kll, kb3_inv_detail inv
@@ -474,7 +474,7 @@ switch ($_GET['view'])
                 $rowclass = 'kb-table-row-even';
             }
 
-            $html .= "<tr class=".$rowclass."><td><b>".$counter.".</b></td><td class=kb-table-cell width=180><b><a href=\"?a=system_detail&amp;sys_id=".$row['sys_id']."\">".$row['sys_name']."</a></b> (".roundsec($row['sys_sec']).")</td><td align=center>".$row['kills']."</td></tr>";
+            $html .= "<tr class=".$rowclass."><td><b>".$counter.".</b></td><td class='kb-table-cell' width=180><b><a href=\"?a=system_detail&amp;sys_id=".$row['sys_id']."\">".$row['sys_name']."</a></b> (".roundsec($row['sys_sec']).")</td><td align=center>".$row['kills']."</td></tr>";
             $counter++;
         }
 
@@ -482,8 +482,8 @@ switch ($_GET['view'])
 
         $html .= "</td><td align=center valign=top>";
         $html .= "<div class=block-header>All-Time</div>";
-        $html .= "<table class=kb-table>";
-        $html .= "<tr class=kb-table-header><td>#</td><td width=180>System</td><td width=40 align=center>Kills</td></tr>";
+        $html .= "<table class='kb-table'>";
+        $html .= "<tr class='kb-table-header'><td>#</td><td width=180>System</td><td width=40 align=center>Kills</td></tr>";
 
         $sql = "select sys.sys_name, sys.sys_id, sys.sys_sec, count(distinct kll.kll_id) as kills
                     from kb3_systems sys, kb3_kills kll, kb3_inv_detail inv
@@ -516,7 +516,7 @@ switch ($_GET['view'])
                 $rowclass = 'kb-table-row-even';
             }
 
-            $html .= "<tr class=".$rowclass."><td><b>".$counter.".</b></td><td class=kb-table-cell><b><a href=\"?a=system_detail&amp;sys_id=".$row['sys_id']."\">".$row['sys_name']."</a></b> (".roundsec($row['sys_sec']).")</td><td align=center>".$row['kills']."</td></tr>";
+            $html .= "<tr class=".$rowclass."><td><b>".$counter.".</b></td><td class='kb-table-cell'><b><a href=\"?a=system_detail&amp;sys_id=".$row['sys_id']."\">".$row['sys_name']."</a></b> (".roundsec($row['sys_sec']).")</td><td align=center>".$row['kills']."</td></tr>";
             $counter++;
         }
         $html .= "</table>";

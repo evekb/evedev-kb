@@ -294,7 +294,7 @@ class TopList
 		}
  */
 		$this->sql_ .= " ".$this->sqlbottom_;
-		// echo $this->sql_."<br/><br/>";
+		// echo $this->sql_."<br /><br />";
 		$this->qry_->execute($this->sql_);
 	}
 
@@ -729,10 +729,10 @@ class TopPilotTable
 	{
 		$this->toplist_->generate();
 
-		$html .= "<table class=kb-table cellspacing=1>";
-		$html .= "<tr class=kb-table-header>";
-		$html .= "<td class=kb-table-cell align=center colspan=2>Pilot</td>";
-		$html .= "<td class=kb-table-cell align=center width=60>".$this->entity_."</td>";
+		$html .= "<table class='kb-table' cellspacing='1'>";
+		$html .= "<tr class='kb-table-header'>";
+		$html .= "<td class='kb-table-cell' align='center' colspan='2'>Pilot</td>";
+		$html .= "<td class='kb-table-cell' align='center' width='60'>".$this->entity_."</td>";
 		$html .= "</tr>";
 
 		$odd = true;
@@ -750,10 +750,10 @@ class TopPilotTable
 				$class = "kb-table-row-even";
 				$odd = true;
 			}
-			$html .= "<tr class=".$class.">";
-			$html .= "<td><img src=\"".$pilot->getPortraitURL(32)."\"></td>";
-			$html .= "<td class=kb-table-cell width=200><b>".$i.".</b>&nbsp;<a class=kb-shipclass href=\"?a=pilot_detail&amp;plt_id=".$row['plt_id']."\">".$pilot->getName()."</a></td>";
-			$html .= "<td class=kb-table-cell align=center><b>".$row['cnt']."</b></td>";
+			$html .= "<tr class='".$class."'>";
+			$html .= "<td><img src=\"".$pilot->getPortraitURL(32)."\" /></td>";
+			$html .= "<td class='kb-table-cell' width='200'><b>".$i.".</b>&nbsp;<a class='kb-shipclass' href=\"?a='pilot'_detail&amp;plt_id=".$row['plt_id']."\">".$pilot->getName()."</a></td>";
+			$html .= "<td class='kb-table-cell' align='center'><b>".$row['cnt']."</b></td>";
 
 			$html .= "</tr>";
 			$i++;
@@ -777,11 +777,11 @@ class TopCorpTable
 	{
 		$this->toplist_->generate();
 
-		$html .= "<table class=kb-table cellspacing=1>";
-		$html .= "<tr class=kb-table-header>";
-		$html .= "<td class=kb-table-cell align=center>#</td>";
-		$html .= "<td class=kb-table-cell align=center>Corporation</td>";
-		$html .= "<td class=kb-table-cell align=center width=60>".$this->entity_."</td>";
+		$html .= "<table class='kb-table' cellspacing='1'>";
+		$html .= "<tr class='kb-table-header'>";
+		$html .= "<td class='kb-table-cell' align='center'>#</td>";
+		$html .= "<td class='kb-table-cell' align='center'>Corporation</td>";
+		$html .= "<td class='kb-table-cell' align='center' width='60'>".$this->entity_."</td>";
 		$html .= "</tr>";
 
 		$odd = true;
@@ -799,10 +799,10 @@ class TopCorpTable
 				$class = "kb-table-row-even";
 				$odd = true;
 			}
-			$html .= "<tr class=".$class.">";
-			$html .= "<td class=kb-table-cell align=center><b>".$i.".</b></td>";
-			$html .= "<td class=kb-table-cell width=200><a href=\"?a=corp_detail&amp;crp_id=".$row['crp_id']."\">".$corp->getName()."</a></td>";
-			$html .= "<td class=kb-table-cell align=center><b>".$row['cnt']."</b></td>";
+			$html .= "<tr class='".$class."'>";
+			$html .= "<td class='kb-table-cell' align='center'><b>".$i.".</b></td>";
+			$html .= "<td class='kb-table-cell' width='200'><a href=\"?a='corp'_detail&amp;crp_id=".$row['crp_id']."\">".$corp->getName()."</a></td>";
+			$html .= "<td class='kb-table-cell' align='center'><b>".$row['cnt']."</b></td>";
 
 			$html .= "</tr>";
 			$i++;
@@ -872,10 +872,10 @@ class TopShipListTable
 	{
 		$this->toplist_->generate();
 
-		$html .= "<table class=kb-table cellspacing=1>";
-		$html .= "<tr class=kb-table-header>";
-		$html .= "<td class=kb-table-cell align=center colspan=2>Ship</td>";
-		$html .= "<td class=kb-table-cell align=center width=60>Kills</td>";
+		$html .= "<table class='kb-table' cellspacing='1'>";
+		$html .= "<tr class='kb-table-header'>";
+		$html .= "<td class='kb-table-cell' align='center' colspan='2'>Ship</td>";
+		$html .= "<td class='kb-table-cell' align='center' width='60'>Kills</td>";
 		$html .= "</tr>";
 
 		$odd = true;
@@ -893,10 +893,10 @@ class TopShipListTable
 				$class = "kb-table-row-even";
 				$odd = true;
 			}
-			$html .= "<tr class=".$class.">";
-			$html .= "<td><img src=\"".$ship->getImage(32)."\"></td>";
-			$html .= "<td class=kb-table-cell width=200><b>".$ship->getName()."</b><br>".$shipclass->getName()."</td>";
-			$html .= "<td class=kb-table-cell align=center><b>".$row['cnt']."</b></td>";
+			$html .= "<tr class='".$class."'>";
+			$html .= "<td><img src=\"".$ship->getImage(32)."\" /></td>";
+			$html .= "<td class='kb-table-cell' width='200'><b>".$ship->getName()."</b><br />".$shipclass->getName()."</td>";
+			$html .= "<td class='kb-table-cell' align='center'><b>".$row['cnt']."</b></td>";
 
 			$html .= "</tr>";
 		}
@@ -964,10 +964,10 @@ class TopWeaponListTable
 	{
 		$this->toplist_->generate();
 
-		$html .= "<table class=kb-table cellspacing=1>";
-		$html .= "<tr class=kb-table-header>";
-		$html .= "<td class=kb-table-cell align=center colspan=2>Weapon</td>";
-		$html .= "<td class=kb-table-cell align=center width=60>Kills</td>";
+		$html .= "<table class='kb-table' cellspacing='1'>";
+		$html .= "<tr class='kb-table-header'>";
+		$html .= "<td class='kb-table-cell' align='center' colspan='2'>Weapon</td>";
+		$html .= "<td class='kb-table-cell' align='center' width='60'>Kills</td>";
 		$html .= "</tr>";
 
 		$odd = true;
@@ -984,10 +984,10 @@ class TopWeaponListTable
 				$class = "kb-table-row-even";
 				$odd = true;
 			}
-			$html .= "<tr height=32 class=".$class.">";
-			$html .= "<td width=32 valign=top align=left>".$item->getIcon(32)."</td>";
-			$html .= "<td class=kb-table-cell width=200><b>".$item->getName()."</b></td>";
-			$html .= "<td class=kb-table-cell align=center><b>".$row['cnt']."</b></td>";
+			$html .= "<tr style='height:32px' class='".$class."'>";
+			$html .= "<td width='32' valign='top' align='left'>".$item->getIcon(32)."</td>";
+			$html .= "<td class='kb-table-cell' width='200'><b>".$item->getName()."</b></td>";
+			$html .= "<td class='kb-table-cell' align='center'><b>".$row['cnt']."</b></td>";
 
 			$html .= "</tr>";
 		}

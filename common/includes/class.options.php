@@ -57,7 +57,7 @@ class options
     {
         $data = &options::_getData();
 
-        $current = &$data[$_POST['field']][$_POST['sub']];
+        $current = &$data[urldecode($_POST['field'])][urldecode($_POST['sub'])];
         foreach ($current as $elements)
         {
             foreach ($elements as $element)
@@ -110,8 +110,8 @@ class options
         }
 
         // create the option field
-        $smarty->assign('field', $field);
-        $smarty->assign('sub', $sub);
+        $smarty->assign('field', urlencode($field));
+        $smarty->assign('sub', urlencode($sub));
 
         // save smarty compile_check state because we will call many templates
         // and leaving this enabled causes performance issues
@@ -250,12 +250,12 @@ class options
                 // if this subfield has no options then it is a category
                 if (!is_array($array))
                 {
-                    $menubox->addOption('link', $subfield, $array);
+                    $menubox->addOption('link', $subfield, urlencode($array));
                     continue;
                 }
 
-                // we're not a category, make it klickable
-                $menubox->addOption('link', $subfield, '?a=admin&amp;field='.$field.'&amp;sub='.$subfield);
+                // we're not a category, make it clickable
+                $menubox->addOption('link', $subfield, '?a=admin&amp;field='.urlencode($field).'&amp;sub='.urlencode($subfield));
             }
             $lastfield = $field;
         }
