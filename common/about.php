@@ -4,7 +4,7 @@ require_once('common/includes/class.ship.php');
 $page = new Page('About');
 
 // i store the names here for an easy edit
-$developer = array('exi (Lead Developer)',
+$developer = array('exi (Developer)',
 	'Beansman (Developer)',
 	'Ralle030583 (Developer)',
 	'Hon Kovell (Developer)');
@@ -18,7 +18,8 @@ $contributor = array('JaredC01',
 	'Karbowiak',
 	'EDG',
 	'Duncan - Shailo Koljas',
-	'mastergamer');
+	'mastergamer',
+	'Captain Thunk');
 sort($contributor);
 $smarty->assign_by_ref('developer', $developer);
 $smarty->assign('contributor', $contributor);

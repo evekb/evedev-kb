@@ -71,7 +71,6 @@ $alliance = $corp->getAlliance();
 
 $kill_summary = new KillSummaryTable();
 $kill_summary->addInvolvedCorp($corp);
-$kill_summary->setBreak(config::get('summarytable_rowcount'));
 $summary_html = $kill_summary->generate();
 
 $corpname = str_replace(" ", "%20", $corp->getName() );
@@ -548,7 +547,7 @@ switch ($_GET['view'])
         break;
 }
 
-$html .= "<hr /><b>Extended Corp Detail " . EVELOGOVERSION . " by " . FindThunk() . ". Logo generation by Entity. Thanks to Arkady and Exi.</b><br/>";
+//$html .= "<hr /><b>Extended Corp Detail " . EVELOGOVERSION . " by " . FindThunk() . ". Logo generation by Entity. Thanks to Arkady and Exi.</b><br/>";
 
 $menubox = new box("Menu");
 $menubox->setIcon("menu-item.gif");

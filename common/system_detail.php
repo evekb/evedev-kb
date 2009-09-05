@@ -28,7 +28,6 @@ $lslist->addSystem($system);
 if(config::get('kill_classified')) $lslist->setEndDate(gmdate('Y-m-d H:i',strtotime('now - '.(config::get('kill_classified')*3600).' hours')));
 
 $summarytable = new KillSummaryTable($kslist, $lslist);
-$summarytable->setBreak(config::get('summarytable_rowcount'));
 $html .= $summarytable->generate();
 
 $klist = new KillList();

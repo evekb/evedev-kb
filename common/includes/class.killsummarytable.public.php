@@ -119,14 +119,6 @@ class KillSummaryTablePublic extends KillSummaryTable
         $prevdate = "";
 		// Don't count noobships.
 		$num = count($entry) - 1;
-		if($this->break_) $columns = ceil($num/$this->break_);
-		else $columns = 2;
-		if(!$columns) $columns = 2;
-        $width_mod = 1/$columns;
-        $width = round($width_mod*100);
-		if($this->verbose_) $width_abs = round($width_mod*(760-120*$columns));
-		else $width_abs = round($width_mod*(760-30*$columns));
-
 		$summary = array();
 		$count = 0;
 		foreach ($entry as $k => $v)
@@ -156,11 +148,7 @@ class KillSummaryTablePublic extends KillSummaryTable
 		}
 		global $smarty;
 		$smarty->assign('summary', $summary);
-		$smarty->assign('count', count($entry));
-		$smarty->assign('break', $this->break_);
-		$smarty->assign('width', $width);
-		$smarty->assign('width_abs', $width_abs);
-		$smarty->assign('columns', $columns);
+		$smarty->assign('count', $num);
 		$smarty->assign('verbose', $this->verbose_);
 		$smarty->assign('filter', $this->filter_);
 

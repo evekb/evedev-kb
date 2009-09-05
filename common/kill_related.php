@@ -139,7 +139,6 @@ foreach($invCorp as $ic) $lslist->addVictimCorp($ic);
 foreach($invAll as $ia) $lslist->addVictimAlliance($ia);
 
 $summarytable = new KillSummaryTable($kslist, $lslist);
-$summarytable->setBreak(config::get('summarytable_rowcount'));
 $html .= $summarytable->generate();
 
 $klist = new KillList();

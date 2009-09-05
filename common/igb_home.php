@@ -23,7 +23,6 @@ $llist->setWeek($week);
 $llist->setYear($year);
 
 $summarytable = new KillSummaryTable($kslist, $llist);
-$summarytable->setBreak(config::get('summarytable_rowcount'));
 
 if ($week == 1)
 {

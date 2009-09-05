@@ -29,10 +29,11 @@ options::fadd('Show Corp: / Alliance: on Front Page', 'corpalliance-name', 'chec
 options::fadd('Display clock on Front Page', 'show_clock', 'checkbox');
 
 options::cat('Appearance', 'Front Page', 'Kill Summary Tables');
-options::fadd('Amount in each Column', 'summarytable_rowcount', 'edit:size:2');
+options::fadd('Display Summary Table (Also works on the Monthly mod)', 'summarytable', 'checkbox');
+//options::fadd('Amount in each Column', 'summarytable_rowcount', 'edit:size:2');
+//options::fadd('Number of columns', 'summarytable_colcount', 'edit:size:2');
 options::fadd('Display a summary line below a Summary Table', 'summarytable_summary', 'checkbox');
 options::fadd('Display efficiency in the summary line', 'summarytable_efficiency', 'checkbox');
-options::fadd('Display Summary Table (Also works on the Monthly mod)', 'summarytable', 'checkbox');
 options::fadd('Amount of shown kills on front, kills and losses pages', 'killcount', 'edit:size:2');
 
 options::cat('Appearance', 'Kill Details', 'Kill Details');

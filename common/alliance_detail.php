@@ -82,7 +82,6 @@ else
 
 $kill_summary = new KillSummaryTable();
 $kill_summary->addInvolvedAlliance($alliance);
-$kill_summary->setBreak(config::get('summarytable_rowcount'));
 $smarty->assign('summary', $kill_summary->generate());
 
 $smarty->assign('totalkills', $kill_summary->getTotalKills());

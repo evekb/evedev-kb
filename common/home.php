@@ -9,18 +9,18 @@ if(config::get('show_clock')) require_once('common/includes/class.clock.php');
 
 class pHome extends pageAssembly
 {
-    function __construct()
-    {
-        parent::__construct();
-        $this->queue('start');
-        $this->queue('summaryTable');
-        $this->queue('campaigns');
-        $this->queue('contracts');
-        $this->queue('kills');
-    }
+	function __construct()
+	{
+		parent::__construct();
+		$this->queue('start');
+		$this->queue('summaryTable');
+		$this->queue('campaigns');
+		$this->queue('contracts');
+		$this->queue('kills');
+	}
 
 	function start()
-    {
+	{
 		$this->killboard = new Killboard();
 		$this->killcount = config::get('killcount');
 		$this->hourlimit = config::get('limit_hours');
@@ -57,11 +57,11 @@ class pHome extends pageAssembly
 		if(isset($_REQUEST['kills'])) $this->page = new Page('Kills - Week '.$this->getWeek().', '.$this->getYear());
 		elseif(isset($_REQUEST['losses'])) $this->page = new Page('Losses - Week '.$this->getWeek().', '.$this->getYear());
 		else $this->page = new Page('Week '.$this->getWeek().', '.$this->getYear());
-    }
+	}
 	//! Check if summary tables are enabled and if so return a table for this week.
-    function summaryTable()
-    {
-		// Display the summary table.
+	function summaryTable()
+	{
+	// Display the summary table.
 		if (config::get('summarytable'))
 		{
 			require_once('common/includes/class.killsummarytable.php');
@@ -70,10 +70,10 @@ class pHome extends pageAssembly
 				require_once('common/includes/class.killsummarytable.public.php');
 				//$kslist = new KillList();
 				$summarytable = new KillSummaryTablePublic();
-				involved::load($summarytable,'kill');
 				$summarytable->setWeek($this->week);
 				$summarytable->setYear($this->year);
-				//$summarytable = new KillSummaryTablePublic($kslist);
+				involved::load($summarytable,'kill');
+			//$summarytable = new KillSummaryTablePublic($kslist);
 			}
 			else
 			{
@@ -82,14 +82,13 @@ class pHome extends pageAssembly
 				$summarytable->setYear($this->year);
 				involved::load($summarytable, 'kill');
 			}
-			$summarytable->setBreak(config::get('summarytable_rowcount'));
 			return $summarytable->generate();
 		}
-    }
+	}
 
-    function campaigns()
-    {
-		// Display campaigns, if any.
+	function campaigns()
+	{
+	// Display campaigns, if any.
 		if ($this->killboard->hasCampaigns(true) &&
 			!isset($_REQUEST['losses']) &&
 			!isset($_REQUEST['kills']) &&
@@ -103,11 +102,11 @@ class pHome extends pageAssembly
 			$html .= $table->generate();
 			return $html;
 		}
-    }
+	}
 
-    function contracts()
-    {
-		// Display contracts, if any.
+	function contracts()
+	{
+	// Display contracts, if any.
 		if ($this->killboard->hasContracts(true))
 		{
 			$html .= "<div class=\"kb-campaigns-header\">Active contracts</div>";
@@ -118,10 +117,10 @@ class pHome extends pageAssembly
 			$html .= $table->generate();
 			return $html;
 		}
-    }
+	}
 
-    function kills()
-    {
+	function kills()
+	{
 		global $smarty;
 		$smarty->assign('kill_count', $this->killcount);
 		// bad hax0ring, we really need mod callback stuff
@@ -172,11 +171,11 @@ class pHome extends pageAssembly
 			$html .= $table->generate();
 		}
 		return $html;
-    }
+	}
 
 	function menu()
 	{
-		// Display the menu for previous and next weeks.
+	// Display the menu for previous and next weeks.
 		$menubox = new box("Menu");
 		$menubox->setIcon("menu-item.gif");
 		$menubox->addOption("caption","Navigation");
@@ -214,18 +213,18 @@ class pHome extends pageAssembly
 		if(kbdate('W') != $this->week || getYear() != $this->year) $weektext = $this->week . ", " . $this->year;
 		else $weektext = "This Week's";
 		$menubox->addOption("link", $weektext." Kills",
-				"?a=home&amp;w=" . $this->week . "&amp;y=" . $this->year . '&amp;kills'.$suffixscl);
+			"?a=home&amp;w=" . $this->week . "&amp;y=" . $this->year . '&amp;kills'.$suffixscl);
 		$menubox->addOption("link", $weektext." Losses",
-				"?a=home&amp;w=" . $this->week . "&amp;y=" . $this->year . '&amp;losses'.$suffixscl);
+			"?a=home&amp;w=" . $this->week . "&amp;y=" . $this->year . '&amp;losses'.$suffixscl);
 		if(config::get('show_comb_home')) $menubox->addOption("link",
-			 $weektext." All Kills",
+				$weektext." All Kills",
 				"?a=home&amp;w=" . $this->week . "&amp;y=" . $this->year.$suffixscl);
 		return $menubox->generate();
 	}
 
 	function clock()
 	{
-		// Show the Eve time.
+	// Show the Eve time.
 		if(config::get('show_clock'))
 		{
 			$clock = new Clock();
@@ -235,7 +234,7 @@ class pHome extends pageAssembly
 
 	function topLists()
 	{
-		// Display the top pilot lists.
+	// Display the top pilot lists.
 		if(!isset($_REQUEST['losses']))
 		{
 			$tklist = new TopKillsList();
@@ -272,14 +271,14 @@ class pHome extends pageAssembly
 		return $html;
 	}
 
-    function context()
-    {
+	function context()
+	{
 		parent::__construct();
 		$this->queue('menu');
 		$this->queue('clock');
 		$this->queue('topLists');
-    }
-    
+	}
+
 	function getWeek()
 	{
 		return $this->week;
@@ -296,7 +295,7 @@ class pHome extends pageAssembly
 	}
 	function setWeek($week, $year)
 	{
-		// If a valid week and year are given then show that week.
+	// If a valid week and year are given then show that week.
 		if(((int)$week) < 1 || ((int)$week) > 53 || ((int)$year) < 2000) return false;
 
 		$this->prevweek = true;

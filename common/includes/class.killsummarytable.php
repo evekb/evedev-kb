@@ -14,10 +14,9 @@ class KillSummaryTable
 		$this->inv_crp_ = array();
 		$this->inv_all_ = array();
 	}
-
+	//! Stub to handle deprecated code.
 	function setBreak($break)
 	{
-		$this->break_ = $break;
 	}
 
 	function setVerbose($verbose)
@@ -122,23 +121,23 @@ class KillSummaryTable
 		$this->view_ = $string;
 	}
 
-    function addInvolvedPilot($pilot)
-    {
-        if(is_numeric($pilot)) $this->inv_plt_[] = $pilot;
-            else $this->inv_plt_[] = $pilot->getID();
-    }
+	function addInvolvedPilot($pilot)
+	{
+		if(is_numeric($pilot)) $this->inv_plt_[] = $pilot;
+		else $this->inv_plt_[] = $pilot->getID();
+	}
 
-    function addInvolvedCorp($corp)
-    {
-        if(is_numeric($corp)) $this->inv_crp_[] = $corp;
-            else $this->inv_crp_[] = $corp->getID();
-    }
+	function addInvolvedCorp($corp)
+	{
+		if(is_numeric($corp)) $this->inv_crp_[] = $corp;
+		else $this->inv_crp_[] = $corp->getID();
+	}
 
-    function addInvolvedAlliance($alliance)
-    {
-        if(is_numeric($alliance)) $this->inv_all_[] = $alliance;
-        else $this->inv_all_[] = $alliance->getID();
-    }
+	function addInvolvedAlliance($alliance)
+	{
+		if(is_numeric($alliance)) $this->inv_all_[] = $alliance;
+		else $this->inv_all_[] = $alliance->getID();
+	}
 
 	// do it faster, baby!
 	function getkills()
@@ -222,7 +221,7 @@ class KillSummaryTable
                     INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )';
 		$sql .= ' INNER JOIN kb3_ship_classes scl ON ( scl.scl_id = shp.shp_class )';
 
-		
+
 		if ($this->inv_all_)
 		{
 			$sql .= " INNER JOIN kb3_inv_all inv ON (inv.ina_kll_id = kll.kll_id)
@@ -365,13 +364,6 @@ class KillSummaryTable
 		$prevdate = "";
 		// Don't count noobships.
 		$num = count($entry) - 1;
-		if($this->break_) $columns = ceil($num/$this->break_);
-		else $columns = 2;
-		if(!$columns) $columns = 1;
-        $width_mod = 1/$columns;
-        $width = round($width_mod*100);
-		if($this->verbose_) $width_abs = round($width_mod*(760-240*$columns));
-		else $width_abs = round($width_mod*(760-60*$columns));
 		$summary = array();
 		$count = 0;
 		foreach ($entry as $k => $v)
@@ -406,11 +398,7 @@ class KillSummaryTable
 		}
 		global $smarty;
 		$smarty->assign('summary', $summary);
-		$smarty->assign('count', count($entry));
-		$smarty->assign('break', $this->break_);
-		$smarty->assign('width', $width);
-		$smarty->assign('width_abs', $width_abs);
-		$smarty->assign('columns', $columns);
+		$smarty->assign('count', $num);
 		$smarty->assign('verbose', $this->verbose_);
 		$smarty->assign('filter', $this->filter_);
 		$smarty->assign('losses', 1);

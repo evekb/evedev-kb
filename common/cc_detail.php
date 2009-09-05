@@ -35,7 +35,6 @@ $smarty->assign('contract_efficiency', $contract->getEfficiency());
 $klist = $contract->getKillList();
 $llist = $contract->getLossList();
 $killsummary = new KillSummaryTable($klist, $llist);
-$killsummary->setBreak(config::get('summarytable_rowcount'));
 if ($_GET['view'] == "") $killsummary->setFilter(false);
 
 $smarty->assign('contract_summary', $killsummary->generate());

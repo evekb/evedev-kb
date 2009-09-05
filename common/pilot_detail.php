@@ -108,7 +108,6 @@ $summary = new KillSummaryTable($klist, $llist);
 //$summary = new KillSummaryTable();
 //$summary->addInvolvedPilot($pilot);
 
-$summary->setBreak(config::get('summarytable_rowcount'));
 if ($_GET['view'] == "ships_weapons")
 {
 	$summary->setFilter(false);

@@ -1,9 +1,14 @@
-<!-- summarytable.tpl --><table class="kb-subtable" width="100%" border="0" cellspacing="0">
+{if $losses}{if $verbose}{assign var=columns value=2}{math assign='class_width' equation='floor((760-240*x)/x)' x=$columns}
+{else}{assign var=columns value=4}{math assign='class_width' equation='floor((760-60*x)/x)' x=$columns}{/if}
+{else}{if $verbose}{assign var=columns value=3}{math assign='class_width' equation='floor((760-120*x)/x)' x=$columns}
+{else}{assign var=columns value=4}{math assign='class_width' equation='floor((760-30*x)/x)' x=$columns}{/if}{/if}
+{math assign='width' equation='floor(100/x)' x=$columns}
+<!-- summarytable.tpl --><table class="kb-subtable" width="760" border="0" cellspacing="0">
 	<tr>
 		<td valign="top" width="{$width}%">
 			<table class="kb-table" cellspacing="1" width="100%">
 				<tr class="kb-table-header">
-					<td class="kb-table-cell" width="{$width_abs}">Ship class</td>
+					<td class="kb-table-cell" width="{$class_width}">Ship class</td>
 {if $verbose}
 					<td class="kb-table-cell" width="60" align="center">Kills</td>
 					<td class="kb-table-cell" width="60" align="center">ISK (M)</td>
@@ -15,11 +20,11 @@
 	{/if}
 {/if}	</tr>
 {cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
-{foreach from=$summary item=i}
-{if $i.break }{cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
+{assign var=classcount value=0}{foreach from=$summary item=i}{assign var=classcount value=$classcount+1}
+{if $classcount > round($count/$columns) }{assign var=classcount value=1}{cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
 			</table></td><td valign="top" width="{$width}%"><table class="kb-table" cellspacing="1" width="100%">
 				<tr class="kb-table-header">
-					<td class="kb-table-cell" width="{$width_abs}">Ship class</td>
+					<td class="kb-table-cell" width="{$class_width}">Ship class</td>
 	{if $verbose}					<td class="kb-table-cell" width="60" align="center">Kills</td>
 					<td class="kb-table-cell" width="60" align="center">ISK (M)</td>
 		{if $losses}					<td class="kb-table-cell" width="60" align="center">Losses</td>
