@@ -5,14 +5,13 @@
 */
 
 @error_reporting(E_ALL ^ E_NOTICE);
-if (PHP_OS === 'Windows')
+if (!substr_compare(PHP_OS, 'win', 0, 3, true))
 {
-    @ini_set('include_path', ini_get('include_path').';.\\common\\includes');
+	@ini_set('include_path', ini_get('include_path').';.\\common\\includes');
 }
 else
 {
-    @ini_set('include_path', ini_get('include_path').':./common/includes');
+	@ini_set('include_path', ini_get('include_path').':./common/includes');
 }
 
 include('common/index.php');
-?>
