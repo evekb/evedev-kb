@@ -14,10 +14,11 @@ class PageSplitter
 
     function generate()
     {
+		global $smarty;
         if ($this->max_ / $this->split_ <= 1)
             return;
 
-        $html = "<br><p><b>[</b> Page: ";
+        $html = "<br /><b>[</b> Page: ";
         $endpage = ceil($this->max_ / $this->split_);
         if ($_GET['page'])
         {
@@ -31,7 +32,12 @@ class PageSplitter
             $url = $_SERVER['QUERY_STRING'];
 			$url =preg_replace("/&/", "&amp;", $url);
             $page = 1;
-        }
+		}
+		$smarty->assign('splitter_endpage', $endpage);
+		$smarty->assign('splitter_page', $page);
+		$smarty->assign('splitter_url', $url);
+		$html = $smarty->fetch(get_tpl('pagesplitter'));
+		/*
         for ($i = 1; $i <= $endpage; $i++)
         {
             if ($i != $page)
@@ -56,6 +62,7 @@ class PageSplitter
                 $html .= "<b>".$i."</b>&nbsp;";
         }
         $html .= "<b>]</b>";
+		 */
         return $html;
     }
 }
