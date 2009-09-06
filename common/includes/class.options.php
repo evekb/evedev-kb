@@ -250,7 +250,7 @@ class options
                 // if this subfield has no options then it is a category
                 if (!is_array($array))
                 {
-                    $menubox->addOption('link', $subfield, urlencode($array));
+                    $menubox->addOption('link', $subfield, $array);
                     continue;
                 }
 
