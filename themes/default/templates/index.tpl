@@ -3,6 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" dir="ltr">
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<meta name="description" content="EDK Killboard - {$config->get('cfg_kbtitle')}" />
+<meta name="keywords" content="EDK, killboard, {$config->get('cfg_kbtitle')}, {if $kb_owner}{$kb_owner}, {/if}Eve-Online, killmail" />
 <title>{$kb_title}</title>
 <link rel="stylesheet" type="text/css" href="{$theme_url}/{$style}.css" />
 {$page_headerlines}

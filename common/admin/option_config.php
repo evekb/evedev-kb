@@ -1,9 +1,9 @@
 <?php
 options::cat('Advanced', 'Configuration', 'Killboard Configuration');
 options::fadd('Display profiling information', 'cfg_profile', 'checkbox');
-options::fadd('KB_TITLE', 'cfg_kbtitle', 'edit:size:50');
-options::fadd('KB_HOST', 'cfg_kbhost', 'edit:size:50','', array('admin_config', 'checkHost'));
-options::fadd('IMG URL', 'cfg_img', 'edit:size:50','', array('admin_config', 'checkImg'));
+options::fadd('Killboard Title', 'cfg_kbtitle', 'edit:size:50');
+options::fadd('Killboard Host', 'cfg_kbhost', 'edit:size:50','', array('admin_config', 'checkHost'));
+options::fadd('Image base URL', 'cfg_img', 'edit:size:50','', array('admin_config', 'checkImg'));
 options::fadd('Main Webpage Link', 'cfg_mainsite', 'edit:size:50');
 options::fadd('Allow Masterfeed', 'feed_allowmaster', 'checkbox');
 

@@ -68,7 +68,7 @@ class Page
     {
         global $smarty;
 
-        $smarty->assign('kb_title', KB_TITLE.' Killboard - '.$this->title_);
+        $smarty->assign('kb_title', KB_TITLE.' '.$this->title_);
 
         $style = config::get('style_name');
         $smarty->assign('style', $style);

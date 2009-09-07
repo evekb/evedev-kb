@@ -85,25 +85,6 @@ define('THEME_URL', config::get('cfg_kbhost').'/themes/'.config::get('theme_name
 define('IMG_URL', config::get('cfg_img'));
 define('KB_TITLE', config::get('cfg_kbtitle'));
 
-// pilot id not fully implemented yet.
-if (0 && config::get('cfg_pilotid'))
-{
-	define('PILOT_ID', intval(config::get('cfg_pilotid')) );
-	define('CORP_ID', 0);
-	define('ALLIANCE_ID', 0);
-}
-elseif (config::get('cfg_corpid'))
-{
-	define('PILOT_ID', 0);
-	define('CORP_ID', intval(config::get('cfg_corpid')));
-	define('ALLIANCE_ID', 0);
-}
-else
-{
-	define('PILOT_ID', 0);
-	define('CORP_ID', 0);
-	define('ALLIANCE_ID', intval(config::get('cfg_allianceid')));
-}
 
 // setting up smarty and feed it with some config
 $smarty = new Smarty();
@@ -118,6 +99,42 @@ $smarty->assign('style', config::get('style_name'));
 $smarty->assign('img_url', IMG_URL);
 $smarty->assign('kb_host', KB_HOST);
 $smarty->assign_by_ref('config', $config);
+
+// pilot id not fully implemented yet.
+if (0 && config::get('cfg_pilotid'))
+{
+	define('PILOT_ID', intval(config::get('cfg_pilotid')) );
+	define('CORP_ID', 0);
+	define('ALLIANCE_ID', 0);
+	require_once('common/includes/class.pilot.php');
+	$pilot=new Pilot(PILOT_ID);
+	$smarty->assign('kb_owner', htmlentities($pilot->getName() ));
+}
+elseif (config::get('cfg_corpid'))
+{
+	define('PILOT_ID', 0);
+	define('CORP_ID', intval(config::get('cfg_corpid')));
+	define('ALLIANCE_ID', 0);
+	require_once('common/includes/class.corp.php');
+	$corp=new Corporation(CORP_ID);
+	$smarty->assign('kb_owner', htmlentities($corp->getName() ));
+}
+elseif(config::get('cfg_allianceid'))
+{
+	define('PILOT_ID', 0);
+	define('CORP_ID', 0);
+	define('ALLIANCE_ID', intval(config::get('cfg_allianceid')));
+	require_once('common/includes/class.alliance.php');
+	$alliance=new Alliance(ALLIANCE_ID);
+	$smarty->assign('kb_owner', htmlentities($alliance->getName() ));
+}
+else
+{
+	define('PILOT_ID', 0);
+	define('CORP_ID', 0);
+	define('ALLIANCE_ID', 0);
+	$smarty->assign('kb_owner', false);
+}
 
 // set up titles/roles
 role::init();
