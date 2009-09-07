@@ -210,14 +210,14 @@ class pHome extends pageAssembly
 			$menubox->addOption("link","Previous week",
 				"?a=home&amp;w=" . $this->pweek . "&amp;y=" . $this->pyear . $suffix.$suffixscl);
 		}
-		if(kbdate('W') != $this->week || getYear() != $this->year) $weektext = $this->week . ", " . $this->year;
-		else $weektext = "This Week's";
-		$menubox->addOption("link", $weektext." Kills",
+		//if(kbdate('W') != $this->week || getYear() != $this->year) $weektext = $this->week . ", " . $this->year;
+		//else $weektext = "All kills";
+		$menubox->addOption("link", "Kills",
 			"?a=home&amp;w=" . $this->week . "&amp;y=" . $this->year . '&amp;kills'.$suffixscl);
-		$menubox->addOption("link", $weektext." Losses",
+		$menubox->addOption("link", "Losses",
 			"?a=home&amp;w=" . $this->week . "&amp;y=" . $this->year . '&amp;losses'.$suffixscl);
 		if(config::get('show_comb_home')) $menubox->addOption("link",
-				$weektext." All Kills",
+				$weektext."All Kills",
 				"?a=home&amp;w=" . $this->week . "&amp;y=" . $this->year.$suffixscl);
 		return $menubox->generate();
 	}
