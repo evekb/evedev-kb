@@ -27,6 +27,7 @@ class session
     function create($admin = false)
     {
         session_start();
+		session_regenerate_id();
         $_SESSION['admin'] = $admin;
 		$_SESSION['rsite'] = $_SERVER["HTTP_HOST"];
 		$_SESSION['site'] = md5(KB_SITE);
