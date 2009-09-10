@@ -7,7 +7,7 @@ function [subfoldername] is called. Official updates are numbered sequentially.
 e.g. upgrade/012/
 */
 if(function_exists("set_time_limit"))
-	set_time_limit(0);
+	@set_time_limit(0);
 
 define('DB_HALTONERROR', true);
 chdir("..");
