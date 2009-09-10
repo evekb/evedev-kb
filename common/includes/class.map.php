@@ -95,6 +95,7 @@ class MapView
 
         $qry = new DBQuery();
         $qry->execute($sql);
+		if(!$qry->recordCount()) die;
         $row = $qry->getRow();
 
         $this->conid_ = $row['con_id'];
