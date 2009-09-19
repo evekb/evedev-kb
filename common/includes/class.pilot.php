@@ -249,12 +249,12 @@ class Pilot
 		}
 		$this->externalid_ = intval($externalID);
 		$qry = new DBQuery(true);
-		$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_external_id = ".$externalid." AND plt_id <> ".$this->id_);
+		$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_externalid = ".$externalid." AND plt_id <> ".$this->id_);
 		if($qry->recordCount())
 		{
 			$result = $qry->getRow();
 			$qry->autocommit(false);
-			$old_id = $result['crp_id'];
+			$old_id = $result['plt_id'];
 			$qry->execute("UPDATE kb3_pilots SET plt_name = '.$this->name_.' where plt_id = ".$old_id);
 			$qry->execute("UPDATE kb3_kills SET kll_victim_id = ".$old_id." WHERE kll_victim_id = ".$this->id_);
 			$qry->execute("UPDATE kb3_kills SET kll_fb_plt_id = ".$old_id." WHERE kll_fb_plt_id = ".$this->id_);
