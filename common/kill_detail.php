@@ -26,7 +26,7 @@ $kill->setDetailedInvolved();
 
 if (!$kill->exists())
 {
-    $html="That kill doesn't exist.";
+    $html="The specified kill is not valid.";
     $page->setContent($html);
     $page->generate($html);
     exit;
