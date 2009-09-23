@@ -329,15 +329,10 @@ class TopKillsList extends TopList
               inner join kb3_pilots plt
 	 	      on ( plt.plt_id = ind.ind_plt_id ";
 		if ($this->inv_crp_)
-			$sql .= " and plt.plt_crp_id in ( ".implode(",", $this->inv_crp_)." )";
-		$sql .= ")";
-
+			$sql .= " and ind.ind_crp_id in ( ".implode(",", $this->inv_crp_)." )";
 		if ($this->inv_all_)
-		{
-			$sql .= ' inner join kb3_corps crp on ( crp.crp_id = ind.ind_crp_id ';
-			$sql .= " and crp.crp_all_id in ( ".implode(",", $this->inv_all_)." )";
-			$sql .= ")";
-		}
+			$sql .= " and ind.ind_all_id in ( ".implode(",", $this->inv_all_)." )";
+		$sql .= ")";
 
 		$this->setSQLTop($sql);
 
@@ -399,16 +394,11 @@ class TopScoreList extends TopList
               inner join kb3_pilots plt
 	 	      on ( plt.plt_id = ind.ind_plt_id ";
 		if ($this->inv_crp_)
-			$sql .= " and plt.plt_crp_id in ( ".implode(",", $this->inv_crp_)." )";
+			$sql .= " and ind.ind_crp_id in ( ".implode(",", $this->inv_crp_)." )";
+		if ($this->inv_all_)
+			$sql .= " and ind.ind_all_id in ( ".implode(",", $this->inv_all_)." )";
 
 		$sql .= ")";
-
-		if ($this->inv_all_)
-		{
-			$sql .= ' inner join kb3_corps crp on ( crp.crp_id = ind.ind_crp_id ';
-			$sql .= " and crp.crp_all_id in ( ".implode(",", $this->inv_all_)." )";
-			$sql .= ')';
-		}
 
 		$this->setSQLTop($sql);
 
@@ -471,19 +461,17 @@ class TopFinalBlowList extends TopList
 
 	function generate()
 	{
-		$sql = "select count(kll.kll_id) as cnt, kll.kll_fb_plt_id as plt_id
-                from kb3_kills kll
-				inner join kb3_inv_detail ind on (ind.ind_kll_id = kll.kll_id)
-              inner join kb3_pilots plt
-	 	      on ( plt.plt_id = kll.kll_fb_plt_id ";
+		$sql = "select count(ind.ind_kll_id) as cnt, kll.kll_fb_plt_id as plt_id
+                from kb3_inv_detail ind
+                inner join kb3_kills kll on (ind.ind_kll_id = kll.kll_id ";
 		if ($this->inv_crp_)
-			$sql .= " and plt.plt_crp_id in ( ".implode(",", $this->inv_crp_)." )";
+			$sql .= " and ind.ind_crp_id in ( ".implode(",", $this->inv_crp_)." )";
 
 		$sql .= ")";
 
 		$this->setSQLTop($sql);
 
-		$this->setSQLBottom("AND ind.ind_plt_id = kll.kll_fb_plt_id group by kll.kll_fb_plt_id order by 1 desc
+		$this->setSQLBottom("AND ind.ind_plt_id = kll.kll_fb_plt_id group by ind.ind_plt_id order by cnt desc
                             limit 30 /* TopFinalBlowList */");
 		$this->setPodsNoobShips(false);
 	}
