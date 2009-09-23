@@ -262,6 +262,7 @@ class Kill
 		}
 
 		$this->execQuery();
+		if(!$this->valid_) return "The specified kill ID is not valid.";
 		if ($this->isClassified())
 		{
 			return 'Killmail not yet available, try again in '.round($this->getClassifiedTime()/3600, 2).' hrs.';
