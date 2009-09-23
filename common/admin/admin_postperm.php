@@ -1,5 +1,4 @@
 <?php
-require_once('common/includes/class.contract.php');
 require_once('common/includes/class.http.php');
 require_once('common/admin/admin_menu.php');
 

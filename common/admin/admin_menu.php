@@ -42,7 +42,7 @@ class Box2 extends Box
 
 $menubox = new Box2();
 
-options::oldMenu('Features', "Contracts", "?a=admin_cc&amp;op=view&amp;type=contract");
+//options::oldMenu('Features', "Contracts", "?a=admin_cc&amp;op=view&amp;type=contract");
 options::oldMenu('Features', "Campaigns", "?a=admin_cc&amp;op=view&amp;type=campaign");
 options::oldMenu('Features', "Standings", "?a=admin_standings");
 
