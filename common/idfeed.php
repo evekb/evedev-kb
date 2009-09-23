@@ -12,28 +12,45 @@
  * alliance = alliance id to retrieve kills for
  *
  */
+
+$maxkillsreturned = 100;
 require_once('common/includes/class.killlist.php');
 $list = new KillList();
 if(!isset($_REQUEST['allkills'])) $list->setAPIKill();
-$list->setLimit(100);
+$list->setLimit($maxkillsreturned);
 $list->setOrdered(true);
 $list->setOrderBy(' kll.kll_external_id DESC ');
 $qry = new DBQuery();
 if(isset($_REQUEST['alliance']))
 {
-	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_external_id = ".intval($_REQUEST['alliance']));
+	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_external_id = ".intval($_REQUEST['alliance']." LIMIT 1"));
+	if(!$qry->recordCount())
+	{
+		$xml = "<?xml version='1.0' encoding='UTF-8'?><eveapi version='2'></eveapi>";
+		die($xml);
+	}
 	$row = $qry->getRow();
 	$list->addCombinedAlliance($row['all_id']);
 }
 if(isset($_REQUEST['corp'])) 
 {
-	$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_external_id = ".intval($_REQUEST['corp']));
+	$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_external_id = ".intval($_REQUEST['corp']." LIMIT 1"));
+	if(!$qry->recordCount())
+	{
+		$xml = "<?xml version='1.0' encoding='UTF-8'?><eveapi version='2'></eveapi>";
+		die($xml);
+	}
 	$row = $qry->getRow();
 	$list->addCombinedCorp($row['crp_id']);
 }
 if(isset($_REQUEST['pilot']))
 {
 	$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_externalid = ".intval($_REQUEST['pilot'])." LIMIT 1");
+	if(!$qry->recordCount())
+	{
+		$xml = "<?xml version='1.0' encoding='UTF-8'?><eveapi version='2'></eveapi>";
+		die($xml);
+	}
 	$row = $qry->getRow();
 	$list->addCombinedPilot($row['plt_id']);
 }
@@ -41,12 +58,14 @@ if(isset($_REQUEST['lastID'])) $list->setMinExtID(intval($_REQUEST['lastID']));
 if(isset($_REQUEST['startdate'])) $list->setStartDate(intval($_REQUEST['startdate']));
 if(isset($_REQUEST['enddate'])) $list->setStartDate(intval($_REQUEST['enddate']));
 $date = gmdate('Y-m-d H:i:s');
+/*
 $text = "<?xml version='1.0' encoding='UTF-8'?>
 <eveapi version='2'>
   <currentTime>".$date."</currentTime>
   <result>
     <rowset name='kills' key='killID' columns='killID,solarSystemID,killTime,moonID'>
 ";
+*/
 $xml = "<?xml version='1.0' encoding='UTF-8'?>
 <eveapi version='2'>
 </eveapi>";
@@ -62,7 +81,7 @@ $count = 0;
 while($kill1 = $list->getKill())
 {//$kill = new Kill();
 	$count++;
-	if($kill1->isClassified()) break;
+	if($kill1->isClassified()) continue;
 	$kill = new Kill($kill1->getID());
 	$kill->setDetailedInvolved();
 	$row = $kills->addChild('row');
