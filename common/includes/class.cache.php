@@ -122,8 +122,9 @@ class cache
 					exit;
 				}
 
-				ob_start();
-                @readfile($cachefile);
+				if(!ini_get('zlib.output_compression')) ob_start("ob_gzhandler");
+				else ob_start();
+				@readfile($cachefile);
 				ob_end_flush();
 				exit();
 			}
