@@ -740,7 +740,7 @@ class TopPilotTable
 			}
 			$html .= "<tr class='".$class."'>";
 			$html .= "<td><img src=\"".$pilot->getPortraitURL(32)."\" /></td>";
-			$html .= "<td class='kb-table-cell' width='200'><b>".$i.".</b>&nbsp;<a class='kb-shipclass' href=\"?a='pilot'_detail&amp;plt_id=".$row['plt_id']."\">".$pilot->getName()."</a></td>";
+			$html .= "<td class='kb-table-cell' width='200'><b>".$i.".</b>&nbsp;<a class='kb-shipclass' href=\"?a=pilot_detail&amp;plt_id=".$row['plt_id']."\">".$pilot->getName()."</a></td>";
 			$html .= "<td class='kb-table-cell' align='center'><b>".$row['cnt']."</b></td>";
 
 			$html .= "</tr>";
@@ -789,7 +789,7 @@ class TopCorpTable
 			}
 			$html .= "<tr class='".$class."'>";
 			$html .= "<td class='kb-table-cell' align='center'><b>".$i.".</b></td>";
-			$html .= "<td class='kb-table-cell' width='200'><a href=\"?a='corp'_detail&amp;crp_id=".$row['crp_id']."\">".$corp->getName()."</a></td>";
+			$html .= "<td class='kb-table-cell' width='200'><a href=\"?a=corp_detail&amp;crp_id=".$row['crp_id']."\">".$corp->getName()."</a></td>";
 			$html .= "<td class='kb-table-cell' align='center'><b>".$row['cnt']."</b></td>";
 
 			$html .= "</tr>";
