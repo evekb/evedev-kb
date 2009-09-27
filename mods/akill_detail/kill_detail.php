@@ -911,7 +911,7 @@ class FBlowBox
     function generate()
     {
         global $smarty;
-        return $smarty->fetch('../../../mods/aapoc_fitting/damage_box.tpl');
+        return $smarty->fetch(getcwd().'/mods/akill_detail/damage_box.tpl');
     }
 }
 
@@ -940,7 +940,7 @@ if ((!$kill->isClassified()) || ($page->isAdmin()))
         }
     }
 
-$html.=$smarty->fetch('../../../mods/akill_detail/kill_detail.tpl');
+$html.=$smarty->fetch(getcwd().'/mods/akill_detail/kill_detail.tpl');
 
 $page->setContent($html);
 $page->generate();
