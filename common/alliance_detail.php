@@ -6,6 +6,7 @@ require_once('common/includes/class.killlisttable.php');
 require_once('common/includes/class.killsummarytable.php');
 require_once('common/includes/class.toplist.php');
 
+$_GET['scl_id'] = intval($_GET['scl_id']);
 $all_id = intval($_GET['all_id']);
 $all_external_id = intval($_GET['all_external_id']);
 if (!$all_id && !$all_external_id)
@@ -106,8 +107,8 @@ switch ($_GET['view'])
         $list->setLimit(10);
         $list->setPodsNoobships(true);
         $list->addInvolvedAlliance($alliance);
-        if (intval($_GET['scl_id']))
-            $list->addVictimShipClass(new ShipClass(intval($_GET['scl_id'])));
+        if ($_GET['scl_id'])
+            $list->addVictimShipClass($_GET['scl_id']);
 		//$list->setStartDate(date('Y-m-d H:i',strtotime('- 30 days')));
         $ktab = new KillListTable($list);
         $ktab->setLimit(10);
@@ -121,8 +122,8 @@ switch ($_GET['view'])
         $list->setLimit(10);
         $list->setPodsNoobships(true);
         $list->addVictimAlliance($alliance);
-        if (intval($_GET['scl_id']))
-            $list->addVictimShipClass(new ShipClass(intval($_GET['scl_id'])));
+        if ($_GET['scl_id'])
+            $list->addVictimShipClass($_GET['scl_id']);
 		//$list->setStartDate(date('Y-m-d H:i',strtotime('- 30 days')));
 
         $ltab = new KillListTable($list);
@@ -136,7 +137,7 @@ switch ($_GET['view'])
 		$list->setOrdered(true);
 		$list->addInvolvedAlliance($alliance);
 		if ($_GET['scl_id'])
-			$list->addVictimShipClass(new ShipClass($_GET['scl_id']));
+			$list->addVictimShipClass($_GET['scl_id']);
 		$list->setPageSplit(config::get('killcount'));
 		$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 		$table = new KillListTable($list);
@@ -151,7 +152,7 @@ switch ($_GET['view'])
 		$list->setPodsNoobships(true);
         $list->addVictimAlliance($alliance);
         if ($_GET['scl_id'])
-            $list->addVictimShipClass(new ShipClass($_GET['scl_id']));
+            $list->addVictimShipClass($_GET['scl_id']);
 		$list->setPageSplit(config::get('killcount'));
 		$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 

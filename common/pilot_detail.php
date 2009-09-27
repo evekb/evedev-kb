@@ -8,6 +8,7 @@ require_once('common/includes/class.killlisttable.php');
 require_once('common/includes/class.killsummarytable.php');
 require_once('common/includes/class.toplist.php');
 
+$_GET['scl_id'] = intval($_GET['scl_id']);
 $plt_id = intval($_GET['plt_id']);
 $plt_external_id = intval($_GET['plt_external_id']);
 if(!$plt_id)
@@ -123,7 +124,7 @@ switch ($_GET['view'])
 		$list->setOrdered(true);
 		$list->addInvolvedPilot($pilot);
 		if ($_GET['scl_id'])
-			$list->addVictimShipClass(new ShipClass($_GET['scl_id']));
+			$list->addVictimShipClass($_GET['scl_id']);
 		$list->setPageSplit(config::get('killcount'));
 		$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 		$table = new KillListTable($list);
@@ -140,7 +141,7 @@ switch ($_GET['view'])
 		$list->setPodsNoobships(true);
 		$list->addVictimPilot($pilot);
 		if ($_GET['scl_id'])
-			$list->addVictimShipClass(new ShipClass($_GET['scl_id']));
+			$list->addVictimShipClass($_GET['scl_id']);
 		$list->setPageSplit(config::get('killcount'));
 		$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 
@@ -176,7 +177,7 @@ switch ($_GET['view'])
 		$list->setPodsNoobships(true);
 		$list->addInvolvedPilot($pilot);
 		if ($_GET['scl_id'])
-			$list->addVictimShipClass(new ShipClass($_GET['scl_id']));
+			$list->addVictimShipClass($_GET['scl_id']);
 
 		$table = new KillListTable($list);
 		$table->setDayBreak(false);
@@ -191,7 +192,7 @@ switch ($_GET['view'])
 		$list->setPodsNoobships(true);
 		$list->addVictimPilot($pilot);
 		if ($_GET['scl_id'])
-			$list->addVictimShipClass(new ShipClass($_GET['scl_id']));
+			$list->addVictimShipClass($_GET['scl_id']);
 
 		$table = new KillListTable($list);
 		$table->setDayBreak(false);

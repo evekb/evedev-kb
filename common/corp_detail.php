@@ -8,6 +8,7 @@ require_once('common/includes/class.toplist.php');
 require_once("common/includes/evelogo.php");
 require_once("common/includes/class.eveapi.php");
 
+$_GET['scl_id'] = intval($_GET['scl_id']);
 $crp_id = intval($_GET['crp_id']);
 $crp_external_id = intval($_GET['crp_external_id']);
 if (!$crp_id && !$crp_external_id)
@@ -99,7 +100,7 @@ if (file_exists("img/corps/".$corp->getID().".jpg") || file_exists("img/corps/".
 else
 {
 	if ($alliance != 0)
-	{	
+	{
 		$mylogo = $myAPI->getLogo();
 		
 		if ($result == "Corporation is not part of alliance.")
@@ -109,9 +110,8 @@ else
 			// create two sized logo's in 2 places - this allows checks already in place not to keep requesting corp logos each time page is viewed
 			// class.thumb.php cannot work with png (although saved as jpg these are actually pngs) therefore we have to create the 128 size for it
 			// doing this prevents the images being rendered each time the function is called and allows it to use one in the cache instead.
-			CorporationLogo( $mylogo, 64, $corp->getID() );
-			CorporationLogo( $mylogo, 128, $corp->getID() );
-			
+			CorporationLogo( $mylogo, 64, $corp->getExternalID() );
+			CorporationLogo( $mylogo, 128, $corp->getExternalID() );
 			$html .= "<img src=\"".$corp->getPortraitURL(128)."\" border=\"0\" alt=\"\" /></td>";
 		} else {
 			// some kind of error getting details from CCP so abort writing file(s) allowing us to try again later - in the meantime, lets print trusty default
@@ -205,7 +205,7 @@ switch ($_GET['view'])
         $list->setPodsNoobships(true);
         $list->addInvolvedCorp($corp);
         if ($_GET['scl_id'])
-            $list->addVictimShipClass(new ShipClass($_GET['scl_id']));
+            $list->addVictimShipClass($_GET['scl_id']);
 		$list->setStartDate(date('Y-m-d H:i',strtotime('- 30 days')));
 
         $ktab = new KillListTable($list);
@@ -221,7 +221,7 @@ switch ($_GET['view'])
         $list->setPodsNoobships(true);
         $list->addVictimCorp($corp);
         if ($_GET['scl_id'])
-            $list->addVictimShipClass(new ShipClass($_GET['scl_id']));
+            $list->addVictimShipClass($_GET['scl_id']);
 		$list->setStartDate(date('Y-m-d H:i',strtotime('- 30 days')));
 
         $ltab = new KillListTable($list);
@@ -237,7 +237,7 @@ switch ($_GET['view'])
         $list->setOrdered(true);
         $list->addInvolvedCorp($corp);
         if ($_GET['scl_id'])
-            $list->addVictimShipClass(new ShipClass($_GET['scl_id']));
+            $list->addVictimShipClass($_GET['scl_id']);
 		$list->setPageSplit(config::get('killcount'));
 		$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
         $table = new KillListTable($list);
@@ -254,7 +254,7 @@ switch ($_GET['view'])
         $list->setPodsNoobships(true);
         $list->addVictimCorp($corp);
         if ($_GET['scl_id'])
-            $list->addVictimShipClass(new ShipClass($_GET['scl_id']));
+            $list->addVictimShipClass($_GET['scl_id']);
 		$list->setPageSplit(config::get('killcount'));
 		$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 

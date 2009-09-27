@@ -68,7 +68,7 @@ involved::load($klist,'kill');
 $klist->setLimit(20);
 
 if ($_GET['scl_id'])
-    $klist->addVictimShipClass(new ShipClass($_GET['scl_id']));
+    $klist->addVictimShipClass(intval($_GET['scl_id']));
 else
     $klist->setPodsNoobShips(false);
 

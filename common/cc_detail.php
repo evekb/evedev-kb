@@ -6,7 +6,7 @@ require_once('common/includes/class.contract.php');
 require_once('common/includes/class.toplist.php');
 
 $ctr_id = intval($_GET['ctr_id']);
-
+$_GET['scl_id'] = intval($_GET['scl_id']);
 $contract = new Contract($ctr_id);
 
 if ($contract->getCampaign())
@@ -88,7 +88,7 @@ switch ($_GET['view'])
         $klist = $contract->getKillList();
         $klist->setOrdered(true);
         if ($_GET['scl_id'])
-            $klist->addVictimShipClass(intval($_GET['scl_id']));
+            $klist->addVictimShipClass($_GET['scl_id']);
         else
             $klist->setPodsNoobShips(false);
 
@@ -100,7 +100,7 @@ switch ($_GET['view'])
         $llist = $contract->getLossList();
         $llist->setOrdered(true);
         if ($_GET['scl_id'])
-            $llist->addVictimShipClass(new ShipClass($_GET['scl_id']));
+            $llist->addVictimShipClass($_GET['scl_id']);
         else
             $llist->setPodsNoobShips(false);
 
@@ -115,7 +115,7 @@ switch ($_GET['view'])
         $list = $contract->getKillList();
         $list->setOrdered(true);
         if ($_GET['scl_id'])
-            $list->addVictimShipClass(intval($_GET['scl_id']));
+            $list->addVictimShipClass($_GET['scl_id']);
 
 		$list->setPageSplit(config::get('killcount'));
 		$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
@@ -130,7 +130,7 @@ switch ($_GET['view'])
         $llist = $contract->getLossList();
         $llist->setOrdered(true);
         if ($_GET['scl_id'])
-            $llist->addVictimShipClass(intval($_GET['scl_id']));
+            $llist->addVictimShipClass($_GET['scl_id']);
 
 		$llist->setPageSplit(config::get('killcount'));
 		$pagesplitter = new PageSplitter($llist->getCount(), config::get('killcount'));
@@ -145,7 +145,7 @@ switch ($_GET['view'])
         $list = $contract->getKillList();
         $list->setOrdered(true);
         if ($_GET['scl_id'])
-            $list->addVictimShipClass(intval($_GET['scl_id']));
+            $list->addVictimShipClass($_GET['scl_id']);
 
 		$list->setPageSplit(config::get('killcount'));
 		$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
@@ -158,7 +158,7 @@ switch ($_GET['view'])
         $llist = $contract->getLossList();
         $llist->setOrdered(true);
         if ($_GET['scl_id'])
-            $llist->addVictimShipClass(intval($_GET['scl_id']));
+            $llist->addVictimShipClass($_GET['scl_id']);
 
 		$llist->setPageSplit(config::get('killcount'));
 		$pagesplitter = new PageSplitter($llist->getCount(), config::get('killcount'));

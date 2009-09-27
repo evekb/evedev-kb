@@ -111,7 +111,7 @@ class ShipClass
     function ShipClass($id = 0)
     {
         if (!$id) $id = 0;
-        $this->id_ = $id;
+        $this->id_ = intval($id);
 
         $this->qry_ = new DBQuery();
     }
@@ -123,7 +123,7 @@ class ShipClass
 
     function getName()
     {
-        if ($this->name_ == "") $this->execQuery();
+        if (!$this->name_) $this->execQuery();
         return $this->name_;
     }
 
