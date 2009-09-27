@@ -342,17 +342,17 @@ class DBDebug
 	}
 	function killCache()
     {
-		if(!is_dir(KB_CACHEDIR)) return;
-		$dir = opendir(KB_CACHEDIR);
+		if(!is_dir(KB_QUERYCACHEDIR)) return;
+		$dir = opendir(KB_QUERYCACHEDIR);
 		while ($line = readdir($dir))
 		{
 			if (strstr($line, 'qcache_qry') !== false)
 			{
-				@unlink(KB_CACHEDIR.'/'.$line);
+				@unlink(KB_QUERYCACHEDIR.'/'.$line);
 			}
 			elseif (strstr($line, 'qcache_tbl') !== false)
 			{
-				@unlink(KB_CACHEDIR.'/'.$line);
+				@unlink(KB_QUERYCACHEDIR.'/'.$line);
 			}
 		}
 	}

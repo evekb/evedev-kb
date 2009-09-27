@@ -1,24 +1,18 @@
 <?php
 // current subversion revision
-if (file_exists('cache/svnrev.php'))
-{
-	include('cache/svnrev.php');
-}
-else
-{
-	$svn_rev = '435dev';
-}
-define('SVN_REV', $svn_rev);
+define('SVN_REV', '2.1alpha');
 
 define('LATEST_DB_UPDATE',"012");
+
+define('KB_CACHEDIR', 'cache');
+define('KB_PAGECACHEDIR', KB_CACHEDIR.'/page');
+define('KB_MAILCACHEDIR', KB_CACHEDIR.'/mails');
+define('KB_QUERYCACHEDIR', KB_CACHEDIR.'/SQLqueries');
 
 // current version: major.minor.sub
 // unpair numbers for minor = development version
 define('KB_VERSION', '2.1 alpha');
 define('KB_RELEASE', '(Apocrypha)');
-
-// set the running-server for id-syncs here
-define('KB_SYNCURL', 'http://sync.eve-dev.net/?a=sync_server');
 
 // add new corporations here once you've added the logo to img/corps/
 $corp_npc = array('Guristas', 'Serpentis Corporation', 'Sansha\'s Nation', 'CONCORD',

@@ -123,5 +123,25 @@ class Alliance
 		}
 		return 0;
 	}
+	//! Return the URL for the alliance's portrait.
+
+    /*!
+     * \param $size The desired portrait size.
+	 * \return URL for a portrait.
+     */
+	function getPortraitURL($size = 128)
+	{
+		if (file_exists("img/alliances/".$this->getUnique().".png"))
+		{
+			return "img/alliances/".$this->getUnique().".png";
+//			return '?a=thumb&amp;id='.$this->id_.'&amp;size='.$size.'&amp;int=1';
+		}
+		else
+		{
+			if( file_exists(KB_CACHEDIR.'/img/alliances/'.$this->getUnique().'_'.$size.'.jpg'))
+				return KB_CACHEDIR.'/img/alliances/'.$this->getUnique().'_'.$size.'.jpg';
+			else return '?a=thumb&amp;id='.$this->getUnique().'&amp;size='.$size;
+		}
+	}
 }
 ?>

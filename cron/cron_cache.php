@@ -24,10 +24,10 @@ chdir($KB_HOME);
 //chdir($KB_HOME); 
 
 require_once( "kbconfig.php" );
+require_once( "common/includes/globals.php" );
 require_once( "common/includes/class.config.php" );
 require_once( "common/includes/class.apicache.php" );
 require_once( "common/includes/class.event.php" );
-require_once( "common/includes/globals.php" );
 require_once( "common/includes/class.eveapi.php" );
 require_once( "common/includes/db.php" );
 

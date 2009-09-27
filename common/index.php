@@ -165,9 +165,6 @@ if (config::get('auto_reinforced'))
         }
     }
 }
-// Enable page caching if set.
-if(config::get('cache_enabled')) define('KB_CACHE', 1);
-else define('KB_CACHE', 0);
 
 if(config::get('DBUpdate') < LATEST_DB_UPDATE)
 {

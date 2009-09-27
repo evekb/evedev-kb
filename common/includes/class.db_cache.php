@@ -38,13 +38,13 @@ class DBCachedQuery
             return false;
         }
 
-        if (file_exists(KB_CACHEDIR.'/qcache_qry_'.$this->_hash))
+        if (file_exists(KB_QUERYCACHEDIR.'/qcache_qry_'.$this->_hash))
         {
-            $this->_mtime = filemtime(KB_CACHEDIR.'/qcache_qry_'.$this->_hash);
+            $this->_mtime = filemtime(KB_QUERYCACHEDIR.'/qcache_qry_'.$this->_hash);
             /// Remove cached queries more than an hour old.
             if (time() - $this->_mtime > 3600 )
             {
-                unlink(KB_CACHEDIR.'/qcache_qry_'.$this->_hash);
+                unlink(KB_QUERYCACHEDIR.'/qcache_qry_'.$this->_hash);
                 return false;
             }
             if ($this->isCacheValid())
@@ -127,7 +127,7 @@ class DBCachedQuery
 
 		foreach ($this->_usedtables as $table)
         {
-            $file = KB_CACHEDIR.'/qcache_tbl_'.trim($table);
+            $file = KB_QUERYCACHEDIR.'/qcache_tbl_'.trim($table);
             if (file_exists($file))
             {
                 // if one of the tables is outdated, the query is outdated
@@ -197,7 +197,7 @@ class DBCachedQuery
 
         foreach ($tables as $table)
         {
-            $file = KB_CACHEDIR.'/qcache_tbl_'.$table;
+            $file = KB_QUERYCACHEDIR.'/qcache_tbl_'.$table;
             @touch($file);
         }
         // refresh php's filestatcache so we dont get wrong timestamps on changed files
@@ -235,7 +235,7 @@ class DBCachedQuery
         }
 
         // write data into textfile
-        file_put_contents(KB_CACHEDIR.'/qcache_qry_'.$this->_hash, serialize($this->_cache));
+        file_put_contents(KB_QUERYCACHEDIR.'/qcache_qry_'.$this->_hash, serialize($this->_cache));
 
         $this->_cached = true;
         $this->_currrow = 0;
@@ -246,7 +246,7 @@ class DBCachedQuery
     function loadCache()
     {
         // loads the cachefile into the memory
-        $this->_cache = unserialize(file_get_contents(KB_CACHEDIR.'/qcache_qry_'.$this->_hash));
+        $this->_cache = unserialize(file_get_contents(KB_QUERYCACHEDIR.'/qcache_qry_'.$this->_hash));
 
         $this->_cached = true;
         $this->_currrow = 0;

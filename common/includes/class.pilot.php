@@ -75,8 +75,8 @@ class Pilot
 		}
 		else
 		{
-			if( file_exists('cache/portraits/'.$this->externalid_.'_'.$size.'.jpg'))
-				return 'cache/portraits/'.$this->externalid_.'_'.$size.'.jpg';
+			if( file_exists('cache/img/pilots/'.substr($this->externalid_,0,2).'/'.substr($this->externalid_,2,2).'/'.$this->externalid_.'_'.$size.'.jpg'))
+				return 'cache/img/pilots/'.substr($this->externalid_,0,2).'/'.substr($this->externalid_,2,2).'/'.$this->externalid_.'_'.$size.'.jpg';
 			else return '?a=thumb&amp;id='.$this->externalid_.'&amp;size='.$size;
 		}
 	}

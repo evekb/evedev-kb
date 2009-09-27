@@ -27,19 +27,9 @@
 //
 //-----------------------------------------------------------------------------
 
-define ("EVELOGOVERSION", "V1.2");
+define ("EVELOGOVERSION", "V1.2.1");
 
-// Checks for configuration of files and folders
-if (!file_exists("img/corps")) 
-{
-    if (!mkdir("img/corps", 0777))
-	{
-		// creating folder failed - spam something about that
-		echo "Failed to create folder 'img/corps' you should create the folder yourself and set chmod 777";
-	}
-} 
-
-function CorporationLogo($data, $size = 64, $filename)
+function CorporationLogo($data, $size = 64, $id)
 {
 	/* Generates corp logo defined by the parameters in data object. The data
 object may be an eveapi logo element from the CorporationSheet, a dict
@@ -141,8 +131,9 @@ a background with the color of your choice if specified, otherwise black.*/
 		//imagepng ( $logo , "img/corps/" . $filename . ".jpg" );
 	}
 	
-	imagejpeg ( $logo , "img/corps/" . $filename . ".jpg" );
-	
+	if(!file_exists(KB_CACHEDIR.'/img/corps/'.substr($id,0,2)))
+		mkdir(KB_CACHEDIR.'/img/corps/'.substr($id,0,2));
+	imagejpeg ( $logo , KB_CACHEDIR.'/img/corps/' . substr($id,0,2).'/'.$id. "_64.jpg" );
 	imagedestroy($logo);
 	if ($shape1)
 		imagedestroy($layer1);

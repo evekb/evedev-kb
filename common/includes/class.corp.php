@@ -34,6 +34,10 @@ class Corporation
 	//! Return a URL for the icon of this corporation.
 	function getPortraitURL($size = 64)
 	{
+		$this->getExternalID();
+		if($this->externalid_ &&
+			file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->externalid_,0,2).'/'.$this->externalid_.'_'.$size.'.jpg'))
+				return KB_CACHEDIR.'/img/corps/'.substr($this->externalid_,0,2).'/'.$this->externalid_.'_'.$size.'.jpg';
 		if ($this->isNPCCorp() || file_exists('img/corps/'.$this->getUnique().'.jpg'))
 		{
 			if($size == 128)
@@ -42,11 +46,11 @@ class Corporation
 					return 'img/corps/c'.$this->externalid_.'.jpg';
 				else return 'img/corps/'.$this->getUnique().'.jpg';
 			}
-			if($this->externalid_ > 1000001 && $this->externalid_ < 1000183)
+			elseif($this->externalid_ > 1000001 && $this->externalid_ < 1000183)
 				return '?a=thumb&amp;type=corp&amp;id=c'.$this->externalid_.'&amp;size='.$size;
 			else return '?a=thumb&amp;type=corp&amp;id='.$this->getUnique().'&amp;size='.$size;
 		}
-		return '?a=thumb&amp;type=corp&amp;id='.$this->id_.'&amp;size='.$size;
+		return '?a=thumb&amp;type=corp&amp;id='.$this->externalid_.'&amp;size='.$size;
 	}
 
 	//! Return the corporation CCP ID.
@@ -112,7 +116,7 @@ class Corporation
 			$row = $qry->getRow();
 			$this->id_ = $row['crp_id'];
 			$this->name_ = $row['crp_name'];
-			$this->externalid_ = $row['crp_external_id'];
+			$this->externalid_ = intval($row['crp_external_id']);
 			$this->alliance_ = $row['crp_all_id'];
 		}
 	}

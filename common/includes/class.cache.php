@@ -50,7 +50,7 @@ class cache
 		}
 
 		$cacheignore = explode(',', config::get('cache_ignore'));
-		if (KB_CACHE == 1 && count($_POST) == 0 && !($page != '' && in_array($page, $cacheignore)))
+		if (config::get('cache_enabled') && count($_POST) == 0 && !($page != '' && in_array($page, $cacheignore)))
 		{
 			return true;
 		}
@@ -94,15 +94,15 @@ class cache
 			else $timestamp = 0;
 
 			if(config::get('cache_update') == '*')
-				if(file_exists(KB_CACHEDIR.'/killadded.mk'))
-					if($timestamp < @filemtime(KB_CACHEDIR.'/killadded.mk'))
+				if(file_exists(KB_PAGECACHEDIR.'/killadded.mk'))
+					if($timestamp < @filemtime(KB_PAGECACHEDIR.'/killadded.mk'))
 						$timestamp = 0;
 					else
 					{
 						$cacheupdate = explode(',', config::get('cache_update'));
 						if (($page != '' && in_array($page, $cacheupdate)))
-							if(file_exists(KB_CACHEDIR.'/killadded.mk'))
-								if($timestamp < @filemtime(KB_CACHEDIR.'/killadded.mk'))
+							if(file_exists(KB_PAGECACHEDIR.'/killadded.mk'))
+								if($timestamp < @filemtime(KB_PAGECACHEDIR.'/killadded.mk'))
 									$timestamp = 0;
 					}
 			if (time() - $cachetime < $timestamp)
@@ -146,13 +146,13 @@ class cache
 			$cachefile = cache::genCacheName();
 
 			// Create directories if needed.
-			if (!file_exists(KB_CACHEDIR.'/'.KB_SITE))
+			if (!file_exists(KB_PAGECACHEDIR.'/'.KB_SITE))
 			{
-				mkdir(KB_CACHEDIR.'/'.KB_SITE);
+				mkdir(KB_PAGECACHEDIR.'/'.KB_SITE);
 			}
-			if (!file_exists(KB_CACHEDIR.'/'.KB_SITE.'/'.cache::genCacheName(true)))
+			if (!file_exists(KB_PAGECACHEDIR.'/'.KB_SITE.'/'.cache::genCacheName(true)))
 			{
-				mkdir(KB_CACHEDIR.'/'.KB_SITE.'/'.cache::genCacheName(true));
+				mkdir(KB_PAGECACHEDIR.'/'.KB_SITE.'/'.cache::genCacheName(true));
 			}
             $fp = @fopen($cachefile, 'w');
 
@@ -173,7 +173,7 @@ class cache
 	{
 		$filename = md5($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].@implode($_SESSION)).'.cache';
 		if($subdir) return substr($filename,0,1);
-		else return KB_CACHEDIR.'/'.KB_SITE.'/'.substr($filename,0,1).'/'.$filename;
+		else return KB_PAGECACHEDIR.'/'.KB_SITE.'/'.substr($filename,0,1).'/'.$filename;
 	}
 	//! Remove the cache of the current page.
 	function deleteCache()
@@ -185,17 +185,17 @@ class cache
 	function touchCache()
 	{
 		if(! config::get('cache_enabled') ) return;
-		if (!file_exists(KB_CACHEDIR.'/'.KB_SITE))
-			mkdir(KB_CACHEDIR.'/'.KB_SITE);
+		if (!file_exists(KB_PAGECACHEDIR.'/'.KB_SITE))
+			mkdir(KB_PAGECACHEDIR.'/'.KB_SITE);
 		touch(cache::genCacheName());
 	}
 	//! Notify the cache that a kill has been added.
 	function notifyKillAdded()
 	{
 		if(! config::get('cache_enabled') ) return;
-		if (!file_exists(KB_CACHEDIR))
-			mkdir(KB_CACHEDIR);
-		touch(KB_CACHEDIR.'/killadded.mk');
+		if (!file_exists(KB_PAGECACHEDIR))
+			mkdir(KB_PAGECACHEDIR);
+		touch(KB_PAGECACHEDIR.'/killadded.mk');
 	}
 }
 ?>

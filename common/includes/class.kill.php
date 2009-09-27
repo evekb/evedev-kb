@@ -256,9 +256,9 @@ class Kill
 
 	function getRawMail()
 	{
-		if (config::get('km_cache_enabled') && file_exists(config::get('km_cache_dir')."/".$this->getID().".txt"))
+		if (config::get('km_cache_enabled') && file_exists(KB_PAGECACHEDIR."/".$this->getID().".txt"))
 		{
-			return file_get_contents(config::get('km_cache_dir')."/".$this->getID().".txt");
+			return file_get_contents(KB_PAGECACHEDIR."/".$this->getID().".txt");
 		}
 
 		$this->execQuery();
