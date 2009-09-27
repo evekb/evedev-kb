@@ -47,9 +47,11 @@ class Comments
         $comment = $this->bbencode($text); 
 
         $name = slashfix(strip_tags($name)); 
-        $qry = new DBQuery(true); 
+        $qry = new DBQuery(true);
+		$remoteaddr = '';
+		if(isset($_SERVER['REMOTE_ADDR'])) $remoteaddr = $_SERVER['REMOTE_ADDR'];
         $qry->execute("INSERT INTO kb3_comments (`kll_id`,`comment`,`name`,`posttime`, `ip`)
-                       VALUES ('".$this->id_."','".$comment."','".$name."','".kbdate('Y-m-d H:i:s')."', '".$_SERVER['REMOTE_ADDR']."')");
+                       VALUES ('".$this->id_."','".$comment."','".$name."','".kbdate('Y-m-d H:i:s')."', '".$remoteaddr."')");
         $id = $qry->getInsertID(); 
         $this->comments_[] = array('time' => kbdate('Y-m-d H:i:s'), 
             'name' => $name, 'comment' => stripslashes($comment), 'id' => $id); 
@@ -89,4 +91,3 @@ class Comments
         return nl2br(addslashes($string)); 
     } 
 } 
-?>
