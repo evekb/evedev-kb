@@ -314,7 +314,7 @@ class Fetcher
 						if (config::get('fetch_comment'))
 						{
 							$comments = new Comments($killid);
-							$comments->addComment("Feed Syndication", config::get('fetch_comment')." mail fetched from: ".$this->uurl.")");
+							$comments->addComment("Feed Syndication ", config::get('fetch_comment')." mail fetched from: ".$this->uurl);
 						}
 						$this->x++;
 					}
