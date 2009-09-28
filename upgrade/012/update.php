@@ -243,7 +243,7 @@ function update012()
 
 		killCache();
 		config::set("DBUpdate", "012");
-		$qry->execute("UPDATE kb3_config SET cfg_value = '012' WHERE cfg_key = 'DBUpdate'");
+		$qry->execute("INSERT INTO kb3_config (cfg_site, cfg_key, cfg_value) SELECT cfg_site, 'DBUpdate', '012' FROM kb3_config GROUP BY cfg_site ON DUPLICATE KEY UPDATE cfg_value = '012'");
 		config::del("012updatestatus");
 		echo $header;
 		echo "Update 012 completed.";
