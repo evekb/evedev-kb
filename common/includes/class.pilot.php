@@ -269,6 +269,22 @@ class Pilot
 		$qry->execute("update kb3_pilots set plt_externalid = ".$this->externalid_."
                        where plt_id = ".$this->id_);
 	}
+    //! Lookup a pilot name and set this object to use the details found.
+
+    /*!
+     * \param $name The pilot name to look up.
+     */
+    function lookup($name)
+    {
+        $qry = new DBQuery();
+        $qry->execute("select * from kb3_pilots
+                       where plt_name = '".slashfix($name)."'");
+        $row = $qry->getRow();
+        if ($row['plt_id']) $this->id_ = $row['plt_id'];
+		$this->name_ = $row['plt_name'];
+		$this->externalid_ = intval($row['plt_externalid']);
+		$this->alliance_ = $row['plt_crp_id'];
+    }
 }
 
 class Pilots
