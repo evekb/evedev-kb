@@ -89,7 +89,7 @@ class Item
 	{
 		$icon .= IMG_URL.'/items/'.$size.'_'.$size.'/o'.$show_style.'.png';
 	}
-	elseif (($this->row_['itm_techlevel'] > 10) && $d_s && !(strstr($it_name,"Modified"))) // or it's just a deadspace item.
+	elseif (($this->row_['itm_techlevel'] > 10) && $d_s && (strstr($it_name,"-Type"))) // or it's just a deadspace item.
 	{
 		$icon .= IMG_URL.'/items/'.$size.'_'.$size.'/d'.$show_style.'.png';
 	}
