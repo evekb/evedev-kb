@@ -47,7 +47,7 @@ Class Fetcher
 		}
 		else
 		{
-			$file = fopen($this->uncompfile , "r");
+			$file = fopen($this->url , "r");
 			// Check that the file really is open
 			if (!$file) return 0;
 			// Grab contents and close
