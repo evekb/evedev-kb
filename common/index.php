@@ -95,7 +95,16 @@ else $smarty->template_dir = './themes/default/templates';
 $smarty->compile_dir = './cache/templates_c';
 $smarty->cache_dir = './cache/data';
 $smarty->assign('theme_url', THEME_URL);
-$smarty->assign('style', config::get('style_name'));
+if(isset($_GET['style']))
+{
+	$stylename = preg_replace('/[^0-9a-zA-z-_]/','',$_GET['style']);
+	if(file_exists("themes/".config::get('theme_name')."/".$stylename.".css"))
+	{
+		$smarty->assign('style', $stylename);
+	}
+	else $smarty->assign('style', config::get('style_name'));
+}
+else $smarty->assign('style', config::get('style_name'));
 $smarty->assign('img_url', IMG_URL);
 $smarty->assign('kb_host', KB_HOST);
 $smarty->assign_by_ref('config', $config);

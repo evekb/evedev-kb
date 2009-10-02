@@ -70,9 +70,6 @@ class Page
 
         $smarty->assign('kb_title', KB_TITLE.' '.$this->title_);
 
-        $style = config::get('style_name');
-        $smarty->assign('style', $style);
-
         if ($this->onload_)
         {
             $smarty->assign('on_load', ' onload="'.$this->onload_.'"');
