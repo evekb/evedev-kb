@@ -112,18 +112,20 @@ class allianceSummary
 			FROM kb3_kills kll
 				INNER JOIN kb3_ships shp
 					ON ( shp.shp_id = kll.kll_ship_id )
-				INNER JOIN kb3_inv_all ina ON (ina.ina_all_id ='.$all_id.'
-						AND ina.ina_kll_id = kll.kll_id
-						AND kll.kll_all_id <> '.$all_id.')
+				INNER JOIN kb3_inv_all ina ON (ina.ina_kll_id = kll.kll_id)
+			WHERE ina.ina_all_id ='.$all_id.'
+				AND kll.kll_all_id <> '.$all_id.'
 			GROUP BY shp_class';
 		$qry->execute($sql);
 		$sql = 'INSERT INTO tmp_all_summary (asm_all_id, asm_shp_id, asm_loss_count, asm_loss_isk)
-			SELECT '.$all_id.', shp_class, count(distinct kll_id) AS lnb, sum(kll_isk_loss) AS lisk
+			SELECT '.$all_id.', shp_class, count(kll_id) AS lnb, sum(kll_isk_loss) AS lisk
 			FROM kb3_kills kll
 				INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )
-				INNER JOIN kb3_inv_all ina ON ( kll.kll_id = ina.ina_kll_id
-							AND ina.ina_all_id <> '.$all_id.')
 			WHERE  kll.kll_all_id = '.$all_id.'
+					AND EXISTS (SELECT 1
+							FROM kb3_inv_all
+							WHERE kll.kll_id = ina_kll_id
+							AND ina_all_id <> '.$all_id.' limit 0,1)
 			GROUP BY shp_class
 			ON DUPLICATE KEY UPDATE asm_loss_count = values(asm_loss_count),
 				asm_loss_isk = values(asm_loss_isk)';
@@ -293,7 +295,7 @@ class corpSummary extends allianceSummary
 		$qry->execute($sql);
 
 		$sql = 'INSERT INTO tmp_sum_corp (csm_crp_id, csm_shp_id, csm_kill_count, csm_kill_isk)
-			SELECT '.$crp_id.', shp_class, COUNT(distinct kll.kll_id) AS knb,
+			SELECT '.$crp_id.', shp_class, COUNT(kll.kll_id) AS knb,
 				sum(kll_isk_loss) AS kisk
 			FROM kb3_kills kll
 				INNER JOIN kb3_ships shp
@@ -304,11 +306,16 @@ class corpSummary extends allianceSummary
 			GROUP BY shp_class';
 		$qry->execute($sql);
 		$sql = 'INSERT INTO tmp_sum_corp (csm_crp_id, csm_shp_id, csm_loss_count, csm_loss_isk)
-			SELECT '.$crp_id.', shp_class, count(kll_id) AS lnb, sum(kll_isk_loss) AS lisk
+			SELECT '.$crp_id.', shp_class, count(kll_id) AS lnb,
+				sum(kll_isk_loss) AS lisk
 			FROM kb3_kills kll
-				INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )
-				INNER JOIN kb3_inv_crp inc ON ( kll.kll_id = inc.inc_kll_id)
-			WHERE  kll.kll_crp_id = '.$crp_id.' AND inc.inc_crp_id <> '.$crp_id.'
+				INNER JOIN kb3_ships shp
+					ON ( shp.shp_id = kll.kll_ship_id )
+			WHERE  kll.kll_crp_id = '.$crp_id.'
+				AND EXISTS (SELECT 1
+						FROM kb3_inv_crp
+						WHERE kll.kll_id = inc_kll_id
+						AND inc_crp_id <> '.$crp_id.' limit 0,1)
 			GROUP BY shp_class
 			ON DUPLICATE KEY UPDATE csm_loss_count = values(csm_loss_count),
 				csm_loss_isk = values(csm_loss_isk)';
@@ -478,7 +485,7 @@ class pilotSummary extends allianceSummary
 		$qry->execute($sql);
 
 		$sql = 'INSERT INTO tmp_sum_pilot (psm_plt_id, psm_shp_id, psm_kill_count, psm_kill_isk)
-			SELECT '.$plt_id.', shp_class, COUNT(distinct kll.kll_id) AS knb,
+			SELECT '.$plt_id.', shp_class, COUNT(kll.kll_id) AS knb,
 				sum(kll_isk_loss) AS kisk
 			FROM kb3_kills kll
 				INNER JOIN kb3_ships shp
