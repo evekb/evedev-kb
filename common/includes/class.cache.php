@@ -59,12 +59,11 @@ class cache
 	//! Check if the current page is cached and valid then send it if so.
 	function check($page)
 	{
-	// If the cache doesn't exist then we don't need to check times.
+		$cachefile = cache::genCacheName();
+		// If the cache doesn't exist then we don't need to check times.
 		if (cache::shouldCache($page) && file_exists(cache::genCacheName()))
 		{
-			$cachefile = cache::genCacheName();
-
-			$times = explode(',', config::get('cache_times'));
+						$times = explode(',', config::get('cache_times'));
 			foreach ($times as $string)
 			{
 				$array = explode(':', $string);
