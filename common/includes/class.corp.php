@@ -12,7 +12,7 @@ class Corporation
      */
 	function Corporation($id = 0)
 	{
-		$this->id_ = $id;
+		$this->id_ = intval($id);
 		$this->executed_ = false;
 	}
 	//! Return whether this corporation is an NPC corporation.

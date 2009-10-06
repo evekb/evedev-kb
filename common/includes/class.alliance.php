@@ -9,7 +9,7 @@ class Alliance
      */
     function Alliance($id = null)
     {
-        $this->id_ = $id;
+        $this->id_ = intval($id);
         $this->executed_ = false;
     }
 

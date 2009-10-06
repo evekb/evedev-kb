@@ -197,7 +197,7 @@ if ($_GET['view'] == "" || $_GET['view'] == "kills" || $_GET['view'] == "losses"
 switch ($_GET['view'])
 {
     case "":
-        $html .= "<div class=\"kb-kills-header\">10 Most recent kills in the last 30 days</div>";
+        $html .= "<div class=\"kb-kills-header\">10 Most recent kills</div>";
 
         $list = new KillList();
         $list->setOrdered(true);
@@ -206,14 +206,14 @@ switch ($_GET['view'])
         $list->addInvolvedCorp($corp);
         if ($_GET['scl_id'])
             $list->addVictimShipClass($_GET['scl_id']);
-		$list->setStartDate(date('Y-m-d H:i',strtotime('- 30 days')));
+		//$list->setStartDate(date('Y-m-d H:i',strtotime('- 30 days')));
 
         $ktab = new KillListTable($list);
         $ktab->setLimit(10);
         $ktab->setDayBreak(false);
         $html .= $ktab->generate();
 
-        $html .= "<div class=\"kb-losses-header\">10 Most recent losses in the last 30 days</div>";
+        $html .= "<div class=\"kb-losses-header\">10 Most recent losses</div>";
 
         $list = new KillList();
         $list->setOrdered(true);
@@ -222,7 +222,7 @@ switch ($_GET['view'])
         $list->addVictimCorp($corp);
         if ($_GET['scl_id'])
             $list->addVictimShipClass($_GET['scl_id']);
-		$list->setStartDate(date('Y-m-d H:i',strtotime('- 30 days')));
+		//$list->setStartDate(date('Y-m-d H:i',strtotime('- 30 days')));
 
         $ltab = new KillListTable($list);
         $ltab->setLimit(10);

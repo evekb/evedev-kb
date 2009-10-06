@@ -8,7 +8,7 @@ class Contract
 {
     function Contract($ctr_id = 0)
     {
-        $this->ctr_id_ = $ctr_id;
+        $this->ctr_id_ = intval($ctr_id);
         $this->contracttargets_ = array();
 
         // overall kill/losslist

@@ -14,6 +14,7 @@ class Kill
 {
 	function Kill($id = 0, $external = false)
 	{
+		$id = intval($id);
 		if($id && $external)
 		{
 			$qry = new DBQuery();

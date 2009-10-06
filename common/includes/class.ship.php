@@ -12,7 +12,7 @@ class Ship
 {
     function Ship($id = 0)
     {
-        $this->id_ = $id;
+        $this->id_ = intval($id);
     }
 
     function getID()
