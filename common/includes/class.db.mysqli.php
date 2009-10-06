@@ -84,6 +84,8 @@ class DBNormalQuery_mysqli
      */
     function execute($sql)
     {
+		if(isset($this->stmt)) $this->execute_prepared();
+
         $t1 = strtok(microtime(), ' ') + strtok('');
 
 		//if(isset($this->resid_)) $this->resid_->free();
@@ -182,6 +184,74 @@ class DBNormalQuery_mysqli
     {
         return mysqli_rollback($this->dbconn_->id());
     }
+	//! Prepare a statement.
+	
+	/* \param $sql String containing a prepared statement.
+	 * \return true on success and false on failure.
+	 */
+	function prepare($sql)
+	{
+		$this->stmt = $this->dbconn_->id()->prepare($sql);
+		if(!$this->stmt)
+		{
+            if(defined('KB_PROFILE'))
+			{
+				DBDebug::recordError("Database error: ".$this->dbconn_->id()->error);
+				DBDebug::recordError("SQL: ".$sql);
+			}
+            if (defined('DB_HALTONERROR') && DB_HALTONERROR)
+            {
+                echo "Database error: " . $this->dbconn_->id()->error . "<br>";
+                echo "SQL: " . $sql . "<br>";
+                exit;
+            }
+            else
+            {
+                return false;
+            }
+		}
+		return true;
+	}
+	function bind_param()
+	{
+		$arr[0]=$this->stmt;
+		$args = func_get_args();
+		array_unshift($args,$arr2);
+		return call_user_func_array('mysqli_stmt_bind_param',$args);
+	}
+	function bind_result()
+	{
+		$arr[0]=$this->stmt;
+		$args = func_get_args();
+		array_unshift($args,$arr2);
+		return call_user_func_array('mysqli_stmt_bind_result',$args);
+	}
+	function execute_prepared()
+	{
+		if($this->stmt->execute())
+		{
+            if(defined('KB_PROFILE'))
+			{
+				DBDebug::recordError("Database error: ".$this->dbconn_->id()->error);
+				DBDebug::recordError("SQL: ".$sql);
+			}
+            if (defined('DB_HALTONERROR') && DB_HALTONERROR)
+            {
+                echo "Database error: " . $this->dbconn_->id()->error . "<br>";
+                echo "SQL: " . $sql . "<br>";
+                exit;
+            }
+            else
+            {
+                return false;
+            }
+		}
+		return true;
+	}
+	function fetch_prepared()
+	{
+		return $this->stmt->fetch();
+	}
 }
 //! mysqli file-cached query class. Manages SQL queries to a MySQL DB using mysqli.
 class DBCachedQuery_mysqli
