@@ -2,40 +2,40 @@
 
 class session
 {
-    function init()
-    {
-        if (isset($_REQUEST[session_name()]))
-        {
-            session_start();
-            if (isset($_SESSION['user']))
-            {
-                user::loggedin(true);
-            }
-        }
-    }
+	function init()
+	{
+		if (isset($_REQUEST[session_name()]))
+		{
+			session_start();
+			if (isset($_SESSION['user']))
+			{
+				user::loggedin(true);
+			}
+		}
+	}
+	
+	function isAdmin()
+	{
+		return (bool)($_SESSION['admin'] && $_SESSION['rsite'] == $_SERVER["HTTP_HOST"] && md5(KB_SITE) == $_SESSION['site']);
+	}
 
-    function isAdmin()
-    {
-        return (bool)(isset($_SESSION['admin']) && $_SESSION['rsite'] == $_SERVER["HTTP_HOST"] && md5(KB_SITE) == $_SESSION['site']);
-    }
+	function isSuperAdmin()
+	{
+		return (bool)($_SESSION['admin_super'] && $_SESSION['rsite'] == $_SERVER["HTTP_HOST"] && md5(KB_SITE) == $_SESSION['site']);
+	}
 
-    function isSuperAdmin()
-    {
-        return (bool)(isset($_SESSION['admin_super']) && $_SESSION['rsite'] == $_SERVER["HTTP_HOST"] && md5(KB_SITE) == $_SESSION['site']);
-    }
-
-    function create($admin = false)
-    {
-        session_start();
-		session_regenerate_id();
-        $_SESSION['admin'] = $admin;
+	function create($admin = false)
+	{
+		session_start();
+		if(function_exists('session_regenerate_id')) session_regenerate_id();
+		$_SESSION['admin'] = $admin;
 		$_SESSION['rsite'] = $_SERVER["HTTP_HOST"];
 		$_SESSION['site'] = md5(KB_SITE);
-    }
+	}
 
-    function destroy()
-    {
-        session_destroy();
-    }
+	function destroy()
+	{
+		session_destroy();
+	}
 }
 ?>
