@@ -9,7 +9,7 @@ if (isset($_POST['comment']))
     {
         $pw = true;
     }
-    if ($_POST['password'] == config::get("comment_password") || $pw)
+    if ($pw || crypt($_POST['password'],config::get("comment_password")) == config::get("comment_password"))
     {
         if ($_POST['comment'] == '')
         {

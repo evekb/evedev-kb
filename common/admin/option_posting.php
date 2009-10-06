@@ -6,8 +6,8 @@ options::fadd('Forbid posting', 'post_forbid', 'checkbox');
 options::fadd('Forbid out of game posting', 'post_oog_forbid', 'checkbox');
 //options::fadd('Enable auto-addition of unknown Items', 'adapt_items', 'checkbox');
 options::fadd('ReAdd known killmails', 'readd_dupes', 'checkbox');
-options::fadd('Mail post password', 'post_password', 'edit');
-options::fadd('Comment post password', 'comment_password', 'edit');
+options::fadd('Mail post password', 'post_password', 'custom', array('admin_posting', 'createPostQ'), array('admin_posting', 'setPasswords'));
+options::fadd('Comment post password', 'comment_password', 'custom', array('admin_posting', 'createCommentQ'), array('admin_posting', 'setPasswords'));
 options::fadd('Killmail CC', 'post_mailto', 'edit');
 options::fadd('Mailhost', 'post_mailhost', 'edit');
 options::fadd('Mailserver', 'post_mailserver', 'edit', '', '', 'This is the server where php connects to send the mail.');
@@ -84,6 +84,49 @@ class admin_posting
         }
 
     }
+	function makePassword($pwd)
+	{
+		return crypt($pwd);
+	}
+	function passwordChanged($pwd, $oldpwd)
+	{
+		return (crypt($pwd, $oldpwd) == $oldpwd
+			|| $pwd == $oldpwd
+			|| $pwd == "SET"
+			|| $pwd == "NOT SET");
+	}
+	function setPasswords()
+	{
+		if(!admin_posting::passwordChanged($_POST['option_post_password'],config::get('post_password'))
+			&& !admin_posting::passwordChanged($_POST['option_comment_password'],config::get('comment_password')))
+				return;
+		if($_POST['option_comment_password'])
+			config::set('comment_password', admin_posting::makePassword($_POST['option_comment_password']));
+		elseif(isset($_POST['option_comment_password']))
+			config::set('comment_password', '');
+		if($_POST['option_post_password'])
+			config::set('post_password', admin_posting::makePassword($_POST['option_post_password']));
+		elseif(isset($_POST['option_post_password']))
+			config::set('post_password', '');
+		admin_posting::reload();
+	}
+	function createCommentQ()
+	{
+		if(config::get('comment_password')) $pwd = 'SET';
+		else $pwd = 'NOT SET';
+		return '<input type="text" id="option_comment_password" name="option_comment_password" value="'.$pwd.'" size="20" maxlength="20" />';
+	}
+	function createPostQ()
+	{
+		if(config::get('post_password')) $pwd = 'SET';
+		else $pwd = 'NOT SET';
+		return '<input type="text" id="option_post_password" name="option_post_password" value="'.$pwd.'" size="20" maxlength="20" />';
+	}
+	function reload()
+	{
+		header("Location: http://".$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'?'.$_SERVER['QUERY_STRING']);
+		die;
+	}
 }
 
 ?>

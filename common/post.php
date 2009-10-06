@@ -8,7 +8,7 @@ $kb = new Killboard(KB_SITE);
 global $smarty;
 if (isset($_POST['killmail']))
 {
-    if ($_POST['password'] == config::get('post_password') || $page->isAdmin())
+    if (config::get("post_password") == '' || crypt($_POST['password'],config::get("post_password")) == config::get("post_password") || $page->isAdmin())
     {
         $parser = new Parser($_POST['killmail']);
 

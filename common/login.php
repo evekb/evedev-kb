@@ -6,8 +6,10 @@ if (trim($_POST['usrpass']))
 	if ($_POST['usrlogin'] == '' && crypt($_POST['usrpass'],ADMIN_PASSWORD) == ADMIN_PASSWORD )
 	{
 		session::create(true);
-		
+
+		session_write_close();
 		header('Location: ?a=admin');
+		die;
 	}
 	else
 	{
@@ -15,6 +17,7 @@ if (trim($_POST['usrpass']))
 		if ($result)
 		{
 			header('Location: ?a=home');
+			die;
 		}
 		else
 		{
