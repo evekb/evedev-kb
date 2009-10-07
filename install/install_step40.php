@@ -133,6 +133,7 @@ if ($_REQUEST['sub'] == 'data')
                 $fp = gzopen($file, 'r');
                 $lines = 0;
                 $errors = 0;
+				mysql_query("LOCK TABLES ".$table." WRITE");
                 while ($query = gzgets($fp, 4000))
                 {
                     $text .= $query;
@@ -160,6 +161,7 @@ if ($_REQUEST['sub'] == 'data')
                         }
                     }
                 }
+				mysql_query("UNLOCK TABLES");
                 echo '<br/>File '.$file.' had '.$lines.' lines with '.$query_count.' querys.<br/> '.$errors.' Querys failed.<br/>';
                 if (!$error)
                 {
