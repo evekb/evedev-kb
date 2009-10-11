@@ -222,6 +222,7 @@ class Pilot
      */
 	function isUpdatable($timestamp)
 	{
+		$timestamp = preg_replace("/\./","-",$timestamp);
 		if(isset($this->updated_))
 			if(is_null($this->updated_) || strtotime($timestamp." UTC") > $this->updated_) return true;
 			else return false;

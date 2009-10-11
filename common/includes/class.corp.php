@@ -130,7 +130,7 @@ class Corporation
      */
 	function add($name, $alliance, $timestamp, $externalid = 0)
 	{
-		$qry = new DBQuery();
+		$qry = new DBQuery(true);
 		$qry->execute("select * from kb3_corps
 		               where crp_name = '".slashfix($name)."'");
 		// If the corp name is not present in the db add it.
@@ -222,6 +222,7 @@ class Corporation
      */
 	function isUpdatable($timestamp)
 	{
+		$timestamp = preg_replace("/\./","-",$timestamp);
 		if(isset($this->updated_))
 			if(is_null($this->updated_) || strtotime($timestamp." UTC") > $this->updated_) return true;
 			else return false;
