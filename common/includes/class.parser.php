@@ -341,7 +341,7 @@ class Parser
                             {
                                 $slash = strpos($involved[$counter], '/');
                                 $name = trim(substr($involved[$counter], 5, $slash-5));
-                                $corporation = trim(substr($involved[$counter], $slash+1, strlen($involved[$counter])- $shash+1));
+                                $corporation = trim(substr($involved[$counter], $slash+1, strlen($involved[$counter])- $slash+1));
 
                                 //now if the corp bit has final blow info, note it
                                 preg_match("/(.*) \\(laid the final blow\\)/", $corporation, $matched);
@@ -760,4 +760,3 @@ class Parser
     }
 }
 //Currently maintained by FriedRoadKill
-?>
