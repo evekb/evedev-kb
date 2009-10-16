@@ -154,6 +154,8 @@ class http_request
         $this->sent = strlen($header)+strlen($data);
 
         $header = 1;
+		$http_header = '';
+		$file = '';
         socket_set_timeout($fp, $this->socket_timeout);
         while ($line = fgets($fp, 4096))
         {
@@ -216,4 +218,3 @@ class http_request
         $this->headers[$headerstring] = $headerstring;
     }
 }
-?>
