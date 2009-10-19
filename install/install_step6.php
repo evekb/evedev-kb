@@ -49,7 +49,6 @@ To be able to continue you have to enter at least an admin password and a site i
 Title is used as title attribute for every page so your corp/alliance name could be a good idea.<br/>
 Site identification should be 1-8 chars, they will be used to reference your settings inside the database, something like 'GKB' will be sufficient.<br/>
 The URLs are guessed on the location of this installscript, you might need to correct them for some installations.<br/>
-You can try to get the needed corp/alliance id from the eve-dev.net test killboard in case you don't know them.
 </p>
 <form id="options" name="options" method="post" action="?step=6">
 <input type="hidden" name="step" value="6">
