@@ -42,7 +42,7 @@ function remove_old($hours, $dir, $recurse = false)
 		if ($recurse && file_exists("{$dir}{$fname}") && is_dir("{$dir}{$fname}")
 			 && substr($fname,0,1) != "." && $fname != "..")
 		{
-			remove_old($hours, $dir.$fname."/");
+			remove_old($hours, $dir.$fname."/", $recurse);
 		}
 	}
 }
