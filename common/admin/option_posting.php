@@ -32,7 +32,7 @@ class admin_posting
     	$html .= "<select name=\"option_filter_month\" id=\"option_filter_month\">";
     	for ($i = 1; $i <= 12; $i++)
         {
-    		$t = mktime(0, 0, 0, $i, 1, 1980);
+    		$t = gmmktime(0, 0, 0, $i, 1, 1980);
     		$month = gmdate("M", $t);
     		if($date['mon'] == $i)
             {
@@ -75,7 +75,7 @@ class admin_posting
         if ($_POST['option_filter_apply'] == 'on')
         {
             config::set('filter_apply', '1');
-            config::set('filter_date', mktime(0, 0, 0, $_POST['option_filter_month'], ($_POST['option_filter_day'] > 31 ? 31 : $_POST['option_filter_day']), $_POST['option_filter_year']));
+            config::set('filter_date', gmmktime(0, 0, 0, $_POST['option_filter_month'], ($_POST['option_filter_day'] > 31 ? 31 : $_POST['option_filter_day']), $_POST['option_filter_year']));
         }
         else
         {
@@ -90,7 +90,7 @@ class admin_posting
 	}
 	function passwordChanged($pwd, $oldpwd)
 	{
-		return (crypt($pwd, $oldpwd) == $oldpwd
+		return !(crypt($pwd, $oldpwd) == $oldpwd
 			|| $pwd == $oldpwd
 			|| $pwd == "SET"
 			|| $pwd == "NOT SET");
