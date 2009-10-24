@@ -91,7 +91,7 @@ class KillListTable
 				elseif(file_exists('img/alliances/'.$kll['victimallianceicon'].'.png'))
 				{
 					$kll['allianceexists'] = true;
-					$kll['victimallianceicon'] = '?a=thumb&type=alliance&id='.$kll['victimallianceicon'];
+					$kll['victimallianceicon'] = '?a=thumb&amp;type=alliance&amp;id='.$kll['victimallianceicon'];
 				}
 				else $kll['allianceexists'] = false;
 			}
