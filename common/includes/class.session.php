@@ -4,7 +4,7 @@ class session
 {
 	function init()
 	{
-		if (isset($_REQUEST[session_name()]))
+		if (isset($_COOKIE[session_name()]))
 		{
 			session_start();
 			if (isset($_SESSION['user']))
@@ -16,11 +16,13 @@ class session
 	
 	function isAdmin()
 	{
+		if(!isset($_SESSION['admin']) || !isset($_SESSION['rsite']) || !isset($_SESSION['site']) ) return false;
 		return (bool)($_SESSION['admin'] && $_SESSION['rsite'] == $_SERVER["HTTP_HOST"] && md5(KB_SITE) == $_SESSION['site']);
 	}
 
 	function isSuperAdmin()
 	{
+		if(!isset($_SESSION['admin']) || !isset($_SESSION['rsite']) || !isset($_SESSION['site']) ) return false;
 		return (bool)($_SESSION['admin_super'] && $_SESSION['rsite'] == $_SERVER["HTTP_HOST"] && md5(KB_SITE) == $_SESSION['site']);
 	}
 
@@ -38,4 +40,3 @@ class session
 		session_destroy();
 	}
 }
-?>
