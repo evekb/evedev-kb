@@ -104,76 +104,81 @@ class Fetcher
 				$cprs = "GZip compressed stream";
 			}
 			file_put_contents($this->feedfilename, $data);
+			
 			// Process all new pilots and corps
-			$pos = 0;
-			$namelist = array();
-			$newcorp = new Corporation();
-			$newall = new Alliance();
-			$newall->add("None");
-			// Corps
-			while($pos = strpos($data, 'Corp: ', $pos + 1))
+			// First check any are present.
+			if(strpos($data,"Corp: "))
 			{
-				$endpos = strpos($data, "\n", $pos);
-				$name = substr($data, $pos + 6, $endpos - ($pos + 6));
-				$name = trim(str_replace("\r", '', $name));
-				$name = preg_replace("/ \(laid the final blow\)/", "", $name);
-				if(strpos($name, '/')) continue;
-				$namelist[slashfix($name)] = $newall;
-			}
-			Corporations::addNames($namelist);
-
-			$pos = 0;
-			$namelist = array();
-			// Corps will repeat a lot so store the ones we find for reuse.
-			$corps = array();
-			// Victims
-			while($pos = strpos($data, 'Victim: ', $pos))
-			{
-				$endpos = strpos($data, "\n", $pos);
-				$name = substr($data, $pos + 8, $endpos - ($pos + 8));
-				$name = trim(str_replace("\r", '', $name));
-
-				$pos = strpos($data, "Corp: ",$pos);
-				if(!$pos) break;
-				if(strpos($name, "/")) continue;
-				$endpos = strpos($data, "\n", $pos);
-				$cname = substr($data, $pos + 6, $endpos - ($pos + 6));
-				$cname = trim(str_replace("\r", "", $cname));
-				if(!isset($corps[$cname]))
+				$pos = 0;
+				$namelist = array();
+				$newcorp = new Corporation();
+				$newall = new Alliance();
+				$newall->add("None");
+				// Corps
+				while($pos = strpos($data, 'Corp: ', $pos + 1))
 				{
-					$newcorp = new Corporation();
-					$newcorp->lookup($cname);
-					$corps[$cname] = $newcorp;
+					$endpos = strpos($data, "\n", $pos);
+					$name = substr($data, $pos + 6, $endpos - ($pos + 6));
+					$name = trim(str_replace("\r", '', $name));
+					$name = preg_replace("/ \(laid the final blow\)/", "", $name);
+					if(strpos($name, '/')) continue;
+					$namelist[slashfix($name)] = $newall;
 				}
-				$namelist[slashfix($name)] = $corps[$cname];
-			}
-			// Involved parties
-			$pos = 0;
-			while($pos = strpos($data, 'Name: ', $pos))
-			{
-				$endpos = strpos($data, "\n", $pos);
-				$name = substr($data, $pos + 6, $endpos - ($pos + 6));
-				$name = trim(str_replace("\r", '', $name));
-				$name = preg_replace("/ \(laid the final blow\)/", "", $name);
+				Corporations::addNames($namelist);
 
-				$pos = strpos($data, "Corp: ",$pos);
-				if(!$pos) break;
-				// Skip NPC names with a '/' in them.
-				if(strpos($name, "/")) continue;
-				$endpos = strpos($data, "\n", $pos);
-				$cname = substr($data, $pos + 6, $endpos - ($pos + 6));
-				$cname = trim(str_replace("\r", "", $cname));
-				if(!isset($corps[$cname]))
+				$pos = 0;
+				$namelist = array();
+				// Corps will repeat a lot so store the ones we find for reuse.
+				$corps = array();
+				// Victims
+				while($pos = strpos($data, 'Victim: ', $pos))
 				{
-					$newcorp = new Corporation();
-					$newcorp->lookup($cname);
-					$corps[$cname] = $newcorp;
+					$endpos = strpos($data, "\n", $pos);
+					$name = substr($data, $pos + 8, $endpos - ($pos + 8));
+					$name = trim(str_replace("\r", '', $name));
+
+					$pos = strpos($data, "Corp: ",$pos);
+					if(!$pos) break;
+					if(strpos($name, "/")) continue;
+					$endpos = strpos($data, "\n", $pos);
+					$cname = substr($data, $pos + 6, $endpos - ($pos + 6));
+					$cname = trim(str_replace("\r", "", $cname));
+					if(!isset($corps[$cname]))
+					{
+						$newcorp = new Corporation();
+						$newcorp->lookup($cname);
+						$corps[$cname] = $newcorp;
+					}
+					$namelist[slashfix($name)] = $corps[$cname];
 				}
-				$namelist[slashfix($name)] = $corps[$cname];
+				// Involved parties
+				$pos = 0;
+				while($pos = strpos($data, 'Name: ', $pos))
+				{
+					$endpos = strpos($data, "\n", $pos);
+					$name = substr($data, $pos + 6, $endpos - ($pos + 6));
+					$name = trim(str_replace("\r", '', $name));
+					$name = preg_replace("/ \(laid the final blow\)/", "", $name);
+
+					$pos = strpos($data, "Corp: ",$pos);
+					if(!$pos) break;
+					// Skip NPC names with a '/' in them.
+					if(strpos($name, "/")) continue;
+					$endpos = strpos($data, "\n", $pos);
+					$cname = substr($data, $pos + 6, $endpos - ($pos + 6));
+					$cname = trim(str_replace("\r", "", $cname));
+					if(!isset($corps[$cname]))
+					{
+						$newcorp = new Corporation();
+						$newcorp->lookup($cname);
+						$corps[$cname] = $newcorp;
+					}
+					$namelist[slashfix($name)] = $corps[$cname];
+				}
+				Pilots::addNames($namelist);
+				unset ($corps);
+				unset ($namelist);
 			}
-			Pilots::addNames($namelist);
-			unset ($corps);
-			unset ($namelist);
 		}
 		else
 		{
