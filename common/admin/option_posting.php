@@ -92,7 +92,8 @@ class admin_posting
 	}
 	function passwordChanged($pwd, $oldpwd)
 	{
-		return !(crypt($pwd, $oldpwd) == $oldpwd
+		return !($pwd == '' ||
+			crypt($pwd, $oldpwd) == $oldpwd
 			|| ($pwd == $oldpwd && substr($oldpwd,0,3) == '$1$'));
 	}
 	function setPostPassword()
