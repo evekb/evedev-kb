@@ -250,7 +250,7 @@ class Pilot
 		}
 		$this->externalid_ = intval($externalID);
 		$qry = new DBQuery(true);
-		$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_externalid = ".$externalid." AND plt_id <> ".$this->id_);
+		$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_externalid = ".$this->externalid_." AND plt_id <> ".$this->id_);
 		if($qry->recordCount())
 		{
 			$result = $qry->getRow();
