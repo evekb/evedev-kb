@@ -13,6 +13,7 @@ class KillSummaryTable
 		$this->inv_plt_ = array();
 		$this->inv_crp_ = array();
 		$this->inv_all_ = array();
+		$this->html_ = '';
 	}
 	//! Stub to handle deprecated code.
 	function setBreak($break)
@@ -310,6 +311,7 @@ class KillSummaryTable
 
 	function generate()
 	{
+		if($this->html_ != '') return $this->html_;
 		if ($this->klist_)
 		{
 			$entry = array();
@@ -424,9 +426,9 @@ class KillSummaryTable
 			$smarty->assign('clearfilter',$qrystring);
 		}
 
-		$html .= $smarty->fetch(get_tpl('summarytable'));
+		$this->html_ = $smarty->fetch(get_tpl('summarytable'));
 
-		return $html;
+		return $this->html_;
 	}
 }
 ?>
