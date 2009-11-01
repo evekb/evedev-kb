@@ -217,9 +217,8 @@ class TopList
 
 		if (count($this->vic_scl_id_))
 		{
-			$this->sql_ .= " inner join kb3_ships shp
-	  		         on ( shp.shp_id = kll.kll_ship_id and
-	  		 shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) )";
+			$this->sql_ .= " straight_join kb3_ships shp
+	  		         on ( shp.shp_id = kll.kll_ship_id )";
 		}
 
 		if (count($this->regions_))
@@ -230,10 +229,7 @@ class TopList
       	                         on ( con.con_id = sys.sys_con_id and
 			         con.con_reg_id in ( ".implode($this->regions_, ",")." ) )";
 		}
-		if (count($this->systems_))
-		{
-			$this->sql_ .= "   and kll.kll_system_id in ( ".implode($this->systems_, ",").")";
-		}
+
 		// victim filter
 		if ($this->mixedvictims_)
 		{
@@ -262,6 +258,14 @@ class TopList
 			$this->sql_ .= " AND ind.ind_crp_id in ( ".implode(",", $this->inv_crp_)." ) ";
 		if ($this->inv_all_)
 			$this->sql_ .= " AND ind.ind_all_id in ( ".implode(",", $this->inv_all_)." ) ";
+
+		if (count($this->vic_scl_id_))
+			$this->sql_ .= "and shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
+
+		if (count($this->systems_))
+		{
+			$this->sql_ .= " and kll.kll_system_id in ( ".implode($this->systems_, ",").") ";
+		}
 
 		// timestamp filter
 		//$this->sql_ .= $this->getDateFilter();
@@ -327,13 +331,14 @@ class TopKillsList extends TopList
 	      inner join kb3_inv_detail ind
 		      on ( ind.ind_kll_id = kll.kll_id )
               inner join kb3_pilots plt
-	 	      on ( plt.plt_id = ind.ind_plt_id ";
-		if ($this->inv_crp_)
+	 	      on ( plt.plt_id = ind.ind_plt_id )";
+/*
+ 		if ($this->inv_crp_)
 			$sql .= " and ind.ind_crp_id in ( ".implode(",", $this->inv_crp_)." )";
 		if ($this->inv_all_)
 			$sql .= " and ind.ind_all_id in ( ".implode(",", $this->inv_all_)." )";
 		$sql .= ")";
-
+*/
 		$this->setSQLTop($sql);
 
 		$this->setSQLBottom("group by ind.ind_plt_id order by 1 desc
