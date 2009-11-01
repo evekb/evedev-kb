@@ -71,7 +71,7 @@ else
 
 $html .=  '<br /><div class="block-header2">Connectivity</div>';
 // connectivity
-$url = 'http://www.eve-dev.net/logo.png';
+$url = 'http://www.eve-id.net/logo.png';
 if (ini_get('allow_url_fopen'))
 {
     if (count(file($url)))
