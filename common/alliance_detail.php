@@ -140,8 +140,8 @@ class pAllianceDetail extends pageAssembly
 
 	function summaryTable()
 	{
-		if(!$this->view == '' && !$this->view == 'recent_activity'
-			&& !$this->view == 'kills' && !$this->view == 'losses') return '';
+		if($this->view != '' && $this->view != 'recent_activity'
+			&& $this->view != 'kills' && $this->view != 'losses') return '';
 		// The summary table is also used by the stats. Whichever is called
 		// first generates the table.
 		if(isset($this->kill_summary)) return $this->kill_summary->generate();
@@ -421,7 +421,7 @@ class pAllianceDetail extends pageAssembly
 				$html .= $table->generate();
 
 				$html .= "<table width=300 cellspacing=1><tr><td><a href='?a=alliance_detail&amp;view=pilot_kills&amp;m=$this->pmonth&amp;all_id=$this->all_id&amp;y=$this->pyear'>previous</a></td>";
-				$html .= "<td align='right'><a href='?a=alliance_detail&amp;view=pilot_kills&amp;all_id=$this->all_id&amp;m=$this->nmonth&amp;y=$this->nyear'>next</a></p></td></tr></table>";
+				$html .= "<td align='right'><a href='?a=alliance_detail&amp;view=pilot_kills&amp;all_id=$this->all_id&amp;m=$this->nmonth&amp;y=$this->nyear'>next</a></td></tr></table>";
 
 				$html .= "</td><td valign=top width=400>";
 				$html .= "<div class=block-header>All time</div>";
@@ -451,7 +451,7 @@ class pAllianceDetail extends pageAssembly
 				$html .= $table->generate();
 
 				$html .= "<table width=300 cellspacing=1><tr><td><a href='?a=alliance_detail&amp;view=pilot_scores&amp;m=$this->pmonth&amp;all_id=$this->all_id&amp;y=$this->pyear'>previous</a></td>";
-				$html .= "<td align='right'><a href='?a=alliance_detail&amp;view=pilot_scores&amp;all_id=$this->all_id&amp;m=$this->nmonth&amp;y=$this->nyear'>next</a></p></td></tr></table>";
+				$html .= "<td align='right'><a href='?a=alliance_detail&amp;view=pilot_scores&amp;all_id=$this->all_id&amp;m=$this->nmonth&amp;y=$this->nyear'>next</a></td></tr></table>";
 
 				$html .= "</td><td valign=top width=400>";
 				$html .= "<div class=block-header>All time</div>";
@@ -542,7 +542,7 @@ class pAllianceDetail extends pageAssembly
 				$html .= "</table>";
 
 				$html .= "<table width=250 cellspacing=1><tr><td><a href='?a=alliance_detail&amp;view=violent_systems&amp;m=$this->pmonth&amp;all_id=$this->all_id&amp;y=$this->pyear'>previous</a></td>";
-				$html .= "<td align='right'><a href='?a=alliance_detail&amp;view=violent_systems&amp;all_id=$this->all_id&amp;m=$this->nmonth&amp;y=$this->nyear'>next</a></p></td></tr></table>";
+				$html .= "<td align='right'><a href='?a=alliance_detail&amp;view=violent_systems&amp;all_id=$this->all_id&amp;m=$this->nmonth&amp;y=$this->nyear'>next</a></td></tr></table>";
 				$html .= "</td><td align=center valign=top>";
 				$html .= "<div class=block-header>All-Time</div>";
 				$html .= "<table class='kb-table'>";

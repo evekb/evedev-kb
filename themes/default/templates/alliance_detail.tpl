@@ -42,7 +42,7 @@
 <div class="block-header">{$monthname} {$year}</div>
 {$killtable}
 <table width="300" cellspacing="1"><tr><td><a href='?a=alliance_detail&amp;view=corp_kills&amp;m={$pmonth}&amp;all_id={$all_id}&amp;y={$pyear}'>previous</a></td>
-<td align='right'><a href='?a=alliance_detail&amp;view=corp_kills&amp;all_id={$all_id}&amp;m={$nmonth}&amp;y={$nyear}'>next</a></p></td></tr></table>
+<td align='right'><a href='?a=alliance_detail&amp;view=corp_kills&amp;all_id={$all_id}&amp;m={$nmonth}&amp;y={$nyear}'>next</a></td></tr></table>
 </td><td valign="top" width="400">
 <div class="block-header">All time</div>
 {$allkilltable}
@@ -53,7 +53,7 @@
 <div class="block-header">{$monthname} {$year}</div>
 {$losstable}
 <table width="300" cellspacing="1"><tr><td><a href='?a=alliance_detail&amp;view=corp_kills&amp;m={$pmonth}&amp;all_id={$all_id}&amp;y={$pyear}'>previous</a></td>
-<td align='right'><a href='?a=alliance_detail&amp;view=corp_kills&amp;all_id={$all_id}&amp;m={$nmonth}&amp;y={$nyear}'>next</a></p></td></tr></table>
+<td align='right'><a href='?a=alliance_detail&amp;view=corp_kills&amp;all_id={$all_id}&amp;m={$nmonth}&amp;y={$nyear}'>next</a></td></tr></table>
 </td><td valign="top" width="400">
 <div class="block-header">All time</div>
 {$alllosstable}
