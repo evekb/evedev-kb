@@ -1,6 +1,9 @@
 <?php
 // current subversion revision
-define('SVN_REV', '2.1alpha');
+$svnrevision = '$Revision$';
+$svnrevision = trim(substr($svnrevision, 9, strlen($svnrevision)-10));
+
+define('SVN_REV', $svnrevision);
 
 define('LATEST_DB_UPDATE',"012");
 
