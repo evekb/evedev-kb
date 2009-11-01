@@ -9,7 +9,7 @@
 // set this to 1 if you are running a master killboard and want
 // to even fetch mails not related to your corp / alliance
 define('MASTER', 0);
-
+@error_reporting(E_ERROR);
 @set_time_limit(0);
 
 $cronStartTime = microtime(true);
@@ -35,7 +35,7 @@ $validurl = "/^(http|https):\/\/([A-Za-z0-9_]+(:[A-Za-z0-9_]+)?@)?[a-z0-9]+([\-\
 if (config::get('fetch_feed_count'))
     $feedcount = config::get('fetch_feed_count');
 else
-    $feedcount = 3;
+    $feedcount = 1;
 
 // corporation OR alliance id
 if (config::get('cfg_corpid'))
@@ -71,6 +71,7 @@ $out = '';
 
 $feed = array();
 $friend = array();
+$apikills = array();
 for ($i = 1; $i <= $feedcount; $i++)
 {
     $str = config::get('fetch_url_' . $i);
@@ -79,7 +80,7 @@ for ($i = 1; $i <= $feedcount; $i++)
     $feedlast[$i] = intval($tmp[1]);
     if ($tmp[2] == "on")
         $friend[$i] = $tmp[2];
-	if ($tmp[3] == "on")
+	if (isset($tmp[3]) && $tmp[3] == "on")
         $apikills[$i] = $tmp[3];
     $feedfetch = new Fetcher();
     if (preg_match($validurl , $feed[$i]))
@@ -92,7 +93,7 @@ for ($i = 1; $i <= $feedcount; $i++)
         }
         if ($friend[$i])
             $str .= '&friend=1';
-		if ($apikills[$i])
+		if (isset($apikills[$i]))
 			$str .= '&apikills=1';
         if (!config::get('fetch_compress'))
             $str .= "&gz=1";
