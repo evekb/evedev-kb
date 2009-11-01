@@ -22,6 +22,8 @@ class http_request
         $this->headers = array();
         $this->cookiedata = array();
         $this->socket_timeout = 5;
+		$this->fp = false;
+		$this->requested = false;
     }
 
     // socket timeout is the amount of time in second which is waited
@@ -92,6 +94,7 @@ class http_request
 
         if (!is_resource($fp))
         {
+			$this->content = '';
             return false;
         }
 
@@ -103,7 +106,7 @@ class http_request
                           .'User-Agent: '.$this->useragent.$lf
                           .'Host: '.$this->url['host'].$lf
                           .'Connection: close'.$lf;
-		if (count($this->url['user']) && count($this->url['pass']))
+		if (isset($this->url['user']) && isset($this->url['pass']))
 		{
 			$base64 = base64_encode($this->url['user'].':'.$this->url['pass']);
 			$request_string .=	'Authorization: Basic '.$base64.$lf.$lf;
@@ -151,7 +154,7 @@ class http_request
         $request_string .= $lf;
 
         fputs($fp, $request_string.$data);
-        $this->sent = strlen($header)+strlen($data);
+        $this->sent = strlen($data);
 
         $header = 1;
 		$http_header = '';
