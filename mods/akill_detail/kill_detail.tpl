@@ -138,6 +138,10 @@
                         <td colspan=2 class=kb-table-cell style="padding-top: 1px; padding-bottom: 1px;">Damage done:</td><td class=kb-table-cell style="padding-top: 1px; padding-bottom: 1px;">{$i.damageDone|number_format} {if $VictimDamageTaken > 0}({$i.damageDone/$VictimDamageTaken*100|number_format}%){/if}</td>
                     </tr>
                 {/foreach}
+{if $limited}                <tr class="{cycle name=ccl}">
+                    <td colspan="3" class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;"><a href="{$unlimitURL}">Show all involved parties</a></td>
+                </tr>
+{/if}
 
             </table>
 {if $config->get('comments')}{$comments}{/if}

@@ -5,6 +5,8 @@ $page = new Page('Kill details');
 
 $kll_id = intval($_GET['kll_id']);
 $kll_external_id = intval($_GET['kll_external_id']);
+if(isset($_GET['nolimit'])) $nolimit = true;
+else $nolimit = false;
 if (!$kll_id && !$kll_external_id)
 {
     $html = "No kill id specified.";
@@ -143,6 +145,12 @@ $i = 1;
 $involved = array();
 foreach ($kill->involvedparties_ as $inv)
 {
+	if($i > 10 && !$nolimit)
+	{
+		$smarty->assign('limited', true);
+		$smarty->assign('unlimitURL', '?'.$_SERVER['QUERY_STRING'].'&amp;nolimit');
+		break;
+	}
     $pilot = $inv->getPilot();
     $corp = $inv->getCorp();
     $alliance = $inv->getAlliance();
