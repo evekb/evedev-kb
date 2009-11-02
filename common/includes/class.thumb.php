@@ -206,18 +206,37 @@ class thumb
 
 	function genCorp()
 	{
-		if (!file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->_id,0,2).'/'.$this->_id.'_64.jpg'))
+		if (!file_exists('img/corps/'.$this->_id.'.jpg') && $this->_id != intval($this->_id))
 		{
-			if (file_exists('img/corps/'.$this->_id.'.jpg'))
-				$file = 'img/corps/'.$this->_id.'.jpg';
-			else
+			$this->_id = 0;
+		}
+		elseif (!file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->_id,0,2).'/'.$this->_id.'_64.jpg'))
+		{
+			require_once("common/includes/class.eveapi.php");
+
+			$myAPI = new API_CorporationSheet();
+			$myAPI->setCorpID($this->_id);
+
+			$result .= $myAPI->fetchXML();
+
+			$mylogo = $myAPI->getLogo();
+
+			if ($result == "Corporation is not part of alliance.")
 			{
-				$file = 'img/corps/0.jpg';
 				$this->_thumb = KB_CACHEDIR.'/img/corps/0_'.$this->_size. '.jpg';
 			}
+			elseif ($result == "")
+			{
+				require_once("common/includes/evelogo.php");
+				// create two sized logo's in 2 places - this allows checks already in place not to keep requesting corp logos each time page is viewed
+				// class.thumb.php cannot work with png (although saved as jpg these are actually pngs) therefore we have to create the 128 size for it
+				// doing this prevents the images being rendered each time the function is called and allows it to use one in the cache instead.
+				CorporationLogo( $mylogo, 64, $this->_id );
+				CorporationLogo( $mylogo, $this->_size, $this->_id );
+			}
+			return;
 		}
-		else $file = KB_CACHEDIR.'/img/corps/'.substr($this->_id,0,2).'/'.$this->_id.'_64.jpg';
-		$img = imagecreatefromjpeg($file);
+		$img = imagecreatefromjpeg('img/corps/'.$this->_id.'.jpg');
 		if ($img)
 		{
 			$newimg = imagecreatetruecolor($this->_size, $this->_size);
@@ -226,6 +245,7 @@ class thumb
 			imagecopyresampled($newimg, $img, 0, 0, 0, 0, $this->_size, $this->_size, $oldx, $oldy);
 			imagejpeg($newimg, $this->_thumb, 90);
 		}
+		return;
 	}
 
 	function genAlliance()
@@ -251,16 +271,44 @@ class thumb
 
 class thumbInt extends thumb
 {
-	function thumbInt($int_id, $size)
+	function thumbInt($int_id, $size, $type)
 	{
-		require_once('common/includes/class.pilot.php');
-		$pilot = new Pilot($int_id);
-		$this->_id = $pilot->getExternalID();
-		$this->_size = $size;
-		$this->_type = 'pilot';
-		$this->_encoding = 'jpeg';
+		$this->_type = $type;
+		switch($this->_type)
+		{
+			case 'pilot':
+			case '':
+				require_once('common/includes/class.pilot.php');
+				$pilot = new Pilot($int_id);
+				$this->_id = $pilot->getExternalID();
+				$this->_size = $size;
+				$this->_type = 'pilot';
+				$this->_encoding = 'jpeg';
 
-		$this->validate();
+				$this->validate();
+				break;
+			case 'corp':
+				$this->_type = 'corp';
+				require_once('common/includes/class.corp.php');
+				$corp = new Corporation($int_id);
+				if(!$corp->getExternalID())
+				{
+					$this->_id = 0;
+				}
+				$this->_id = $corp->getExternalID();
+				$this->_size = $size;
+				$this->_encoding = 'jpeg';
+
+				$this->validate();
+				break;
+			default:
+				$this->_id = $str_id;
+				$this->_size = $size;
+				$this->_type = $type;
+				$this->_encoding = 'jpeg';
+
+				$this->validate();
+		}
 	}
 }
 ?>

@@ -93,6 +93,9 @@ if ($result == "Corporation is not part of alliance.")
 }	
 $html .= '<table class="kb-table" width="100%" border="0" cellspacing="1"><tr class="kb-table-row-even"><td rowspan="8" width="128" align="center" bgcolor="black">';
 
+$html .= "<img src=\"".$corp->getPortraitURL(128)."\" border=\"0\" alt=\"\" /></td>";
+
+/*
 if (file_exists("img/corps/".$corp->getID().".jpg") || file_exists("img/corps/".$corp->getUnique().".jpg"))
 {
     $html .= "<img src=\"".$corp->getPortraitURL(128)."\" border=\"0\" alt=\"\" /></td>";
@@ -122,7 +125,7 @@ else
 		$html .= "<img src=\"".IMG_URL."/campaign-big.gif\" border=\"0\" alt=\"\" /></td>";
 	}
 }
-
+*/
 if ($result == "Corporation is not part of alliance.")
 {
 	$html .= '<td class="kb-table-cell" width="180"><b>Alliance:</b></td><td class="kb-table-cell">';
