@@ -4,7 +4,8 @@ class session
 {
 	function init()
 	{
-		if (isset($_COOKIE[session_name("EDK_".preg_replace('/[^a-zA-Z0-9_-]/', '',KB_SITE))]))
+		session_name("EDK_".preg_replace('/[^a-zA-Z0-9_-]/', '',KB_SITE));
+		if (isset($_COOKIE[session_name()]))
 		{
 			session_start();
 			if (isset($_SESSION['user']))
