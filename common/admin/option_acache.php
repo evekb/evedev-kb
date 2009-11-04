@@ -131,7 +131,7 @@ class admin_acache
         }
         if ($_POST['option_clear_template'] == 'on')
         {//hardcoded in index.php
-			admin_acache::removeOld(0, 'cache/templates_c', false);
+			admin_acache::removeOld(0, KB_CACHEDIR.'/templates_c', false);
 			$_POST['option_clear_template'] == 'off';
         }
         if ($_POST['option_clear_mail'] == 'on')
@@ -161,14 +161,15 @@ class admin_acache
         }
         if ($_POST['option_clear_all'] == 'on')
         {
+			// Specify each in case they have been moved.
 			admin_acache::removeOld(0, KB_PAGECACHEDIR.'/'.KB_SITE, true);
-			admin_acache::removeOld(0, 'cache/templates_c', false);
+			admin_acache::removeOld(0, KB_CACHEDIR.'/templates_c', false);
 			admin_acache::removeOld(0, KB_MAILCACHEDIR, false);
 			admin_acache::clearQCache();
-			admin_acache::removeOld(0, 'cache/img', true);
-			admin_acache::removeOld(0, 'cache/data', false);
-			admin_acache::removeOld(0, 'cache/map', false);
-			admin_acache::removeOld(0, 'cache/api', false);
+			admin_acache::removeOld(0, KB_CACHEDIR.'/img', true);
+			admin_acache::removeOld(0, KB_CACHEDIR.'/data', false);
+			admin_acache::removeOld(0, KB_CACHEDIR.'/map', false);
+			admin_acache::removeOld(0, KB_CACHEDIR.'/api', false);
 			$qry = new DBQuery();
 			$qry->execute("DELETE FROM kb3_sum_alliance");
 			$qry->execute("DELETE FROM kb3_sum_corp");

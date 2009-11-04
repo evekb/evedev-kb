@@ -54,7 +54,7 @@ if (!$pid)
 {
     $pid = 0;
 }
-$img = imagecreatefromjpeg("cache/portraits/".$pid."_256.jpg");
+$img = imagecreatefromjpeg(Pilot::getPortraitPath(256,$pid));
 imagefilledrectangle($im, 318, 18, 392, 92, $greyred_trans);
 imagecopyresampled($im, $img, 320, 20, 0, 0, 70, 70, 256, 256);
 imagedestroy($img);

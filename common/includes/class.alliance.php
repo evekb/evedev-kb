@@ -11,6 +11,7 @@ class Alliance
     {
         $this->id_ = intval($id);
         $this->executed_ = false;
+		$this->name_ = '';
     }
 
 	//! Return the alliance CCP ID.

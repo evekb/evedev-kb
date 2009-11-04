@@ -62,8 +62,8 @@ class Config
 			config::set('cfg_memcache', 0);
 			config::set('cfg_memcache_server', 'memcached server address');
 			config::set('cfg_memcache_port', 'memcached server port');
-			config::set('cache_dir', 'cache/cache');
-			config::set('km_cache_dir', 'cache/mails');
+//			config::set('cache_dir', KB_QUERYCACHEDIR);
+//			config::set('km_cache_dir', KB_CACHEDIR.'/mails');
 			config::set('DBUpdate',LATEST_DB_UPDATE);
 		}
 	}

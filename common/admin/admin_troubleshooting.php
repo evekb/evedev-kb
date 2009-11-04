@@ -43,29 +43,32 @@ function checkdir($dir)
     else
     {
 	$html .=  '<img src="'.IMG_URL .'/panel/error.jpg" border="0" alt="" />';
-    $html .= '  I cannot write into ../cache.<br />';
-    $html .= '  Please issue a "chmod 777 ../cache" and "chmod 777 ../cache/*" on the commandline inside of this directory<br />';
+    $html .= '  I cannot write into '.$dir.'.<br />';
+    $html .= '  Please issue a "chmod 777 '.$dir.'" and "chmod 777 '.$dir.'/*" on the commandline inside of this directory<br />';
         global $stoppage;
         $stoppage = true;
     }
 }
 
-if (is_writeable('cache'))
+if (is_writeable(KB_CACHEDIR))
 {
 	$html .=  '<img src="'.IMG_URL .'/panel/working.jpg" border="0" alt="" />';
     $html .=  '  Cache directory is writeable<br />';
-    checkdir('cache/corps');
-    checkdir('cache/data');
-    checkdir('cache/map');
-    checkdir('cache/portraits');
-    checkdir('cache/templates_c');
+    checkdir(KB_PAGECACHEDIR);
+    checkdir(KB_QUERYCACHEDIR);
+    checkdir(KB_CACHEDIR.'/data');
+    checkdir(KB_CACHEDIR.'/map');
+    checkdir(KB_CACHEDIR.'/img/pilots');
+    checkdir(KB_CACHEDIR.'/img/corps');
+    checkdir(KB_CACHEDIR.'/img/alliances');
+    checkdir(KB_CACHEDIR.'/templates_c');
 }
 else
 {
     $stoppage = true;
     $html .=  '<img src="'.IMG_URL .'/panel/error.jpg" border="0" alt="" />';
-    $html .= '  I cannot write into ../cache.<br />';
-    $html .= '  Please issue a "chmod 777 ../cache" and "chmod 777 ../cache/*" on the commandline inside of this directory<br />';
+    $html .= '  I cannot write into '.KB_CACHEDIR.'<br />';
+    $html .= '  Please issue a "chmod 777 '.KB_CACHEDIR.'" and "chmod 777 '.KB_CACHEDIR.'/*" on the commandline inside of this directory<br />';
 }
 
 

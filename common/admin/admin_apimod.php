@@ -63,7 +63,7 @@ if ($_POST['clearapicache'])
 {
 	$deld = 0;
 	$dsize = 0;
-	$cachepath = getcwd().'/cache/api/*';
+	$cachepath = KB_CACHEDIR.'/api/*';
 	$match = "*";
 
 	//$dirs = glob($cachepath."*");
@@ -222,7 +222,7 @@ if ($_POST['import'] || isset($_GET['Process']))
             $outputdata .= $myEveAPI->Import($keystring, $typestring, $i);
 			$apicachetime[$i] = $myEveAPI->CachedUntil_;
 			
-			$file = @fopen(getcwd().'/cache/data/report.txt', 'a');
+			$file = @fopen(KB_CACHEDIR.'/data/report.txt', 'a');
         	fwrite($file, $outputdata);
        		fclose($file);
 			
@@ -233,10 +233,10 @@ if ($_POST['import'] || isset($_GET['Process']))
 			    //$html .= "<a href=\"http:?a=admin_apimod&Process=" . $processindex . "\">Click to process next Key</a>";
 				$html .= "<script type=\"text/javascript\">window.location = \"?a=admin_apimod&Process=" .$processindex . "\"</script>"; //*/
 			} else { // load report.txt to $html
-				$fp = @fopen(getcwd().'/cache/data/report.txt', 'r');
-        		$html .= fread($fp, filesize(getcwd().'/cache/data/report.txt'));
+				$fp = @fopen(KB_CACHEDIR.'/data/report.txt', 'r');
+        		$html .= fread($fp, filesize(KB_CACHEDIR.'/data/report.txt'));
         		fclose($fp);
-				@unlink(getcwd().'/cache/data/report.txt'); // delete file, it was temporary
+				@unlink(KB_CACHEDIR.'/data/report.txt'); // delete file, it was temporary
 				
 			}
 		} else {
@@ -257,7 +257,7 @@ if ($_POST['import'] || isset($_GET['Process']))
 // calculate cache size
 $deld = 0;
 $dsize = 0;
-$cachepath = getcwd().'/cache/api/*';
+$cachepath = KB_CACHEDIR.'/api/*';
 $match = "*";
 
 $files = glob($cachepath.$match);

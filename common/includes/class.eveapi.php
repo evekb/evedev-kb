@@ -16,22 +16,22 @@ require_once( "common/includes/db.php" );
 require_once('common/includes/class.apicache.php');
 
 // Checks for configuration of files and folders
-if (!file_exists("cache/api")) 
+if (!file_exists(KB_CACHEDIR."/api"))
 {
-    if (!mkdir("cache/api", 0777))
+    if (!mkdir(KB_CACHEDIR."/api", 0777))
 	{
 		// creating folder failed - spam something about that
-		echo "Failed to create folder 'cache/api' you should create the folder yourself and set chmod 777";
+		echo "Failed to create folder '".KB_CACHEDIR."/api' you should create the folder yourself and set chmod 777";
 	}
-} 
+}
 
 // **********************************************************************************************************************************************
 // ****************                                    API KillLog - /corp/Killlog.xml.aspx                                      ****************
 // **********************************************************************************************************************************************
 
-class API_KillLog 
+class API_KillLog
 {
-    function Import($keystring, $typestring, $keyindex) 
+    function Import($keystring, $typestring, $keyindex)
 	{
 		$this->mailcount_ = 0;
 		$this->ignoredmails_ = 0;
@@ -44,8 +44,7 @@ class API_KillLog
 		$this->hasdownloaded_ = false;
 		$this->errortext_ = "";
 		$this->CachedUntil_ = "";
-		$this->killmailExists_ = false;
-		
+
         // reduces strain on DB
 		if(function_exists("set_time_limit"))
       		set_time_limit(0);
@@ -65,7 +64,7 @@ class API_KillLog
 		// Initialise for error correcting and missing itemID resolution
 		$this->myIDName = new API_IDtoName();
 		$this->myNameID = new API_NametoID();
-		
+
         $lastdatakillid = 1;
         $currentdatakillid = 0;
 
@@ -74,12 +73,12 @@ class API_KillLog
     	{
         	$this->API_CacheTime = "2005-01-01 00:00:00"; // fake date to ensure that it runs first time.
     	}
-		
-		if (is_file(getcwd().'/cache/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml'))
+
+		if (is_file(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml'))
 			$cacheexists = true;
 		else
 			$cacheexists = false;
-		
+
 		// if API_UseCache = 1 (off) then don't use cache
         if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($this->API_CacheTime_) > 0) || ($this->API_UseCaching_ == 1)  || !$cacheexists )
         {
@@ -92,33 +91,33 @@ class API_KillLog
             	$lastdatakillid = $currentdatakillid;
             	$currentdatakillid = $this->getlastkillid($data);
         	} while ( $lastdatakillid != $currentdatakillid );
-        	$data .= '</myxml>'; 
+        	$data .= '</myxml>';
 
-			if ( ( $this->API_UseCaching_ ) == 0 )//&& ( $this->iscronjob_ == false ) ) 
+			if ( ( $this->API_UseCaching_ ) == 0 )//&& ( $this->iscronjob_ == false ) )
 			{
 				// save the file if no errors have occurred
 				if ($this->errorcode_ == 0)
 				{
-					$file = fopen(getcwd().'/cache/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml', 'w+');
+					$file = fopen(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml', 'w+');
         			fwrite($file, $data);
        				fclose($file);
 					//chmod the file so it can be altered by cronjobs in future
-					@chmod(getcwd().'/cache/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml',0666);
+					@chmod(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml',0666);
 				}
-			} 
-        } else { 
+			}
+        } else {
             // re-use cached XML
 			$this->Output_ .= "<i>Using cached XML file for " . config::get('API_Name_'.$keyindex) . "</i><br><br>";
 			$logsource = "Cache";
-			
-			if ($fp = @fopen(getcwd().'/cache/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml', 'r')) {
-    	    	$data = fread($fp, filesize(getcwd().'/cache/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml'));
+
+			if ($fp = @fopen(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml', 'r')) {
+    	    	$data = fread($fp, filesize(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml'));
         		fclose($fp);
     		} else {
-				return "<i>error loading cached file ".config::get('API_Name_'.$keyindex)."_KillLog.xml</i><br><br>";  
+				return "<i>error loading cached file ".config::get('API_Name_'.$keyindex)."_KillLog.xml</i><br><br>";
     		}
         }
-   
+
         $xml_parser = xml_parser_create();
         xml_set_object ( $xml_parser, $this );
         xml_set_element_handler($xml_parser, "startElement", "endElement");
@@ -127,7 +126,7 @@ class API_KillLog
         if (!xml_parse($xml_parser, $data, true))
             return $this->Output_ .= "<i>Error getting XML data from api.eve-online.com</i><br><br>";
 
-        if ( strlen($data) == 28 ) 
+        if ( strlen($data) == 28 )
             return $this->Output_ .= "<i>Error contacting api.eve-online.com</i><br><br>";
 
         xml_parser_free($xml_parser);
@@ -142,14 +141,14 @@ class API_KillLog
             $this->Output_ .= "<div class=block-header2>".$this->mailcount_." kills, " . $this->malformedmails_ . " malformed, " . $this->ignoredmails_ . " ignored and " . $this->verified_ . " verified from feed: " . config::get('API_Name_'.$keyindex) . " which contained ".$this->totalmails_." mails.<br></div>";
         else
             $this->Output_ .= "<div class=block-header2>No kills added, ". $this->malformedmails_ . " malformed, " . $this->ignoredmails_." ignored and " . $this->verified_ . " verified from feed: " . config::get('API_Name_'.$keyindex) . " which contained ".$this->totalmails_." mails.<br></div>";
-			
+
 		// Write to kb3_apilog
 		$qry = new DBQuery();
 		if ($this->iscronjob_)
 			$logtype = "Cron Job";
 		else
 			$logtype = "Manual";
-			
+
         $qry->execute( "insert into kb3_apilog	values( '" . KB_SITE . "', '"
 														. config::get('API_Name_'.$keyindex) . "',"
 														. $this->mailcount_ . ","
@@ -159,23 +158,21 @@ class API_KillLog
 														. $this->totalmails_ . ",'"
 														. $logsource . "','"
 														. $logtype . "',now() )" );
-		
+
         return $this->Output_;
 
     }
 
-    function startElement($parser, $name, $attribs) 
+    function startElement($parser, $name, $attribs)
     {
-		if($this->killmailExists_ && ($name != "ROW" ||  !is_numeric($attribs['KILLID']))) return;
-		else $this->killmailExists_ = false;
         if ($name == "ROWSET")
-        { 
+        {
 			//echo $this->rowsetCounter_ . " ";
             if (($this->pname_ == "") && ($this->typeid_ != "0"))
-            { 
+            {
 				$this->isContainer = true;
 				// this is to catch containers that spawn a new rowset so are missed off loot
-                if ($this->qtydropped_ !=0) 
+                if ($this->qtydropped_ !=0)
 				{
                     // dropped items
                     $this->droppeditems_['typeid'][] = $this->typeid_;
@@ -186,8 +183,8 @@ class API_KillLog
 					//} else {
 						$this->droppeditems_['flag'][] = $this->itemFlag_;
 					//}
-                } 
-                if ($this->qtydestroyed_ != 0) 
+                }
+                if ($this->qtydestroyed_ != 0)
 				{
                     // destroyed items
                     $this->destroyeditems_['typeid'][] =$this->typeid_;
@@ -201,52 +198,52 @@ class API_KillLog
                 }
                 $this->typeid_ = 0;
                 $this->itemFlag_ = 0;
-                $this->qtydropped_ = 0; 
+                $this->qtydropped_ = 0;
                 $this->qtydestroyed_ = 0;
             }
 			// goes after so container itself doesn't count as "(in countainer)
-			
+
         }
 
-        if (count($attribs)) 
+        if (count($attribs))
         {
-            foreach ($attribs as $k => $v) 
+            foreach ($attribs as $k => $v)
 			{
-                switch ($k) 
+                switch ($k)
 				{
                     case "CHARACTERID":
                         $this->charid_ = $v;
                         break;
-                    case "CHARACTERNAME":  
+                    case "CHARACTERNAME":
 						$this->pname_ = $v;
-						
+
 						// Error Correction is on (0 = on, 1 = off(I know, just don't ask))
-						if ( $this->API_CCPErrorCorrecting == 0 ) 
+						if ( $this->API_CCPErrorCorrecting == 0 )
 						{
 							if ( ($this->charid_ != "0" ) && (strlen($this->pname_) == 0) )
-							{ 
+							{
 								// name is blank but ID is valid - convert ID into name
 								$this->myIDName->clear();
-								$this->myIDName->setIDs($this->charid_); 
+								$this->myIDName->setIDs($this->charid_);
 								$this->Output_ .= $this->myIDName->fetchXML();
 								$myNames = $this->myIDName->getIDData();
 								$this->pname_ = $myNames[0]['name'];
 							}
-						} 
+						}
                         break;
-					case "CORPORATIONID": 
+					case "CORPORATIONID":
                         $this->corporationID_ = $v;
 						break;
-                    case "CORPORATIONNAME": 
+                    case "CORPORATIONNAME":
 						$this->corporation_ = $v;
-						
+
 						// Error Correction is on (0 = on, 1 = off(I know, just don't ask))
-						if ( $this->API_CCPErrorCorrecting == 0 ) 
+						if ( $this->API_CCPErrorCorrecting == 0 )
 						{
-							if ( ($this->corporationID_ != "0" ) && (strlen($this->corporation_) == 0) ) 
+							if ( ($this->corporationID_ != "0" ) && (strlen($this->corporation_) == 0) )
 							{ // name is blank but ID is valid - convert ID into name
 								$this->myIDName->clear();
-								$this->myIDName->setIDs($this->corporationID_); 
+								$this->myIDName->setIDs($this->corporationID_);
 								$this->Output_ .= $this->myIDName->fetchXML();
 								$myNames = $this->myIDName->getIDData();
 								$this->corporation_ = $myNames[0]['name'];
@@ -256,95 +253,92 @@ class API_KillLog
                     case "ALLIANCEID":
                         $this->allianceID_ = $v;
                         break;
-                    case "ALLIANCENAME": 
+                    case "ALLIANCENAME":
 						$this->alliance_ = $v;
-						
+
 						// Error Correction is on (0 = on, 1 = off(I know, just don't ask))
-						//if ( $this->API_CCPErrorCorrecting == 0 ) 
+						//if ( $this->API_CCPErrorCorrecting == 0 )
 						// conditional branch removed - ALWAYS fix alliance name bugs
 						{
 							if ( ($this->allianceID_ != "0" ) && (strlen($this->alliance_) == 0) )
 							{ // name is blank but ID is valid - convert ID into name
 								$this->myIDName->clear();
-								$this->myIDName->setIDs($this->allianceID_); 
+								$this->myIDName->setIDs($this->allianceID_);
 								$this->Output_ .= $this->myIDName->fetchXML();
 								$myNames = $this->myIDName->getIDData();
 								$this->alliance_ = $myNames[0]['name'];
 							}
 						}
-						
+
 						if (strlen($this->alliance_) == 0)
 							$this->alliance_ = "NONE";
                     	break;
-                    case "DAMAGETAKEN": 
+                    case "DAMAGETAKEN":
                         $this->damagetaken_ = $v;
                         break;
-                    case "DAMAGEDONE": 
+                    case "DAMAGEDONE":
                         $this->damagedone_ = $v;
                         break;
-                    case "SHIPTYPEID": 
-                        if ($v == 0) 
+                    case "SHIPTYPEID":
+                        if ($v == 0)
 						{
                             $this->shipname_ = "Unknown";
 						} else {
                             $this->shipname_ = gettypeIDname($v);
                         }
                         break;
-                    case "FINALBLOW": 
-                        $this->finalblow_ = $v; 
+                    case "FINALBLOW":
+                        $this->finalblow_ = $v;
                         break;
-                    case "SECURITYSTATUS": 
+                    case "SECURITYSTATUS":
                         //$this->security_ = $v;
 						$this->security_ = round($v,2); // allows number to pass with strict settings (number is usually much longer than 5 chars as defined in DB)
                         break;
-                    case "WEAPONTYPEID": 
+                    case "WEAPONTYPEID":
                         $this->weapon_ = gettypeIDname($v);
                         break;
                     // for items
-                    case "TYPEID": 
+                    case "TYPEID":
                         $this->typeid_ = gettypeIDname($v);
-						
+
 						// Missing Item correction
 						if ($this->typeid_ == "")
 						{
 							$this->myIDName->clear();
-							$this->myIDName->setIDs($v); 
+							$this->myIDName->setIDs($v);
 							$this->Output_ .= $this->myIDName->fetchXML();
 							$myNames = $this->myIDName->getIDData();
 							//$this->typeid_ = "Item missing from DB: " . $myNames[0]['name'];
 							$this->typeid_ = $myNames[0]['name'];
 						}
                         break;
-                    case "FLAG": 
+                    case "FLAG":
                         $this->itemFlag_ = $v;
                         break;
-                    case "QTYDROPPED": 
+                    case "QTYDROPPED":
                         $this->qtydropped_ = $v;
                         break;
-                    case "QTYDESTROYED": 
+                    case "QTYDESTROYED":
                         $this->qtydestroyed_ = $v;
                         break;
 
                     // for system/kill mail details (start of mail)
-                    case "KILLID": 
+                    case "KILLID":
                         // print mail here - this will miss the last mail but it can be caught on exit. This weird way of doing things prevents falling foul
                         // of the CCP API cargo bug - using function, avoids the repetition
-                        if ($this->beforekillid_ != 0) 
+                        if ($this->beforekillid_ != 0)
                         {
                             $this->parseendofmail();
                         }
+                        $this->beforekillid_ = $v;
 						$this->killid_ = $v; // added v2.6 for help tracing erroneous mails
 						$this->totalmails_++; // Count total number of mails in XML feed
 						if ($this->isKillIDVerified($v) != null)
 						{
 							$this->killmailExists_ = true;
-        unset($this->destroyeditems_ );
-        unset($this->droppeditems_);
-		$this->beforekillid_ = 0;
 							return;
 						} else {
 							$this->killmailExists_ = false;
-	                        $this->beforekillid_ = $v;
 						}
                         break;
                     case "SOLARSYSTEMID": // convert to system name and fetch system security - DONE
@@ -363,18 +357,18 @@ class API_KillLog
                         break;
                     case "MOONID": // only given with POS related stuff - unanchored mods however, do not have a moonid.
 						$this->moonid_ = $v;
-						
-						$this->moonname_ = getMoonName($v);	
+
+						$this->moonname_ = getMoonName($v);
 						// Missing Moon DB correction
 						if (($this->moonname_ == "") && ($this->moonid_ != 0))
 						{
 							$this->myIDName->clear();
-							$this->myIDName->setIDs($v); 
+							$this->myIDName->setIDs($v);
 							$this->Output_ .= $this->myIDName->fetchXML();
 							$myNames = $this->myIDName->getIDData();
 							//$this->typeid_ = "Item missing from DB: " . $myNames[0]['name'];
 							$this->moonname_ = $myNames[0]['name'];
-						}	
+						}
                         break;
                     case "KILLTIME": // Time Kill took place
                         $this->killtime_ = $v;
@@ -397,11 +391,9 @@ class API_KillLog
         }
     }
 
-    function endElement($parser, $name) 
+    function endElement($parser, $name)
     {
-		if($this->killmailExists_ && $name != "RESULT") return;
-		else $this->killmailExists_ = false;
-        switch ($name) 
+        switch ($name)
         {
 			case "ROWSET":
 				$this->isContainer = false;
@@ -437,7 +429,7 @@ class API_KillLog
                 $this->killmail_ .= "Involved parties:\r\n\r\n";
 
                 if ( config::get('API_Update') == 0 )
-                { 
+                {
 					// update Victim portrait while we're here
                     $sql = 'select plts.plt_id, plts.plt_externalid from kb3_pilots plts where plts.plt_name = "' . $this->pname_ . '"';
 
@@ -450,20 +442,20 @@ class API_KillLog
                         $pilot_external_id = $row['plt_externalid'];
 
                         if ( $pilot_external_id == 0 && $pilot_id != 0)
-                        {	
+                        {
 							// update DB with ID
                             $qry->execute("update kb3_pilots set plt_externalid = " . intval($this->charid_) . "
                                             where plt_id = " . $pilot_id);
-                        } 
+                        }
                     }
                 }
-				
+
 				// update crp_external_id
 				Update_CorpID($this->corporation_, $this->corporationID_);
 				// update all_external_id
 				if ($this->allianceID_ != 0)
 					Update_AllianceID($this->alliance_, $this->allianceID_);
-					
+
                 // set victim corp and alliance for FF check
                 $this->valliance_ = $this->alliance_;
                 $this->vcorp_ = $this->corporation_;
@@ -486,9 +478,9 @@ class API_KillLog
                 break;
             case "ROW":
                 if ( $this->typeid_ != "0" )
-                { 
+                {
 					// it's cargo
-                    if ($this->qtydropped_ !=0) 
+                    if ($this->qtydropped_ !=0)
                     {
                         // dropped items
                         $this->droppeditems_['typeid'][] = $this->typeid_;
@@ -499,7 +491,7 @@ class API_KillLog
 						} else {
 							$this->droppeditems_['flag'][] = $this->itemFlag_;
 						}
-					} 
+					}
                     if ($this->qtydestroyed_ != 0)
                     {
                     // destroyed items
@@ -514,12 +506,12 @@ class API_KillLog
                     }
                     $this->typeid_ = 0;
                     $this->itemFlag_ = 0;
-                    $this->qtydropped_ = 0; 
+                    $this->qtydropped_ = 0;
                     $this->qtydestroyed_ = 0;
-                } 
+                }
 				// using corporation_ not pname_ as NPCs don't have a name *** CHANGED to corporationID 16/03/2009 to catch 'sleeper' NPCs
-                if ($this->corporationID_ != 0)  
-                { 
+                if ($this->corporationID_ != 0)
+                {
 					// it's an attacker
                     $this->attackerslist_['name'][] = $this->pname_;
                     $this->attackerslist_['finalblow'][] = $this->finalblow_;
@@ -527,12 +519,12 @@ class API_KillLog
 					$this->attackerslist_['corporation'][] = $this->corporation_;
                     $this->attackerslist_['alliance'][] = $this->alliance_;
                     $this->attackerslist_['faction'][] = $this->factionname_;
-                    $this->attackerslist_['shiptypeid'][] = $this->shipname_; 
-                    $this->attackerslist_['weapon'][] = $this->weapon_; 
+                    $this->attackerslist_['shiptypeid'][] = $this->shipname_;
+                    $this->attackerslist_['weapon'][] = $this->weapon_;
                     $this->attackerslist_['damagedone'][] = $this->damagedone_;
 
                     if ( config::get('API_Update') == 0 )
-                    { 
+                    {
 						// update Attacker portrait while we're here
                         $sql = 'select plts.plt_id, plts.plt_externalid from kb3_pilots plts where plts.plt_name = "' . $this->pname_ . '"';
 
@@ -540,25 +532,25 @@ class API_KillLog
                         $qry->execute($sql);
                         $row = $qry->getRow();
                         if ($qry->recordCount() != 0)
-                        {						
+                        {
                             $pilot_id = $row['plt_id'];
                             $pilot_external_id = $row['plt_externalid'];
 
                             if ( $pilot_external_id == 0 && $pilot_id != 0 )
-                            {	
+                            {
 								// update DB with ID
                                 $qry->execute("update kb3_pilots set plt_externalid = " . intval($this->charid_) . "
                                                 where plt_id = " . $pilot_id);
                             }
                         }
                     }
-					
+
 					// update crp_external_id
 					Update_CorpID($this->corporation_, $this->corporationID_);
 					// update all_external_id
 					if ($this->allianceID_ != 0)
 						Update_AllianceID($this->alliance_, $this->allianceID_);
-						
+
                     $this->pname_ = "";
                     $this->finalblow_ = 0;
                     $this->security_ = 0;
@@ -578,8 +570,8 @@ class API_KillLog
                 $this->beforekillid_ = 0;
 
                 // does last killmail
-                if ($this->hasdownloaded_) 
-				{ 
+                if ($this->hasdownloaded_)
+				{
 					// catch to prevent processing without any mails
                     $this->parseendofmail();
                 }
@@ -587,7 +579,7 @@ class API_KillLog
             case "MYXML":
                 // end of data xml, process cachedtime here
                 //$ApiCache->set('API_CachedUntil_' . $this->keyindex_, $this->cachetext_);
-                break;	
+                break;
 			case "ERROR": //  Error Message
 				if ($this->errortext_ == "")
 				{
@@ -609,17 +601,17 @@ class API_KillLog
         }
     }
 
-    function characterData($parser, $data) 
+    function characterData($parser, $data)
     {
 		$this->characterDataValue = $data;
     }
 
     function parseendofmail()
     {
-	    // print attacks 
+	    // print attacks
 		$attackercounter = count($this->attackerslist_['name']);
        	// sort array into descending damage
-       	if ($attackercounter != 0 ) 
+       	if ($attackercounter != 0 )
         {
         	array_multisort($this->attackerslist_['damagedone'], SORT_NUMERIC, SORT_DESC,
                 $this->attackerslist_['name'], SORT_ASC, SORT_STRING,
@@ -632,17 +624,17 @@ class API_KillLog
                 $this->attackerslist_['weapon'], SORT_ASC, SORT_STRING );
         }
 
-        // Initialise some flags to use				
+        // Initialise some flags to use
         $hasplayersonmail = false;
         $this->corpFF_ = true;
         $this->allianceFF_ = true;
         $poswasfriendly = false;
-				
+
         // catch for victim being in no alliance
         if ($this->valliance_ == "NONE")
        		$this->allianceFF_ = false;
 
-        for ($attackerx = 0; $attackerx < $attackercounter; $attackerx++) 
+        for ($attackerx = 0; $attackerx < $attackercounter; $attackerx++)
         {
        		// if NPC (name will be "") then set pname_ as corporation_ for mail parsing
         	if  ($this->attackerslist_['name'][$attackerx] == "")
@@ -659,7 +651,7 @@ class API_KillLog
                 $this->corpFF_ = false;
                 $this->allianceFF_ = false;
             } else {
-                $hasplayersonmail = true;	
+                $hasplayersonmail = true;
                 $this->killmail_ .= "Name: ".$this->attackerslist_['name'][$attackerx];
                 if ($this->attackerslist_['finalblow'][$attackerx] == 1)
                 {
@@ -671,73 +663,73 @@ class API_KillLog
 				$this->killmail_ .= "Corp: ".$this->attackerslist_['corporation'][$attackerx]."\r\n";
                 $this->killmail_ .= "Alliance: ".$this->attackerslist_['alliance'][$attackerx]."\r\n";
                 $this->killmail_ .= "Faction: ".$this->attackerslist_['faction'][$attackerx]."\r\n";
-                $this->killmail_ .= "Ship: ".$this->attackerslist_['shiptypeid'][$attackerx]."\r\n"; 
-                $this->killmail_ .= "Weapon: ".$this->attackerslist_['weapon'][$attackerx]."\r\n"; 
+                $this->killmail_ .= "Ship: ".$this->attackerslist_['shiptypeid'][$attackerx]."\r\n";
+                $this->killmail_ .= "Weapon: ".$this->attackerslist_['weapon'][$attackerx]."\r\n";
                 $this->killmail_ .= "Damage Done: ".$this->attackerslist_['damagedone'][$attackerx]."\r\n";
 
                 // set Friendly Fire matches
                 if ($this->attackerslist_['alliance'][$attackerx] != $this->valliance_)
                		$this->allianceFF_ = false;
                 if ($this->attackerslist_['corporation'][$attackerx] != $this->vcorp_)
-                	$this->corpFF_ = false;				
+                	$this->corpFF_ = false;
             }
             $this->killmail_ .= "\r\n";
         } //end for next loop
-		
+
         // clear attackerslist
         $this->attackerslist_ = array();
 
-        if (count($this->destroyeditems_['qty']) != 0) 
+        if (count($this->destroyeditems_['qty']) != 0)
         {
             $this->killmail_ .= "\r\nDestroyed items:\r\n\r\n";
 
             $counter = count($this->destroyeditems_['qty']);
-            for ($x = 0; $x < $counter; $x++) 
+            for ($x = 0; $x < $counter; $x++)
             {
                 if ($this->destroyeditems_['qty'][$x] > 1)
-                { 
+                {
 					// show quantity
                 	$this->killmail_ .= $this->destroyeditems_['typeid'][$x].", Qty: ".$this->destroyeditems_['qty'][$x];
-                } else { 
+                } else {
 					// just the one
                 	$this->killmail_ .= $this->destroyeditems_['typeid'][$x];
                 }
-	
+
     	        if ($this->destroyeditems_['flag'][$x] == 5) {
     	        	$this->killmail_ .= " (Cargo)";
     	        } elseif ($this->destroyeditems_['flag'][$x] == 87) {
         	        $this->killmail_ .= " (Drone Bay)";
-            	}  elseif ($this->destroyeditems_['flag'][$x] == -1) 
+            	}  elseif ($this->destroyeditems_['flag'][$x] == -1)
 				{
 					$this->killmail_ .= " (In Container)";
 				}
                 $this->killmail_ .= "\r\n";
             }
-        }	
+        }
 
-        if (count($this->droppeditems_['qty']) != 0) 
+        if (count($this->droppeditems_['qty']) != 0)
         {
             $this->killmail_ .= "\r\nDropped items:\r\n\r\n";
 
             $counter = count($this->droppeditems_['qty']);
-            for ($x = 0; $x < $counter; $x++) 
+            for ($x = 0; $x < $counter; $x++)
             {
             	if ($this->droppeditems_['qty'][$x] > 1)
-            	{ 
+            	{
 					// show quantity
             	    $this->killmail_ .= $this->droppeditems_['typeid'][$x].", Qty: ".$this->droppeditems_['qty'][$x];
-            	} else { 
+            	} else {
 					// just the one
             	    $this->killmail_ .= $this->droppeditems_['typeid'][$x];
             	}
 
-            	if ($this->droppeditems_['flag'][$x] == 5) 
+            	if ($this->droppeditems_['flag'][$x] == 5)
                	{
                 	$this->killmail_ .= " (Cargo)";
-               	} elseif ($this->droppeditems_['flag'][$x] == 87) 
+               	} elseif ($this->droppeditems_['flag'][$x] == 87)
                 {
                 	$this->killmail_ .= " (Drone Bay)";
-                } elseif ($this->droppeditems_['flag'][$x] == -1) 
+                } elseif ($this->droppeditems_['flag'][$x] == -1)
 				{
 					$this->killmail_ .= " (In Container)";
 				}
@@ -749,12 +741,12 @@ class API_KillLog
         if ($this->isposkill_) {
         // is board an alliance board?
         	if ( ALLIANCE_ID == 0)
-            { 
+            {
 				// no it's set as a corp
                 $thiscorp = new Corporation(CORP_ID);
                 if ( $this->vcorp_ == $thiscorp->getName() )
                 	$poswasfriendly = true;
-            } else { 
+            } else {
 				// yes it's an Alliance board
             	$thisalliance = new Alliance(ALLIANCE_ID);
                 if ( $this->valliance_ == $thisalliance->getName() )
@@ -762,25 +754,25 @@ class API_KillLog
             }
         }
 
-        if ( ( $this->API_IgnoreFriendPos_ == 0 ) &&  ( $poswasfriendly ) &&  ( $this->isposkill_ ) ) 
+        if ( ( $this->API_IgnoreFriendPos_ == 0 ) &&  ( $poswasfriendly ) &&  ( $this->isposkill_ ) )
         {
-        	if ( ( $this->API_NoSpam_ == 0 ) && ( $this->iscronjob_ ) ) 
+        	if ( ( $this->API_NoSpam_ == 0 ) && ( $this->iscronjob_ ) )
         	{
             	// do not write to $this->Output_
             } else {
             	$this->Output_ .= "Killmail ID:".$this->killid_." containing friendly POS structure has been ignored.<br>";
             }
             $this->ignoredmails_++;
-        } elseif ( ( $this->API_IgnoreEnemyPos_ == 0 ) &&  ( !$poswasfriendly ) &&  ( $this->isposkill_ ) ) 
+        } elseif ( ( $this->API_IgnoreEnemyPos_ == 0 ) &&  ( !$poswasfriendly ) &&  ( $this->isposkill_ ) )
         {
-        	if ( ( $this->API_NoSpam_ == 0 ) && ( $this->iscronjob_ ) ) 
+        	if ( ( $this->API_NoSpam_ == 0 ) && ( $this->iscronjob_ ) )
             {
                 // do not write to $this->Output_
             } else {
                 $this->Output_ .= "Killmail ID:".$this->killid_." containing enemy POS structure been ignored.<br>";
             }
             $this->ignoredmails_++;
-        } elseif ( ( $this->API_IgnoreNPC_ == 0 ) && ($hasplayersonmail == false) ) 
+        } elseif ( ( $this->API_IgnoreNPC_ == 0 ) && ($hasplayersonmail == false) )
         {
             if ( ( $this->API_NoSpam_ == 0 ) && ( $this->iscronjob_ ) )
             {
@@ -789,18 +781,18 @@ class API_KillLog
                 $this->Output_ .= "Killmail ID:".$this->killid_." containing only NPCs has been ignored.<br>";
             }
             $this->ignoredmails_++;
-        } elseif ( ( $this->API_IgnoreCorpFF_ == 0 ) && ($this->corpFF_ == true ) ) 
+        } elseif ( ( $this->API_IgnoreCorpFF_ == 0 ) && ($this->corpFF_ == true ) )
         {
-            if ( ( $this->API_NoSpam_ == 0 ) && ( $this->iscronjob_ ) ) 
+            if ( ( $this->API_NoSpam_ == 0 ) && ( $this->iscronjob_ ) )
             {
                	// do not write to $this->Output_
            	} else {
                	$this->Output_ .= "Killmail ID:".$this->killid_." containing corporation friendly fire has been ignored.<br>";
             }
             $this->ignoredmails_++;
-        } elseif ( ( $this->API_IgnoreAllianceFF_ == 0 ) && ($this->allianceFF_ == true ) ) 
+        } elseif ( ( $this->API_IgnoreAllianceFF_ == 0 ) && ($this->allianceFF_ == true ) )
         {
-            if ( ( $this->API_NoSpam_ == 0 ) && ( $this->iscronjob_) ) 
+            if ( ( $this->API_NoSpam_ == 0 ) && ( $this->iscronjob_) )
             {
                	 // do not write to $this->Output_
             } else {
@@ -809,7 +801,7 @@ class API_KillLog
             $this->ignoredmails_++;
         } else {
             $this->postimportmail();
-        }	
+        }
 
         // clear destroyed/dropped arrays
         unset($this->destroyeditems_ );
@@ -818,11 +810,11 @@ class API_KillLog
 
     function postimportmail()
     {
-        if ( ( isset( $this->killmail_ ) ) && ( !$this->killmailExists_ ) ) 
+        if ( ( isset( $this->killmail_ ) ) && ( !$this->killmailExists_ ) )
         {
             $parser = new Parser( $this->killmail_ );
             //$killid = $parser->parse( true );
-			
+
 			if (config::get('filter_apply'))
         	{
             	$filterdate = config::get('filter_date');
@@ -842,13 +834,13 @@ class API_KillLog
             	$killid = $parser->parse(true);
         	}
 
-            if ( $killid == 0 || $killid == -1 || $killid == -2 || $killid == -3 ) 
+            if ( $killid == 0 || $killid == -1 || $killid == -2 || $killid == -3 )
             {
                 if ( $killid == 0 )
                 {
                     $this->Output_ .= "Killmail ID:".$this->killid_." is malformed.<br>";
 					$this->malformedmails_++;
-					
+
                     if ($errors = $parser->getError())
                     {
                         foreach ($errors as $error)
@@ -859,7 +851,7 @@ class API_KillLog
                                 $this->Output_ .= ' The text lead to this error was: "'.$error[1].'"<br>';
                             }
                         }
-						
+
 						//if ( $this->iscronjob_ )
 						//{
 						//	$this->Output_ .= $this->killmail_; // experimental - output the killmail as the API Parser understood it
@@ -876,7 +868,7 @@ class API_KillLog
 					$this->Output_ .= "Killmail ID:".$this->killid_. " has been ignored as mails before $filterdate are restricted.<br>";
 					$this->ignoredmails_++;
             	}
-				
+
                 if ( $killid == -2 )
 				{
                     $this->Output_ .= "Killmail ID:".$this->killid_. " is not related to ".KB_TITLE.".<br>";
@@ -885,7 +877,7 @@ class API_KillLog
 				// Killmail exists - as we're here and the mail was posted, it is not a verified mail, so verify it now.
                 if ( $killid == -1 )
                 {
-                    if ( ( $this->API_NoSpam_ == 0 ) && ( $this->iscronjob_ ) ) 
+                    if ( ( $this->API_NoSpam_ == 0 ) && ( $this->iscronjob_ ) )
                     {
                     // do not write to $this->Output_
                     } else {
@@ -894,22 +886,22 @@ class API_KillLog
 						$this->VerifyKill($this->killid_, $parser->dupeid_);
 						$this->verified_++;
                     }
-                } 
+                }
             } else {
                 $qry = new DBQuery();
                 $qry->execute( "insert into kb3_log	values( ".$killid.", '".KB_SITE."','API ".APIVERSION."',now() )" );
                 $this->Output_ .= "API Killmail ID:".$this->killid_. " successfully imported <a href=\"?a=kill_detail&amp;kll_id=".$killid."\">here</a> as KB ID:". $killid ."<br>";
-			
+
 				// Now place killID (API) into killboard row $killid
 				$this->VerifyKill($this->killid_, $killid);
-				
+
 				// mail forward
 				event::call('killmail_imported', $this);
 
 				// For testing purposes
 				//$this->Output_ .= str_replace("\r\n", "<br>", $this->killmail_);
-				
-				if ( file_exists("common/includes/class.comments.php") ) 
+
+				if ( file_exists("common/includes/class.comments.php") )
 				  	require_once( "common/includes/class.comments.php" );
                 if (class_exists('Comments') && config::get('API_Comment')) { // for the Eve-Dev Comment Class
                     $comments = new Comments($killid);
@@ -958,11 +950,11 @@ class API_KillLog
             {
                 $contents = substr($contents, $start + strlen("\r\n\r\n"));
             }
-        } 
+        }
         return $contents;
     }
 
-    function mystrripos($haystack, $needle, $offset=0) 
+    function mystrripos($haystack, $needle, $offset=0)
     {
         if($offset<0)
         {
@@ -1001,7 +993,7 @@ class API_KillLog
         $alliancenamereturn = "";
 
         $counter = count($this->alliancearray_['Name']);
-        for ($x = 0; $x < $counter; $x++) 
+        for ($x = 0; $x < $counter; $x++)
         {
             if ($this->alliancearray_['allianceID'][$x] == $v)
                 $alliancenamereturn = $this->alliancearray_['Name'][$x];
@@ -1009,13 +1001,13 @@ class API_KillLog
 
         return $alliancenamereturn;
     }
-	
+
 	function VerifyKill($killid, $mailid)
 	{
 		$qry = new DBQuery();
         $qry->execute( "UPDATE `kb3_kills` SET `kll_external_id` = '" . $killid . "' WHERE `kb3_kills`.`kll_id` =" . $mailid . " LIMIT 1" );
 	}
-	
+
 	function isKillIDVerified($killid)
 	{
 		$qry = new DBQuery();
@@ -1029,9 +1021,9 @@ class API_KillLog
 // ****************                                   API Char list - /account/Characters.xml.aspx                               ****************
 // **********************************************************************************************************************************************
 
-class APIChar 
+class APIChar
 {
-    function fetchChars($apistring) 
+    function fetchChars($apistring)
     {
         $data = $this->loaddata($apistring);
 
@@ -1044,7 +1036,7 @@ class APIChar
             return "<i>Error getting XML data from api.eve-online.com/account/Characters.xml.aspx  </i><br><br>";
 
         xml_parser_free($xml_parser);
-        
+
         // add any characters not already in the kb
         $numchars = count($this->chars_);
         for ( $x = 0; $x < $numchars; $x++ )
@@ -1055,7 +1047,7 @@ class APIChar
             $qry = new DBQuery();
             $qry->execute($sql);
             if ($qry->recordCount() != 0)
-            { 
+            {
 				// pilot is in kb db, check he has his char id
                 $row = $qry->getRow();
 
@@ -1063,7 +1055,7 @@ class APIChar
                 $pilot_external_id = $row['plt_externalid'];
 
                 if ( $pilot_external_id == 0 && $pilot_id != 0 )
-                {	
+                {
 					// update DB with ID
                     $qry->execute("update kb3_pilots set plt_externalid = " . intval($this->chars_[$x]['charID']) . "
                                      where plt_id = " . $pilot_id);
@@ -1090,28 +1082,28 @@ class APIChar
         return $this->chars_;
     }
 
-    function startElement($parser, $name, $attribs) 
+    function startElement($parser, $name, $attribs)
     {
 		global $character;
-		
-        if ($name == "ROW") 
-        { 
-            if (count($attribs)) 
+
+        if ($name == "ROW")
+        {
+            if (count($attribs))
             {
-                foreach ($attribs as $k => $v) 
+                foreach ($attribs as $k => $v)
                 {
-                    switch ($k) 
+                    switch ($k)
                     {
                         case "NAME":
                             $character['Name'] = $v;
                             break;
-                        case "CORPORATIONNAME":  
+                        case "CORPORATIONNAME":
                             $character['corpName'] = $v;
                             break;
-                        case "CHARACTERID":  
+                        case "CHARACTERID":
                             $character['charID'] = $v;
                             break;
-                        case "CORPORATIONID":  
+                        case "CORPORATIONID":
                             $character['corpID'] = $v;
                             break;
                     }
@@ -1120,10 +1112,10 @@ class APIChar
         }
     }
 
-    function endElement($parser, $name) 
+    function endElement($parser, $name)
     {
 		global $character;
-		
+
         if ($name == "ROW")
 		{
 			$this->chars_[] = $character;
@@ -1132,7 +1124,7 @@ class APIChar
 		}
     }
 
-    function characterData($parser, $data) 
+    function characterData($parser, $data)
     {
         // nothing
     }
@@ -1170,7 +1162,7 @@ class APIChar
             {
                 $contents = substr($contents, $start + strlen("\r\n\r\n"));
             }
-        } 
+        }
         return $contents;
     }
 }
@@ -1179,23 +1171,23 @@ class APIChar
 // ****************                                 API Alliance list - /eve/AllianceList.xml.aspx                               ****************
 // **********************************************************************************************************************************************
 
-class AllianceAPI 
+class AllianceAPI
 {
 	function getCachedUntil()
 	{
 		return $this->CachedUntil_;
 	}
-	
+
 	function getCurrentTime()
 	{
 		return $this->CurrentTime_;
 	}
-	
-	
+
+
 	function initXML()
 	{
 		global $myalliancelist;
-		
+
 		$data = LoadGlobalData('/eve/AllianceList.xml.aspx');
 
     	$xml_parser = xml_parser_create();
@@ -1205,32 +1197,32 @@ class AllianceAPI
 
     	if (!xml_parse($xml_parser, $data, true))
        	 	return false;
-	
+
    	 	xml_parser_free($xml_parser);
 		return true;
 	}
-	
-    function fetchalliances($overide=false) 
+
+    function fetchalliances($overide=false)
     {
         global $myalliancelist;
-		
+
 		if (!isset($this->alliances_))
 			$this->initXML($overide);
-			
+
         return $myalliancelist;
     }
 
-    function startElement($parser, $name, $attribs) 
+    function startElement($parser, $name, $attribs)
     {
         global $myalliancelist, $alliancedetail, $membercorps, $membercorp, $iscorpsection;
 
-        if ($name == "ROW") 
+        if ($name == "ROW")
         {
-            if (count($attribs)) 
+            if (count($attribs))
             {
-                foreach ($attribs as $k => $v) 
+                foreach ($attribs as $k => $v)
                 {
-                    switch ($k) 
+                    switch ($k)
                     {
                         case "NAME":
                             $alliancedetail['allianceName'] = $v;
@@ -1238,17 +1230,17 @@ class AllianceAPI
 						case "SHORTNAME":
                             $alliancedetail['shortName'] = $v;
                             break;
-                        case "ALLIANCEID":  
+                        case "ALLIANCEID":
                             $alliancedetail['allianceID'] = $v;
                             break;
-						case "EXECUTORCORPID":  
+						case "EXECUTORCORPID":
                             $alliancedetail['executorCorpID'] = $v;
                             break;
-						case "MEMBERCOUNT":  
+						case "MEMBERCOUNT":
                             $alliancedetail['memberCount'] = $v;
                             break;
-						case "STARTDATE": 
-							if (!$iscorpsection) 
+						case "STARTDATE":
+							if (!$iscorpsection)
 							{
                             	$alliancedetail['startDate'] = $v;
 							} else {
@@ -1256,7 +1248,7 @@ class AllianceAPI
 								$membercorps[] = $membercorp;
 							}
                             break;
-						case "CORPORATIONID":  
+						case "CORPORATIONID":
                             $membercorp['corporationID'] = $v;
 							$iscorpsection = true;
                             break;
@@ -1266,11 +1258,11 @@ class AllianceAPI
         }
     }
 
-    function endElement($parser, $name) 
+    function endElement($parser, $name)
     {
         global $myalliancelist, $alliancedetail, $membercorps, $membercorp, $iscorpsection;
 		global $tempvalue;
-		
+
 		if ($name == "CURRENTTIME")
 			$this->CurrentTime_ = $tempvalue;
 		if ($name == "CACHEDUNTIL")
@@ -1283,18 +1275,18 @@ class AllianceAPI
 			}
 			ApiCache::set('API_eve_AllianceList' , $this->CachedUntil_);
 		}
-		
-        switch ($name) 
+
+        switch ($name)
         {
             case "ROWSET":
-                if ($alliancedetail['allianceName'] != "" && $alliancedetail['allianceID'] != "0") 
+                if ($alliancedetail['allianceName'] != "" && $alliancedetail['allianceID'] != "0")
                 {
                     $myalliancelist['Name'][] = $alliancedetail['allianceName'];
                     $myalliancelist['allianceID'][] = $alliancedetail['allianceID'];
                 }
 				$alliancedetail['memberCorps'] = $membercorps;
 				$this->alliances_[] = $alliancedetail;
-				
+
 				$alliancedetail['allianceName'] = "";
 				$alliancedetail['shortName'] = "";
 				$alliancedetail['allianceID'] = "";
@@ -1312,21 +1304,21 @@ class AllianceAPI
         }
     }
 
-    function characterData($parser, $data) 
+    function characterData($parser, $data)
     {
 		global $tempvalue;
-        
+
 		$tempvalue = $data;
     }
-	
+
 	function updatealliancetable()
     {
         if (!isset($this->alliances_))
             $this->initXML();
-        
+
         if (!isset($this->alliances_))
             return false;
-            
+
         $qry = new DBQuery();
         $qry->execute("DROP TABLE IF EXISTS `kb3_all_corp`;");
         $qry->execute("CREATE TABLE kb3_all_corp (
@@ -1336,7 +1328,7 @@ class AllianceAPI
             ) ");
 
         $alliances = $this->alliances_;
-        
+
         foreach ($alliances as $arraykey => $arrayvalue)
         {
             $tempally = $arrayvalue;
@@ -1371,21 +1363,21 @@ class AllianceAPI
                         	$qry->execute("INSERT INTO kb3_all_corp values ".substr($q,0,strlen($q)-1));
                         break;
                 }
-            }                  
+            }
         }
         return true;
     }
-	
+
 	function LocateAlliance($name)
 	{
 		if (!isset($this->alliances_))
             $this->initXML();
-        
+
         if (!isset($this->alliances_))
             return false;
-			
+
 		$alliances = $this->alliances_;
-        
+
         foreach ($alliances as $arraykey => $arrayvalue)
         {
             $tempally = $arrayvalue;
@@ -1402,21 +1394,21 @@ class AllianceAPI
 						}
                         break;
                 }
-            }                  
+            }
         }
 		return false;
 	}
-	
+
 	function LocateAllianceID($id)
 	{
 		if (!isset($this->alliances_))
             $this->initXML();
-        
+
         if (!isset($this->alliances_))
             return false;
-			
+
 		$alliances = $this->alliances_;
-        
+
         foreach ($alliances as $arraykey => $arrayvalue)
         {
             $tempally = $arrayvalue;
@@ -1433,19 +1425,19 @@ class AllianceAPI
 						}
                         break;
                 }
-            }                  
+            }
         }
 		return false;
 	}
-	
+
 	function UpdateAlliances($andCorps = false)
 	{
 		if (!isset($this->alliances_))
             $this->initXML();
-        
+
         if (!isset($this->alliances_))
             return false;
-		
+
 		if ($andCorps)
 		{
 			// Remove every single corp in the Killboard DB from their current Alliance
@@ -1453,22 +1445,22 @@ class AllianceAPI
 			$db->execute("UPDATE kb3_corps
 							SET crp_all_id = 14");
 		}
-		
+
 		$alliances = $this->alliances_;
 		$alliance = new Alliance();
-		$tempMyCorp = new Corporation();				
+		$tempMyCorp = new Corporation();
 		$myCorpAPI = new API_CorporationSheet();
-		
+
 		$NumberOfAlliances = 0;
 		$NumberOfCorps = 0;
 		$NumberOfAlliancesAdded = 0; // we won't know this
 		$NumberOfCorpsAdded = 0;
-		
+
 		foreach ($alliances as $arraykey => $arrayvalue)
         {
             $tempally = $arrayvalue;
 			$NumberOfAlliances++;
-			
+
             foreach ($tempally as $key => $value)
             {
                 switch ($key)
@@ -1484,26 +1476,26 @@ class AllianceAPI
 							foreach ($value as $tempcorp)
 							{
 								$NumberOfCorps++;
-								
+
 								$myCorpAPI->setCorpID($tempcorp["corporationID"]);
 								$result .= $myCorpAPI->fetchXML();
-	
+
 								//$NumberOfCorpsAdded++;
 								$tempMyCorp->add($myCorpAPI->getCorporationName(), $alliance , gmdate("Y-m-d H:i:s"));
-								
+
 							}
-						
+
 						}
 						break;
                 }
-            }                  
+            }
         }
 		$returnarray["NumAlliances"] = $NumberOfAlliances;
 		$returnarray["NumCorps"] = $NumberOfCorps;
 		$returnarray["NumAlliancesAdded"] = $NumberOfAlliancesAdded;
 		$returnarray["NumCorpsAdded"] = $NumberOfCorpsAdded;
 		return $returnarray;
-		
+
 	}
 }
 
@@ -1511,24 +1503,24 @@ class AllianceAPI
 // ****************                 API Conquerable Station/Outpost list - /eve/ConquerableStationList.xml.aspx                  ****************
 // **********************************************************************************************************************************************
 
-class API_ConquerableStationList 
+class API_ConquerableStationList
 {
 	function getCachedUntil()
 	{
 		return $this->CachedUntil_;
 	}
-	
+
 	function getCurrentTime()
 	{
 		return $this->CurrentTime_;
 	}
-	
+
 	function getStations()
 	{
 		return $this->Stations_;
 	}
-	
-    function fetchXML() 
+
+    function fetchXML()
     {
         $data = LoadGlobalData('/eve/ConquerableStationList.xml.aspx');
 
@@ -1541,38 +1533,38 @@ class API_ConquerableStationList
             return "<i>Error getting XML data from api.eve-online.com/eve/ConquerableStationList.xml.aspx </i><br><br>";
 
         xml_parser_free($xml_parser);
-     
+
         return $this->html;
     }
 
-    function startElement($parser, $name, $attribs) 
+    function startElement($parser, $name, $attribs)
     {
 		global $Station;
-		
-        if ($name == "ROW") 
-        { 
-            if (count($attribs)) 
+
+        if ($name == "ROW")
+        {
+            if (count($attribs))
             {
-                foreach ($attribs as $k => $v) 
+                foreach ($attribs as $k => $v)
                 {
-                    switch ($k) 
+                    switch ($k)
                     {
                         case "STATIONID":
                             $Station['stationID'] = $v;
                             break;
-                        case "STATIONNAME":  
+                        case "STATIONNAME":
                             $Station['stationName'] = $v;
                             break;
-                        case "STATIONTYPEID":  
+                        case "STATIONTYPEID":
                             $Station['stationTypeID'] = $v;
                             break;
-                        case "SOLARSYSTEMID":  
+                        case "SOLARSYSTEMID":
                             $Station['solarSystemID'] = $v;
                             break;
-						case "CORPORATIONID":  
+						case "CORPORATIONID":
                             $Station['corporationID'] = $v;
                             break;
-						case "CORPORATIONNAME":  
+						case "CORPORATIONNAME":
                             $Station['corporationName'] = $v;
                             break;
                     }
@@ -1581,11 +1573,11 @@ class API_ConquerableStationList
         }
     }
 
-    function endElement($parser, $name) 
+    function endElement($parser, $name)
     {
 		global $Station;
 		global $tempvalue;
-		
+
 		if ($name == "CURRENTTIME")
 			$this->CurrentTime_ = $tempvalue;
 		if ($name == "CACHEDUNTIL")
@@ -1598,7 +1590,7 @@ class API_ConquerableStationList
 			}
 			ApiCache::set('API_eve_ConquerableStationList' , $this->CachedUntil_);
 		}
-		
+
         if ($name == "ROW")
 		{
 			$this->Stations_[] = $Station;
@@ -1607,10 +1599,10 @@ class API_ConquerableStationList
 		}
     }
 
-    function characterData($parser, $data) 
+    function characterData($parser, $data)
     {
         global $tempvalue;
-        
+
 		$tempvalue = $data;
     }
 }
@@ -1619,24 +1611,24 @@ class API_ConquerableStationList
 // ****************                                   API Error list - /eve/ErrorList.xml.aspx                                   ****************
 // **********************************************************************************************************************************************
 
-class API_ErrorList 
+class API_ErrorList
 {
 	function getCachedUntil()
 	{
 		return $this->CachedUntil_;
 	}
-	
+
 	function getCurrentTime()
 	{
 		return $this->CurrentTime_;
 	}
-	
+
 	function getErrorList()
 	{
 		return $this->Error_;
 	}
-	
-    function fetchXML() 
+
+    function fetchXML()
     {
         $data = LoadGlobalData('/eve/ErrorList.xml.aspx');
 
@@ -1649,26 +1641,26 @@ class API_ErrorList
             return "<i>Error getting XML data from api.eve-online.com/eve/ErrorList.xml.aspx </i><br><br>";
 
         xml_parser_free($xml_parser);
-     
+
         return $this->html;
     }
 
-    function startElement($parser, $name, $attribs) 
+    function startElement($parser, $name, $attribs)
     {
 		global $ErrorData;
-		
-        if ($name == "ROW") 
-        { 
-            if (count($attribs)) 
+
+        if ($name == "ROW")
+        {
+            if (count($attribs))
             {
-                foreach ($attribs as $k => $v) 
+                foreach ($attribs as $k => $v)
                 {
-                    switch ($k) 
+                    switch ($k)
                     {
                         case "ERRORCODE":
                             $ErrorData['errorCode'] = $v;
                             break;
-                        case "ERRORTEXT":  
+                        case "ERRORTEXT":
                             $ErrorData['errorText'] = $v;
                             break;
                     }
@@ -1677,11 +1669,11 @@ class API_ErrorList
         }
     }
 
-    function endElement($parser, $name) 
+    function endElement($parser, $name)
     {
 		global $ErrorData;
 		global $tempvalue;
-		
+
 		if ($name == "CURRENTTIME")
 			$this->CurrentTime_ = $tempvalue;
 		if ($name == "CACHEDUNTIL")
@@ -1689,7 +1681,7 @@ class API_ErrorList
 			$this->CachedUntil_ = $tempvalue;
 			ApiCache::set('API_eve_ErrorList' , $tempvalue);
 		}
-		
+
         if ($name == "ROW")
 		{
 			$this->Error_[] = $ErrorData;
@@ -1698,10 +1690,10 @@ class API_ErrorList
 		}
     }
 
-    function characterData($parser, $data) 
+    function characterData($parser, $data)
     {
         global $tempvalue;
-        
+
 		$tempvalue = $data;
     }
 }
@@ -1710,29 +1702,29 @@ class API_ErrorList
 // ****************                                   API Jumps list - /map/Jumps.xml.aspx                                   ****************
 // **********************************************************************************************************************************************
 
-class API_Jumps 
+class API_Jumps
 {
 	function getCachedUntil()
 	{
 		return $this->CachedUntil_;
 	}
-	
+
 	function getCurrentTime()
 	{
 		return $this->CurrentTime_;
 	}
-	
+
 	function getDataTime()
 	{
 		return $this->DataTime_;
 	}
-	
+
 	function getJumps()
 	{
 		return $this->Jumps_;
 	}
-	
-    function fetchXML() 
+
+    function fetchXML()
     {
         $data = LoadGlobalData('/map/Jumps.xml.aspx');
 
@@ -1745,26 +1737,26 @@ class API_Jumps
             return "<i>Error getting XML data from api.eve-online.com/map/Jumps.xml.aspx </i><br><br>";
 
         xml_parser_free($xml_parser);
-     
+
         return $this->html;
     }
 
-    function startElement($parser, $name, $attribs) 
+    function startElement($parser, $name, $attribs)
     {
 		global $JumpData;
-		
-        if ($name == "ROW") 
-        { 
-            if (count($attribs)) 
+
+        if ($name == "ROW")
+        {
+            if (count($attribs))
             {
-                foreach ($attribs as $k => $v) 
+                foreach ($attribs as $k => $v)
                 {
-                    switch ($k) 
+                    switch ($k)
                     {
                         case "SOLARSYSTEMID":
                             $JumpData['solarSystemID'] = $v;
                             break;
-                        case "SHIPJUMPS":  
+                        case "SHIPJUMPS":
                             $JumpData['shipJumps'] = $v;
                             break;
                     }
@@ -1773,11 +1765,11 @@ class API_Jumps
         }
     }
 
-    function endElement($parser, $name) 
+    function endElement($parser, $name)
     {
 		global $JumpData;
 		global $tempvalue;
-		
+
 		if ($name == "CURRENTTIME")
 			$this->CurrentTime_ = $tempvalue;
 		if ($name == "DATATIME")
@@ -1787,7 +1779,7 @@ class API_Jumps
 			$this->CachedUntil_ = $tempvalue;
 			ApiCache::set('API_map_Jumps' , $tempvalue);
 		}
-		
+
         if ($name == "ROW")
 		{
 			$this->Jumps_[] = $JumpData;
@@ -1796,10 +1788,10 @@ class API_Jumps
 		}
     }
 
-    function characterData($parser, $data) 
+    function characterData($parser, $data)
     {
         global $tempvalue;
-        
+
 		$tempvalue = $data;
     }
 }
@@ -1808,29 +1800,29 @@ class API_Jumps
 // ****************                                   API Kills list - /map/Kills.xml.aspx                                   ****************
 // **********************************************************************************************************************************************
 
-class API_Kills 
+class API_Kills
 {
 	function getCachedUntil()
 	{
 		return $this->CachedUntil_;
 	}
-	
+
 	function getCurrentTime()
 	{
 		return $this->CurrentTime_;
 	}
-	
+
 	function getDataTime()
 	{
 		return $this->DataTime_;
 	}
-	
+
 	function getkills()
 	{
 		return $this->kills_;
 	}
-	
-    function fetchXML() 
+
+    function fetchXML()
     {
         $data = LoadGlobalData('/map/Kills.xml.aspx');
 
@@ -1843,32 +1835,32 @@ class API_Kills
             return "<i>Error getting XML data from api.eve-online.com/map/Kills.xml.aspx </i><br><br>";
 
         xml_parser_free($xml_parser);
-     
+
         return $this->html;
     }
 
-    function startElement($parser, $name, $attribs) 
+    function startElement($parser, $name, $attribs)
     {
 		global $KillsData;
-		
-        if ($name == "ROW") 
-        { 
-            if (count($attribs)) 
+
+        if ($name == "ROW")
+        {
+            if (count($attribs))
             {
-                foreach ($attribs as $k => $v) 
+                foreach ($attribs as $k => $v)
                 {
-                    switch ($k) 
+                    switch ($k)
                     {
                         case "SOLARSYSTEMID":
                             $KillsData['solarSystemID'] = $v;
                             break;
-                        case "SHIPKILLS":  
+                        case "SHIPKILLS":
                             $KillsData['shipKills'] = $v;
                             break;
-						case "FACTIONKILLS":  
+						case "FACTIONKILLS":
                             $KillsData['factionKills'] = $v;
                             break;
-						case "PODKILLS":  
+						case "PODKILLS":
                             $KillsData['podKills'] = $v;
                             break;
                     }
@@ -1877,11 +1869,11 @@ class API_Kills
         }
     }
 
-    function endElement($parser, $name) 
+    function endElement($parser, $name)
     {
 		global $KillsData;
 		global $tempvalue;
-		
+
 		if ($name == "CURRENTTIME")
 			$this->CurrentTime_ = $tempvalue;
 		if ($name == "DATATIME")
@@ -1891,7 +1883,7 @@ class API_Kills
 			$this->CachedUntil_ = $tempvalue;
 			ApiCache::set('API_map_Kills' , $tempvalue);
 		}
-		
+
         if ($name == "ROW")
 		{
 			$this->kills_[] = $KillsData;
@@ -1900,10 +1892,10 @@ class API_Kills
 		}
     }
 
-    function characterData($parser, $data) 
+    function characterData($parser, $data)
     {
         global $tempvalue;
-        
+
 		$tempvalue = $data;
     }
 }
@@ -1918,23 +1910,23 @@ class API_Sovereignty
 	{
 		return $this->CachedUntil_;
 	}
-	
+
 	function getCurrentTime()
 	{
 		return $this->CurrentTime_;
 	}
-	
+
 	function getDataTime()
 	{
 		return $this->DataTime_;
 	}
-	
+
 	function getSovereignty()
 	{
 		return $this->Sovereignty_;
 	}
 
-    function fetchXML() 
+    function fetchXML()
     {
         $data = LoadGlobalData('/map/Sovereignty.xml.aspx');
 
@@ -1947,38 +1939,38 @@ class API_Sovereignty
             return "<i>Error getting XML data from api.eve-online.com/map/Sovereignty.xml.aspx  </i><br><br>";
 
         xml_parser_free($xml_parser);
-     
+
         return $this->html;
     }
 
-    function startElement($parser, $name, $attribs) 
+    function startElement($parser, $name, $attribs)
     {
 		global $SovereigntyData;
-		
-        if ($name == "ROW") 
-        { 
-            if (count($attribs)) 
+
+        if ($name == "ROW")
+        {
+            if (count($attribs))
             {
-                foreach ($attribs as $k => $v) 
+                foreach ($attribs as $k => $v)
                 {
-                    switch ($k) 
+                    switch ($k)
                     {
                         case "SOLARSYSTEMID":
                             $SovereigntyData['solarSystemID'] = $v;
                             break;
-                        case "ALLIANCEID":  
+                        case "ALLIANCEID":
                             $SovereigntyData['allianceID'] = $v;
                             break;
-						case "CONSTELLATIONSOVEREIGNTY":  
+						case "CONSTELLATIONSOVEREIGNTY":
                             $SovereigntyData['constellationSovereignty'] = $v;
                             break;
-						case "SOVEREIGNTYLEVEL":  
+						case "SOVEREIGNTYLEVEL":
                             $SovereigntyData['sovereigntyLevel'] = $v;
                             break;
-						case "FACTIONID":  
+						case "FACTIONID":
                             $SovereigntyData['factionID'] = $v;
                             break;
-						case "SOLARSYSTEMNAME":  
+						case "SOLARSYSTEMNAME":
                             $SovereigntyData['solarSystemName'] = $v;
                             break;
                     }
@@ -1987,11 +1979,11 @@ class API_Sovereignty
         }
     }
 
-    function endElement($parser, $name) 
+    function endElement($parser, $name)
     {
 		global $SovereigntyData;
 		global $tempvalue;
-		
+
 		if ($name == "CURRENTTIME")
 			$this->CurrentTime_ = $tempvalue;
 		if ($name == "DATATIME")
@@ -2006,7 +1998,7 @@ class API_Sovereignty
 			}
 			ApiCache::set('API_map_Sovereignty' , $this->CachedUntil_);
 		}
-			
+
         if ($name == "ROW")
 		{
 			$this->Sovereignty_[] = $SovereigntyData;
@@ -2015,50 +2007,50 @@ class API_Sovereignty
 		}
     }
 
-    function characterData($parser, $data) 
+    function characterData($parser, $data)
     {
 		global $tempvalue;
-        
+
 		$tempvalue = $data;
     }
-	
+
 	function getSystemDetails($sysname)
 	{
 		if (!isset($this->Sovereignty_))
             $this->fetchXML();
-        
+
         if (!isset($this->Sovereignty_))
             return false;
-		
+
 		$Sov = $this->Sovereignty_;
-		
+
 		foreach ($Sov as $myTempData)
 		{
 			if ($myTempData['solarSystemName'] == $sysname)
 				return $myTempData;
 		}
-		
+
 		return;
 	}
-	
+
 	function getSystemIDDetails($sysID)
 	{
 		if (!isset($this->Sovereignty_))
             $this->fetchXML();
-        
+
         if (!isset($this->Sovereignty_))
             return false;
-			
+
 		//echo var_dump($this->Sovereignty_);
-		
+
 		$Sov = $this->Sovereignty_;
-		
+
 		foreach ($Sov as $myTempData)
 		{
 			if ($myTempData['solarSystemID'] == $sysID)
 				return $myTempData;
 		}
-		
+
 		return false;
 	}
 }
@@ -2073,18 +2065,18 @@ class API_RefTypes
 	{
 		return $this->CachedUntil_;
 	}
-	
+
 	function getCurrentTime()
 	{
 		return $this->CurrentTime_;
 	}
-	
+
 	function getRefTypes()
 	{
 		return $this->RefTypes_;
 	}
-	
-    function fetchXML() 
+
+    function fetchXML()
     {
         $data = LoadGlobalData('/eve/RefTypes.xml.aspx');
 
@@ -2097,26 +2089,26 @@ class API_RefTypes
             return "<i>Error getting XML data from api.eve-online.com/eve/RefTypes.xml.aspx  </i><br><br>";
 
         xml_parser_free($xml_parser);
-     
+
         return $this->html;
     }
 
-    function startElement($parser, $name, $attribs) 
+    function startElement($parser, $name, $attribs)
     {
 		global $RefTypeData;
-		
-        if ($name == "ROW") 
-        { 
-            if (count($attribs)) 
+
+        if ($name == "ROW")
+        {
+            if (count($attribs))
             {
-                foreach ($attribs as $k => $v) 
+                foreach ($attribs as $k => $v)
                 {
-                    switch ($k) 
+                    switch ($k)
                     {
                         case "REFTYPEID":
                             $RefTypeData['refTypeID'] = $v;
                             break;
-                        case "REFTYPENAME":  
+                        case "REFTYPENAME":
                             $RefTypeData['refTypeName'] = $v;
                             break;
                     }
@@ -2125,11 +2117,11 @@ class API_RefTypes
         }
     }
 
-    function endElement($parser, $name) 
+    function endElement($parser, $name)
     {
 		global $RefTypeData;
 		global $tempvalue;
-		
+
 		if ($name == "CURRENTTIME")
 			$this->CurrentTime_ = $tempvalue;
 		if ($name == "CACHEDUNTIL")
@@ -2137,7 +2129,7 @@ class API_RefTypes
 			$this->CachedUntil_ = $tempvalue;
 			ApiCache::set('API_eve_RefTypes' , $tempvalue);
 		}
-			
+
         if ($name == "ROW")
 		{
 			$this->RefTypes_[] = $RefTypeData;
@@ -2146,10 +2138,10 @@ class API_RefTypes
 		}
     }
 
-    function characterData($parser, $data) 
+    function characterData($parser, $data)
     {
         global $tempvalue;
-       
+
 		$tempvalue = $data;
     }
 }
@@ -2164,18 +2156,18 @@ class API_FacWarSystems
 	{
 		return $this->CachedUntil_;
 	}
-	
+
 	function getCurrentTime()
 	{
 		return $this->CurrentTime_;
 	}
-	
+
 	function getFacWarSystems()
 	{
 		return $this->FacWarSystems_;
 	}
-	
-    function fetchXML() 
+
+    function fetchXML()
     {
         $data = LoadGlobalData('/map/FacWarSystems.xml.aspx');
 
@@ -2188,26 +2180,26 @@ class API_FacWarSystems
             return "<i>Error getting XML data from api.eve-online.com/map/FacWarSystems.xml.aspx  </i><br><br>";
 
         xml_parser_free($xml_parser);
-     
+
         return $this->FacWarSystems_;
     }
 
-    function startElement($parser, $name, $attribs) 
+    function startElement($parser, $name, $attribs)
     {
 		global $FacWarSystem;
-		
-        if ($name == "ROW") 
-        { 
-            if (count($attribs)) 
+
+        if ($name == "ROW")
+        {
+            if (count($attribs))
             {
-                foreach ($attribs as $k => $v) 
+                foreach ($attribs as $k => $v)
                 {
-                    switch ($k) 
+                    switch ($k)
                     {
                         case "SOLARSYSTEMID":
                             $FacWarSystem['solarSystemID'] = $v;
                             break;
-                        case "SOLARSYSTEMNAME":  
+                        case "SOLARSYSTEMNAME":
                             $FacWarSystem['solarSystemName'] = $v;
                             break;
 						case "OCCUPYINGFACTIONID":
@@ -2225,11 +2217,11 @@ class API_FacWarSystems
         }
     }
 
-    function endElement($parser, $name) 
+    function endElement($parser, $name)
     {
 		global $FacWarSystem;
 		global $tempvalue;
-		
+
 		if ($name == "CURRENTTIME")
 			$this->CurrentTime_ = $tempvalue;
 		if ($name == "CACHEDUNTIL")
@@ -2242,7 +2234,7 @@ class API_FacWarSystems
 			}
 			ApiCache::set('API_map_FacWarSystems' , $this->CachedUntil_);
 		}
-		
+
         if ($name == "ROW")
 		{
 			$this->FacWarSystems_[] = $FacWarSystem;
@@ -2251,10 +2243,10 @@ class API_FacWarSystems
 		}
     }
 
-    function characterData($parser, $data) 
+    function characterData($parser, $data)
     {
         global $tempvalue;
-       
+
 		$tempvalue = $data;
     }
 }
@@ -2263,38 +2255,38 @@ class API_FacWarSystems
 // ****************                                  API Standings - /corp & char/Standings.xml.aspx                             ****************
 // **********************************************************************************************************************************************
 class API_Standings
-{		
+{
 	function getCachedUntil()
 	{
 		return $this->CachedUntil_;
 	}
-	
+
 	function getCurrentTime()
 	{
 		return $this->CurrentTime_;
 	}
-	
+
 	// boolean value - sets between char/corp
-	function isUser($value) 
+	function isUser($value)
 	{
 		$this->isUser_ = $value;
 	}
-	
+
 	function setAPIKey($key)
 	{
 		$this->API_apiKey_ = $key;
 	}
-	
+
 	function setUserID($uid)
 	{
 		$this->API_userID_ = $uid;
 	}
-	
+
 	function setCharacterID($cid)
 	{
 		$this->API_characterID_ = $cid;
 	}
-	
+
 	function getCharacters()
 	{
 		return $this->Characters_;
@@ -2327,25 +2319,25 @@ class API_Standings
 	{
 		return $this->AliianceAlliances_;
 	}
-	
+
 	function fetchXML()
 	{
 		$this->isAllianceStandings_ = false;
 		$this->isCorporationStandings_ = false;
-		
+
 		if ($this->isUser_)
-		{ 
+		{
 			// is a player feed - take details from logged in user
 			if (user::get('usr_pilot_id'))
     		{
 				$myEveCharAPI = new API_CharacterSheet();
 				$this->html .= $myEveCharAPI->fetchXML();
-	
+
 				$skills = $myEveCharAPI->getSkills();
-	
+
 				$this->connections_ = 0;
 				$this->diplomacy_ = 0;
-	
+
 				foreach ((array)$skills as $myTempData)
 				{
 					if ($myTempData['typeID'] == "3359")
@@ -2355,13 +2347,13 @@ class API_Standings
 				}
 
 				$myKeyString = "userID=" . $this->API_userID_ . "&apiKey=" . $this->API_apiKey_ . "&characterID=" . $this->API_characterID_;
-				
+
 				$data = $this->loaddata($myKeyString, "char");
 			} else {
 				return "You are not logged in.";
 			}
-		
-		} else { 
+
+		} else {
 			// is a corp feed
 			$myKeyString = "userID=" . $this->API_userID_ . "&apiKey=" . $this->API_apiKey_ . "&characterID=" . $this->API_characterID_;
 			$data = $this->loaddata($myKeyString, "corp");
@@ -2376,7 +2368,7 @@ class API_Standings
             return "<i>Error getting XML data from api.eve-online.com/Standings.xml.aspx  </i><br><br>";
 
         xml_parser_free($xml_parser);
-		
+
 		// sort the arrays (in descending order of standing)
 		$this->Factions_ = $this->mysortarray($this->Factions_);
 		$this->Characters_ = $this->mysortarray($this->Characters_);
@@ -2386,36 +2378,36 @@ class API_Standings
 		$this->NPCCorporations_ = $this->mysortarray($this->NPCCorporations_);
 		$this->AllianceCorporations_ = $this->mysortarray($this->AllianceCorporations_);
 		$this->AllianceAlliances_ = $this->mysortarray($this->AliianceAlliances_);
-		
+
 		return $this->html;
 	}
-	
+
 	function mysortarray($arraydata)
 	{
-		if (count($arraydata) != 0 ) 
-		{ 
+		if (count($arraydata) != 0 )
+		{
 			foreach ((array)$arraydata as $key => $row) {
     			$standing[$key]  = $row['Standing'];
     			$name[$key] = $row['Name'];
 				$id[$key] = $row['ID'];
 			}
-			
+
 			array_multisort($standing, SORT_DESC, $name, SORT_ASC, $id, SORT_ASC, $arraydata);
-				
+
 			$standing = array();
 			unset($standing);
 			$name = array();
 			unset($name);
 			$id = array();
 			unset($id);
-			
+
 			return $arraydata;
 		}
 	}
-	
-	function startElement($parser, $name, $attribs) 
+
+	function startElement($parser, $name, $attribs)
     {
-		
+
 		if ($name == "CORPORATIONSTANDINGS")
 		{
 			$this->isAllianceStandings_ = false;
@@ -2434,18 +2426,18 @@ class API_Standings
 			$this->isAllianceStandings_ = true;
 			$this->isCorporationStandings_ = false;
 		}
-		
+
 		if ($name == "ROWSET") // In this If statement we set booleans to ultimately determine where the data in the next If statement is stored
         {
-            if (count($attribs)) 
+            if (count($attribs))
             {
-                foreach ($attribs as $k => $v) 
+                foreach ($attribs as $k => $v)
                 {
-                    switch ($k) 
+                    switch ($k)
                     {
                         case "NAME":
-							switch ($v) 
-                    		{	
+							switch ($v)
+                    		{
 								// bitwise or numeric flag would be better and more concise - but fuck it!
 								case "characters": // can only be personal/corp
 									$this->isCharacters_ = true;
@@ -2466,7 +2458,7 @@ class API_Standings
 									$this->isFactions_ = false;
 									$this->isAllianceCorporations_ = false;
 									$this->isAllianceAlliances_ = false;
-									
+
 									if (!$this->isAllianceStandings_) // then it is personal/corp
 									{
 										$this->isCorporations_ = true;
@@ -2483,13 +2475,13 @@ class API_Standings
 									$this->isFactions_ = false;
 									$this->isAllianceCorporations_ = false;
 									$this->isAllianceAlliances_ = false;
-									
+
 									if (!$this->isAllianceStandings_) // then it is personal/corp
 									{
 										$this->isAlliances_ = true;
 									} else { // then it is alliance
 										$this->isAllianceAlliances_ = true;
-									}	
+									}
 									break;
 								case "agents": // can only be personal/corp
 									$this->isCharacters_ = false;
@@ -2520,40 +2512,40 @@ class API_Standings
 									$this->isFactions_ = true;
 									$this->isAllianceCorporations_ = false;
 									$this->isAllianceAlliances_ = false;
-									break;	
+									break;
 							}
                             break;
 					}
 				}
 			}
 		}
-		
-		if ($name == "ROW") 
+
+		if ($name == "ROW")
         {
 			global $tempdata;
-			
-			if (count($attribs)) 
+
+			if (count($attribs))
             {
-                foreach ($attribs as $k => $v) 
+                foreach ($attribs as $k => $v)
                 {
-                    switch ($k) 
+                    switch ($k)
                     {
 						case "TOID":
 							$tempdata['ID'] = $v;
-                            break;	
+                            break;
 						case "FROMID":
 							$tempdata['ID'] = $v;
-                            break;	
+                            break;
 						case "TONAME":
 							$tempdata['Name'] = $v;
-                            break;	
+                            break;
 						case "FROMNAME":
 							$tempdata['Name'] = $v;
-                            break;	
+                            break;
 						case "STANDING":
 							// use flags determined in previous If... to load the correct array[]
 							if ($this->isUser_ && !$this->StandingsTo_)
-							{ 
+							{
 								// set standings bonus where applicable
 								// calculate bonus
 								if ($v >= 0) // Connections
@@ -2563,10 +2555,10 @@ class API_Standings
 							} else {
 								$tempdata['Standing'] = $v;
 							}
-							
+
 							// check that 'Name' isn't empty as this means the value was reset
 							if ($tempdata['Name'] != "")
-							{	
+							{
 								if ($this->isCharacters_) {
 									$this->Characters_[] = $tempdata;
 								} elseif ($this->isCorporations_) {
@@ -2585,19 +2577,19 @@ class API_Standings
 									$this->AllianceAlliances_[] = $tempdata;
 								}
 							}
-							
+
 							$tempdata = array();
 							unset($tempdata);
-                            break;			
+                            break;
 					}
 				}
 			}
 		}
-    }				
+    }
 
-    function endElement($parser, $name) 
+    function endElement($parser, $name)
     {
-	
+
 		if ($name == "CURRENTTIME")
 			$this->CurrentTime_ = $this->characterDataValue;
 		if ($name == "CACHEDUNTIL")
@@ -2607,33 +2599,33 @@ class API_Standings
 		}
     }
 
-    function characterData($parser, $data) 
+    function characterData($parser, $data)
     {
 		$this->characterDataValue = $data;
     }
-	
+
 	function loaddata($keystring, $typestring)
     {
 		$configvalue = $this->API_characterID_ . '_Standings';
-		
+
 		$CachedTime = ApiCache::get($configvalue);
 		$UseCaching = config::get('API_UseCache');
-		
+
         $url = "http://api.eve-online.com/" . $typestring . "/Standings.xml.aspx" . $keystring;
         $path = "/" . $typestring . "/Standings.xml.aspx";
-			
+
 		// API Caching system, If we're still under cachetime reuse the last XML, if not download the new one. Helps with Bug hunting and just better all round.
 		if ($CachedTime == "")
     	{
         	$CachedTime = "2005-01-01 00:00:00"; // fake date to ensure that it runs first time.
     	}
-		
-		if (is_file(getcwd().'/cache/api/'.$configvalue.'.xml'))
+
+		if (is_file(KB_CACHEDIR.'/api/'.$configvalue.'.xml'))
 			$cacheexists = true;
 		else
 			$cacheexists = false;
-			
-		
+
+
 		if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($CachedTime) > 0) || ($UseCaching == 1)  || !$cacheexists )// if API_UseCache = 1 (off) then don't use cache
     	{
         	$fp = fsockopen("api.eve-online.com", 80);
@@ -2666,22 +2658,22 @@ class API_Standings
             	{
                 	$contents = substr($contents, $start + strlen("\r\n\r\n"));
            	 	}
-			
+
 				if ($UseCaching == 0) // Save the file if we're caching (0 = true in Thunks world)
 				{
-					$file = fopen(getcwd().'/cache/api/'.$configvalue.'.xml', 'w+');
+					$file = fopen(KB_CACHEDIR.'/api/'.$configvalue.'.xml', 'w+');
         			fwrite($file, $contents);
        				fclose($file);
-					@chmod(getcwd().'/cache/api/'.$configvalue.'.xml',0666);
-				} 
-        	} 
+					@chmod(KB_CACHEDIR.'/api/'.$configvalue.'.xml',0666);
+				}
+        	}
 		} else {
 			// re-use cached XML
-			if ($fp = @fopen(getcwd().'/cache/api/'.$configvalue.'.xml', 'r')) {
-    	    	$contents = fread($fp, filesize(getcwd().'/cache/api/'.$configvalue.'.xml'));
+			if ($fp = @fopen(KB_CACHEDIR.'/api/'.$configvalue.'.xml', 'r')) {
+    	    	$contents = fread($fp, filesize(KB_CACHEDIR.'/api/'.$configvalue.'.xml'));
         		fclose($fp);
     		} else {
-				return "<i>error loading cached file ".$configvalue.".xml</i><br><br>";  
+				return "<i>error loading cached file ".$configvalue.".xml</i><br><br>";
     		}
 		}
         return $contents;
@@ -2692,53 +2684,53 @@ class API_Standings
 // ****************                                 API Character Sheet - char/CharacterSheet.xml.aspx                           ****************
 // **********************************************************************************************************************************************
 // Incomplete - Does not read Certificates or Roles
-class API_CharacterSheet 
-{		
+class API_CharacterSheet
+{
 	function getCachedUntil()
 	{
 		return $this->CachedUntil_;
 	}
-	
+
 	function getCurrentTime()
 	{
 		return $this->CurrentTime_;
 	}
-	
+
 	function getSkills()
 	{
 		return $this->Skills_;
 	}
-	
+
 	// array 1-5 based on implant slot position. 6-10 don't seem to appear, presumably because Hardwirings do not affect skill training.
-	function getImplants() 
+	function getImplants()
 	{
 		return $this->Implant_;
 	}
-	
+
 	function getIntelligence()
 	{
 		return $this->Intelligence_;
 	}
-	
+
 	function getMemory()
 	{
 		return $this->Memory_;
 	}
-	
+
 	function getCharisma()
 	{
 		return $this->Charisma_;
 	}
-	
+
 	function getPerception()
 	{
 		return $this->Perception_;
 	}
-	
+
 	function getWillpower()
 	{
 		return $this->Willpower_;
-	}	
+	}
 	function getCharacterID()
 	{
 		return $this->CharacterID_;
@@ -2787,9 +2779,9 @@ class API_CharacterSheet
 			require_once('class.pilot.php');
 			$plt = new pilot(user::get('usr_pilot_id'));
 			$usersname = $plt->getName();
-			
+
 			$this->CharName_ = $usersname;  // $this->CharName_ is used later for config key value for caching
-			
+
 			$sql = 'select plts.plt_id, plts.plt_externalid from kb3_pilots plts where plts.plt_name = "' . $usersname . '"';
 
     		$qry = new DBQuery();
@@ -2803,16 +2795,16 @@ class API_CharacterSheet
 			{
         		return "Something went wrong with finiding pilots external ID<br>";
     		}
-		
+
 			$newsql = 'SELECT userID , apiKey FROM kb3_api_user WHERE charID = "' . $API_charID . '"';
 			$qry->execute($newsql);
     		$userrow = $qry->getRow();
-		
+
 			$API_userID = $userrow['userID'];
 			$API_apiKey = $userrow['apiKey'];
-			
+
 			$myKeyString = "userID=" . $API_userID . "&apiKey=" . $API_apiKey . "&characterID=" . $API_charID;
-				
+
 			$data = $this->loaddata($myKeyString);
 		} else {
 			return "You are not logged in.";
@@ -2827,21 +2819,21 @@ class API_CharacterSheet
             return "<i>Error getting XML data from api.eve-online.com/CharacterSheet.xml.aspx  </i><br><br>";
 
         xml_parser_free($xml_parser);
-		
+
 		return $this->html;
 	}
-	
-	function startElement($parser, $name, $attribs) 
+
+	function startElement($parser, $name, $attribs)
     {
-		if ($name == "ROW") 
+		if ($name == "ROW")
         {
 			global $tempdata;
-			
-			if (count($attribs)) 
+
+			if (count($attribs))
             {
-                foreach ($attribs as $k => $v) 
+                foreach ($attribs as $k => $v)
                 {
-                    switch ($k) 
+                    switch ($k)
                     {
 						case "TYPEID":
 							$tempdata['typeID'] = $v;
@@ -2849,18 +2841,18 @@ class API_CharacterSheet
 							$tempdata['GroupID'] = getgroupID($v);
 							$tempdata['GroupName'] = getgroupIDname($tempdata['GroupID']);
 							$tempdata['Rank'] = gettypeIDrank($v);
-                            break;	
+                            break;
 						case "SKILLPOINTS":
 							$tempdata['SkillPoints'] = $v;
-                            break;	
+                            break;
 						case "LEVEL":
 							$tempdata['Level'] = $v;
-							
+
 							$this->Skills_[] = $tempdata;
-							
+
 							$tempdata = array();
 							unset($tempdata);
-                            break;	
+                            break;
 						case "UNPUBLISHED": // unused skill eg. Black Market Trading
 							$tempdata = array();
 							unset($tempdata);
@@ -2869,9 +2861,9 @@ class API_CharacterSheet
 				}
 			}
 		}
-    }				
+    }
 
-    function endElement($parser, $name) 
+    function endElement($parser, $name)
     {
 		// Player Details
 		if ($name == "CHARACTERID")
@@ -2889,66 +2881,66 @@ class API_CharacterSheet
 		if ($name == "CORPORATIONID")
 			$this->CorporationID_ = $this->characterDataValue;
 		if ($name == "CLONENAME")
-			$this->CloneName_ = $this->characterDataValue;	
+			$this->CloneName_ = $this->characterDataValue;
 		if ($name == "CLONESKILLPOINTS")
 			$this->CloneSkillPoints_ = $this->characterDataValue;
 		if ($name == "BALANCE")
-			$this->Balance_ = $this->characterDataValue;	
-		
+			$this->Balance_ = $this->characterDataValue;
+
 		// Augmentations
 		if ($name == "AUGMENTATORNAME")
 			$tempaug['Name'] = $this->characterDataValue;
 		if ($name == "AUGMENTATORVALUE")
 			$tempaug['Value'] = $this->characterDataValue;
-		
+
 		if ($name == "PERCEPTIONBONUS")
 		{
 			$this->Implant_[1] = $tempaug;
-			
+
 			$tempaug = array();
 			unset($tempaug);
 		}
 		if ($name == "MEMORYBONUS")
 		{
 			$this->Implant_[2] = $tempaug;
-			
+
 			$tempaug = array();
 			unset($tempaug);
 		}
 		if ($name == "WILLPOWERBONUS")
 		{
 			$this->Implant_[3] = $tempaug;
-			
+
 			$tempaug = array();
 			unset($tempaug);
 		}
 		if ($name == "INTELLIGENCEBONUS")
 		{
 			$this->Implant_[4] = $tempaug;
-			
+
 			$tempaug = array();
 			unset($tempaug);
 		}
 		if ($name == "CHARISMABONUS")
 		{
 			$this->Implant_[5] = $tempaug;
-			
+
 			$tempaug = array();
 			unset($tempaug);
 		}
-			
+
 		// Attributes
 		if ($name == "INTELLIGENCE")
 			$this->Intelligence_ = $this->characterDataValue;
 		if ($name == "MEMORY")
 			$this->Memory_ = $this->characterDataValue;
 		if ($name == "CHARISMA")
-			$this->Charisma_ = $this->characterDataValue;	
+			$this->Charisma_ = $this->characterDataValue;
 		if ($name == "PERCEPTION")
 			$this->Perception_ = $this->characterDataValue;
 		if ($name == "WILLPOWER")
 			$this->Willpower_ = $this->characterDataValue;
-		
+
 		if ($name == "CURRENTTIME")
 			$this->CurrentTime_ = $this->characterDataValue;
 		if ($name == "CACHEDUNTIL")
@@ -2959,7 +2951,7 @@ class API_CharacterSheet
 		}
     }
 
-    function characterData($parser, $data) 
+    function characterData($parser, $data)
     {
 		$this->characterDataValue = $data;
     }
@@ -2967,25 +2959,25 @@ class API_CharacterSheet
 	function loaddata($keystring)
     {
 		$configvalue = $this->CharName_ . '_CharacterSheet';
-		
+
 		$CachedTime = ApiCache::get($configvalue);
 		$UseCaching = config::get('API_UseCache');
-		
+
         $url = "http://api.eve-online.com/char/CharacterSheet.xml.aspx" . $keystring;
 
         $path = '/char/CharacterSheet.xml.aspx';
-		
+
 		// API Caching system, If we're still under cachetime reuse the last XML, if not download the new one. Helps with Bug hunting and just better all round.
 		if ($CachedTime == "")
     	{
         	$CachedTime = "2005-01-01 00:00:00"; // fake date to ensure that it runs first time.
     	}
-		
-		if (is_file(getcwd().'/cache/api/'.$configvalue.'.xml'))
+
+		if (is_file(KB_CACHEDIR.'/api/'.$configvalue.'.xml'))
 			$cacheexists = true;
 		else
 			$cacheexists = false;
-			
+
 		// if API_UseCache = 1 (off) then don't use cache
 		if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($CachedTime) > 0) || ($UseCaching == 1)  || !$cacheexists )
     	{
@@ -3019,23 +3011,23 @@ class API_CharacterSheet
             	{
                 	$contents = substr($contents, $start + strlen("\r\n\r\n"));
             	}
-				
+
 				// Save the file if we're caching (0 = true in Thunks world)
-				if ($UseCaching == 0) 
+				if ($UseCaching == 0)
 				{
-					$file = fopen(getcwd().'/cache/api/'.$configvalue.'.xml', 'w+');
+					$file = fopen(KB_CACHEDIR.'/api/'.$configvalue.'.xml', 'w+');
         			fwrite($file, $contents);
        				fclose($file);
-					@chmod(getcwd().'/cache/api/'.$configvalue.'.xml',0666);
-				} 
-        	} 
+					@chmod(KB_CACHEDIR.'/api/'.$configvalue.'.xml',0666);
+				}
+        	}
 		} else {
 			// re-use cached XML
-			if ($fp = @fopen(getcwd().'/cache/api/'.$configvalue.'.xml', 'r')) {
-    	    	$contents = fread($fp, filesize(getcwd().'/cache/api/'.$configvalue.'.xml'));
+			if ($fp = @fopen(KB_CACHEDIR.'/api/'.$configvalue.'.xml', 'r')) {
+    	    	$contents = fread($fp, filesize(KB_CACHEDIR.'/api/'.$configvalue.'.xml'));
         		fclose($fp);
     		} else {
-				return "<i>error loading cached file ".$configvalue.".xml</i><br><br>";  
+				return "<i>error loading cached file ".$configvalue.".xml</i><br><br>";
     		}
 		}
         return $contents;
@@ -3045,54 +3037,54 @@ class API_CharacterSheet
 // **********************************************************************************************************************************************
 // ****************                                 API Skill Training Sheet - char/SkillInTraining.xml.aspx                     ****************
 // **********************************************************************************************************************************************
-class API_SkillInTraining 
-{		
+class API_SkillInTraining
+{
 
 	function getSkillInTraining()
 	{
 		return $this->SkillInTraining_;
 	}
-	
+
 	function getCurrentTQTime()
 	{
 		return $this->CurrentTQTime_;
 	}
-	
+
 	function getTrainingEndTime()
 	{
 		return $this->TrainingEndTime_;
 	}
-	
+
 	function getTrainingStartTime()
 	{
 		return $this->TrainingStartTime_;
 	}
-	
+
 	function getTrainingTypeID()
 	{
 		return $this->TrainingTypeID_;
 	}
-	
+
 	function getTrainingStartSP()
 	{
 		return $this->TrainingStartSP_;
 	}
-	
+
 	function getTrainingDestinationSP()
 	{
 		return $this->TrainingDestinationSP_;
 	}
-	
+
 	function getTrainingToLevel()
 	{
 		return $this->TrainingToLevel_;
 	}
-	
+
 	function getCachedUntil()
 	{
 		return $this->CachedUntil_;
 	}
-	
+
 	function getCurrentTime()
 	{
 		return $this->CurrentTime_;
@@ -3102,12 +3094,12 @@ class API_SkillInTraining
 	{
 		return $this->SPTrained_;
 	}
-	
+
 	function getTrainingTimeRemaining()
 	{
 		return $this->TrainingTimeRemaining_;
 	}
-	
+
 	function fetchXML()
 	{
 		// is a player feed - take details from logged in user
@@ -3116,9 +3108,9 @@ class API_SkillInTraining
 			require_once('class.pilot.php');
 			$plt = new pilot(user::get('usr_pilot_id'));
 			$usersname = $plt->getName();
-			
+
 			$this->CharName_ = $usersname;
-			
+
 			$sql = 'select plts.plt_id, plts.plt_externalid from kb3_pilots plts where plts.plt_name = "' . $usersname . '"';
 
     		$qry = new DBQuery();
@@ -3132,16 +3124,16 @@ class API_SkillInTraining
 			{
         		return "Something went wrong with finiding pilots external ID<br>";
     		}
-		
+
 			$newsql = 'SELECT userID , apiKey FROM kb3_api_user WHERE charID = "' . $API_charID . '"';
 			$qry->execute($newsql);
     		$userrow = $qry->getRow();
-		
+
 			$API_userID = $userrow['userID'];
 			$API_apiKey = $userrow['apiKey'];
-			
+
 			$myKeyString = "userID=" . $API_userID . "&apiKey=" . $API_apiKey . "&characterID=" . $API_charID;
-				
+
 			$data = $this->loaddata($myKeyString);
 		} else {
 			return "You are not logged in.";
@@ -3156,7 +3148,7 @@ class API_SkillInTraining
             return "<i>Error getting XML data from api.eve-online.com/SkillInTraining.xml.aspx  </i><br><br>";
 
         xml_parser_free($xml_parser);
-		
+
 		// Calculate Time Training remaining and amount of SP Done
 		if ($this->SkillInTraining_ == 1)
 		{
@@ -3175,7 +3167,7 @@ class API_SkillInTraining
 
     		$difference = gmmktime($hour, $minute, $second, $month, $day, $year) - $now;
 			$timedone = $difference;
-    		if ($difference >= 1) 
+    		if ($difference >= 1)
 			{
         		$days = floor($difference/86400);
         		$difference = $difference - ($days*86400);
@@ -3188,22 +3180,22 @@ class API_SkillInTraining
     		} else {
         		$this->TrainingTimeRemaining_ = "Done !";
     		}
-		
+
 			// Calculate SP done by using the ratio gained from Time spent training so far.
     		$finaltime = strtotime($this->TrainingEndTime_) - strtotime($this->TrainingStartTime_); // in seconds
 			$ratio =  1 - ($timedone / $finaltime);
 			$this->SPTrained_ = ($this->TrainingDestinationSP_ - $this->TrainingStartSP_) * $ratio;
 		}
-		
+
 		return $this->html; // should be empty, but keeping just incase - errors are returned by Text so worth looking anyway.
 	}
-	
-	function startElement($parser, $name, $attribs) 
+
+	function startElement($parser, $name, $attribs)
     {
 		// Nothing to do here
-    }				
+    }
 
-    function endElement($parser, $name) 
+    function endElement($parser, $name)
     {
 		// Details
 		if ($name == "SKILLINTRAINING")
@@ -3222,7 +3214,7 @@ class API_SkillInTraining
 			$this->TrainingDestinationSP_ = $this->characterDataValue;
 		if ($name == "TRAININGTOLEVEL")
 			$this->TrainingToLevel_ = $this->characterDataValue;
-			
+
 		if ($name == "CURRENTTIME")
 			$this->CurrentTime_ = $this->characterDataValue;
 		if ($name == "CACHEDUNTIL")
@@ -3233,33 +3225,33 @@ class API_SkillInTraining
 		}
     }
 
-    function characterData($parser, $data) 
+    function characterData($parser, $data)
     {
 		$this->characterDataValue = $data;
     }
-	
+
 	function loaddata($keystring)
     {
 		$configvalue = $this->CharName_ . '_SkillInTraining';
-		
+
 		$CachedTime = ApiCache::get($configvalue);
 		$UseCaching = config::get('API_UseCache');
-		
+
         $url = "http://api.eve-online.com/char/SkillInTraining.xml.aspx" . $keystring;
 
         $path = '/char/SkillInTraining.xml.aspx';
-		
+
 		// API Caching system, If we're still under cachetime reuse the last XML, if not download the new one. Helps with Bug hunting and just better all round.
 		if ($CachedTime == "")
     	{
         	$CachedTime = "2005-01-01 00:00:00"; // fake date to ensure that it runs first time.
     	}
-		
-		if (is_file(getcwd().'/cache/api/'.$configvalue.'.xml'))
+
+		if (is_file(KB_CACHEDIR.'/api/'.$configvalue.'.xml'))
 			$cacheexists = true;
 		else
 			$cacheexists = false;
-			
+
 		// if API_UseCache = 1 (off) then don't use cache
 		if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($CachedTime) > 0) || ($UseCaching == 1)  || !$cacheexists )
     	{
@@ -3293,23 +3285,23 @@ class API_SkillInTraining
             	{
                 	$contents = substr($contents, $start + strlen("\r\n\r\n"));
             	}
-				
+
 				// Save the file if we're caching (0 = true in Thunks world)
-				if ($UseCaching == 0) 
+				if ($UseCaching == 0)
 				{
-					$file = fopen(getcwd().'/cache/api/'.$configvalue.'.xml', 'w+');
+					$file = fopen(KB_CACHEDIR.'/api/'.$configvalue.'.xml', 'w+');
         			fwrite($file, $contents);
        				fclose($file);
-					@chmod(getcwd().'/cache/api/'.$configvalue.'.xml',0666);
-				} 
-        	} 
+					@chmod(KB_CACHEDIR.'/api/'.$configvalue.'.xml',0666);
+				}
+        	}
 		} else {
 			// re-use cached XML
-			if ($fp = @fopen(getcwd().'/cache/api/'.$configvalue.'.xml', 'r')) {
-    	    	$contents = fread($fp, filesize(getcwd().'/cache/api/'.$configvalue.'.xml'));
+			if ($fp = @fopen(KB_CACHEDIR.'/api/'.$configvalue.'.xml', 'r')) {
+    	    	$contents = fread($fp, filesize(KB_CACHEDIR.'/api/'.$configvalue.'.xml'));
         		fclose($fp);
     		} else {
-				return "<i>error loading cached file ".$configvalue.".xml</i><br><br>";  
+				return "<i>error loading cached file ".$configvalue.".xml</i><br><br>";
     		}
 		}
         return $contents;
@@ -3319,38 +3311,38 @@ class API_SkillInTraining
 // **********************************************************************************************************************************************
 // ****************                                       API StarbaseList - /corp/StarbaseList.xml.aspx                         ****************
 // **********************************************************************************************************************************************
-class API_StarbaseList 
-{		
+class API_StarbaseList
+{
 	function getCachedUntil()
 	{
 		return $this->CachedUntil_;
 	}
-	
+
 	function getCurrentTime()
 	{
 		return $this->CurrentTime_;
 	}
-	
+
 	function setAPIKey($key)
 	{
 		$this->API_apiKey_ = $key;
 	}
-	
+
 	function setUserID($uid)
 	{
 		$this->API_userID_ = $uid;
 	}
-	
+
 	function setCharacterID($cid)
 	{
 		$this->API_charID_ = $cid;
 	}
-	
+
 	function getStarbases()
 	{
 		return $this->Starbase_;
 	}
-	
+
 	function fetchXML()
 	{
 		// is a player feed - take details from logged in user
@@ -3359,9 +3351,9 @@ class API_StarbaseList
 			require_once('class.pilot.php');
 			$plt = new pilot(user::get('usr_pilot_id'));
 			$usersname = $plt->getName();
-			
+
 			$this->CharName_ = $usersname;
-			
+
 			$sql = 'select plts.plt_id, plts.plt_externalid from kb3_pilots plts where plts.plt_name = "' . $usersname . '"';
 
     		$qry = new DBQuery();
@@ -3375,16 +3367,16 @@ class API_StarbaseList
 			{
         		return "Something went wrong with finiding pilots external ID<br>";
     		}
-		
+
 			$newsql = 'SELECT userID , apiKey FROM kb3_api_user WHERE charID = "' . $API_charID . '"';
 			$qry->execute($newsql);
     		$userrow = $qry->getRow();
-		
+
 			$API_userID = $userrow['userID'];
 			$API_apiKey = $userrow['apiKey'];
-			
+
 			$myKeyString = "userID=" . $API_userID . "&apiKey=" . $API_apiKey . "&characterID=" . $API_charID;
-				
+
 			$data = $this->loaddata($myKeyString);
 		} else {
 			if ($this->API_userID_ != "" && $this->API_apiKey_ != "" && $this->API_charID_ != "")
@@ -3406,29 +3398,29 @@ class API_StarbaseList
             return "<i>Error getting XML data from api.eve-online.com/StarbaseList.xml.aspx  </i><br><br>";
 
         xml_parser_free($xml_parser);
-		
+
 		return $this->html; // should be empty, but keeping just incase - errors are returned by Text so worth looking anyway.
 	}
-	
-	function startElement($parser, $name, $attribs) 
+
+	function startElement($parser, $name, $attribs)
     {
-		if ($name == "ROW") 
+		if ($name == "ROW")
         {
 			global $tempdata;
-			
-			if (count($attribs)) 
+
+			if (count($attribs))
             {
-                foreach ($attribs as $k => $v) 
+                foreach ($attribs as $k => $v)
                 {
-                    switch ($k) 
+                    switch ($k)
                     {
 						case "ITEMID":
 							$tempdata['itemID'] = $v;
-                            break;	
+                            break;
 						case "TYPEID":
 							$tempdata['typeID'] = $v;
 							$tempdata['typeName'] = gettypeIDname($v);
-                            break;	
+                            break;
 						case "LOCATIONID":
 							$tempdata['locationID'] = $v;
 							$sql = 'select sys.sys_name, sys.sys_sec from kb3_systems sys where sys.sys_eve_id = '.$v;
@@ -3443,34 +3435,34 @@ class API_StarbaseList
                             	$tempdata['locationSec'] = number_format(0.0, 1);
                         	else
                             	$tempdata['locationSec'] = number_format(round($mysec, 1), 1);
-                            break;	
+                            break;
 						case "MOONID":
 							$tempdata['moonID'] = $v;
 							$tempmoon = getMoonName($v);
-							
+
 							if ($tempmoon == "")
 							{
 								// Use API IDtoName to get Moon Name.
 								$this->myIDName = new API_IDtoName();
 								$this->myIDName->clear();
-								$this->myIDName->setIDs($v); 
+								$this->myIDName->setIDs($v);
 								$this->Output_ .= $this->myIDName->fetchXML();
 								$myNames = $this->myIDName->getIDData();
-								$tempdata['moonName'] = $myNames[0]['name'];		
+								$tempdata['moonName'] = $myNames[0]['name'];
 							} else {
 								$tempdata['moonName'] = $tempmoon;
    							}
-                            break;	
-						case "STATE": 
+                            break;
+						case "STATE":
 							$tempdata['state'] = $v;
                             break;
-						case "STATETIMESTAMP": 
+						case "STATETIMESTAMP":
 							$tempdata['stateTimestamp'] = $v;
                             break;
-						case "ONLINETIMESTAMP": 
+						case "ONLINETIMESTAMP":
 							$tempdata['onlineTimestamp'] = $v;
 							$this->Starbase_[] = $tempdata;
-							
+
 							$tempdata = array();
 							unset($tempdata);
                             break;
@@ -3478,9 +3470,9 @@ class API_StarbaseList
 				}
 			}
 		}
-    }				
+    }
 
-    function endElement($parser, $name) 
+    function endElement($parser, $name)
     {
 		// Details
 		if ($name == "ERROR")
@@ -3495,33 +3487,33 @@ class API_StarbaseList
 		}
     }
 
-    function characterData($parser, $data) 
+    function characterData($parser, $data)
     {
 		$this->characterDataValue = $data;
     }
-	
+
 	function loaddata($keystring)
     {
 		$configvalue = $this->CharName_ . '_StarbaseList';
-		
+
 		$CachedTime = ApiCache::get($configvalue);
 		$UseCaching = config::get('API_UseCache');
-		
+
         $url = "http://api.eve-online.com/corp/StarbaseList.xml.aspx" . $keystring;
 
         $path = '/corp/StarbaseList.xml.aspx';
-		
+
 		// API Caching system, If we're still under cachetime reuse the last XML, if not download the new one. Helps with Bug hunting and just better all round.
 		if ($CachedTime == "")
     	{
         	$CachedTime = "2005-01-01 00:00:00"; // fake date to ensure that it runs first time.
     	}
-		
-		if (is_file(getcwd().'/cache/api/'.$configvalue.'.xml'))
+
+		if (is_file(KB_CACHEDIR.'/api/'.$configvalue.'.xml'))
 			$cacheexists = true;
 		else
 			$cacheexists = false;
-			
+
 		// if API_UseCache = 1 (off) then don't use cache
 		if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($CachedTime) > 0) || ($UseCaching == 1)  || !$cacheexists )
     	{
@@ -3555,23 +3547,23 @@ class API_StarbaseList
             	{
                 	$contents = substr($contents, $start + strlen("\r\n\r\n"));
             	}
-				
+
 				// Save the file if we're caching (0 = true in Thunks world)
-				if ($UseCaching == 0) 
+				if ($UseCaching == 0)
 				{
-					$file = fopen(getcwd().'/cache/api/'.$configvalue.'.xml', 'w+');
+					$file = fopen(KB_CACHEDIR.'/api/'.$configvalue.'.xml', 'w+');
         			fwrite($file, $contents);
        				fclose($file);
-					@chmod(getcwd().'/cache/api/'.$configvalue.'.xml',0666);
-				} 
-        	} 
+					@chmod(KB_CACHEDIR.'/api/'.$configvalue.'.xml',0666);
+				}
+        	}
 		} else {
 			// re-use cached XML
-			if ($fp = @fopen(getcwd().'/cache/api/'.$configvalue.'.xml', 'r')) {
-    	    	$contents = fread($fp, filesize(getcwd().'/cache/api/'.$configvalue.'.xml'));
+			if ($fp = @fopen(KB_CACHEDIR.'/api/'.$configvalue.'.xml', 'r')) {
+    	    	$contents = fread($fp, filesize(KB_CACHEDIR.'/api/'.$configvalue.'.xml'));
         		fclose($fp);
     		} else {
-				return "<i>error loading cached file ".$configvalue.".xml</i><br><br>";  
+				return "<i>error loading cached file ".$configvalue.".xml</i><br><br>";
     		}
 		}
         return $contents;
@@ -3581,33 +3573,33 @@ class API_StarbaseList
 // **********************************************************************************************************************************************
 // ****************                                       API StarbaseDetail - /corp/StarbaseDetail.xml.aspx                          ****************
 // **********************************************************************************************************************************************
-class API_StarbaseDetail 
-{		
+class API_StarbaseDetail
+{
 	function getCachedUntil()
 	{
 		return $this->CachedUntil_;
 	}
-	
+
 	function getCurrentTime()
 	{
 		return $this->CurrentTime_;
 	}
-	
+
 	function setAPIKey($key)
 	{
 		$this->API_apiKey_ = $key;
 	}
-	
+
 	function setUserID($uid)
 	{
 		$this->API_userID_ = $uid;
 	}
-	
+
 	function setCharacterID($cid)
 	{
 		$this->API_charID_ = $cid;
 	}
-	
+
 	function setitemID($itemID)
 	{
 		$this->API_itemID_ = $itemID;
@@ -3664,8 +3656,8 @@ class API_StarbaseDetail
 	{
 		return $this->onCorporationWar_;
 	}
-	
-	
+
+
 	function fetchXML()
 	{
 		// is a player feed - take details from logged in user
@@ -3674,9 +3666,9 @@ class API_StarbaseDetail
 			require_once('class.pilot.php');
 			$plt = new pilot(user::get('usr_pilot_id'));
 			$usersname = $plt->getName();
-			
+
 			$this->CharName_ = $usersname;
-			
+
 			$sql = 'select plts.plt_id, plts.plt_externalid from kb3_pilots plts where plts.plt_name = "' . $usersname . '"';
 
     		$qry = new DBQuery();
@@ -3690,16 +3682,16 @@ class API_StarbaseDetail
 			{
         		return "Something went wrong with finding pilots external ID<br>";
     		}
-		
+
 			$newsql = 'SELECT userID , apiKey FROM kb3_api_user WHERE charID = "' . $API_charID . '"';
 			$qry->execute($newsql);
     		$userrow = $qry->getRow();
-		
+
 			$API_userID = $userrow['userID'];
 			$API_apiKey = $userrow['apiKey'];
-			
+
 			$myKeyString = "userID=" . $API_userID . "&apiKey=" . $API_apiKey . "&characterID=" . $API_charID . "&itemID=" . $this->API_itemID_;
-				
+
 			$data = $this->loaddata($myKeyString);
 		} else {
 			if (($this->API_userID_ != "") && ($this->API_apiKey_ != "") && ($this->API_charID_ != "") && ($this->API_itemID_ != ""))
@@ -3721,122 +3713,122 @@ class API_StarbaseDetail
             return "<i>Error getting XML data from api.eve-online.com/StarbaseDetail.xml.aspx  </i><br><br>";
 
         xml_parser_free($xml_parser);
-		
+
 		return $this->html; // should be empty, but keeping just incase - errors are returned by Text so worth looking anyway.
 	}
-	
-	function startElement($parser, $name, $attribs) 
+
+	function startElement($parser, $name, $attribs)
     {
-		if ($name == "ROW") 
+		if ($name == "ROW")
         {
 			global $tempdata;
-			
-			if (count($attribs)) 
+
+			if (count($attribs))
             {
-                foreach ($attribs as $k => $v) 
+                foreach ($attribs as $k => $v)
                 {
-                    switch ($k) 
+                    switch ($k)
                     {
 						case "TYPEID":
 							$fueldata['typeID'] = $v;
 							$fueldata['typeName'] = gettypeIDname($v);
-                            break;	
+                            break;
 						case "QUANTITY":
 							$fueldata['quantity'] = $v;
 							$this->Fuel_[] = $fueldata;
-							
+
 							$fueldata = array();
 							unset($fueldata);
-                            break;	
+                            break;
 					}
 				}
 			}
 		}
-		
-		if ($name == "ONSTANDINGDROP") 
+
+		if ($name == "ONSTANDINGDROP")
         {
-			if (count($attribs)) 
+			if (count($attribs))
             {
-                foreach ($attribs as $k => $v) 
+                foreach ($attribs as $k => $v)
                 {
-                    switch ($k) 
+                    switch ($k)
                     {
 						case "ENABLED":
 							$this->onStandingDrop_['enabled'] = $v;
-                            break;	
+                            break;
 						case "STANDING":
 							$this->onStandingDrop_['standing'] = $v;
-                            break;	
+                            break;
 					}
 				}
 			}
 		}
-		
-		if ($name == "ONSTATUSDROP") 
+
+		if ($name == "ONSTATUSDROP")
         {
-			if (count($attribs)) 
+			if (count($attribs))
             {
-                foreach ($attribs as $k => $v) 
+                foreach ($attribs as $k => $v)
                 {
-                    switch ($k) 
+                    switch ($k)
                     {
 						case "ENABLED":
 							$this->onStatusDrop_['enabled'] = $v;
-                            break;	
+                            break;
 						case "STANDING":
 							$this->onStatusDrop_['standing'] = $v;
-                            break;		
+                            break;
 					}
 				}
 			}
 		}
-		
-		if ($name == "ONAGGRESSION") 
+
+		if ($name == "ONAGGRESSION")
         {
-			if (count($attribs)) 
+			if (count($attribs))
             {
-                foreach ($attribs as $k => $v) 
+                foreach ($attribs as $k => $v)
                 {
-                    switch ($k) 
+                    switch ($k)
                     {
 						case "ENABLED":
 							$this->onAggression_['enabled'] = $v;
-                            break;	
+                            break;
 					}
 				}
 			}
 		}
-		
-		if ($name == "ONCORPORATIONWAR") 
+
+		if ($name == "ONCORPORATIONWAR")
         {
-			if (count($attribs)) 
+			if (count($attribs))
             {
-                foreach ($attribs as $k => $v) 
+                foreach ($attribs as $k => $v)
                 {
-                    switch ($k) 
+                    switch ($k)
                     {
 						case "ENABLED":
 							$this->onCorporationWar_['enabled'] = $v;
-                            break;	
+                            break;
 					}
 				}
 			}
 		}
-    }				
+    }
 
-    function endElement($parser, $name) 
+    function endElement($parser, $name)
     {
 		// Details
 		if ($name == "ERROR")
 			$this->html .= $this->characterDataValue;
-		
+
 		if ($name == "STATE")
 			$this->State_ .= $this->characterDataValue;
 		if ($name == "STATETIMESTAMP")
 			$this->stateTimestamp_ .= $this->characterDataValue;
 		if ($name == "ONLINETIMESTAMP")
 			$this->onlineTimestamp_ .= $this->characterDataValue;
-		
+
 		// General Settings
 		if ($name == "USAGEFLAGS")
 			$this->usageFlags_ .= $this->characterDataValue;
@@ -3848,7 +3840,7 @@ class API_StarbaseDetail
 			$this->allowAllianceMembers_ .= $this->characterDataValue;
 		if ($name == "CLAIMSOVEREIGNTY")
 			$this->claimSovereignty_ .= $this->characterDataValue;
-			
+
 		if ($name == "CURRENTTIME")
 			$this->CurrentTime_ = $this->characterDataValue;
 		if ($name == "CACHEDUNTIL")
@@ -3859,33 +3851,33 @@ class API_StarbaseDetail
 		}
     }
 
-    function characterData($parser, $data) 
+    function characterData($parser, $data)
     {
 		$this->characterDataValue = $data;
     }
-	
+
 	function loaddata($keystring)
     {
 		$configvalue = $this->API_itemID_ . '_StarbaseDetail';
-		
+
 		$CachedTime = ApiCache::get($configvalue);
 		$UseCaching = config::get('API_UseCache');
 
         $url = "http://api.eve-online.com/corp/StarbaseDetail.xml.aspx" . $keystring;
 
         $path = '/corp/StarbaseDetail.xml.aspx';
-		
+
 		// API Caching system, If we're still under cachetime reuse the last XML, if not download the new one. Helps with Bug hunting and just better all round.
 		if ($CachedTime == "")
     	{
         	$CachedTime = "2005-01-01 00:00:00"; // fake date to ensure that it runs first time.
     	}
-		
-		if (is_file(getcwd().'/cache/api/'.$configvalue.'.xml'))
+
+		if (is_file(KB_CACHEDIR.'/api/'.$configvalue.'.xml'))
 			$cacheexists = true;
 		else
 			$cacheexists = false;
-			
+
 		// if API_UseCache = 1 (off) then don't use cache
 		if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($CachedTime) > 0) || ($UseCaching == 1)  || !$cacheexists )
     	{
@@ -3919,23 +3911,23 @@ class API_StarbaseDetail
             	{
                 	$contents = substr($contents, $start + strlen("\r\n\r\n"));
             	}
-				
+
 				// Save the file if we're caching (0 = true in Thunks world)
-				if ($UseCaching == 0) 
+				if ($UseCaching == 0)
 				{
-					$file = fopen(getcwd().'/cache/api/'.$configvalue.'.xml', 'w+');
+					$file = fopen(KB_CACHEDIR.'/api/'.$configvalue.'.xml', 'w+');
         			fwrite($file, $contents);
        				fclose($file);
-					@chmod(getcwd().'/cache/api/'.$configvalue.'.xml',0666);
-				} 
-        	} 
+					@chmod(KB_CACHEDIR.'/api/'.$configvalue.'.xml',0666);
+				}
+        	}
 		} else {
 			// re-use cached XML
-			if ($fp = @fopen(getcwd().'/cache/api/'.$configvalue.'.xml', 'r')) {
-    	    	$contents = fread($fp, filesize(getcwd().'/cache/api/'.$configvalue.'.xml'));
+			if ($fp = @fopen(KB_CACHEDIR.'/api/'.$configvalue.'.xml', 'r')) {
+    	    	$contents = fread($fp, filesize(KB_CACHEDIR.'/api/'.$configvalue.'.xml'));
         		fclose($fp);
     		} else {
-				return "<i>error loading cached file ".$configvalue.".xml</i><br><br>";  
+				return "<i>error loading cached file ".$configvalue.".xml</i><br><br>";
     		}
 		}
         return $contents;
@@ -3946,134 +3938,134 @@ class API_StarbaseDetail
 // ****************                                   API Corporation Sheet - /corp/CorporationSheet.xml.aspx                    ****************
 // **********************************************************************************************************************************************
 // INCOMPLETE - MISSING CORP DIVISIONS AND WALLET DIVISIONS
-class API_CorporationSheet  
-{		
+class API_CorporationSheet
+{
 	function getCachedUntil()
 	{
 		return $this->CachedUntil_;
 	}
-	
+
 	function getCurrentTime()
 	{
 		return $this->CurrentTime_;
 	}
-	
+
 	function setAPIKey($key)
 	{
 		$this->API_apiKey_ = $key;
 	}
-	
+
 	function setUserID($uid)
 	{
 		$this->API_userID_ = $uid;
 	}
-	
+
 	function setCharacterID($cid)
 	{
 		$this->API_charID_ = $cid;
 	}
-	
+
 	function setCorpID($corpid)
 	{
 		$this->API_corpID_ = $corpid;
 	}
-	
+
 	function getAllianceID()
 	{
 		return $this->allianceID_;
 	}
-	
+
 	function getAllianceName()
 	{
 		return $this->allianceName_;
 	}
-	
+
 	function getCorporationID()
 	{
 		return $this->corporationID_;
 	}
-	
+
 	function getCorporationName()
 	{
 		return $this->corporationName_;
 	}
-	
+
 	function getTicker()
 	{
 		return $this->ticker_;
 	}
-	
+
 	function getCeoID()
 	{
 		return $this->ceoID_;
 	}
-	
+
 	function getCeoName()
 	{
 		return $this->ceoName_;
 	}
-		
+
 	function getStationID()
 	{
 		return $this->stationID_;
 	}
-	
+
 	function getStationName()
 	{
 		return $this->stationName_;
-	}	
-	
+	}
+
 	function getDescription()
 	{
 		return $this->description_;
-	}		
-	
+	}
+
 	function getUrl()
 	{
 		return $this->url_;
 	}
-		
+
 	function getLogo()
 	{
 		return $this->logo_;
-	}	
-	
+	}
+
 	function getTaxRate()
 	{
 		return $this->taxRate_;
 	}
-	
+
 	function getMemberCount()
 	{
 		return $this->memberCount_;
 	}
-	
+
 	function getMemberLimit()
 	{
 		return $this->memberLimit_;
 	}
-	
+
 	function getShares()
 	{
 		return $this->shares_;
 	}
-		
+
 	function fetchXML()
 	{
 		// is a player feed - take details from logged in user
-		if ($this->API_corpID_ != "") 
+		if ($this->API_corpID_ != "")
 		{
 			$myKeyString = "corporationID=" . $this->API_corpID_;
 			$this->CharName_ = $this->API_corpID_;
 			$data = $this->loaddata($myKeyString);
-			
+
 		} elseif (user::get('usr_pilot_id')) {
 			require_once('class.pilot.php');
 			$plt = new pilot(user::get('usr_pilot_id'));
 			$usersname = $plt->getName();
-			
+
 			$this->CharName_ = $usersname;
-			
+
 			$sql = 'select plts.plt_id, plts.plt_externalid from kb3_pilots plts where plts.plt_name = "' . $usersname . '"';
 
     		$qry = new DBQuery();
@@ -4087,16 +4079,16 @@ class API_CorporationSheet
 			{
         		return "Something went wrong with finding pilots external ID<br>";
     		}
-		
+
 			$newsql = 'SELECT userID , apiKey FROM kb3_api_user WHERE charID = "' . $API_charID . '"';
 			$qry->execute($newsql);
     		$userrow = $qry->getRow();
-		
+
 			$API_userID = $userrow['userID'];
 			$API_apiKey = $userrow['apiKey'];
-			
+
 			$myKeyString = "userID=" . $API_userID . "&apiKey=" . $API_apiKey . "&characterID=" . $API_charID;
-				
+
 			$data = $this->loaddata($myKeyString);
 		} else {
 			if (($this->API_userID_ != "") && ($this->API_apiKey_ != "") && ($this->API_charID_ != ""))
@@ -4118,14 +4110,14 @@ class API_CorporationSheet
             return "<i>Error getting XML data from api.eve-online.com/CorporationSheet.xml.aspx  </i><br><br>";
 
         xml_parser_free($xml_parser);
-		
+
 		return $this->html; // should be empty, but keeping just incase - errors are returned by Text so worth looking anyway.
 	}
-	
-	function startElement($parser, $name, $attribs) 
+
+	function startElement($parser, $name, $attribs)
     {
 		$this->characterDataValue = "";
-		
+
 		if ($name == "DESCRIPTION")
 		{
 			$this->DataIsDescription = true;
@@ -4133,25 +4125,25 @@ class API_CorporationSheet
 		} else {
 			$this->DataIsDescription = false;
 		}
-    }				
+    }
 
-    function endElement($parser, $name) 
+    function endElement($parser, $name)
     {
 		// Details
-		switch ($name) 
+		switch ($name)
         {
 			case "ERROR":
 				$this->html .= $this->characterDataValue;
                 break;
 			case "CORPORATIONID":
 				$this->corporationID_ = $this->characterDataValue;
-                break;		
+                break;
 			case "CORPORATIONNAME":
 				$this->corporationName_ = $this->characterDataValue;
-                break;	
+                break;
 			case "TICKER":
 				$this->ticker_ = $this->characterDataValue;
-                break;	
+                break;
 			case "CEOID":
 				$this->ceoID_ = $this->characterDataValue;
                 break;
@@ -4159,7 +4151,7 @@ class API_CorporationSheet
 				$this->ceoName_ = $this->characterDataValue;
                 break;
 			case "STATIONID":
-				$this->stationID_ = $this->characterDataValue;	
+				$this->stationID_ = $this->characterDataValue;
                 break;
 			case "STATIONNAME":
 				$this->stationName_ = $this->characterDataValue;
@@ -4186,9 +4178,9 @@ class API_CorporationSheet
 				$this->memberLimit_ = $this->characterDataValue;
                 break;
 			case "SHARES":
-				$this->shares_ = $this->characterDataValue;	
+				$this->shares_ = $this->characterDataValue;
                 break;
-				
+
 			case "GRAPHICID":
 				$this->logo_["graphicID"] = $this->characterDataValue;
                 break;
@@ -4203,15 +4195,15 @@ class API_CorporationSheet
                 break;
 			case "COLOR1":
 				$this->logo_["colour1"] = $this->characterDataValue;
-                break;	
+                break;
 			case "COLOR2":
 				$this->logo_["colour2"] = $this->characterDataValue;
-                break;	
+                break;
 			case "COLOR3":
 				$this->logo_["colour3"] = $this->characterDataValue;
-                break;	
+                break;
 		}
-			
+
 		if ($name == "CURRENTTIME")
 			$this->CurrentTime_ = $this->characterDataValue;
 		if ($name == "CACHEDUNTIL")
@@ -4222,7 +4214,7 @@ class API_CorporationSheet
 		}
     }
 
-    function characterData($parser, $data) 
+    function characterData($parser, $data)
     {
 		//  This is a fix for some hosts that strip "<" and ">" from the API XML when it's put into a string. I have no idea why this happens, where or how - but this puts them back
 		if ($this->DataIsDescription)
@@ -4231,7 +4223,7 @@ class API_CorporationSheet
 			{
 				$this->tagsareworking = true;
 			}
-		
+
 			if (!$this->tagsareworking)
 			{
 				if ( ($data == "br") || ($data == "b") || ($data == "/a") || ($data == "/b") || ($data == "/font") || (substr($data,0,4)== "font") || (substr($data,0,6)== "a href"))
@@ -4243,33 +4235,33 @@ class API_CorporationSheet
 		} else {
 			$this->characterDataValue = $data;
 		}
-		
-		
+
+
 		//echo $data;
     }
-	
+
 	function loaddata($keystring)
-    {	
+    {
 		$configvalue = $this->CharName_ . '_CorporationSheet';
-		
+
 		$CachedTime = ApiCache::get($configvalue);
 		$UseCaching = config::get('API_UseCache');
 
         $url = "http://api.eve-online.com/corp/CorporationSheet.xml.aspx" . $keystring;
 
         $path = '/corp/CorporationSheet.xml.aspx';
-		
+
 		// API Caching system, If we're still under cachetime reuse the last XML, if not download the new one. Helps with Bug hunting and just better all round.
 		if ($CachedTime == "")
     	{
         	$CachedTime = "2005-01-01 00:00:00"; // fake date to ensure that it runs first time.
     	}
-		
-		if (is_file(getcwd().'/cache/api/'.$configvalue.'.xml'))
+
+		if (is_file(KB_CACHEDIR.'/api/'.$configvalue.'.xml'))
 			$cacheexists = true;
 		else
 			$cacheexists = false;
-			
+
 		// if API_UseCache = 1 (off) then don't use cache
 		if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($CachedTime) > 0) || ($UseCaching == 1)  || !$cacheexists )
     	{
@@ -4303,23 +4295,23 @@ class API_CorporationSheet
             	{
                 	$contents = substr($contents, $start + strlen("\r\n\r\n"));
             	}
-				
+
 				// Save the file if we're caching (0 = true in Thunks world)
-				if ($UseCaching == 0) 
+				if ($UseCaching == 0)
 				{
-					$file = fopen(getcwd().'/cache/api/'.$configvalue.'.xml', 'w+');
+					$file = fopen(KB_CACHEDIR.'/api/'.$configvalue.'.xml', 'w+');
         			fwrite($file, $contents);
        				fclose($file);
-					@chmod(getcwd().'/cache/api/'.$configvalue.'.xml',0666);
-				} 
-        	} 
+					@chmod(KB_CACHEDIR.'/api/'.$configvalue.'.xml',0666);
+				}
+        	}
 		} else {
 			// re-use cached XML
-			if ($fp = @fopen(getcwd().'/cache/api/'.$configvalue.'.xml', 'r')) {
-    	    	$contents = fread($fp, filesize(getcwd().'/cache/api/'.$configvalue.'.xml'));
+			if ($fp = @fopen(KB_CACHEDIR.'/api/'.$configvalue.'.xml', 'r')) {
+    	    	$contents = fread($fp, filesize(KB_CACHEDIR.'/api/'.$configvalue.'.xml'));
         		fclose($fp);
     		} else {
-				return "<i>error loading cached file ".$configvalue.".xml</i><br><br>";  
+				return "<i>error loading cached file ".$configvalue.".xml</i><br><br>";
     		}
 		}
         return $contents;
@@ -4328,18 +4320,18 @@ class API_CorporationSheet
 // **********************************************************************************************************************************************
 // ****************                                   API Name -> ID Conversion /eve/CharacterID.xml.aspx 	                     ****************
 // **********************************************************************************************************************************************
-class API_NametoID 
-{		
+class API_NametoID
+{
 	function getCachedUntil()
 	{
 		return $this->CachedUntil_;
 	}
-	
+
 	function getCurrentTime()
 	{
 		return $this->CurrentTime_;
 	}
-	
+
 	function setNames($names)
 	{
 		$this->API_Names_ = $names;
@@ -4348,16 +4340,16 @@ class API_NametoID
 	{
 		return $this->NameData_;
 	}
-	
+
 	function clear()
 	{
 		$this->NameData_ = array();
 		unset($this->NameData_);
 	}
-	
+
 	function fetchXML()
 	{
-		if ($this->API_Names_ != "") 
+		if ($this->API_Names_ != "")
 		{
 			$myKeyString = "names=" . $this->API_Names_;
 			$data = $this->loaddata($myKeyString);
@@ -4374,49 +4366,49 @@ class API_NametoID
             return "<i>Error getting XML data from api.eve-online.com/CharacterID.xml.aspx  </i><br><br>";
 
         xml_parser_free($xml_parser);
-		
+
 		return $this->html; // should be empty, but keeping just incase - errors are returned by Text so worth looking anyway.
 	}
-	
-	function startElement($parser, $name, $attribs) 
+
+	function startElement($parser, $name, $attribs)
     {
 		global $NameData;
-		
-		if ($name == "ROW") 
-        { 
-            if (count($attribs)) 
+
+		if ($name == "ROW")
+        {
+            if (count($attribs))
             {
-                foreach ($attribs as $k => $v) 
+                foreach ($attribs as $k => $v)
                 {
-                    switch ($k) 
+                    switch ($k)
                     {
                         case "NAME":
                             $NameData['name'] = $v;
                             break;
-                        case "CHARACTERID":  
+                        case "CHARACTERID":
                             $NameData['characterID'] = $v;
                             break;
                     }
                 }
             }
         }
-    }				
+    }
 
-    function endElement($parser, $name) 
+    function endElement($parser, $name)
     {
 		global $NameData;
-		
+
 		// Details
 		if ($name == "ERROR")
 			$this->html .= $this->characterDataValue;
-		
+
 		if ($name == "ROW")
 		{
 			$this->NameData_[] = $NameData;
 			$NameData = array();
 			unset($NameData);
 		}
-			
+
 		if ($name == "CURRENTTIME")
 			$this->CurrentTime_ = $this->characterDataValue;
 		if ($name == "CACHEDUNTIL") // cache not needed for this process
@@ -4424,21 +4416,21 @@ class API_NametoID
 			$this->CachedUntil_ = $this->characterDataValue;
 			//ApiCache::set('API_eve_RefTypes' , $this->characterDataValue);
 			//ApiCache::set( $this->CharName_ . 'CharacterID' , $this->characterDataValue);
-		} 
+		}
     }
 
-    function characterData($parser, $data) 
+    function characterData($parser, $data)
     {
 		$this->characterDataValue = $data;
     }
-	
+
 	function loaddata($keystring)
-    {	
+    {
         $url = "http://api.eve-online.com/eve/CharacterID.xml.aspx" . $keystring;
 
         $path = '/eve/CharacterID.xml.aspx';
-		
-		
+
+
         $fp = fsockopen("api.eve-online.com", 80);
 
         if (!$fp)
@@ -4469,7 +4461,7 @@ class API_NametoID
             {
                 	$contents = substr($contents, $start + strlen("\r\n\r\n"));
             }
-        } 
+        }
 
         return $contents;
     }
@@ -4477,18 +4469,18 @@ class API_NametoID
 // **********************************************************************************************************************************************
 // ****************                                   API ID -> Name Conversion /eve/CharacterID.xml.aspx 	                     ****************
 // **********************************************************************************************************************************************
-class API_IDtoName 
-{		
+class API_IDtoName
+{
 	function getCachedUntil()
 	{
 		return $this->CachedUntil_;
 	}
-	
+
 	function getCurrentTime()
 	{
 		return $this->CurrentTime_;
 	}
-	
+
 	function setIDs($IDs)
 	{
 		$this->API_IDs_ = $IDs;
@@ -4497,16 +4489,16 @@ class API_IDtoName
 	{
 		return $this->NameData_;
 	}
-	
+
 	function clear()
 	{
 		$this->NameData_ = array();
 		unset($this->NameData_);
 	}
-	
+
 	function fetchXML()
 	{
-		if ($this->API_IDs_ != "") 
+		if ($this->API_IDs_ != "")
 		{
 			$myKeyString = "ids=" . $this->API_IDs_;
 			$data = $this->loaddata($myKeyString);
@@ -4523,49 +4515,49 @@ class API_IDtoName
             return "<i>Error getting XML data from api.eve-online.com/CharacterName.xml.aspx  </i><br><br>";
 
         xml_parser_free($xml_parser);
-		
+
 		return $this->html; // should be empty, but keeping just incase - errors are returned by Text so worth looking anyway.
 	}
-	
-	function startElement($parser, $name, $attribs) 
+
+	function startElement($parser, $name, $attribs)
     {
 		global $NameData;
-		
-		if ($name == "ROW") 
-        { 
-            if (count($attribs)) 
+
+		if ($name == "ROW")
+        {
+            if (count($attribs))
             {
-                foreach ($attribs as $k => $v) 
+                foreach ($attribs as $k => $v)
                 {
-                    switch ($k) 
+                    switch ($k)
                     {
                         case "NAME":
                             $NameData['name'] = $v;
                             break;
-                        case "CHARACTERID":  
+                        case "CHARACTERID":
                             $NameData['characterID'] = $v;
                             break;
                     }
                 }
             }
         }
-    }				
+    }
 
-    function endElement($parser, $name) 
+    function endElement($parser, $name)
     {
 		global $NameData;
-		
+
 		// Details
 		if ($name == "ERROR")
 			$this->html .= $this->characterDataValue;
-		
+
 		if ($name == "ROW")
 		{
 			$this->NameData_[] = $NameData;
 			$NameData = array();
 			unset($NameData);
 		}
-			
+
 		if ($name == "CURRENTTIME")
 			$this->CurrentTime_ = $this->characterDataValue;
 		if ($name == "CACHEDUNTIL") // cache not needed for this process
@@ -4573,21 +4565,21 @@ class API_IDtoName
 			$this->CachedUntil_ = $this->characterDataValue;
 			//ApiCache::set('API_eve_RefTypes' , $this->characterDataValue);
 			//ApiCache::set( $this->CharName_ . 'CharacterID' , $this->characterDataValue);
-		} 
+		}
     }
 
-    function characterData($parser, $data) 
+    function characterData($parser, $data)
     {
 		$this->characterDataValue = $data;
     }
-	
+
 	function loaddata($keystring)
-    {	
+    {
         $url = "http://api.eve-online.com/eve/CharacterName.xml.aspx" . $keystring;
 
         $path = '/eve/CharacterName.xml.aspx';
-		
-		
+
+
         $fp = fsockopen("api.eve-online.com", 80);
 
         if (!$fp)
@@ -4618,7 +4610,7 @@ class API_IDtoName
             {
                 	$contents = substr($contents, $start + strlen("\r\n\r\n"));
             }
-        } 
+        }
 
         return $contents;
     }
@@ -4634,23 +4626,23 @@ class API_ServerStatus
    {
       return $this->CachedUntil_;
    }
-   
+
    function getCurrentTime()
    {
       return $this->CurrentTime_;
    }
-   
+
    function getserverOpen()
    {
       return $this->serverOpen_;
    }
-   
+
    function getonlinePlayers()
    {
       return $this->onlinePlayers_;
    }
 
-    function fetchXML() 
+    function fetchXML()
     {
         $data = LoadGlobalData('/server/ServerStatus.xml.aspx');
 
@@ -4663,7 +4655,7 @@ class API_ServerStatus
             return "<i>Error getting XML data from api.eve-online.com/server/ServerStatus.xml.aspx</i><br><br>";
 
         xml_parser_free($xml_parser);
-     
+
         return $this->html;
     }
 
@@ -4672,10 +4664,10 @@ class API_ServerStatus
     // nothing to do here...
     }
 
-    function endElement($parser, $name) 
+    function endElement($parser, $name)
     {
       global $tempvalue;
-      
+
       if ($name == "CURRENTTIME")
          $this->CurrentTime_ = $tempvalue;
       if ($name == "SERVEROPEN")
@@ -4688,11 +4680,11 @@ class API_ServerStatus
 		 ApiCache::set( 'API_server_ServerStatus' , $tempvalue);
       }
     }
-    
-	function characterData($parser, $data) 
+
+	function characterData($parser, $data)
     {
       global $tempvalue;
-        
+
       $tempvalue = $data;
     }
 }
@@ -4708,25 +4700,25 @@ class API_ServerStatus
 // **********************************************************************************************************************************************
 
 // loads a generic XML sheet that requires no API Login as such
-function LoadGlobalData($path) 
+function LoadGlobalData($path)
 {
 	$temppath = substr($path, 0, strlen($path) - 14);
 	$configvalue = "API" . str_replace("/", "_", $temppath);
-		
+
 	$CachedTime = ApiCache::get($configvalue);
 	$UseCaching = config::get('API_UseCache');
-		
+
 	// API Caching system, If we're still under cachetime reuse the last XML, if not download the new one. Helps with Bug hunting and just better all round.
 	if ($CachedTime == "")
     {
         $CachedTime = "2005-01-01 00:00:00"; // fake date to ensure that it runs first time.
     }
-		
-	if (is_file(getcwd().'/cache/api/'.$configvalue.'.xml'))
+
+	if (is_file(KB_CACHEDIR.'/api/'.$configvalue.'.xml'))
 		$cacheexists = true;
 	else
 		$cacheexists = false;
-	
+
 	if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($CachedTime) > 0) || ($UseCaching == 1)  || !$cacheexists )// if API_UseCache = 1 (off) then don't use cache
     {
         $fp = fsockopen("api.eve-online.com", 80);
@@ -4759,23 +4751,23 @@ function LoadGlobalData($path)
             {
              	$contents = substr($contents, $start + strlen("\r\n\r\n"));
             }
-			
+
 			// Save the file if we're caching (0 = true in Thunks world)
-			if ( $UseCaching == 0 ) 
+			if ( $UseCaching == 0 )
 			{
-				$file = fopen(getcwd().'/cache/api/'.$configvalue.'.xml', 'w+');
+				$file = fopen(KB_CACHEDIR.'/api/'.$configvalue.'.xml', 'w+');
         		fwrite($file, $contents);
        			fclose($file);
-				@chmod(getcwd().'/cache/api/'.$configvalue.'.xml',0666);
-			} 
-        } 
+				@chmod(KB_CACHEDIR.'/api/'.$configvalue.'.xml',0666);
+			}
+        }
 	} else {
 		// re-use cached XML
-		if ($fp = @fopen(getcwd().'/cache/api/'.$configvalue.'.xml', 'r')) {
-    	    $contents = fread($fp, filesize(getcwd().'/cache/api/'.$configvalue.'.xml'));
+		if ($fp = @fopen(KB_CACHEDIR.'/api/'.$configvalue.'.xml', 'r')) {
+    	    $contents = fread($fp, filesize(KB_CACHEDIR.'/api/'.$configvalue.'.xml'));
         	fclose($fp);
     	} else {
-			return "<i>error loading cached file ".$configvalue.".xml</i><br><br>";  
+			return "<i>error loading cached file ".$configvalue.".xml</i><br><br>";
     	}
 	}
 	return $contents;
@@ -4787,11 +4779,11 @@ function LoadGlobalData($path)
 function gettypeIDname($id)
 {
 	$sql = 'select inv.typeName from kb3_invtypes inv where inv.typeID = ' . $id;
-				
+
     $qry = new DBQuery();
     $qry->execute($sql);
     $row = $qry->getRow();
-			
+
     return $row['typeName'];
 }
 
@@ -4801,11 +4793,11 @@ function gettypeIDname($id)
 function getgroupID($id)
 {
 	$sql = 'select inv.groupID from kb3_invtypes inv where inv.typeID = ' . $id;
-				
+
     $qry = new DBQuery();
     $qry->execute($sql);
     $row = $qry->getRow();
-			
+
     return $row['groupID'];
 }
 
@@ -4813,13 +4805,13 @@ function getgroupID($id)
 // ****************                         			    Convert groupID -> groupName           					             ****************
 // **********************************************************************************************************************************************
 function getgroupIDname($id)
-{		
+{
 	$sql = 'select itt.itt_name from kb3_item_types itt where itt.itt_id = ' . $id;
-	
+
     $qry = new DBQuery();
     $qry->execute($sql);
     $row = $qry->getRow();
-	
+
 	return $row['itt_name'];
 }
 
@@ -4829,11 +4821,11 @@ function getgroupIDname($id)
 function gettypeIDrank($id)
 {
 	$sql = 'select att.value from kb3_dgmtypeattributes att where att.typeID = ' . $id . ' and att.attributeID = 275';
-				
+
     $qry = new DBQuery();
     $qry->execute($sql);
     $row = $qry->getRow();
-			
+
     return $row['value'];
 }
 
@@ -4844,16 +4836,20 @@ function getMoonName($id)
 {
 	if ($id != 0)
 	{
+        $qry = new DBQuery();
+		$sql = "SHOW TABLES LIKE 'kb3_moons'";
+        $qry->execute($sql);
+		if(!$qry->recordCount()) return "";
+
 		$sql = 'select moon.itemID, moon.itemName from kb3_moons moon where moon.itemID = '.$id;
 
-        $qry = new DBQuery();
         $qry->execute($sql);
         $row = $qry->getRow();
-						
+
         return $row['itemName'];
 	} else {
 		return "Unknown";
-	}				
+	}
 }
 
 // **********************************************************************************************************************************************
@@ -4871,7 +4867,7 @@ function FindThunk()
     $pilot_charid = $row['plt_externalid'];
 
     if ( $pilot_id != 0 )	{
-        return '<a href="?a=pilot_detail&amp;plt_id=' . $pilot_id . '" ><font size="2">Captain Thunk</font></a>';
+        return '<a href="?a=pilot_detail&plt_id=' . $pilot_id . '" ><font size="2">Captain Thunk</font></a>';
     } else {
         return "Captain Thunk";
     }
@@ -4883,10 +4879,10 @@ function FindThunk()
 function Update_CorpID($corpName, $corpID)
 {
 	if ( (strlen($corpName) != 0) && ($corpID != 0) )
-	{	
+	{
 		$qry = new DBQuery();
 		$qry->execute( "SELECT * FROM `kb3_corps` WHERE `crp_name` = '" . slashfix($corpName) . "'");
-		
+
 		if ($qry->recordCount() != 0)
     	{
 			$row = $qry->getRow();
@@ -4907,7 +4903,7 @@ function Update_AllianceID($allianceName, $allianceID)
 	{
 		$qry = new DBQuery();
 		$qry->execute( "SELECT * FROM `kb3_alliances` WHERE `all_name` = '" . slashfix($allianceName) . "'");
-		
+
 		if ($qry->recordCount() != 0)
     	{
 			$row = $qry->getRow();
@@ -4930,12 +4926,12 @@ function ConvertTimestamp($timeStampGMT)
 		$gmoffset = (strtotime(date("M d Y H:i:s")) - strtotime(gmdate("M d Y H:i:s")));
 		//if (!config::get('API_ForceDST'))
 			//$gmoffset = $gmoffset + 3600;
-		
+
 		$cachetime = date("Y-m-d H:i:s",  strtotime($timeStampGMT) + $gmoffset);
 	} else {
 		$cachetime = $timeStampGMT;
 	}
-	
+
 	return $cachetime;
 }
 ?>

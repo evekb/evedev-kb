@@ -11,7 +11,7 @@ $page->setTitle('Administration - Killmail Exporter');
 
 if (!$_POST['dir'])
 {
-    $dir = str_replace('\\','/',getcwd()).'/cache/kill_export';
+    $dir = KB_CACHEDIR.'/kill_export';
 }
 if (!$_POST['ext'])
 {

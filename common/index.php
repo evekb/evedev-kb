@@ -92,8 +92,8 @@ if(is_dir('./themes/'.config::get('theme_name').'/templates'))
 	$smarty->template_dir = './themes/'.config::get('theme_name').'/templates';
 else $smarty->template_dir = './themes/default/templates';
 
-$smarty->compile_dir = './cache/templates_c';
-$smarty->cache_dir = './cache/data';
+$smarty->compile_dir = KB_CACHEDIR.'/templates_c';
+$smarty->cache_dir = KB_CACHEDIR.'/data';
 $smarty->assign('theme_url', THEME_URL);
 if(isset($_GET['style']))
 {

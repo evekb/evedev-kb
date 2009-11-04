@@ -141,18 +141,18 @@ class MapView
 
         if ($this->mode_ == "map")
         {
-            $regioncache = 'cache/map/'.KB_SITE.'_'.$this->regionid_.'_'.$this->imgwidth_.'.png';
+            $regioncache = KB_CACHEDIR.'/map/'.KB_SITE.'_'.$this->regionid_.'_'.$this->imgwidth_.'.png';
             $caption = $this->regname_;
         }
         elseif ($this->mode_ == "region")
         {
-            $regioncache = 'cache/map/'.KB_SITE.'_'.$this->conid_.'_'.$this->imgwidth_.'.png';
+            $regioncache = KB_CACHEDIR.'/map/'.KB_SITE.'_'.$this->conid_.'_'.$this->imgwidth_.'.png';
             $sql .= " and reg.reg_id = ".$this->regionid_;
             $caption = $this->conname_;
         }
         elseif ($this->mode_ == "cons")
         {
-            $regioncache = 'cache/map/'.KB_SITE.'_'.$this->systemid_.'_'.$this->imgwidth_.'.png';
+            $regioncache = KB_CACHEDIR.'/map/'.KB_SITE.'_'.$this->systemid_.'_'.$this->imgwidth_.'.png';
 
             $sql .= " and con.con_id = ".$this->conid_;
             $caption = $this->sysname_." (".roundsec($this->syssec_).")";

@@ -10,9 +10,9 @@ $page->setAdmin();
 $svn_revNew = @exec('svnversion');
 if (!empty($svn_revNew))
 {
-    @unlink('cache/svnrev.php');
+    @unlink(KB_CACHEDIR.'/svnrev.php');
     $data = '<'.'?php $svn_rev = "'.$svn_revNew.'";';
-    file_put_contents('cache/svnrev.php', $data);
+    file_put_contents(KB_CACHEDIR.'/svnrev.php', $data);
 }
 */
 if (!$_REQUEST['field'] && !$_REQUEST['sub'])

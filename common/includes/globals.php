@@ -10,7 +10,7 @@ define('LATEST_DB_UPDATE',"012");
 define('KB_CACHEDIR', 'cache');
 define('KB_PAGECACHEDIR', KB_CACHEDIR.'/page');
 define('KB_MAILCACHEDIR', KB_CACHEDIR.'/mails');
-define('KB_QUERYCACHEDIR', KB_CACHEDIR.'/SQLqueries');
+define('KB_QUERYCACHEDIR', KB_CACHEDIR.'/SQL');
 
 // current version: major.minor.sub
 // unpair numbers for minor = development version

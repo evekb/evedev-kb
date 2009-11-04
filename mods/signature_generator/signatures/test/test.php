@@ -68,7 +68,7 @@ imagefttext($im, 10, 0, 89, 53, $white, $font, $killrow2_str, array('hdpi'=>200)
 
 
 // player portrait
-$portrait_img = imagecreatefromjpeg("cache/portraits/".$pid."_256.jpg");
+$portrait_img = imagecreatefromjpeg(Pilot::getPortraitPath(256,$pid));
 imagecopyresampled($im, $portrait_img, 8, 8, 0, 0, 44, 44, 256, 256);
 imagedestroy($portrait_img);
 

@@ -48,9 +48,9 @@ elseif (CORP_ID && $corp->getID() != CORP_ID)
 
 $id = abs(crc32($sig_name));
 // check for cached version
-if (file_exists('cache/data/sig_'.$id.'_'.$plt_id))
+if (file_exists(KB_CACHEDIR.'/data/sig_'.$id.'_'.$plt_id))
 {
-    $age = filemtime('cache/data/sig_'.$id.'_'.$plt_id);
+    $age = filemtime(KB_CACHEDIR.'/data/sig_'.$id.'_'.$plt_id);
 
     // cache files for 30 minutes
     if (time() - $age < 30*60)
@@ -63,15 +63,15 @@ if (file_exists('cache/data/sig_'.$id.'_'.$plt_id))
         {
             header('Content-Type: image/jpeg');
         }
-        readfile('cache/data/sig_'.$id.'_'.$plt_id);
+        readfile(KB_CACHEDIR.'/data/sig_'.$id.'_'.$plt_id);
         return;
     }
 }
 
 $pid = $pilot->getExternalID();
-if (file_exists('cache/portraits/'.$pid.'_256.jpg'))
+if (file_exists(KB_CACHEDIR.'/portraits/'.$pid.'_256.jpg'))
 {
-	touch('cache/portraits/'.$pid.'_256.jpg');
+	touch(KB_CACHEDIR.'/portraits/'.$pid.'_256.jpg');
 }
 else
 {
@@ -80,7 +80,7 @@ else
 	$file = @file_get_contents('http://img.eve.is/serv.asp?s=256&c='.$pid);
 	if ($img = @imagecreatefromstring($file))
 	{
-		$fp = fopen('cache/portraits/'.$pid.'_256.jpg', 'w');
+		$fp = fopen(KB_CACHEDIR.'/portraits/'.$pid.'_256.jpg', 'w');
 		fwrite($fp, $file);
 		fclose($fp);
 	}
@@ -96,7 +96,7 @@ else
 
 		if ($img = @imagecreatefromstring($file))
 		{
-			$fp = fopen('cache/portraits/'.$id.'_256.jpg', 'w');
+			$fp = fopen(KB_CACHEDIR.'/portraits/'.$id.'_256.jpg', 'w');
 			fwrite($fp, $file);
 		}
 	}
@@ -122,5 +122,5 @@ else
     header('Content-Type: image/jpeg');
     imagejpeg($im, 'cache/data/sig_'.$id.'_'.$plt_id, 90);
 }
-readfile('cache/data/sig_'.$id.'_'.$plt_id);
+readfile(KB_CACHEDIR.'/data/sig_'.$id.'_'.$plt_id);
 ?>

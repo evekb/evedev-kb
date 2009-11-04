@@ -265,7 +265,7 @@ class admin_appearance
 		if(!isset($_REQUEST['option_theme_name'])) return;
 		if(!file_exists("themes/".config::get('theme_name')."/".config::get('style_name').".css"))
 			config::set('style_name', config::get('theme_name'));
-		admin_appearance::removeOld(0, 'cache/templates_c', false);
+		admin_appearance::removeOld(0, KB_CACHEDIR.'/templates_c', false);
 		header("Location: http://".$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'?'.$_SERVER['QUERY_STRING']);
 		die;
 	}

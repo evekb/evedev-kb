@@ -68,7 +68,7 @@ class Fetcher
 		// only lists fetched with lastkllid are ordered by id.
 		if(strpos($fetchurl, 'lastkllid')) $this->idordered = true;
 		else $this->idordered = false;
-		$this->feedfilename = 'cache/data/feed'.md5($this->uurl).'.xml';
+		$this->feedfilename = KB_CACHEDIR.'/data/feed'.md5($this->uurl).'.xml';
 		$xml_parser = xml_parser_create("UTF-8");
 		xml_set_object ( $xml_parser, $this );
 		xml_set_element_handler($xml_parser, "startElement", "endElement");

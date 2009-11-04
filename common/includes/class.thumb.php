@@ -68,13 +68,13 @@ class thumb
 		switch ($this->_type)
 		{
 			case 'pilot':
-				$this->_thumb = 'cache/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2).'/'.$this->_id.'_'.$this->_size.'.jpg';
+				$this->_thumb = KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2).'/'.$this->_id.'_'.$this->_size.'.jpg';
 				break;
 			case 'corp':
-				$this->_thumb = 'cache/img/corps/'.substr($this->_id,0,2).'/'.$this->_id.'_'.$this->_size.'.jpg';
+				$this->_thumb = KB_CACHEDIR.'/img/corps/'.substr($this->_id,0,2).'/'.$this->_id.'_'.$this->_size.'.jpg';
 				break;
 			case 'alliance':
-				$this->_thumb = 'cache/img/alliances/'.$this->_id.'_'.$this->_size.'.png';
+				$this->_thumb = KB_CACHEDIR.'/img/alliances/'.$this->_id.'_'.$this->_size.'.png';
 				break;
 		}
 
@@ -104,10 +104,10 @@ class thumb
 
 	function genPilot()
 	{
-		if (file_exists('cache/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2).'/'.$this->_id.'_256.jpg'))
+		if (file_exists(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2).'/'.$this->_id.'_256.jpg'))
 		{
-			touch('cache/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2).'/'.$this->_id.'_256.jpg');
-			$img = imagecreatefromjpeg('cache/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2).'/'.$this->_id.'_256.jpg');
+			touch(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2).'/'.$this->_id.'_256.jpg');
+			$img = imagecreatefromjpeg(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2).'/'.$this->_id.'_256.jpg');
 		}
 		// 20070911 - Gate: Support EVE/Capture/Portraits images
 		elseif (file_exists('img/portraits/'.$this->_id.'.jpg'))
@@ -142,11 +142,11 @@ class thumb
 				curl_close($ch);
 				if ($img = @imagecreatefromstring($file))
 				{
-					if(!file_exists('cache/img/pilots/'.substr($this->_id,0,2)))
-						mkdir('cache/img/pilots/'.substr($this->_id,0,2));
-					if(!file_exists('cache/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2)))
-						mkdir('cache/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2));
-					$fp = fopen('cache/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2).'/'.$this->_id.'_256.jpg', 'w');
+					if(!file_exists(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2)))
+						mkdir(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2));
+					if(!file_exists(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2)))
+						mkdir(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2));
+					$fp = fopen(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2).'/'.$this->_id.'_256.jpg', 'w');
 					fwrite($fp, $file);
 					fclose($fp);
 				}
@@ -156,11 +156,11 @@ class thumb
 				$file = @file_get_contents('http://img.eve.is/serv.asp?s=256&c='.$this->_id);
 				if ($img = @imagecreatefromstring($file))
 				{
-					if(!file_exists('cache/img/pilots/'.substr($this->_id,0,2)))
-						mkdir('cache/img/pilots/'.substr($this->_id,0,2));
-					if(!file_exists('cache/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2)))
-						mkdir('cache/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2));
-					$fp = fopen('cache/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2).'/'.$this->_id.'_256.jpg', 'w');
+					if(!file_exists(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2)))
+						mkdir(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2));
+					if(!file_exists(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2)))
+						mkdir(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2));
+					$fp = fopen(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2).'/'.$this->_id.'_256.jpg', 'w');
 					fwrite($fp, $file);
 					fclose($fp);
 				}
@@ -176,11 +176,11 @@ class thumb
 
 					if ($img = @imagecreatefromstring($file))
 					{
-						if(!file_exists('cache/img/pilots/'.substr($this->_id,0,2)))
-							mkdir('cache/img/pilots/'.substr($this->_id,0,2));
-						if(!file_exists('cache/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2)))
-							mkdir('cache/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2));
-						$fp = fopen('cache/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2).'/'.$this->_id.'_256.jpg', 'w');
+						if(!file_exists(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2)))
+							mkdir(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2));
+						if(!file_exists(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2)))
+							mkdir(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2));
+						$fp = fopen(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2).'/'.$this->_id.'_256.jpg', 'w');
 						fwrite($fp, $file);
 					}
 				}

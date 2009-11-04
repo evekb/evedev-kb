@@ -54,12 +54,12 @@ if ($_POST['submit'])
     }
 
     // on submit delete all region cache files
-    $dir = opendir('cache/map');
+    $dir = opendir(KB_CACHEDIR.'/map');
     while ($file = readdir($dir))
     {
         if (strpos($file, '.png'))
         {
-            @unlink('cache/map/'.$file);
+            @unlink(KB_CACHEDIR.'/map/'.$file);
         }
     }
 }
