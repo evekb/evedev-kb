@@ -61,6 +61,7 @@ class user
         $_SESSION['user'] = $user;
 
         user::loggedin(true);
+        event::call("user_login", $user);
         return true;
     }
 
