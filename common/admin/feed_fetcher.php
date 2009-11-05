@@ -124,7 +124,7 @@ class Fetcher
 					if(strpos($name, '/')) continue;
 					$namelist[slashfix($name)] = $newall;
 				}
-				Corporations::addNames($namelist);
+				Fetcher::addCorpNames($namelist);
 
 				$pos = 0;
 				$namelist = array();
@@ -175,7 +175,7 @@ class Fetcher
 					}
 					$namelist[slashfix($name)] = $corps[$cname];
 				}
-				Pilots::addNames($namelist);
+				Fetcher::addPilotNames($namelist);
 				unset ($corps);
 				unset ($namelist);
 			}
@@ -372,6 +372,90 @@ class Fetcher
 			$this->combined_ = true;
 		}
 	}
-	
+	//! Add an array of pilots to be checked.
+
+	//! \param $names array of corp names indexed by pilot name.
+	function addPilotNames($names)
+	{
+		$qry = new DBQuery(true);
+		$checklist = array();
+		foreach($names as $pilot =>$corp)
+		{
+			$qry->execute("SELECT 1 FROM kb3_pilots WHERE plt_name = '".$pilot."'");
+			if(!$qry->recordCount()) $checklist[] = $pilot;
+		}
+		if(!count($checklist)) return;
+		require_once("common/includes/class.eveapi.php");
+		$position = 0;
+		$myNames = array();
+		$myID = new API_NametoID();
+		while($position < count($checklist))
+		{
+			$namestring = str_replace(" ", "%20", implode(',',array_slice($checklist,$position, 500, true)));
+			$namestring = str_replace("\'", "'", $namestring);
+			$position +=500;
+			$myID->setNames($namestring);
+			$myID->fetchXML();
+			$tempNames = $myID->getNameData();
+			$myID->clear();
+			if(!is_array($tempNames)) continue;
+			$myNames = array_merge($myNames, $tempNames);
+		}
+		$newpilot = new Pilot();
+		//$sql = '';
+		if(!is_array($myNames)) die("Name fetch error : ".$myNames);
+		foreach($myNames as $name)
+		{
+			if(isset($names[slashfix($name['name'])]))
+			{
+				$newpilot->add(slashfix($name['name']), $names[slashfix($name['name'])], '0000-00-00', $name['characterID']);
+			// Adding all at once is faster but skips checks for name/id clashes.
+			//if($sql == '') $sql = "INSERT INTO kb3_pilots (plt_name, plt_crp_id, plt_externalid, plt_updated) values ('".slashfix($name['name'])."', ".$names[slashfix($name['name'])]->getID().', '.$name['characterID'].", '0000-00-00')";
+			//else $sql .= ", ('".slashfix($name['name'])."', ".$names[slashfix($name['name'])]->getID().', '.$name['characterID'].", '0000-00-00')";
+			}
+		}
+		if($sql) $qry->execute($sql);
+	}
+	//! Add an array of pilots to be checked.
+
+	//! \param $names array of corp names indexed by pilot name.
+	function addCorpNames($names)
+	{
+		$qry = new DBQuery(true);
+		$checklist = array();
+		foreach($names as $corp =>$all)
+		{
+			$qry->execute("SELECT 1 FROM kb3_corps WHERE crp_name = '".$corp."'");
+			if(!$qry->recordCount()) $checklist[] = $corp;
+		}
+		if(!count($checklist)) return;
+		require_once("common/includes/class.eveapi.php");
+		$position = 0;
+		$myNames = array();
+		while($position < count($checklist))
+		{
+			$namestring = str_replace(" ", "%20", implode(',',array_slice($checklist,$position, 500, true)));
+			$namestring = str_replace("\'", "'", $namestring);
+			$position +=500;
+			$myID = new API_NametoID();
+			$myID->setNames($namestring);
+			$myID->fetchXML();
+			$tempNames = $myID->getNameData();
+			if(!is_array($tempNames)) continue;
+			$myNames = array_merge($myNames, $tempNames);
+		}
+		$newcorp = new Corporation();
+		//$sql = '';
+		foreach($myNames as $name)
+		{
+			if(isset($names[slashfix($name['name'])]) && $name['characterID'])
+			{
+				$newcorp->add(slashfix($name['name']), $names[slashfix($name['name'])], '0000-00-00', $name['characterID']);
+			// Adding all at once is faster but skips checks for name/id clashes.
+			//if($sql == '') $sql = "INSERT INTO kb3_corps (crp_name, crp_all_id, crp_updated, crp_external_id) VALUES ('".slashfix($name['name'])."', ".$names[slashfix($name['name'])]->getID().", '0000-00-00', ".$name['characterID'].")";
+			//else $sql .= ",\n ('".slashfix($name['name'])."', ".$names[slashfix($name['name'])]->getID().", '0000-00-00', ".$name['characterID'].")";
+			}
+		}
+		if($sql) $qry->execute($sql);
+	}
 }
-?>
