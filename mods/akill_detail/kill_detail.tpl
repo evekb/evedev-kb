@@ -139,7 +139,7 @@
                     </tr>
                 {/foreach}
 {if $limited}                <tr class="{cycle name=ccl}">
-                    <td colspan="3" class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;"><a href="{$unlimitURL}">Show all involved parties</a></td>
+                    <td colspan="3" class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;">{$moreInvolved} more pilot{if $moreInvolved > 1}s{/if} not shown. <a href="{$unlimitURL}">Show all involved pilots</a></td>
                 </tr>
 {/if}
 

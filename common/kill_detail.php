@@ -148,6 +148,7 @@ foreach ($kill->involvedparties_ as $inv)
 	if($i > 10 && !$nolimit)
 	{
 		$smarty->assign('limited', true);
+		$smarty->assign('moreInvolved', count($kill->involvedparties_) - 10);
 		$smarty->assign('unlimitURL', '?'.$_SERVER['QUERY_STRING'].'&amp;nolimit');
 		break;
 	}
