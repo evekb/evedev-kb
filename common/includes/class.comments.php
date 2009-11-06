@@ -1,4 +1,6 @@
-<?php 
+<?php
+require_once('common/includes/class.logger.php');
+
 //! Store and retrieve comments for each killmail.
 
 //! This class is used when the details of a kill are viewed.
@@ -48,10 +50,8 @@ class Comments
 
         $name = slashfix(strip_tags($name)); 
         $qry = new DBQuery(true);
-		$remoteaddr = '';
-		if(isset($_SERVER['REMOTE_ADDR'])) $remoteaddr = $_SERVER['REMOTE_ADDR'];
         $qry->execute("INSERT INTO kb3_comments (`kll_id`,`comment`,`name`,`posttime`, `ip`)
-                       VALUES ('".$this->id_."','".$comment."','".$name."','".kbdate('Y-m-d H:i:s')."', '".$remoteaddr."')");
+                       VALUES ('".$this->id_."','".$comment."','".$name."','".kbdate('Y-m-d H:i:s')."', '".logger::getip()."')");
         $id = $qry->getInsertID(); 
         $this->comments_[] = array('time' => kbdate('Y-m-d H:i:s'), 
             'name' => $name, 'comment' => stripslashes($comment), 'id' => $id); 

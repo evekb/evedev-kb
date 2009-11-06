@@ -2,6 +2,7 @@
 require_once('common/includes/class.parser.php');
 require_once('common/includes/class.phpmailer.php');
 require_once('common/includes/class.kill.php');
+require_once('common/includes/class.logger.php');
 
 $page = new Page('Post killmail');
 $kb = new Killboard(KB_SITE);
@@ -91,9 +92,10 @@ if (isset($_POST['killmail']))
                 $mailer->Send();
             }
 
-            $qry = new DBQuery();
-            $qry->execute("insert into kb3_log (log_kll_id, log_site, log_ip_address, log_timestamp) values(".
-                    $killid.",'".KB_SITE."','".$_SERVER['REMOTE_ADDR']."', now())");
+            logger::logKill($killid);
+//			$qry = new DBQuery();
+//            $qry->execute("insert into kb3_log (log_kll_id, log_site, log_ip_address, log_timestamp) values(".
+//                    $killid.",'".KB_SITE."','".getip()."', now())");
 
             header("Location: ?a=kill_detail&kll_id=".$killid);
             exit;
@@ -111,4 +113,3 @@ $smarty->assign('post_oog_forbid', config::get('post_oog_forbid'));
 
 $page->setContent($smarty->fetch(get_tpl(post)));
 $page->generate();
-?>

@@ -14,6 +14,7 @@ require_once( "common/includes/class.parser.php" );
 require_once( "common/includes/class.comments.php" );
 require_once( "common/includes/class.corp.php" );
 require_once( "common/includes/class.pilot.php" );
+require_once('common/includes/class.logger.php');
 
 //! EDK Feed Syndication fetcher class.
 
@@ -309,11 +310,12 @@ class Fetcher
 					}
 					else
 					{
-						$qry = new DBQuery();
+//						$qry = new DBQuery();
 						if(strpos($this->uurl, '?')) $logurl = substr($this->uurl,0,strpos($this->uurl, '?')).'?a=kill_detail&kll_id='.intval($this->title);
 						else $logurl = uurl.'?a=kill_detail&kll_id='.intval($this->title);
-						$qry->execute( "insert into kb3_log (log_kll_id, log_site, log_ip_address, log_timestamp) values( ".
-							$killid.", '".KB_SITE."','".$logurl."',now() )" );
+						logger::logKill($killid, $logurl);
+//						$qry->execute( "insert into kb3_log (log_kll_id, log_site, log_ip_address, log_timestamp) values( ".
+//							$killid.", '".KB_SITE."','".$logurl."',now() )" );
 						$this->html .= "Killmail ".intval($this->title)." successfully posted <a href=\"?a=kill_detail&kll_id=".$killid."\">here</a>.<br>";
 
 						if (config::get('fetch_comment'))
