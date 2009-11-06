@@ -9,12 +9,14 @@ e.g. upgrade/012/
 if(function_exists("set_time_limit"))
 	@set_time_limit(0);
 
+define('LATEST_DB_UPDATE', "012");
 define('DB_HALTONERROR', true);
 chdir("..");
 require_once('kbconfig.php');
 require_once('common/includes/db.php');
 require_once('common/includes/class.config.php');
 require_once('common/includes/class.session.php');
+require_once('common/includes/globals.php');
 
 $config = new Config(KB_SITE);
 session::init();
@@ -83,7 +85,6 @@ You must log in as admin to complete an upgrade.
 }
 $qry=new DBQuery(true);
 define('CURRENT_DB_UPDATE', config::get("DBUpdate"));
-define('LATEST_DB_UPDATE', "012");
 if (CURRENT_DB_UPDATE >= LATEST_DB_UPDATE )
 {
 	echo $header1.$header2;
@@ -189,6 +190,7 @@ function removeOld($hours, $dir, $recurse = false)
 
 	foreach ($files as $num => $fname)
 	{
+		$del = 0;
 		if (file_exists("{$dir}{$fname}") && !is_dir("{$dir}{$fname}") && substr($fname,0,1) != "." && ((time() - filemtime("{$dir}{$fname}")) > $seconds))
 		{
 			$mod_time = filemtime("{$dir}{$fname}");
