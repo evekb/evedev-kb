@@ -442,7 +442,8 @@ class Kill
                     AND kll_victim_id = ".$this->victimid_."
                     AND kll_ship_id = ".$this->victimship_->getID()."
                     AND kll_system_id = ".$this->solarsystem_->getID()."
-                    AND kll_fb_plt_id = ".$this->getFBPilotID();
+                    AND kll_fb_plt_id = ".$this->getFBPilotID()."
+                    AND kll_dmgtaken = ".intval($this->dmgtaken);
 		if($this->externalid_) $sql .= " AND (kll_external_id = ".$this->externalid_." OR kll_external_id IS NULL)";
         $sql .= "             AND kll_id != ".$this->id_;
 		$qry->execute($sql);
