@@ -21,27 +21,28 @@ class pHome extends pageAssembly
 
 	function start()
 	{
+		$week = intval($_GET['w']);
+		$year = intval($_GET['y']);
+		$this->scl_id = intval($_GET['scl_id']);
 		$this->killboard = new Killboard();
 		$this->killcount = config::get('killcount');
 		$this->hourlimit = config::get('limit_hours');
 		if(!$this->hourlimit) $this->hourlimit = 1;
 		$this->klreturnmax = 3;
 		$this->showcombined = config::get('show_comb_home')
-			&& !isset($_REQUEST['kills'])
-			&& !isset($_REQUEST['losses'])
+//			&& !isset($_REQUEST['kills'])
+//			&& !isset($_REQUEST['losses'])
 			&& (ALLIANCE_ID || CORP_ID || PILOT_ID);
 		// Set week.
-		if($_GET['w'] && $_GET['y'])
+		if($week && $year)
 		{
-			$this->setWeek($_GET['w'], $_GET['y']);
-			$this->prevweek = true;
+			$this->setWeek($week, $year);
 		}
 		else
 		{
 			$this->week = kbdate('W');
 			$this->month = kbdate('m');
 			$this->year = getYear();
-			$this->prevweek = false;
 		}
 		if ($this->week == 1)
 		{
@@ -90,8 +91,6 @@ class pHome extends pageAssembly
 	{
 	// Display campaigns, if any.
 		if ($this->killboard->hasCampaigns(true) &&
-			!isset($_REQUEST['losses']) &&
-			!isset($_REQUEST['kills']) &&
 			(kbdate('W') == $this->week && getYear() == $this->year))
 		{
 			$html .= "<div class=\"kb-campaigns-header\">Active campaigns</div>";
@@ -107,7 +106,8 @@ class pHome extends pageAssembly
 	function contracts()
 	{
 	// Display contracts, if any.
-		if ($this->killboard->hasContracts(true))
+		if ($this->killboard->hasContracts(true) &&
+			(kbdate('W') == $this->week && getYear() == $this->year))
 		{
 			$html .= "<div class=\"kb-campaigns-header\">Active contracts</div>";
 			$list = new ContractList();
@@ -122,16 +122,7 @@ class pHome extends pageAssembly
 	function kills()
 	{
 		global $smarty;
-		$smarty->assign('kill_count', $this->killcount);
-		// bad hax0ring, we really need mod callback stuff
-		if (strpos(config::get('mods_active'), 'rss_feed') !== false)
-			$smarty->assign('rss_feed', true);
-		else
-			$smarty->assign('rss_feed', false);
-		$smarty->assign('prevweek', $this->prevweek);
-		$html = $smarty->fetch(get_tpl('home'));
-		// Retrieve kills to be displayed limited by the date. If too few are returned
-		// extend the date range. If too many are returned reduce the date range.
+
 		$klist = new KillList();
 		$klist->setOrdered(true);
 		// We'll be needing comment counts so set the killlist to retrieve them
@@ -144,14 +135,22 @@ class pHome extends pageAssembly
 		elseif(isset($_REQUEST['losses'])) involved::load($klist,'loss');
 		else involved::load($klist,'kill');
 
-		if ($_GET['scl_id'])
-			$klist->addVictimShipClass(intval($_GET['scl_id']));
+		if ($this->scl_id)
+			$klist->addVictimShipClass($this->scl_id);
 		else
 			$klist->setPodsNoobShips(false);
 
-		// If this is the current week then show the most recent kills. If a previous
-		// week show all kills for the week using the page splitter.
-		if($this->prevweek)
+		// If no week is set then show the most recent kills. Otherwise
+		// show all kills for the week using the page splitter.
+		if(empty($_GET['w']) && empty($_GET['y']))
+		{
+			$klist->setLimit($this->killcount);
+			$table = new KillListTable($klist);
+			if($this->showcombined) $table->setCombined(true);
+			$table->setLimit($this->killcount);
+			$html .= $table->generate();
+		}
+		else
 		{
 			$klist->setWeek($this->week);
 			$klist->setYear($this->year);
@@ -161,14 +160,6 @@ class pHome extends pageAssembly
 			if($this->showcombined) $table->setCombined(true);
 			$html .= $table->generate();
 			$html .= $pagesplitter->generate();
-		}
-		else
-		{
-			$klist->setLimit($this->killcount);
-			$table = new KillListTable($klist);
-			if($this->showcombined) $table->setCombined(true);
-			$table->setLimit($this->killcount);
-			$html .= $table->generate();
 		}
 		return $html;
 	}
@@ -182,33 +173,24 @@ class pHome extends pageAssembly
 
 		if(isset($_REQUEST['kills'])) $suffix = '&amp;kills';
 		elseif(isset($_REQUEST['losses'])) $suffix .= '&amp;losses';
-		if($_REQUEST['scl_id']) $suffixscl = '&amp;scl_id='.intval($_REQUEST['scl_id']);
-		if($this->prevweek)
+		if($this->scl_id) $suffixscl = '&amp;scl_id='.$this->scl_id;
+		$menubox->addOption("link","Previous week",
+			"?a=home&amp;w=" . $this->pweek . "&amp;y=" . $this->pyear . $suffix.$suffixscl);
+		if($this->week != kbdate('W') || $this->year != getYear())
 		{
-			$menubox->addOption("link","Previous week",
-				"?a=home&amp;w=" . $this->pweek . "&amp;y=" . $this->pyear . $suffix.$suffixscl);
-
-			if(kbdate('W') != $this->week || getYear() != $this->year)
+			if ($this->week == 53)
 			{
-				if ($this->week == 53)
-				{
-					$nweek = 1;
-					$nyear = $this->year + 1;
-					$this->pyear = $this->year - 1;
-				}
-				else
-				{
-					$nweek = $this->week + 1;
-					$nyear = $this->year;
-				}
-				$menubox->addOption("link","Next week",
-					"?a=home&amp;w=" . $nweek . "&amp;y=" . $nyear . $suffix.$suffixscl);
+				$nweek = 1;
+				$nyear = $this->year + 1;
+				$this->pyear = $this->year - 1;
 			}
-		}
-		else
-		{
-			$menubox->addOption("link","Previous week",
-				"?a=home&amp;w=" . $this->pweek . "&amp;y=" . $this->pyear . $suffix.$suffixscl);
+			else
+			{
+				$nweek = $this->week + 1;
+				$nyear = $this->year;
+			}
+			$menubox->addOption("link","Next week",
+				"?a=home&amp;w=" . $nweek . "&amp;y=" . $nyear . $suffix.$suffixscl);
 		}
 		//if(kbdate('W') != $this->week || getYear() != $this->year) $weektext = $this->week . ", " . $this->year;
 		//else $weektext = "All kills";
@@ -298,7 +280,6 @@ class pHome extends pageAssembly
 	// If a valid week and year are given then show that week.
 		if(((int)$week) < 1 || ((int)$week) > 53 || ((int)$year) < 2000) return false;
 
-		$this->prevweek = true;
 		$this->week = (int)$week;
 		if($this->week < 10) $this->week = '0'.$this->week;
 		$this->year = (int)$year;
