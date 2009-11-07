@@ -49,7 +49,7 @@ require_once('common/includes/class.corp.php');
 require_once('common/includes/class.alliance.php');
 
 $page=new Page('Kill details');
-$page->addHeader('<link rel="stylesheet" type="text/css" href="mods/akill_detail/style.css">');
+$page->addHeader('<link rel="stylesheet" type="text/css" href="mods/akill_detail/style.css" />');
 
 // check apoc settings are set up. If not, put defaults in.
 if(!config::get('apocfitting_colour'))
@@ -229,7 +229,7 @@ foreach ($kill->involvedparties_ as $inv)
 		$involved[$i]['FB']="false";
 	}
 
-	if ($corp->isNPCCorp())
+	if ($corp->isNPCCorp() && $pilot->getExternalID() != 0)
 	{
 		$involved[$i]['portrait']=$corp->getPortraitURL(64);
 	}
@@ -265,32 +265,12 @@ foreach ($kill->involvedparties_ as $inv)
 			{
 				$involved[$i]['shipImage']="img/ships/64_64/" . trim($ItemsArray[1]) . ".png";
 
-				if ($corp->isNPCCorp())
+				if (!$corp->isNPCCorp())
 				{
-				} else
-				{
-					if ($involved[$i]['CorpName'] =="None")
-					{
-						$aliimg                  =ereg_replace(" ", "", $involved[$i]['AlliName']);
-						$aliimg                  =ereg_replace("\.", "", $aliimg);
-						$aliimg                  =ereg_replace("-", "", $aliimg);
-
-						if (file_exists("img/alliances/".$aliimg.".png"))
-						{
-							$involved[$i]['portrait']="img/alliances/" . $aliimg . ".png";
-						} else
-						{
-							$involved[$i]['portrait']="img/alliances/default.png";}
-
-						if ((($involved[$i]['AlliName'] == "None") || ($involved[$i]['AlliName'] == "Unknown")))
-						{
-							$involved[$i]['portrait']="img/alliances/default.png";
-						}
-
-					} else
-					{
-						$involved[$i]['portrait']="img/corps/" . $corp->getID() . ".jpg";
-					}
+					if ($involved[$i]['CorpName'] == "None")
+						$involved[$i]['portrait']=$alliance->getPortraitURL(128);
+					else
+						$involved[$i]['portrait']=$corp->getPortraitURL(128);
 				}
 			}
 		}
