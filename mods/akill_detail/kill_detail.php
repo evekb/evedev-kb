@@ -189,7 +189,18 @@ $i=1;
 
 $involved=array();
 $ownKill= false;
-
+/*
+$handle=@fopen("mods/akill_detail/ItemsList", "r");
+$itemsArray = array();
+if ($handle)
+{
+	if (!feof($handle))
+	{
+		$itemsArray[] = explode(", ", fgets($handle));
+	}
+	fclose($handle);
+}
+*/
 foreach ($kill->involvedparties_ as $inv)
 {
 	if($i > 10 && !$nolimit)
@@ -229,9 +240,14 @@ foreach ($kill->involvedparties_ as $inv)
 		$involved[$i]['FB']="false";
 	}
 
-	if ($corp->isNPCCorp() && $pilot->getName() == $weapon->getName())
+	if ($pilot->getName() == $weapon->getName())
 	{
-		$involved[$i]['portrait']=$corp->getPortraitURL(64);
+		$involved[$i]['portrait'] = $corp->getPortraitURL(64);
+
+		if(!file_exists("img/ships/64_64/".$weapon->getID().".png"))
+			$involved[$i]['shipImage'] = $involved[$i]['portrait'];
+		else 
+			$involved[$i]['shipImage'] = IMG_URL."/ships/64_64/".$weapon->getID().".png";
 	}
 	else
 	{
@@ -254,16 +270,17 @@ foreach ($kill->involvedparties_ as $inv)
 	//sapyx 29/10/2008
 	// Rostik 11/03/2009
 
-	$handle=@fopen("mods/akill_detail/ItemsList", "r");
-
+	//$handle=@fopen("mods/akill_detail/ItemsList", "r");
+/*
 	if ($handle)
 	{
-		while (!feof($handle))
+		//while (!feof($handle))
+		foreach($itemsArray as $NPCWeapon)
 		{
-			$ItemsArray = explode(",", fgets($handle));
-			if (strpos($involved[$i]['weaponName'], trim($ItemsArray[0])) !== FALSE)
+			//$ItemsArray = explode(",", fgets($handle));
+			if (strpos($involved[$i]['weaponName'], $NPCWeapon[0]) !== FALSE)
 			{
-				$involved[$i]['shipImage']="img/ships/64_64/" . trim($ItemsArray[1]) . ".png";
+				$involved[$i]['shipImage']="img/ships/64_64/" . $NPCWeapon[1] . ".png";
 
 				if (!$corp->isNPCCorp())
 				{
@@ -275,9 +292,9 @@ foreach ($kill->involvedparties_ as $inv)
 			}
 		}
 
-		fclose($handle);
+		//fclose($handle);
 	}
-
+*/
 	// END -- Sapyx Rostik & C
 
 	// END -- Sapyx Rostik & C

@@ -178,10 +178,15 @@ foreach ($kill->involvedparties_ as $inv)
         $involved[$i]['FB'] = "false";
     }
 
-	if ($corp->isNPCCorp() && $pilot->getName() == $weapon->getName())
-    {
-        $involved[$i]['portrait'] = $corp->getPortraitURL(64);
-    }
+	if ($pilot->getName() == $weapon->getName())
+	{
+		$involved[$i]['portrait'] = $corp->getPortraitURL(64);
+
+		if(!file_exists("img/ships/64_64/".$weapon->getID().".png"))
+			$involved[$i]['shipImage'] = $involved[$i]['portrait'];
+		else
+			$involved[$i]['shipImage'] = IMG_URL."/ships/64_64/".$weapon->getID().".png";
+	}
     else
     {
         $involved[$i]['portrait'] = $pilot->getPortraitURL(64);
