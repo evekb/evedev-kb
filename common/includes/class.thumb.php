@@ -206,9 +206,10 @@ class thumb
 
 	function genCorp()
 	{
-		if (!file_exists('img/corps/'.$this->_id.'.jpg') && $this->_id != intval($this->_id))
+		if (!file_exists('img/corps/'.$this->_id.'.jpg') && !is_numeric($this->_id))
 		{
 			$this->_id = 0;
+			$this->_thumb = KB_CACHEDIR.'/img/corps/00/0_'.$this->_size.'.jpg';
 		}
 		elseif(file_exists('img/corps/'.$this->_id.'.jpg'));
 		elseif (!file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->_id,0,2).'/'.$this->_id.'_64.jpg'))
@@ -245,8 +246,10 @@ class thumb
 			$oldy = imagesy($img);
 			imagecopyresampled($newimg, $img, 0, 0, 0, 0, $this->_size, $this->_size, $oldx, $oldy);
 
-			if(!file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->_id,0,2)))
+			if($this->_id && !file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->_id,0,2)))
 				mkdir(KB_CACHEDIR.'/img/corps/'.substr($this->_id,0,2));
+			elseif($this->_id == 0 && !file_exists(KB_CACHEDIR.'/img/corps/00'))
+				mkdir(KB_CACHEDIR.'/img/corps/00');
 			imagejpeg($newimg, $this->_thumb, 90);
 		}
 		return;
