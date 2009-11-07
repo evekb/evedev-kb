@@ -447,12 +447,28 @@ class Kill
 		if($this->externalid_) $sql .= " AND (kll_external_id = ".$this->externalid_." OR kll_external_id IS NULL)";
         $sql .= "             AND kll_id != ".$this->id_;
 		$qry->execute($sql);
+		$qryinv = new DBQuery(true);
 
-		$row = $qry->getRow();
-		if ($row)
-			return $row['kll_id'];
-		else
-			return 0;
+		while ($row = $qry->getRow())
+		{
+			$kll_id = $row['kll_id'];
+			// No involved parties found to differentiate kills
+			if(empty($this->involvedparties_)) return $kll_id;
+
+			// Check that all involved parties we know of are on the kill
+			// and did the same damage.
+			$invList = array();
+			foreach($this->involvedparties_ as $inv)
+				$invList[] = '('.$inv->getPilotID().','.intval($inv->dmgdone_).')';
+			$sql = 'SELECT COUNT(*) as count FROM kb3_inv_detail WHERE ind_kll_id = '.
+				$kll_id.' AND (ind_plt_id,ind_dmgdone) IN ('.implode(',', $invList).')';
+
+			$qry->execute($sql);
+			$row = $qry->getRow();
+			if($row['count'] == count($this->involvedparties_)) return $kll_id;
+			else return 0;
+		}
+		return 0;
 	}
 
 	function execQuery()
