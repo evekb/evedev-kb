@@ -178,7 +178,7 @@ foreach ($kill->involvedparties_ as $inv)
         $involved[$i]['FB'] = "false";
     }
 
-    if ($corp->isNPCCorp())
+	if ($corp->isNPCCorp() && $pilot->getName() == $weapon->getName())
     {
         $involved[$i]['portrait'] = $corp->getPortraitURL(64);
     }
