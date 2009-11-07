@@ -132,16 +132,15 @@ class Alliance
      */
 	function getPortraitURL($size = 128)
 	{
-		if (file_exists("img/alliances/".$this->getUnique().".png"))
+		if ($size == 128 && file_exists("img/alliances/".$this->getUnique().".png"))
 		{
 			return "img/alliances/".$this->getUnique().".png";
-//			return '?a=thumb&amp;id='.$this->id_.'&amp;size='.$size.'&amp;int=1';
 		}
 		else
 		{
-			if( file_exists(KB_CACHEDIR.'/img/alliances/'.$this->getUnique().'_'.$size.'.jpg'))
-				return KB_CACHEDIR.'/img/alliances/'.$this->getUnique().'_'.$size.'.jpg';
-			else return '?a=thumb&amp;id='.$this->getUnique().'&amp;size='.$size;
+			if( file_exists(KB_CACHEDIR.'/img/alliances/'.$this->getUnique().'_'.$size.'.png'))
+				return KB_CACHEDIR.'/img/alliances/'.$this->getUnique().'_'.$size.'.png';
+			else return '?a=thumb&amp;type=alliance&amp;id='.$this->getUnique().'&amp;size='.$size;
 		}
 	}
 }
