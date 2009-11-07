@@ -210,6 +210,7 @@ class thumb
 		{
 			$this->_id = 0;
 		}
+		elseif(file_exists('img/corps/'.$this->_id.'.jpg'));
 		elseif (!file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->_id,0,2).'/'.$this->_id.'_64.jpg'))
 		{
 			require_once("common/includes/class.eveapi.php");
@@ -243,6 +244,9 @@ class thumb
 			$oldx = imagesx($img);
 			$oldy = imagesy($img);
 			imagecopyresampled($newimg, $img, 0, 0, 0, 0, $this->_size, $this->_size, $oldx, $oldy);
+
+			if(!file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->_id,0,2)))
+				mkdir(KB_CACHEDIR.'/img/corps/'.substr($this->_id,0,2));
 			imagejpeg($newimg, $this->_thumb, 90);
 		}
 		return;
