@@ -23,7 +23,6 @@
 	</tr>
 </table>
 </form>
-<div>Searches for all names beginning with the search phrase. To search for the phrase anywhere in the name use *yourquery.</div>
 
 {if $searched}
 <div class='block-header'>Search results</div>

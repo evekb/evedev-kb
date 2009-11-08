@@ -11,7 +11,7 @@ if ($searchphrase != "" && strlen($searchphrase) >= 3)
         case "pilot":
             $sql = "select plt.plt_id, plt.plt_name, crp.crp_name
                   from kb3_pilots plt, kb3_corps crp
-                 where plt.plt_name  like '".$searchphrase."%'
+                 where plt.plt_name  like '%".$searchphrase."%'
                    and plt.plt_crp_id = crp.crp_id
                  order by plt.plt_name";
 			$smarty->assign('result_header', 'Pilot');
@@ -20,7 +20,7 @@ if ($searchphrase != "" && strlen($searchphrase) >= 3)
         case "corp":
             $sql = "select crp.crp_id, crp.crp_name, ali.all_name
                   from kb3_corps crp, kb3_alliances ali
-                 where lower( crp.crp_name ) like lower( '".$searchphrase."%' )
+                 where lower( crp.crp_name ) like lower( '%".$searchphrase."%' )
                    and crp.crp_all_id = ali.all_id
                  order by crp.crp_name";
 			$smarty->assign('result_header', 'Corporation');
