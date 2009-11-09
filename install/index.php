@@ -9,7 +9,7 @@ if (!isset($_SESSION['state']))
 {
     $_SESSION['state'] = 1;
 }
-elseif ($step = intval($_REQUEST['step']))
+elseif (isset($_GET['step']) && $step = intval($_GET['step']))
 {
     $_SESSION['state'] = $step;
 }
@@ -37,7 +37,7 @@ include('install_step'.$_SESSION['state'].'.php');
 ?>
 </div></td>
 </tr></table>
-<div class="counter"><font style="font-size: 9px;">&copy;2006-2009 <a href="http://www.eve-dev.net/" target="_blank">EVE Development Network</a></font></div>
+<div class="counter"><font style="font-size: 9px;">&copy;2006-2009 <a href="http://www.eve-id.net/" target="_blank">EVE Development Network</a></font></div>
 </td></tr></table>
 </body>
 </html>

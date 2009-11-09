@@ -66,8 +66,10 @@ insertConfig('cfg_mainsite', '');
 $confs = file('config.data');
 foreach ($confs as $line)
 {
-    list($key, $value) = explode(chr(9), trim($line));
-    insertConfig($key, $value);
+	$valuepair = explode(chr(9), trim($line));
+	if(!isset($valuepair[0])) continue;
+	if(!isset($valuepair[1])) $valuepair[1] = '';
+    insertConfig($valuepair[0], $valuepair[1]);
 }
 ?>
 <br/><br/><font size=+1>Found the config file in the right place. Please continue...</font><br/>

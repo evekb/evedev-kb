@@ -2,7 +2,7 @@
 if(!$installrunning) {header('Location: index.php');die();}
 $stoppage = true;
 
-if ($_REQUEST['submit'] != '')
+if (!empty($_REQUEST['submit']))
 {
     $_SESSION['sql']['host'] = $_POST['host'];
     $_SESSION['sql']['user'] = $_POST['user'];
@@ -11,10 +11,11 @@ if ($_REQUEST['submit'] != '')
     $_SESSION['sql']['engine'] = $_POST['engine'];
 }
 
-if (!$host = $_SESSION['sql']['host'])
+if (empty($_SESSION['sql']['host']))
 {
     $host = 'localhost';
 }
+else $host = $_SESSION['sql']['host'];
 if (file_exists('../config.php'))
 {
     echo '<div class="block-header2">Found old config</div>';

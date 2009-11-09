@@ -4,9 +4,9 @@ $stoppage = true;
 $db = mysql_pconnect($_SESSION['sql']['host'], $_SESSION['sql']['user'], $_SESSION['sql']['pass']);
 mysql_select_db($_SESSION['sql']['db']);
 
-if ($_REQUEST['do'] == 'create')
+if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'create')
 {
-    if ($_REQUEST['a'])
+    if (!empty($_REQUEST['a']))
     {
         $result = mysql_query('select all_id from kb3_alliances where all_name like \'%'.addslashes(stripslashes($_REQUEST['a'])).'%\'');
         if ($row = @mysql_fetch_row($result))
@@ -52,7 +52,7 @@ if ($_REQUEST['do'] == 'create')
     $_SESSION['sett']['cid'] = $_REQUEST['c'];
     $stoppage = false;
 }
-if ($_REQUEST['do'] == 'select')
+if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'select')
 {
     $_SESSION['sett']['aid'] = $_REQUEST['a'];
     $_SESSION['sett']['cid'] = $_REQUEST['c'];
@@ -77,7 +77,7 @@ if ($stoppage)
 </td><td><input type="submit" name="submit" value="Search"/></td></tr>
 </table>
 <?php
-if ($_REQUEST['searchphrase'] != "" && strlen($_REQUEST['searchphrase']) >= 3)
+if (!empty($_REQUEST['searchphrase']) && strlen($_REQUEST['searchphrase']) >= 3)
 {
     switch ($_REQUEST['searchtype'])
     {
