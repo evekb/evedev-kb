@@ -37,7 +37,7 @@ if ('GET' == $_SERVER['REQUEST_METHOD'] AND isset($_GET['d']) AND 'eve_central' 
 }
 
 // Scan the items table for the internal ID, name and value.
-$sql = "SELECT itm.typeID, itm.typeName, val.price FROM kb3_invTypes as itm LEFT JOIN kb3_item_price AS val ON itm.typeID = val.typeID WHERE ";
+$sql = "SELECT itm.typeID, itm.typeName, val.price FROM kb3_invtypes as itm LEFT JOIN kb3_item_price AS val ON itm.typeID = val.typeID WHERE ";
 // Filter it if there's a search phrase
 if (isset($_REQUEST['searchphrase']) && $_REQUEST['searchphrase'] != "" && strlen($_REQUEST['searchphrase']) >= 3) {
     	$smarty->assign('search', true);
