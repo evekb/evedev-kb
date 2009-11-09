@@ -62,7 +62,7 @@ while ($row = mysql_fetch_row($result))
     unset($struct[$table]);
 }
 
-if ($_REQUEST['sub'] == 'struct')
+if (!empty($_GET['sub']) && $_GET['sub'] == 'struct')
 {
     foreach ($struct as $table => $structure)
     {
@@ -83,7 +83,7 @@ if ($_REQUEST['sub'] == 'struct')
 	        	else
 	        	{
 	            	echo 'error: '.mysql_error().'<br/>';
-	        	}       
+	        	}
 	        }
         }
         else
@@ -93,13 +93,13 @@ if ($_REQUEST['sub'] == 'struct')
         unset($struct[$table]);
     }
 }
-if ($_REQUEST['do'] == 'reset')
+if (!empty($_GET['do']) && $_GET['do'] == 'reset')
 {
     unset($_SESSION['sqlinsert']);
     unset($_SESSION['doopt']);
 }
 
-if ($_REQUEST['sub'] == 'data')
+if (!empty($_GET['sub']) && $_GET['sub'] == 'data')
 {
     if (!isset($_SESSION['sqlinsert']))
     {
@@ -136,10 +136,11 @@ if ($_REQUEST['sub'] == 'data')
                 $errors = 0;
 				$text = '';
 				$query_count = 0;
+				mysql_query("START TRANSACTION");
                 while ($query = gzgets($fp, 4000))
                 {
                     $text .= $query;
-                    if (substr($text, -3, 1) != ';')
+                    if (substr(trim($query), -1, 1) != ';')
                     {
                         continue;
                     }
@@ -153,16 +154,25 @@ if ($_REQUEST['sub'] == 'data')
                         {
                             $query = substr($query, 0, -1);
                         }
+                        if (strpos($query, 'TRUNCATE') !== FALSE)
+                        {
+							mysql_query("COMMIT");
+                        }
                         $query_count++;
                         $id = mysql_query($query);
+                        if (strpos($query, 'TRUNCATE') !== FALSE)
+                        {
+							mysql_query("START TRANSACTION");
+                        }
                         #echo $query;
                         if (!$id)
                         {
-                            $error .= 'error: '.mysql_error().'<br/>';
+                            $error .= 'error: '.mysql_error().'<br/>'.$query.'<br/>';
                             $errors++;
                         }
                     }
                 }
+				mysql_query("COMMIT");
                 echo '<br/>File '.$file.' had '.$lines.' lines with '.$query_count.' queries.<br/> '.$errors.' Queries failed.<br/>';
                 if (!$error)
                 {
@@ -303,7 +313,7 @@ foreach ($struct as $table => $file)
     echo 'Table struct has to be added: '.$table.'<br/>';
     $structadd++;
 }
-if (!$structadd && $_REQUEST['sub'] != 'datasel' && $_REQUEST['sub'] != 'data')
+if (!$structadd && $_GET['sub'] != 'datasel' && $_GET['sub'] != 'data')
 {
     echo 'All table structures seem to be in the database.<br/>';
 #    echo 'I will now check some table structures in case you are upgrading from a previous version... ';
@@ -319,7 +329,7 @@ if (!$structadd && $_REQUEST['sub'] != 'datasel' && $_REQUEST['sub'] != 'data')
         echo 'Checking table '.$table.': ';
         $result = mysql_query('SELECT count(*) as cnt FROM '.$table);
         $test = mysql_fetch_array($result);
-        
+
         if ($test['cnt'] != $count && $count != 0)
         {
             echo $test['cnt'].'/'.$count.' - <font color="red"><b>FAILED</b></font>';
@@ -345,7 +355,7 @@ elseif ($structadd)
     echo 'Some table structures have to be added. Please continue with <a href="?step=4&sub=struct">Creating Tables</a><br/>';
 }
 
-if ($_REQUEST['sub'] == 'datasel')
+if (!empty($_GET['sub']) && $_GET['sub'] == 'datasel')
 {
 ?>
 <p>Please select optional SQL data to be inserted into the database:<br/></p>
