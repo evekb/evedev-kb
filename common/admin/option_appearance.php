@@ -262,7 +262,7 @@ class admin_appearance
     }
 	function changeTheme()
 	{
-		if(!isset($_REQUEST['option_theme_name'])) return;
+		if(!isset($_POST['option_theme_name'])) return;
 		if(!file_exists("themes/".config::get('theme_name')."/".config::get('style_name').".css"))
 			config::set('style_name', config::get('theme_name'));
 		admin_appearance::removeOld(0, KB_CACHEDIR.'/templates_c', false);

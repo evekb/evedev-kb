@@ -3,10 +3,10 @@ $page = new Page();
 $page->setAdmin();
 $page->setTitle('Administration - Role Management');
 
-if ($_REQUEST['action'] == 'search')
+if ($_POST['action'] == 'search')
 {
     $hitlist = array();
-    $search = slashfix($_REQUEST['search']);
+    $search = slashfix($_POST['search']);
     $qry = new DBQuery();
     $qry->execute('select usr_login from kb3_user where usr_login like '."'%".$search."%'");
     while ($row = $qry->getRow())
@@ -14,21 +14,21 @@ if ($_REQUEST['action'] == 'search')
         $hitlist[] = $row['usr_login'];
     }
 
-    $smarty->assign_by_ref('role', $_REQUEST['role']);
+    $smarty->assign_by_ref('role', $_POST['role']);
     $smarty->assign_by_ref('user', $hitlist);
 
     $page->addContext($menubox->generate());
     $page->setContent($smarty->fetch(get_tpl('admin_roles_assign')));
     $page->generate();
 }
-elseif ($_REQUEST['action'] == 'assign')
+elseif ($_POST['action'] == 'assign')
 {
     $qry = new DBQuery();
-    $tmp = role::_get($_REQUEST['role']);
+    $tmp = role::_get($_POST['role']);
     var_dump($tmp);
     #$qry->execute('select usr_login from kb3_user where usr_login like '."'%".$search."%'");
 }
-elseif ($_REQUEST['action'] == 'create')
+elseif ($_POST['action'] == 'create')
 {
     $page->addContext($menubox->generate());
     $page->setContent('to be done');

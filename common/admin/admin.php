@@ -15,12 +15,12 @@ if (!empty($svn_revNew))
     file_put_contents(KB_CACHEDIR.'/svnrev.php', $data);
 }
 */
-if (!$_REQUEST['field'] && !$_REQUEST['sub'])
+if (!$_GET['field'] && !$_GET['sub'])
 {
-    $_REQUEST['field'] = 'Advanced';
-    $_REQUEST['sub'] = 'Configuration';
+    $_GET['field'] = 'Advanced';
+    $_GET['sub'] = 'Configuration';
 }
-if ($_REQUEST['field'] && $_REQUEST['sub'])
+if ($_GET['field'] && $_GET['sub'])
 {
     if ($_POST)
     {
@@ -28,7 +28,7 @@ if ($_REQUEST['field'] && $_REQUEST['sub'])
     }
     $page->setContent(options::genOptionsPage());
     $page->addContext(options::genAdminMenu());
-    if ($_REQUEST['sub'] == 'Configuration' && $_REQUEST['field'] == 'Advanced')
+    if ($_GET['sub'] == 'Configuration' && $_GET['field'] == 'Advanced')
     {
         $page->setTitle('Administration - Board Configuration (Current version: '.KB_VERSION.' '.KB_RELEASE.' Build '.SVN_REV.')');
     }

@@ -20,17 +20,17 @@ class admin_config
 {
 	function checkHost()
 	{
-		if(!isset($_REQUEST['option_cfg_kbhost'])) return;
-		$newhost = preg_replace('/\/+$/','',$_REQUEST['option_cfg_kbhost']);
+		if(!isset($_POST['option_cfg_kbhost'])) return;
+		$newhost = preg_replace('/\/+$/','',$_POST['option_cfg_kbhost']);
 		config::set('cfg_kbhost', $newhost);
-		$_REQUEST['option_cfg_kbhost'] = $newhost;
+		$_POST['option_cfg_kbhost'] = $newhost;
 	}
 	function checkImg()
 	{
-		if(!isset($_REQUEST['option_cfg_img'])) return;
-		$newimg = preg_replace('/\/+$/','',$_REQUEST['option_cfg_img']);
+		if(!isset($_POST['option_cfg_img'])) return;
+		$newimg = preg_replace('/\/+$/','',$_POST['option_cfg_img']);
 		config::set('cfg_img', $newimg);
-		$_REQUEST['option_cfg_img'] = $newimg;
+		$_POST['option_cfg_img'] = $newimg;
 	}
 	function createSelectStats()
     {

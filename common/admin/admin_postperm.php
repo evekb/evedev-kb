@@ -6,28 +6,28 @@ $page = new Page();
 $page->setAdmin();
 $page->setTitle('Administration - Post Permissions');
 
-if ($_REQUEST['searchphrase'] != "" && strlen($_REQUEST['searchphrase']) >= 3)
+if ($_POST['searchphrase'] != "" && strlen($_POST['searchphrase']) >= 3)
 {
-    switch ($_REQUEST['searchtype'])
+    switch ($_POST['searchtype'])
     {
         case "pilot":
             $sql = "select plt.plt_id, plt.plt_name, crp.crp_name
                     from kb3_pilots plt, kb3_corps crp
-                    where lower( plt.plt_name ) like lower( '%".slashfix($_REQUEST['searchphrase'])."%' )
+                    where lower( plt.plt_name ) like lower( '%".slashfix($_POST['searchphrase'])."%' )
                     and plt.plt_crp_id = crp.crp_id
                     order by plt.plt_name";
             break;
         case "corp":
             $sql = "select crp.crp_id, crp.crp_name, ali.all_name
                     from kb3_corps crp, kb3_alliances ali
-                    where lower( crp.crp_name ) like lower( '%".slashfix($_REQUEST['searchphrase'])."%' )
+                    where lower( crp.crp_name ) like lower( '%".slashfix($_POST['searchphrase'])."%' )
                     and crp.crp_all_id = ali.all_id
                     order by crp.crp_name";
             break;
         case "alliance":
             $sql = "select ali.all_id, ali.all_name
                     from kb3_alliances ali
-                    where lower( ali.all_name ) like lower( '%".slashfix($_REQUEST['searchphrase'])."%' )
+                    where lower( ali.all_name ) like lower( '%".slashfix($_POST['searchphrase'])."%' )
                     order by ali.all_name";
             break;
     }
@@ -40,7 +40,7 @@ if ($_REQUEST['searchphrase'] != "" && strlen($_REQUEST['searchphrase']) >= 3)
 
     while ($row = $qry->getRow())
     {
-        switch ($_REQUEST['searchtype'])
+        switch ($_POST['searchtype'])
         {
             case 'pilot':
                 $link = '?a=admin_postperm&amp;add=p'.$row['plt_id'];
@@ -61,9 +61,9 @@ if ($_REQUEST['searchphrase'] != "" && strlen($_REQUEST['searchphrase']) >= 3)
     $smarty->assign('search', true);
 }
 
-if (isset($_REQUEST['authall']))
+if (isset($_GET['authall']))
 {
-    if ($_REQUEST['authall'])
+    if ($_GET['authall'])
     {
         config::set('post_permission', 'all');
     }
@@ -91,10 +91,10 @@ if ($string != 'all')
         $permissions[$typ][$id] = $id;
     }
 
-    if ($_REQUEST['add'])
+    if ($_GET['add'])
     {
-        $typ = substr($_REQUEST['add'], 0, 1);
-        $id = intval(substr($_REQUEST['add'], 1));
+        $typ = substr($_GET['add'], 0, 1);
+        $id = intval(substr($_GET['add'], 1));
         $permissions[$typ][$id] = $id;
         $configstr = '';
         foreach ($permissions as $typ => $id_array)
@@ -107,10 +107,10 @@ if ($string != 'all')
         config::set('post_permission', implode(',', $conf));
     }
 
-    if ($_REQUEST['del'])
+    if ($_GET['del'])
     {
-        $typ = substr($_REQUEST['del'], 0, 1);
-        $id = intval(substr($_REQUEST['del'], 1));
+        $typ = substr($_GET['del'], 0, 1);
+        $id = intval(substr($_GET['del'], 1));
         unset($permissions[$typ][$id]);
         $conf = array();
         foreach ($permissions as $typ => $id_array)
@@ -134,6 +134,7 @@ if ($string != 'all')
         {
             if ($typ == 'a')
             {
+				require_once('class.alliance.php');
                 $alliance = new Alliance($id);
                 $text = $alliance->getName();
                 $link = '?a=admin_postperm&amp;del='.$typ.$id;
@@ -141,6 +142,7 @@ if ($string != 'all')
             }
             if ($typ == 'p')
             {
+				require_once('class.pilot.php');
                 $pilot = new Pilot($id);
                 $text = $pilot->getName();
                 $link = '?a=admin_postperm&amp;del='.$typ.$id;
@@ -148,6 +150,7 @@ if ($string != 'all')
             }
             if ($typ == 'c')
             {
+				require_once('class.corp.php');
                 $corp = new Corporation($id);
                 $text = $corp->getName();
                 $link = '?a=admin_postperm&amp;del='.$typ.$id;

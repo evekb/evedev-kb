@@ -21,12 +21,12 @@ else
 {
     $ext = $_POST['ext'];
 }
-if ($_REQUEST['submit'] == 'Reset')
+if ($_POST['submit'] == 'Reset')
 {
     unset($_SESSION['admin_kill_export']);
     unset($_POST);
 }
-elseif ($_REQUEST['sub'] == 'do')
+elseif ($_GET['sub'] == 'do')
 {
     unset($_SESSION['admin_kill_export']['select']);
     $_SESSION['admin_kill_export']['do'] = 1;
@@ -45,8 +45,9 @@ if ($_POST)
     }
     if (!strstr(stripslashes($dir), stripslashes(str_replace('\\','/',getcwd()))))
     {
-        $dir = str_replace('\\','/',getcwd()).$dir;
+        $dir = str_replace('\\','/',getcwd()).'/'.$dir;
     }
+        $dir = str_replace('//','/',$dir);
 
     if (substr($dir, -1, 1) != '/')
     {
@@ -64,7 +65,7 @@ if ($_POST)
     }
     else
     {
-        $html .= "'$dir' does not exists, trying to create it...";
+        $html .= "'$dir' does not exist, trying to create it...";
         if (mkdir($dir))
         {
             $html .= 'successful<br/>';
@@ -96,7 +97,7 @@ elseif (!isset($_SESSION['admin_kill_export']['do']) || !isset($_SESSION['admin_
     $html .= "<table class=kb-subtable>";
     $html .= "<tr><td width=120><b>Directory:</b></td><td><input type=text name=dir id=dir size=60 maxlength=80 value=\"".$dir."\"></td></tr>";
     $html .= "<tr><td width=120><b>Extension:</b></td><td><input type=text name=ext id=ext size=3 maxlength=10 value=\"".$ext."\"></td></tr>";
-    $html .= "<tr><td width=120><b>Attention:</b></td><td>For security reasons only directorys below the main EDK-directory will be used.</td></tr>";
+    $html .= "<tr><td width=120><b>Attention:</b></td><td>For security reasons only directories below the main EDK directory will be used.</td></tr>";
     $html .= "<tr><td width=120></td><td><input type=submit name=submit value=\"Check\"></td></tr>";
     $html .= "</table>";
 }
@@ -104,28 +105,28 @@ $html .= "</form>";
 
 if (isset($_SESSION['admin_kill_export']['select']))
 {
-    if ($_REQUEST['searchphrase'] != "" && strlen($_REQUEST['searchphrase']) >= 3)
+    if ($_POST['searchphrase'] != "" && strlen($_POST['searchphrase']) >= 3)
     {
-        switch ($_REQUEST['searchtype'])
+        switch ($_POST['searchtype'])
         {
             case "pilot":
                 $sql = "select plt.plt_id, plt.plt_name, crp.crp_name
                         from kb3_pilots plt, kb3_corps crp
-                        where lower( plt.plt_name ) like lower( '%".slashfix($_REQUEST['searchphrase'])."%' )
+                        where lower( plt.plt_name ) like lower( '%".slashfix($_POST['searchphrase'])."%' )
                         and plt.plt_crp_id = crp.crp_id
                         order by plt.plt_name";
                 break;
             case "corp":
                 $sql = "select crp.crp_id, crp.crp_name, ali.all_name
                         from kb3_corps crp, kb3_alliances ali
-                        where lower( crp.crp_name ) like lower( '%".slashfix($_REQUEST['searchphrase'])."%' )
+                        where lower( crp.crp_name ) like lower( '%".slashfix($_POST['searchphrase'])."%' )
                         and crp.crp_all_id = ali.all_id
                         order by crp.crp_name";
                 break;
             case "alliance":
                 $sql = "select ali.all_id, ali.all_name
                         from kb3_alliances ali
-                        where lower( ali.all_name ) like lower( '%".slashfix($_REQUEST['searchphrase'])."%' )
+                        where lower( ali.all_name ) like lower( '%".slashfix($_POST['searchphrase'])."%' )
                         order by ali.all_name";
                 break;
         }
@@ -135,7 +136,7 @@ if (isset($_SESSION['admin_kill_export']['select']))
 
         while ($row = $qry->getRow())
         {
-            switch ($_REQUEST['searchtype'])
+            switch ($_POST['searchtype'])
             {
                 case 'pilot':
                     $link = '?a=admin_kill_export&add=p'.$row['plt_id'];
@@ -173,10 +174,10 @@ if (isset($_SESSION['admin_kill_export']['select']))
         $permissions[$typ][$id] = $id;
     }
 
-    if ($_REQUEST['add'])
+    if ($_GET['add'])
     {
-        $typ = substr($_REQUEST['add'], 0, 1);
-        $id = intval(substr($_REQUEST['add'], 1));
+        $typ = substr($_GET['add'], 0, 1);
+        $id = intval(substr($_GET['add'], 1));
         $permissions[$typ][$id] = $id;
         $configstr = '';
         foreach ($permissions as $typ => $id_array)
@@ -189,10 +190,10 @@ if (isset($_SESSION['admin_kill_export']['select']))
         $_SESSION['admin_kill_export']['to_export'] = implode(',', $conf);
     }
 
-    if ($_REQUEST['del'])
+    if ($_GET['del'])
     {
-        $typ = substr($_REQUEST['del'], 0, 1);
-        $id = intval(substr($_REQUEST['del'], 1));
+        $typ = substr($_GET['del'], 0, 1);
+        $id = intval(substr($_GET['del'], 1));
         unset($permissions[$typ][$id]);
         $conf = array();
         foreach ($permissions as $typ => $id_array)
