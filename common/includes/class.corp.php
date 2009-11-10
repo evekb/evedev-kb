@@ -23,6 +23,9 @@ class Corporation
 			return true;
 		if($this->externalid_ > 1000001 && $this->externalid_ < 1000183)
 			return true;
+		// These are NPC alliances but they may show up as corps on mails.
+		if($this->externalid_ > 500000 && $this->externalid_ < 500021)
+			return true;
 	}
 
 	//! Return the corporation name stripped of all non-ASCII non-alphanumeric characters.
@@ -100,7 +103,7 @@ class Corporation
 		$qry->execute("select * from kb3_corps
                        where crp_name = '".slashfix($name)."'");
 		$row = $qry->getRow();
-		if ($row['crp_id']) $this->id_ = $row['crp_id'];
+		$this->id_ = intval($row['crp_id']);
 		$this->name_ = $row['crp_name'];
 		$this->externalid_ = intval($row['crp_external_id']);
 		$this->alliance_ = $row['crp_all_id'];
@@ -114,7 +117,7 @@ class Corporation
 			$qry->execute("select * from kb3_corps
 	  	                   where crp_id = ".$this->id_);
 			$row = $qry->getRow();
-			$this->id_ = $row['crp_id'];
+			$this->id_ = intval($row['crp_id']);
 			$this->name_ = $row['crp_name'];
 			$this->externalid_ = intval($row['crp_external_id']);
 			$this->alliance_ = $row['crp_all_id'];
