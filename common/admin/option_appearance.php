@@ -2,7 +2,7 @@
 
 options::cat('Appearance', 'Global Options', 'Global Look');
 options::fadd('Banner', 'style_banner', 'select', array('admin_appearance', 'createSelectBanner'));
-options::fadd('Style', 'style_name', 'select', array('admin_appearance', 'createSelectStyle'));
+options::fadd('Style', 'style_name', 'select', array('admin_appearance', 'createSelectStyle'), array('admin_appearance', 'changeStyle'));
 options::fadd('Theme', 'theme_name', 'select', array('admin_appearance', 'createSelectTheme'), array('admin_appearance', 'changeTheme'));
 
 options::cat('Appearance', 'Global Options', 'Global Options');
@@ -10,6 +10,7 @@ options::fadd('Display standings', 'show_standings', 'checkbox');
 options::fadd('Enable lost item values', 'item_values', 'checkbox');
 //options::fadd('Use custom shipvalues', 'ship_values', 'checkbox');
 options::fadd('Display a link instead of POD on Battlesummary', 'bs_podlink', 'checkbox');
+options::fadd('Include Capsules, Shuttles and Noobships in kills', 'podnoobs', 'checkbox');
 options::fadd('Split up fitted items on Killmails', 'kill_splitfit', 'checkbox');
 options::fadd('Use gmdate instead of date', 'date_gmtime', 'checkbox');
 options::fadd('Classify kills for hours:', 'kill_classified', 'edit:size:4', '', '', '0 to disable, 1-24hrs');
@@ -165,6 +166,9 @@ class admin_appearance
 	return $options;
     }
 
+	//! Create the selection options for available banners
+
+	//! \return HTML for the banner selection dropdown list.
     function createSelectBanner()
     {
         $options = array();
@@ -196,6 +200,9 @@ class admin_appearance
         return $options;
     }
 
+	//! Create the selection options for available styles in the current theme.
+
+	//! \return HTML for the style selection dropdown list.
     function createSelectStyle()
     {
         $dir = "themes/".config::get('theme_name')."/";
@@ -228,6 +235,9 @@ class admin_appearance
         }
         return $options;
     }
+	//! Create the selection options for available themes.
+
+	//! \return HTML for the theme selection dropdown list.
 	function createSelectTheme()
     {
         $dir = "themes/";
@@ -260,15 +270,36 @@ class admin_appearance
         }
         return $options;
     }
+	//! Checks if theme has changed and updates page before display.
+
+	/*! If the style set is no longer valid in the new theme then that
+	 *  is also changed.
+	 */
 	function changeTheme()
 	{
-		if(!isset($_POST['option_theme_name'])) return;
+		if(substr(THEME_URL,(strrpos(THEME_URL,"/")+1)) == config::get('theme_name')) return;
+		global $smarty;
+		$smarty->assign('theme_url', config::get('cfg_kbhost').'/themes/'.config::get('theme_name'));
 		if(!file_exists("themes/".config::get('theme_name')."/".config::get('style_name').".css"))
+		{
 			config::set('style_name', config::get('theme_name'));
+		}
+		$smarty->assign('style', config::get('style_name'));
 		admin_appearance::removeOld(0, KB_CACHEDIR.'/templates_c', false);
-		header("Location: http://".$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'?'.$_SERVER['QUERY_STRING']);
-		die;
 	}
+	//! Updates style before page is displayed.
+	function changeStyle()
+	{
+		global $smarty;
+		$smarty->assign('style', config::get('style_name'));
+	}
+	//! Remove files in a directory older than a certain age.
+
+	/*! \param $hours Maximum age of files before deletion.
+	 *  \param $dir Directory to remove files from.
+	 *  \param $recurse If true then recurse into subdirectories.
+	 *  \return The number of files deleted.
+	 */
 	function removeOld($hours, $dir, $recurse = false)
 	{
 		if(!session::isAdmin()) return false;
