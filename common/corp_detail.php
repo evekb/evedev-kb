@@ -8,7 +8,7 @@ require_once('common/includes/class.toplist.php');
 require_once("common/includes/evelogo.php");
 require_once("common/includes/class.eveapi.php");
 
-$_GET['scl_id'] = intval($_GET['scl_id']);
+$scl_id = intval($_GET['scl_id']);
 $crp_id = intval($_GET['crp_id']);
 $crp_external_id = intval($_GET['crp_external_id']);
 if (!$crp_id && !$crp_external_id)
@@ -205,10 +205,9 @@ switch ($_GET['view'])
         $list = new KillList();
         $list->setOrdered(true);
         $list->setLimit(10);
-        $list->setPodsNoobships(true);
+        $list->setPodsNoobShips(config::get('podnoobs'));
         $list->addInvolvedCorp($corp);
-        if ($_GET['scl_id'])
-            $list->addVictimShipClass($_GET['scl_id']);
+        if ($scl_id) $list->addVictimShipClass($scl_id);
 		//$list->setStartDate(date('Y-m-d H:i',strtotime('- 30 days')));
 
         $ktab = new KillListTable($list);
@@ -221,10 +220,9 @@ switch ($_GET['view'])
         $list = new KillList();
         $list->setOrdered(true);
         $list->setLimit(10);
-        $list->setPodsNoobships(true);
+        $list->setPodsNoobShips(config::get('podnoobs'));
         $list->addVictimCorp($corp);
-        if ($_GET['scl_id'])
-            $list->addVictimShipClass($_GET['scl_id']);
+        if ($scl_id) $list->addVictimShipClass($scl_id);
 		//$list->setStartDate(date('Y-m-d H:i',strtotime('- 30 days')));
 
         $ltab = new KillListTable($list);
@@ -238,9 +236,9 @@ switch ($_GET['view'])
 
         $list = new KillList();
         $list->setOrdered(true);
+        $list->setPodsNoobShips(config::get('podnoobs'));
         $list->addInvolvedCorp($corp);
-        if ($_GET['scl_id'])
-            $list->addVictimShipClass($_GET['scl_id']);
+        if ($scl_id) $list->addVictimShipClass($scl_id);
 		$list->setPageSplit(config::get('killcount'));
 		$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
         $table = new KillListTable($list);
@@ -254,10 +252,9 @@ switch ($_GET['view'])
 
         $list = new KillList();
         $list->setOrdered(true);
-        $list->setPodsNoobships(true);
+        $list->setPodsNoobShips(config::get('podnoobs'));
         $list->addVictimCorp($corp);
-        if ($_GET['scl_id'])
-            $list->addVictimShipClass($_GET['scl_id']);
+        if ($scl_id) $list->addVictimShipClass($scl_id);
 		$list->setPageSplit(config::get('killcount'));
 		$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 
@@ -275,7 +272,7 @@ switch ($_GET['view'])
 
         $list = new TopKillsList();
         $list->addInvolvedCorp($corp);
-        $list->setPodsNoobShips(false);
+        $list->setPodsNoobShips(config::get('podnoobs'));
         $list->setMonth($month);
         $list->setYear($year);
         $table = new TopPilotTable($list, "Kills");
@@ -289,7 +286,7 @@ switch ($_GET['view'])
 
         $list = new TopKillsList();
         $list->addInvolvedCorp($corp);
-        $list->setPodsNoobShips(false);
+        $list->setPodsNoobShips(config::get('podnoobs'));
         $table = new TopPilotTable($list, "Kills");
         $html .= $table->generate();
 
@@ -304,7 +301,7 @@ switch ($_GET['view'])
 
         $list = new TopScoreList();
         $list->addInvolvedCorp($corp);
-        $list->setPodsNoobShips(true);
+        $list->setPodsNoobShips(config::get('podnoobs'));
         $list->setMonth($month);
         $list->setYear($year);
         $table = new TopPilotTable($list, "Points");
@@ -318,7 +315,7 @@ switch ($_GET['view'])
 
         $list = new TopScoreList();
         $list->addInvolvedCorp($corp);
-        $list->setPodsNoobShips(true);
+        $list->setPodsNoobShips(config::get('podnoobs'));
         $table = new TopPilotTable($list, "Points");
         $html .= $table->generate();
 
@@ -333,7 +330,7 @@ switch ($_GET['view'])
 
         $list = new TopSoloKillerList();
         $list->addInvolvedCorp($corp);
-        $list->setPodsNoobShips(false);
+        $list->setPodsNoobShips(config::get('podnoobs'));
         $list->setMonth($month);
         $list->setYear($year);
         $table = new TopPilotTable($list, "Solokills");
@@ -347,7 +344,7 @@ switch ($_GET['view'])
 
         $list = new TopSoloKillerList();
         $list->addInvolvedCorp($corp);
-        $list->setPodsNoobShips(false);
+        $list->setPodsNoobShips(config::get('podnoobs'));
         $table = new TopPilotTable($list, "Solokills");
         $html .= $table->generate();
 
@@ -363,7 +360,7 @@ switch ($_GET['view'])
 
         $list = new TopDamageDealerList();
         $list->addInvolvedCorp($corp);
-        $list->setPodsNoobShips(false);
+        $list->setPodsNoobShips(config::get('podnoobs'));
         $list->setMonth($month);
         $list->setYear($year);
         $table = new TopPilotTable($list, "Kills");
@@ -377,7 +374,7 @@ switch ($_GET['view'])
 
         $list = new TopDamageDealerList();
         $list->addInvolvedCorp($corp);
-        $list->setPodsNoobShips(false);
+        $list->setPodsNoobShips(config::get('podnoobs'));
         $table = new TopPilotTable($list, "Kills");
         $html .= $table->generate();
 
@@ -421,7 +418,7 @@ switch ($_GET['view'])
 
         $list = new TopLossesList();
         $list->addVictimCorp($corp);
-        $list->setPodsNoobShips(false);
+        $list->setPodsNoobShips(config::get('podnoobs'));
         $list->setMonth($month);
         $list->setYear($year);
         $table = new TopPilotTable($list, "Losses");
@@ -435,7 +432,7 @@ switch ($_GET['view'])
 
         $list = new TopLossesList();
         $list->addVictimCorp($corp);
-        $list->setPodsNoobShips(false);
+        $list->setPodsNoobShips(config::get('podnoobs'));
         $table = new TopPilotTable($list, "Losses");
         $html .= $table->generate();
 

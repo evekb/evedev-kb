@@ -49,7 +49,7 @@ class pSystemDetail extends pageAssembly
 		if ($_GET['scl_id'])
 			$klist->addVictimShipClass(intval($_GET['scl_id']));
 		else
-			$klist->setPodsNoobShips(false);
+			$klist->setPodsNoobShips(config::get('podnoobs'));
 		$klist->setLimit(20);
 
 		if ($_GET['view'] == 'recent' || !isset($_GET['view']))

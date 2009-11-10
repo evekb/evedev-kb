@@ -6,7 +6,8 @@ require_once('common/includes/class.contract.php');
 require_once('common/includes/class.toplist.php');
 
 $ctr_id = intval($_GET['ctr_id']);
-$_GET['scl_id'] = intval($_GET['scl_id']);
+$scl_id = intval($_GET['scl_id']);
+$view = preg_replace('/[^a-zA-Z0-9_-]/','',$_GET['view']);
 $contract = new Contract($ctr_id);
 
 if(!$contract->validate())
@@ -41,11 +42,11 @@ $smarty->assign('contract_efficiency', $contract->getEfficiency());
 $klist = $contract->getKillList();
 $llist = $contract->getLossList();
 $killsummary = new KillSummaryTable($klist, $llist);
-if ($_GET['view'] == "") $killsummary->setFilter(false);
+if ($view == "") $killsummary->setFilter(false);
 
 $smarty->assign('contract_summary', $killsummary->generate());
-$smarty->assign('view',$_GET['view']);
-switch ($_GET['view'])
+$smarty->assign('view',$view);
+switch ($view)
 {
 	case "":
 		$qrylength=new DBQuery();
@@ -93,10 +94,10 @@ switch ($_GET['view'])
 		$contract = new Contract($ctr_id);
 		$klist = $contract->getKillList();
 		$klist->setOrdered(true);
-		if ($_GET['scl_id'])
-			$klist->addVictimShipClass($_GET['scl_id']);
+		if ($scl_id)
+			$klist->addVictimShipClass($scl_id);
 		else
-			$klist->setPodsNoobShips(false);
+			$klist->setPodsNoobShips(config::get('podnoobs'));
 
 		$table = new KillListTable($klist);
 		$table->setLimit(10);
@@ -105,10 +106,10 @@ switch ($_GET['view'])
 
 		$llist = $contract->getLossList();
 		$llist->setOrdered(true);
-		if ($_GET['scl_id'])
-			$llist->addVictimShipClass($_GET['scl_id']);
+		if ($scl_id)
+			$llist->addVictimShipClass($scl_id);
 		else
-			$llist->setPodsNoobShips(false);
+			$llist->setPodsNoobShips(config::get('podnoobs'));
 
 		$table = new KillListTable($llist);
 		$table->setLimit(10);
@@ -120,8 +121,10 @@ switch ($_GET['view'])
 		$contract = new Contract($ctr_id);
 		$list = $contract->getKillList();
 		$list->setOrdered(true);
-		if ($_GET['scl_id'])
-			$list->addVictimShipClass($_GET['scl_id']);
+		if ($scl_id)
+			$list->addVictimShipClass($scl_id);
+		else
+			$llist->setPodsNoobShips(config::get('podnoobs'));
 
 		$list->setPageSplit(config::get('killcount'));
 		$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
@@ -135,8 +138,10 @@ switch ($_GET['view'])
 		$contract = new Contract($ctr_id);
 		$llist = $contract->getLossList();
 		$llist->setOrdered(true);
-		if ($_GET['scl_id'])
-			$llist->addVictimShipClass($_GET['scl_id']);
+		if ($scl_id)
+			$llist->addVictimShipClass($scl_id);
+		else
+			$llist->setPodsNoobShips(config::get('podnoobs'));
 
 		$llist->setPageSplit(config::get('killcount'));
 		$pagesplitter = new PageSplitter($llist->getCount(), config::get('killcount'));
@@ -146,44 +151,16 @@ switch ($_GET['view'])
 		$smarty->assign('splitter', $pagesplitter->generate());
 		$html .= $smarty->fetch(get_tpl('cc_detail'));
 		break;
-	case "combined":
-		$contract = new Contract($ctr_id);
-		$list = $contract->getKillList();
-		$list->setOrdered(true);
-		if ($_GET['scl_id'])
-			$list->addVictimShipClass($_GET['scl_id']);
-
-		$list->setPageSplit(config::get('killcount'));
-		$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
-		$table = new KillListTable($list);
-		$table->setDayBreak(false);
-		$smarty->assign('killtable', $table->generate());
-		$smarty->assign('killsplitter', $pagesplitter->generate());
-
-		$contract = new Contract($ctr_id);
-		$llist = $contract->getLossList();
-		$llist->setOrdered(true);
-		if ($_GET['scl_id'])
-			$llist->addVictimShipClass($_GET['scl_id']);
-
-		$llist->setPageSplit(config::get('killcount'));
-		$pagesplitter = new PageSplitter($llist->getCount(), config::get('killcount'));
-		$table = new KillListTable($llist);
-		$table->setDayBreak(false);
-		$smarty->assign('losstable', $table->generate());
-		$smarty->assign('losssplitter', $pagesplitter->generate());
-		$html .= $smarty->fetch(get_tpl('cc_detail'));
-		break;
 }
 
 $menubox = new box("Menu");
 $menubox->setIcon("menu-item.gif");
 $menubox->addOption("caption","Overview");
-$menubox->addOption("link","Target overview", "?a=cc_detail&amp;ctr_id=".$_GET['ctr_id']);
+$menubox->addOption("link","Target overview", "?a=cc_detail&amp;ctr_id=".$ctr_id);
 $menubox->addOption("caption","Kills &amp; losses");
-$menubox->addOption("link","Recent activity", "?a=cc_detail&amp;ctr_id=".$_GET['ctr_id']."&amp;view=recent_activity");
-$menubox->addOption("link","All kills", "?a=cc_detail&amp;ctr_id=".$_GET['ctr_id']."&amp;view=kills");
-$menubox->addOption("link","All losses", "?a=cc_detail&amp;ctr_id=".$_GET['ctr_id']."&amp;view=losses");
+$menubox->addOption("link","Recent activity", "?a=cc_detail&amp;ctr_id=".$ctr_id."&amp;view=recent_activity");
+$menubox->addOption("link","All kills", "?a=cc_detail&amp;ctr_id=".$ctr_id."&amp;view=kills");
+$menubox->addOption("link","All losses", "?a=cc_detail&amp;ctr_id=".$ctr_id."&amp;view=losses");
 
 $page->addContext($menubox->generate());
 

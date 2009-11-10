@@ -166,7 +166,7 @@ class pAllianceDetail extends pageAssembly
 				if (config::get('comments_count')) $list->setCountComments(true);
 				if (config::get('killlist_involved')) $list->setCountInvolved(true);
 				$list->setLimit(10);
-				$list->setPodsNoobships(true);
+				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->addInvolvedAlliance($this->alliance);
 				if ($this->scl_id)
 					$list->addVictimShipClass($this->scl_id);
@@ -181,7 +181,7 @@ class pAllianceDetail extends pageAssembly
 				if (config::get('comments_count')) $list->setCountComments(true);
 				if (config::get('killlist_involved')) $list->setCountInvolved(true);
 				$list->setLimit(10);
-				$list->setPodsNoobships(true);
+				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->addVictimAlliance($this->alliance);
 				if ($this->scl_id)
 					$list->addVictimShipClass($this->scl_id);
@@ -210,7 +210,7 @@ class pAllianceDetail extends pageAssembly
 			case "losses":
 				$list = new KillList();
 				$list->setOrdered(true);
-				$list->setPodsNoobships(true);
+				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->addVictimAlliance($this->alliance);
 				if ($this->scl_id)
 					$list->addVictimShipClass($this->scl_id);
@@ -226,7 +226,7 @@ class pAllianceDetail extends pageAssembly
 			case "corp_kills":
 				$list = new TopCorpKillsList();
 				$list->addInvolvedAlliance($this->alliance);
-				$list->setPodsNoobShips(false);
+				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
 				$table = new TopCorpTable($list, "Kills");
@@ -234,7 +234,7 @@ class pAllianceDetail extends pageAssembly
 
 				$list = new TopCorpKillsList();
 				$list->addInvolvedAlliance($this->alliance);
-				$list->setPodsNoobShips(false);
+				$list->setPodsNoobShips(config::get('podnoobs'));
 				$table = new TopCorpTable($list, "Kills");
 				$smarty->assign('allkilltable', $table->generate());
 				break;
@@ -394,7 +394,7 @@ class pAllianceDetail extends pageAssembly
 			case "corp_losses":
 				$list = new TopCorpLossesList();
 				$list->addVictimAlliance($this->alliance);
-				$list->setPodsNoobShips(false);
+				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
 				$table = new TopCorpTable($list, "Losses");
@@ -402,7 +402,7 @@ class pAllianceDetail extends pageAssembly
 
 				$list = new TopCorpLossesList();
 				$list->addVictimAlliance($this->alliance);
-				$list->setPodsNoobShips(false);
+				$list->setPodsNoobShips(config::get('podnoobs'));
 				$table = new TopCorpTable($list, "Losses");
 				$smarty->assign('alllosstable', $table->generate());
 				break;
@@ -414,7 +414,7 @@ class pAllianceDetail extends pageAssembly
 
 				$list = new TopKillsList();
 				$list->addInvolvedAlliance($this->alliance);
-				$list->setPodsNoobShips(false);
+				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
 				$table = new TopPilotTable($list, "Kills");
@@ -428,7 +428,7 @@ class pAllianceDetail extends pageAssembly
 
 				$list = new TopKillsList();
 				$list->addInvolvedAlliance($this->alliance);
-				$list->setPodsNoobShips(false);
+				$list->setPodsNoobShips(config::get('podnoobs'));
 				$table = new TopPilotTable($list, "Kills");
 				$html .= $table->generate();
 
@@ -444,7 +444,7 @@ class pAllianceDetail extends pageAssembly
 
 				$list = new TopScoreList();
 				$list->addInvolvedAlliance($this->alliance);
-				$list->setPodsNoobShips(true);
+				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
 				$table = new TopPilotTable($list, "Points");
@@ -458,7 +458,7 @@ class pAllianceDetail extends pageAssembly
 
 				$list = new TopScoreList();
 				$list->addInvolvedAlliance($this->alliance);
-				$list->setPodsNoobShips(true);
+				$list->setPodsNoobShips(config::get('podnoobs'));
 				$table = new TopPilotTable($list, "Points");
 				$html .= $table->generate();
 
@@ -469,7 +469,7 @@ class pAllianceDetail extends pageAssembly
 			case "pilot_losses":
 				$list = new TopLossesList();
 				$list->addVictimAlliance($this->alliance);
-				$list->setPodsNoobShips(false);
+				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
 				$table = new TopPilotTable($list, "Losses");
@@ -477,7 +477,7 @@ class pAllianceDetail extends pageAssembly
 
 				$list = new TopLossesList();
 				$list->addVictimAlliance($this->alliance);
-				$list->setPodsNoobShips(false);
+				$list->setPodsNoobShips(config::get('podnoobs'));
 				$table = new TopPilotTable($list, "Losses");
 				$smarty->assign('totallosstable', $table->generate());
 

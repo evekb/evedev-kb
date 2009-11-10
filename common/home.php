@@ -30,8 +30,8 @@ class pHome extends pageAssembly
 		if(!$this->hourlimit) $this->hourlimit = 1;
 		$this->klreturnmax = 3;
 		$this->showcombined = config::get('show_comb_home')
-//			&& !isset($_REQUEST['kills'])
-//			&& !isset($_REQUEST['losses'])
+//			&& !isset($_GET['kills'])
+//			&& !isset($_GET['losses'])
 			&& (ALLIANCE_ID || CORP_ID || PILOT_ID);
 		// Set week.
 		if($week && $year)
@@ -55,8 +55,8 @@ class pHome extends pageAssembly
 			$this->pweek = $this->week - 1;
 		}
 
-		if(isset($_REQUEST['kills'])) $this->page = new Page('Kills - Week '.$this->getWeek().', '.$this->getYear());
-		elseif(isset($_REQUEST['losses'])) $this->page = new Page('Losses - Week '.$this->getWeek().', '.$this->getYear());
+		if(isset($_GET['kills'])) $this->page = new Page('Kills - Week '.$this->getWeek().', '.$this->getYear());
+		elseif(isset($_GET['losses'])) $this->page = new Page('Losses - Week '.$this->getWeek().', '.$this->getYear());
 		else $this->page = new Page('Week '.$this->getWeek().', '.$this->getYear());
 	}
 	//! Check if summary tables are enabled and if so return a table for this week.
@@ -132,13 +132,13 @@ class pHome extends pageAssembly
 
 		// Select between kills, losses or both.
 		if($this->showcombined) involved::load($klist,'combined');
-		elseif(isset($_REQUEST['losses'])) involved::load($klist,'loss');
+		elseif(isset($_GET['losses'])) involved::load($klist,'loss');
 		else involved::load($klist,'kill');
 
 		if ($this->scl_id)
 			$klist->addVictimShipClass($this->scl_id);
 		else
-			$klist->setPodsNoobShips(false);
+			$klist->setPodsNoobShips(config::get('podnoobs'));
 
 		// If no week is set then show the most recent kills. Otherwise
 		// show all kills for the week using the page splitter.
@@ -171,8 +171,8 @@ class pHome extends pageAssembly
 		$menubox->setIcon("menu-item.gif");
 		$menubox->addOption("caption","Navigation");
 
-		if(isset($_REQUEST['kills'])) $suffix = '&amp;kills';
-		elseif(isset($_REQUEST['losses'])) $suffix .= '&amp;losses';
+		if(isset($_GET['kills'])) $suffix = '&amp;kills';
+		elseif(isset($_GET['losses'])) $suffix .= '&amp;losses';
 		if($this->scl_id) $suffixscl = '&amp;scl_id='.$this->scl_id;
 		$menubox->addOption("link","Previous week",
 			"?a=home&amp;w=" . $this->pweek . "&amp;y=" . $this->pyear . $suffix.$suffixscl);
@@ -217,7 +217,7 @@ class pHome extends pageAssembly
 	function topLists()
 	{
 	// Display the top pilot lists.
-		if(!isset($_REQUEST['losses']))
+		if(!isset($_GET['losses']))
 		{
 			$tklist = new TopKillsList();
 			$tklist->setWeek($this->week);
@@ -228,7 +228,7 @@ class pHome extends pageAssembly
 			$tkbox = new AwardBox($tklist, "Top killers", "kills in week " . $this->week, "kills", "eagle");
 			$html .= $tkbox->generate();
 		}
-		if(isset($_REQUEST['losses']))
+		if(isset($_GET['losses']))
 		{
 			$tllist = new TopLossesList();
 			$tllist->setWeek($this->week);
@@ -239,7 +239,7 @@ class pHome extends pageAssembly
 			$tlbox = new AwardBox($tllist, "Top losers", "losses in week ".$this->week, "losses", "moon");
 			$html .= $tlbox->generate();
 		}
-		if (!isset($_REQUEST['kills']) && !isset($_REQUEST['losses']))
+		if (!isset($_GET['kills']) && !isset($_GET['losses']))
 		{
 			$tklist = new TopScoreList();
 			$tklist->setWeek($this->week);
