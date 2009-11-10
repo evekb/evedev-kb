@@ -99,9 +99,9 @@ class options
     {
         $data = &options::_getData();
 
-        $field = urldecode($_REQUEST['field']);
-        $sub = urldecode($_REQUEST['sub']);
-
+        $field = urldecode($_GET['field']);
+        $sub = urldecode($_GET['sub']);
+		
         global $smarty, $page;
 
         if (is_object($page))

@@ -1,12 +1,12 @@
 <?php
 $page = new Page('Search');
 
-$searchphrase = slashfix($_REQUEST['searchphrase']);
+$searchphrase = slashfix($_POST['searchphrase']);
 $searchphrase = preg_replace('/\*/', '%', $searchphrase);
 $searchphrase = trim($searchphrase);
 if ($searchphrase != "" && strlen($searchphrase) >= 3)
 {
-    switch ($_REQUEST['searchtype'])
+    switch ($_POST['searchtype'])
     {
         case "pilot":
             $sql = "select plt.plt_id, plt.plt_name, crp.crp_name
@@ -62,7 +62,7 @@ if ($searchphrase != "" && strlen($searchphrase) >= 3)
 		while ($row = $qry->getRow())
 		{
 			$result = array();
-			switch ($_REQUEST['searchtype'])
+			switch ($_POST['searchtype'])
 			{
 				case "pilot":
 					$result['link'] = "?a=pilot_detail&plt_id=".$row['plt_id'];

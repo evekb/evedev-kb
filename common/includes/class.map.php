@@ -231,7 +231,7 @@ class MapView
             $dz = abs($maxz - $minz);
             $xscale = 1 / ($dx / ($this->imgwidth_ - ($this->offset_ * 2)));
             $yscale = 1 / ($dz / ($this->imgheight_ - ($this->offset_ * 2)));
-            if ($_REQUEST['debug'] == 'admovrd')
+            if ($_GET['debug'] == 'admovrd')
             {
                 echo "dx:".$dx." dz:".$dz."<br/> xscale:".$xscale." ".$yscale."<br/>";
                 echo "minx:".$minx." maxx:".$maxx."<br/>";
