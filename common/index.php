@@ -97,7 +97,7 @@ $smarty->cache_dir = KB_CACHEDIR.'/data';
 $smarty->assign('theme_url', THEME_URL);
 if(isset($_GET['style']))
 {
-	$stylename = preg_replace('/[^0-9a-zA-z-_]/','',$_GET['style']);
+	$stylename = preg_replace('/[^0-9a-zA-Z-_]/','',$_GET['style']);
 	if(file_exists("themes/".config::get('theme_name')."/".$stylename.".css"))
 	{
 		$smarty->assign('style', $stylename);
