@@ -511,7 +511,7 @@ class KillList
 		if ($row)
 		{
 			$this->killcounter_++;
-			if ($row['scl_class'] != 2 && $row['scl_class'] != 3 && $row['scl_class'] != 11)
+			if ($row['scl_id'] != 2 && $row['scl_id'] != 3 && $row['scl_id'] != 11)
 				$this->realkillcounter_++;
 /*
 			// Should this be total value, ship value or class value?
@@ -781,7 +781,8 @@ class KillList
 
 	function getRealCount()
 	{
-		return $this->getCount();
+		$this->getCount();
+		return $this->realkillcounter_;
 	}
 
 	function getISK()
