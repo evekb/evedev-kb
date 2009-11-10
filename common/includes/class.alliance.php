@@ -17,8 +17,19 @@ class Alliance
 	//! Return the alliance CCP ID.
 	function getExternalID()
 	{
-		if(!$this->externalid_) $this->execQuery();
-		return $this->externalid_;
+		if($this->externalid_) return $this->externalid_;
+		$this->execQuery();
+		if($this->externalid_) return $this->externalid_;
+
+		$allname = str_replace(" ", "%20", $this->getName() );
+		require_once("common/includes/class.eveapi.php");
+		$myID = new API_NametoID();
+		$myID->setNames($allname);
+		$myID->fetchXML();
+		$myNames = $myID->getNameData();
+		if($this->setExternalID($myNames[0]['characterID']))
+			return $this->externalid_;
+		else return 0;
 	}
 
 	//! Return the alliance ID.
@@ -63,11 +74,38 @@ class Alliance
 
         if ($qry->recordCount() == 0)
         {
-			if(intval($externalid))
+			$externalid = intval($externalid);
+			if(!$externalid)
+			{
+				$allname = str_replace(" ", "%20", $name );
+				require_once("common/includes/class.eveapi.php");
+				$myID = new API_NametoID();
+				$myID->setNames($allname);
+				$myID->fetchXML();
+				$myNames = $myID->getNameData();
+				$externalid = intval($myNames[0]['characterID']);
+			}
+			// If we have an external id then check it isn't already in use
+			// If we find it then update the old alliance with the new name
+			// then return.
+			if($externalid)
+			{
+				$qry->execute("SELECT * FROM kb3_alliances WHERE all_external_id = ".$externalid);
+				if ($qry->recordCount() > 0)
+				{
+					$row = $qry->getRow();
+					$qry->execute("UPDATE kb3_alliances SET all_name = '".slashfix($name)."' WHERE all_external_id = ".$externalid);
+
+					$this->id_ = $row['all_id'];
+					$this->name_ = slashfix($name);
+					$this->externalid_ = $row['all_external_id'];
+					return $this->id_;
+				}
 				$qry->execute("insert into kb3_alliances ".
 					"(all_id, all_name, all_external_id) values ".
-					"(null, '".slashfix($name)."', ".intval($externalid).")");
-            $qry->execute("insert into kb3_alliances ".
+					"(null, '".slashfix($name)."', ".$externalid.")");
+			}
+            else $qry->execute("insert into kb3_alliances ".
 				"(all_id, all_name) values ".
 				"(null, '".slashfix($name)."')");
             $this->id_ = $qry->getInsertID();
@@ -106,6 +144,8 @@ class Alliance
 	function getFactionID()
 	{
 		if(!$this->isFaction()) return 0;
+		return getExternalID();
+		/*
 		switch($this->getName())
 		{
 			//needs less magic.
@@ -122,7 +162,7 @@ class Alliance
 				return 500004;
 				break;
 		}
-		return 0;
+		return 0; */
 	}
 	//! Return the URL for the alliance's portrait.
 
