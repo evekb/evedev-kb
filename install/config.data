@@ -43,6 +43,7 @@ show_standing	1
 show_standings	0
 style_banner	default.jpg
 style_name	default
+theme_name	default
 summarytable_summary	1
 total_points	1
 user_regdisabled	1

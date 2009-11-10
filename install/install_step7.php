@@ -51,10 +51,8 @@ function insertConfig($key, $value)
 insertConfig('cfg_allianceid', $aid);
 insertConfig('cfg_corpid', $cid);
 
-insertConfig('cfg_common', $common);
 insertConfig('cfg_img', $img);
 insertConfig('cfg_kbhost', $host);
-insertConfig('cfg_style', $style);
 insertConfig('cfg_kbtitle', $title);
 
 insertConfig('cfg_profile', 0);

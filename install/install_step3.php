@@ -58,7 +58,7 @@ if ($_SESSION['sql']['db'])
 {
     echo '<div class="block-header2">Testing Settings</div>';
     echo 'Got the data you supplied, trying to connect to that sql server now...<br/>';
-    $db = mysql_pconnect($_SESSION['sql']['host'], $_SESSION['sql']['user'], $_SESSION['sql']['pass']);
+    $db = @mysql_connect($_SESSION['sql']['host'], $_SESSION['sql']['user'], $_SESSION['sql']['pass']);
     if (is_resource($db))
     {
         echo 'Connected to MySQl';

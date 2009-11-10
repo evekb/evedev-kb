@@ -1,7 +1,7 @@
 <?php
 if(!$installrunning) {header('Location: index.php');die();}
 $stoppage = true;
-$db = mysql_pconnect($_SESSION['sql']['host'], $_SESSION['sql']['user'], $_SESSION['sql']['pass']);
+$db = mysql_connect($_SESSION['sql']['host'], $_SESSION['sql']['user'], $_SESSION['sql']['pass']);
 mysql_select_db($_SESSION['sql']['db']);
 
 if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'create')

@@ -26,17 +26,9 @@ if (empty($_SESSION['sett']['host']))
 {
 	$_SESSION['sett']['host'] = $uri;
 }
-if (empty($_SESSION['sett']['style']))
-{
-	$_SESSION['sett']['style'] = $uri.'/style';
-}
 if (empty($_SESSION['sett']['img']))
 {
 	$_SESSION['sett']['img'] = $uri.'/img';
-}
-if (empty($_SESSION['sett']['common']))
-{
-	$_SESSION['sett']['common'] = $uri.'/common';
 }
 
 if (isset($_SESSION['sett']['adminpw']) && isset($_SESSION['sett']['site']))
@@ -73,9 +65,7 @@ if (isset($_SESSION['sett']['site']) && strlen($_SESSION['sett']['site']) > 12)
 		$settings[] = array('descr' => 'Site', 'name' => 'site');
 
 		$settings[] = array('descr' => 'Host', 'name' => 'host');
-		$settings[] = array('descr' => 'Style URL', 'name' => 'style');
 		$settings[] = array('descr' => 'IMG URL', 'name' => 'img');
-		$settings[] = array('descr' => 'Common URL', 'name' => 'common');
 
 		//$settings[] = array('descr' => 'CorpID', 'name' => 'cid');
 		//$settings[] = array('descr' => 'AllianceID', 'name' => 'aid');

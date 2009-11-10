@@ -171,6 +171,7 @@ if (!empty($_REQUEST['sub']) && $_REQUEST['sub'] == 'data')
 					echo '<br/>Finished importing of this file.<br/>';
 					echo '<meta http-equiv="refresh" content="1; URL=?step=4&sub=data" />';
 					echo 'Automatic reload in 1s for next chunk. <a href="?step=4&sub=data">Manual Link</a><br/>';
+					$_SESSION['sqlinsert']++;
 				}
 				else
 				{
@@ -178,7 +179,6 @@ if (!empty($_REQUEST['sub']) && $_REQUEST['sub'] == 'data')
 					echo '<meta http-equiv="refresh" content="20; URL=?step=4&sub=data" />';
 					echo 'Automatic reload in 20s for next chunk because an error occurred. <a href="?step=4&sub=data">Manual Link</a><br/>';
 				}
-				$_SESSION['sqlinsert']++;
 
 				$did = true;
 				break 2;
