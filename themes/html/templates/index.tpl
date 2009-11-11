@@ -1,13 +1,13 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<meta name="description" content="EDK Killboard - {$config->get('cfg_kbtitle')}">
-<meta name="keywords" content="EDK, killboard, {$config->get('cfg_kbtitle')}, {if $kb_owner}{$kb_owner}, {/if}Eve-Online, killmail">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" >
+<meta name="description" content="EDK Killboard - {$config->get('cfg_kbtitle')}" >
+<meta name="keywords" content="EDK, killboard, {$config->get('cfg_kbtitle')}, {if $kb_owner}{$kb_owner}, {/if}Eve-Online, killmail" >
 <title>{$kb_title}</title>
 <link rel="stylesheet" type="text/css" href="{$theme_url}/{$style}.css">
 {$page_headerlines}
-<script type="text/javascript" language=javascript src="{$kb_host}/themes/generic.js"></script>
+<script type="text/javascript" src="{$kb_host}/themes/generic.js"></script>
 <!--[if lt IE 7]>
 <script defer type="text/javascript" src="{$kb_host}/themes/generic.js"></script>
 <![endif]-->
@@ -29,13 +29,13 @@
 {else}
 {if $banner_link}
 <a href="{$banner_link}">
-<img src="{$kb_host}/banner/{$banner}" border="0" alt="Banner" width = "950" height="125"></a>
+<img src="{$kb_host}/banner/{$banner}" border="0" alt="Banner" width = "950" height="125" /></a>
 {else}
-<a href="?a=home"><img src="{$kb_host}/banner/{$banner}" border="0" alt="Banner" width = "950" height="125"></a>
+<a href="?a=home"><img src="{$kb_host}/banner/{$banner}" border="0" alt="Banner" width = "950" height="125" /></a>
 {/if}
 {/if}
 </div>
-{include file="menu.tpl"}
+{include file="../../default/templates/menu.tpl"}
 {if $message}
 <table class="navigation" width="100%" height="25" border="0" cellspacing="1">
 <tr class="kb-table-row-odd">
