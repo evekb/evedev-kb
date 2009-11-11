@@ -29,7 +29,7 @@
 onmouseover="this.className='kb-table-row-hover';" onclick="window.location.href='?a=kill_detail&amp;kll_id={$k.id}';">
 {/if}
         <td style="width: 32px" align="center"><img src="{$k.victimshipimage}" style="border-width: 0px; width: 32px; height: 32px;" alt="" /></td>
-        <td style="height: 34px; width: 180px; vertical-align: middle;"><div class="kb-shiptype"><b>{$k.victimshipname|truncate:21:"...":true}</b><br />{$k.victimshipclass|truncate:24:"...":true}</div><div class="kb-shipicon"><img src="{$k.victimshipindicator}" style="border-width: 0px; width: 6px; height: 6px;" alt="" /></div></td>
+        <td style="height: 34px; width: 180px; vertical-align: middle;"><div class="kb-shiptype"><b>{$k.victimshipname|truncate:21:"...":true}</b><br />{$k.victimshipclass|truncate:24:"...":true}</div>{if 0}<div class="kb-shipicon"><img src="{$k.victimshipindicator}" style="border-width: 0px; width: 6px; height: 6px;" alt="" /></div>{/if}</td>
         {if $config->get('killlist_alogo')}
             {if $k.allianceexists}
             <td style="width: 32px" align="center"><img src="{$k.victimallianceicon}" style="border-width: 0px; width: 32px; height: 32px;" title="{$k.victimalliancename}" alt="{$k.victimalliancename}" /></td>
