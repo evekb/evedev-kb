@@ -5,7 +5,7 @@ require_once('common/includes/class.killlist.php');
 require_once('common/includes/class.killlisttable.php');
 require_once('common/includes/class.killsummarytable.php');
 
-$_GET['scl_id'] = intval($_GET['scl_id']);
+$scl_id = intval($_GET['scl_id']);
 if (!$kll_id = intval($_GET['kll_id']))
 {
     echo 'No valid kill id specified';
@@ -31,7 +31,7 @@ $invCorp = array();
 // the board has an owner swap sides if necessary so board owner is the killer
 foreach ($kill->involvedparties_ as $inv)
 {
-	if($inv->getAlliance()->getName() != 'None' 
+	if($inv->getAlliance()->getName() != 'None'
             && $inv->getAllianceID() != $kill->getVictimAllianceID())
                 $invAll[$inv->getAllianceID()] = $inv->getAllianceID();
 	elseif($inv->getCorpID() != $kill->getVictimCorpID())
@@ -63,15 +63,28 @@ $page = new Page('Related kills & losses');
 
 // this is a fast query to get the system and timestamp
 $rqry = new DBQuery();
-$rsql = 'SELECT kll_timestamp, kll_system_id from kb3_kills where kll_id = '.$kll_id;
+if(isset($_GET['adjacent']))
+	$rsql = 'SELECT kll_timestamp, b.sys_id from kb3_kills
+	join kb3_systems a ON (a.sys_id = kll_system_id)
+	join kb3_system_jumps on (sjp_from = a.sys_eve_id)
+	join kb3_systems b ON (b.sys_eve_id = sjp_to)
+	where kll_id = '.$kll_id.' UNION
+	SELECT kll_timestamp, kll_system_id as sys_id from kb3_kills
+	where kll_id = '.$kll_id;
+else
+	$rsql = 'SELECT kll_timestamp, kll_system_id as sys_id from kb3_kills
+	where kll_id = '.$kll_id;
 $rqry->execute($rsql);
-$rrow = $rqry->getRow();
-$system = new SolarSystem($rrow['kll_system_id']);
+while($rrow = $rqry->getRow())
+{
+	$systems[] = $rrow['sys_id'];
+	$basetime = $rrow['kll_timestamp'];
+}
 
         // now we get all kills in that system for +-4 hours
-$query = 'SELECT kll.kll_timestamp AS ts FROM kb3_kills kll WHERE kll.kll_system_id='.$rrow['kll_system_id'].
-            ' AND kll.kll_timestamp <= "'.(date('Y-m-d H:i:s',strtotime($rrow['kll_timestamp']) +  4 * 60 * 60)).'"'.
-            ' AND kll.kll_timestamp >= "'.(date('Y-m-d H:i:s',strtotime($rrow['kll_timestamp']) -  4 * 60 * 60)).'"'.
+$query = 'SELECT kll.kll_timestamp AS ts FROM kb3_kills kll WHERE kll.kll_system_id IN ('.implode(',', $systems).
+            ') AND kll.kll_timestamp <= "'.(date('Y-m-d H:i:s',strtotime($basetime) +  4 * 60 * 60)).'"'.
+            ' AND kll.kll_timestamp >= "'.(date('Y-m-d H:i:s',strtotime($basetime) -  4 * 60 * 60)).'"'.
             ' ORDER BY kll.kll_timestamp ASC';
 $qry = new DBQuery();
 $qry->execute($query);
@@ -83,7 +96,7 @@ while ($row = $qry->getRow())
 }
 
 // this tricky thing looks for gaps of more than 1 hour and creates an intersection
-$baseh = date('H', strtotime($rrow['kll_timestamp']));
+$baseh = date('H', strtotime($basetime));
 $maxc = count($ts);
 $times = array();
 for ($i = 0; $i < $maxc; $i++)
@@ -123,7 +136,7 @@ $lastts = array_pop($times);
 
 $kslist = new KillList();
 $kslist->setOrdered(true);
-$kslist->addSystem($system);
+foreach($systems as $system) $kslist->addSystem($system);
 $kslist->setStartDate($firstts);
 $kslist->setEndDate($lastts);
 //involved::load($kslist,'kill');
@@ -132,7 +145,7 @@ foreach($invAll as $ia) $kslist->addInvolvedAlliance($ia);
 
 $lslist = new KillList();
 $lslist->setOrdered(true);
-$lslist->addSystem($system);
+foreach($systems as $system) $lslist->addSystem($system);
 $lslist->setStartDate($firstts);
 $lslist->setEndDate($lastts);
 //involved::load($lslist,'loss');
@@ -146,7 +159,7 @@ $klist = new KillList();
 $klist->setOrdered(true);
 $klist->setCountComments(true);
 $klist->setCountInvolved(true);
-$klist->addSystem($system);
+foreach($systems as $system) $klist->addSystem($system);
 $klist->setStartDate($firstts);
 $klist->setEndDate($lastts);
 //involved::load($klist,'kill');
@@ -157,17 +170,17 @@ $llist = new KillList();
 $llist->setOrdered(true);
 $llist->setCountComments(true);
 $llist->setCountInvolved(true);
-$llist->addSystem($system);
+foreach($systems as $system) $llist->addSystem($system);
 $llist->setStartDate($firstts);
 $llist->setEndDate($lastts);
 //involved::load($llist,'loss');
 foreach($invCorp as $ic) $llist->addVictimCorp($ic);
 foreach($invAll as $ia) $llist->addVictimAlliance($ia);
 
-if ($_GET['scl_id'])
+if ($scl_id)
 {
-    $klist->addVictimShipClass($_GET['scl_id']);
-    $llist->addVictimShipClass($_GET['scl_id']);
+    $klist->addVictimShipClass($scl_id);
+    $llist->addVictimShipClass($scl_id);
 }
 
 function handle_involved($kill, $side)
@@ -479,7 +492,8 @@ if ($classified)
 }
 else
 {
-    $smarty->assign('system', $system->getName());
+	$kill = new Kill($kll_id);
+    $smarty->assign('system', $kill->getSolarSystemName());
 }
 $smarty->assign('firstts', $firstts);
 $smarty->assign('lastts', $lastts);
@@ -524,8 +538,9 @@ $html .= $ltable->generate();
 $menubox = new Box("Menu");
 $menubox->setIcon("menu-item.gif");
 $menubox->addOption("caption", "View");
-$menubox->addOption("link", "Back to Killmail", "?a=kill_detail&amp;kll_id=".$_GET['kll_id']);
-$menubox->addOption("link", "Kills &amp; losses", "?a=kill_related&amp;kll_id=".$_GET['kll_id']);
+$menubox->addOption("link", "Include adjacent", "?a=kill_related&amp;adjacent&amp;kll_id=".$kll_id);
+$menubox->addOption("link", "Back to Killmail", "?a=kill_detail&amp;kll_id=".$kll_id);
+$menubox->addOption("link", "Kills &amp; losses", "?a=kill_related&amp;kll_id=".$kll_id);
 $page->addContext($menubox->generate());
 
 $page->setContent($html);
