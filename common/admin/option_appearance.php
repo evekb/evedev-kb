@@ -2,8 +2,8 @@
 
 options::cat('Appearance', 'Global Options', 'Global Look');
 options::fadd('Banner', 'style_banner', 'select', array('admin_appearance', 'createSelectBanner'));
-options::fadd('Style', 'style_name', 'select', array('admin_appearance', 'createSelectStyle'), array('admin_appearance', 'changeStyle'));
 options::fadd('Theme', 'theme_name', 'select', array('admin_appearance', 'createSelectTheme'), array('admin_appearance', 'changeTheme'));
+options::fadd('Style', 'style_name', 'select', array('admin_appearance', 'createSelectStyle'), array('admin_appearance', 'changeStyle'));
 
 options::cat('Appearance', 'Global Options', 'Global Options');
 options::fadd('Display standings', 'show_standings', 'checkbox');
@@ -278,20 +278,26 @@ class admin_appearance
 	function changeTheme()
 	{
 		if(substr(THEME_URL,(strrpos(THEME_URL,"/")+1)) == config::get('theme_name')) return;
+
 		global $smarty;
 		$smarty->assign('theme_url', config::get('cfg_kbhost').'/themes/'.config::get('theme_name'));
-		if(!file_exists("themes/".config::get('theme_name')."/".config::get('style_name').".css"))
-		{
-			config::set('style_name', config::get('theme_name'));
-		}
-		$smarty->assign('style', config::get('style_name'));
+		$smarty->template_dir = './themes/'.config::get('theme_name').'/templates';
 		admin_appearance::removeOld(0, KB_CACHEDIR.'/templates_c', false);
 	}
 	//! Updates style before page is displayed.
 	function changeStyle()
 	{
-		global $smarty;
-		$smarty->assign('style', config::get('style_name'));
+		if(substr(THEME_URL,(strrpos(THEME_URL,"/")+1)) != $_POST['option_theme_name'])
+		{
+			config::set('style_name', config::get('theme_name'));
+			global $smarty;
+			$smarty->assign('style', $_POST['option_theme_name']);
+		}
+		else
+		{
+			global $smarty;
+			$smarty->assign('style', $_POST['option_style_name']);
+		}
 	}
 	//! Remove files in a directory older than a certain age.
 
