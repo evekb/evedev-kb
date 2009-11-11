@@ -10,20 +10,22 @@
  * pilot = pilot id to retrieve kills for
  * corp =  corp id to retrieve kills for
  * alliance = alliance id to retrieve kills for
+ * system = restrict kills to a specific system
+ * region = restrict kills to a specific region
  *
  */
 
 $maxkillsreturned = 100;
 require_once('common/includes/class.killlist.php');
 $list = new KillList();
-if(!isset($_REQUEST['allkills'])) $list->setAPIKill();
+if(!isset($_GET['allkills'])) $list->setAPIKill();
 $list->setLimit($maxkillsreturned);
 $list->setOrdered(true);
 $list->setOrderBy(' kll.kll_external_id DESC ');
 $qry = new DBQuery();
-if(isset($_REQUEST['alliance']))
+if(isset($_GET['alliance']))
 {
-	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_external_id = ".intval($_REQUEST['alliance']." LIMIT 1"));
+	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_external_id = ".intval($_GET['alliance']." LIMIT 1"));
 	if(!$qry->recordCount())
 	{
 		$xml = "<?xml version='1.0' encoding='UTF-8'?><eveapi version='2'></eveapi>";
@@ -32,9 +34,9 @@ if(isset($_REQUEST['alliance']))
 	$row = $qry->getRow();
 	$list->addCombinedAlliance($row['all_id']);
 }
-if(isset($_REQUEST['corp'])) 
+if(isset($_GET['corp']))
 {
-	$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_external_id = ".intval($_REQUEST['corp']." LIMIT 1"));
+	$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_external_id = ".intval($_GET['corp']." LIMIT 1"));
 	if(!$qry->recordCount())
 	{
 		$xml = "<?xml version='1.0' encoding='UTF-8'?><eveapi version='2'></eveapi>";
@@ -43,9 +45,9 @@ if(isset($_REQUEST['corp']))
 	$row = $qry->getRow();
 	$list->addCombinedCorp($row['crp_id']);
 }
-if(isset($_REQUEST['pilot']))
+if(isset($_GET['pilot']))
 {
-	$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_externalid = ".intval($_REQUEST['pilot'])." LIMIT 1");
+	$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_externalid = ".intval($_GET['pilot'])." LIMIT 1");
 	if(!$qry->recordCount())
 	{
 		$xml = "<?xml version='1.0' encoding='UTF-8'?><eveapi version='2'></eveapi>";
@@ -54,9 +56,31 @@ if(isset($_REQUEST['pilot']))
 	$row = $qry->getRow();
 	$list->addCombinedPilot($row['plt_id']);
 }
-if(isset($_REQUEST['lastID'])) $list->setMinExtID(intval($_REQUEST['lastID']));
-if(isset($_REQUEST['startdate'])) $list->setStartDate(intval($_REQUEST['startdate']));
-if(isset($_REQUEST['enddate'])) $list->setStartDate(intval($_REQUEST['enddate']));
+if(isset($_GET['system']))
+{
+	$qry->execute("SELECT sys_id FROM kb3_systems WHERE sys_eve_id = ".intval($_GET['system'])." LIMIT 1");
+	if(!$qry->recordCount())
+	{
+		$xml = "<?xml version='1.0' encoding='UTF-8'?><eveapi version='2'></eveapi>";
+		die($xml);
+	}
+	$row = $qry->getRow();
+	$list->addSystem($row['sys_id']);
+}
+if(isset($_GET['region']))
+{
+	$qry->execute("SELECT reg_id FROM kb3_regions WHERE reg_id = ".intval($_GET['region'])." LIMIT 1");
+	if(!$qry->recordCount())
+	{
+		$xml = "<?xml version='1.0' encoding='UTF-8'?><eveapi version='2'></eveapi>";
+		die($xml);
+	}
+	$row = $qry->getRow();
+	$list->addRegion($row['reg_id']);
+}
+if(isset($_GET['lastID'])) $list->setMinExtID(intval($_GET['lastID']));
+if(isset($_GET['startdate'])) $list->setStartDate(intval($_GET['startdate']));
+if(isset($_GET['enddate'])) $list->setStartDate(intval($_GET['enddate']));
 $date = gmdate('Y-m-d H:i:s');
 /*
 $text = "<?xml version='1.0' encoding='UTF-8'?>
@@ -86,7 +110,7 @@ while($kill1 = $list->getKill())
 	$kill->setDetailedInvolved();
 	$row = $kills->addChild('row');
 	$row->addAttribute('killID', intval($kill->getExternalID()));
-	if(isset($_REQUEST['allkills'])) $row->addAttribute('killInternalID', intval($kill->getID()));
+	if(isset($_GET['allkills'])) $row->addAttribute('killInternalID', intval($kill->getID()));
 	$row->addAttribute('solarSystemID', $kill->getSystem()->getExternalID());
 	$row->addAttribute('killTime', $kill->getTimeStamp());
 	$row->addAttribute('moonID', '0');
@@ -153,10 +177,3 @@ while($kill1 = $list->getKill())
 $sxe->addChild('cachedUntil', $date);
 
 echo $sxe->asXML();
-die;
-
-
-
-
-
-?>
