@@ -176,8 +176,7 @@
           <br />
           <div id="fitting" style="position:relative; height:398px; width:398px;" title="fitting">
 		<div id="mask" style="position:absolute; left:0px; top:0px; width:398px; height:398px; z-index:0;">
-			<img border="0" style="position:absolute; height='398' width='398' filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(
-     			src='{$img_url}/{$themedir}/{$panel_colour}.png', sizingMethod='image');" src='{$img_url}/{$themedir}/{$panel_colour}.png' alt='' /></div>
+			<img border="0" style="position:absolute; height:398px; width:398px;" src='{$img_url}/{$themedir}/{$panel_colour}.png' alt='' /></div>
 
 		<div id="high1" style="position:absolute; left:73px; top:90px; width:32px; height:32px; z-index:1;">{$fitting_high.0.Icon}</div>
 		<div id="high2" style="position:absolute; left:100px; top:67px; width:32px; height:32px; z-index:1;">{$fitting_high.1.Icon}</div>
