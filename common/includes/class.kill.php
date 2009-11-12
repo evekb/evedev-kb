@@ -190,12 +190,16 @@ class Kill
 
 	function getSolarSystemName()
 	{
-		return $this->solarsystemname_;
+		if(isset($this->solarsystemname_))return $this->solarsystemname_;
+		$this->execQuery();
+		return $this->solarsystem_->getName();
 	}
 
 	function getSolarSystemSecurity()
 	{
-		return $this->solarsystemsecurity_;
+		if(isset($this->solarsystemsecurity_))return $this->solarsystemsecurity_;
+		$this->execQuery();
+		return $this->solarsystem_->getSecurity();
 	}
 
 	function getVictimShipName()

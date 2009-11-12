@@ -493,7 +493,17 @@ if ($classified)
 else
 {
 	$kill = new Kill($kll_id);
-    $smarty->assign('system', $kill->getSolarSystemName());
+	if(!isset($_GET['adjacent'])) $smarty->assign('system', $kill->getSolarSystemName());
+	else
+	{
+		$sysnames = array();
+		foreach($systems as $sys_id)
+		{
+			$system = new SolarSystem($sys_id);
+			$sysnames[] = $system->getName();
+		}
+		$smarty->assign('system', implode(', ', $sysnames));
+	}
 }
 $smarty->assign('firstts', $firstts);
 $smarty->assign('lastts', $lastts);
@@ -538,7 +548,8 @@ $html .= $ltable->generate();
 $menubox = new Box("Menu");
 $menubox->setIcon("menu-item.gif");
 $menubox->addOption("caption", "View");
-$menubox->addOption("link", "Include adjacent", "?a=kill_related&amp;adjacent&amp;kll_id=".$kll_id);
+if(!isset($_GET['adjacent'])) $menubox->addOption("link", "Include adjacent", "?a=kill_related&amp;adjacent&amp;kll_id=".$kll_id);
+else $menubox->addOption("link", "Remove adjacent", "?a=kill_related&amp;kll_id=".$kll_id);
 $menubox->addOption("link", "Back to Killmail", "?a=kill_detail&amp;kll_id=".$kll_id);
 $menubox->addOption("link", "Kills &amp; losses", "?a=kill_related&amp;kll_id=".$kll_id);
 $page->addContext($menubox->generate());
