@@ -6,7 +6,7 @@
             <table class="kb-table" width=360 cellpadding=0 cellspacing=1 border=0>
                 <tr class="kb-table-row-even">
                     <td>
-                    <img style="float: left; margin-right: 10px;" src="{if $item->item.itt_cat == 18}{$img_url}/drones/32_32/{$item->item.typeID}.png{elseif $item->item.itt_cat == 9}{$img_url}/blueprints/64_64/{$item->item.typeID}.png{else}{$img_url}/items/32_32/icon{$item->item.icon}.png{/if}"> 
+                    <img style="float: left; margin-right: 10px;" src="{if $item->item.itt_cat == 18}{$img_url}/drones/32_32/{$item->item.typeID}.png{elseif $item->item.itt_cat == 9}{$img_url}/blueprints/64_64/{$item->item.typeID}.png{elseif $item->item.itt_cat == 23}{$img_url}/ships/64_64/{$item->item.typeID}.png{else}{$img_url}/items/32_32/icon{$item->item.icon}.png{/if}">
                     {if $item->attrib.techLevel.value == 2 and $item->item.itt_cat != 9}<img style="position: relative; left: -42px; float: left; margin-right: -10px;" src="{$img_url}/items/32_32/t2.gif">{/if}
 		    {if $item->attrib.techLevel.value == 2 and $item->item.itt_cat == 9}<img style="position: relative; left: -74px; float: left; margin-right: -10px;" src="{$img_url}/items/64_64/t2.gif">{/if}
 		    {$item->item.description|nl2br}</td>
