@@ -68,7 +68,7 @@
                 </tr>
 {/foreach}
 {if $limited}                <tr class="{cycle name=ccl}">
-                    <td colspan="3" class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;">{$moreInvolved} more pilot{if $moreInvolved > 1}s{/if} not shown. <a href="{$unlimitURL}">Show all involved pilots</a></td>
+                    <td colspan="3" class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;">{$moreInvolved} pilot{if $moreInvolved > 1}s{/if} not shown. <a href="{$unlimitURL}">Show all involved pilots</a></td>
                 </tr>
 {/if}
             </table>
@@ -114,8 +114,7 @@
 			<img src="{$img_url}/{$themedir}/{$ssc->attrib.rigSlots.value}r.gif" border="0" alt="" /></div>
 
 		<div id="mask" style="position:absolute; left:0px; top:0px; width:398px; height:398px; z-index:0;">
-			<img border="0" style="position:absolute; height:398px; width:398px; filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(
-     			src='{$img_url}/{$themedir}/{$panel_colour}.png', sizingMethod='image');" src="{$img_url}/{$themedir}/{$panel_colour}.png" alt="" /></div>
+			<img border="0" style="position:absolute; height:398px; width:398px;" src="{$img_url}/{$themedir}/{$panel_colour}.png" alt="" /></div>
 		
 		<div id="highx" style="position:absolute; left:0px; top:0px; width:398px; height:398px; z-index:0;">
 			<img src="{$img_url}/{$themedir}/{$hic}ph.gif" border="0" alt="" /></div>

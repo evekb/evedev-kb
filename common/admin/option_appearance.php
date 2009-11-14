@@ -48,6 +48,7 @@ options::fadd('Show Deadspace items tag', 'kd_dtag', 'checkbox');
 options::fadd('Show Officer items tag', 'kd_otag', 'checkbox');
 options::fadd('Show Fitting Panel', 'fp_show', 'checkbox');
 options::fadd('Export EFT fittings', 'kd_EFT', 'checkbox');
+options::fadd('Limit involved parties', 'kd_involvedlimit', 'edit:size:4', '', '', 'Leave blank for no limit.');
 
 options::cat('Appearance', 'Kill Details', 'Fitting Panel');
 options::fadd('Panel Theme', 'fp_theme', 'select', array('admin_appearance', 'createPanelTheme'));

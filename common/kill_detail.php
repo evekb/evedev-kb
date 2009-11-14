@@ -143,12 +143,14 @@ $smarty->assign('VictimDamageTaken', $kill->VictimDamageTaken);
 // involved
 $i = 1;
 $involved = array();
+$invlimit = config::get('kd_involvedlimit');
+if(!is_numeric($invlimit)) $nolimit = 1;
 foreach ($kill->involvedparties_ as $inv)
 {
-	if($i > 10 && !$nolimit)
+	if(!$nolimit && $i > $invlimit)
 	{
 		$smarty->assign('limited', true);
-		$smarty->assign('moreInvolved', count($kill->involvedparties_) - 10);
+		$smarty->assign('moreInvolved', count($kill->involvedparties_) - $invlimit);
 		$smarty->assign('unlimitURL', '?'.$_SERVER['QUERY_STRING'].'&amp;nolimit');
 		break;
 	}
@@ -166,7 +168,7 @@ foreach ($kill->involvedparties_ as $inv)
     $involved[$i]['AlliURL'] = "?a=alliance_detail&amp;all_id=".$alliance->getID();
     $involved[$i]['AlliName'] = $alliance->getName();
     $involved[$i]['ShipName'] = $ship->getName();
-    $involved[$i]['ShipID'] = $ship->externalid_;
+    $involved[$i]['ShipID'] = $ship->getExternalID();
     $involved[$i]['damageDone'] = $inv->dmgdone_;
 
     if ($pilot->getID() == $kill->getFBPilotID())

@@ -201,14 +201,30 @@ if ($handle)
 	fclose($handle);
 }
 */
+$invlimit = config::get('kd_involvedlimit');
+if(!is_numeric($invlimit)) $nolimit = 1;
 foreach ($kill->involvedparties_ as $inv)
 {
-	if($i > 10 && !$nolimit)
+	if(!$nolimit && $i > $invlimit)
 	{
-		$smarty->assign('limited', true);
-		$smarty->assign('moreInvolved', count($kill->involvedparties_) - 10);
-		$smarty->assign('unlimitURL', '?'.$_SERVER['QUERY_STRING'].'&amp;nolimit');
-		break;
+		if($i == $invlimit + 1)
+		{
+			$smarty->assign('limited', true);
+			$smarty->assign('moreInvolved', count($kill->involvedparties_) - $invlimit);
+			$smarty->assign('unlimitURL', '?'.$_SERVER['QUERY_STRING'].'&amp;nolimit');
+		}
+
+		$corp                      =$inv->getCorp();
+		$alliance                  =$inv->getAlliance();
+		$ship                      =$inv->getShip();
+
+		$InvAllies[$alliance->getName()]["quantity"]+=1;
+		$InvAllies[$alliance->getName()]["corps"][$corp->getName()]+=1;
+		$InvShips[$ship->getName()] += 1;
+		if(ALLIANCE_ID >0 && $alliance->getID()==ALLIANCE_ID) $ownKill=true;
+		elseif(CORP_ID >0 && $corp->getID()==CORP_ID) $ownKill=true;
+
+		continue;
 	}
 
 	$pilot                     =$inv->getPilot();
