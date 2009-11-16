@@ -278,21 +278,32 @@ class admin_appearance
 	 */
 	function changeTheme()
 	{
-		if(substr(THEME_URL,(strrpos(THEME_URL,"/")+1)) == config::get('theme_name')) return;
+		if(options::getPrevious('theme_name') == $_POST['option_theme_name']) return;
+
+		$themename = preg_replace('/[^a-zA-Z0-9-_]/', '', $_POST['option_theme_name']);
+		if(!is_dir("themes/$themename")) $themename = 'default';
+
+		$_POST['option_theme_name'] = $themename;
+		config::set('theme_name', $themename);
 
 		global $smarty;
-		$smarty->assign('theme_url', config::get('cfg_kbhost').'/themes/'.config::get('theme_name'));
-		$smarty->template_dir = './themes/'.config::get('theme_name').'/templates';
+		$smarty->assign('theme_url', config::get('cfg_kbhost').'/themes/'.$themename);
+		$smarty->template_dir = './themes/'.$themename.'/templates';
 		admin_appearance::removeOld(0, KB_CACHEDIR.'/templates_c', false);
 	}
 	//! Updates style before page is displayed.
 	function changeStyle()
 	{
-		if(substr(THEME_URL,(strrpos(THEME_URL,"/")+1)) != $_POST['option_theme_name'])
+		if(options::getPrevious('theme_name') != $_POST['option_theme_name'])
 		{
-			config::set('style_name', config::get('theme_name'));
+			$themename = preg_replace('/[^a-zA-Z0-9-_]/', '', $_POST['option_theme_name']);
+			if(!is_dir("themes/$themename")) $themename = 'default';
+			
+			config::set('style_name', $themename);
+			$_POST['option_style_name'] = $themename;
+
 			global $smarty;
-			$smarty->assign('style', $_POST['option_theme_name']);
+			$smarty->assign('style', $themename);
 		}
 		else
 		{
