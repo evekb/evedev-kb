@@ -58,10 +58,12 @@ class options
         $data = &options::_getData();
 
         $current = &$data[urldecode($_POST['field'])][urldecode($_POST['sub'])];
-        foreach ($current as $elements)
+        foreach ($current as &$elements)
         {
-            foreach ($elements as $element)
+            foreach ($elements as &$element)
             {
+				// Record the previous value
+				$element['previous'] = config::get($element['name']);
                 // for checkboxes we need to set the value to zero if the option is not there
                 if ($element['type'] == 'checkbox')
                 {
@@ -273,5 +275,25 @@ class options
         }
         return $data;
     }
+
+	// Return the value of an option before it was changed
+	function getPrevious($key)
+	{
+        $data = &options::_getData();
+
+        $current = &$data[urldecode($_POST['field'])][urldecode($_POST['sub'])];
+        foreach ($current as &$elements)
+        {
+            foreach ($elements as &$element)
+            {
+                if ($element['name'] == $key)
+                {
+					if(isset($element['previous'])) return $element['previous'];
+					else return config::get($element['name']);
+                }
+			}
+        }
+		return '';
+	}
 }
 ?>
