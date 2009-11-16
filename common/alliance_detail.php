@@ -625,6 +625,11 @@ class pAllianceDetail extends pageAssembly
 		}
 		return $menubox->generate();
 	}
+
+	function addMenuItem($type, $name, $url = '')
+	{
+		$this->menuOptions[] = array($type, $name, $url);
+	}
 }
 
 $allianceDetail = new pallianceDetail();

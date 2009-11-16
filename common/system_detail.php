@@ -28,6 +28,7 @@ class pSystemDetail extends pageAssembly
 			exit;
 		}
 		$this->system = new SolarSystem($this->sys_id);
+		$this->menuOptions = array();
 		$this->page = new Page('System details - '.$this->system->getName());
 		$this->smarty->assign('sys_id',$this->sys_id);
 	}
@@ -85,9 +86,20 @@ class pSystemDetail extends pageAssembly
 		$menubox->addOption("link","All kills", "?a=system_detail&amp;sys_id=".$this->sys_id."&amp;view=kills");
 		$menubox->addOption("link","All losses", "?a=system_detail&amp;sys_id=".$this->sys_id."&amp;view=losses");
 		$menubox->addOption("link","Recent Activity", "?a=system_detail&amp;sys_id=".$this->sys_id."&amp;view=recent");
+		foreach($this->menuOptions as $options)
+		{
+			if(isset($options[2]))
+				$menubox->addOption($options[0],$options[1], $options[2]);
+			else
+				$menubox->addOption($options[0],$options[1]);
+		}
 		return $menubox->generate();
 	}
-	
+
+	function addMenuItem($type, $name, $url = '')
+	{
+		$this->menuOptions[] = array($type, $name, $url);
+	}
 }
 
 $systemDetail = new pSystemDetail();

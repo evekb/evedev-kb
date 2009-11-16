@@ -21,10 +21,14 @@ class pHome extends pageAssembly
 
 	function start()
 	{
+		$this->menuOptions = array();
+
 		$week = intval($_GET['w']);
 		$year = intval($_GET['y']);
 		$this->scl_id = intval($_GET['scl_id']);
+
 		$this->killboard = new Killboard();
+
 		$this->killcount = config::get('killcount');
 		$this->hourlimit = config::get('limit_hours');
 		if(!$this->hourlimit) $this->hourlimit = 1;
@@ -201,7 +205,19 @@ class pHome extends pageAssembly
 		if(config::get('show_comb_home')) $menubox->addOption("link",
 				$weektext."All Kills",
 				"?a=home&amp;w=" . $this->week . "&amp;y=" . $this->year.$suffixscl);
+		foreach($this->menuOptions as $options)
+		{
+			if(isset($options[2]))
+				$menubox->addOption($options[0],$options[1], $options[2]);
+			else
+				$menubox->addOption($options[0],$options[1]);
+		}
 		return $menubox->generate();
+	}
+
+	function addMenuItem($type, $name, $url = '')
+	{
+		$this->menuOptions[] = array($type, $name, $url);
 	}
 
 	function clock()

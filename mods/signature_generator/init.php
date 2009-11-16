@@ -10,7 +10,7 @@ class signature
 	}
 	function menuOptions($home)
 	{
-		$home->menuOptions[] = array("caption","Signature");
-		$home->menuOptions[] = array("link","Link", "?a=sig_list&amp;i=".$home->pilot->getID());
+		$home->addMenuItem("caption","Signature");
+		$home->addMenuItem("link","Link", "?a=sig_list&amp;i=".$home->pilot->getID());
 	}
 }

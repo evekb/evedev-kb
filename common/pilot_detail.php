@@ -283,6 +283,11 @@ class pPilotDetail extends pageAssembly
 		}
 		return $html;
 	}
+
+	function addMenuItem($type, $name, $url = '')
+	{
+		$this->menuOptions[] = array($type, $name, $url);
+	}
 }
 
 
