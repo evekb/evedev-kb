@@ -131,6 +131,7 @@ if ($_REQUEST['opt'] == 'add')
         if ($data['cnt'] >= 1)
         {
             $qry->execute('update kb3_ships_values set shp_value=\''.$value.'\' where shp_id='.$id);
+            $qry->execute('update kb3_item_price join kb3_ships on (shp_externalid = typeID) set price=\''.$value.'\' where shp_id='.$id);
         }
         else
         {
@@ -159,10 +160,11 @@ if (!isset($_REQUEST['opt']))
     $html .= "<div class='block-header2'>View/Change Shipvalues</div>";
     $qry = new DBQuery();
     $query = 'select kbs.shp_id as id, shp.shp_externalid as ext, shp.shp_name, shp.shp_class, kbs.shp_value,
-                     shp.shp_baseprice, scl.scl_class, shp.shp_techlevel, scl.scl_value
-                     from kb3_ships_values kbs
-                     inner join kb3_ships shp on (kbs.shp_id = shp.shp_id)
-                     inner join kb3_ship_classes scl on (shp.shp_class = scl.scl_id) order by shp.shp_name asc';
+				shp.shp_baseprice, scl.scl_class, shp.shp_techlevel, scl.scl_value
+				from kb3_ships_values kbs
+				inner join kb3_ships shp on (kbs.shp_id = shp.shp_id)
+				inner join kb3_ship_classes scl on (shp.shp_class = scl.scl_id)
+				where scl.scl_class NOT IN ("Drone") order by shp.shp_name asc';
     $qry->execute($query);
     while ($data = $qry->getRow())
     {
