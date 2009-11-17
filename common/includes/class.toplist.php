@@ -833,6 +833,7 @@ class TopShipList extends TopList
 	{
 		$sqltop = "select count(distinct ind.ind_kll_id) as cnt, ind.ind_shp_id as shp_id
               from kb3_inv_detail ind
+			  inner join kb3_kills kll on (kll.kll_id = ind.ind_kll_id)
 	      inner join kb3_ships shp on ( shp_id = ind.ind_shp_id )";
 
 		$this->setSQLTop($sqltop);
@@ -925,8 +926,9 @@ class TopWeaponList extends TopList
 	function generate()
 	{
 		$sql = "select count(distinct ind.ind_kll_id) as cnt, ind.ind_wep_id as itm_id
-				  from kb3_inv_detail ind
-				  inner join kb3_invtypes itm on (typeID = ind.ind_wep_id)";
+				from kb3_inv_detail ind
+				inner join kb3_kills kll on (kll.kll_id = ind.ind_kll_id)
+				inner join kb3_invtypes itm on (typeID = ind.ind_wep_id)";
 
 		if ($this->invplt_)
 			$sqlbottom .= " and ind.ind_plt_id = ".$this->invplt_->getID();
