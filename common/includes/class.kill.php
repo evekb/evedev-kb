@@ -366,23 +366,7 @@ class Kill
 				$item = $destroyed->getItem();
 				$mail .= $item->getName();
 				if ($destroyed->getQuantity() > 1)
-				{
-				// if the option is enabled and the item is fitted then split it up
-				// this is aworkaround for the lazy parser of griefwatch
-					if (config::get('kill_splitfit') && $destroyed->getQuantity() < 9 && ($destroyed->getLocationID() == 1
-						|| $destroyed->getLocationID() == 2 || $destroyed->getLocationID() == 3))
-					{
-						for ($i = $destroyed->getQuantity(); $i > 1; $i--)
-						{
-							$mail .= "\r\n".$item->getName();
-						}
-
-					}
-					else
-					{
 						$mail .= ", Qty: ".$destroyed->getQuantity();
-					}
-				}
 				if ($destroyed->getLocationID() == 4) // cargo
 					$mail .= " (Cargo)";
 				if ($destroyed->getLocationID() == 6) // drone
@@ -400,23 +384,7 @@ class Kill
 				$item = $dropped->getItem();
 				$mail .= $item->getName();
 				if ($dropped->getQuantity() > 1)
-				{
-				// if the option is enabled and the item is fitted then split it up
-				// this is aworkaround for the lazy parser of griefwatch
-					if (config::get('kill_splitfit') && $dropped->getQuantity() < 9 && ($dropped->getLocationID() == 1
-						|| $dropped->getLocationID() == 2 || $dropped->getLocationID() == 3))
-					{
-						for ($i = $dropped->getQuantity(); $i > 1; $i--)
-						{
-							$mail .= "\r\n".$item->getName();
-						}
-
-					}
-					else
-					{
 						$mail .= ", Qty: ".$dropped->getQuantity();
-					}
-				}
 				if ($dropped->getLocationID() == 4) // cargo
 					$mail .= " (Cargo)";
 				if ($dropped->getLocationID() == 6) // drone

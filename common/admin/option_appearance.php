@@ -11,7 +11,7 @@ options::fadd('Enable lost item values', 'item_values', 'checkbox');
 //options::fadd('Use custom shipvalues', 'ship_values', 'checkbox');
 options::fadd('Display a link instead of POD on Battlesummary', 'bs_podlink', 'checkbox');
 options::fadd('Include Capsules, Shuttles and Noobships in kills', 'podnoobs', 'checkbox');
-options::fadd('Split up fitted items on Killmails', 'kill_splitfit', 'checkbox');
+//options::fadd('Split up fitted items on Killmails', 'kill_splitfit', 'checkbox');
 options::fadd('Use gmdate instead of date', 'date_gmtime', 'checkbox');
 options::fadd('Classify kills for hours:', 'kill_classified', 'edit:size:4', '', '', '0 to disable, 1-24hrs');
 
