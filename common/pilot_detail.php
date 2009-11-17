@@ -62,6 +62,7 @@ class pPilotDetail extends pageAssembly
 					$this->plt_id = $row['plt_id'];
 				}
 			}
+			elseif(PILOT_ID) $this->plt_id = PILOT_ID;
 			else
 			{
 				$html = 'That pilot doesn\'t exist.';
