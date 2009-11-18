@@ -1,7 +1,7 @@
 <?php
 
 options::cat('Appearance', 'Global Options', 'Global Look');
-options::fadd('Banner', 'style_banner', 'select', array('admin_appearance', 'createSelectBanner'));
+options::fadd('Banner', 'style_banner', 'select', array('admin_appearance', 'createSelectBanner'), array('admin_appearance', 'changeBanner'));
 options::fadd('Theme', 'theme_name', 'select', array('admin_appearance', 'createSelectTheme'), array('admin_appearance', 'changeTheme'));
 options::fadd('Style', 'style_name', 'select', array('admin_appearance', 'createSelectStyle'), array('admin_appearance', 'changeStyle'));
 
@@ -310,6 +310,25 @@ class admin_appearance
 			global $smarty;
 			$smarty->assign('style', $_POST['option_style_name']);
 		}
+	}
+	//! Checks if banner has changed, updates page before display and resets banner size.
+
+	/*! If the banner is changed the stored size is updated and used to display
+	 *  the banner image. Smarty variables are updated so display is immediate.
+	 */
+	function changeBanner()
+	{
+		global $smarty;
+		if(options::getPrevious('style_banner') == $_POST['option_style_banner']) return;
+
+		$dimensions = getimagesize('banner/'.$_POST['option_style_banner']);
+		if(!$dimensions) $dimensions = array(0,0);
+
+		config::set('style_banner_x', $dimensions[0]);
+		config::set('style_banner_y', $dimensions[1]);
+
+		$smarty->assign('banner_x', $dimensions[0]);
+		$smarty->assign('banner_y', $dimensions[1]);
 	}
 	//! Remove files in a directory older than a certain age.
 
