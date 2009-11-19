@@ -63,13 +63,9 @@ if ($page == '' || $page == 'index')
 }
 
 // check for the igb
-if (substr($_SERVER['HTTP_USER_AGENT'], 0, 15) == 'EVE-minibrowser')
+if (strpos($_SERVER['HTTP_USER_AGENT'], 'EVE-IGB') !== FALSE)
 {
     define('IS_IGB', true);
-    if (!isset($_GET['a']))
-    {
-        $page = 'igb';
-    }
 }
 else
 {
@@ -108,6 +104,7 @@ else $smarty->assign('style', config::get('style_name'));
 $smarty->assign('img_url', IMG_URL);
 $smarty->assign('kb_host', KB_HOST);
 $smarty->assign_by_ref('config', $config);
+$smarty->assign('is_IGB', IS_IGB);
 
 // pilot id not fully implemented yet.
 if (0 && config::get('cfg_pilotid'))
