@@ -8,11 +8,11 @@ require_once('common/includes/globals.php');
 require_once('common/includes/class.config.php');
 require_once('common/includes/db.php');
 
-remove_old(7 * 24, config::get('cache_dir').'/');
-remove_old(7 * 24, config::get('cache_dir').'/'.KB_SITE.'/');
-remove_old(1 * 24, "cache/templates_c/");
-remove_old(7 * 24, "cache/mails/");
-remove_old(30 * 24, "cache/", true);
+remove_old(7 * 24, KB_QUERYCACHEDIR.'/');
+remove_old(7 * 24, KB_PAGECACHEDIR.'/'.KB_SITE.'/', true);
+remove_old(1 * 24, KB_CACHEDIR."/templates_c/");
+remove_old(7 * 24, KB_MAILCACHEDIR.'/');
+remove_old(30 * 24, KB_CACHEDIR.'/', true);
 
 //! Remove old files from the given directory.
 
@@ -23,9 +23,13 @@ remove_old(30 * 24, "cache/", true);
 function remove_old($hours, $dir, $recurse = false)
 {
 	$seconds = $hours*60*60;
-
+	$del = 0;
 	$files = scandir($dir);
-
+	if(!$files)
+	{
+		echo "Directory invalid: ".$dir."<br>\n";
+		return 0;
+	}
 	echo $dir."<br>".$hours." hours<br>\n";
 	foreach ($files as $num => $fname)
 	{
