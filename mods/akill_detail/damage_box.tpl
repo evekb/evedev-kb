@@ -6,7 +6,7 @@
 {foreach from=$topdamage key=key item=i}
   <tr class="{cycle name=ccl}">
     <td class="finalblow" align="center" width="64"><div class="menu-wrapper"><a href="{$i.PilotURL}"><img class="finalblow" height="64" width="64" src="{$i.portrait}" alt="{$i.PilotName}" title="{$i.PilotName}" border="0" /></a></div></td>
-    <td class="finalblow" align="center" width="64"><div class="menu-wrapper"><a href="?a=invtype&amp;id={$i.ShipID}"><img class="finalblow" height="64" width="64" src="{$i.shipImage}" alt="{$i.ShipName}" title="{$i.ShipName}" border="0" /></a></div></td>
+    <td class="finalblow" align="center" width="64"><div class="menu-wrapper"><a href="{if !$is_IGB}?a=invtype&amp;id={$i.ShipID}{else}javascript:CCPEVE.showInfo({$i.ShipID}){/if}"><img class="finalblow" height="64" width="64" src="{$i.shipImage}" alt="{$i.ShipName}" title="{$i.ShipName}" border="0" /></a></div></td>
   </tr>
 {/foreach}
 </table>
@@ -20,7 +20,7 @@
 {if $i.FB == "true"}
   <tr class="{cycle name=ccl}">
     <td class="finalblow" align="center" width="64"><div class="menu-wrapper"><a href="{$i.PilotURL}"><img class="finalblow" height="64" width="64" src="{$i.portrait}" alt="{$i.PilotName}" title="{$i.PilotName}" border="0" /></a></div></td>
-    <td class="finalblow" align="center" width="64"><div class="menu-wrapper"><a href="?a=invtype&amp;id={$i.ShipID}"><img class="finalblow" height="64" width="64" src="{$i.shipImage}" alt="{$i.ShipName}" title="{$i.ShipName}" border="0" /></a></div></td>
+    <td class="finalblow" align="center" width="64"><div class="menu-wrapper"><a href="{if !$is_IGB}?a=invtype&amp;id={$i.ShipID}{else}javascript:CCPEVE.showInfo({$i.ShipID}){/if}"><img class="finalblow" height="64" width="64" src="{$i.shipImage}" alt="{$i.ShipName}" title="{$i.ShipName}" border="0" /></a></div></td>
   </tr>
 {/if}
 {/foreach}

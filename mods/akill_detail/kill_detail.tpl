@@ -3,7 +3,7 @@
     <tr>
         <td width="360" align="left" valign="top"><table class="kb-table" width="360" cellpadding="0" cellspacing="1" border="0">
                 <tr class="{cycle name="ccl"}">
-                    <td rowspan="3" width="64"><img src="{$VictimPortrait}" border="0" width="64" height="64" alt="victim" /></td>
+                    <td rowspan="3" width="64">{if $is_IGB}<a href="javascript:CCPEVE.showInfo(1377, {$VictimExtID})">{/if}<img src="{$VictimPortrait}" border="0" width="64" height="64" alt="victim" />{if $is_IGB}</a>{/if}</td>
                     <td class="kb-table-cell" width="64"><b>Victim:</b></td>
                     <td class="kb-table-cell"><b><a href="{$VictimURL}">{$VictimName}</a></b></td>
                 </tr>
@@ -90,8 +90,8 @@
                 {foreach from=$involved key="key" item="i"}
                     {if $IsAlly eq true}
                         <tr class="{cycle name="ccl"}">
-	                        <td rowspan="5" width="64"><img {if $i.FB == "true"}class="finalblow"{/if} height="64" width="64" src="{$i.portrait}" border="0" alt="inv portrait" /></td>
-	                        <td rowspan="5" width="64"><img {if $i.FB == "true"}class="finalblow"{/if} height="64" width="64" src="{$i.shipImage}" border="0" alt="{$i.ShipName}" /></td>
+	                        <td rowspan="5" width="64">{if $is_IGB}<a href="javascript:CCPEVE.showInfo(1377, {$i.ext_id})">{/if}<img {if $i.FB == "true"}class="finalblow"{/if} height="64" width="64" src="{$i.portrait}" border="0" alt="inv portrait" />{if $is_IGB}</a>{/if}</td>
+	                        <td rowspan="5" width="64"><a href="{if !$is_IGB}?a=invtype&amp;id={$i.ShipID}{else}javascript:CCPEVE.showInfo({$i.ShipID}){/if}"><img {if $i.FB == "true"}class="finalblow"{/if} height="64" width="64" src="{$i.shipImage}" border="0" alt="{$i.ShipName}" /></a></td>
 
 		                    <td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;"><a href="{$i.PilotURL}">{$i.PilotName}</a></td>
                         </tr>
@@ -129,10 +129,10 @@
                     {/if}
 
                     <tr class="{cycle name="ccl"}">
-                        <td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;"><b><a href="?a=invtype&amp;id={$i.ShipID}">{$i.ShipName}</a></b> ({$i.shipClass})</td>
+                        <td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;"><b><a href="{if !$is_IGB}?a=invtype&amp;id={$i.ShipID}{else}javascript:CCPEVE.showInfo({$i.ShipID}){/if}">{$i.ShipName}</a></b> ({$i.shipClass})</td>
                     </tr>
                     <tr class="{cycle name="ccl"}">
-                        <td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;">{if $i.weaponID}<a href="?a=invtype&amp;id={$i.weaponID}">{$i.weaponName}</a>{else}{$i.weaponName}{/if}</td>
+                        <td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;">{if $i.weaponID}<a href="{if !$is_IGB}?a=invtype&amp;id={$i.weaponID}{else}javascript:CCPEVE.showInfo({$i.weaponID}){/if}">{$i.weaponName}</a>{else}{$i.weaponName}{/if}</td>
                     </tr>
                     <tr class="{cycle name="ccl"}">
                         <td colspan="2" class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;">Damage done:</td><td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;">{$i.damageDone|number_format} {if $VictimDamageTaken > 0}({$i.damageDone/$VictimDamageTaken*100|number_format}%){/if}</td>
@@ -151,7 +151,7 @@
                 <tr class="{cycle name="ccl"}">
                     <td width="64" height="64" rowspan="3"><img src="{$VictimShipImg}" width="64" height="64" alt="{$ShipName}" /></td>
                     <td class="kb-table-cell"><b>Ship:</b></td>
-                    <td class="kb-table-cell"><b><a href="?a=invtype&amp;id={$ShipID}">{$ShipName}</a></b> ({$ClassName})</td>
+                    <td class="kb-table-cell"><b><a href="{if !$is_IGB}?a=invtype&amp;id={$i.ShipID}{else}javascript:CCPEVE.showInfo({$i.ShipID}{/if}">{$ShipName}</a></b> ({$ClassName})</td>
                 </tr>
                 <tr class="{cycle name="ccl"}">
                     <td class="kb-table-cell"><b>Location:</b></td>
@@ -251,7 +251,7 @@
                 </tr>
     {foreach from=$destroyed.$slotindex item="i"}
                 <tr class="kb-table-row-odd">
-                    <td class="item-icon" width="32" height="34" valign="top"><a href="?a=invtype&amp;id={$i.itemID}">{$i.Icon}</a></td>
+                    <td class="item-icon" width="32" height="34" valign="top"><a href="{if !$is_IGB}?a=invtype&amp;id={$i.itemID}{else}javascript:CCPEVE.showInfo({$i.itemID}){/if}">{$i.Icon}</a></td>
                     <td class="kb-table-cell">{$i.Name}</td>
                     <td width="30" align="center">{$i.Quantity}</td>
         {if $config->get('item_values')}
@@ -290,7 +290,7 @@
     {/foreach}
     {foreach from=$dropped.$slotindex item="i"}
                 <tr class="kb-table-row-odd" style="background-color: {$dropped_colour};">
-                    <td style="border: 1px solid green;" width="32" height="34" valign="top"><a href="?a=invtype&amp;id={$i.itemID}">{$i.Icon}</a></td>
+                    <td style="border: 1px solid green;" width="32" height="34" valign="top"><a href="{if !$is_IGB}?a=invtype&amp;id={$i.itemID}{else}javascript:CCPEVE.showInfo({$i.itemID}){/if}">{$i.Icon}</a></td>
                     <td class="kb-table-cell">{$i.Name}</td>
                     <td width="30" align="center">{$i.Quantity}</td>
         {if $config->get('item_values')}

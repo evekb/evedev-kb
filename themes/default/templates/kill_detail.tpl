@@ -5,7 +5,7 @@
         <td width="360" align="left" valign="top"><table class="kb-table" width="360" cellpadding="0" cellspacing="1" border="0">
                 <tr class="{cycle name=ccl}">
                     <td rowspan="4" width="64"><a href="{$VictimCorpURL}"><img src="{$VictimPortrait}" border="0" width="64" height="64" alt="{$VictimName}" /></a></td>
-					<td width="64" height="64" rowspan="4"><a href="?a=invtype&amp;id={$ShipID}"><img src="{$VictimShipImg}" border="0" width="64" height="64" alt="{$ShipName}" /></a></td>
+					<td width="64" height="64" rowspan="4"><a href="{if !$is_IGB}?a=invtype&amp;id={$ShipID}{else}javascript:CCPEVE.showInfo({$ShipID}){/if}"><img src="{$VictimShipImg}" border="0" width="64" height="64" alt="{$ShipName}" /></a></td>
                     <td class="kb-table-cell" width="64"><b>Victim:</b></td>
                     <td class="kb-table-cell"><b><a href="{$VictimURL}">{$VictimName}</a></b></td>
                 </tr>
@@ -24,7 +24,7 @@
 				</tr>
                 <tr class="{cycle name=ccl}">
                     <td class="kb-table-cell"><b>Ship:</b></td>
-                    <td class="kb-table-cell"><b><a href="?a=invtype&amp;id={$ShipID}">{$ShipName}</a></b> ({$ClassName})</td>
+                    <td class="kb-table-cell"><b><a href="{if !$is_IGB}?a=invtype&amp;id={$ShipID}{else}javascript:CCPEVE.showInfo({$ShipID}){/if}">{$ShipName}</a></b> ({$ClassName})</td>
                 </tr>
             </table>
 			
@@ -48,7 +48,7 @@
 {foreach from=$involved key=key item=i}
                 <tr class="{cycle name=ccl}">
                     <td rowspan="5" width="64"><a href="{$i.PilotURL}"><img {if $i.FB == "true"}class="finalblow"{/if} height="64" width="64" src="{$i.portrait}" border="0" alt="inv portrait" /></a></td>
-                    <td rowspan="5" width="64"><a href="?a=invtype&amp;id={$i.ShipID}"><img {if $i.FB == "true"}class="finalblow"{/if} height="64" width="64" src="{$i.shipImage}" border="0" alt="{$i.ShipName}" /></a></td>
+                    <td rowspan="5" width="64"><a href="{if !$is_IGB}?a=invtype&amp;id={$i.ShipID}{else}javascript:CCPEVE.showInfo({$i.ShipID}){/if}"><img {if $i.FB == "true"}class="finalblow"{/if} height="64" width="64" src="{$i.shipImage}" border="0" alt="{$i.ShipName}" /></a></td>
                     <td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;"><a href="{$i.PilotURL}"><b>{$i.PilotName} {if $i.FB == "true"}(Final Blow){/if}</b></a></td>
                 </tr>
                 <tr class="{cycle name=ccl}">
@@ -58,7 +58,7 @@
                     <td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;"><a href="{$i.AlliURL}">{$i.AlliName}</a></td>
                 </tr>
                 <tr class="{cycle name=ccl}">
-                    <td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;"><b><a href="?a=invtype&amp;id={$i.ShipID}">{$i.ShipName}</a></b></td>
+                    <td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;"><b><a href="{if !$is_IGB}?a=invtype&amp;id={$i.ShipID}{else}javascript:CCPEVE.showInfo({$i.ShipID}){/if}">{$i.ShipName}</a></b></td>
                 </tr>
                 <tr class="{cycle name=ccl}">
                     <td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;">{if $i.weaponID}<a href="?a=invtype&amp;id={$i.weaponID}">{$i.weaponName}</a>{else}{$i.weaponName}{/if}</td>
@@ -204,7 +204,7 @@
                 </tr>
     {foreach from=$destroyed.$slotindex item=i}
                 <tr class="kb-table-row-destroyed">
-                    <td class="item-icon" width="32" height="34" valign="top" onclick="window.location.href='?a=invtype&amp;id={$i.itemID}'">{$i.Icon}</td>
+                    <td class="item-icon" width="32" height="34" valign="top" onclick="window.location.href='{if !$is_IGB}?a=invtype&amp;id={$i.itemID}{else}javascript:CCPEVE.showInfo({$i.itemID}){/if}'">{$i.Icon}</td>
                     <td class="kb-table-cell">{$i.Name}</td>
                     <td width="30" align="center">{$i.Quantity}</td>
         {if $config->get('item_values')}
@@ -243,7 +243,7 @@
     {/foreach}
     {foreach from=$dropped.$slotindex item=i}
                 <tr class="kb-table-row-dropped">
-                    <td class="item-dropped-icon" onclick="window.location.href='?a=invtype&amp;id={$i.itemID}'" width="32" height="34" valign="top">{$i.Icon}</td>
+                    <td class="item-dropped-icon" onclick="window.location.href='{if !$is_IGB}?a=invtype&amp;id={$i.itemID}{else}javascript:CCPEVE.showInfo({$i.itemID}){/if}'" width="32" height="34" valign="top">{$i.Icon}</td>
                     <td class="kb-table-cell">{$i.Name}</td>
                     <td width="30" align="center">{$i.Quantity}</td>
         {if $config->get('item_values')}

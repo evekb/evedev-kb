@@ -183,6 +183,7 @@ foreach ($kill->involvedparties_ as $inv)
 	if ($pilot->getName() == $weapon->getName())
 	{
 		$involved[$i]['portrait'] = $corp->getPortraitURL(64);
+        $involved[$i]['ext_id'] = $weapon->getID();
 
 		if(!file_exists("img/ships/64_64/".$weapon->getID().".png"))
 			$involved[$i]['shipImage'] = $involved[$i]['portrait'];
@@ -192,6 +193,7 @@ foreach ($kill->involvedparties_ as $inv)
     else
     {
         $involved[$i]['portrait'] = $pilot->getPortraitURL(64);
+        $involved[$i]['ext_id'] = $pilot->getExternalID();
     }
 
     if ($weapon->getName() != "Unknown" && $weapon->getName() != $ship->getName())
