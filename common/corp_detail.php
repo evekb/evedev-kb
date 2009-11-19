@@ -23,6 +23,7 @@ class pCorpDetail extends pageAssembly
 		$this->crp_id = intval($_GET['crp_id']);
 		$this->crp_external_id = intval($_GET['crp_external_id']);
 		$this->view = $_GET['view'];
+		$this->viewList = array();
 
 		$this->menuOptions = array();
 
@@ -221,6 +222,8 @@ class pCorpDetail extends pageAssembly
 
 	function killList()
 	{
+		if(isset($this->viewList[$this->view])) return call_user_func_array($this->viewList[$this->view], array(&$this));
+
 		switch ($this->view)
 		{
 			case "":
@@ -605,6 +608,11 @@ class pCorpDetail extends pageAssembly
 	function addMenuItem($type, $name, $url = '')
 	{
 		$this->menuOptions[] = array($type, $name, $url);
+	}
+
+	function addView($view, $callback)
+	{
+		$this->viewList[$view] = $callback;
 	}
 }
 

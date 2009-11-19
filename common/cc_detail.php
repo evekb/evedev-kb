@@ -20,6 +20,7 @@ class pContractDetail extends pageAssembly
 		$this->ctr_id = intval($_GET['ctr_id']);
 
 		$this->view =  preg_replace('/[^a-zA-Z0-9_-]/','',$_GET['view']);
+		$this->viewList = array();
 		$this->contract = new Contract($this->ctr_id);
 
 		$this->menuOptions = array();
@@ -123,6 +124,8 @@ class pContractDetail extends pageAssembly
 	//! Build the killlists that are needed for the options selected.
 	function killList()
 	{
+		if(isset($this->viewList[$this->view])) return call_user_func_array($this->viewList[$this->view], array(&$this));
+
 		global $smarty;
 
 		$html = '';
@@ -268,6 +271,11 @@ class pContractDetail extends pageAssembly
 	function addMenuItem($type, $name, $url = '')
 	{
 		$this->menuOptions[] = array($type, $name, $url);
+	}
+
+	function addView($view, $callback)
+	{
+		$this->viewList[$view] = $callback;
 	}
 }
 

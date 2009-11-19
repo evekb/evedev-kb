@@ -14,6 +14,9 @@ class pSystemDetail extends pageAssembly
 		$this->sys_id = intval($_GET['sys_id']);
 		global $smarty;
 		$this->smarty = $smarty;
+		$this->view =  preg_replace('/[^a-zA-Z0-9_-]/','',$_GET['view']);
+		$this->viewList = array();
+		$this->menuOptions = array();
 		
 		$this->queue("start");
 		$this->queue("map");
@@ -40,9 +43,12 @@ class pSystemDetail extends pageAssembly
 	
 	function killList()
 	{
+
+		if(isset($this->viewList[$this->view])) return call_user_func_array($this->viewList[$this->view], array(&$this));
+
 		$klist = new KillList();
 		$klist->setOrdered(true);
-		if ($_GET['view'] == 'losses')
+		if ($this->view == 'losses')
 			involved::load($klist,'loss');
 		else
 			involved::load($klist,'kill');
@@ -53,9 +59,9 @@ class pSystemDetail extends pageAssembly
 			$klist->setPodsNoobShips(config::get('podnoobs'));
 		$klist->setLimit(20);
 
-		if ($_GET['view'] == 'recent' || !isset($_GET['view']))
+		if ($this->view == 'recent' || !isset($this->view))
 			$html .= "<div class='kb-kills-header'>20 most recent kills</div>";
-		elseif ($_GET['view'] == 'losses')
+		elseif ($this->view == 'losses')
 			$html .= "<div class='kb-kills-header'>All losses</div>";
 		else
 			$html .= "<div class='kb-kills-header'>All kills</div>";
@@ -100,6 +106,11 @@ class pSystemDetail extends pageAssembly
 	{
 		$this->menuOptions[] = array($type, $name, $url);
 	}
+
+	function addView($view, $callback)
+	{
+		$this->viewList[$view] = $callback;
+	}
 }
 
 $systemDetail = new pSystemDetail();
@@ -113,4 +124,3 @@ $context = $systemDetail->assemble();
 $systemDetail->page->addContext($context);
 
 $systemDetail->page->generate();
-?>

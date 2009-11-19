@@ -22,7 +22,8 @@ class pPilotDetail extends pageAssembly
 		$this->scl_id = intval($_GET['scl_id']);
 		$this->plt_id = intval($_GET['plt_id']);
 		$this->plt_external_id = intval($_GET['plt_external_id']);
-		$this->view = $_GET['view'];
+		$this->view =  preg_replace('/[^a-zA-Z0-9_-]/','',$_GET['view']);
+		$this->viewList = array();
 		$this->klist = null;
 		$this->llist = null;
 
@@ -98,7 +99,7 @@ class pPilotDetail extends pageAssembly
 			if(!isset($this->kill_summary))
 			{
 				$this->summary = new KillSummaryTable($this->klist, $this->llist);
-				if ($_GET['view'] == "ships_weapons") $this->summary->setFilter(false);
+				if ($this->view == "ships_weapons") $this->summary->setFilter(false);
 			}
 		}
 		$html .= $this->summary->generate();
@@ -120,7 +121,7 @@ class pPilotDetail extends pageAssembly
 			if(!isset($this->kill_summary))
 			{
 				$this->summary = new KillSummaryTable($this->klist, $this->llist);
-				if ($_GET['view'] == "ships_weapons") $this->summary->setFilter(false);
+				if ($this->view == "ships_weapons") $this->summary->setFilter(false);
 			}
 		}
 		global $smarty;
@@ -158,7 +159,10 @@ class pPilotDetail extends pageAssembly
 
 	function killList()
 	{
-		switch ($_GET['view'])
+
+		if(isset($this->viewList[$this->view])) return call_user_func_array($this->viewList[$this->view], array(&$this));
+
+		switch ($this->view)
 		{
 			case "kills":
 				$html .= "<div class='kb-kills-header'>All kills</div>";
@@ -288,6 +292,11 @@ class pPilotDetail extends pageAssembly
 	function addMenuItem($type, $name, $url = '')
 	{
 		$this->menuOptions[] = array($type, $name, $url);
+	}
+	
+	function addView($view, $callback)
+	{
+		$this->viewList[$view] = $callback;
 	}
 }
 

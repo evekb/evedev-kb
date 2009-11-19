@@ -21,6 +21,7 @@ class pAllianceDetail extends pageAssembly
 		$this->all_id = intval($_GET['all_id']);
 		$this->all_external_id = intval($_GET['all_external_id']);
 		$this->view = $_GET['view'];
+		$this->viewList = array();
 		$this->crp_id = intval($_GET['crp_id']);
 
 		$this->menuOptions = array();
@@ -120,7 +121,7 @@ class pAllianceDetail extends pageAssembly
 		if(!isset($this->kill_summary))
 		{
 			$this->kill_summary = new KillSummaryTable();
-			$this->kill_summary->addInvolvedAlliance($this->alliance);
+			$this->kill_summary->addInvolvedAlliance($this->all_id);
 			$this->kill_summary->generate();
 		}
 		if (file_exists("img/alliances/".$this->alliance->getUnique().".png"))
@@ -147,7 +148,7 @@ class pAllianceDetail extends pageAssembly
 		if(isset($this->kill_summary)) return $this->kill_summary->generate();
 
 		$this->kill_summary = new KillSummaryTable();
-		$this->kill_summary->addInvolvedAlliance($this->alliance);
+		$this->kill_summary->addInvolvedAlliance($this->all_id);
 		return $this->kill_summary->generate();
 	}
 
@@ -158,6 +159,9 @@ class pAllianceDetail extends pageAssembly
 			$smarty->assign('view', 'recent_activity');
 		else
 			$smarty->assign('view', $this->view);
+
+		if(isset($this->viewList[$this->view])) return call_user_func_array($this->viewList[$this->view], array(&$this));
+
 		switch ($this->view)
 		{
 			case "":
@@ -630,9 +634,14 @@ class pAllianceDetail extends pageAssembly
 	{
 		$this->menuOptions[] = array($type, $name, $url);
 	}
+
+	function addView($view, $callback)
+	{
+		$this->viewList[$view] = $callback;
+	}
 }
 
-$allianceDetail = new pallianceDetail();
+$allianceDetail = new pAllianceDetail();
 event::call("allianceDetail_assembling", $allianceDetail);
 $html = $allianceDetail->assemble();
 $allianceDetail->page->setContent($html);
