@@ -14,7 +14,7 @@ define('KB_QUERYCACHEDIR', KB_CACHEDIR.'/SQL');
 
 // current version: major.minor.sub
 // unpair numbers for minor = development version
-define('KB_VERSION', '2.1 alpha');
+define('KB_VERSION', '3.0 Alpha');
 define('KB_RELEASE', '(Apocrypha)');
 
 // add new corporations here once you've added the logo to img/corps/

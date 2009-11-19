@@ -1,12 +1,39 @@
 -------------------------------------------
-Eve Development Network Killboard v2.1 alpha
+Eve Development Network Killboard v3.0.0 alpha
 -------------------------------------------
-
-Incorporates changes and additional mods from Alvar's EDK Full Package v150.13Apoc.33.2622.0
 
 VERSION HISTORY
+v3.0
+PHP5 support only. PHP 4 may work in some cases.
+External ID for kills, corps and alliances added
+large database handling improved
+extended theme support
+event driven page modification
+
+v2.0.7 (svn r476)
+PHP4 compatibility improved
+Install speed increased
+EFT fittings show subsystems
+session handling improved
+corrected ship class filtering
+pilot's corp reset correctly
+eve-dev references changed to eve-id
+
+v2.0.6 (svn r459)
+Security fixes
+Updated parser
+Improved handling of large cache directories
+cache clearing script included
+-------------------------------------------
+v2.0.3 (svn 445)
+- various bufixes
+- PHP4 support
+-------------------------------------------
+v2.0.1 (svn 435)
+- first release of EDK v2
 -------------------------------------------
 v2.0.0 RC1 (svn 370)
+- Incorporates changes and additional mods from Alvar's EDK Full Package v150.13Apoc.33.2622.0
 - Database structure changed
 - SQL queries optimised for speed and error protection.
 - feed syndication optimised
@@ -57,7 +84,7 @@ v150.13Apoc.33.2622.0 - Updates for
 //  VERSION NOMENCLATURE
 -------------------------------------------
 [Base Ver].[dB Ver].[API Ver].[Smarty Ver].[Change Release TB]
-v150.12Apoc.32.2622.0 is 
+v150.12Apoc.32.2622.0 is
 - Base 1.5.0
 - Database 1.2 for Apocrypha
 - API module is to 3.2
@@ -70,7 +97,7 @@ v150.12Apoc.32.2622.0 is
 -------------------------------------------
 
 
-// MODS INCLUDED IN THIS PACKAGE     
+// MODS INCLUDED IN THIS PACKAGE
 -------------------------------------------
 API v3.3 ....................... Capt Thunk
 Corp Logo Generator ............ Capt Thunk
@@ -79,22 +106,22 @@ Extended Fitting Mod .......... Unknown ATM
 Apoc Fitting Mod................. btcentral
 
 
-// SUPPORT               
+// SUPPORT
 -------------------------------------------
 Web:                http://eve-id.net/forum/
 
-Check out the EVE-Development Network for 
-general support, bugfixes and new versions 
+Check out the EVE-Development Network for
+general support, bugfixes and new versions
 at http://www.eve-id.net
 
 Developers wanted!
-If you'd like to contribute to further version 
+If you'd like to contribute to further version
 of this killboard, sign up for the EVE-Dev forums!
 
-// REQUIREMENTS            
+// REQUIREMENTS
 -------------------------------------------
 - Webserver (apache)
-- PHP 5.0.0+
+- PHP 4.0.9+
 - Mysql 4.10.+
 - GD 2 or higher
 
@@ -102,10 +129,10 @@ of this killboard, sign up for the EVE-Dev forums!
 // SETUP
 -------------------------------------------
 - Upload the whole package to a webhost**
-- Point your webbrowser to /install inside the 
+- Point your webbrowser to /install inside the
     EDK-Directory
 - Follow the instructions
-- Don't forget to delete the install folder after 
+- Don't forget to delete the install folder after
     installation or restrict the access to it!
 - Have fun ;)
 
@@ -114,7 +141,7 @@ o/ EVE Development Network
 
 ** Alvar recommends the use of FileZilla (free) to
 upload the files, as it has a built in easy to use
-error log, that allows you to upload files if they 
+error log, that allows you to upload files if they
 time out or error on the upload due to server
 settings.
 

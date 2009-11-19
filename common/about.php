@@ -22,25 +22,33 @@ class pAbout extends pageAssembly
 	
 	function developers()
 	{
-		// i store the names here for an easy edit
-		$developer = array('exi (Developer)',
-			'Beansman (Developer)',
-			'Ralle030583 (Developer)',
-			'Hon Kovell (Developer)');
+		// Current active developers
+		$currentDeveloper = array(
+			'Hon Kovell',
+			'mastergamer');
 
-		$contributor = array('JaredC01',
+		// Inactive developers
+		$developer = array(
+			'exi',
+			'Beansman',
+			'Ralle030583');
+
+		// Other contributors
+		$contributor = array(
+			'FriedRoadKill', // Parser, db updates and image packs
+			'Karbowiak',
+			'JaredC01',
 			'liquidism',
 			'Mitchman',
 			'Coni',
-			'FriedRoadKill',
 			'bunjiboys',
-			'Karbowiak',
 			'EDG',
-			'Duncan - Shailo Koljas',
-			'mastergamer',
-			'Captain Thunk');
+			'Captain Thunk' // API mod
+		);
+		sort($developer);
 		sort($contributor);
 
+		$this->smarty->assign_by_ref('current_developer', $currentDeveloper);
 		$this->smarty->assign_by_ref('developer', $developer);
 		$this->smarty->assign('contributor', $contributor);
 		$this->smarty->assign('version', KB_VERSION." ".KB_RELEASE." rev ".SVN_REV);
