@@ -41,8 +41,11 @@ options::cat('Appearance', 'Kill Details', 'Kill Details');
 options::fadd('Display killpoints', 'kill_points', 'checkbox');
 options::fadd('Display losspoints', 'loss_points', 'checkbox');
 options::fadd('Display totalpoints', 'total_points', 'checkbox');
+options::fadd('Show Total ISK Loss, Damage at top', 'apocfitting_showiskd', 'checkbox');
+options::fadd('Show Top Damage Dealer/Final Blow Boxes', 'apocfitting_showbox', 'checkbox');
+options::fadd('Show involved parties summary', 'apocfitting_showext', 'checkbox');
 options::fadd('Include dropped value in total loss', 'kd_droptototal', 'checkbox');
-options::fadd('Use lighter green for dropped items', 'kd_lgreen', 'checkbox');
+
 options::fadd('Show Faction items tag', 'kd_ftag', 'checkbox');
 options::fadd('Show Deadspace items tag', 'kd_dtag', 'checkbox');
 options::fadd('Show Officer items tag', 'kd_otag', 'checkbox');
@@ -55,6 +58,7 @@ options::fadd('Panel Theme', 'fp_theme', 'select', array('admin_appearance', 'cr
 options::fadd('Panel Style', 'fp_style', 'select', array('admin_appearance', 'createPanelStyle'));
 options::fadd('Item Highlight Style', 'fp_highstyle', 'select', array('admin_appearance', 'createHighStyle'));
 options::fadd('Ammo Highlight Style', 'fp_ammostyle', 'select', array('admin_appearance', 'createAmmoStyle'));
+options::fadd('Show Ammo, charges, etc', 'apocfitting_showammo', 'checkbox');
 options::fadd('Highlight Tech II items', 'fp_ttag', 'checkbox');
 options::fadd('Highlight Faction items', 'fp_ftag', 'checkbox');
 options::fadd('Highlight Deadspace items', 'fp_dtag', 'checkbox');
