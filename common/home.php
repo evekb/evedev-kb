@@ -211,17 +211,17 @@ class pHome extends pageAssembly
 			involved::load($tklist,'kill');
 
 			$tklist->generate();
-			$tkbox = new AwardBox($tklist, "Top killers", "kills in week " . $this->week, "kills", "eagle");
+			$tkbox = new AwardBox($tklist, "Top killers", "kills in " . $this->getCurrentPeriod(), "kills", "eagle");
 			$html .= $tkbox->generate();
 		}
 		if($this->view == 'losses')
 		{
 			$tllist = new TopLossesList();
-			$this->loadTime($tklist);
+			$this->loadTime($tllist);
 			involved::load($tllist,'loss');
 
 			$tllist->generate();
-			$tlbox = new AwardBox($tllist, "Top losers", "losses in week ".$this->week, "losses", "moon");
+			$tlbox = new AwardBox($tllist, "Top losers", "losses in " . $this->getCurrentPeriod(), "losses", "moon");
 			$html .= $tlbox->generate();
 		}
 		if ($this->view != 'losses')
@@ -233,7 +233,7 @@ class pHome extends pageAssembly
 			involved::load($tklist,'kill');
 
 			$tklist->generate();
-			$tkbox = new AwardBox($tklist, "Top scorers", "points in week " . $this->week, "points", "redcross");
+			$tkbox = new AwardBox($tklist, "Top scorers", "points in " . $this->getCurrentPeriod(), "points", "redcross");
 			$html .= $tkbox->generate();
 		}
 		return $html;
@@ -382,7 +382,7 @@ class pHome extends pageAssembly
 		return $this->previousPeriodLink;
 	}
 
-	function loadTime($object)
+	function loadTime(&$object)
 	{
 		if($this->week)
 		{
