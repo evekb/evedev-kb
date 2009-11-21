@@ -34,6 +34,7 @@ class pCorpDetail extends pageAssembly
 
 	}
 
+	//! Reset the assembly object to prepare for creating the context.
 	function context()
 	{
 		parent::__construct();
@@ -106,6 +107,7 @@ class pCorpDetail extends pageAssembly
 		$this->monthname = kbdate("F", strtotime("2000-".$this->month."-2"));
 	}
 
+	//! Build the summary table showing all kills and losses for this corporation.
 	function summaryTable()
 	{
 		if($this->view != '' && $this->view != 'kills'
@@ -119,6 +121,7 @@ class pCorpDetail extends pageAssembly
 		return $this->kill_summary->generate();
 	}
 
+	//! Show the overall statistics for this corporation.
 	function stats()
 	{
 		global $smarty;
@@ -220,6 +223,7 @@ class pCorpDetail extends pageAssembly
 		//return $smarty->fetch(get_tpl('corp_detail_stats'));
 	}
 
+	//! Build the killlists that are needed for the options selected.
 	function killList()
 	{
 		if(isset($this->viewList[$this->view])) return call_user_func_array($this->viewList[$this->view], array(&$this));
@@ -575,6 +579,9 @@ class pCorpDetail extends pageAssembly
 		}
 		return $html;
 	}
+	//! Build the menu.
+
+	//! Additional options that have been set are added to the menu.
 	function menu()
 	{
 		$menubox = new box("Menu");
@@ -604,12 +611,25 @@ class pCorpDetail extends pageAssembly
 		}
 		return $menubox->generate();
 	}
+	//! Add an item to the menu in standard box format.
 
+	/*!
+	 *  Only links need all 3 attributes
+	 * \param type Types can be caption, img, link, points.
+	 * \param name The name to display.
+	 * \param url Only needed for URLs.
+	 */
 	function addMenuItem($type, $name, $url = '')
 	{
 		$this->menuOptions[] = array($type, $name, $url);
 	}
 
+	//! Add a type of view to the options.
+
+	/*!
+	 * \param view The name of the view to recognise.
+	 * \param callback The method to call when this view is used.
+	 */
 	function addView($view, $callback)
 	{
 		$this->viewList[$view] = $callback;

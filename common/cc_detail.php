@@ -273,6 +273,12 @@ class pContractDetail extends pageAssembly
 		$this->menuOptions[] = array($type, $name, $url);
 	}
 
+	//! Add a type of view to the options.
+
+	/*!
+	 * \param view The name of the view to recognise.
+	 * \param callback The method to call when this view is used.
+	 */
 	function addView($view, $callback)
 	{
 		$this->viewList[$view] = $callback;

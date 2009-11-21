@@ -51,7 +51,6 @@ $html .= "</table>";
 $klist = $contract->getKillList();
 $llist = $contract->getLossList();
 $killsummary = new KillSummaryTable($klist, $llist);
-$killsummary->setBreak(config::get('summarytable_rowcount'));
 if ($_GET['view'] == "")
     $killsummary->setFilter(false);
 
@@ -67,7 +66,6 @@ switch ($_GET['view'])
             $ll = &$target->getLossList();
             $summary = new KillSummaryTable($kl, $ll);
             $summary->setVerbose(true);
-            $summary->setBreak(13);
             $summary->setView('combined');
 
             $html .= "<br><div class=kb-contract-target-header>Target ".$target->getType()." - ";

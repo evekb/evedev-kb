@@ -36,6 +36,7 @@ class pPilotDetail extends pageAssembly
 
 	}
 
+	//! Reset the assembly object to prepare for creating the context.
 	function context()
 	{
 		parent::__construct();
@@ -84,6 +85,7 @@ class pPilotDetail extends pageAssembly
 		$this->corp = $this->pilot->getCorp();
 		$this->alliance = $this->corp->getAlliance();
 	}
+	//! Build the summary table showing all kills and losses for this pilot.
 	function summaryTable()
 	{
 		if(is_null($this->klist) || is_null($this->llist))
@@ -106,6 +108,7 @@ class pPilotDetail extends pageAssembly
 		return $html;
 	}
 
+	//! Show the overall statistics for this alliance.
 	function stats()
 	{
 		if(is_null($this->klist) || is_null($this->llist))
@@ -157,6 +160,7 @@ class pPilotDetail extends pageAssembly
 		return $smarty->fetch(get_tpl('pilot_detail_stats'));
 	}
 
+	//! Build the killlists that are needed for the options selected.
 	function killList()
 	{
 
@@ -245,6 +249,9 @@ class pPilotDetail extends pageAssembly
 		}
 		return $html;
 	}
+	//! Build the menu.
+
+	//! Additional options that have been set are added to the menu.
 	function menu()
 	{
 		$menubox = new box("Menu");
@@ -289,11 +296,25 @@ class pPilotDetail extends pageAssembly
 		return $html;
 	}
 
+	//! Add an item to the menu in standard box format.
+
+	/*!
+	 *  Only links need all 3 attributes
+	 * \param type Types can be caption, img, link, points.
+	 * \param name The name to display.
+	 * \param url Only needed for URLs.
+	 */
 	function addMenuItem($type, $name, $url = '')
 	{
 		$this->menuOptions[] = array($type, $name, $url);
 	}
-	
+
+	//! Add a type of view to the options.
+
+	/*!
+	 * \param view The name of the view to recognise.
+	 * \param callback The method to call when this view is used.
+	 */
 	function addView($view, $callback)
 	{
 		$this->viewList[$view] = $callback;

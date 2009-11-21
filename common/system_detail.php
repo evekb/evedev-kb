@@ -23,6 +23,11 @@ class pSystemDetail extends pageAssembly
 		$this->queue("killList");
 	}
 	
+	//! Start constructing the page.
+
+	/*! Prepare all the shared variables such as dates and check alliance ID.
+	 *
+	 */
 	function start()
 	{
 		if (!$this->sys_id)
@@ -41,6 +46,7 @@ class pSystemDetail extends pageAssembly
 		return $this->smarty->fetch(get_tpl("system_detail_map"));
 	}
 	
+	//! Build the killlists that are needed for the options selected.
 	function killList()
 	{
 
@@ -78,13 +84,17 @@ class pSystemDetail extends pageAssembly
 		return $html;
 	}
 	
+	//! Reset the assembly object to prepare for creating the context.
 	function context()
 	{
 		parent::__construct();
-		$this->queue("box");
+		$this->queue("menu");
 	}
 	
-	function box()
+	//! Build the menu.
+
+	//! Additional options that have been set are added to the menu.
+	function menu()
 	{
 		$menubox = new box("Menu");
 		$menubox->setIcon("menu-item.gif");
@@ -101,12 +111,25 @@ class pSystemDetail extends pageAssembly
 		}
 		return $menubox->generate();
 	}
+	//! Add an item to the menu in standard box format.
 
+	/*!
+	 *  Only links need all 3 attributes
+	 * \param type Types can be caption, img, link, points.
+	 * \param name The name to display.
+	 * \param url Only needed for URLs.
+	 */
 	function addMenuItem($type, $name, $url = '')
 	{
 		$this->menuOptions[] = array($type, $name, $url);
 	}
 
+	//! Add a type of view to the options.
+
+	/*!
+	 * \param view The name of the view to recognise.
+	 * \param callback The method to call when this view is used.
+	 */
 	function addView($view, $callback)
 	{
 		$this->viewList[$view] = $callback;
