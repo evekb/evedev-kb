@@ -105,19 +105,10 @@ class KillSummaryTable
                                                      'losses' => 0, 'losses_isk' => 0);
         }
 
-        $sql = 'SELECT count(*) AS knb, scl_id, scl_class,';
-        if (config::get('ship_values'))
-        {
-            $sql .= ' sum(ifnull(ksv.shp_value,scl.scl_value)) AS kisk FROM kb3_kills kll
-                    INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )
-                    left join kb3_ships_values ksv on (shp.shp_id = ksv.shp_id)';
-        }
-        else
-        {
-            $sql .= ' sum(scl.scl_value) AS kisk FROM kb3_kills kll
+		$sql = 'SELECT count(kll.kll_id) AS knb, scl_id, scl_class,';
+		$sql .= ' sum(kll_isk_loss) AS kisk FROM kb3_kills kll
                     INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )';
-        }
-        $sql .= ' INNER JOIN kb3_ship_classes scl ON ( scl.scl_id = shp.shp_class )';
+		$sql .= ' INNER JOIN kb3_ship_classes scl ON ( scl.scl_id = shp.shp_class )';
 
         if ($this->inv_crp_)
         {
@@ -140,19 +131,10 @@ class KillSummaryTable
         }
 
 
-        $sql = 'SELECT count(*) AS lnb, scl_id, scl_class,';
-        if (config::get('ship_values'))
-        {
-            $sql .= ' sum(ifnull(ksv.shp_value,scl.scl_value)) AS lisk FROM kb3_kills kll
-                    INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )
-                    left join kb3_ships_values ksv on (shp.shp_id = ksv.shp_id)';
-        }
-        else
-        {
-            $sql .= ' sum(scl.scl_value) AS lisk FROM kb3_kills kll
+		$sql = 'SELECT count( kll_id) AS lnb, scl_id, scl_class,';
+		$sql .= ' sum(kll_isk_loss) AS lisk FROM kb3_kills kll
                     INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )';
-        }
-        $sql .= ' INNER JOIN kb3_ship_classes scl ON ( scl.scl_id = shp.shp_class )';
+		$sql .= ' INNER JOIN kb3_ship_classes scl ON ( scl.scl_id = shp.shp_class )';
 
         if ($this->inv_crp_)
         {
@@ -272,7 +254,7 @@ class KillSummaryTable
                 $class = 'kb-table-row-even';
             }
 
-            if ($_GET['scl_id'] != "" && $v['id'] == $_GET['scl_id'])
+            if (isset($_GET['scl_id']) && $v['id'] == $_GET['scl_id'])
                 $highlight = "-hl";
             else
                 $highlight = "";
@@ -336,7 +318,7 @@ class KillSummaryTable
                      .$this->tkcount_.' Ships killed ('.round($this->tkisk_/1000000, 2).'M ISK)</span></td><td width=49%><span class="losscount">'.$this->tlcount_.' Ships lost ('.round($this->tlisk_/1000000, 2).'M ISK)</span></td></tr></table>';
         }
 
-        if ($_GET['scl_id'] != "")
+        if (isset($_GET['scl_id']))
         {
             $html .= "<table align=center><tr><td align=center valign=top class=weeknav>";
             $qrystring = preg_replace("/&scl_id=([0-9]?[0-9])/", "", $_SERVER['QUERY_STRING']);
