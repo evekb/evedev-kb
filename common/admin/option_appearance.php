@@ -28,11 +28,10 @@ options::fadd('Display involved count on Front Page', 'killlist_involved', 'chec
 options::fadd('Display alliance logos on Front Page', 'killlist_alogo', 'checkbox');
 options::fadd('Show Corp: / Alliance: on Front Page', 'corpalliance-name', 'checkbox');
 options::fadd('Display clock on Front Page', 'show_clock', 'checkbox');
+options::fadd('Display Monthly stats', 'show_monthly', 'checkbox', '', '', 'Default is weekly');
 
 options::cat('Appearance', 'Front Page', 'Kill Summary Tables');
-options::fadd('Display Summary Table (Also works on the Monthly mod)', 'summarytable', 'checkbox');
-//options::fadd('Amount in each Column', 'summarytable_rowcount', 'edit:size:2');
-//options::fadd('Number of columns', 'summarytable_colcount', 'edit:size:2');
+options::fadd('Display Summary Table', 'summarytable', 'checkbox');
 options::fadd('Display a summary line below a Summary Table', 'summarytable_summary', 'checkbox');
 options::fadd('Display efficiency in the summary line', 'summarytable_efficiency', 'checkbox');
 options::fadd('Amount of shown kills on front, kills and losses pages', 'killcount', 'edit:size:2');
