@@ -10,8 +10,8 @@ class known_members
 	}
 	function addMenu($home)
 	{
-		$home->addMenuItem("link","Known Members", "?a=corp_detail&crp_id=" .
-			$home->corp->getID() . "&view=known_members");
+		$home->addMenuItem("link","Known Members", "?a=corp_detail&amp;crp_id=" .
+			$home->corp->getID() . "&amp;view=known_members");
 	}
 	function view($home)
 	{
