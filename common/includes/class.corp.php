@@ -10,9 +10,10 @@ class Corporation
     /*!
      * \param $id The corporation ID.
      */
-	function Corporation($id = 0)
+	function Corporation($id = 0, $externalIDFlag = false)
 	{
-		$this->id_ = intval($id);
+		if($externalIDFlag) $this->externalid_=intval($id);
+		else $this->id_ = intval($id);
 		$this->executed_ = false;
 	}
 	//! Return whether this corporation is an NPC corporation.
@@ -77,7 +78,13 @@ class Corporation
 	//! Return the corporation ID.
 	function getID()
 	{
-		return $this->id_;
+		if($this->id_) return $this->id_;
+		elseif($this->externalid_)
+		{
+			$this->execQuery();
+			return $this->id_;
+		}
+		else return 0;
 	}
 	//! Return the corporation name.
 	function getName()
@@ -114,8 +121,10 @@ class Corporation
 		if (!$this->executed_)
 		{
 			$qry = new DBQuery();
-			$qry->execute("select * from kb3_corps
-	  	                   where crp_id = ".$this->id_);
+			$sql = "select * from kb3_corps where ";
+			if($this->externalid_) $sql .= "crp_external_id = ".$this->externalid_;
+			else $sql .= "crp_id = ".$this->id_;
+			$qry->execute($sql);
 			$row = $qry->getRow();
 			$this->id_ = intval($row['crp_id']);
 			$this->name_ = $row['crp_name'];

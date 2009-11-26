@@ -7,9 +7,10 @@ class Alliance
     /*!
      * \param $id The alliance ID.
      */
-    function Alliance($id = null)
-    {
-        $this->id_ = intval($id);
+    function Alliance($id = 0, $externalIDFlag = false)
+	{
+		if($externalIDFlag) $this->externalid_=intval($id);
+		else $this->id_ = intval($id);
         $this->executed_ = false;
 		$this->name_ = '';
     }
@@ -35,7 +36,13 @@ class Alliance
 	//! Return the alliance ID.
 	function getID()
     {
-        return $this->id_;
+		if($this->id_) return $this->id_;
+		elseif($this->externalid_)
+		{
+			$this->execQuery();
+			return $this->id_;
+		}
+		else return 0;
     }
     //! Return the alliance name stripped of all non-ASCII non-alphanumeric characters.
     function getUnique()
@@ -55,8 +62,12 @@ class Alliance
         if (!$this->executed_)
         {
 			$qry = new DBQuery();
-            $qry->execute("select * from kb3_alliances where all_id = " . $this->id_);
+			$sql = "select * from kb3_alliances where ";
+			if($this->externalid_) $sql .= "all_external_id = ".$this->externalid_;
+			else $sql .= "all_id = ".$this->id_;
+			$qry->execute($sql);
             $row = $qry->getRow();
+			$this->id_ = $row['all_id'];
 			$this->name_ = $row['all_name'];
 			$this->externalid_ = intval($row['all_external_id']);
 			$this->executed_ = true;
