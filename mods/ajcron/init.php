@@ -1,4 +1,5 @@
 <?php
+require_once('common/xajax/xajax.php');
 
 // make sure we are only running if xajax is enabled
 event::register('mod_xajax_initialised', 'ajcron::run');
