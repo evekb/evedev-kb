@@ -1,8 +1,9 @@
 {cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
+<table class="kb-table" width="398" cellspacing="1">
 	<tr class="{cycle name="ccl"}">
 		<td width="64" height="64" rowspan="3"><img src="{$VictimShipImg}" width="64" height="64" alt="{$ShipName}" /></td>
 		<td class="kb-table-cell"><b>Ship:</b></td>
-		<td class="kb-table-cell"><b><a href="{if !$is_IGB}?a=invtype&amp;id={$i.ShipID}{else}javascript:CCPEVE.showInfo({$i.ShipID}{/if}">{$ShipName}</a></b> ({$ClassName})</td>
+		<td class="kb-table-cell"><b><a href="{if !$is_IGB}?a=invtype&amp;id={$ShipID}{else}javascript:CCPEVE.showInfo({$ShipID}{/if}">{$ShipName}</a></b> ({$ClassName})</td>
 	</tr>
 	<tr class="{cycle name="ccl"}">
 		<td class="kb-table-cell"><b>Location:</b></td>

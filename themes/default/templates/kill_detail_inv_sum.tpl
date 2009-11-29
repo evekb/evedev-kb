@@ -1,4 +1,3 @@
-{cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
             <div class="block-header">Involved parties: {$InvolvedPartyCount}</div>
 
             {if $showext && $InvolvedPartyCount > 4}

@@ -1,4 +1,3 @@
-{cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
 <div class="block-header">Ship details</div>
 <table class="kb-table" width="398" border="0" cellspacing="1">
 {foreach from=$slots item="slot" key="slotindex"}
@@ -91,6 +90,7 @@
     {/foreach}
 {/if}
 {/foreach}
+{cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
 {if $item_values}
 	<tr class="{cycle name="ccl"}">
 		<td align="right" colspan="3"><b>Damage taken:</b></td>
