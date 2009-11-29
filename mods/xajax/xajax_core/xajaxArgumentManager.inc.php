@@ -13,7 +13,8 @@
 /*
 	@package xajax
 	@version $Id: xajaxArgumentManager.inc.php 362 2007-05-29 15:32:24Z calltoconstruct $
-	@copyright Copyright (c) 2005-2006 by Jared White & J. Max Wilson
+	@copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
+	@copyright Copyright (c) 2008-2009 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
 	@license http://www.xajaxproject.org/bsd_license.txt BSD License
 */
 
@@ -69,6 +70,34 @@ class xajaxArgumentManager
 	*/
 	var $aSequence;
 	
+	/*
+		Function: convertStringToBool
+		
+		Converts a string to a bool var.
+		
+		Parameters:
+			$sValue - (string): 
+				
+		Returns:
+			(bool) : true / false
+	
+	*/
+	
+	function convertStringToBool($sValue)
+	{
+		if (0 == strcasecmp($sValue, 'true'))
+			return true;
+		if (0 == strcasecmp($sValue, 'false'))
+			return false;
+		if (is_numeric($sValue))
+		{
+			if (0 == $sValue)
+				return false;
+			return true;
+		}
+		return false;
+	}
+	
 	function argumentStripSlashes(&$sArg)
 	{
 		if (false == is_string($sArg))
@@ -91,11 +120,10 @@ class xajaxArgumentManager
 		
 		$nCurrent = 0;
 		$nLast = 0;
-//		$sText = '';
 		$aExpecting = array();
 		$nFound = 0;
 		list($aExpecting, $nFound) = $this->aSequence['start'];
-
+		
 		$nLength = strlen($sArg);
 			
 		$sKey = '';
@@ -108,64 +136,72 @@ class xajaxArgumentManager
 			foreach ($aExpecting as $sExpecting => $nExpectedLength)
 			{
 				if ($sArg[$nCurrent] == $sExpecting[0])
-				if ($sExpecting == substr($sArg, $nCurrent, $nExpectedLength))
 				{
-					list($aExpecting, $nFound) = $this->aSequence[$sExpecting];
-					
-					switch ($nFound)
+					if ($sExpecting == substr($sArg, $nCurrent, $nExpectedLength))
 					{
-					case 3:	// v
-						$sKey = '';
-						break;
-					case 4:	// /v
-						$sKey = str_replace(
-							array('<'.'![CDATA[', ']]>'), 
-							'', 
-//							$sText
-							substr($sArg, $nLast, $nCurrent - $nLast)
-							);
-						break;
-					case 5:	// k
-						$mValue = '';
-						break;
-					case 6:	// /k
-						if ($nLast < $nCurrent)
+						list($aExpecting, $nFound) = $this->aSequence[$sExpecting];
+						
+						switch ($nFound)
 						{
-							$mValue = str_replace(
+						case 3:	// k
+							$sKey = '';
+							break;
+						case 4:	// /k
+							$sKey = str_replace(
 								array('<'.'![CDATA[', ']]>'), 
 								'', 
-//								$sText
 								substr($sArg, $nLast, $nCurrent - $nLast)
 								);
+							break;
+						case 5:	// v
+							$mValue = '';
+							break;
+						case 6:	// /v
+							if ($nLast < $nCurrent)
+							{
+								$mValue = str_replace(
+									array('<'.'![CDATA[', ']]>'), 
+									'', 
+									substr($sArg, $nLast, $nCurrent - $nLast)
+									);
+								
+								$cType = substr($mValue, 0, 1);
+								$sValue = substr($mValue, 1);
+								switch ($cType) {
+									case 'S': $mValue = false === $sValue ? '' : $sValue;  break;
+									case 'B': $mValue = $this->convertStringToBool($sValue); break;
+									case 'N': $mValue = floatval($sValue); break;
+									case '*': $mValue = null; break;
+								}
+							}
+							break;
+						case 7:	// /e
+							$aArg[$sKey] = $mValue;
+							break;
+						case 1:	// xjxobj
+							++$nStackDepth;
+							array_push($aStack, $aArg);
+							$aArg = array();
+							array_push($aStack, $sKey);
+							$sKey = '';
+							break;
+						case 8:	// /xjxobj
+							if (1 < $nStackDepth) {
+								$mValue = $aArg;								
+								$sKey = array_pop($aStack);
+								$aArg = array_pop($aStack);
+								--$nStackDepth;
+							} else {
+								$sArg = $aArg;
+								return;
+							}
+							break;
 						}
-						break;
-					case 7:	// /e
-						$aArg[$sKey] = $mValue;
-						break;
-					case 1:	// xjxobj
-						++$nStackDepth;
-						array_push($aStack, $aArg);
-						$aArg = array();
-						array_push($aStack, $sKey);
-						$sKey = '';
-						break;
-					case 8:	// /xjxobj
-						if (1 < $nStackDepth) {
-							$mValue = $aArg;								
-							$sKey = array_pop($aStack);
-							$aArg = array_pop($aStack);
-							--$nStackDepth;
-						} else {
-							$sArg = $aArg;
-							return;
-						}
+						$nCurrent += $nExpectedLength;
+						$nLast = $nCurrent;
+						$bFound = true;
 						break;
 					}
-					$nCurrent += $nExpectedLength;
-					$nLast = $nCurrent;
-//					$sText = '';
-					$bFound = true;
-					break;
 				}
 			}
 			
@@ -179,9 +215,18 @@ class xajaxArgumentManager
 						$sArg
 						);
 					
+					$cType = substr($sArg, 0, 1);
+					$sValue = substr($sArg, 1);
+					switch ($cType) {
+						case 'S': $sArg = false === $sValue ? '' : $sValue;  break;
+						case 'B': $sArg = $this->convertStringToBool($sValue); break;
+						case 'N': $sArg = floatval($sValue); break;
+						case '*': $sArg = null; break;
+					}
+					
 					return;
 				}
-
+				
 //				for larger arg data, performance may suffer using concatenation				
 //				$sText .= $sArg[$nCurrent];
 				$nCurrent++;
@@ -192,9 +237,9 @@ class xajaxArgumentManager
 		
 		trigger_error(
 			$objLanguageManager->getText('ARGMGR:ERR:01') 
-			. $sExpected 
+			. $sExpecting 
 			. $objLanguageManager->getText('ARGMGR:ERR:02') 
-			. $sChunk
+			. $sArg
 			, E_USER_ERROR
 			);
 	}
@@ -214,7 +259,7 @@ class xajaxArgumentManager
 					unset($mArg[$sKey]);
 					$sKey = $sNewKey;
 				}
-
+				
 				$this->argumentDecodeUTF8_iconv($mArg[$sKey]);
 			}
 		}
@@ -237,7 +282,7 @@ class xajaxArgumentManager
 					unset($mArg[$sKey]);
 					$sKey = $sNewKey;
 				}
-
+				
 				$this->argumentDecodeUTF8_mb_convert_encoding($mArg[$sKey]);
 			}
 		}
@@ -260,7 +305,7 @@ class xajaxArgumentManager
 					unset($mArg[$sKey]);
 					$sKey = $sNewKey;
 				}
-
+				
 				$this->argumentDecodeUTF8_utf8_decode($mArg[$sKey]);
 			}
 		}
@@ -277,6 +322,7 @@ class xajaxArgumentManager
 	function xajaxArgumentManager()
 	{
 		$this->aArgs = array();
+		
 		$this->bDecodeUTF8Input = false;
 		$this->sCharacterEncoding = 'UTF-8';
 		$this->nMethod = XAJAX_METHOD_UNKNOWN;
@@ -325,7 +371,7 @@ class xajaxArgumentManager
 			$this->nMethod = XAJAX_METHOD_GET;
 			$this->aArgs = $_GET['xjxargs'];
 		}
-
+		
 		if (1 == get_magic_quotes_gpc())
 			array_walk($this->aArgs, array(&$this, 'argumentStripSlashes'));
 		
@@ -354,7 +400,11 @@ class xajaxArgumentManager
 		
 		Accepts configuration settings from the main <xajax> object.
 		
+		Parameters:
+		
+		
 		The <xajaxArgumentManager> tracks the following configuration settings:
+		
 			<decodeUTF8Input> - (boolean): See <xajaxArgumentManager->bDecodeUTF8Input>
 			<characterEncoding> - (string): See <xajaxArgumentManager->sCharacterEncoding>
 	*/

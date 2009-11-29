@@ -13,7 +13,8 @@
 /*
 	@package xajax
 	@version $Id: xajaxPluginManager.inc.php 362 2007-05-29 15:32:24Z calltoconstruct $
-	@copyright Copyright (c) 2005-2006 by Jared White & J. Max Wilson
+	@copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
+	@copyright Copyright (c) 2008-2009 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
 	@license http://www.xajaxproject.org/bsd_license.txt BSD License
 */
 
@@ -80,7 +81,7 @@ class xajaxPluginManager
 		
 		Returns:
 		
-		object - a reference to the one and only instance of the
+		object : a reference to the one and only instance of the
 			plugin manager.
 	*/
 	function &getInstance()
@@ -96,10 +97,14 @@ class xajaxPluginManager
 		Function: loadPlugins
 		
 		Loads plugins from the folders specified.
+		
+		Parameters:
+			$aFolders - (array): Array of folders to check for plugins
 	*/
 	function loadPlugins($aFolders)
 	{
 		foreach ($aFolders as $sFolder) {
+			if (is_dir($sFolder))
 			if ($handle = opendir($sFolder)) {
 				while (!(false === ($sName = readdir($handle)))) {
 					$nLength = strlen($sName);
@@ -125,8 +130,13 @@ class xajaxPluginManager
 		automatically incremented until a free spot is found.  The plugin
 		is then inserted into the empty spot in the array.
 		
-		nPriorityNumber - (number):  The desired priority, used to order
+		Parameters:
+		
+		$aPlugins - (array): Plugins array
+		$objPlugin - (object): A reference to an instance of a plugin.
+		$nPriority - (number): The desired priority, used to order
 			the plugins.
+		
 	*/
 	function _insertIntoArray(&$aPlugins, &$objPlugin, $nPriority)
 	{
@@ -141,8 +151,11 @@ class xajaxPluginManager
 		
 		Registers a plugin.
 		
+		Parameters:
+		
 		objPlugin - (object):  A reference to an instance of a plugin.
 		
+		Note:
 		Below is a table for priorities and their description:
 		0 thru 999: Plugins that are part of or extensions to the xajax core
 		1000 thru 8999: User created plugins, typically, these plugins don't care about order
@@ -241,6 +254,8 @@ class xajaxPluginManager
 		Call each of the request plugins passing along the configuration
 		setting specified.
 		
+		Parameters:
+		
 		sName - (string):  The name of the configuration setting to set.
 		mValue - (mixed):  The value to be set.
 	*/
@@ -257,6 +272,9 @@ class xajaxPluginManager
 		
 		Call each of the request plugins and give them the opportunity to 
 		handle the registration of the specified function, event or callable object.
+		
+		Parameters:
+		 $aArgs - (array) :
 	*/
 	function register($aArgs)
 	{
@@ -305,6 +323,12 @@ class xajaxPluginManager
 		
 		Locate the specified response plugin by name and return
 		a reference to it if one exists.
+		
+		Parameters:
+			$sName - (string): Name of the plugin.
+			
+		Returns:
+			mixed : Returns plugin or false if not found.
 	*/
 	function &getPlugin($sName)
 	{

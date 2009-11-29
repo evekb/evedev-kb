@@ -13,7 +13,8 @@
 /*
 	@package xajax
 	@version $Id: xajaxPlugin.inc.php 362 2007-05-29 15:32:24Z calltoconstruct $
-	@copyright Copyright (c) 2005-2006 by Jared White & J. Max Wilson
+	@copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
+	@copyright Copyright (c) 2008-2009 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
 	@license http://www.xajaxproject.org/bsd_license.txt BSD License
 */
 
@@ -94,6 +95,9 @@ class xajaxRequestPlugin extends xajaxPlugin
 		Called by the <xajaxPluginManager> when a request is being processed.  This 
 		will only occur when <xajax> has determined that the current request is a valid
 		(registered) xajax enabled function via <xajax->canProcessRequest>.
+		
+		Returns:
+			false
 	*/
 	function processRequest()
 	{
@@ -126,6 +130,8 @@ class xajaxResponsePlugin extends xajaxPlugin
 		
 		Called by the <xajaxResponse> object that is currently being used
 		to build the response that will be sent to the client browser.
+		
+		Parameters:
 		
 		objResponse - (object):  A reference to the <xajaxResponse> object
 	*/

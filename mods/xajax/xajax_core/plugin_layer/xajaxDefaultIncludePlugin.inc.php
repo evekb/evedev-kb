@@ -13,7 +13,8 @@
 /*
 	@package xajax
 	@version $Id: xajaxDefaultIncludePlugin.inc.php 362 2007-05-29 15:32:24Z calltoconstruct $
-	@copyright Copyright (c) 2005-2006 by Jared White & J. Max Wilson
+	@copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
+	@copyright Copyright (c) 2008-2009 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
 	@license http://www.xajaxproject.org/bsd_license.txt BSD License
 */
 
@@ -42,6 +43,7 @@ class xajaxIncludeClientScriptPlugin extends xajaxRequestPlugin
 	var $bUseUncompressedScripts;
 	var $bDeferScriptGeneration;
 	var $sLanguage;
+	var $nResponseQueueSize;
 
 	function xajaxIncludeClientScriptPlugin()
 	{
@@ -60,6 +62,7 @@ class xajaxIncludeClientScriptPlugin extends xajaxRequestPlugin
 		$this->bUseUncompressedScripts = false;
 		$this->bDeferScriptGeneration = false;
 		$this->sLanguage = null;
+		$this->nResponseQueueSize = null;
 	}
 
 	/*
@@ -108,6 +111,8 @@ class xajaxIncludeClientScriptPlugin extends xajaxRequestPlugin
 				$this->bDeferScriptGeneration = $mValue;
 		} else if ('language' == $sName) {
 			$this->sLanguage = $mValue;
+		} else if ('responseQueueSize' == $sName) {
+			$this->nResponseQueueSize = $mValue;
 		}
 	}
 
@@ -158,48 +163,57 @@ class xajaxIncludeClientScriptPlugin extends xajaxRequestPlugin
 	{
 		$sCrLf = "\n";
 
-		print $sCrLf;
-		print '<';
-		print 'script type="text/javascript" ';
-		print $this->sDefer;
-		print 'charset="UTF-8">';
-		print $sCrLf;
-		print '/* <';
-		print '![CDATA[ */';
-		print $sCrLf;
-		print 'try { if (undefined == xajax.config) xajax.config = {}; } catch (e) { xajax = {}; xajax.config = {}; };';
-		print $sCrLf;
-		print 'xajax.config.requestURI = "';
-		print $this->sRequestURI;
-		print '";';
-		print $sCrLf;
-		print 'xajax.config.statusMessages = ';
-		print $this->sStatusMessages;
-		print ';';
-		print $sCrLf;
-		print 'xajax.config.waitCursor = ';
-		print $this->sWaitCursor;
-		print ';';
-		print $sCrLf;
-		print 'xajax.config.version = "';
-		print $this->sVersion;
-		print '";';
-		print $sCrLf;
-		print 'xajax.config.legacy = false;';
-		print $sCrLf;
-		print 'xajax.config.defaultMode = "';
-		print $this->sDefaultMode;
-		print '";';
-		print $sCrLf;
-		print 'xajax.config.defaultMethod = "';
-		print $this->sDefaultMethod;
-		print '";';
-		print $sCrLf;
-		print '/* ]]> */';
-		print $sCrLf;
-		print '<';
-		print '/script>';
-		print $sCrLf;
+		echo $sCrLf;
+		echo '<';
+		echo 'script type="text/javascript" ';
+		echo $this->sDefer;
+		echo 'charset="UTF-8">';
+		echo $sCrLf;
+		echo '/* <';
+		echo '![CDATA[ */';
+		echo $sCrLf;
+		echo 'try { if (undefined == xajax.config) xajax.config = {}; } catch (e) { xajax = {}; xajax.config = {}; };';
+		echo $sCrLf;
+		echo 'xajax.config.requestURI = "';
+		echo $this->sRequestURI;
+		echo '";';
+		echo $sCrLf;
+		echo 'xajax.config.statusMessages = ';
+		echo $this->sStatusMessages;
+		echo ';';
+		echo $sCrLf;
+		echo 'xajax.config.waitCursor = ';
+		echo $this->sWaitCursor;
+		echo ';';
+		echo $sCrLf;
+		echo 'xajax.config.version = "';
+		echo $this->sVersion;
+		echo '";';
+		echo $sCrLf;
+		echo 'xajax.config.legacy = false;';
+		echo $sCrLf;
+		echo 'xajax.config.defaultMode = "';
+		echo $this->sDefaultMode;
+		echo '";';
+		echo $sCrLf;
+		echo 'xajax.config.defaultMethod = "';
+		echo $this->sDefaultMethod;
+		echo '";';
+		
+		if (false === (null === $this->nResponseQueueSize))
+		{
+			echo $sCrLf;
+			echo 'xajax.config.responseQueueSize = ';
+			echo $this->nResponseQueueSize;
+			echo ';';
+		}
+		
+		echo $sCrLf;
+		echo '/* ]]> */';
+		echo $sCrLf;
+		echo '<';
+		echo '/script>';
+		echo $sCrLf;
 	}
 
 	/*
@@ -253,59 +267,59 @@ class xajaxIncludeClientScriptPlugin extends xajaxRequestPlugin
 		$sCrLf = "\n";
 		
 		foreach ($aJsFiles as $aJsFile) {
-			print '<';
-			print 'script type="text/javascript" src="';
-			print $sJsURI;
-			print $aJsFile[0];
-			print '" ';
-			print $this->sDefer;
-			print 'charset="UTF-8"><';
-			print '/script>';
-			print $sCrLf;
+			echo '<';
+			echo 'script type="text/javascript" src="';
+			echo $sJsURI;
+			echo $aJsFile[0];
+			echo '" ';
+			echo $this->sDefer;
+			echo 'charset="UTF-8"><';
+			echo '/script>';
+			echo $sCrLf;
 		}
 			
 		if (0 < $this->nScriptLoadTimeout) {
 			foreach ($aJsFiles as $aJsFile) {
-				print '<';
-				print 'script type="text/javascript" ';
-				print $this->sDefer;
-				print 'charset="UTF-8">';
-				print $sCrLf;
-				print '/* <';
-				print '![CDATA[ */';
-				print $sCrLf;
-				print 'window.setTimeout(';
-				print $sCrLf;
-				print ' function() {';
-				print $sCrLf;
-				print '  var scriptExists = false;';
-				print $sCrLf;
-				print '  try { if (';
-				print $aJsFile[1];
-				print '.isLoaded) scriptExists = true; }';
-				print $sCrLf;
-				print '  catch (e) {}';
-				print $sCrLf;
-				print '  if (!scriptExists) {';
-				print $sCrLf;
-				print '   alert("Error: the ';
-				print $aJsFile[1];
-				print ' Javascript component could not be included. Perhaps the URL is incorrect?\nURL: ';
-				print $sJsURI;
-				print $aJsFile[0];
-				print '");';
-				print $sCrLf;
-				print '  }';
-				print $sCrLf;
-				print ' }, ';
-				print $this->nScriptLoadTimeout;
-				print ');';
-				print $sCrLf;
-				print '/* ]]> */';
-				print $sCrLf;
-				print '<';
-				print '/script>';
-				print $sCrLf;
+				echo '<';
+				echo 'script type="text/javascript" ';
+				echo $this->sDefer;
+				echo 'charset="UTF-8">';
+				echo $sCrLf;
+				echo '/* <';
+				echo '![CDATA[ */';
+				echo $sCrLf;
+				echo 'window.setTimeout(';
+				echo $sCrLf;
+				echo ' function() {';
+				echo $sCrLf;
+				echo '  var scriptExists = false;';
+				echo $sCrLf;
+				echo '  try { if (';
+				echo $aJsFile[1];
+				echo '.isLoaded) scriptExists = true; }';
+				echo $sCrLf;
+				echo '  catch (e) {}';
+				echo $sCrLf;
+				echo '  if (!scriptExists) {';
+				echo $sCrLf;
+				echo '   alert("Error: the ';
+				echo $aJsFile[1];
+				echo ' Javascript component could not be included. Perhaps the URL is incorrect?\nURL: ';
+				echo $sJsURI;
+				echo $aJsFile[0];
+				echo '");';
+				echo $sCrLf;
+				echo '  }';
+				echo $sCrLf;
+				echo ' }, ';
+				echo $this->nScriptLoadTimeout;
+				echo ');';
+				echo $sCrLf;
+				echo '/* ]]> */';
+				echo $sCrLf;
+				echo '<';
+				echo '/script>';
+				echo $sCrLf;
 			}
 		}
 	}

@@ -23,15 +23,11 @@ class mod_xajax
         $mod_xajax_enable = true;
     }
 
-    // on page assembly look wether xajax is needed or not
+    // on page assembly check whether or not xajax is needed
     function insertHTML($obj)
     {
         global $mod_xajax_enable;
         if (!isset($mod_xajax_enable))
-        {
-            return;
-        }
-        if (IS_IGB)
         {
             return;
         }

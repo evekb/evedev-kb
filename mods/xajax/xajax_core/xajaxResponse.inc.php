@@ -13,7 +13,8 @@
 /*
 	@package xajax
 	@version $Id: xajaxResponse.inc.php 361 2007-05-24 12:48:14Z calltoconstruct $
-	@copyright Copyright (c) 2005-2006 by Jared White & J. Max Wilson
+	@copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
+	@copyright Copyright (c) 2008-2009 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
 	@license http://www.xajaxproject.org/bsd_license.txt BSD License
 */
 
@@ -41,7 +42,7 @@ class xajaxResponse
 	/**#@+
 	 * @access protected
 	 */
-	 
+	
 	/*
 		Array: aCommands
 		
@@ -64,7 +65,7 @@ class xajaxResponse
 		<xajax->bOutputEntities> and <xajax->setFlag>.
 	*/
 	var $bOutputEntities;
-
+	
 	/*
 		Mixed: returnValue
 		
@@ -79,9 +80,9 @@ class xajaxResponse
 		A reference to the global plugin manager.
 	*/
 	var $objPluginManager;
-
+	
 	/**#@-*/
-
+	
 	/*
 		Constructor: xajaxResponse
 		
@@ -89,15 +90,15 @@ class xajaxResponse
 	*/
 	function xajaxResponse()
 	{
-//SkipDebug
+		//SkipDebug
 		if (0 < func_num_args()) {
 			$objLanguageManager =& xajaxLanguageManager::getInstance();
 			trigger_error(
-				$objLanguageManager->getText('XJXRSP:EDERR:01')
-				, E_USER_ERROR
-				);
+					$objLanguageManager->getText('XJXRSP:EDERR:01')
+					, E_USER_ERROR
+					);
 		}
-//EndSkipDebug
+		//EndSkipDebug
 		
 		$this->aCommands = array();
 		
@@ -105,15 +106,17 @@ class xajaxResponse
 		
 		$this->sCharacterEncoding = $objResponseManager->getCharacterEncoding();
 		$this->bOutputEntities = $objResponseManager->getOutputEntities();
-
+		
 		$this->objPluginManager =& xajaxPluginManager::getInstance();
 	}
-
+	
 	/*
 		Function: setCharacterEncoding
 		
 		Overrides the default character encoding (or the one specified in the
 		constructor) to the specified character encoding.
+		
+		Parameters:
 		
 		sCharacterEncoding - (string):  The encoding method to use for this response.
 		
@@ -128,12 +131,14 @@ class xajaxResponse
 		$this->sCharacterEncoding = $sCharacterEncoding;
 		return $this;
 	}
-
+	
 	/*
 		Function: setOutputEntities
 		
 		Convert special characters to their HTML equivellent automatically
 		(only works if the mb_string extension is available).
+		
+		Parameters:
 		
 		bOption - (boolean):  Convert special characters
 		
@@ -159,6 +164,8 @@ class xajaxResponse
 		first argument and the plugin object will be returned.  You can then
 		access the methods of the plugin directly.
 		
+		Parameters:
+		
 		sName - (string):  Name of the plugin.
 		sFunction - (string, optional):  The name of the method to call.
 		arg1...argn - (mixed, optional):  Additional arguments to pass on to
@@ -173,18 +180,18 @@ class xajaxResponse
 		$aArgs = func_get_args();
 		$nArgs = func_num_args();
 		
-//SkipDebug
+		//SkipDebug
 		if (false == (0 < $nArgs)) {
 			$objLanguageManager =& xajaxLanguageManager::getInstance();
 			trigger_error(
-				$objLanguageManager->getText('XJXRSP:MPERR:01')
-				, E_USER_ERROR
-				);
+					$objLanguageManager->getText('XJXRSP:MPERR:01')
+					, E_USER_ERROR
+					);
 		}
-//EndSkipDebug
-
+		//EndSkipDebug
+		
 		$sName = array_shift($aArgs);
-
+		
 		$objPlugin =& $this->objPluginManager->getPlugin($sName);
 		
 		if (false === $objPlugin)
@@ -205,12 +212,14 @@ class xajaxResponse
 		
 		return $objPlugin;
 	}
-
+	
 	/*
 		Function: __get
 		
 		Magic function for PHP 5.  Used to permit plugins to be called as if they
 		where native members of the xajaxResponse instance.
+		
+		Parameters:
 		
 		sPluginName - (string):  The name of the plugin.
 		
@@ -223,7 +232,7 @@ class xajaxResponse
 		$objPlugin =& $this->plugin($sPluginName);
 		return $objPlugin;
 	}
-
+	
 	/*
 		Function: confirmCommands
 		
@@ -232,20 +241,22 @@ class xajaxResponse
 		number of response commands following this one, will be
 		skipped.
 		
+		Parameters:
+		
 		iCmdNumber - (integer):  The number of commands to skip upon cancel.
 		sMessage - (string):  The message to display to the user.
-	
+		
 		Returns:
 		
-		object - The xajaxResponse object.
+		object : The xajaxResponse object.
 	*/
 	function confirmCommands($iCmdNumber, $sMessage)
 	{
 		return $this->addCommand(
 			array(
-				'n'=>'cc',
-				't'=>$iCmdNumber
-				),
+					'cmd'=>'cc',
+					'id'=>$iCmdNumber
+					),
 			$sMessage
 			);
 	}
@@ -256,26 +267,25 @@ class xajaxResponse
 		Response command indicating that the specified value should be 
 		assigned to the given element's attribute.
 		
+		Parameters:
+		
 		sTarget - (string):  The id of the html element on the browser.
 		sAttribute - (string):  The property to be assigned.
 		sData - (string):  The value to be assigned to the property.
 		
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 		
-		Example:
-		
-		$objResponse->assign("contentDiv", "innerHTML", "Some Text");
 	*/
 	function assign($sTarget,$sAttribute,$sData)
 	{
 		return $this->addCommand(
 			array(
-				'n'=>'as',
-				't'=>$sTarget,
-				'p'=>$sAttribute
-				),
+					'cmd'=>'as',
+					'id'=>$sTarget,
+					'prop'=>$sAttribute
+					),
 			$sData
 			);
 	}
@@ -286,31 +296,35 @@ class xajaxResponse
 		Response command that indicates the specified data should be appended
 		to the given element's property.
 		
+		Parameters:
+		
 		sTarget - (string):  The id of the element to be updated.
 		sAttribute - (string):  The name of the property to be appended to.
 		sData - (string):  The data to be appended to the property.
 		
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function append($sTarget,$sAttribute,$sData)
 	{	
 		return $this->addCommand(
 			array(
-				'n'=>'ap',
-				't'=>$sTarget,
-				'p'=>$sAttribute
-				),
+					'cmd'=>'ap',
+					'id'=>$sTarget,
+					'prop'=>$sAttribute
+					),
 			$sData
 			);
 	}
-
+	
 	/*
 		Function: prepend
 		
 		Response command to prepend the specified value onto the given
 		element's property.
+		
+		Parameters:
 		
 		sTarget - (string):  The id of the element to be updated.
 		sAttribute - (string):  The property to be updated.
@@ -318,16 +332,16 @@ class xajaxResponse
 		
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function prepend($sTarget,$sAttribute,$sData)
 	{
 		return $this->addCommand(
 			array(
-				'n'=>'pp',
-				't'=>$sTarget,
-				'p'=>$sAttribute
-				),
+					'cmd'=>'pp',
+					'id'=>$sTarget,
+					'prop'=>$sAttribute
+					),
 			$sData
 			);
 	}
@@ -338,6 +352,8 @@ class xajaxResponse
 		Replace a specified value with another value within the given
 		element's property.
 		
+		Parameters:
+		
 		sTarget - (string):  The id of the element to update.
 		sAttribute - (string):  The property to be updated.
 		sSearch - (string):  The needle to search for.
@@ -347,14 +363,14 @@ class xajaxResponse
 	{
 		return $this->addCommand(
 			array(
-				'n'=>'rp',
-				't'=>$sTarget,
-				'p'=>$sAttribute
-				),
+					'cmd'=>'rp',
+					'id'=>$sTarget,
+					'prop'=>$sAttribute
+					),
 			array(
-				's' => $sSearch,
-				'r' => $sData
-				)
+					's' => $sSearch,
+					'r' => $sData
+					)
 			);
 	}
 	
@@ -363,6 +379,8 @@ class xajaxResponse
 		
 		Response command used to clear the specified property of the 
 		given element.
+		
+		Parameters:
 		
 		sTarget - (string):  The id of the element to be updated.
 		sAttribute - (string):  The property to be clared.
@@ -379,7 +397,7 @@ class xajaxResponse
 			''
 			);
 	}
-
+	
 	/*
 		Function: contextAssign
 		
@@ -388,24 +406,26 @@ class xajaxResponse
 		member of the request.  The object is referenced using the 'this' keyword
 		in the sAttribute parameter.
 		
+		Parameters:
+		
 		sAttribute - (string):  The property to be updated.
 		sData - (string):  The value to assign.
-	
+		
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function contextAssign($sAttribute, $sData)
 	{
 		return $this->addCommand(
 			array(
-				'n'=>'c:as', 
-				'p'=>$sAttribute
-				), 
+					'cmd'=>'c:as', 
+					'prop'=>$sAttribute
+					), 
 			$sData
 			);
 	}
-
+	
 	/*
 		Function: contextAppend
 		
@@ -414,20 +434,22 @@ class xajaxResponse
 		member of the request.  The object is referenced using the 'this' keyword
 		in the sAttribute parameter.
 		
+		Parameters:
+		
 		sAttribute - (string):  The member to be appended to.
 		sData - (string):  The value to append.
 		
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function contextAppend($sAttribute, $sData)
 	{
 		return $this->addCommand(
 			array(
-				'n'=>'c:ap', 
-				'p'=>$sAttribute
-				), 
+					'cmd'=>'c:ap', 
+					'prop'=>$sAttribute
+					), 
 			$sData
 			);
 	}	
@@ -440,24 +462,26 @@ class xajaxResponse
 		current request.  The object is access via the 'this' keyword in the
 		sAttribute parameter.
 		
+		Parameters:
+		
 		sAttribute - (string):  The member to be updated.
 		sData - (string):  The value to be prepended.
 		
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function contextPrepend($sAttribute, $sData)
 	{
 		return $this->addCommand(
 			array(
-				'n'=>'c:pp', 
-				'p'=>$sAttribute
-				), 
+					'cmd'=>'c:pp', 
+					'prop'=>$sAttribute
+					), 
 			$sData
 			);
 	}
-
+	
 	/*
 		Function: contextClear
 		
@@ -466,11 +490,13 @@ class xajaxResponse
 		keyword and can be used to update a javascript object specified
 		by context in the request parameters.
 		
+		Parameters:
+		
 		sAttribute - (string):  The member to be cleared.
 		
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function contextClear($sAttribute)
 	{
@@ -479,24 +505,26 @@ class xajaxResponse
 			''
 			);
 	}
-
+	
 	/*
 		Function: alert
 		
 		Response command that is used to display an alert message to the user.
 		
+		Parameters:
+		
 		sMsg - (string):  The message to be displayed.
 		
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function alert($sMsg)
 	{
 		return $this->addCommand(
 			array(
-				'n'=>'al'
-				),
+					'cmd'=>'al'
+					),
 			$sMsg
 			);
 	}
@@ -505,8 +533,8 @@ class xajaxResponse
 	{
 		return $this->addCommand(
 			array(
-				'n'=>'dbg'
-				),
+					'cmd'=>'dbg'
+					),
 			$sMessage
 			);
 	}
@@ -517,13 +545,15 @@ class xajaxResponse
 		Response command that causes the browser to navigate to the specified
 		URL.
 		
+		Parameters:
+		
 		sURL - (string):  The relative or fully qualified URL.
 		iDelay - (integer, optional):  Number of seconds to delay before
 			the redirect occurs.
 			
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function redirect($sURL, $iDelay=0)
 	{
@@ -548,34 +578,34 @@ class xajaxResponse
 					if ($first)
 						$first = false;
 					else
-						$newQueryPart .= ini_get('arg_separator.output');
+						$newQueryPart .= '&';
 					$newQueryPart .= rawurlencode($key).'='.rawurlencode($value);
 				}
 			} else if ($_SERVER['QUERY_STRING']) {
-				//couldn't break up the query, but there's one there
-				//possibly "http://url/page.html?query1234" type of query?
-				//just encode it and hope it works
-				$newQueryPart = rawurlencode($_SERVER['QUERY_STRING']);
-			}
+					//couldn't break up the query, but there's one there
+					//possibly "http://url/page.html?query1234" type of query?
+					//just encode it and hope it works
+					$newQueryPart = rawurlencode($_SERVER['QUERY_STRING']);
+				}
 			$sURL = str_replace($queryPart, $newQueryPart, $sURL);
 		}
 		if ($iDelay)
 			$this->script(
-				'window.setTimeout("window.location = \''
-				. $sURL
-				. '\';",'
-				. ($iDelay*1000)
-				. ');'
-				);
+					'window.setTimeout("window.location = \''
+					. $sURL
+					. '\';",'
+					. ($iDelay*1000)
+					. ');'
+					);
 		else
 			$this->script(
-				'window.location = "'
-				. $sURL
-				. '";'
-				);
+					'window.location = "'
+					. $sURL
+					. '";'
+					);
 		return $this;
 	}
-
+	
 	/*
 		Function: script
 		
@@ -585,18 +615,20 @@ class xajaxResponse
 		call.  To construct a variable that will be accessable globally, even
 		after the script has executed, leave off the 'var' keyword.
 		
+		Parameters:
+		
 		sJS - (string):  The script to execute.
 		
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function script($sJS)
 	{
 		return $this->addCommand(
 			array(
-				'n'=>'js'
-				),
+					'cmd'=>'js'
+					),
 			$sJS
 			);
 	}
@@ -607,21 +639,23 @@ class xajaxResponse
 		Response command that indicates that the specified javascript
 		function should be called with the given (optional) parameters.
 		
+		Parameters:
+		
 		arg1 - (string):  The name of the function to call.
-		arg2 .. argn - arguments to be passed to the function.
+		arg2 .. argn : arguments to be passed to the function.
 		
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function call() {
 		$aArgs = func_get_args();
 		$sFunc = array_shift($aArgs);
 		return $this->addCommand(
 			array(
-				'n'=>'jc',
-				'f'=>$sFunc
-				), 
+					'cmd'=>'jc',
+					'func'=>$sFunc
+					), 
 			$aArgs
 			);
 	}
@@ -631,26 +665,30 @@ class xajaxResponse
 		
 		Response command used to remove an element from the document.
 		
+		Parameters:
+		
 		sTarget - (string):  The id of the element to be removed.
 		
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function remove($sTarget)
 	{
 		return $this->addCommand(
 			array(
-				'n'=>'rm',
-				't'=>$sTarget),
-				''
-				);
+					'cmd'=>'rm',
+					'id'=>$sTarget),
+			''
+			);
 	}
 	
 	/*
 		Function: create
 		
 		Response command used to create a new element on the browser.
+		
+		Parameters:
 		
 		sParent - (string):  The id of the parent element.
 		sTag - (string):  The tag name to be used for the new element.
@@ -660,26 +698,26 @@ class xajaxResponse
 			
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function create($sParent, $sTag, $sId, $sType=null)
 	{
-//SkipDebug
+		//SkipDebug
 		if (false === (null === $sType)) {
 			$objLanguageManager =& xajaxLanguageManager::getInstance();
 			trigger_error(
-				$objLanguageManager->getText('XJXRSP:CPERR:01')
-				, E_USER_WARNING
-				);
+					$objLanguageManager->getText('XJXRSP:CPERR:01')
+					, E_USER_WARNING
+					);
 		}
-//EndSkipDebug
-
+		//EndSkipDebug
+		
 		return $this->addCommand(
 			array(
-				'n'=>'ce',
-				't'=>$sParent,
-				'p'=>$sId
-				),
+					'cmd'=>'ce',
+					'id'=>$sParent,
+					'prop'=>$sId
+					),
 			$sTag
 			);
 	}
@@ -690,6 +728,8 @@ class xajaxResponse
 		Response command used to insert a new element just prior to the specified
 		element.
 		
+		Parameters:
+		
 		sBefore - (string):  The element used as a reference point for the 
 			insertion.
 		sTag - (string):  The tag to be used for the new element.
@@ -697,25 +737,27 @@ class xajaxResponse
 		
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function insert($sBefore, $sTag, $sId)
 	{
 		return $this->addCommand(
 			array(
-				'n'=>'ie',
-				't'=>$sBefore,
-				'p'=>$sId
-				),
+					'cmd'=>'ie',
+					'id'=>$sBefore,
+					'prop'=>$sId
+					),
 			$sTag
 			);
 	}
-
+	
 	/*
 		Function: insertAfter
 		
 		Response command used to insert a new element after the specified
 		one.
+		
+		Parameters:
 		
 		sAfter - (string):  The id of the element that will be used as a reference
 			for the insertion.
@@ -724,16 +766,16 @@ class xajaxResponse
 		
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function insertAfter($sAfter, $sTag, $sId)
 	{
 		return $this->addCommand(
 			array(
-				'n'=>'ia',
-				't'=>$sAfter,
-				'p'=>$sId
-				),
+					'cmd'=>'ia',
+					'id'=>$sAfter,
+					'prop'=>$sId
+					),
 			$sTag
 			);
 	}
@@ -743,6 +785,8 @@ class xajaxResponse
 		
 		Response command used to create an input element on the browser.
 		
+		Parameters:
+		
 		sParent - (string):  The id of the parent element.
 		sType - (string):  The type of the new input element.
 		sName - (string):  The name of the new input element.
@@ -750,17 +794,17 @@ class xajaxResponse
 		
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function createInput($sParent, $sType, $sName, $sId)
 	{
 		return $this->addCommand(
 			array(
-				'n'=>'ci',
-				't'=>$sParent,
-				'p'=>$sId,
-				'c'=>$sType
-				),
+					'cmd'=>'ci',
+					'id'=>$sParent,
+					'prop'=>$sId,
+					'type'=>$sType
+					),
 			$sName
 			);
 	}
@@ -771,6 +815,8 @@ class xajaxResponse
 		Response command used to insert a new input element preceeding the
 		specified element.
 		
+		Parameters:
+		
 		sBefore - (string):  The id of the element to be used as the reference
 			point for the insertion.
 		sType - (string):  The type of the new input element.
@@ -779,17 +825,17 @@ class xajaxResponse
 		
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function insertInput($sBefore, $sType, $sName, $sId)
 	{
 		return $this->addCommand(
 			array(
-				'n'=>'ii',
-				't'=>$sBefore,
-				'p'=>$sId,
-				'c'=>$sType
-				),
+					'cmd'=>'ii',
+					'id'=>$sBefore,
+					'prop'=>$sId,
+					'type'=>$sType
+					),
 			$sName
 			);
 	}
@@ -800,6 +846,8 @@ class xajaxResponse
 		Response command used to insert a new input element after the 
 		specified element.
 		
+		Parameters:
+		
 		sAfter - (string):  The id of the element that is to be used
 			as the insertion point for the new element.
 		sType - (string):  The type of the new input element.
@@ -808,17 +856,17 @@ class xajaxResponse
 		
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function insertInputAfter($sAfter, $sType, $sName, $sId)
 	{
 		return $this->addCommand(
 			array(
-				'n'=>'iia',
-				't'=>$sAfter,
-				'p'=>$sId,
-				'c'=>$sType
-				),
+					'cmd'=>'iia',
+					'id'=>$sAfter,
+					'prop'=>$sId,
+					'type'=>$sType
+					),
 			$sName
 			);
 	}
@@ -828,26 +876,49 @@ class xajaxResponse
 		
 		Response command used to set an event handler on the browser.
 		
+		Parameters:
+		
 		sTarget - (string):  The id of the element that contains the event.
 		sEvent - (string):  The name of the event.
 		sScript - (string):  The javascript to execute when the event is fired.
 		
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function setEvent($sTarget,$sEvent,$sScript)
 	{
 		return $this->addCommand(
 			array(
-				'n'=>'ev',
-				't'=>$sTarget,
-				'p'=>$sEvent
-				),
+					'cmd'=>'ev',
+					'id'=>$sTarget,
+					'prop'=>$sEvent
+					),
 			$sScript
 			);
 	}
 	
+
+	/*
+		Function: addEvent
+		
+		Response command used to set an event handler on the browser.
+		
+		Parameters:
+		
+		sTarget - (string):  The id of the element that contains the event.
+		sEvent - (string):  The name of the event.
+		sScript - (string):  The javascript to execute when the event is fired.
+		
+		Returns:
+		
+		object : The <xajaxResponse> object.
+		
+		Note:
+		
+		This function is depreciated and will be removed in a future version. 
+		Use <setEvent> instead.
+	*/	
 	function addEvent($sTarget,$sEvent,$sScript)
 	{
 		return $this->setEvent(
@@ -856,11 +927,13 @@ class xajaxResponse
 			$sScript
 			);
 	}
-
+	
 	/*
 		Function: addHandler
 		
 		Response command used to install an event handler on the specified element.
+		
+		Parameters:
 		
 		sTarget - (string):  The id of the element.
 		sEvent - (string):  The name of the event to add the handler to.
@@ -876,10 +949,10 @@ class xajaxResponse
 	{	
 		return $this->addCommand(
 			array(
-				'n'=>'ah',
-				't'=>$sTarget,
-				'p'=>$sEvent
-				),
+					'cmd'=>'ah',
+					'id'=>$sTarget,
+					'prop'=>$sEvent
+					),
 			$sHandler
 			);
 	}
@@ -889,6 +962,8 @@ class xajaxResponse
 		
 		Response command used to remove an event handler from an element.
 		
+		Parameters:
+		
 		sTarget - (string):  The id of the element.
 		sEvent - (string):  The name of the event.
 		sHandler - (string):  The javascript function that is called when the 
@@ -896,23 +971,25 @@ class xajaxResponse
 			
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function removeHandler($sTarget,$sEvent,$sHandler)
 	{
 		return $this->addCommand(
 			array(
-				'n'=>'rh',
-				't'=>$sTarget,
-				'p'=>$sEvent
-				),
+					'cmd'=>'rh',
+					'id'=>$sTarget,
+					'prop'=>$sEvent
+					),
 			$sHandler);
 	}
-
+	
 	/*
 		Function: setFunction
 		
 		Response command used to construct a javascript function on the browser.
+		
+		Parameters:
 		
 		sFunction - (string):  The name of the function to construct.
 		sArgs - (string):  Comma separated list of parameter names.
@@ -921,16 +998,16 @@ class xajaxResponse
 			
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function setFunction($sFunction, $sArgs, $sScript)
 	{
 		return $this->addCommand(
 			array(
-				'n'=>'sf',
-				'f'=>$sFunction,
-				'p'=>$sArgs
-				),
+					'cmd'=>'sf',
+					'func'=>$sFunction,
+					'prop'=>$sArgs
+					),
 			$sScript
 			);
 	}
@@ -940,6 +1017,8 @@ class xajaxResponse
 		
 		Response command used to construct a wrapper function around
 		and existing javascript function on the browser.
+		
+		Parameters:
 		
 		sFunction - (string):  The name of the existing function to wrap.
 		sArgs - (string):  The comma separated list of parameters for the function.
@@ -952,17 +1031,17 @@ class xajaxResponse
 			
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function wrapFunction($sFunction, $sArgs, $aScripts, $sReturnValueVariable)
 	{
 		return $this->addCommand(
 			array(
-				'n'=>'wpf',
-				'f'=>$sFunction,
-				'p'=>$sArgs,
-				'c'=>$sReturnValueVariable
-				),
+					'cmd'=>'wpf',
+					'func'=>$sFunction,
+					'prop'=>$sArgs,
+					'type'=>$sReturnValueVariable
+					),
 			$aScripts
 			);
 	}
@@ -972,42 +1051,63 @@ class xajaxResponse
 		
 		Response command used to load a javascript file on the browser.
 		
+		Parameters:
+		
 		sFileName - (string):  The relative or fully qualified URI of the 
 			javascript file.
+	
+		sType - (string): Determines the script type . Defaults to 'text/javascript'. 
+
 			
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
-	function includeScript($sFileName)
+	function includeScript($sFileName, $sType = null, $sId = null)
 	{
+		$command = array('cmd' => 'in');
+		
+		if (false === (null === $sType))
+			$command['type'] = $sType;
+		
+		if (false === (null === $sId))
+			$command['elm_id'] = $sId;
+
 		return $this->addCommand(
-			array(
-				'n'=>'in'
-				),
+			$command,
 			$sFileName
 			);
 	}
-
+	
 	/*
 		Function: includeScriptOnce
 		
 		Response command used to include a javascript file on the browser
 		if it has not already been loaded.
 		
+		Parameters:
+		
 		sFileName - (string):  The relative for fully qualified URI of the
 			javascript file.
+
+		sType - (string): Determines the script type . Defaults to 'text/javascript'. 
 			
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
-	function includeScriptOnce($sFileName)
+	function includeScriptOnce($sFileName, $sType = null, $sId = null)
 	{
+		$command = array('cmd' => 'ino');
+		
+		if (false === (null === $sType))
+			$command['type'] = $sType;
+		
+		if (false === (null === $sId))
+			$command['elm_id'] = $sId;
+			
 		return $this->addCommand(
-			array(
-				'n'=>'ino'
-				),
+			$command,
 			$sFileName
 			);
 	}
@@ -1019,6 +1119,8 @@ class xajaxResponse
 		file on the browser.  Optionally, you can call a javascript function
 		just prior to the file being unloaded (for cleanup).
 		
+		Parameters:
+		
 		sFileName - (string):  The relative or fully qualified URI of the
 			javascript file.
 		sUnload - (string):  Name of a javascript function to call prior
@@ -1026,17 +1128,16 @@ class xajaxResponse
 			
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function removeScript($sFileName, $sUnload = '') {
 		$this->addCommand(
-			array(
-				'n'=>'rjs'
-				), 
-			('' != $sUnload) 
-				? array($sFileName, $sUnload) 
-				: $sFileName
-			);
+				array(
+					'cmd'=>'rjs',
+					'unld'=>$sUnload
+					),
+				$sFileName
+				);
 		return $this;
 	}
 	
@@ -1047,19 +1148,26 @@ class xajaxResponse
 		the specified CSS file on the browser.  This will cause the
 		browser to load and apply the style sheet.
 		
+		Parameters:
+		
 		sFileName - (string):  The relative or fully qualified URI of
 			the css file.
+	
+		sMedia - (string): Determines the media type of the CSS file. Defaults to 'screen'. 
 		
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
-	function includeCSS($sFileName)
+	function includeCSS($sFileName, $sMedia = null)
 	{
+		$command = array('cmd' => 'css');
+		
+		if (false === (null === $sMedia))
+			$command['media'] = $sMedia;
+		
 		return $this->addCommand(
-			array(
-				'n'=>'css'
-				),
+			$command,
 			$sFileName
 			);
 	}
@@ -1072,19 +1180,24 @@ class xajaxResponse
 		unload the style sheet, effectively removing the style
 		changes it caused.
 		
+		Parameters:
+		
 		sFileName - (string):  The relative or fully qualified URI
 			of the css file.
 		
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
-	function removeCSS($sFileName)
+	function removeCSS($sFileName, $sMedia = null)
 	{
+		$command = array('cmd'=>'rcss');
+		
+		if (false === (null === $sMedia))
+			$command['media'] = $sMedia;
+		
 		return $this->addCommand(
-			array(
-				'n'=>'rcss'
-				),
+			$command,
 			$sFileName
 			);
 	}
@@ -1102,23 +1215,25 @@ class xajaxResponse
 		of the response until the CSS files, included previously, are
 		loaded.
 		
+		Parameters:
+		
 		iTimeout - (integer):  The number of 1/10ths of a second to pause
 			before timing out and continuing with the execution of the
 			response commands.
 			
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function waitForCSS($iTimeout = 600) {
 		$sData = "";
 		$this->addCommand(
-			array(
-				'n'=>'wcss', 
-				'p'=>$iTimeout
-				),
-			$sData
-			);
+				array(
+					'cmd'=>'wcss', 
+					'prop'=>$iTimeout
+					),
+				$sData
+				);
 		return $this;
 	}
 	
@@ -1131,6 +1246,8 @@ class xajaxResponse
 		will continue to monitor the specified condition and, when it evaulates
 		to true, will continue processing response commands.
 		
+		Parameters:
+		
 		script - (string):  A piece of javascript code that evaulates to true 
 			or false.
 		tenths - (integer):  The number of 1/10ths of a second to wait before
@@ -1139,14 +1256,14 @@ class xajaxResponse
 		
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function waitFor($script, $tenths) {
 		return $this->addCommand(
 			array(
-				'n'=>'wf',
-				'p'=>$tenths
-				), 
+					'cmd'=>'wf',
+					'prop'=>$tenths
+					), 
 			$script
 			);
 	}
@@ -1160,21 +1277,23 @@ class xajaxResponse
 		the specified delay, xajax will continue execution of the 
 		response commands.
 		
+		Parameters:
+		
 		tenths - (integer):  The number of 1/10ths of a second to
 			sleep.
 		
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function sleep($tenths) {
 		$this->addCommand(
-			array(
-				'n'=>'s',
-				'p'=>$tenths
-				), 
-			''
-			);
+				array(
+					'cmd'=>'s',
+					'prop'=>$tenths
+					), 
+				''
+				);
 		return $this;
 	}
 	
@@ -1186,11 +1305,13 @@ class xajaxResponse
 		obtain this value immediately as the return value of the
 		<xajax.call> function.
 		
+		Parameters:
+		
 		value - (mixed):  Any value.
 		
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function setReturnValue($value) {
 		$this->returnValue = $this->_encodeArray($value);
@@ -1205,7 +1326,7 @@ class xajaxResponse
 		
 		Returns:
 		
-		string - The content type.
+		string : The content type.
 	*/
 	function getContentType()
 	{
@@ -1231,7 +1352,7 @@ class xajaxResponse
 		
 		Returns:
 		
-		string - The textual representation of the response commands.
+		string : The textual representation of the response commands.
 	*/
 	function printOutput()
 	{
@@ -1255,14 +1376,14 @@ class xajaxResponse
 			header ("Cache-Control: no-cache, must-revalidate");
 			header ("Pragma: no-cache");
 		}
-
+		
 		$sCharacterSet = '';
 		if ($this->sCharacterEncoding && 0 < strlen(trim($this->sCharacterEncoding))) {
 			$sCharacterSet = '; charset="' . trim($this->sCharacterEncoding) . '"';
 		}
 		
 		$sContentType = $this->getContentType();
-
+		
 		header('content-type: ' . $sContentType . ' ' . $sCharacterSet);
 	}
 	
@@ -1271,18 +1392,20 @@ class xajaxResponse
 		
 		Returns:
 		
-		integer - The number of commands in the response.
+		integer : The number of commands in the response.
 	*/
 	function getCommandCount()
 	{
 		return count($this->aCommands);
 	}
-
+	
 	/*
 		Function: loadCommands
 		
 		Merges the response commands from the specified <xajaxResponse>
 		object with the response commands in this <xajaxResponse> object.
+		
+		Parameters:
 		
 		mCommands - (object):  <xajaxResponse> object.
 		bBefore - (boolean):  Add the new commands to the beginning 
@@ -1302,24 +1425,24 @@ class xajaxResponse
 			}
 		}
 		else if (is_array($mCommands)) {
-			if ($bBefore) {
-				$this->aCommands = array_merge($mCommands, $this->aCommands);
+				if ($bBefore) {
+					$this->aCommands = array_merge($mCommands, $this->aCommands);
+				}
+				else {
+					$this->aCommands = array_merge($this->aCommands, $mCommands);
+				}
 			}
 			else {
-				$this->aCommands = array_merge($this->aCommands, $mCommands);
+				//SkipDebug
+				if (!empty($mCommands)) {
+					$objLanguageManager =& xajaxLanguageManager::getInstance();
+					trigger_error(
+							$objLanguageManager->getText('XJXRSP:LCERR:01')
+							, E_USER_ERROR
+							);
+				}
+				//EndSkipDebug
 			}
-		}
-		else {
-//SkipDebug
-			if (!empty($mCommands)) {
-				$objLanguageManager =& xajaxLanguageManager::getInstance();
-				trigger_error(
-					$objLanguageManager->getText('XJXRSP:LCERR:01')
-					, E_USER_ERROR
-					);
-			}
-//EndSkipDebug
-		}
 	}
 	
 	function absorb($objResponse)
@@ -1332,6 +1455,8 @@ class xajaxResponse
 		
 		Adds a response command that is generated by a plugin.
 		
+		Parameters:
+		
 		objPlugin - (object):  A reference to a plugin object.
 		aAttributes - (array):  Array containing the attributes for this
 			response command.
@@ -1339,7 +1464,7 @@ class xajaxResponse
 		
 		Returns:
 		
-		object - The <xajaxResponse> object.
+		object : The <xajaxResponse> object.
 	*/
 	function addPluginCommand($objPlugin, $aAttributes, $mData)
 	{
@@ -1353,13 +1478,15 @@ class xajaxResponse
 		Add a response command to the array of commands that will
 		be sent to the browser.
 		
+		Parameters:
+		
 		aAttributes - (array):  Associative array of attributes that
 			will describe the command.
 		mData - (mixed):  The data to be associated with this command.
 		
 		Returns:
 		
-		object - The <xajaxResponse> command.
+		object : The <xajaxResponse> command.
 	*/
 	function addCommand($aAttributes, $mData)
 	{
@@ -1375,47 +1502,47 @@ class xajaxResponse
 	*/
 	function _printHeader_XML()
 	{
-		print '<';
-		print '?';
-		print 'xml version="1.0"';
+		echo '<';
+		echo '?';
+		echo 'xml version="1.0"';
 		
 		$sEncoding = trim($this->sCharacterEncoding);
 		if ($this->sCharacterEncoding && 0 < strlen($sEncoding)) {
-			print ' encoding="';
-			print $sEncoding;
-			print '"';
+			echo ' encoding="';
+			echo $sEncoding;
+			echo '"';
 		}
 		
-		print ' ?';
-		print '>';
+		echo ' ?';
+		echo '>';
 	}
 	
 	/*
 		Function: _printResponse_XML
-	
+		
 		Used internally to generate the command output.
 	*/
 	function _printResponse_XML()
 	{
-		print '<';
-		print 'xjx>';
+		echo '<';
+		echo 'xjx>';
 		
 		if (null !== $this->returnValue)
 		{
-			print '<';
-			print 'xjxrv>';
+			echo '<';
+			echo 'xjxrv>';
 			
 			$this->_printArray_XML($this->returnValue);
-
-			print '<';
-			print '/xjxrv>';
+			
+			echo '<';
+			echo '/xjxrv>';
 		}
-
+		
 		foreach(array_keys($this->aCommands) as $sKey)
 			$this->_printCommand_XML($this->aCommands[$sKey]);
 		
-		print '<';
-		print '/xjx>';
+		echo '<';
+		echo '/xjx>';
 	}
 	
 	/*
@@ -1423,35 +1550,37 @@ class xajaxResponse
 		
 		Prints an XML representation of the command.
 		
+		Parameters:
+		
 		aAttributes - (array):  Associative array of attributes for this
 			command.
 	*/
 	function _printCommand_XML(&$aAttributes)
 	{
-		print '<';
-		print 'cmd';
+		echo '<';
+		echo 'cmd';
 		
 		$mData = '';
 		
 		foreach (array_keys($aAttributes) as $sKey) {
 			if ($sKey) {
 				if ('data' != $sKey) {
-					print ' ';
-					print $sKey;
-					print '="';
-					print $aAttributes[$sKey];
-					print '"';
+					echo ' ';
+					echo $sKey;
+					echo '="';
+					echo $aAttributes[$sKey];
+					echo '"';
 				} else
 					$mData =& $aAttributes[$sKey];
 			}
 		}
 		
-		print '>';
+		echo '>';
 		
 		$this->_printArray_XML($mData);
 		
-		print '<';
-		print '/cmd>';
+		echo '<';
+		echo '/cmd>';
 	}
 	
 	/*
@@ -1461,6 +1590,8 @@ class xajaxResponse
 		for inclusion in the response to the browser.  Arrays
 		sent via this method will be converted into a javascript
 		array on the browser.
+		
+		Parameters:
 		
 		mArray - (array):  Array to be converted.
 	*/
@@ -1473,60 +1604,60 @@ class xajaxResponse
 			return;
 		}
 		
-		print '<';
-		print 'xjxobj>';
+		echo '<';
+		echo 'xjxobj>';
 		
 		foreach (array_keys($mArray) as $sKey) {
 			if (is_array($mArray[$sKey])) {
-				print '<';
-				print 'e>';
+				echo '<';
+				echo 'e>';
 				
 				foreach (array_keys($mArray[$sKey]) as $sInnerKey) {
-//SkipDebug
+					//SkipDebug
 					if (htmlspecialchars($sInnerKey, ENT_COMPAT, 'UTF-8') != $sInnerKey) {
 						$objLanguageManager =& xajaxLanguageManager::getInstance();
 						trigger_error(
-							$objLanguageManager->getText('XJXRSP:AKERR:01')
-							, E_USER_ERROR
-							);
+								$objLanguageManager->getText('XJXRSP:AKERR:01')
+								, E_USER_ERROR
+								);
 					}
-//EndSkipDebug
-						
+					//EndSkipDebug
+					
 					if ('k' == $sInnerKey || 'v' == $sInnerKey) {
-						print '<';
-						print $sInnerKey;
-						print '>';
+						echo '<';
+						echo $sInnerKey;
+						echo '>';
 						$this->_printArray_XML($mArray[$sKey][$sInnerKey]);
-						print '<';
-						print '/';
-						print $sInnerKey;
-						print '>';
+						echo '<';
+						echo '/';
+						echo $sInnerKey;
+						echo '>';
 					} else {
-//SkipDebug
+						//SkipDebug
 						$objLanguageManager =& xajaxLanguageManager::getInstance();
 						trigger_error(
-							$objLanguageManager->getText('XJXRSP:IEAERR:01')
-							, E_USER_ERROR
-							);
-//EndSkipDebug
+								$objLanguageManager->getText('XJXRSP:IEAERR:01')
+								, E_USER_ERROR
+								);
+						//EndSkipDebug
 					}
 				}
 				
-				print '<';
-				print '/e>';
+				echo '<';
+				echo '/e>';
 			} else {
-//SkipDebug
+				//SkipDebug
 				$objLanguageManager =& xajaxLanguageManager::getInstance();
 				trigger_error(
-					$objLanguageManager->getText('XJXRSP:NEAERR:01')
-					, E_USER_ERROR
-					);
-//EndSkipDebug
+						$objLanguageManager->getText('XJXRSP:NEAERR:01')
+						, E_USER_ERROR
+						);
+				//EndSkipDebug
 			}
 		}
 		
-		print '<';
-		print '/xjxobj>';
+		echo '<';
+		echo '/xjxobj>';
 	}
 	
 	/*
@@ -1538,34 +1669,36 @@ class xajaxResponse
 		This could be overridden to allow for transport encodings other than
 		XML.
 		
+		Parameters:
+		
 		sData - (string):  The data to be escaped.
 		
 		Returns:
 		
-		string - The escaped data.
+		string : The escaped data.
 	*/
 	function _printEscapedString_XML(&$sData)
 	{
-		if (null === $sData) {
-			print '';
+		if (is_null($sData) || false == isset($sData)) {
+			echo '*';
 			return;
 		}
 		
 		if ($this->bOutputEntities) {
-//SkipDebug
+			//SkipDebug
 			if (false === function_exists('mb_convert_encoding')) {
 				$objLanguageManager =& xajaxLanguageManager::getInstance();
 				trigger_error(
-					$objLanguageManager->getText('XJXRSP:MBEERR:01')
-					, E_USER_NOTICE
-					);
+						$objLanguageManager->getText('XJXRSP:MBEERR:01')
+						, E_USER_NOTICE
+						);
 			}
-//EndSkipDebug
+			//EndSkipDebug
 			
-			print call_user_func_array('mb_convert_encoding', array(&$sData, 'HTML-ENTITIES', $this->sCharacterEncoding));
+			echo call_user_func_array('mb_convert_encoding', array(&$sData, 'HTML-ENTITIES', $this->sCharacterEncoding));
 			return;
 		}
-
+		
 		$nCDATA = 0;
 		
 		$bNoOpenCDATA = (false === strpos($sData, '<'.'![CDATA['));
@@ -1581,9 +1714,18 @@ class xajaxResponse
 			$nCDATA = 2;
 		
 		if (0 < $nCDATA) {
-			print '<';
-			print '![CDATA[';
-		
+			echo '<';
+			echo '![CDATA[';
+			
+			// PHP defines numeric values as integer or float (double and real are aliases of float)
+			if (is_string($sData)) {
+				echo 'S';
+			} else if (is_int($sData) || is_float($sData)) {
+				echo 'N';
+			} else if (is_bool($sData)) {
+				echo 'B';
+			}
+			
 			if (1 < $nCDATA) {
 				$aSegments = explode('<'.'![CDATA[', $sData);
 				$aOutput = array();
@@ -1605,13 +1747,21 @@ class xajaxResponse
 						$aOutput[] = implode('', $aStack);
 					++$nOutput;
 				}
-				print implode('', $aOutput);
+				echo implode('', $aOutput);
 			} else
-				print $sData;
+				echo $sData;
 			
-			print ']]>';
-		} else
-			print $sData;
+			echo ']]>';
+		} else {
+			if (is_string($sData)) {
+				echo 'S';
+			} else if (is_int($sData) || is_float($sData)) {
+				echo 'N';
+			} else if (is_bool($sData)) {
+				echo 'B';
+			}
+			echo $sData;
+		}
 	}
 	
 	/*
@@ -1621,11 +1771,13 @@ class xajaxResponse
 		be sent to the browser.  This can be thought of as the opposite of
 		<xajaxRequestProcessorPlugin->_parseObjXml>.
 		
+		Parameters:
+		
 		mData - (mixed):  The data to be evaluated.
 		
 		Returns:
 		
-		mixed - The object constructed from the data.
+		mixed : The object constructed from the data.
 	*/
 	function _encodeArray(&$mData) {
 		if ('object' === gettype($mData))
@@ -1637,10 +1789,10 @@ class xajaxResponse
 		$aData = array();
 		foreach (array_keys($mData) as $sKey)
 			$aData[] = array(
-				// key does not need to be encoded
-				'k'=>$sKey,
-				'v'=>$this->_encodeArray($mData[$sKey])
-			);
+					// key does not need to be encoded
+					'k'=>$sKey,
+					'v'=>$this->_encodeArray($mData[$sKey])
+					);
 		return $aData;
 	}
 	
@@ -1687,40 +1839,40 @@ class xajaxCustomResponse
 	
 	function absorb($objResponse)
 	{
-//SkipDebug
+		//SkipDebug
 		if (false == is_a($objResponse, 'xajaxCustomResponse')) {
 			$objLanguageManager =& xajaxLanguageManager::getInstance();
 			trigger_error(
-				$objLanguageManager->getText('XJXRSP:MXRTERR')
-				, E_USER_ERROR
-				);
+					$objLanguageManager->getText('XJXRSP:MXRTERR')
+					, E_USER_ERROR
+					);
 		}
-
+		
 		if ($objResponse->getContentType() != $this->getContentType()) {
 			$objLanguageManager =& xajaxLanguageManager::getInstance();
 			trigger_error(
-				$objLanguageManager->getText('XJXRSP:MXCTERR')
-				, E_USER_ERROR
-				);
+					$objLanguageManager->getText('XJXRSP:MXCTERR')
+					, E_USER_ERROR
+					);
 		}
 		
 		if ($objResponse->getCharacterEncoding() != $this->getCharacterEncoding()) {
 			$objLanguageManager =& xajaxLanguageManager::getInstance();
 			trigger_error(
-				$objLanguageManager->getText('XJXRSP:MXCEERR')
-				, E_USER_ERROR
-				);
+					$objLanguageManager->getText('XJXRSP:MXCEERR')
+					, E_USER_ERROR
+					);
 		}
 		
 		if ($objResponse->getOutputEntities() != $this->getOutputEntities()) {
 			$objLanguageManager =& xajaxLanguageManager::getInstance();
 			trigger_error(
-				$objLanguageManager->getText('XJXRSP:MXOEERR')
-				, E_USER_ERROR
-				);
+					$objLanguageManager->getText('XJXRSP:MXOEERR')
+					, E_USER_ERROR
+					);
 		}
-//EndSkipDebug
-
+		//EndSkipDebug
+		
 		$this->sOutput .= $objResponse->getOutput();
 	}
 	
@@ -1750,7 +1902,7 @@ class xajaxCustomResponse
 		$sCharacterSet = $this->sCharacterEncoding;
 		
 		header("content-type: {$sContentType}; charset={$sCharacterSet}");
-
-		print $this->sOutput;
+		
+		echo $this->sOutput;
 	}
 }

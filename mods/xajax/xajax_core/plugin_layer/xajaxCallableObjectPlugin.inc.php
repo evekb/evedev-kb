@@ -13,7 +13,8 @@
 /*
 	@package xajax
 	@version $Id: xajaxCallableObjectPlugin.inc.php 362 2007-05-29 15:32:24Z calltoconstruct $
-	@copyright Copyright (c) 2005-2006 by Jared White & J. Max Wilson
+	@copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
+	@copyright Copyright (c) 2008-2009 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
 	@license http://www.xajaxproject.org/bsd_license.txt BSD License
 */
 
@@ -120,7 +121,7 @@ class xajaxCallableObjectPlugin extends xajaxRequestPlugin
 //EndSkipDebug
 
 				if (false === is_a($xco, 'xajaxCallableObject'))
-					$xco =& new xajaxCallableObject($xco);
+					$xco = new xajaxCallableObject($xco);
 
 				if (2 < count($aArgs))
 					if (is_array($aArgs[2]))
@@ -148,24 +149,24 @@ class xajaxCallableObjectPlugin extends xajaxRequestPlugin
 			{
 				$sCrLf = "\n";
 				
-				print $sCrLf;
-				print '<';
-				print 'script type="text/javascript" ';
-				print $this->sDefer;
-				print 'charset="UTF-8">';
-				print $sCrLf;
-				print '/* <';
-				print '![CDATA[ */';
-				print $sCrLf;
+				echo $sCrLf;
+				echo '<';
+				echo 'script type="text/javascript" ';
+				echo $this->sDefer;
+				echo 'charset="UTF-8">';
+				echo $sCrLf;
+				echo '/* <';
+				echo '![CDATA[ */';
+				echo $sCrLf;
 
 				foreach(array_keys($this->aCallableObjects) as $sKey)
 					$this->aCallableObjects[$sKey]->generateClientScript($this->sXajaxPrefix);
 
-				print '/* ]]> */';
-				print $sCrLf;
-				print '<';
-				print '/script>';
-				print $sCrLf;
+				echo '/* ]]> */';
+				echo $sCrLf;
+				echo '<';
+				echo '/script>';
+				echo $sCrLf;
 			}
 		}
 	}

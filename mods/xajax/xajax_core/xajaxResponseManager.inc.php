@@ -13,7 +13,8 @@
 /*
 	@package xajax
 	@version $Id: xajaxResponseManager.inc.php 362 2007-05-29 15:32:24Z calltoconstruct $
-	@copyright Copyright (c) 2005-2006 by Jared White & J. Max Wilson
+	@copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
+	@copyright Copyright (c) 2008-2009 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
 	@license http://www.xajaxproject.org/bsd_license.txt BSD License
 */
 
@@ -82,6 +83,10 @@ class xajaxResponseManager
 		Called by the xajax object when configuration options are set in the main script.  Option
 		values are passed to each of the main xajax components and stored locally as needed.  The
 		<xajaxResponseManager> will track the characterEncoding and outputEntities settings.
+		
+		Parameters:
+		$sName - (string): Setting name
+		$mValue - (mixed): Value
 	*/
 	function configure($sName, $mValue)
 	{
@@ -123,6 +128,8 @@ class xajaxResponseManager
 		another xajaxCustomResponse.  However, you cannot append a standard response object onto the end
 		of a custom response and likewise, you cannot append a custom response onto the end of a standard
 		response.
+		
+		Parameters:
 		
 		$mResponse - (object):  The new response object to be added to the current response object.
 		
@@ -171,6 +178,8 @@ class xajaxResponseManager
 		Appends a debug message on the end of the debug message queue.  Debug messages
 		will be sent to the client with the normal response (if the response object supports
 		the sending of debug messages, see: <xajaxResponse>)
+		
+		Parameters:
 		
 		$sMessage - (string):  The text of the debug message to be sent.
 	*/

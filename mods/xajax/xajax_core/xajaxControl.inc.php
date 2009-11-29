@@ -13,7 +13,8 @@
 /*
 	@package xajax
 	@version $Id: xajaxControl.inc.php 362 2007-05-29 15:32:24Z calltoconstruct $
-	@copyright Copyright (c) 2005-2006 by Jared White & J. Max Wilson
+	@copyright Copyright (c) 2005-2007 by Jared White & J. Max Wilson
+	@copyright Copyright (c) 2008-2009 by Joseph Woolley, Steffen Konerow, Jared White  & J. Max Wilson
 	@license http://www.xajaxproject.org/bsd_license.txt BSD License
 */
 
@@ -91,9 +92,12 @@ class xajaxControl
 	/*
 		Function: xajaxControl
 		
+		Parameters:
+		
 		$aConfiguration - (array):  An associative array that contains a variety
 			of configuration options for this <xajaxControl> object.
-			
+		
+		Note:
 		This array may contain the following entries:
 		
 		'attributes' - (array):  An associative array containing attributes
@@ -153,6 +157,10 @@ class xajaxControl
 		Call to set various control specific attributes to be included in the HTML
 		script that is returned when <xajaxControl->printHTML> or <xajaxControl->getHTML>
 		is called.
+		
+		Parameters:
+			$sName - (string): The attribute name to set the value.
+			$sValue - (string): The value to be set.
 	*/
 	function setAttribute($sName, $sValue)
 	{
@@ -183,11 +191,13 @@ class xajaxControl
 		Call to obtain the value currently associated with the specified attribute
 		if set.
 		
+		Parameters:
+		
 		sName - (string): The name of the attribute to be returned.
 		
 		Returns:
 		
-		mixed - The value associated with the attribute, or null.
+		mixed : The value associated with the attribute, or null.
 	*/
 	function getAttribute($sName)
 	{
@@ -213,6 +223,8 @@ class xajaxControl
 		Call this function to assign a <xajaxRequest> object as the handler for
 		the specific DOM event.  The <xajaxRequest->printScript> function will 
 		be called to generate the javascript for this request.
+		
+		Parameters:
 		
 		sEvent - (string):  A string containing the name of the event to be assigned.
 		objRequest - (xajaxRequest object):  The <xajaxRequest> object to be associated
@@ -269,7 +281,7 @@ class xajaxControl
 		
 		Returns:
 		
-		string - The HTML representation of this control.
+		string : The HTML representation of this control.
 	*/
 	function getHTML($bFormat=false)
 	{
@@ -289,7 +301,7 @@ class xajaxControl
 		
 		Returns:
 		
-		string - The HTML representation of this control.
+		string : The HTML representation of this control.
 	*/
 	function printHTML($sIndent='')
 	{
@@ -438,6 +450,8 @@ class xajaxControlContainer extends xajaxControl
 		Function: xajaxControlContainer
 		
 		Called to construct and configure this control.
+		
+		Parameters:
 		
 		aConfiguration - (array):  See <xajaxControl->xajaxControl> for more
 			information.
