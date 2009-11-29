@@ -20,13 +20,13 @@ class DBConnection_mysqli
         {
             if (!$this->id_ = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT))
             die("Unable to connect to mysql database.");
-            $this->id_->set_charset('utf8');
+            if(method_exists($this->id_,'set_charset')) $this->id_->set_charset('utf8');
         }
         else
         {
             if (!$this->id_ = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME))
             die("Unable to connect to mysql database.");
-            $this->id_->set_charset('utf8');
+            if(method_exists($this->id_,'set_charset')) $this->id_->set_charset('utf8');
         }
 
         //mysqli_select_db(DB_NAME);
@@ -124,6 +124,7 @@ class DBNormalQuery_mysqli
     //! Return the number of rows returned by the last query.
     function recordCount()
     {
+		if($this->stmt) return $this->stmt->num_rows;
         if ($this->resid_)
         {
             return $this->resid_->num_rows;
@@ -162,6 +163,10 @@ class DBNormalQuery_mysqli
     //! Return the most recent error message for the DB connection.
     function getErrorMsg()
     {
+		if($this->stmt)
+		{
+			return "Prepared statement failed: ".$this->stmt->errno;
+		}
         $msg = $this->sql_ . "<br>";
         $msg .= "Query failed. " . mysqli_error($this->dbconn_->id());
 
@@ -196,12 +201,12 @@ class DBNormalQuery_mysqli
 		{
             if(defined('KB_PROFILE'))
 			{
-				DBDebug::recordError("Database error: ".$this->dbconn_->id()->error);
+				DBDebug::recordError("Database error: ".$this->stmt->error);
 				DBDebug::recordError("SQL: ".$sql);
 			}
             if (defined('DB_HALTONERROR') && DB_HALTONERROR)
             {
-                echo "Database error: " . $this->dbconn_->id()->error . "<br>";
+                echo "Database error: " . $this->stmt->error . "<br>";
                 echo "SQL: " . $sql . "<br>";
                 exit;
             }
@@ -212,23 +217,58 @@ class DBNormalQuery_mysqli
 		}
 		return true;
 	}
+	//! Bind the prepared query parameters to the given variables.
+
+	/*! bound parameters can not be changed. While this can be changed as per
+	 * bind_results it would break future caching. For now it stays unbound.
+	 */
 	function bind_param()
 	{
 		$arr[0]=$this->stmt;
 		$args = func_get_args();
-		array_unshift($args,$arr2);
-		return call_user_func_array('mysqli_stmt_bind_param',$args);
+		$Args = array();
+        foreach($args as $k => &$arg){
+            $Args[$k] = &$arg;
+        }
+ 		array_unshift($Args,$this->stmt);
+		return call_user_func_array('mysqli_stmt_bind_param',$Args);
 	}
-	function bind_result()
+	//! Bind the prepared query results to the given variables.
+
+	/*! The hideous argument list is there as func_get_args only returns a copy
+	 * of the arguments rather than a reference so references to the original
+	 * arguments do not reach the prepared statement.
+	 */
+
+	function bind_result(&$arg0=null, &$arg1=null, &$arg2=null, &$arg3=null,
+		&$arg4=null, &$arg5=null, &$arg6=null, &$arg7=null, &$arg8=null,
+		&$arg9=null, &$arg10=null, &$arg11=null, &$arg12=null, &$arg13=null,
+		&$arg14=null, &$arg15=null, &$arg16=null, &$arg17=null, &$arg18=null,
+		&$arg19=null)
 	{
-		$arr[0]=$this->stmt;
-		$args = func_get_args();
-		array_unshift($args,$arr2);
-		return call_user_func_array('mysqli_stmt_bind_result',$args);
+		/*
+		 * Only returns a reference to the original variable if &$arg is used
+		 * in function definition so might as well use them directly.
+		 *
+		 *
+        $stack = debug_backtrace();
+        $args = array();
+        if (isset($stack[0]["args"]))
+            for($i=0; $i < count($stack[0]["args"]); $i++)
+                $args[$i] = & $stack[0]["args"][$i];
+        return call_user_func_array(array($this->stmt,'bind_result'),$args);
+		*/
+		$args = array();
+		for($i=0;$i<func_num_args();$i++)
+		{
+			$temparg = 'arg'.$i;
+			$args[$i] = & $$temparg;
+		}
+		return call_user_func_array(array($this->stmt,'bind_result'),$args);
 	}
 	function execute_prepared()
 	{
-		if($this->stmt->execute())
+		if(!$this->stmt->execute())
 		{
             if(defined('KB_PROFILE'))
 			{
@@ -246,6 +286,7 @@ class DBNormalQuery_mysqli
                 return false;
             }
 		}
+		$this->stmt->store_result();
 		return true;
 	}
 	function fetch_prepared()
