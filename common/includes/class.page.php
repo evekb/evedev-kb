@@ -10,6 +10,7 @@ class Page
 //! Page generation timer is started on Page creation.
 	function Page($title = '', $cachable = true)
 	{
+		event::call('page_initialisation', $this);
 		if (!config::get('public_stats'))
 		{
 			config::set('public_stats','do nothing');

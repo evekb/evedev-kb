@@ -6,7 +6,10 @@ event::register('page_assembleheader', 'edk_xajax::insertHTML');
 
 // if mods depend on xajax they can register to xajax_initialised
 // it gets called after all mods have been initialized
-event::register('mods_initialised', 'edk_xajax::lateProcess');
+//event::register('smarty_displayindex', 'edk_xajax::lateProcess');
+//event::register('page_assembleheader', 'edk_xajax::lateProcess');
+//event::register('mods_initialised', 'edk_xajax::lateProcess');
+event::register('page_initialisation', 'edk_xajax::lateProcess');
 
 class edk_xajax
 {
@@ -43,10 +46,10 @@ class edk_xajax
 }
 
 // Catch calls from old mods.
-class mod_ajax
+class mod_xajax
 {
 	function xajax()
 	{
-		edk_ajax::xajax();
+		edk_xajax::xajax();
 	}
 }
