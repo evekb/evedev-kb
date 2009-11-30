@@ -1,110 +1,258 @@
 <?php
-$page = new Page('Search');
+require_once('common/xajax/xajax.php');
+require_once('class.pageAssembly.php');
+require_once('class.db.mysqli.prepared.php');
 
-$searchphrase = slashfix($_POST['searchphrase']);
-$searchphrase = preg_replace('/\*/', '%', $searchphrase);
-$searchphrase = trim($searchphrase);
-if ($searchphrase != "" && strlen($searchphrase) >= 3)
+$xajax->configure("javascript URI", "common/xajax/");
+$xajax->register(XAJAX_FUNCTION, "doAjaxSearch");
+edk_xajax::xajax();
+
+function doAjaxSearch($searchphrase='', $type='pilot')
 {
-    switch ($_POST['searchtype'])
-    {
-        case "pilot":
-            $sql = "select plt.plt_id, plt.plt_name, crp.crp_name
-                  from kb3_pilots plt, kb3_corps crp
-                 where plt.plt_name  like '%".$searchphrase."%'
-                   and plt.plt_crp_id = crp.crp_id
-                 order by plt.plt_name";
-			$smarty->assign('result_header', 'Pilot');
-			$smarty->assign('result_header_group', 'Corporation');
-            break;
-        case "corp":
-            $sql = "select crp.crp_id, crp.crp_name, ali.all_name
-                  from kb3_corps crp, kb3_alliances ali
-                 where lower( crp.crp_name ) like lower( '%".$searchphrase."%' )
-                   and crp.crp_all_id = ali.all_id
-                 order by crp.crp_name";
-			$smarty->assign('result_header', 'Corporation');
-			$smarty->assign('result_header_group', 'Alliance');
-            break;
-        case "alliance":
-            $sql = "select ali.all_id, ali.all_name
-                  from kb3_alliances ali
-                 where lower( ali.all_name ) like lower( '%".$searchphrase."%' )
-                 order by ali.all_name";
-			$smarty->assign('result_header', 'Alliance');
-			$smarty->assign('result_header_group', '');
-            break;
-        case "system":
-            $sql = "select sys.sys_id, sys.sys_name
-                  from kb3_systems sys
-                 where lower( sys.sys_name ) like lower( '%".$searchphrase."%' )
-                 order by sys.sys_name";
-			$smarty->assign('result_header', 'System');
-			$smarty->assign('result_header_group', '');
-            break;
-        case "item":
-            $sql = "select typeID, typeName from kb3_invtypes where typeName like ('%".$searchphrase."%')";
-            break;
-    }
-    $qry = new DBQuery();
-    if (!$qry->execute($sql))
-    {
-        die ($qry->getErrorMsg());
-    }
-	$smarty->assign('searched', 1);
-	if ($qry->recordCount() == 0)
-    {
-        $smarty->assign('results', 0);
-    }
-    else
-    {
-		$results = array();
-		while ($row = $qry->getRow())
+	$qry = new DBPreparedQuery();
+	switch($type)
+	{
+		case "pilot":
+			$sql = "select plt.plt_name as name1, crp.crp_name as name2, plt.plt_id as id
+				  from kb3_pilots plt, kb3_corps crp
+				 where plt.plt_name  like ?
+				   and plt.plt_crp_id = crp.crp_id
+				 order by plt.plt_name LIMIT 10";
+			break;
+		case "corp":
+			$sql = "select crp.crp_name as name1, ali.all_name as name2, crp.crp_id as id
+				  from kb3_corps crp, kb3_alliances ali
+				 where crp.crp_name like  ?
+				   and crp.crp_all_id = ali.all_id
+				 order by crp.crp_name LIMIT 10";
+			break;
+		case "alliance":
+			$sql = "select ali.all_name as name1, '' as name2, ali.all_id as id
+				  from kb3_alliances ali
+				 where ali.all_name like  ?
+				 order by ali.all_name LIMIT 10";
+			break;
+		case "system":
+			$sql = "select sys.sys_name as name1, reg.reg_name as name2, sys.sys_id as id
+				  from kb3_systems sys, kb3_constellations con, kb3_regions reg
+				 where sys.sys_name like  ?
+					and con.con_id = sys.sys_con_id and reg.reg_id = con.con_reg_id
+				 order by sys.sys_name LIMIT 10";
+			break;
+		case "item":
+			$sql = "select typeName as name1, '' as name2, typeID as id
+				from kb3_invtypes where typeName like ? LIMIT 10";
+			break;
+	}
+	$name1 = 'No result';
+	$name2 = '';
+	$id = 0;
+	$qry->prepare($sql);
+	$searchphrase2 = $searchphrase.'%';
+	$qry->bind_param('s', $searchphrase2);
+	$qry->bind_result($name1, $name2, $id);
+	$result = '';
+
+	if(!$qry->execute_prepared() )
+	{
+		$result = $qry->getErrorMsg();
+	}
+
+	else
+	{
+		if(!$qry->recordCount()) $result = "No results";
+		else
 		{
-			$result = array();
+			$result = "<table class='kb-table' width='450'><tr class='kb-table-header'>";
+				switch($type)
+				{
+					case "pilot":
+						$result .= "<td>Pilot</td><td>Corporation</td></tr>";
+						break;
+					case "corp":
+						$result .= "<td>Corporation</td><td>Alliance</td></tr>";
+						break;
+					case "alliance":
+						$result .= "<td>Alliance</td><td></td></tr>";
+						break;
+					case "system":
+						$result .= "<td>System</td><td>Region</td></tr>";
+						break;
+					case "item":
+						$result .= "<td>Item</td><td></td></tr>";
+						break;
+				}
+			while($qry->fetch_prepared())
+			{
+				$result .= "<tr class='kb-table-row-even'><td><a href='".KB_HOST;
+				switch($type)
+				{
+					case "pilot":
+						$result .= "?a=pilot_detail&amp;plt_id=$id'>";
+						break;
+					case "corp":
+						$result .= "?a=corp_detail&amp;crp_id=$id'>";
+						break;
+					case "alliance":
+						$result .= "?a=alliance_detail&amp;all_id=$id'>";
+						break;
+					case "system":
+						$result .= "?a=system_detail&amp;sys_id=$id'>";
+						break;
+					case "item":
+						$result .= "?a=invtype&amp;id=$id'>";
+						break;
+				}
+				$result .= $name1."</a></td><td>".$name2."</td></tr>";
+			}
+		}
+	}
+	$objResponse = new xajaxResponse();
+	$objResponse->assign('searchresults', "innerHTML", $result);
+	return $objResponse;
+}
+
+class pSearch extends pageAssembly
+{
+	//! Construct the Alliance Details object.
+
+	/** Set up the basic variables of the class and add the functions to the
+	 *  build queue.
+	 */
+	function __construct()
+	{
+		$this->page = new Page();
+
+		parent::__construct();
+
+		$this->queue("start");
+		$this->queue("checkSearch");
+		$this->queue("display");
+	}
+	function start()
+	{
+		$this->page->setTitle('Search');
+		$this->searchphrase = slashfix($_POST['searchphrase']);
+		$this->searchphrase = preg_replace('/\*/', '%', $this->searchphrase);
+		$this->searchphrase = trim($this->searchphrase);
+	}
+
+	function checkSearch()
+	{
+		global $smarty;
+		if ($this->searchphrase != "" && strlen($this->searchphrase) >= 3)
+		{
 			switch ($_POST['searchtype'])
 			{
 				case "pilot":
-					$result['link'] = "?a=pilot_detail&plt_id=".$row['plt_id'];
-					$result['name'] = $row['plt_name'];
-					$result['type'] = $row['crp_name'];
-					$results[] = $result;
+					$sql = "select plt.plt_id, plt.plt_name, crp.crp_name
+						  from kb3_pilots plt, kb3_corps crp
+						 where plt.plt_name  like '%".$this->searchphrase."%'
+						   and plt.plt_crp_id = crp.crp_id
+						 order by plt.plt_name";
+					$smarty->assign('result_header', 'Pilot');
+					$smarty->assign('result_header_group', 'Corporation');
 					break;
 				case "corp":
-					$result['link'] = "?a=corp_detail&crp_id=".$row['crp_id'];
-					$result['name'] = $row['crp_name'];
-					$result['type'] = $row['all_name'];
-					$results[] = $result;
+					$sql = "select crp.crp_id, crp.crp_name, ali.all_name
+						  from kb3_corps crp, kb3_alliances ali
+						 where lower( crp.crp_name ) like lower( '%".$this->searchphrase."%' )
+						   and crp.crp_all_id = ali.all_id
+						 order by crp.crp_name";
+					$smarty->assign('result_header', 'Corporation');
+					$smarty->assign('result_header_group', 'Alliance');
 					break;
 				case "alliance":
-					$result['link'] = "?a=alliance_detail&all_id=".$row['all_id'];
-					$result['name'] = $row['all_name'];
-					$result['type'] = '';
-					$results[] = $result;
+					$sql = "select ali.all_id, ali.all_name
+						  from kb3_alliances ali
+						 where lower( ali.all_name ) like lower( '%".$this->searchphrase."%' )
+						 order by ali.all_name";
+					$smarty->assign('result_header', 'Alliance');
+					$smarty->assign('result_header_group', '');
 					break;
 				case "system":
-					$result['link'] = "?a=system_detail&sys_id=".$row['sys_id'];
-					$result['name'] = $row['sys_name'];
-					$result['type'] = '';
-					$results[] = $result;
+					$sql = "select sys.sys_id, sys.sys_name
+						  from kb3_systems sys
+						 where lower( sys.sys_name ) like lower( '%".$this->searchphrase."%' )
+						 order by sys.sys_name";
+					$smarty->assign('result_header', 'System');
+					$smarty->assign('result_header_group', '');
 					break;
-				case 'item':
-					$result['link'] = "?a=invtype&id=".$row['typeID'];
-					$result['name'] = $row['typeName'];
-					$result['type'] = '';
-					$results[] = $result;
+				case "item":
+					$sql = "select typeID, typeName from kb3_invtypes where typeName like ('%".$this->searchphrase."%')";
 					break;
 			}
-			if ($qry->recordCount() == 1)
+			$qry = new DBQuery();
+			if (!$qry->execute($sql))
 			{
-				// if there is only one entry we redirect the user
-				header("Location: ".KB_HOST.$result['link']);
-				die;
+				die ($qry->getErrorMsg());
+			}
+			$smarty->assign('searched', 1);
+			if ($qry->recordCount() == 0)
+			{
+				$smarty->assign('results', 0);
+			}
+			else
+			{
+				$results = array();
+				while ($row = $qry->getRow())
+				{
+					$result = array();
+					switch ($_POST['searchtype'])
+					{
+						case "pilot":
+							$result['link'] = "?a=pilot_detail&amp;plt_id=".$row['plt_id'];
+							$result['name'] = $row['plt_name'];
+							$result['type'] = $row['crp_name'];
+							$results[] = $result;
+							break;
+						case "corp":
+							$result['link'] = "?a=corp_detail&amp;crp_id=".$row['crp_id'];
+							$result['name'] = $row['crp_name'];
+							$result['type'] = $row['all_name'];
+							$results[] = $result;
+							break;
+						case "alliance":
+							$result['link'] = "?a=alliance_detail&amp;all_id=".$row['all_id'];
+							$result['name'] = $row['all_name'];
+							$result['type'] = '';
+							$results[] = $result;
+							break;
+						case "system":
+							$result['link'] = "?a=system_detail&amp;sys_id=".$row['sys_id'];
+							$result['name'] = $row['sys_name'];
+							$result['type'] = '';
+							$results[] = $result;
+							break;
+						case 'item':
+							$result['link'] = "?a=invtype&amp;id=".$row['typeID'];
+							$result['name'] = $row['typeName'];
+							$result['type'] = '';
+							$results[] = $result;
+							break;
+					}
+					if ($qry->recordCount() == 1)
+					{
+						// if there is only one entry we redirect the user
+						header("Location: ".KB_HOST.$result['link']);
+						die;
+					}
+				}
+				$smarty->assign_by_ref('results', $results);
 			}
 		}
-		$smarty->assign_by_ref('results', $results);
+		return '';
+	}
+	function display()
+	{
+		global $smarty;
+		return $smarty->fetch(get_tpl('search'));
 	}
 }
-$page->setContent($smarty->fetch(get_tpl('search')));
-$page->generate();
-?>
+
+$searchDetail = new pSearch();
+event::call("search_assembling", $searchDetail);
+$html = $searchDetail->assemble();
+$searchDetail->page->setContent($html);
+
+$searchDetail->page->generate();

@@ -15,7 +15,7 @@
 			</select>
 		</td>
 		<td>
-			<input id='searchphrase' name='searchphrase' type='text' size='30' />
+			<input id='searchphrase' name='searchphrase' type='text' size='30' onkeyup="if(this.form.searchphrase.value.length > 3) xajax_doAjaxSearch(this.form.searchphrase.value, this.form.searchtype.value);"/>
 		</td>
 		<td>
 			<input type='submit' name='submit' value='Search' />
@@ -23,9 +23,7 @@
 	</tr>
 </table>
 </form>
-
-{if $searched}
-<div class='block-header'>Search results</div>
+<div class='block-header'>Search results</div><div id='searchresults'>
 {if !$results}No results.
 {else}<table class='kb-table' width='450' cellspacing='1'>
 	<tr class='kb-table-header'>
@@ -39,4 +37,4 @@
 	</tr>
 {/section}
 </table>
-{/if}{/if}
+{/if}</div>
