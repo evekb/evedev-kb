@@ -26,7 +26,7 @@
 	</tr>
 	<tr class='kb-table-row-even'>
 		<td class='kb-table-cell'><b>Damage received (ISK):</b></td>
-		<td class='kl-loss'>{$klist_isk_B}B</td>
+		<td class='kl-loss'>{$llist_isk_B}B</td>
 	</tr>
 	<tr class='kb-table-row-even'>
 		<td class='kb-table-cell'><b>Chance of enemy survival:</b></td>
