@@ -237,7 +237,7 @@ class pCorpDetail extends pageAssembly
 				$list->setOrdered(true);
 				$list->setLimit(10);
 				$list->setPodsNoobShips(config::get('podnoobs'));
-				$list->addVictimCorp($this->crp_id);
+				$list->addInvolvedCorp($this->crp_id);
 				if ($this->scl_id) $list->addVictimShipClass($this->scl_id);
 				//$list->setStartDate(date('Y-m-d H:i',strtotime('- 30 days')));
 
@@ -268,7 +268,7 @@ class pCorpDetail extends pageAssembly
 				$list = new KillList();
 				$list->setOrdered(true);
 				$list->setPodsNoobShips(config::get('podnoobs'));
-				$list->addVictimCorp($this->crp_id);
+				$list->addInvolvedCorp($this->crp_id);
 				if ($this->scl_id) $list->addVictimShipClass($this->scl_id);
 				$list->setPageSplit(config::get('killcount'));
 				$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
@@ -302,7 +302,7 @@ class pCorpDetail extends pageAssembly
 				$html .= "<div class=\"block-header\">$this->monthname $this->year</div>";
 
 				$list = new TopKillsList();
-				$list->addVictimCorp($this->crp_id);
+				$list->addInvolvedCorp($this->crp_id);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
@@ -316,7 +316,7 @@ class pCorpDetail extends pageAssembly
 				$html .= "<div class=\"block-header\">All time</div>";
 
 				$list = new TopKillsList();
-				$list->addVictimCorp($this->crp_id);
+				$list->addInvolvedCorp($this->crp_id);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$table = new TopPilotTable($list, "Kills");
 				$html .= $table->generate();
@@ -331,7 +331,7 @@ class pCorpDetail extends pageAssembly
 				$html .= "<div class=\"block-header\">$this->monthname $this->year</div>";
 
 				$list = new TopScoreList();
-				$list->addVictimCorp($this->crp_id);
+				$list->addInvolvedCorp($this->crp_id);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
@@ -345,7 +345,7 @@ class pCorpDetail extends pageAssembly
 				$html .= "<div class=\"block-header\">All time</div>";
 
 				$list = new TopScoreList();
-				$list->addVictimCorp($this->crp_id);
+				$list->addInvolvedCorp($this->crp_id);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$table = new TopPilotTable($list, "Points");
 				$html .= $table->generate();
@@ -360,7 +360,7 @@ class pCorpDetail extends pageAssembly
 				$html .= "<div class=\"block-header\">$this->monthname $this->year</div>";
 
 				$list = new TopSoloKillerList();
-				$list->addVictimCorp($this->crp_id);
+				$list->addInvolvedCorp($this->crp_id);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
@@ -374,7 +374,7 @@ class pCorpDetail extends pageAssembly
 				$html .= "<div class=\"block-header\">All time</div>";
 
 				$list = new TopSoloKillerList();
-				$list->addVictimCorp($this->crp_id);
+				$list->addInvolvedCorp($this->crp_id);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$table = new TopPilotTable($list, "Solokills");
 				$html .= $table->generate();
@@ -390,7 +390,7 @@ class pCorpDetail extends pageAssembly
 				$html .= "<div class=\"block-header\">$this->monthname $this->year</div>";
 
 				$list = new TopDamageDealerList();
-				$list->addVictimCorp($this->crp_id);
+				$list->addInvolvedCorp($this->crp_id);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
@@ -404,7 +404,7 @@ class pCorpDetail extends pageAssembly
 				$html .= "<div class=\"block-header\">All time</div>";
 
 				$list = new TopDamageDealerList();
-				$list->addVictimCorp($this->crp_id);
+				$list->addInvolvedCorp($this->crp_id);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$table = new TopPilotTable($list, "Kills");
 				$html .= $table->generate();
@@ -420,7 +420,7 @@ class pCorpDetail extends pageAssembly
 				$html .= "<div class=\"block-header\">$this->monthname $this->year</div>";
 
 				$list = new TopGrieferList();
-				$list->addVictimCorp($this->crp_id);
+				$list->addInvolvedCorp($this->crp_id);
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
 				$table = new TopPilotTable($list, "Kills");
@@ -433,7 +433,7 @@ class pCorpDetail extends pageAssembly
 				$html .= "<div class=\"block-header\">All time</div>";
 
 				$list = new TopGrieferList();
-				$list->addVictimCorp($this->crp_id);
+				$list->addInvolvedCorp($this->crp_id);
 				$table = new TopPilotTable($list, "Kills");
 				$html .= $table->generate();
 
