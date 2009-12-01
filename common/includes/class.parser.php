@@ -15,7 +15,7 @@ class Parser
         return $str;
     }
 
-    function Parser($killmail)
+    function Parser($killmail, $externalID = null)
     {
 		if( phpversion() >= '5.0.0' ) { //lousy but necessary
             $canUnicode = true; //if this is unset, Russian will not parse, but English will atleast.
@@ -23,6 +23,8 @@ class Parser
         $this->error_ = array();
         $this->killmail_ = trim(str_replace("\r", '', $killmail));
         $this->returnmail = false;
+		if(!is_null($externalID))$this->externalID = intval($externalID);
+		else $this->externalID = 0;
 
         $pos = 0;
 
@@ -88,6 +90,28 @@ class Parser
 
     function parse($checkauth = true)
     {
+		if($this->externalID)
+		{
+			$qry = new DBQuery();
+			$qry->execute('SELECT kll_id FROM kb3_kills WHERE kll_external_id = '.$this->externalID);
+			if($qry->recordCount())
+			{
+				$row = $qry->getRow();
+				$this->dupeid_ = $row['kll_id'];
+				return -1;
+			}
+		}
+		static $pilots = array();
+		static $corps = array();
+		static $alliances = array();
+		static $ships = array();
+		static $items = array();
+
+		$this->pilots = &$pilots;
+		$this->corps = &$corps;
+		$this->alliances = &$alliances;
+		$this->ships = &$ships;
+		$this->items = &$items;
         //trim out any multiple spaces that may exist
         $this->killmail_ = preg_replace('/ +/', ' ', $this->killmail_);
 
@@ -242,25 +266,22 @@ class Parser
         else $authorized = true;
 
         // populate/update database
-        $alliance = new Alliance();
-        $alliance->add($alliancename);
-        $corp = new Corporation();
-        $corp->add($corpname, $alliance, $timestamp);
-        $victim = new Pilot();
-        $victim->add($victimname, $corp, $timestamp);
+		$alliance = $this->fetchAlliance($alliancename);
+		$corp = $this->fetchCorp($corpname, $alliance, $timestamp);
+		$victim = $this->fetchPilot($victimname, $corp, $timestamp);
         $system = new SolarSystem();
         $system->lookup($systemname);
         if (!$system->getID())
         {
             $this->error('System not found.', $systemname);
         }
-        $ship = new Ship();
-        $ship->lookup($shipname);
+        $ship = $this->fetchShip($shipname);
         if (!$ship->getID())
         {
             $this->error('Ship not found.', $shipname);
         }
         $kill = new Kill();
+		if($this->externalID) $kill->setExternalID($this->externalID);
         $kill->setTimeStamp($timestamp);
         $kill->setVictimID($victim->getID());
         $kill->setVictimCorpID($corp->getID());
@@ -358,8 +379,7 @@ class Parser
                                     $iwname = $name;
                                 }
                                 //alliance lookup for warp disruptors - normal NPCs aren't to be bundled in
-                                $crp = new Corporation();
-                                $crp->lookup($corporation);
+								$crp = $this->fetchCorp($corporation);
                                 if($crp->getID() > 0 && ( stristr($name, ' warp ') || stristr($name, ' control ')))
                                 {
                                     $al = $crp->getAlliance();
@@ -445,45 +465,46 @@ class Parser
 				}
 				// end faction warfare stuff
 
-                $ialliance = new Alliance();
-                $ialliance->add($ianame);
+                $ialliance = $this->fetchAlliance($ianame);
 
-                $icorp = new Corporation();
+                //$icorp = new Corporation();
                 if (strcmp($icname, 'None') == 0)
-                {
+                {	//don't add corp, because pilots have to be in corps.
                     $this->error('Involved party has no corp. (Party No. '.$ipilot_count.')');
+					$icorp = new Corporation();
                 }
                 else
-                {   //don't add corp, because pilots have to be in corps.
-                    $icorp->add($icname, $ialliance, $kill->getTimeStamp());
+                {
+					$icorp = $this->fetchCorp($icname, $ialliance, $kill->getTimeStamp());
                 }
 
-                $ipilot = new Pilot();
+                //$ipilot = new Pilot();
 
                 if (strcmp($ipname, 'Unknown') == 0)
                 {
                     if (preg_match("/Mobile/", $iwname) || preg_match("/Control Tower/", $iwname))
                     { //for involved parties parsed that lack a pilot, but are actually POS or mobile warp disruptors
                         $ipname = $iwname;
-                        $ipilot->add($ipname, $icorp, $timestamp);
+						$ipilot = $this->fetchPilot($ipname, $icorp, $timestamp);
                     }
-                    else $this->error('Involved party has no name. (Party No. '.$ipilot_count.')');
+                    else
+					{
+						$ipilot = new Pilot();
+						$this->error('Involved party has no name. (Party No. '.$ipilot_count.')');
+					}
                 }
                 else
                 {
                     //don't add pilot if the pilot's unknown or dud
-                    $ipilot->add($ipname, $icorp, $timestamp);
+                    $ipilot = $this->fetchPilot($ipname, $icorp, $timestamp);
                 }
-
-                $iship = new Ship();
-                $iship->lookup($isname);
+                $iship = $this->fetchShip($isname);
                 if (!$iship->getID())
                 {
                     $this->error('Ship not found.', $isname);
                 }
 
-                $iweapon = new Item();
-                $iweapon->lookup($iwname);
+                $iweapon = $this->fetchItem($iwname);
                 if (strcmp($iwname, 'Unknown') == 0)
                 {
                     $this->error('No weapon found for pilot "'.$ipname .'"');
@@ -553,7 +574,7 @@ class Parser
                     }
                 }
 
-                $iparty = new InvolvedParty($ipilot->getID(), $icorp->getID(),
+				$iparty = new InvolvedParty($ipilot->getID(), $icorp->getID(),
                     $ialliance->getID(), $secstatus, $iship, $iweapon);
                 if ($dmgtaken)
                 {
@@ -566,14 +587,23 @@ class Parser
                     $kill->setFBPilotID($ipilot->getID());
                     $kill->setFBCorpID($icorp->getID());
                     $kill->setFBAllianceID($ialliance->getID());
-					if($id = $kill->getDupe(true))
-					{
-						$this->dupeid_ = $id;
-						return -1;
-					}
                 }
             }
         }
+		// Duplicate check does not use items so it's safe to check now
+		if($id = $kill->getDupe(true))
+		{
+			$this->dupeid_ = $id;
+			// If this is a duplicate and we have an external id then update the
+			// existing kill.
+			if($this->externalID)
+			{
+				$qry = new DBQuery();
+				$qry->execute("UPDATE kb3_kills SET kll_external_id = ".
+					$this->externalID." WHERE kll_id = ".$this->dupeid_);
+			}
+			return -1;
+		}
 
         // destroyed items section
         $destroyedpos = strpos($this->killmail_, "Destroyed items:");
@@ -631,6 +661,11 @@ class Parser
         if ($id == -1)
         {
             $this->dupeid_ = $kill->dupeid_;
+			if($this->externalID)
+			{
+				$qry = new DBQuery();
+				$qry->execute("UPDATE kb3_kills SET kll_external_id = ".$this->externalID." WHERE kll_id = ".$this->dupeid_);
+			}
         }
         elseif ($id == -2) {
             $this->error("An error has occurred. Please try again later.");
@@ -721,6 +756,7 @@ class Parser
                 $quantity = 1;
             }
 
+//            $item = $this->fetchItem(trim($itemname));
             $item = new Item();
             $item->lookup(trim($itemname));
             if (!$item->getID())
@@ -758,5 +794,97 @@ class Parser
         $translate = new Translate($set);
         $this->killmail_ = $translate->getTranslation($this->killmail_);
     }
+	//! Return alliance from cached list or look up a new name.
+
+	//! \param $alliancename Alliance name to look up.
+	//! \return Alliance object matching input name.
+	function fetchAlliance($alliancename)
+	{
+		if(isset($this->alliances[slashfix($alliancename)]))
+			$alliance = $this->alliances[slashfix($alliancename)];
+		else
+		{
+			$alliance = new Alliance();
+			$alliance->add($alliancename);
+			$this->alliances[slashfix($alliancename)] = $alliance;
+		}
+		return $alliance;
+	}
+	//! Return corporation from cached list or look up a new name.
+
+	//! \param $corpname Alliance name to look up.
+	//! \return Corporation object matching input name.
+	function fetchCorp($corpname, $alliance = null, $timestamp = null)
+	{
+		if(isset($this->corps[slashfix($corpname)]))
+		{
+			if(!is_null($timestamp) && $this->corps[slashfix($corpname)]->isUpdatable($timestamp))
+				$this->corps[slashfix($corpname)]->add($corpname, $alliance, $timestamp);
+			$corp = $this->corps[slashfix($corpname)];
+		}
+		else
+		{
+			$corp = new Corporation();
+			if($alliance == null) $corp->lookup($corpname);
+			else
+			{
+				$corp->add($corpname, $alliance, $timestamp);
+				$this->corps[slashfix($corpname)] = $corp;
+			}
+		}
+		return $corp;
+	}
+	//! Return pilot from cached list or look up a new name.
+
+	//! \param $pilotname Pilot name to look up.
+	//! \return Pilot object matching input name.
+	function fetchPilot($pilotname, $corp, $timestamp)
+	{
+		if(isset($this->pilots[slashfix($pilotname)]))
+		{
+			if($this->pilots[slashfix($pilotname)]->isUpdatable($timestamp))
+				$this->pilots[slashfix($pilotname)]->add($pilotname, $corp, $timestamp);
+			$pilot = $this->pilots[slashfix($pilotname)];
+		}
+		else
+		{
+			$pilot = new Pilot();
+			$pilot->add($pilotname, $corp, $timestamp);
+			$this->pilots[slashfix($pilotname)] = $pilot;
+		}
+		return $pilot;
+	}
+	//! Return ship from cached list or look up a new name.
+
+	//! \param $shipname Ship name to look up.
+	//! \return Ship object matching input name.
+	function fetchShip($shipname)
+	{
+		if(isset($this->ships[slashfix($shipname)]))
+			$ship = $this->ships[slashfix($shipname)];
+		else
+		{
+			$ship = new Ship();
+			$ship->lookup(slashfix($shipname));
+			$this->ships[slashfix($shipname)] = $ship;
+		}
+		return $ship;
+	}
+	//! Return item from cached list or look up a new name.
+
+	//! \param $itemname Item name to look up.
+	//! \return Item object matching input name.
+	function fetchItem($itemname)
+	{
+		if(isset($this->items[slashfix($itemname)]))
+			$item = $this->items[slashfix($itemname)];
+		else
+		{
+			$item = new Item();
+			$item->lookup(slashfix($itemname));
+			$this->items[slashfix($itemname)] = $item;
+		}
+		return $item;
+	}
 }
 //Currently maintained by FriedRoadKill

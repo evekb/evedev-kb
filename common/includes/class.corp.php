@@ -142,9 +142,10 @@ class Corporation
      */
 	function add($name, $alliance, $timestamp, $externalid = 0)
 	{
+		$name = slashfix($name);
 		$qry = new DBQuery(true);
 		$qry->execute("select * from kb3_corps
-		               where crp_name = '".slashfix($name)."'");
+		               where crp_name = '".$name."'");
 		// If the corp name is not present in the db add it.
 		if ($qry->recordCount() == 0)
 		{
@@ -169,10 +170,10 @@ class Corporation
 				if ($qry->recordCount() > 0)
 				{
 					$row = $qry->getRow();
-					$qry->execute("UPDATE kb3_corps SET crp_name = '".slashfix($name)."' WHERE crp_external_id = ".$externalid);
+					$qry->execute("UPDATE kb3_corps SET crp_name = '".$name."' WHERE crp_external_id = ".$externalid);
 
 					$this->id_ = $row['crp_id'];
-					$this->name_ = slashfix($name);
+					$this->name_ = $name;
 					$this->externalid_ = $row['crp_external_id'];
 					$this->alliance_ = $row['crp_all_id'];
 					$this->updated_ = strtotime($row['crp_updated']." UTC");
@@ -194,23 +195,27 @@ class Corporation
 			// Neither corp name or external id was found so add this corp as new
 			if($externalid) $qry->execute("insert into kb3_corps ".
 					"(crp_name, crp_all_id, crp_external_id, crp_updated) ".
-					"values ('".slashfix($name)."',".$alliance->getID().
+					"values ('".$name."',".$alliance->getID().
 					", ".$externalid.", date_format('".$timestamp.
 					"','%Y.%m.%d %H:%i:%s'))");
 			else $qry->execute("insert into kb3_corps ".
 					"(crp_name, crp_all_id, crp_updated) ".
-					"values ('".slashfix($name)."',".$alliance->getID().
+					"values ('".$name."',".$alliance->getID().
 					",date_format('".$timestamp."','%Y.%m.%d %H:%i:%s'))");
 			$this->id_ = $qry->getInsertID();
+			$this->name_ = $name;
+			$this->alliance_ = $alliance->getID();
+			if($externalid) $this->externalid_ = $externalid;
+			$this->updated_ = strtotime(preg_replace("/\./","-",$timestamp)." UTC");
 		}
 		else
 		{
 			$row = $qry->getRow();
 			$this->id_ = $row['crp_id'];
-			$this->name = $row['crp_name'];
+			$this->name_ = $row['crp_name'];
 			$this->externalid_ = $row['crp_external_id'];
 			$this->alliance_ = $row['crp_all_id'];
-
+			$this->updated_ = strtotime($row['crp_updated']." UTC");
 			if ($row['crp_all_id'] != $alliance->getID() && $this->isUpdatable($timestamp))
 			{
 				$sql = 'update kb3_corps
