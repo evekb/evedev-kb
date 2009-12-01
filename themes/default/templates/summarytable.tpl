@@ -21,7 +21,7 @@
 {/if}	</tr>
 {cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
 {assign var=classcount value=0}{foreach from=$summary item=i}{assign var=classcount value=$classcount+1}
-{if $classcount > round($count/$columns) }{assign var=classcount value=1}{cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
+{if $classcount > ceil($count/$columns) }{assign var=classcount value=1}{cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
 			</table></td><td valign="top" width="{$width}%"><table class="kb-table" cellspacing="1" width="100%">
 				<tr class="kb-table-header">
 					<td class="kb-table-cell" width="{$class_width}">Ship class</td>
