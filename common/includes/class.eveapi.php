@@ -812,7 +812,7 @@ class API_KillLog
     {
         if ( ( isset( $this->killmail_ ) ) && ( !$this->killmailExists_ ) )
         {
-            $parser = new Parser( $this->killmail_ );
+            $parser = new Parser( $this->killmail_, $this->killid_);
             //$killid = $parser->parse( true );
 
 			if (config::get('filter_apply'))
@@ -893,7 +893,7 @@ class API_KillLog
                 $this->Output_ .= "API Killmail ID:".$this->killid_. " successfully imported <a href=\"?a=kill_detail&amp;kll_id=".$killid."\">here</a> as KB ID:". $killid ."<br>";
 
 				// Now place killID (API) into killboard row $killid
-				$this->VerifyKill($this->killid_, $killid);
+				//$this->VerifyKill($this->killid_, $killid);
 
 				// mail forward
 				event::call('killmail_imported', $this);
