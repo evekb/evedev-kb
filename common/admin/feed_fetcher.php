@@ -92,9 +92,11 @@ class Fetcher
 			$http = new http_request($fetchurl);
 			$http->set_useragent("EDK Feedfetcher ".$feedversion);
 			$http->set_timeout(120);
-			$http->set_cookie('PHPSESSID', 'a2bb4a7485eaba91b9d8db6aafd8ec5d');
+			//$http->set_cookie('PHPSESSID', 'a2bb4a7485eaba91b9d8db6aafd8ec5d');
 			$data = $http->get_content();
-	//		$data = trim(preg_replace('<<!--.*?-->>', '', $data)); // remove <!-- Cached --> message, else it will break gzinflate
+			if($data == '') return "<i>Error getting XML data from ".$fetchurl."</i><br>".$http->getError()."<br>";
+
+			//$data = trim(preg_replace('<<!--.*?-->>', '', $data)); // remove <!-- Cached --> message, else it will break gzinflate
 			$data = preg_replace('<<!--.*?-->>', '', $data); // remove <!-- Cached --> message, else it will break gzinflate
 			if (!@gzinflate($data))
 			{
@@ -286,6 +288,9 @@ class Fetcher
 						if(!$qry->recordCount())
 						{
 							$parser = new Parser( $this->description );
+							// Add external id when known.
+							// Make an admin option for the feed?
+							//$parser = new Parser( $this->description, $this->apiID );
 							$killid = $parser->parse( true );
 						}
 						else $killid = -3;
