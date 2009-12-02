@@ -549,7 +549,7 @@ class KillList
 			$kill->setVictimID($row['kll_victim_id']);
 			$kill->setFBPilotName($row['fbplt_name']);
 			$kill->setFBCorpName($row['fbcrp_name']);
-			$kill->setFBAllianceName($row['fbcrp_name']);
+			$kill->setFBAllianceName($row['fball_name']);
 			$kill->setKillPoints($row['kll_points']);
 			$kill->setExternalID($row['kll_external_id']);
 			$kill->setISKLoss($row['kll_isk_loss']);
