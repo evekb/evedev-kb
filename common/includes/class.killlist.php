@@ -110,6 +110,7 @@ class KillList
 				// included ship filter
 				if (count($this->vic_scl_id_))
 					$this->sqlinner_ .= " AND shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
+				event::call('killlist_where_combined_kills', $this);
 
 				if ($this->ordered_)
 				{
@@ -168,7 +169,7 @@ class KillList
 				// included ship filter
 				if (count($this->vic_scl_id_))
 					$this->sqlinner_ .= " AND shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
-
+				event::call('killlist_where_combined_losses', $this);
 				if ($this->ordered_)
 				{
 					if (!$this->orderby_)
@@ -213,6 +214,7 @@ class KillList
 							fbplt.plt_externalid as fbplt_externalid,
 							fbcrp.crp_name as fbcrp_name,
 							fbali.all_name as fball_name';
+				event::call('killlist_select_expr', $this);
 			}
 
 
@@ -267,7 +269,7 @@ class KillList
 
 			if($this->comb_plt_ || $this->comb_crp_ || $this->comb_all_)
 			{
-			// GROUP BY
+				// GROUP BY
 				if ($this->groupby_) $this->sql_ .= " GROUP BY ".implode(",", $this->groupby_);
 				// order/limit
 				if ($this->ordered_)
@@ -337,6 +339,8 @@ class KillList
 				// included ship filter
 				if (count($this->vic_scl_id_))
 					$this->sql_ .= " AND shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
+				event::call('killlist_where_kill', $this);
+
 				if ($this->ordered_)
 				{
 					if (!$this->orderby_)
@@ -420,14 +424,13 @@ class KillList
 					$this->sql_ .= $sqlwhereop." shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
 					$sqlwhereop = ' AND ';
 				}
+				event::call('killlist_where_loss', $this);
 				if ($this->ordered_)
 				{
 					if (!$this->orderby_)
 						$this->sql_ .= " order by kll.kll_timestamp desc";
 					else $this->sql_ .= " order by ".$this->orderby_;
 				}
-			//$this->sql_ .= " kll ";
-
 			}
 			// Enclose query in another to fetch comments and involved parties
 			if(!count($this->groupby_) && ($this->comments_ || $this->involved_))
@@ -952,4 +955,3 @@ class CombinedKillList extends KillList
 	}
 
 }
-?>

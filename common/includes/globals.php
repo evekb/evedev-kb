@@ -56,6 +56,7 @@ function roundsec($sec)
  */
 function get_tpl($name)
 {
+	event::call('get_tpl', $name);
 	if(config::get('theme_name')== 'default')
 	{
 		if (IS_IGB)

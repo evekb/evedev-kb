@@ -10,11 +10,6 @@ class KillListTable
 		$this->daybreak_ = true;
 	}
 
-	function setBrowsable($browsable)
-	{
-		$this->browsable = $browsable;
-	}
-
 	function setDayBreak($daybreak)
 	{
 		$this->daybreak_ = $daybreak;
@@ -128,8 +123,10 @@ class KillListTable
 				elseif(PILOT_ID && $kill->getVictimID() == PILOT_ID) $kll['loss'] = true;
 				else $kll['kill'] = true;
 			}
+			event::call('killlist_table_kill', $kll);
 			$kills[] = $kll;
 		}
+		event::call('killlist_table_kills', $kills);
 		if (count($kills))
 		{
 			$kl[] = array('kills' => $kills, 'date' => strtotime($prevdate));
@@ -139,4 +136,3 @@ class KillListTable
 		return $smarty->fetch(get_tpl('killlisttable'));
 	}
 }
-?>
