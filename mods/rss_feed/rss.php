@@ -12,6 +12,7 @@ require_once("common/includes/class.killlist.php");
 require_once("common/includes/class.killlisttable.php");
 require_once("class.rss.php");
 
+$scl_id = intval($_GET['scl_id']);
 header('Content-Type: text/xml');
 $html .= "<"."?xml version=\"1.0\"?".">
 <rss version=\"2.0\">
@@ -28,13 +29,13 @@ $klist = new KillList();
 $klist->setOrdered(true);
 if(isset($_REQUEST['losses']) && isset($_REQUEST['kills']))
 	involved::load($klist,'combined');
-if(!isset($_REQUEST['losses']) && isset($_REQUEST['kills']))
-	involved::load($klist,'kill');
+elseif(isset($_REQUEST['losses']) && !isset($_REQUEST['kills']))
+	involved::load($klist,'loss');
 else
 	involved::load($klist,'kill');
-if ($_GET['scl_id'])
+if ($scl_id)
 {
-    $klist->addVictimShipClass(new ShipClass($_GET['scl_id']));
+    $klist->addVictimShipClass($scl_id);
 }
 else
 {
@@ -48,4 +49,3 @@ $html .= $table->generate();
 $html .= "</channel>
 </rss>";
 echo $html;
-?>
