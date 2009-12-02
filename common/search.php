@@ -234,7 +234,7 @@ class pSearch extends pageAssembly
 					if ($qry->recordCount() == 1)
 					{
 						// if there is only one entry we redirect the user
-						header("Location: ".KB_HOST.html_entity_decode($result['link']));
+						header("Location: ".KB_HOST.'/'.html_entity_decode($result['link']));
 						die;
 					}
 				}
