@@ -1,6 +1,4 @@
 <?php
-
-if(file_exists('install.lock')) die("Remove install/install.lock before attempting to reinstall.");
 $installrunning = true;
 
 session_start();
@@ -33,7 +31,14 @@ elseif (isset($_GET['step']) && $step = intval($_GET['step']))
 <table cellpadding="0" cellspacing="0" width="100%" border="0">
 <tr><td valign="top"><div id="content">
 <?php
-include('install_step'.$_SESSION['state'].'.php');
+if(file_exists('install.lock'))
+{
+	?>
+	<p>Remove install/install.lock before attempting to reinstall.</p>
+	<?php	
+}
+else include('install_step'.$_SESSION['state'].'.php');
+
 ?>
 </div></td>
 </tr></table>
