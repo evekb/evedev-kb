@@ -83,24 +83,21 @@ class Page
 		event::call('page_assemblebody', $this);
 		$smarty->assign('page_bodylines', join("\n", $this->bodylines));
 
-		if (!$this->igb_)
+		if (MAIN_SITE)
 		{
-			if (MAIN_SITE)
-			{
-				$smarty->assign('banner_link', MAIN_SITE);
-			}
-			$smarty->assign('banner', config::get('style_banner'));
-			$smarty->assign('banner_x', config::get('style_banner_x'));
-			$smarty->assign('banner_y', config::get('style_banner_y'));
-
-			$nav = new Navigation();
-			$nav->setSite($_GET['a']);
-			$menu = $nav->generateMenu();
-			$w = floor(100 / count($menu->get()));
-
-			$smarty->assign('menu_w',$w.'%');
-			$smarty->assign('menu', $menu->get());
+			$smarty->assign('banner_link', MAIN_SITE);
 		}
+		$smarty->assign('banner', config::get('style_banner'));
+		$smarty->assign('banner_x', config::get('style_banner_x'));
+		$smarty->assign('banner_y', config::get('style_banner_y'));
+
+		$nav = new Navigation();
+		$nav->setSite($_GET['a']);
+		$menu = $nav->generateMenu();
+		$w = floor(100 / count($menu->get()));
+
+		$smarty->assign('menu_w',$w.'%');
+		$smarty->assign('menu', $menu->get());
 
 		//check if banner is a swf
 		$bannerExn = substr(config::get('style_banner'),-3);
