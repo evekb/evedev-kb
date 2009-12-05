@@ -12,7 +12,7 @@
 	</tr>
     {foreach from=$destroyed.$slotindex item="i"}
 	<tr class="kb-table-row-odd">
-		<td class="item-icon" width="32" height="34" valign="top"><a href="?a=invtype&amp;id={$i.itemID}">{$i.Icon}</a></td>
+		<td class="item-icon" width="32" height="34" valign="top" onclick="CCPEVE.showInfo({$i.itemID})">{$i.Icon}</a></td>
 		<td class="kb-table-cell">{$i.Name}</td>
 		<td width="30" align="center">{$i.Quantity}</td>
         {if $config->get('item_values')}
@@ -51,7 +51,7 @@
     {/foreach}
     {foreach from=$dropped.$slotindex item="i"}
 	<tr class="kb-table-row-odd" style="background-color: {$dropped_colour};">
-		<td style="border: 1px solid green;" width="32" height="34" valign="top"><a href="?a=invtype&amp;id={$i.itemID}">{$i.Icon}</a></td>
+		<td style="border: 1px solid green;" width="32" height="34" valign="top" onclick="CCPEVE.showInfo({$i.itemID})">{$i.Icon}</a></td>
 		<td class="kb-table-cell">{$i.Name}</td>
 		<td width="30" align="center">{$i.Quantity}</td>
         {if $config->get('item_values')}
@@ -108,7 +108,7 @@
 		<td colspan="3"><div align="right"><strong>Ship Loss:</strong></div></td>
 		<td align="right">{$shipValue}</td>
 	</tr>
-        {if $admin and $config->get('item_values') and !$fixSlot}
+{if $admin and $config->get('item_values') and !$fixSlot}
 	<tr class="kb-table-row-even">
 	  <td height="34" colspan="4" valign="top" align="right"><form method="post" action=""><table><tr>
 		<td>
@@ -120,7 +120,7 @@
 		<td height="34" valign="top"><input type="submit" name="submit" value="UpdateValue" class="comment-button" /></td>
 	  </tr></table></form></td>
 	</tr>
-        {/if}
+{/if}
 	<tr class="{cycle name="ccl"}" style="background-color: #600000;">
 		<td style="border: 1px solid #600000;" colspan="3"><div align="right"><strong>Total Loss:</strong></div></td>
 		<td style="border: 1px solid #C00000;" align="right">{$totalLoss}</td>

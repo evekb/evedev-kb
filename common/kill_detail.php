@@ -378,14 +378,14 @@ class pKillDetail extends pageAssembly
 			$weapon                    =$inv->getWeapon();
 
 			$this->involved[$i]['shipImage'] =$ship->getImage(64);
-			$this->involved[$i]['PilotURL']  ="?a=pilot_detail&amp;plt_id=" . $pilot->getID();
-			$this->involved[$i]['PilotName'] =$pilot->getName();
-			$this->involved[$i]['CorpURL']   ="?a=corp_detail&amp;crp_id=" . $corp->getID();
-			$this->involved[$i]['CorpName']  =$corp->getName();
-			$this->involved[$i]['AlliURL']   ="?a=alliance_detail&amp;all_id=" . $alliance->getID();
-			$this->involved[$i]['AlliName']  =$alliance->getName();
-			$this->involved[$i]['ShipName']  =$ship->getName();
-			$this->involved[$i]['ShipID']    =$ship->externalid_;
+			$this->involved[$i]['pilotURL']  ="?a=pilot_detail&amp;plt_id=" . $pilot->getID();
+			$this->involved[$i]['pilotName'] =$pilot->getName();
+			$this->involved[$i]['corpURL']   ="?a=corp_detail&amp;crp_id=" . $corp->getID();
+			$this->involved[$i]['corpName']  =$corp->getName();
+			$this->involved[$i]['alliURL']   ="?a=alliance_detail&amp;all_id=" . $alliance->getID();
+			$this->involved[$i]['alliName']  =$alliance->getName();
+			$this->involved[$i]['shipName']  =$ship->getName();
+			$this->involved[$i]['shipID']    =$ship->externalid_;
 			$this->involved[$i]['damageDone']=$inv->dmgdone_;
 			$shipclass                 =$ship->getClass();
 
@@ -394,7 +394,8 @@ class pKillDetail extends pageAssembly
 			if ($pilot->getName() == $weapon->getName())
 			{
 				$this->involved[$i]['portrait'] = $corp->getPortraitURL(64);
-				$this->involved[$i]['ext_id'] = $weapon->getID();
+				$this->involved[$i]['externalID'] = $corp->getExternalID();
+				$this->involved[$i]['typeID'] = 2; //type number for corporations.
 
 				if(!file_exists("img/ships/64_64/".$weapon->getID().".png"))
 					$this->involved[$i]['shipImage'] = $this->involved[$i]['portrait'];
@@ -404,7 +405,8 @@ class pKillDetail extends pageAssembly
 			else
 			{
 				$this->involved[$i]['portrait']=$pilot->getPortraitURL(64);
-				$this->involved[$i]['ext_id'] = $pilot->getExternalID();
+				$this->involved[$i]['externalID'] = $pilot->getExternalID();
+				$this->involved[$i]['typeID'] = 1377; //type number for characters.
 			}
 
 			if ($weapon->getName() != "Unknown" && $weapon->getName() != $ship->getName())
@@ -417,14 +419,14 @@ class pKillDetail extends pageAssembly
 
 			if (!$this->finalblow && $pilot->getID() == $this->kill->getFBPilotID())
 			{
-				$this->involved[$i]['FB']="true";
+				$this->involved[$i]['finalBlow']="true";
 				$this->finalblow = $this->involved[$i];
 				// If we're only here to get the final blow box details then remove this pilot.
 				if(!$this->nolimit && $i > $invlimit && $i == $invlimit + 1) array_pop($this->involved);
 			}
 			else
 			{
-				$this->involved[$i]['FB']="false";
+				$this->involved[$i]['finalBlow']="false";
 			}
 
 			++$i;
@@ -434,12 +436,12 @@ class pKillDetail extends pageAssembly
 	function involvedSummary()
 	{
 		global $smarty;
-		$smarty->assign_by_ref('InvAllies', $this->InvAllies);
-		$smarty->assign_by_ref('InvShips', $this->InvShips);
-		$smarty->assign_by_ref('AlliesCount', count($this->InvAllies));
+		$smarty->assign_by_ref('invAllies', $this->InvAllies);
+		$smarty->assign_by_ref('invShips', $this->InvShips);
+		$smarty->assign_by_ref('alliesCount', count($this->InvAllies));
 		if($this->ownKill) $smarty->assign('kill',true);
 		else $smarty->assign('kill',false);
-		$smarty->assign('InvolvedPartyCount', $this->kill->getInvolvedPartyCount()); // Anne Sapyx 07/05/2008
+		$smarty->assign('involvedPartyCount', $this->kill->getInvolvedPartyCount()); // Anne Sapyx 07/05/2008
 		$smarty->assign('showext', config::get('apocfitting_showext'));
 
 		return $smarty->fetch(get_tpl('kill_detail_inv_sum'));
@@ -472,17 +474,17 @@ class pKillDetail extends pageAssembly
 	function victim()
 	{
 		global $smarty;
-		$smarty->assign('KillId', $this->kill->getID());
+		$smarty->assign('killID', $this->kill->getID());
 		$plt = new Pilot($this->kill->getVictimID());
-		$smarty->assign('VictimPortrait', $plt->getPortraitURL(64));
-		$smarty->assign('VictimURL', "?a=pilot_detail&amp;plt_id=" . $this->kill->getVictimID());
-		$smarty->assign('VictimExtID', $plt->getExternalID());
-		$smarty->assign('VictimName', $this->kill->getVictimName());
-		$smarty->assign('VictimCorpURL', "?a=corp_detail&amp;crp_id=" . $this->kill->getVictimCorpID());
-		$smarty->assign('VictimCorpName', $this->kill->getVictimCorpName());
-		$smarty->assign('VictimAllianceURL', "?a=alliance_detail&amp;all_id=" . $this->kill->getVictimAllianceID());
-		$smarty->assign('VictimAllianceName', $this->kill->getVictimAllianceName());
-		$smarty->assign('VictimDamageTaken', $this->kill->VictimDamageTaken);
+		$smarty->assign('victimPortrait', $plt->getPortraitURL(64));
+		$smarty->assign('victimURL', "?a=pilot_detail&amp;plt_id=" . $this->kill->getVictimID());
+		$smarty->assign('victimExtID', $plt->getExternalID());
+		$smarty->assign('victimName', $this->kill->getVictimName());
+		$smarty->assign('victimCorpURL', "?a=corp_detail&amp;crp_id=" . $this->kill->getVictimCorpID());
+		$smarty->assign('victimCorpName', $this->kill->getVictimCorpName());
+		$smarty->assign('victimAllianceURL', "?a=alliance_detail&amp;all_id=" . $this->kill->getVictimAllianceID());
+		$smarty->assign('victimAllianceName', $this->kill->getVictimAllianceName());
+		$smarty->assign('victimDamageTaken', $this->kill->VictimDamageTaken);
 
 		return $smarty->fetch(get_tpl('kill_detail_victim'));
 	}
@@ -638,10 +640,10 @@ class pKillDetail extends pageAssembly
 		$this->ShipValue=number_format($this->ShipValue, 2);
 		$this->dropvalue=number_format($this->dropvalue, 2);
 
-		$smarty->assign('ItemValue', $Formatted);
-		$smarty->assign('DropValue', $this->dropvalue);
-		$smarty->assign('ShipValue', $this->ShipValue);
-		$smarty->assign('TotalLoss', $TotalLoss);
+		$smarty->assign('itemValue', $Formatted);
+		$smarty->assign('dropValue', $this->dropvalue);
+		$smarty->assign('shipValue', $this->ShipValue);
+		$smarty->assign('totalLoss', $TotalLoss);
 
 		return $smarty->fetch(get_tpl('kill_detail_items_lost'));
 
@@ -653,13 +655,13 @@ class pKillDetail extends pageAssembly
 		$ship=$this->kill->getVictimShip();
 		$shipclass=$ship->getClass();
 
-		$smarty->assign('VictimShip', $this->kill->getVictimShip());
-		$smarty->assign('ShipClass', $ship->getClass());
-		$smarty->assign('ShipImage', $ship->getImage(64));
-		$smarty->assign('ShipName', $ship->getName());
-		$smarty->assign('ShipID', $ship->externalid_);
-		$smarty->assign('ClassName', $shipclass->getName());
-		if($this->page->isAdmin()) $smarty->assign('Ship', $ship);
+		$smarty->assign('victimShip', $this->kill->getVictimShip());
+		$smarty->assign('victimShipClass', $ship->getClass());
+		$smarty->assign('victimShipImage', $ship->getImage(64));
+		$smarty->assign('victimShipName', $ship->getName());
+		$smarty->assign('victimShipID', $ship->externalid_);
+		$smarty->assign('victimShipClassName', $shipclass->getName());
+		if($this->page->isAdmin()) $smarty->assign('ship', $ship);
 
 		include_once('common/includes/class.dogma.php');
 
@@ -674,34 +676,34 @@ class pKillDetail extends pageAssembly
 			{
 				if (config::get('apocfitting_mapmod'))
 				{
-					$smarty->assign('SystemID', $this->system->getID());
+					$smarty->assign('systemID', $this->system->getID());
 				}
-				$smarty->assign('System', $this->system->getName() . ' (Classified)');
-				$smarty->assign('SystemURL', "?a=system_detail&amp;sys_id=" . $this->system->getID());
-				$smarty->assign('SystemSecurity', $this->system->getSecurity(true));
+				$smarty->assign('system', $this->system->getName() . ' (Classified)');
+				$smarty->assign('systemURL', "?a=system_detail&amp;sys_id=" . $this->system->getID());
+				$smarty->assign('systemSecurity', $this->system->getSecurity(true));
 			}
 			else
 			{
-				$smarty->assign('System', 'Classified');
-				$smarty->assign('SystemURL', "");
-				$smarty->assign('SystemSecurity', '0.0');
+				$smarty->assign('system', 'Classified');
+				$smarty->assign('systemURL', "");
+				$smarty->assign('systemSecurity', '0.0');
 			}
 		}
 		else
 		{
 			if (config::get('apocfitting_mapmod'))
 			{
-				$smarty->assign('SystemID', $this->system->getID());
+				$smarty->assign('systemID', $this->system->getID());
 			}
-			$smarty->assign('System', $this->system->getName());
-			$smarty->assign('SystemURL', "?a=system_detail&amp;sys_id=" . $this->system->getID());
-			$smarty->assign('SystemSecurity', $this->system->getSecurity(true));
+			$smarty->assign('system', $this->system->getName());
+			$smarty->assign('systemURL', "?a=system_detail&amp;sys_id=" . $this->system->getID());
+			$smarty->assign('systemSecurity', $this->system->getSecurity(true));
 		}
 
-		$smarty->assign('TimeStamp', $this->kill->getTimeStamp());
-		$smarty->assign('VictimShipImg', $ship->getImage(64));
+		$smarty->assign('timeStamp', $this->kill->getTimeStamp());
+		$smarty->assign('victimShipImg', $ship->getImage(64));
 
-		$smarty->assign('TotalLoss', number_format($this->kill->getISKLoss()));
+		$smarty->assign('totalLoss', number_format($this->kill->getISKLoss()));
 		return $smarty->fetch(get_tpl('kill_detail_victim_ship'));
 	}
 	function fitting()
@@ -1007,9 +1009,18 @@ class pKillDetail extends pageAssembly
 			if (!config::get('apocfitting_sidemap'))
 			{
 				$mapbox=new Box("Map");
-				$mapbox->addOption("img", "?a=mapview&amp;sys_id=" . $this->system->getID() . "&amp;mode=map&amp;size=145");
-				$mapbox->addOption("img", "?a=mapview&amp;sys_id=" . $this->system->getID() . "&amp;mode=region&amp;size=145");
-				$mapbox->addOption("img", "?a=mapview&amp;sys_id=" . $this->system->getID() . "&amp;mode=cons&amp;size=145");
+				if(IS_IGB)
+				{
+					$mapbox->addOption("img", "?a=mapview&amp;sys_id=" . $this->system->getID() . "&amp;mode=map&amp;size=145", "javascript:CCPEVE.showInfo(3, ".$this->system->getRegionID().")");
+					$mapbox->addOption("img", "?a=mapview&amp;sys_id=" . $this->system->getID() . "&amp;mode=region&amp;size=145", "javascript:CCPEVE.showInfo(4, ".$this->system->getConstellationID().")");
+					$mapbox->addOption("img", "?a=mapview&amp;sys_id=" . $this->system->getID() . "&amp;mode=cons&amp;size=145", "javascript:CCPEVE.showInfo(5, ".$this->system->getExternalID().")");
+				}
+				else
+				{
+					$mapbox->addOption("img", "?a=mapview&amp;sys_id=" . $this->system->getID() . "&amp;mode=map&amp;size=145");
+					$mapbox->addOption("img", "?a=mapview&amp;sys_id=" . $this->system->getID() . "&amp;mode=region&amp;size=145");
+					$mapbox->addOption("img", "?a=mapview&amp;sys_id=" . $this->system->getID() . "&amp;mode=cons&amp;size=145");
+				}
 				return $mapbox->generate();
 			}
 		}

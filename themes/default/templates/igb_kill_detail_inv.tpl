@@ -2,8 +2,8 @@
 <table class="kb-table" width="360" border="0" cellspacing="1">
 {foreach from=$involved key="key" item="i"}
 	<tr class="{cycle name="ccl"}">
-		<td rowspan="5" width="64"><img {if $i.finalBlow == "true"}class="finalblow"{/if} height="64" width="64" src="{$i.portrait}" border="0" alt="inv portrait" /></td>
-		<td rowspan="5" width="64"><a href="?a=invtype&amp;id={$i.shipID}"><img {if $i.finalBlow == "true"}class="finalblow"{/if} height="64" width="64" src="{$i.shipImage}" border="0" alt="{$i.shipName}" /></a></td>
+		<td rowspan="5" width="64" onclick="CCPEVE.showInfo({$i.typeID}, {$i.externalID})"><img {if $i.finalBlow == "true"}class="finalblow"{/if} height="64" width="64" src="{$i.portrait}" border="0" alt="inv portrait" /></td>
+		<td rowspan="5" width="64" onclick="CCPEVE.showPreview({$i.shipID})"><img {if $i.finalBlow == "true"}class="finalblow"{/if} height="64" width="64" src="{$i.shipImage}" border="0" alt="{$i.shipName}" /></a></td>
 
 		<td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;"><a href="{$i.pilotURL}">{$i.pilotName}</a></td>
 	</tr>
@@ -14,10 +14,10 @@
 		<td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;"><a href="{$i.alliURL}">{$i.alliName}</a></td>
 	</tr>
 	<tr class="{cycle name="ccl"}">
-		<td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;"><b><a href="?a=invtype&amp;id={$i.shipID}">{$i.shipName}</a></b> ({$i.shipClass})</td>
+		<td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;"><b><a href="javascript:CCPEVE.showInfo({$i.shipID})">{$i.shipName}</a></b> ({$i.shipClass})</td>
 	</tr>
 	<tr class="{cycle name="ccl"}">
-		<td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;">{if $i.weaponID}<a href="?a=invtype&amp;id={$i.weaponID}">{$i.weaponName}</a>{else}{$i.weaponName}{/if}</td>
+		<td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;">{if $i.weaponID}<a href="javascript:CCPEVE.showInfo({$i.weaponID})">{$i.weaponName}</a>{else}{$i.weaponName}{/if}</td>
 	</tr>
 	<tr class="{cycle name="ccl"}">
 		<td colspan="2" class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;">Damage done:</td><td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;">{$i.damageDone|number_format} {if $victimDamageTaken > 0}({$i.damageDone/$victimDamageTaken*100|number_format}%){/if}</td>
