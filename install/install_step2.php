@@ -88,7 +88,7 @@ else
 
 echo '<br/><div class="block-header2">Connectivity</div>';
 // connectivity
-$url = 'http://www.eve-dev.net/logo.png';
+$url = 'http://www.eve-id.net/logo.png';
 if (ini_get('allow_url_fopen'))
 {
     echo 'allow_url_fopen is on, I will try to fetch a testpage from "'.$url.'".<br/>';
