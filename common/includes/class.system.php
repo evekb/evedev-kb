@@ -41,10 +41,22 @@ class SolarSystem
         else return $sec;
     }
 
+    function getConstellationID()
+    {
+        $this->execQuery();
+        return $this->row_['con_id'];
+    }
+
     function getConstellationName()
     {
         $this->execQuery();
         return $this->row_['con_name'];
+    }
+
+    function getRegionID()
+    {
+        $this->execQuery();
+        return $this->row_['reg_id'];
     }
 
     function getRegionName()
