@@ -106,16 +106,16 @@ class cache
 					}
 			if (time() - $cachetime < $timestamp)
 			{
-				$etag=md5($cachefile);
+				$etag=md5($cachefile.$timestamp);
 				header("Last-Modified: ".gmdate("D, d M Y H:i:s", $timestamp)." GMT");
 				// Breaks comment posting.
 				//				header('Expires: ' . gmdate('D, d M Y H:i:s', $timestamp + $cachetime) . ' GMT');
-				header("Etag: ".md5($etag));
+				header("Etag: ".$etag);
 				header("Cache-Control:");
 				header('Pragma:');
 
-				if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $timestamp ||
-					trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag)
+				if (trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag ||
+					@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $timestamp)
 				{
 					header("HTTP/1.1 304 Not Modified");
 					exit;
@@ -133,7 +133,7 @@ class cache
 		else if(!ini_get('zlib.output_compression')) ob_start("ob_gzhandler");
 		header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
 		//		header('Expires: ' . gmdate('D, d M Y H:i:s', time()+60) . ' GMT');
-		header("Etag: ".md5($cachefile));
+		header("Etag: ".md5($cachefile.time()));
 		header("Cache-Control:");
 		header('Pragma:');
 	}
