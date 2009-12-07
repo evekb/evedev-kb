@@ -14,8 +14,8 @@ define('KB_QUERYCACHEDIR', KB_CACHEDIR.'/SQL');
 
 // current version: major.minor.sub
 // unpair numbers for minor = development version
-define('KB_VERSION', '3.0 Alpha');
-define('KB_RELEASE', '(Apocrypha)');
+define('KB_VERSION', '3.0 Beta');
+define('KB_RELEASE', '(Dominion)');
 
 // add new corporations here once you've added the logo to img/corps/
 $corp_npc = array('Guristas', 'Serpentis Corporation', 'Sansha\'s Nation', 'CONCORD',
