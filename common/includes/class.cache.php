@@ -63,7 +63,7 @@ class cache
 		// If the cache doesn't exist then we don't need to check times.
 		if (cache::shouldCache($page) && file_exists(cache::genCacheName()))
 		{
-						$times = explode(',', config::get('cache_times'));
+			$times = explode(',', config::get('cache_times'));
 			foreach ($times as $string)
 			{
 				$array = explode(':', $string);
@@ -106,14 +106,20 @@ class cache
 					}
 			if (time() - $cachetime < $timestamp)
 			{
+				// Alternatively, use a hash of the file. More cpu for a little
+				// less bandwidth. Possibly more useful if we keep an index.
+				// filename, age, hash. Age would be used for cache clearing.
 				$etag=md5($cachefile.$timestamp);
 				header("Last-Modified: ".gmdate("D, d M Y H:i:s", $timestamp)." GMT");
-				// Breaks comment posting.
-				//				header('Expires: ' . gmdate('D, d M Y H:i:s', $timestamp + $cachetime) . ' GMT');
+				//Breaks comment posting. Page is not reloaded until expiry time
+				//thus missing comments posted by others.
+				//header('Expires: ' . gmdate('D, d M Y H:i:s', $timestamp + $cachetime) . ' GMT');
 				header("Etag: ".$etag);
 				header("Cache-Control:");
 				header('Pragma:');
 
+				// There was a reason for having both checks. etag not always
+				// checked maybe?
 				if (trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag ||
 					@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $timestamp)
 				{
@@ -132,7 +138,9 @@ class cache
 		}
 		else if(!ini_get('zlib.output_compression')) ob_start("ob_gzhandler");
 		header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
-		//		header('Expires: ' . gmdate('D, d M Y H:i:s', time()+60) . ' GMT');
+		if (strpos($_SERVER['REQUEST_URI'],'thumb') ||
+			strpos($_SERVER['REQUEST_URI'],'mapview'))
+				header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 7776000) . ' GMT');
 		header("Etag: ".md5($cachefile.time()));
 		header("Cache-Control:");
 		header('Pragma:');
@@ -197,4 +205,3 @@ class cache
 		touch(KB_PAGECACHEDIR.'/killadded.mk');
 	}
 }
-?>
