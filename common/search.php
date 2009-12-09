@@ -43,6 +43,11 @@ function doAjaxSearch($searchphrase='', $type='pilot')
 			$sql = "select typeName as name1, '' as name2, typeID as id
 				from kb3_invtypes where typeName like ? LIMIT 10";
 			break;
+		default:
+			$objResponse = new xajaxResponse();
+			$objResponse->assign('searchresults', "innerHTML", 'Invalid type');
+			return $objResponse;
+
 	}
 	$name1 = 'No result';
 	$name2 = '';

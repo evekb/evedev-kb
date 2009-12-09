@@ -1,3 +1,4 @@
+<script type="text/javascript" src="{$kb_host}/themes/default/search.js"></script>
 <form id='search' action="?a=search" method='post'>
 <table class='kb-subtable'>
 	<tr>
@@ -6,7 +7,7 @@
 	</tr>
 	<tr>
 		<td>
-			<select id='searchtype' name='searchtype'>
+			<select id='searchtype' name='searchtype' onchange="searchBuffer.bufferText='';if(this.value.length > 2) searchBuffer.modified('searchphrase');">
 			<option value='pilot'>Pilot</option>
 			<option value='corp'>Corporation</option>
 			<option value='alliance'>Alliance</option>
@@ -15,7 +16,7 @@
 			</select>
 		</td>
 		<td>
-			<input id='searchphrase' name='searchphrase' type='text' size='30' onkeyup="if(this.form.searchphrase.value.length > 3) xajax_doAjaxSearch(this.form.searchphrase.value, this.form.searchtype.value);"/>
+			<input id='searchphrase' name='searchphrase' type='text' size='30' onkeyup="if(this.value.length > 2) searchBuffer.modified('searchphrase');"/>
 		</td>
 		<td>
 			<input type='submit' name='submit' value='Search' />
