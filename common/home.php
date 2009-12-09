@@ -60,16 +60,14 @@ class pHome extends pageAssembly
 				require_once('common/includes/class.killsummarytable.public.php');
 				//$kslist = new KillList();
 				$summarytable = new KillSummaryTablePublic();
-				$summarytable->setWeek($this->week);
-				$summarytable->setYear($this->year);
+				$this->loadTime($summarytable);
 				involved::load($summarytable,'kill');
 			//$summarytable = new KillSummaryTablePublic($kslist);
 			}
 			else
 			{
 				$summarytable = new KillSummaryTable();
-				$summarytable->setWeek($this->week);
-				$summarytable->setYear($this->year);
+				$this->loadTime($summarytable);
 				involved::load($summarytable, 'kill');
 			}
 			return $summarytable->generate();
