@@ -88,7 +88,7 @@ class admin_appearance
 		"Yellow" ,
 		"Vidar" ,
 		"Demonic" );*/
-		$sfp_themes=array("apoc.png", " apoc_ammo.png","apoc_notext.png");
+		$sfp_themes=array("apoc", "apoc_ammo","apoc_notext");
 	$option = array();
 	$selected = config::get('fp_theme');
 	foreach ($sfp_themes as $theme)
