@@ -365,7 +365,7 @@ class pKillDetail extends pageAssembly
 				{
 					$smarty->assign('limited', true);
 					$smarty->assign('moreInvolved', count($this->kill->involvedparties_) - $invlimit);
-					$smarty->assign('unlimitURL', '?'.$_SERVER['QUERY_STRING'].'&amp;nolimit');
+					$smarty->assign('unlimitURL', '?'.htmlentities($_SERVER['QUERY_STRING']).'&amp;nolimit');
 				}
 
 				// include the final blow pilot
