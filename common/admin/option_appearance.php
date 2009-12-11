@@ -69,7 +69,7 @@ class admin_appearance
 {
     function createPanelTheme()
     {
-	$sfp_themes =array("ArmyGreen" ,
+/*	$sfp_themes =array("ArmyGreen" ,
 		"CoolGray" ,
 		"DarkOpaque" ,
 		"Desert" ,
@@ -87,7 +87,8 @@ class admin_appearance
 		"Red" ,
 		"Yellow" ,
 		"Vidar" ,
-		"Demonic" );
+		"Demonic" );*/
+		$sfp_themes=array("apoc.png", " apoc_ammo.png","apoc_notext.png");
 	$option = array();
 	$selected = config::get('fp_theme');
 	foreach ($sfp_themes as $theme)
