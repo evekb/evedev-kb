@@ -29,8 +29,6 @@ class pHome extends pageAssembly
 
 		$this->scl_id = intval($_GET['scl_id']);
 
-		$this->killboard = new Killboard();
-
 		$this->killcount = config::get('killcount');
 		$this->hourlimit = config::get('limit_hours');
 		if(!$this->hourlimit) $this->hourlimit = 1;
@@ -77,7 +75,8 @@ class pHome extends pageAssembly
 	function campaigns()
 	{
 	// Display campaigns, if any.
-		if ($this->killboard->hasCampaigns(true) &&
+		require_once('common/includes/class.killboard.php');
+		if (Killboard::hasCampaigns(true) &&
 			$this->isCurrentPeriod())
 		{
 			$html .= "<div class=\"kb-campaigns-header\">Active campaigns</div>";
@@ -93,7 +92,8 @@ class pHome extends pageAssembly
 	function contracts()
 	{
 	// Display contracts, if any.
-		if ($this->killboard->hasContracts(true) &&
+		require_once('common/includes/class.killboard.php');
+		if (Killboard::hasContracts(true) &&
 			$this->isCurrentPeriod())
 		{
 			$html .= "<div class=\"kb-campaigns-header\">Active contracts</div>";

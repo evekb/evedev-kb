@@ -14,14 +14,15 @@ class Navigation{
 
 	function execQuery()
 	{
+		require_once('common/includes/class.killboard.php');
 		$this->qry = new DBQuery();
 		$query = $this->sql_start;
 		$query .= " WHERE nav_type = '$this->type_'";
 
-		if (killboard::hasContracts() == false){
+		if (Killboard::hasContracts() == false){
 			$query .= " AND url != '?a=contracts'";
 		}
-		if (killboard::hasCampaigns() == false){
+		if (Killboard::hasCampaigns() == false){
 			$query .= " AND url != '?a=campaigns'";
 		}
 		if (config::get('public_losses'))

@@ -24,8 +24,6 @@ class Page
 
 		$this->timestart_ = strtok(microtime(), ' ') + strtok('');
 
-		$this->killboard_ = new Killboard(KB_SITE);
-
 		$this->cachable_ = $cachable;
 		$this->cachetime_ = 5;
 

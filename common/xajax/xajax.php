@@ -8,8 +8,8 @@ event::register('page_assembleheader', 'edk_xajax::insertHTML');
 // it gets called after all mods have been initialized
 //event::register('smarty_displayindex', 'edk_xajax::lateProcess');
 //event::register('page_assembleheader', 'edk_xajax::lateProcess');
-//event::register('mods_initialised', 'edk_xajax::lateProcess');
-event::register('page_initialisation', 'edk_xajax::lateProcess');
+event::register('mods_initialised', 'edk_xajax::lateProcess');
+//event::register('page_initialisation', 'edk_xajax::lateProcess');
 
 class edk_xajax
 {

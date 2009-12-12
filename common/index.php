@@ -36,12 +36,9 @@ if(!defined('KB_SITE'))
 	die($html);
 }
 require_once('common/includes/globals.php');
-require_once('common/includes/php_compat.php');
 require_once('common/includes/db.php');
 require_once('common/includes/class.config.php');
 require_once('common/includes/class.apicache.php');
-require_once('common/includes/class.killboard.php');
-require_once('common/includes/class.page.php');
 require_once('common/includes/class.event.php');
 require_once('common/includes/class.roles.php');
 //require_once('common/includes/class.titles.php');
@@ -49,7 +46,8 @@ require_once('common/includes/class.user.php');
 require_once('common/includes/class.session.php');
 require_once('common/includes/class.cache.php');
 require_once('common/includes/class.involvedloader.php');
-require_once('common/smarty/Smarty.class.php');
+require_once('common/xajax/xajax.php');
+require_once('common/includes/xajax.functions.php');
 
 // smarty doesnt like it
 @set_magic_quotes_runtime(0);
@@ -81,65 +79,30 @@ define('THEME_URL', config::get('cfg_kbhost').'/themes/'.config::get('theme_name
 define('IMG_URL', config::get('cfg_img'));
 define('KB_TITLE', config::get('cfg_kbtitle'));
 
-
-// setting up smarty and feed it with some config
-$smarty = new Smarty();
-if(is_dir('./themes/'.config::get('theme_name').'/templates'))
-	$smarty->template_dir = './themes/'.config::get('theme_name').'/templates';
-else $smarty->template_dir = './themes/default/templates';
-
-$smarty->compile_dir = KB_CACHEDIR.'/templates_c';
-$smarty->cache_dir = KB_CACHEDIR.'/data';
-$smarty->assign('theme_url', THEME_URL);
-if(isset($_GET['style']))
-{
-	$stylename = preg_replace('/[^0-9a-zA-Z-_]/','',$_GET['style']);
-	if(file_exists("themes/".config::get('theme_name')."/".$stylename.".css"))
-	{
-		$smarty->assign('style', $stylename);
-	}
-	else $smarty->assign('style', config::get('style_name'));
-}
-else $smarty->assign('style', config::get('style_name'));
-$smarty->assign('img_url', IMG_URL);
-$smarty->assign('kb_host', KB_HOST);
-$smarty->assign_by_ref('config', $config);
-$smarty->assign('is_IGB', IS_IGB);
-
 // pilot id not fully implemented yet.
 if (0 && config::get('cfg_pilotid'))
 {
 	define('PILOT_ID', intval(config::get('cfg_pilotid')) );
 	define('CORP_ID', 0);
 	define('ALLIANCE_ID', 0);
-	require_once('common/includes/class.pilot.php');
-	$pilot=new Pilot(PILOT_ID);
-	$smarty->assign('kb_owner', htmlentities($pilot->getName() ));
 }
 elseif (config::get('cfg_corpid'))
 {
 	define('PILOT_ID', 0);
 	define('CORP_ID', intval(config::get('cfg_corpid')));
 	define('ALLIANCE_ID', 0);
-	require_once('common/includes/class.corp.php');
-	$corp=new Corporation(CORP_ID);
-	$smarty->assign('kb_owner', htmlentities($corp->getName() ));
 }
 elseif(config::get('cfg_allianceid'))
 {
 	define('PILOT_ID', 0);
 	define('CORP_ID', 0);
 	define('ALLIANCE_ID', intval(config::get('cfg_allianceid')));
-	require_once('common/includes/class.alliance.php');
-	$alliance=new Alliance(ALLIANCE_ID);
-	$smarty->assign('kb_owner', htmlentities($alliance->getName() ));
 }
 else
 {
 	define('PILOT_ID', 0);
 	define('CORP_ID', 0);
 	define('ALLIANCE_ID', 0);
-	$smarty->assign('kb_owner', false);
 }
 
 // set up titles/roles
@@ -247,6 +210,57 @@ if (!$settingsPage && !file_exists('common/'.$page.'.php') && !$modOverrides)
 }
 // Serve feeds to feed fetchers.
 if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK Feedfetcher') !== false) $page = 'feed';
+
+// setting up smarty and feed it with some config
+require_once('common/smarty/Smarty.class.php');
+$smarty = new Smarty();
+if(is_dir('./themes/'.config::get('theme_name').'/templates'))
+	$smarty->template_dir = './themes/'.config::get('theme_name').'/templates';
+else $smarty->template_dir = './themes/default/templates';
+
+$smarty->compile_dir = KB_CACHEDIR.'/templates_c';
+$smarty->cache_dir = KB_CACHEDIR.'/data';
+$smarty->assign('theme_url', THEME_URL);
+if(isset($_GET['style']))
+{
+	$stylename = preg_replace('/[^0-9a-zA-Z-_]/','',$_GET['style']);
+	if(file_exists("themes/".config::get('theme_name')."/".$stylename.".css"))
+	{
+		$smarty->assign('style', $stylename);
+	}
+	else $smarty->assign('style', config::get('style_name'));
+}
+else $smarty->assign('style', config::get('style_name'));
+$smarty->assign('img_url', IMG_URL);
+$smarty->assign('kb_host', KB_HOST);
+$smarty->assign_by_ref('config', $config);
+$smarty->assign('is_IGB', IS_IGB);
+
+// pilot id not fully implemented yet.
+if (0 && config::get('cfg_pilotid'))
+{
+	require_once('common/includes/class.pilot.php');
+	$pilot=new Pilot(PILOT_ID);
+	$smarty->assign('kb_owner', htmlentities($pilot->getName() ));
+}
+elseif (config::get('cfg_corpid'))
+{
+	require_once('common/includes/class.corp.php');
+	$corp=new Corporation(CORP_ID);
+	$smarty->assign('kb_owner', htmlentities($corp->getName() ));
+}
+elseif(config::get('cfg_allianceid'))
+{
+	require_once('common/includes/class.alliance.php');
+	$alliance=new Alliance(ALLIANCE_ID);
+	$smarty->assign('kb_owner', htmlentities($alliance->getName() ));
+}
+else
+{
+	$smarty->assign('kb_owner', false);
+}
+require_once('common/includes/class.page.php');
+
 cache::check($page);
 if ($settingsPage)
 {
@@ -269,4 +283,3 @@ else
 }
 
 cache::generate();
-?>

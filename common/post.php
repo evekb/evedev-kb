@@ -5,7 +5,6 @@ require_once('common/includes/class.kill.php');
 require_once('common/includes/class.logger.php');
 
 $page = new Page('Post killmail');
-$kb = new Killboard(KB_SITE);
 global $smarty;
 if (isset($_POST['killmail']))
 {
