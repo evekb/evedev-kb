@@ -15,7 +15,7 @@ class known_members
 	}
 	function view($home)
 	{
-		if(config::get('known_members_own'))
+		if(config::get('mod_knownmembers_own'))
 		{
 			$home->alliance->getID();
 			if (ALLIANCE_ID && $home->alliance->getID() == ALLIANCE_ID)
@@ -39,29 +39,28 @@ class known_members
 			$qry = new DBQuery();
 			$qry->execute($query);
 			$cnt = $qry->recordCount();
-			$clmn = config::get('known_members_clmn');
 
 			$html .= "<div class=block-header2>Known Pilots (".$cnt.")</div>";
 			$html .= "<table class=kb-table align=center>";
 			$html .= '<tr class=kb-table-header>';
-			if (strpos($clmn,"img"))
+			if (config::get('mod_knownmembers_img'))
 			{
 				$html .= '<td class=kb-table-header align="center"></td>';
 			}
 			$html .= '<td class=kb-table-header align="center">Pilot</td>';
-			if (strpos($clmn,"kll_pnts"))
+			if (config::get('mod_knownmembers_kllpnts'))
 			{
 				$html .= '<td class=kb-table-header align="center">Kill Points</td>';
 			}
-			if (strpos($clmn,"dmg_dn"))
+			if (config::get('mod_knownmembers_dmgdn'))
 			{
 				$html .= '<td class=kb-table-header align="center">Dmg Done (isk)</td>';
 			}
-			if (strpos($clmn,"dmg_rcd"))
+			if (config::get('mod_knownmembers_dmgrcv'))
 			{
-				$html .= '<td class=kb-table-header align="center">Dmg Recived (isk)</td>';
+				$html .= '<td class=kb-table-header align="center">Dmg Received (isk)</td>';
 			}
-			if (strpos($clmn,"eff"))
+			if (config::get('mod_knownmembers_eff'))
 			{
 				$html .= '<td class=kb-table-header align="center">Efficiency</td>';
 			}
@@ -102,24 +101,24 @@ class known_members
 				}
 
 				$html .= "<tr class=".$class." style=\"height: 32px;\">";
-				if (strpos($clmn,"img"))
+				if (config::get('mod_knownmembers_img'))
 				{
 					$html .= '<td width="64" align="center"><img src='.$pilot->getPortraitURL( 32 ).'></td>';
 				}
 				$html .= '<td align="center"><a href=?a=pilot_detail&plt_id='.$pilot->getID().'>'.$pilot->getName().'</a></td>';
-				if (strpos($clmn,"kll_pnts"))
+				if (config::get('mod_knownmembers_kllpnts'))
 				{
 					$html .= '<td align="center">'.$points.'</td>';
 				}
-				if (strpos($clmn,"dmg_dn"))
+				if (config::get('mod_knownmembers_dmgdn'))
 				{
 					$html .= '<td align="center">'.(round($plist->getISK(),2)/1000000).'M</td>';
 				}
-				if (strpos($clmn,"dmg_rcd"))
+				if (config::get('mod_knownmembers_dmgrcv'))
 				{
 					$html .= '<td align="center">'.(round($pllist->getISK(),2)/1000000).'M</td>';
 				}
-				if (strpos($clmn,"eff"))
+				if (config::get('mod_knownmembers_eff'))
 				{
 					$html .= '<td align="center">'.$efficiency.'%</td>';
 				}
