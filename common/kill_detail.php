@@ -991,6 +991,13 @@ class pKillDetail extends pageAssembly
 				$menubox->addOption("link", "Fix Slots", "?a=kill_detail&amp;kll_id=" . $this->kill->getID() . "&amp;view=FixSlot");
 			}
 		}
+		foreach($this->menuOptions as $options)
+		{
+			if(isset($options[2]))
+				$menubox->addOption($options[0],$options[1], $options[2]);
+			else
+				$menubox->addOption($options[0],$options[1]);
+		}
 
 		return $menubox->generate();
 	}
@@ -1026,6 +1033,18 @@ class pKillDetail extends pageAssembly
 			}
 		}
 		return '';
+	}
+	//! Add an item to the menu in standard box format.
+
+	/*!
+	 *  Only links need all 3 attributes
+	 * \param type Types can be caption, img, link, points.
+	 * \param name The name to display.
+	 * \param url Only needed for URLs.
+	 */
+	function addMenuItem($type, $name, $url = '')
+	{
+		$this->menuOptions[] = array($type, $name, $url);
 	}
 }
 
