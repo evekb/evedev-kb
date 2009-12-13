@@ -20,9 +20,9 @@ class Box
 
     //! Add something to the array that we send to smarty later.
     //! Types can be caption, img, link, points. Only links need all 3 attributes
-    function addOption($type, $name, $url = '')
+    function addOption($type, $name, $url = '', $width = 145, $height = 145)
     {
-        $this->box_array[] = array('type' => $type, 'name' => $name, 'url' => $url);
+        $this->box_array[] = array('type' => $type, 'name' => $name, 'url' => $url, 'width' => $width, 'height' => $height);
     }
     //! Generate the html from the template.
     function generate()

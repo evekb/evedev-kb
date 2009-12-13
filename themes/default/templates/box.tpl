@@ -18,8 +18,8 @@
                 &nbsp;<a href="{$i.url}">{$i.name}</a><br />
 				</div>
 			{elseif $i.type == "img"}
-                {if $i.url}<a href="{$i.url}"><img src="{$i.name}" border="0" alt="" width="145" height="145"/></a>
-                {else}<img src="{$i.name}" border="0" alt="" width="145" height="145"/>{/if}
+                {if $i.url}<a href="{$i.url}"><img src="{$i.name}" border="0" alt="" width="{$i.width}" height="{$i.height}"/></a>
+                {else}<img src="{$i.name}" border="0" alt="" width="{$i.width}" height="{$i.height}"/>{/if}
             {elseif $i.type == "points"}
 				<div class="kill-points">{$i.name}</div>
 			{/if}
