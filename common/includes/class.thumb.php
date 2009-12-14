@@ -20,9 +20,9 @@ class thumb
 			{
 				return false;
 			}
-		}
+                }
 
-		if (headers_sent())
+                if (headers_sent())
 		{
 			echo 'Error occured.<br/>';
 			return false;
@@ -47,7 +47,8 @@ class thumb
 		}
 		switch ($this->_type)
 		{
-			case 'corp':
+                        case 'corp':
+                        case 'npc':
 				$this->_id = preg_replace('/[^a-z0-9]/', '', $this->_id);
 				break;
 			case 'alliance':
@@ -76,11 +77,14 @@ class thumb
 			case 'alliance':
 				$this->_thumb = KB_CACHEDIR.'/img/alliances/'.$this->_id.'_'.$this->_size.'.png';
 				break;
+                        case 'npc':
+                                $this->_thumb = KB_CACHEDIR.'/img/corps/'.substr($this->_id,0,2).'/'.$this->_id.'_'.$this->_size.'.png';
+                                break;
 		}
 
 		if (file_exists($this->_thumb))
 		{
-			touch($this->_thumb);
+                        touch($this->_thumb);
 			return true;
 		}
 	}
@@ -92,12 +96,15 @@ class thumb
 			case 'pilot':
 				$this->genPilot();
 				break;
-			case 'corp':
+                        case 'corp':
 				$this->genCorp();
 				break;
 			case 'alliance':
 				$this->genAlliance();
 				break;
+                        case 'npc':
+                                $this->genNPC();
+                                break;
 		}
 		return true;
 	}
@@ -276,6 +283,37 @@ class thumb
 			imagepng($newimg, $this->_thumb);
 		}
 	}
+
+        //as npc corp images from a static dump, all this ought to be doing is the resizing of the image
+        //and copying to the cache
+        function genNPC()
+        {
+            $source = 'img/corps/'.$this->_id.'.png';
+            if(!file_exists($source)) {
+                $this->_id = 0;
+                $source = 'img/corps/0.png';
+                $this->_thumb = KB_CACHEDIR.'/img/corps/00/0_'.$this->_size.'.png';
+            }
+            $img = imagecreatefrompng($source);
+            if ($img)
+            {
+                    $newimg = imagecreatetruecolor($this->_size, $this->_size);
+                    $color = imagecolortransparent($newimg, imagecolorallocatealpha($newimg, 0, 0, 0, 127));
+                    imagefill($newimg, 0, 0, $color);
+                    imagesavealpha($newimg, true);
+                    $oldx = imagesx($img);
+                    $oldy = imagesy($img);
+                    imagecopyresampled($newimg, $img, 0, 0, 0, 0, $this->_size, $this->_size, $oldx, $oldy);
+
+                    if($this->_id && !file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->_id,0,2)))
+                            mkdir(KB_CACHEDIR.'/img/corps/'.substr($this->_id,0,2));
+                    elseif($this->_id == 0 && !file_exists(KB_CACHEDIR.'/img/corps/00'))
+                            mkdir(KB_CACHEDIR.'/img/corps/00');
+
+                    imagepng($newimg, $this->_thumb);
+            }
+            return;
+        }
 }
 
 class thumbInt extends thumb
@@ -297,6 +335,7 @@ class thumbInt extends thumb
 				$this->validate();
 				break;
 			case 'corp':
+                        case 'npc':
 				$this->_type = 'corp';
 				require_once('common/includes/class.corp.php');
 				$corp = new Corporation($int_id);
@@ -308,8 +347,14 @@ class thumbInt extends thumb
 				$this->_size = $size;
 				$this->_encoding = 'jpeg';
 
+                                if($this->_type == 'npc') {
+                                    $this->_type = 'npc';
+                                    $this->_encoding = 'png';
+                                }
+
 				$this->validate();
 				break;
+
 			default:
 				$this->_id = $str_id;
 				$this->_size = $size;

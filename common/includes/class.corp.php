@@ -38,23 +38,27 @@ class Corporation
 	//! Return a URL for the icon of this corporation.
 	function getPortraitURL($size = 64)
 	{
-		$this->getExternalID();
-		if($this->externalid_ &&
-			file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->externalid_,0,2).'/'.$this->externalid_.'_'.$size.'.jpg'))
-				return KB_CACHEDIR.'/img/corps/'.substr($this->externalid_,0,2).'/'.$this->externalid_.'_'.$size.'.jpg';
-		if ($this->isNPCCorp() || file_exists('img/corps/'.$this->getUnique().'.jpg'))
-		{
-			if($size == 128)
-			{
-				if($this->externalid_ > 1000001 && $this->externalid_ < 1000183)
-					return 'img/corps/c'.$this->externalid_.'.jpg';
-				else return 'img/corps/'.$this->getUnique().'.jpg';
-			}
-			elseif($this->externalid_ > 1000001 && $this->externalid_ < 1000183)
-				return '?a=thumb&amp;type=corp&amp;id=c'.$this->externalid_.'&amp;size='.$size;
-			else return '?a=thumb&amp;type=corp&amp;id='.$this->getUnique().'&amp;size='.$size;
-		}
-		return '?a=thumb&amp;type=corp&amp;id='.$this->externalid_.'&amp;size='.$size;
+            $this->getExternalID();
+
+            if($this->isNPCCorp() || file_exists('img/corps/'.$this->getUnique().'.png')) {
+                if($this->externalid_ && file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->externalid_,0,2).'/'.$this->externalid_.'_'.$size.'.png'))
+                        return KB_CACHEDIR.'/img/corps/'.substr($this->externalid_,0,2).'/'.$this->externalid_.'_'.$size.'.png';
+                        
+                if($size == 128)
+                {
+                    if($this->externalid_ > 1000001 && $this->externalid_ < 1000183)
+                        return 'img/corps/c'.$this->externalid_.'.png';
+                    else return 'img/corps/'.$this->getUnique().'.png';
+                }
+                elseif($this->externalid_ > 1000001 && $this->externalid_ < 1000183)
+                    return '?a=thumb&amp;type=npc&amp;id=c'.$this->externalid_.'&amp;size='.$size;
+                    else return '?a=thumb&amp;type=npc&amp;id='.$this->getUnique().'&amp;size='.$size;
+            }
+            else {
+                if($this->externalid_ && file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->externalid_,0,2).'/'.$this->externalid_.'_'.$size.'.jpg'))
+                    return KB_CACHEDIR.'/img/corps/'.substr($this->externalid_,0,2).'/'.$this->externalid_.'_'.$size.'.jpg';
+            }
+            return '?a=thumb&amp;type=corp&amp;id='.$this->externalid_.'&amp;size='.$size;
 	}
 
 	//! Return the corporation CCP ID.
