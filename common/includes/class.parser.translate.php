@@ -153,7 +153,9 @@ class Translate
                         'Sisters Recon Probe Launcher Blueprint', 'Sisters Scan Probe Launcher',
                         'Sisters Scan Probe Launcher Blueprint', 'Guristas Doom Torpedo I',
                         'Guristas Purgatory Torpedo I', 'Guristas Rift Torpedo I',
-                        'Guristas Thor Torpedo I');
+                        'Guristas Thor Torpedo I', 'DDO Photometry I Targeting Interference',
+                        'F-392 Baker Nunn Targeting Scrambler', 'Balmer Series Targeting Inhibitor I',
+                        "'Abandon' Targeting Disruptor I", 'Snoop 3AU Scanner Probe I', 'Fathom 12AU Scanner Probe I');
             $replace = array('Civilian Miner', 'Astrometric Triangulation',
                         'Core Probe Launcher I', 'Core Probe Launcher I Blueprint',
                         'Expanded Probe Launcher I', 'Expanded Probe Launcher I Blueprint',
@@ -161,7 +163,9 @@ class Translate
                         'Sisters Expanded Probe Launcher Blueprint',  'Sisters Core Probe Launcher',
                         'Sisters Core Probe Launcher Blueprint', 'Guristas Doom Torpedo',
                         'Guristas Purgatory Torpedo', 'Guristas Rift Torpedo',
-                        'Guristas Thor Torpedo');
+                        'Guristas Thor Torpedo', 'DDO Photometry Tracking Disruptor I',
+                        'F-392 Baker Nunn Tracking Disruptor I', 'Balmer Series Tracking Disruptor I',
+                        "'Abandon' Tracking Disruptor I", 'Snoop Scanner Probe I', 'Fathom Scanner Probe I');
             $this->killmail_ = str_replace($search, $replace, $this->killmail_);
         }
 
