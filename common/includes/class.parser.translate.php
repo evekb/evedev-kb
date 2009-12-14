@@ -211,6 +211,13 @@ class Translate
             $this->killmail_ = preg_replace($ssearch, $replace, $this->killmail_);
         }
 
+        if($this->language_ == 'dominion')
+        {
+            $search = array('/Amarr Navy/', '/Gallente Federation/');
+            $replace = array('Imperial Navy', 'Federation Navy');
+            $this->killmail_ = preg_replace($search, $replace, $this->killmail_);
+        }
+
         return $this->killmail_;
     }
 }
