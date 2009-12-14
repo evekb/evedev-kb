@@ -109,11 +109,6 @@ class thumb
 			touch(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2).'/'.$this->_id.'_256.jpg');
 			$img = imagecreatefromjpeg(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2).'/'.$this->_id.'_256.jpg');
 		}
-		// 20070911 - Gate: Support EVE/Capture/Portraits images
-		elseif (file_exists('img/portraits/'.$this->_id.'.jpg'))
-		{
-			$img = imagecreatefromjpeg('img/portraits/'.$this->_id.'.jpg');
-		}
 		else
 		{
 			if ($this->_id)
@@ -206,13 +201,20 @@ class thumb
 
 	function genCorp()
 	{
-		if (!file_exists('img/corps/'.$this->_id.'.jpg') && !is_numeric($this->_id))
+		$source = 'img/corps/'.$this->_id.'.jpg';
+		// id is not a number and the matching npc corp image does not exist.
+		if (!file_exists($source) && !is_numeric($this->_id))
 		{
 			$this->_id = 0;
 			$this->_thumb = KB_CACHEDIR.'/img/corps/00/0_'.$this->_size.'.jpg';
 		}
-		elseif(file_exists('img/corps/'.$this->_id.'.jpg'));
-		elseif (!file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->_id,0,2).'/'.$this->_id.'_64.jpg'))
+		// id matches an npc image.
+		elseif(file_exists($source));
+		// no matching image found so let's try the cache.
+		elseif (file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->_id,0,2).'/'.$this->_id.'_64.jpg'))
+			$source = KB_CACHEDIR.'/img/corps/'.substr($this->_id,0,2).'/'.$this->_id.'_64.jpg';
+		// no image found in the image folder, or the cache, so let's make it.
+		else
 		{
 			require_once("common/includes/class.eveapi.php");
 
@@ -238,7 +240,7 @@ class thumb
 			}
 			return;
 		}
-		$img = imagecreatefromjpeg('img/corps/'.$this->_id.'.jpg');
+		$img = imagecreatefromjpeg($source);
 		if ($img)
 		{
 			$newimg = imagecreatetruecolor($this->_size, $this->_size);
