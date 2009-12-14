@@ -29,9 +29,9 @@
 {else}
 {if $banner_link}
 <a href="{$banner_link}">
-<img src="{$kb_host}/banner/{$banner}" border="0" alt="Banner" if($banner_x && $banner_y}width = "{$banner_x}" height="{$banner_y}"{/if} /></a>
+<img src="{$kb_host}/banner/{$banner}" border="0" alt="Banner" {if $banner_x && $banner_y}width = "{$banner_x}" height="{$banner_y}"{/if} /></a>
 {else}
-<a href="?a=home"><img src="{$kb_host}/banner/{$banner}" border="0" alt="Banner" if($banner_x && $banner_y}width = "{$banner_x}" height="{$banner_y}"{/if} /></a>
+<a href="?a=home"><img src="{$kb_host}/banner/{$banner}" border="0" alt="Banner" {if $banner_x && $banner_y}width = "{$banner_x}" height="{$banner_y}"{/if} /></a>
 {/if}
 {/if}
 </div>
