@@ -15,7 +15,7 @@ class Parser
         return $str;
     }
 
-    function Parser($killmail, $externalID = null)
+    function Parser($killmail, $externalID = null, $loadExternals = true)
     {
 		if( phpversion() >= '5.0.0' ) { //lousy but necessary
             $canUnicode = true; //if this is unset, Russian will not parse, but English will atleast.
@@ -820,7 +820,7 @@ class Parser
             if(isset($this->corps[slashfix($corpname)]))
             {
                 if(!is_null($timestamp) && $this->corps[slashfix($corpname)]->isUpdatable($timestamp))
-                    $this->corps[slashfix($corpname)]->add($corpname, $alliance, $timestamp);
+                    $this->corps[slashfix($corpname)]->add($corpname, $alliance, $timestamp, 0, $loadExternals);
                 $corp = $this->corps[slashfix($corpname)];
             }
             else
@@ -829,7 +829,7 @@ class Parser
                 if($alliance == null) $corp->lookup($corpname);
                 else
                 {
-                    $corp->add($corpname, $alliance, $timestamp);
+                    $corp->add($corpname, $alliance, $timestamp, 0, $loadExternals);
                     $this->corps[slashfix($corpname)] = $corp;
                 }
             }
@@ -844,13 +844,13 @@ class Parser
             if(isset($this->pilots[slashfix($pilotname)]))
             {
                 if($this->pilots[slashfix($pilotname)]->isUpdatable($timestamp))
-                    $this->pilots[slashfix($pilotname)]->add($pilotname, $corp, $timestamp);
+                    $this->pilots[slashfix($pilotname)]->add($pilotname, $corp, $timestamp, 0, $loadExternals);
                 $pilot = $this->pilots[slashfix($pilotname)];
             }
             else
             {
                 $pilot = new Pilot();
-                $pilot->add($pilotname, $corp, $timestamp);
+                $pilot->add($pilotname, $corp, $timestamp, 0, $loadExternals);
                 $this->pilots[slashfix($pilotname)] = $pilot;
             }
             return $pilot;

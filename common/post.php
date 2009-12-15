@@ -26,12 +26,12 @@ if (isset($_POST['killmail']))
             }
             else
             {
-                $killid = $parser->parse(true);
+                $killid = $parser->parse(true, null, false);
             }
         }
         else
         {
-            $killid = $parser->parse(true);
+            $killid = $parser->parse(true, null, false);
         }
 
         if ($killid == 0 || $killid == -1 || $killid == -2 || $killid == -3)

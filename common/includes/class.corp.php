@@ -62,21 +62,28 @@ class Corporation
 	}
 
 	//! Return the corporation CCP ID.
+        /*! When populateList is true, the lookup will return 0 in favour of getting the
+         *  external ID from CCP. This helps the kill_detail page load times.
+         */
 	function getExternalID()
 	{
 		if($this->externalid_) return $this->externalid_;
 		$this->execQuery();
-		if($this->externalid_) return $this->externalid_;
+		if(!$populateList)
+                {
+                    if($this->externalid_) return $this->externalid_;
 
-		$corpname = str_replace(" ", "%20", $this->getName() );
-		require_once("common/includes/class.eveapi.php");
-		$myID = new API_NametoID();
-		$myID->setNames($corpname);
-		$myID->fetchXML();
-		$myNames = $myID->getNameData();
-		if($this->setExternalID($myNames[0]['characterID']))
-			return $this->externalid_;
-		else return 0;
+                    $corpname = str_replace(" ", "%20", $this->getName() );
+                    require_once("common/includes/class.eveapi.php");
+                    $myID = new API_NametoID();
+                    $myID->setNames($corpname);
+                    $myID->fetchXML();
+                    $myNames = $myID->getNameData();
+                    if($this->setExternalID($myNames[0]['characterID']))
+                            return $this->externalid_;
+                    else return 0;
+                }
+                else return 0;
 	}
 
 	//! Return the corporation ID.
@@ -144,7 +151,7 @@ class Corporation
      * \param $timestamp The timestamp the corporation's details were updated.
      * \param $externalid The external CCP ID for the alliance.
      */
-	function add($name, $alliance, $timestamp, $externalid = 0)
+	function add($name, $alliance, $timestamp, $externalid = 0, $loadExternals = true)
 	{
 		$name = slashfix($name);
 		$qry = new DBQuery(true);
@@ -155,7 +162,7 @@ class Corporation
 		{
 			$externalid = intval($externalid);
 			// If no external id is given then look it up.
-			if(!$externalid)
+			if(!$externalid && $loadExternals)
 			{
 				$corpname = str_replace(" ", "%20", $name );
 				require_once("common/includes/class.eveapi.php");

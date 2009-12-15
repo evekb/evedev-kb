@@ -137,7 +137,7 @@ class Alliance
 		{
 			$this->execQuery();
 			$qry = new DBQuery();
-			if($qry->execute("UPDATE kb3_alliances SET all_external_id = ".$externalid." where all_id = ".$this->id_))
+			if($qry->execute("UPDATE kb3_alliances SET all_external_id = ".$externalid." WHERE all_id = ".$this->id_))
 			{
 				$this->externalid_ = $externalid;
 				return true;
@@ -156,24 +156,6 @@ class Alliance
 	{
 		if(!$this->isFaction()) return 0;
 		return getExternalID();
-		/*
-		switch($this->getName())
-		{
-			//needs less magic.
-			case "Caldari State":
-				return 500001;
-				break;
-			case "Minmatar Republic":
-				return 500002;
-				break;
-			case "Amarr Empire":
-				return 500003;
-				break;
-			case "Gallente Federation":
-				return 500004;
-				break;
-		}
-		return 0; */
 	}
 	//! Return the URL for the alliance's portrait.
 

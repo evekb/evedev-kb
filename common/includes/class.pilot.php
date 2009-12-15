@@ -29,20 +29,29 @@ class Pilot
 		else return 0;
 	}
 	//! Return the pilot's CCP ID.
-	function getExternalID()
+        /*! When populateList is true, the lookup will return 0 in favour of getting the
+         *  external ID from CCP. This helps the kill_detail page load times.
+         */
+	function getExternalID($populateList = false)
 	{
 		if($this->externalid_) return $this->externalid_;
-		elseif($this->id_)
-		{
-			$this->execQuery();
-			if($this->externalid_) return $this->externalid_;
-			require_once("class.api.php");
-			$api = new Api();
-			$id = $api->getCharId($this->getName());
-			if ($id > 0) $this->setCharacterID($id);
-			return $this->externalid_;
-		}
-		else return 0;
+                if(!$populateList)
+                {
+                    $this->execQuery();
+                    if($this->externalid_) return $this->externalid_;
+
+                    $pilotname = str_replace(" ", "%20", $this->getName() );
+                    require_once("common/includes/class.eveapi.php");
+                    $myID = new API_NametoID();
+                    $myID->setNames($pilotname);
+                    $myID->fetchXML();
+                    $myNames = $myID->getNameData();
+
+                    if($this->setCharacterID($myNames[0]['characterID']))
+                        return $this->externalid_;
+                    else return 0;
+                }
+                else return 0;
 	}
 	//! Return the pilot name.
 	function getName()
@@ -160,7 +169,7 @@ class Pilot
 	 * \param $timestamp time this pilot's corp was updated
 	 * \param $externalID CCP external id
      */
-	function add($name, $corp, $timestamp, $externalID = 0)
+	function add($name, $corp, $timestamp, $externalID = 0, $loadExternals = true)
 	{
 		$name = slashfix($name);
 	// Check if pilot exists with a non-cached query.
@@ -175,7 +184,7 @@ class Pilot
 		{
 			$externalID = intval($externalID);
 			// If no external id is given then look it up.
-			if(!$externalID)
+			if(!$externalID && $loadExternals)
 			{
 				$pilotname = str_replace(" ", "%20", $name );
 				require_once("common/includes/class.eveapi.php");

@@ -103,7 +103,7 @@ class pKillDetail extends pageAssembly
 			{
 				if ($_POST['comment'] == '')
 				{
-					$this->commenthtml = 'Error: Silent type hey? good for you, bad for a comment.';
+					$this->commenthtml = 'Error: The silent type, hey? Good for you, bad for a comment.';
 				}
 				else
 				{
@@ -339,10 +339,12 @@ class pKillDetail extends pageAssembly
 	function involvedSetup()
 	{
 		global $smarty;
+                $fetchExternalIDs = array();
 		// involved
 		$i=1;
 
 		$this->involved=array();
+
 		$this->ownKill= false;
 		$invlimit = config::get('kd_involvedlimit');
 		if(!is_numeric($invlimit)) $this->nolimit = 1;
@@ -395,7 +397,14 @@ class pKillDetail extends pageAssembly
 			if ($pilot->getName() == $weapon->getName())
 			{
 				$this->involved[$i]['portrait'] = $corp->getPortraitURL(64);
-				$this->involved[$i]['externalID'] = $corp->getExternalID();
+				$this->involved[$i]['externalID'] = $corp->getExternalID(true);
+
+                                if($this->involved[$i]['externalID'] == 0)
+                                {
+                                    $corpname = str_replace(" ", "%20", $corp->getName());
+                                    $fetchExternalIDs[] = $corpname;
+                                }
+
 				$this->involved[$i]['typeID'] = 2; //type number for corporations.
 
 				if(!file_exists("img/ships/64_64/".$weapon->getID().".png"))
@@ -406,7 +415,16 @@ class pKillDetail extends pageAssembly
 			else
 			{
 				$this->involved[$i]['portrait']=$pilot->getPortraitURL(64);
-				$this->involved[$i]['externalID'] = $pilot->getExternalID();
+				$this->involved[$i]['externalID'] = $pilot->getExternalID(true);
+
+                                //get the external ID from the pilot class - if not found then add it to a list of pilots
+                                //and check the api in bulk
+                                if($this->involved[$i]['externalID'] == 0)
+                                {
+                                    $pilotname = str_replace(" ", "%20", $pilot->getName());
+                                    $fetchExternalIDs[] = $pilotname;
+                                }
+
 				$this->involved[$i]['typeID'] = 1377; //type number for characters.
 			}
 
@@ -433,6 +451,56 @@ class pKillDetail extends pageAssembly
 			++$i;
 		}
 
+                //prod CCP for the entire list of names
+                if(count($fetchExternalIDs) > 0)
+                {
+                    require_once('common/includes/class.eveapi.php');
+                    $names = new API_NametoID();
+                    $names->setNames(implode(',', $fetchExternalIDs));
+                    $names->fetchXML();
+                    $nameIDPair = $names->getNameData();
+
+                    //fill in the pilot external IDs.. could potentially be slow
+                    //but it beats the alternative. Do nothing if no names need loading.
+                    if(count($nameIDPair) > 0) {
+                        foreach($nameIDPair as $idpair)
+                        {
+                            //store the IDs
+                            foreach ($this->kill->involvedparties_ as $inv) {
+                                $pilot = $inv->getPilot();
+                                $corp = $inv->getCorp();
+                                $pname = $pilot->getName();
+                                $cname = $corp->getName();
+
+                                if($idpair['name'] == $cname)
+                                {
+                                    $corp->setExternalID($idpair['characterID']);
+                                }
+                                elseif($idpair['name'] == $pname)
+                                {
+                                    $pilot->setCharacterID($idpair['characterID']);
+                                }
+                            }
+
+                            //as we've already populated the structures for the template
+                            //we need to quickly retrofit it.
+                            foreach ($this->involved as $inv)
+                            {
+                                $pname = $inv['pilotName'];
+                                $cname = $inv['corpName'];
+
+                                if($cname == $idpair['name'])
+                                {
+                                    $inv['externalID'] = $idpair['characterID'];
+                                }
+                                else if($pname == $idpair['name'])
+                                {
+                                    $inv['externalID'] = $idpair['characterID'];
+                                }
+                            }
+                        }
+                    }
+                }
 	}
 	function involvedSummary()
 	{
