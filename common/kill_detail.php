@@ -474,12 +474,24 @@ class pKillDetail extends pageAssembly
 	}
 	function victim()
 	{
+		require_once("common/includes/class.dogma.php");
 		global $smarty;
 		$smarty->assign('killID', $this->kill->getID());
 		$plt = new Pilot($this->kill->getVictimID());
-		$smarty->assign('victimPortrait', $plt->getPortraitURL(64));
+		$item = new dogma($this->kill->getVictimShip()->getExternalID());
+		// itt_cat = 6 for ships. Assume != 6 is a structure.
+		if($item->get('itt_cat') != 6)
+		{
+			$corp = new Corporation($this->kill->getVictimCorpID());
+			$smarty->assign('victimPortrait', $corp->getPortraitURL(64));
+			$smarty->assign('victimExtID', 0);
+		}
+		else 
+		{
+			$smarty->assign('victimPortrait', $plt->getPortraitURL(64));
+			$smarty->assign('victimExtID', $plt->getExternalID());
+		}
 		$smarty->assign('victimURL', "?a=pilot_detail&amp;plt_id=" . $this->kill->getVictimID());
-		$smarty->assign('victimExtID', $plt->getExternalID());
 		$smarty->assign('victimName', $this->kill->getVictimName());
 		$smarty->assign('victimCorpURL', "?a=corp_detail&amp;crp_id=" . $this->kill->getVictimCorpID());
 		$smarty->assign('victimCorpName', $this->kill->getVictimCorpName());
