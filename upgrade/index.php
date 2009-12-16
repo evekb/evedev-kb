@@ -8,8 +8,10 @@ e.g. upgrade/012/
 */
 if(function_exists("set_time_limit"))
 	@set_time_limit(0);
+@error_reporting(E_ERROR);
+ini_set('display_errors', 1);
 
-define('LATEST_DB_UPDATE', "012");
+define('LATEST_DB_UPDATE', "013");
 define('DB_HALTONERROR', true);
 chdir("..");
 require_once('kbconfig.php');

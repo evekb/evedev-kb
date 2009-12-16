@@ -11,6 +11,7 @@ function update011()
 		$qry->execute($sql);
 
 		config::set("DBUpdate", "011");
+		$qry->execute("INSERT INTO kb3_config (cfg_site, cfg_key, cfg_value) SELECT cfg_site, 'DBUpdate', '011' FROM kb3_config GROUP BY cfg_site ON DUPLICATE KEY UPDATE cfg_value = '011'");
 		echo $header;
 		echo "Update 011 completed.";
 		echo $footer;
