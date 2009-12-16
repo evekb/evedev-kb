@@ -144,7 +144,7 @@ class pKillDetail extends pageAssembly
 	}
 	function fittingSetup()
 	{
-		// ship fitting
+                // ship fitting
 		if (count($this->kill->destroyeditems_) > 0)
 		{
 			$this->dest_array=array();
@@ -791,7 +791,7 @@ class pKillDetail extends pageAssembly
 	{
 		global $smarty;
 
-		if (is_array($this->fitting_array[1]))
+                if (is_array($this->fitting_array[1]))
 		{
 			foreach ($this->fitting_array[1] as $array_rowh)
 			{
@@ -992,6 +992,17 @@ class pKillDetail extends pageAssembly
 		$smarty->assign_by_ref('fitting_ammo_high', $hiammo);
 		$smarty->assign_by_ref('fitting_ammo_mid', $midammo);
 		$smarty->assign('showammo', config::get('apocfitting_showammo'));
+
+                if(config::get('kd_verify'))
+                {
+                    $this->verification = false;
+                    if($this->kill->getExternalID() != 0) {
+                        $this->verification = true;
+                        $smarty->assign('verify_id', $this->kill->getExternalID());
+                    }
+                    $smarty->assign('verify_yesno', $this->verification);
+                }
+                $smarty->assign('showverify', config::get('kd_verify'));
 		
 		/*
 		$hicount =count($this->fitting_array[1]);
@@ -1081,7 +1092,8 @@ class pKillDetail extends pageAssembly
 
 		return $menubox->generate();
 	}
-	function points()
+
+        function points()
 	{
 		if (!config::get('kill_points')) return '';
 
@@ -1089,6 +1101,7 @@ class pKillDetail extends pageAssembly
 		$scorebox->addOption("points", $this->kill->getKillPoints());
 		return $scorebox->generate();
 	}
+
 	function map()
 	{
 		//Admin is able to see classsified systems

@@ -58,4 +58,15 @@
 	<div id="mid7l" style="position:absolute; left:136px; top:291px; width:24px; height:24px; z-index:2;">{$fitting_ammo_mid.6.type}</div>
 	<div id="mid8l" style="position:absolute; left:164px; top:301px; width:24px; height:24px; z-index:2;">{$fitting_ammo_mid.7.type}</div>
 	{/if}
+
+        {* Killmail API verification*}
+        {if $showverify}
+            <div style="position:absolute; left:382px; top:0px; width:398px; height:398px; z-index:3;">
+            {if $verify_yesno}
+                <img border="0" style="position:absolute; height:16px; width:16px;" src='{$img_url}/items/24_24/icon09_09.png' alt='Kill verified' title="Kill verified ID: {$verify_id}" />
+            {else}
+                <img border="0" style="position:absolute; height:16px; width:16px;" src='{$img_url}/items/24_24/icon09_13.png' alt='Kill not verified' title="Kill not verfied" />
+            {/if}
+            </div>
+        {/if}
 </div>
