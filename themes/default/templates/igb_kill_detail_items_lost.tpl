@@ -50,7 +50,7 @@
         {/if}
     {/foreach}
     {foreach from=$dropped.$slotindex item="i"}
-	<tr class="kb-table-row-odd" style="background-color: {$dropped_colour};">
+	<tr class="kb-table-row-odd" style="background-color: #006000;">
 		<td style="border: 1px solid green;" width="32" height="34" valign="top" onclick="CCPEVE.showInfo({$i.itemID})">{$i.Icon}</a></td>
 		<td class="kb-table-cell">{$i.Name}</td>
 		<td width="30" align="center">{$i.Quantity}</td>

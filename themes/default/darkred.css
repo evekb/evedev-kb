@@ -244,10 +244,9 @@ textarea.killmail
   cursor: pointer;
 }
 
-/* border arounf final blow in killview */
+/* border around final blow in killview */
 img.finalblow
 {
-  background: #cccccc;
   border: 1px solid #cccccc;
 }
 

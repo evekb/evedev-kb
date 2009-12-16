@@ -8,11 +8,11 @@ require_once('common/includes/class.kill.php');
 
 class pKillDetail extends pageAssembly
 {
-	//! Construct the Pilot Details object.
+//! Construct the Pilot Details object.
 
-	/** Set up the basic variables of the class and add the functions to the
-	 *  build queue.
-	 */
+/** Set up the basic variables of the class and add the functions to the
+ *  build queue.
+ */
 	function __construct()
 	{
 		parent::__construct();
@@ -86,7 +86,7 @@ class pKillDetail extends pageAssembly
 		}
 		$this->system = $this->kill->getSystem();
 		$this->finalblow = false;
-		
+
 		$this->commenthtml = '';
 		// If a comment is being posted then we won't exit this block.
 		if(isset($_POST['comment']) && config::get('comments'))
@@ -123,7 +123,7 @@ class pKillDetail extends pageAssembly
 			}
 			else
 			{
-				// Password is wrong
+			// Password is wrong
 				$this->commenthtml = 'Error: Wrong Password';
 			}
 		}
@@ -135,16 +135,14 @@ class pKillDetail extends pageAssembly
 		global $smarty;
 		if(!file_exists('img/panel/'.config::get('fp_theme').'png')) config::set('fp_theme','apoc');
 		$smarty->assign('panel_colour', config::get('fp_theme'));
-		$smarty->assign('dropped_colour', config::get('apocfitting_dropped_colour'));
-		$smarty->assign('themedir', config::get('apocfitting_themedir'));
-		$smarty->assign('showiskd', config::get('apocfitting_showiskd'));
+		$smarty->assign('showiskd', config::get('kd_showiskd'));
 
 		$this->involvedSetup();
 		$this->fittingSetup();
 	}
 	function fittingSetup()
 	{
-                // ship fitting
+	// ship fitting
 		if (count($this->kill->destroyeditems_) > 0)
 		{
 			$this->dest_array=array();
@@ -334,12 +332,12 @@ class pKillDetail extends pageAssembly
 			}
 		}
 
-		
+
 	}
 	function involvedSetup()
 	{
 		global $smarty;
-                $fetchExternalIDs = array();
+		$fetchExternalIDs = array();
 		// involved
 		$i=1;
 
@@ -372,7 +370,7 @@ class pKillDetail extends pageAssembly
 				}
 
 				// include the final blow pilot
-				if (!config::get('apocfitting_showbox') || $pilot->getID() != $this->kill->getFBPilotID())
+				if (!config::get('kd_showbox') || $pilot->getID() != $this->kill->getFBPilotID())
 				{
 					continue;
 				}
@@ -399,11 +397,11 @@ class pKillDetail extends pageAssembly
 				$this->involved[$i]['portrait'] = $corp->getPortraitURL(64);
 				$this->involved[$i]['externalID'] = $corp->getExternalID(true);
 
-                                if($this->involved[$i]['externalID'] == 0)
-                                {
-                                    $corpname = str_replace(" ", "%20", $corp->getName());
-                                    $fetchExternalIDs[] = $corpname;
-                                }
+				if($this->involved[$i]['externalID'] == 0)
+				{
+					$corpname = str_replace(" ", "%20", $corp->getName());
+					$fetchExternalIDs[] = $corpname;
+				}
 
 				$this->involved[$i]['typeID'] = 2; //type number for corporations.
 
@@ -417,13 +415,13 @@ class pKillDetail extends pageAssembly
 				$this->involved[$i]['portrait']=$pilot->getPortraitURL(64);
 				$this->involved[$i]['externalID'] = $pilot->getExternalID(true);
 
-                                //get the external ID from the pilot class - if not found then add it to a list of pilots
-                                //and check the api in bulk
-                                if($this->involved[$i]['externalID'] == 0)
-                                {
-                                    $pilotname = str_replace(" ", "%20", $pilot->getName());
-                                    $fetchExternalIDs[] = $pilotname;
-                                }
+				//get the external ID from the pilot class - if not found then add it to a list of pilots
+				//and check the api in bulk
+				if($this->involved[$i]['externalID'] == 0)
+				{
+					$pilotname = str_replace(" ", "%20", $pilot->getName());
+					$fetchExternalIDs[] = $pilotname;
+				}
 
 				$this->involved[$i]['typeID'] = 1377; //type number for characters.
 			}
@@ -451,56 +449,58 @@ class pKillDetail extends pageAssembly
 			++$i;
 		}
 
-                //prod CCP for the entire list of names
-                if(count($fetchExternalIDs) > 0)
-                {
-                    require_once('common/includes/class.eveapi.php');
-                    $names = new API_NametoID();
-                    $names->setNames(implode(',', $fetchExternalIDs));
-                    $names->fetchXML();
-                    $nameIDPair = $names->getNameData();
+		//prod CCP for the entire list of names
+		if(count($fetchExternalIDs) > 0)
+		{
+			require_once('common/includes/class.eveapi.php');
+			$names = new API_NametoID();
+			$names->setNames(implode(',', $fetchExternalIDs));
+			$names->fetchXML();
+			$nameIDPair = $names->getNameData();
 
-                    //fill in the pilot external IDs.. could potentially be slow
-                    //but it beats the alternative. Do nothing if no names need loading.
-                    if(count($nameIDPair) > 0) {
-                        foreach($nameIDPair as $idpair)
-                        {
-                            //store the IDs
-                            foreach ($this->kill->involvedparties_ as $inv) {
-                                $pilot = $inv->getPilot();
-                                $corp = $inv->getCorp();
-                                $pname = $pilot->getName();
-                                $cname = $corp->getName();
+			//fill in the pilot external IDs.. could potentially be slow
+			//but it beats the alternative. Do nothing if no names need loading.
+			if(count($nameIDPair) > 0)
+			{
+				foreach($nameIDPair as $idpair)
+				{
+				//store the IDs
+					foreach ($this->kill->involvedparties_ as $inv)
+					{
+						$pilot = $inv->getPilot();
+						$corp = $inv->getCorp();
+						$pname = $pilot->getName();
+						$cname = $corp->getName();
 
-                                if($idpair['name'] == $cname)
-                                {
-                                    $corp->setExternalID($idpair['characterID']);
-                                }
-                                elseif($idpair['name'] == $pname)
-                                {
-                                    $pilot->setCharacterID($idpair['characterID']);
-                                }
-                            }
+						if($idpair['name'] == $cname)
+						{
+							$corp->setExternalID($idpair['characterID']);
+						}
+						elseif($idpair['name'] == $pname)
+						{
+							$pilot->setCharacterID($idpair['characterID']);
+						}
+					}
 
-                            //as we've already populated the structures for the template
-                            //we need to quickly retrofit it.
-                            foreach ($this->involved as $inv)
-                            {
-                                $pname = $inv['pilotName'];
-                                $cname = $inv['corpName'];
+					//as we've already populated the structures for the template
+					//we need to quickly retrofit it.
+					foreach ($this->involved as $inv)
+					{
+						$pname = $inv['pilotName'];
+						$cname = $inv['corpName'];
 
-                                if($cname == $idpair['name'])
-                                {
-                                    $inv['externalID'] = $idpair['characterID'];
-                                }
-                                else if($pname == $idpair['name'])
-                                {
-                                    $inv['externalID'] = $idpair['characterID'];
-                                }
-                            }
-                        }
-                    }
-                }
+						if($cname == $idpair['name'])
+						{
+							$inv['externalID'] = $idpair['characterID'];
+						}
+						else if($pname == $idpair['name'])
+							{
+								$inv['externalID'] = $idpair['characterID'];
+							}
+					}
+				}
+			}
+		}
 	}
 	function involvedSummary()
 	{
@@ -511,7 +511,7 @@ class pKillDetail extends pageAssembly
 		if($this->ownKill) $smarty->assign('kill',true);
 		else $smarty->assign('kill',false);
 		$smarty->assign('involvedPartyCount', $this->kill->getInvolvedPartyCount()); // Anne Sapyx 07/05/2008
-		$smarty->assign('showext', config::get('apocfitting_showext'));
+		$smarty->assign('showext', config::get('kd_showext'));
 
 		return $smarty->fetch(get_tpl('kill_detail_inv_sum'));
 	}
@@ -554,7 +554,7 @@ class pKillDetail extends pageAssembly
 			$smarty->assign('victimPortrait', $corp->getPortraitURL(64));
 			$smarty->assign('victimExtID', 0);
 		}
-		else 
+		else
 		{
 			$smarty->assign('victimPortrait', $plt->getPortraitURL(64));
 			$smarty->assign('victimExtID', $plt->getExternalID());
@@ -755,10 +755,7 @@ class pKillDetail extends pageAssembly
 		//Admin is able to see classified Systems
 			if ($this->page->isAdmin())
 			{
-				if (config::get('apocfitting_mapmod'))
-				{
-					$smarty->assign('systemID', $this->system->getID());
-				}
+				$smarty->assign('systemID', $this->system->getID());
 				$smarty->assign('system', $this->system->getName() . ' (Classified)');
 				$smarty->assign('systemURL', "?a=system_detail&amp;sys_id=" . $this->system->getID());
 				$smarty->assign('systemSecurity', $this->system->getSecurity(true));
@@ -772,10 +769,7 @@ class pKillDetail extends pageAssembly
 		}
 		else
 		{
-			if (config::get('apocfitting_mapmod'))
-			{
-				$smarty->assign('systemID', $this->system->getID());
-			}
+			$smarty->assign('systemID', $this->system->getID());
 			$smarty->assign('system', $this->system->getName());
 			$smarty->assign('systemURL', "?a=system_detail&amp;sys_id=" . $this->system->getID());
 			$smarty->assign('systemSecurity', $this->system->getSecurity(true));
@@ -791,7 +785,7 @@ class pKillDetail extends pageAssembly
 	{
 		global $smarty;
 
-                if (is_array($this->fitting_array[1]))
+		if (is_array($this->fitting_array[1]))
 		{
 			foreach ($this->fitting_array[1] as $array_rowh)
 			{
@@ -991,19 +985,20 @@ class pKillDetail extends pageAssembly
 		$smarty->assign_by_ref('fitting_sub', $this->fitting_array[7]);
 		$smarty->assign_by_ref('fitting_ammo_high', $hiammo);
 		$smarty->assign_by_ref('fitting_ammo_mid', $midammo);
-		$smarty->assign('showammo', config::get('apocfitting_showammo'));
+		$smarty->assign('showammo', config::get('fp_showammo'));
 
-                if(config::get('kd_verify'))
-                {
-                    $this->verification = false;
-                    if($this->kill->getExternalID() != 0) {
-                        $this->verification = true;
-                        $smarty->assign('verify_id', $this->kill->getExternalID());
-                    }
-                    $smarty->assign('verify_yesno', $this->verification);
-                }
-                $smarty->assign('showverify', config::get('kd_verify'));
-		
+		if(config::get('kd_verify'))
+		{
+			$this->verification = false;
+			if($this->kill->getExternalID() != 0)
+			{
+				$this->verification = true;
+				$smarty->assign('verify_id', $this->kill->getExternalID());
+			}
+			$smarty->assign('verify_yesno', $this->verification);
+		}
+		$smarty->assign('showverify', config::get('kd_verify'));
+
 		/*
 		$hicount =count($this->fitting_array[1]);
 		$medcount=count($this->fitting_array[2]);
@@ -1019,7 +1014,7 @@ class pKillDetail extends pageAssembly
 	function damageBox()
 	{
 		global $smarty;
-		if (!config::get('apocfitting_showbox')) return '';
+		if (!config::get('kd_showbox')) return '';
 
 		$topdamage = $this->involved;
 
@@ -1045,7 +1040,7 @@ class pKillDetail extends pageAssembly
 			"javascript:sndReq('index.php?a=kill_mail&amp;kll_id=" . $this->kill->getID()
 			. "');ReverseContentDisplay('popup')");
 
-		if (config::get('apocfitting_showeft'))
+		if (config::get('kd_EFT'))
 		{
 			$menubox->addOption("link",
 				"EFT Fitting",
@@ -1053,7 +1048,7 @@ class pKillDetail extends pageAssembly
 				. "');ReverseContentDisplay('popup')");
 		}
 
-		if (config::get('apocfitting_showeft2eve'))
+		if (config::get('kd_showeft2eve'))
 		{
 			$menubox->addOption("link", "EFT To EVE", "javascript:sndReq('index.php?a=convertinkilldetail');ReverseContentDisplay('popup')");
 		}
@@ -1093,7 +1088,7 @@ class pKillDetail extends pageAssembly
 		return $menubox->generate();
 	}
 
-        function points()
+	function points()
 	{
 		if (!config::get('kill_points')) return '';
 
@@ -1104,26 +1099,23 @@ class pKillDetail extends pageAssembly
 
 	function map()
 	{
-		//Admin is able to see classsified systems
+	//Admin is able to see classsified systems
 		if ((!$this->kill->isClassified()) || ($this->page->isAdmin()))
 		{
-			if (!config::get('apocfitting_sidemap'))
+			$mapbox=new Box("Map");
+			if(IS_IGB)
 			{
-				$mapbox=new Box("Map");
-				if(IS_IGB)
-				{
-					$mapbox->addOption("img", "?a=mapview&amp;sys_id=" . $this->system->getID() . "&amp;mode=map&amp;size=145", "javascript:CCPEVE.showInfo(3, ".$this->system->getRegionID().")");
-					$mapbox->addOption("img", "?a=mapview&amp;sys_id=" . $this->system->getID() . "&amp;mode=region&amp;size=145", "javascript:CCPEVE.showInfo(4, ".$this->system->getConstellationID().")");
-					$mapbox->addOption("img", "?a=mapview&amp;sys_id=" . $this->system->getID() . "&amp;mode=cons&amp;size=145", "javascript:CCPEVE.showInfo(5, ".$this->system->getExternalID().")");
-				}
-				else
-				{
-					$mapbox->addOption("img", "?a=mapview&amp;sys_id=" . $this->system->getID() . "&amp;mode=map&amp;size=145");
-					$mapbox->addOption("img", "?a=mapview&amp;sys_id=" . $this->system->getID() . "&amp;mode=region&amp;size=145");
-					$mapbox->addOption("img", "?a=mapview&amp;sys_id=" . $this->system->getID() . "&amp;mode=cons&amp;size=145");
-				}
-				return $mapbox->generate();
+				$mapbox->addOption("img", "?a=mapview&amp;sys_id=" . $this->system->getID() . "&amp;mode=map&amp;size=145", "javascript:CCPEVE.showInfo(3, ".$this->system->getRegionID().")");
+				$mapbox->addOption("img", "?a=mapview&amp;sys_id=" . $this->system->getID() . "&amp;mode=region&amp;size=145", "javascript:CCPEVE.showInfo(4, ".$this->system->getConstellationID().")");
+				$mapbox->addOption("img", "?a=mapview&amp;sys_id=" . $this->system->getID() . "&amp;mode=cons&amp;size=145", "javascript:CCPEVE.showInfo(5, ".$this->system->getExternalID().")");
 			}
+			else
+			{
+				$mapbox->addOption("img", "?a=mapview&amp;sys_id=" . $this->system->getID() . "&amp;mode=map&amp;size=145");
+				$mapbox->addOption("img", "?a=mapview&amp;sys_id=" . $this->system->getID() . "&amp;mode=region&amp;size=145");
+				$mapbox->addOption("img", "?a=mapview&amp;sys_id=" . $this->system->getID() . "&amp;mode=cons&amp;size=145");
+			}
+			return $mapbox->generate();
 		}
 		return '';
 	}
