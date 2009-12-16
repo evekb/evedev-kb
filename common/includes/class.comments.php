@@ -25,9 +25,10 @@ class Comments
     { 
         global $smarty;
         
-        $qry = new DBQuery(true); 
+        $qry = new DBQuery(true);
+		// NULL site id is shown on all boards
         $qry->execute("SELECT *,id FROM kb3_comments WHERE `kll_id` = '".
-            $this->id_."' order by posttime asc");
+            $this->id_."' AND (site = '".KB_SITE."' OR site IS NULL) order by posttime asc");
         while ($row = $qry->getRow()) 
         { 
             $this->comments_[] = array('time' => $row['posttime'], 'name' => $row['name'],
@@ -50,8 +51,8 @@ class Comments
 
         $name = slashfix(strip_tags($name)); 
         $qry = new DBQuery(true);
-        $qry->execute("INSERT INTO kb3_comments (`kll_id`,`comment`,`name`,`posttime`, `ip`)
-                       VALUES ('".$this->id_."','".$comment."','".$name."','".kbdate('Y-m-d H:i:s')."', '".logger::getip()."')");
+        $qry->execute("INSERT INTO kb3_comments (`kll_id`,`site`, `comment`,`name`,`posttime`, `ip`)
+                       VALUES ('".$this->id_."','".KB_SITE."','".$comment."','".$name."','".kbdate('Y-m-d H:i:s')."', '".logger::getip()."')");
         $id = $qry->getInsertID(); 
         $this->comments_[] = array('time' => kbdate('Y-m-d H:i:s'), 
             'name' => $name, 'comment' => stripslashes($comment), 'id' => $id); 
