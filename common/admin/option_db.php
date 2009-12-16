@@ -2,6 +2,7 @@
 options::cat('Maintenance', 'Database', 'Table Checks');
 options::fadd('This checks automatically your database', 'none', 'custom', array('admin_db', 'checkDatabase'), array('admin_db', 'none'));
 options::fadd('Current SQL cache size', 'none', 'custom', array('admin_db', 'checkCache'), array('admin_db', 'killCache'));
+options::fadd('Reinstall CCP DB', 'none', 'custom', array('admin_db', 'CCPDBlink'));
 
 class admin_db
 {
@@ -14,7 +15,7 @@ class admin_db
 	{
 	// do nothing on submit
 	}
-
+	//! Check the size of the query cache and create a clear cache option.
 	function checkCache()
 	{
 		$size = 0;
@@ -41,7 +42,7 @@ class admin_db
 			return round($size/1024, 2).' KB <input type="checkbox" name="option_sql_clearcache" />Clear cache ?';
 		}
 	}
-
+	//! Delete the contents of the query cache.
 	function killCache()
 	{
 		if ($_POST['option_sql_clearcache'] != 'on')
@@ -62,5 +63,15 @@ class admin_db
 			}
 		}
 	}
+	//! Create an option to link to the database upgrade page.
+	function CCPDBlink()
+	{
+		if(!file_exists("upgrade/CCPDB/update.php"))
+			return "Database update installer is not present.";
+		if(!file_exists("packages/database/kb3_dgmtypeattributes/table.xml"))
+			return "Database packages are not installed.";
+
+		return "<a href='".KB_HOST."/upgrade/index.php?package=CCPDB&do=reset'>".
+			"Reinstall</a>";
+	}
 }
-?>

@@ -8,7 +8,7 @@ e.g. upgrade/012/
 */
 if(function_exists("set_time_limit"))
 	@set_time_limit(0);
-@error_reporting(E_ERROR);
+@error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 define('LATEST_DB_UPDATE', "013");
@@ -85,6 +85,19 @@ You must log in as admin to complete an upgrade.
 		die;
 	}
 }
+
+if(isset($_GET['package']))
+{
+	$package = preg_replace('/[^\w]/','',$_GET['package']);
+	if(is_dir('upgrade/'.$package)) require('upgrade/'.$package.'/update.php');
+	else
+	{
+		echo $header;
+		echo "Specified package does not exist.";
+		echo $footer;
+	}
+	die;
+}
 $qry=new DBQuery(true);
 define('CURRENT_DB_UPDATE', config::get("DBUpdate"));
 if (CURRENT_DB_UPDATE >= LATEST_DB_UPDATE )
@@ -128,12 +141,6 @@ function updateDB()
 		$func();
 	}
 }
-
-/*
- * Too much has changed between update005 and current status for a clean
- * update006. Restarting from update007 in the hope that the differences
- * between 5 and 7 are worked out and an update006 implemented
- */
 
 function update_slot_of_group($id,$oldSlot = 0 ,$newSlot)
 {
