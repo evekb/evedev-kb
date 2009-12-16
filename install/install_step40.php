@@ -1,7 +1,6 @@
 <?php
 if(!$installrunning) {header('Location: index.php');die();}
 $stoppage = true;
-include('../common/includes/php_compat.php');
 include('../common/includes/class.xml.php');
 require('../config.php');
 include('../common/includes/class.db.php');

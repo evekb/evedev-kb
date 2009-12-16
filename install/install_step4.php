@@ -8,7 +8,6 @@ if (file_exists('../config.php'))
 }
 
 $stoppage = true;
-include('../common/includes/php_compat.php');
 include('../common/includes/class.xml.php');
 
 echo 'Reading packages...';
