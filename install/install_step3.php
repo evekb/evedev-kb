@@ -1,34 +1,121 @@
 <?php
 if(!$installrunning) {header('Location: index.php');die();}
 $stoppage = true;
+$pass_img = '../img/sta_alliance.png';
+$fail_img = '../img/sta_horrible.png';
+$amb_img = '../img/sta_bad.png';
+global $smarty;
+$smarty->assign('db_image', $fail_img);
 
 if (!empty($_REQUEST['submit']))
 {
-    $_SESSION['sql']['host'] = $_POST['host'];
-    $_SESSION['sql']['user'] = $_POST['user'];
-    $_SESSION['sql']['pass'] = $_POST['dbpass'];
-    $_SESSION['sql']['db'] = $_POST['db'];
-    $_SESSION['sql']['engine'] = $_POST['engine'];
+	$_SESSION['sql']['host'] = $_POST['host'];
+	$_SESSION['sql']['user'] = $_POST['user'];
+	$_SESSION['sql']['pass'] = $_POST['dbpass'];
+	$_SESSION['sql']['db'] = $_POST['db'];
+	$_SESSION['sql']['engine'] = $_POST['engine'];
 }
 
 if (empty($_SESSION['sql']['host']))
 {
-    $host = 'localhost';
+	$host = 'localhost';
 }
 else $host = $_SESSION['sql']['host'];
-if (file_exists('../config.php'))
+
+//check if we already have a config file
+$smarty->assign('conf_exists', file_exists('../kbconfig.php') && filesize('../kbconfig.php') > 0);
+    
+if (file_exists('../kbconfig.php')) $smarty->assign('conf_image', $amb_img);
+if (file_exists('../kbconfig.php') && filesize('../kbconfig.php') > 0)
 {
-    echo '<div class="block-header2">Found old config</div>';
-    echo 'We will just reuse the data and create a new one.<br/>';
-    include_once('../config.php');
-    $_SESSION['sql'] = array();
-    $_SESSION['sql']['host'] = DB_HOST;
-    $_SESSION['sql']['user'] = DB_USER;
-    $_SESSION['sql']['pass'] = DB_PASS;
-    $_SESSION['sql']['db'] = DB_NAME;
-	$_SESSION['sql']['engine'] = '';
+	include_once('../kbconfig.php');
+	$_SESSION['sql'] = array();
+	$_SESSION['sql']['host'] = DB_HOST;
+
+	if($_SESSION['sql']['host'] != "DB_HOST")
+	{
+		$_SESSION['sql']['user'] = DB_USER;
+		$_SESSION['sql']['pass'] = DB_PASS;
+		$_SESSION['sql']['db'] = DB_NAME;
+		$_SESSION['sql']['engine'] = DB_TYPE;
+	}
+	else {
+		clearConnectionStrings();
+		$_SESSION['sql']['host'] = $host;
+		$smarty->assign('conf_exists', false);
+	}
 }
 else
+{
+    clearConnectionStrings();
+}
+if (empty($_SESSION['sql']['host']))
+	$smarty->assign('db_host', $host);
+else $smarty->assign('db_host', $_SESSION['sql']['host']);
+$smarty->assign('db_user', $_SESSION['sql']['user']);
+$smarty->assign('db_pass', $_SESSION['sql']['pass']);
+$smarty->assign('db_db', $_SESSION['sql']['db']);
+$smarty->assign('db_engine', $_SESSION['sql']['engine']);
+
+if ($_SESSION['sql']['db'])
+{
+    $db = @mysql_connect($_SESSION['sql']['host'], $_SESSION['sql']['user'], $_SESSION['sql']['pass']);
+
+    $smarty->assign('test_db', is_resource($db));
+    if (is_resource($db))
+    {
+	    $result = mysql_query('SELECT VERSION() AS version');
+	    $result = mysql_fetch_assoc($result);
+	    $smarty->assign('test_sql', $result);
+	    if (!$result)
+	    {
+		    $stoppage = true;
+		    $smarty->assign('test_error', mysql_error());
+	    }
+	    else
+	    {
+		    $smarty->assign('test_version', $result['version']);
+		    $smarty->assign('test_select', mysql_select_db($_SESSION['sql']['db']));
+		    if (mysql_select_db($_SESSION['sql']['db']))
+		    {
+			    $stoppage = false;
+			    $smarty->assign('db_image', $pass_img);
+			    //InnoDB check
+			    if ($stoppage == false && $_SESSION['sql']['engine'] == 'InnoDB')
+			    {
+				    $smarty->assign('test_inno', true);
+				    $stoppage = true;
+
+				    $result = mysql_query('SHOW ENGINES;');
+				    while (($row = mysql_fetch_row($result)) &&  $stoppage == true){
+					    if ($row[0] == 'InnoDB'){
+						    if ($row[1] == 'YES' || $row[1] == 'DEFAULT'){ // (YES / NO / DEFAULT)
+							    $stoppage = false;
+						    }
+					    }
+				    }
+				    if ($stoppage){
+					    $smarty->assign('db_image', $fail_img);
+					    $smarty->assign('test_error_inno', true);
+				    }
+			    }
+		    }
+		    else
+		    {
+			    $smarty->assign('test_error', mysql_error());
+		    }
+	    }
+    }
+    else
+    {
+	    $smarty->assign('test_error', mysql_error());
+    }
+}
+$smarty->assign('stoppage', $stoppage);
+$smarty->assign('nextstep', $_SESSION['state']+1);
+$smarty->display('install_step3.tpl');
+
+function clearConnectionStrings()
 {
 	if(!isset($_SESSION['sql']['db']))
 	{
@@ -39,80 +126,5 @@ else
 		$_SESSION['sql']['db'] = '';
 		$_SESSION['sql']['engine'] = '';
 	}
-?>
-<form id="options" name="options" method="post" action="?step=3">
-<input type="hidden" name="step" value="3">
-<div class="block-header2">MySQL Database</div>
-<table class="kb-subtable">
-<tr><td width="120"><b>MySQL Host:</b></td><td><input type=text name=host id=host size=20 maxlength=80 value="<?php echo $host; ?>"></td></tr>
-<tr><td width="120"><b>User:</b></td><td><input type=text name=user id=user size=20 maxlength=80 value="<?php echo $_SESSION['sql']['user']; ?>"></td></tr>
-<tr><td width="120"><b>Password:</b></td><td><input type=password name=dbpass id=pass size=20 maxlength=80 value="<?php echo $_SESSION['sql']['pass']; ?>"></td></tr>
-<tr><td width="120"><b>Database:</b></td><td><input type=text name=db id=db size=20 maxlength=80 value="<?php echo $_SESSION['sql']['db']; ?>"></td></tr>
-<tr><td width="120"><b>Engine:</b></td><td><input type=radio name=engine id=engine value="InnoDB"  <?php if ($_SESSION['sql']['engine'] != "MyISAM") echo "CHECKED"; ?>> InnoDB <input <?php if ($_SESSION['sql']['engine'] == "MyISAM") echo "CHECKED"; ?> type=radio name=engine id=engine value="MyISAM">MyISAM</tr>
-<tr><td width="120"></td><td><input type=submit name=submit value="Test"></td></tr>
-</table>
-<?php
-}
-
-if ($_SESSION['sql']['db'])
-{
-    echo '<div class="block-header2">Testing Settings</div>';
-    echo 'Got the data you supplied, trying to connect to that sql server now...<br/>';
-    $db = @mysql_connect($_SESSION['sql']['host'], $_SESSION['sql']['user'], $_SESSION['sql']['pass']);
-    if (is_resource($db))
-    {
-        echo 'Connected to MySQl';
-        $result = mysql_query('SELECT VERSION() AS version');
-        $result = mysql_fetch_assoc($result);
-        if (!$result)
-        {
-            echo '<br/>Something went wrong:<br/>';
-            echo mysql_error();
-        }
-        else
-        {
-            echo ' running Version '.$result['version'].'.<br/>';
-            if (mysql_select_db($_SESSION['sql']['db']))
-            {
-                echo 'Successfully selected database "'.$_SESSION['sql']['db'].'", everything seems fine to continue.<br/>';
-                $stoppage = false;
-
-                //InnoDB check
-                if ($stoppage == false && $_SESSION['sql']['engine'] == 'InnoDB'){
-                	echo "</br>Checking Database Engine InnoDB.. <br/>";
-                	$stoppage = true;
-                	$result = mysql_query('SHOW ENGINES;');
-                	while (($row = mysql_fetch_row($result)) &&  $stoppage == true){
-                		if ($row[0] == 'InnoDB'){
-                			if ($row[1] == 'YES' || $row[1] == 'DEFAULT'){ // (YES / NO / DEFAULT)
-                				$stoppage = false;
-                			}
-                		}
-                	}
-                	if ($stoppage){
-                		echo 'Error: InnoDB is not supported on your MySQL Server.</br>';
-                	}else{
-                		echo 'InnoDB is supported on your MySQL Server.</br>';
-                	}
-                }
-
-
-            }
-            else
-            {
-                echo 'Could not select the database: '.mysql_error().'<br/>';
-            }
-        }
-    }
-    else
-    {
-        echo 'Could not connect to the server: '.mysql_error().'<br/>';
-    }
 }
 ?>
-
-<?php if ($stoppage)
-{
-    return;
-}?>
-<p><a href="?step=<?php echo ($_SESSION['state']+1); ?>">Next Step</a></p>

@@ -180,4 +180,3 @@ function makeEndDate($week = 0, $year = 0, $month = 0, $enddate = 0)
 
 		return $qenddate;
 }
-

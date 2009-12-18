@@ -4,7 +4,7 @@ if(!$installrunning) {header('Location: index.php');die();}
 function check_commenttable()
 {
     $qry = new DBQuery();
-    $query = 'select count(*) from kb3_comments';
+    $query = 'SELECT count(*) FROM kb3_comments';
     $result = $qry->execute($query);
     if ($result)
     {
@@ -34,17 +34,17 @@ function check_navigationtable()
 	}
 
 	$qry = new DBQuery();
-	$query = 'select count(*) from kb3_navigation';
+	$query = 'SELECT count(*) FROM kb3_navigation';
 	$result = mysql_query($query);
 	if ($result)
 	{
-		$query = "select hidden from kb3_navigation limit 1";
+		$query = "SELECT hidden FROM kb3_navigation LIMIT 1";
 		$result = @mysql_query($query);
 		if (!$result)
 		{
 			 $qry->execute("ALTER TABLE `kb3_navigation` ADD `hidden` BOOL NOT NULL DEFAULT '0' AFTER `page` ;");
 		}
-		$query = "select count(KBSITE) from kb3_navigation WHERE KBSITE = '".KB_SITE."'";
+		$query = "SELECT count(KBSITE) FROM kb3_navigation WHERE KBSITE = '".KB_SITE."'";
 		$result = @mysql_query($query);
 		if ($result)
 		{
@@ -118,7 +118,7 @@ function check_navigationtable()
 function check_commenttablerow()
 {
     $qry = new DBQuery();
-    $query = 'select posttime from kb3_comments limit 1';
+    $query = 'SELECT posttime FROM kb3_comments LIMIT 1';
     $result = mysql_query($query);
     if ($result)
     {
@@ -133,7 +133,7 @@ function check_commenttablerow()
 function check_shipvaltable()
 {
     $qry = new DBQuery();
-    $query = 'select count(*) from kb3_ships_values';
+    $query = 'SELECT count(*) FROM kb3_ships_values';
     $result = mysql_query($query);
     if ($result)
     {
@@ -150,7 +150,7 @@ PRIMARY KEY ( `shp_id` )
 function check_invdetail()
 {
     $qry = new DBQuery();
-    $query = 'select ind_sec_status from kb3_inv_detail limit 1';
+    $query = 'SELECT ind_sec_status FROM kb3_inv_detail LIMIT 1';
     $qry->execute($query);
     $len = mysql_field_len($qry->resid_,0);
     if ($len == 4)
@@ -163,7 +163,7 @@ function check_invdetail()
 function check_pilots()
 {
     $qry = new DBQuery();
-    $query = 'select plt_name from kb3_pilots limit 1';
+    $query = 'SELECT plt_name FROM kb3_pilots LIMIT 1';
     $qry->execute($query);
     $len = mysql_field_len($qry->resid_,0);
     if ($len == 32)
@@ -176,7 +176,7 @@ function check_pilots()
 function check_contracts()
 {
     $qry = new DBQuery();
-    $query = 'select ctd_sys_id from kb3_contract_details limit 1';
+    $query = 'SELECT ctd_sys_id FROM kb3_contract_details LIMIT 1';
     $result = mysql_query($query);
     if ($result)
     {
@@ -184,7 +184,7 @@ function check_contracts()
     }
     $qry->execute('ALTER TABLE `kb3_contract_details` ADD `ctd_sys_id` INT(11) NOT NULL DEFAULT \'0\'');
 
-    $qry->execute('SHOW columns from `kb3_contract_details` like \'ctd_ctr_id\'');
+    $qry->execute('SHOW columns FROM `kb3_contract_details` LIKE \'ctd_ctr_id\'');
     $arr = $qry->getRow();
     if ($arr['Key'] == 'PRI')
     {
@@ -198,7 +198,7 @@ function check_index()
     check_index_invcrp();
     check_index_invall();
     $qry = new DBQuery();
-    $qry->execute('SHOW columns from kb3_item_types like \'itt_id\'');
+    $qry->execute('SHOW columns FROM kb3_item_types LIKE \'itt_id\'');
     $arr = $qry->getRow();
     if ($arr['Key'] == 'PRI')
     {
@@ -210,7 +210,7 @@ function check_index()
 function check_index_invcrp()
 {
     $qry = new DBQuery();
-    $qry->execute('SHOW columns from kb3_inv_crp like \'inc_kll_id\'');
+    $qry->execute('SHOW columns FROM kb3_inv_crp like \'inc_kll_id\'');
     $arr = $qry->getRow();
     if ($arr['Key'] == 'MUL')
     {
@@ -222,7 +222,7 @@ function check_index_invcrp()
 function check_index_invall()
 {
     $qry = new DBQuery();
-    $qry->execute('SHOW columns from kb3_inv_all like \'ina_kll_id\'');
+    $qry->execute('SHOW columns FROM kb3_inv_all like \'ina_kll_id\'');
     $arr = $qry->getRow();
     if ($arr['Key'] == 'MUL')
     {
@@ -234,7 +234,7 @@ function check_index_invall()
 function check_tblstrct1()
 {
     $qry = new DBQuery();
-    $query = 'select shp_description from kb3_ships limit 1';
+    $query = 'SELECT shp_description FROM kb3_ships LIMIT 1';
     $result = mysql_query($query);
     if (!$result)
     {
@@ -246,11 +246,11 @@ function check_tblstrct1()
 function check_tblstrct5()
 {
     $qry = new DBQuery();
-    $query = 'select count(*) from kb3_standings';
+    $query = 'SELECT count(*) FROM kb3_standings';
     $result = mysql_query($query);
     if ($result)
     {
-        $query = 'select count(*) from kb3_standings where sta_from=1 and sta_to=1 and sta_from_type=\'a\' and
+        $query = 'SELECT count(*) FROM kb3_standings WHERE sta_from=1 AND sta_to=1 AND sta_from_type=\'a\' AND
                   sta_to_type=\'c\'';
         $result = mysql_query($query);
         if ($result)
@@ -274,7 +274,7 @@ $query = 'CREATE TABLE `kb3_standings` (
 function check_tblstrct6()
 {
     $qry = new DBQuery();
-    $query = 'select all_img from kb3_alliances limit 1';
+    $query = 'SELECT all_img FROM kb3_alliances LIMIT 1';
     $result = mysql_query($query);
     if (!$result)
     {
@@ -287,7 +287,7 @@ function check_tblstrct6()
 function check_killtables()
 {
     $qry = new DBQuery();
-    $query = 'select kll_dmgtaken from kb3_kills limit 1';
+    $query = 'SELECT kll_dmgtaken FROM kb3_kills LIMIT 1';
     $result = mysql_query($query);
     if ($result)
     {
@@ -296,7 +296,7 @@ function check_killtables()
     $qry->execute('ALTER TABLE `kb3_kills` ADD `kll_dmgtaken` INT(11) NOT NULL DEFAULT \'0\'');
 
     $qry = new DBQuery();
-    $query = 'select ind_dmgdone from kb3_inv_detail limit 1';
+    $query = 'SELECT ind_dmgdone FROM kb3_inv_detail LIMIT 1';
     $result = mysql_query($query);
     if ($result)
     {

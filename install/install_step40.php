@@ -5,7 +5,7 @@ include('../common/includes/class.xml.php');
 require('../config.php');
 include('../common/includes/class.db.php');
 
-echo 'Reading packages...';
+echo 'Reading packages...<br/>';
 $xml = new sxml();
 $kb = $xml->parse(file_get_contents('../packages/database/contents.xml'));
 
@@ -132,7 +132,7 @@ if ($_REQUEST['sub'] == 'data')
                 $fp = gzopen($file, 'r');
                 $lines = 0;
                 $errors = 0;
-				mysql_query("LOCK TABLES ".$table." WRITE");
+		mysql_query("LOCK TABLES ".$table." WRITE");
                 while ($query = gzgets($fp, 4000))
                 {
                     $text .= $query;
@@ -152,7 +152,6 @@ if ($_REQUEST['sub'] == 'data')
                         }
                         $query_count++;
                         $id = mysql_query($query);
-                        #echo $query;
                         if (!$id)
                         {
                             $error .= 'error: '.mysql_error().'<br/>';
@@ -160,11 +159,11 @@ if ($_REQUEST['sub'] == 'data')
                         }
                     }
                 }
-				mysql_query("UNLOCK TABLES");
-                echo '<br/>File '.$file.' had '.$lines.' lines with '.$query_count.' querys.<br/> '.$errors.' Querys failed.<br/>';
+		mysql_query("UNLOCK TABLES");
+                echo '<br/>File '.$file.' had '.$lines.' lines with '.$query_count.' queries.<br/> '.$errors.' queries failed.<br/>';
                 if (!$error)
                 {
-                    echo '<br/>Finished importing of this file.<br/>';
+                    echo '<br/>Finished importing this file.<br/>';
                     echo '<meta http-equiv="refresh" content="1; URL=?step=40&sub=data" />';
                     echo 'Automatic reload in 1s for next chunk. <a href="?step=40&sub=data">Manual Link</a><br/>';
                 }
@@ -255,13 +254,13 @@ if ($_REQUEST['sub'] == 'data')
     if (!$did)
     {
         $stoppage = false;
-        echo 'All tables imported. Checking tables for correct data...<br/>';
+        echo 'All tables have imported. Now checking the tables for the correct data...<br/>';
         foreach ($kb['kb3']['table'] as $line)
         {
             $table = $line['name'];
             $count = $line['rows'];
             echo 'Checking table '.$table.': ';
-            $result = mysql_query('SELECT count(*) as cnt FROM '.$table);
+            $result = mysql_query('SELECT count(*) AS cnt FROM '.$table);
             $test = mysql_fetch_array($result);
             $failed = 0;
             if ($test['cnt'] != $count && $count != 0)
@@ -277,19 +276,19 @@ if ($_REQUEST['sub'] == 'data')
         }
         if ($stoppage)
         {
-            echo 'There has been an error with one of the tables, please <a href="?step=40&do=reset">Reset</a> and try again.<br/>';
+            echo 'An error has occured with one of the tables. Please <a href="?step=40&do=reset">reset</a> and try again.<br/>';
         }
         else
         {
-            echo '<br/>All tables passed.<br/>';
-            echo 'You can now create or search your corporation/alliance: <a href="?step=41">Next Step</a><br/>';
+            echo '<br/>All tables have passed.<br/>';
+            echo 'You can now create or search for your corporation/alliance: <a href="?step=41">Next Step --&gt;</a><br/>';
         }
     }
-    echo '<br/>Use <a href="?step=40&sub=datasel&do=reset">Reset</a> to step back to the sql-opt select.<br/>';
+    echo '<br/>Use <a href="?step=40&sub=datasel&do=reset">reset</a> to step back to the optional package selection.<br/>';
 }
 ?>
 <div class="block-header2">MySQL Data Import</div>
-Found <?php echo $structc; ?> table structures and <?php echo $dcnt; ?> data files for <?php echo count($opt)+count($data); ?> tables.<br/>
+Found <?php echo $structc; ?> table structures and <?php echo $dcnt; ?> data files for <?php echo count($opt)+count($data); ?> tables.<br/><br/>
 <?php
 
 $structadd = 0;
@@ -297,25 +296,25 @@ $failed = 0;
 
 foreach ($struct as $table => $file)
 {
-    echo 'Table struct has to be added: '.$table.'<br/>';
+    echo 'This table structure is missing and has to be added: '.$table.'<br/>';
     $structadd++;
 }
 if (!$structadd && $_REQUEST['sub'] != 'datasel' && $_REQUEST['sub'] != 'data')
 {
-    echo 'All table structures seem to be in the database.<br/><br/>';
+    echo 'All of the table structures seem to be in the database.<br/>';
 #    echo 'I will now check some table structures in case you are upgrading from a previous version... ';
 #    include('install_step4_tblchk.php');
-    echo 'Please continue with <a href="?step=40&sub=datasel">Importing Data</a><br/>';
+    echo 'Please proceed with <a href="?step=40&sub=datasel">importing the data</a><br/>';
 
-    echo '<br/><br/>If you have aborted the install and you already have the data in those tables, you can bypass the import now with <a href="?step=41">this link</a><br/>';
-    echo 'To be sure, I will check some table data for you now:<br/><br/>';
+    echo '<br/><br/>If you have aborted the installation and you already have the data in your tables, you may now <a href="?step=41">bypass the import</a><br/>';
+    echo 'To make sure, I will check some table data for you now:<br/><br/>';
 
     foreach ($kb['kb3']['table'] as $line)
     {
         $table = $line['name'];
         $count = $line['rows'];
         echo 'Checking table '.$table.': ';
-        $result = mysql_query('SELECT count(*) as cnt FROM '.$table);
+        $result = mysql_query('SELECT count(*) AS cnt FROM '.$table);
         $test = mysql_fetch_array($result);
         if ($test['cnt'] != $count && $count != 0)
         {
@@ -330,7 +329,7 @@ if (!$structadd && $_REQUEST['sub'] != 'datasel' && $_REQUEST['sub'] != 'data')
     }
     if ($failed == 0)
     {
-        echo '<br/>All important table data seems to be there. You are safe to bypass the import.<br/>';
+        echo '<br/>All important table data seems to exist. You may safely bypass the import.<br/>';
     }
     else
     {
@@ -339,7 +338,7 @@ if (!$structadd && $_REQUEST['sub'] != 'datasel' && $_REQUEST['sub'] != 'data')
 }
 elseif ($structadd)
 {
-    echo 'Some table structures have to be added. Please continue with <a href="?step=40&sub=struct">Creating Tables</a><br/>';
+    echo 'Table structures have to be added. Please <a href="?step=40&sub=struct">create them</a><br/>';
 }
 
 if ($_REQUEST['sub'] == 'datasel')

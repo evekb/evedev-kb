@@ -2,7 +2,7 @@
 if(!$installrunning) {header('Location: index.php');die();}
 $stoppage = false;
 
-include_once('../config.php');
+include_once('./kbconfig.php');
 $db = mysql_connect(DB_HOST, DB_USER, DB_PASS);
 mysql_select_db(DB_NAME);
 
@@ -13,23 +13,11 @@ $db = DB_NAME;
 $user = DB_USER;
 $pass = DB_PASS;
 
-$config = preg_replace("/\{([^\}]+)\}/e", "\\1", join('', file('config.tpl')));
+$config = preg_replace("/\{([^\}]+)\}/e", "\\1", join('', file('./templates/config.tpl')));
 $fp = fopen('../kbconfig.php', 'w');
 fwrite($fp, trim($config));
 fclose($fp);
 chmod('../kbconfig.php', 0440);
-
-function insertConfig($key, $value)
-{
-    global $db;
-
-    $result = mysql_query('select * from kb3_config where cfg_site=\''.KB_SITE.'\' and cfg_key=\''.$key.'\'');
-    if (!$row = mysql_fetch_row($result))
-    {
-        $sql = "insert into kb3_config values ('".KB_SITE."','".$key."','".$value."')";
-        mysql_query($sql);
-    }
-}
 
 // move stuff from the config to the database
 insertConfig('cfg_allianceid', ALLIANCE_ID);
@@ -47,47 +35,31 @@ insertConfig('cfg_sqlhalt', DB_HALTONERROR);
 
 insertConfig('cfg_mainsite', MAIN_SITE);
 
-echo 'Upgraded your Config and chmodded ../kbconfig.php 440. If there was a warning for chmod please change the permission manually.<br/>';
-
-echo 'The next query checks for abandoned items, save this list for your reference.<br/>';
-
-$query = "select itd_kll_id, itm_id, itm_name
-from kb3_items_destroyed
-left join kb3_items on itd_itm_id=itm_id
-left join kb3_invtypes on itm_name=typeName
-where invtypes.typeID is null";
+$query = "SELECT itd_kll_id, itm_id, itm_name
+FROM kb3_items_destroyed
+LEFT JOIN kb3_items ON itd_itm_id = itm_id
+LEFT JOIN kb3_invtypes ON itm_name = typeName
+WHERE invtypes.typeID IS NULL";
 $result = mysql_query($query);
-echo mysql_error();
+$smarty->assign('sql_error');
+
+$notice = '';
 while ($row = mysql_fetch_array($result))
 {
-    echo 'Killmail id '.$row['itd_kll_id'].' contains item named "'.$row['itm_name'].'" (id '.$row['itm_id'].') that will get orphaned.<br/>';
+    $notice .= 'Killmail id '.$row['itd_kll_id'].' contains an item named "'.$row['itm_name'].'" (id '.$row['itm_id'].') that will be orphaned.<br/>';
 }
-?>
-<p>Warning!</p><br/>
-Once you click for the next step the following querys will be run:<br/>
-<pre>
-update
-kb3_items_destroyed
-left join kb3_items on itd_itm_id=itm_id
-left join kb3_invtypes on itm_name=typeName
-set itd_itm_id=typeID
+$smarty->assign('notice', $notice);
+$smarty->assign('stoppage', $stoppage);
+$smarty->display('install_step41.tpl');
 
-update
-kb3_inv_detail
-left join kb3_items on ind_wep_id=itm_id
-left join kb3_invtypes on itm_name=typeName
-set ind_wep_id=typeID
-
-insert into kb3_item_price
-select typeID, itm_value as price
-from kb3_items
-left join kb3_invtypes on itm_name=typeName
-where typeID is not null and itm_value != 0 and itm_value!=basePrice
-</pre>
-
-Make sure you backed up those tables!<br/>
-<?php if ($stoppage)
+function insertConfig($key, $value)
 {
-    return;
-}?>
-<p><a href="?step=<?php echo ($_SESSION['state']+1); ?>">Next Step</a></p>
+    global $db;
+
+    $result = mysql_query('SELECT * FROM kb3_config WHERE cfg_site=\''.KB_SITE.'\' AND cfg_key=\''.$key.'\'');
+    if (!$row = mysql_fetch_row($result))
+    {
+        $sql = "INSERT INTO kb3_config VALUES ('".KB_SITE."','".$key."','".$value."')";
+        mysql_query($sql);
+    }
+}
