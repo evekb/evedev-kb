@@ -1,4 +1,4 @@
-<p>Welcome to the installer and updater, it will help you to set up everything correctly.<br/>
+<p>Welcome to the installer. It will help you to set up everything correctly.<br/>
 <br/>
 This software requires:<br/>
 - Webserver (Apache / IIS)<br/>
