@@ -46,7 +46,6 @@ require_once('common/includes/class.user.php');
 require_once('common/includes/class.session.php');
 require_once('common/includes/class.cache.php');
 require_once('common/includes/class.involvedloader.php');
-require_once('common/xajax/xajax.php');
 require_once('common/includes/xajax.functions.php');
 
 // smarty doesnt like it
@@ -140,7 +139,7 @@ if(config::get('DBUpdate') < LATEST_DB_UPDATE)
 	// Check db is installed.
 	if(config::get('cfg_kbhost'))
 	{
-		$url = preg_replace('/^http:\/\//','',KB_HOST."/upgrade/");
+		$url = preg_replace('/^http:\/\//','',KB_HOST."/update/");
 		$url = preg_replace('/\/{2,}/','/',$url);
 		header('Location: http://'.$url);
 		die;
