@@ -261,6 +261,8 @@ else
 require_once('common/includes/class.page.php');
 
 cache::check($page);
+// Show a system message on all pages if the init stage has generated any.
+if(isset($boardMessage)) $smarty->assign('message', $boardMessage);
 if ($settingsPage)
 {
     if (!session::isAdmin())
