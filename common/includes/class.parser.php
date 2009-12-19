@@ -17,9 +17,9 @@ class Parser
 
     function Parser($killmail, $externalID = null, $loadExternals = true)
     {
-		if( phpversion() >= '5.0.0' ) { //lousy but necessary
-            $canUnicode = true; //if this is unset, Russian will not parse, but English will atleast.
-        }
+	if( phpversion() >= '5.0.0' ) { //lousy but necessary
+	    $canUnicode = true; //if this is unset, Russian will not parse, but English will atleast.
+	}
         $this->error_ = array();
         $this->killmail_ = trim(str_replace("\r", '', $killmail));
         $this->returnmail = false;

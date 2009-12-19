@@ -27,7 +27,8 @@ class Translate
                      'Zerst'.chr(246).'rte Gegenst'.chr(228).'nde', 'Zerst'.chr(246).'rt:', 'Sicherheit:',
                             'Beteiligte Parteien:','Anz:','Corporation:','(Fracht)', 'Schiff:','Waffe:','(Im Container)',
                             'Verursachter Schaden:','Erlittener Schaden:', '(gab den letzten Schuss ab)',
-                            'Hinterlassene Gegenst'.chr(228).'nde:', 'Anz.:', 'Unbekannt', 'Dronenhangar', 'Drohnenhangar', 'Mond:');
+                            'Hinterlassene Gegenst'.chr(228).'nde:', 'Anz.:', 'Unbekannt', 'Dronenhangar', 'Drohnenhangar', 
+			    'Mond:', 'Kapsel');
 
             $replace = array('Victim:','Alliance: None','Alliance: None','Alliance: None',
                      'Alliance: None','Alliance: None','Alliance: None','Alliance:',
@@ -36,7 +37,8 @@ class Translate
                      'Destroyed items','Destroyed:', 'Security:',
                             'Involved parties:', 'Qty:', 'Corp:', '(Cargo)', 'Ship:', 'Weapon:','(In Container)',
                             'Damage Done:', 'Damage Taken:', '(laid the final blow)',
-                            'Dropped items:', 'Qty:', 'Unknown', 'Drone Bay', 'Drone Bay', 'Moon:');
+                            'Dropped items:', 'Qty:', 'Unknown', 'Drone Bay', 'Drone Bay', 
+			    'Moon:', 'Capsule');
 
             $this->killmail_ = str_replace($search, $replace, $this->killmail_);
             return  $this->killmail_;
