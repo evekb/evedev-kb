@@ -129,7 +129,7 @@ class cache
 
 				if(!ini_get('zlib.output_compression')) ob_start("ob_gzhandler");
 				else ob_start();
-				@readfile($cachefile);
+				@readgzfile($cachefile);
 				ob_end_flush();
 				exit();
 			}
@@ -161,10 +161,11 @@ class cache
 			{
 				mkdir(KB_PAGECACHEDIR.'/'.KB_SITE.'/'.cache::genCacheName(true));
 			}
-            $fp = @fopen($cachefile, 'w');
+			// Use the minimum compression. The difference is minor in our usage.
+            $fp = @gzopen($cachefile, 'wb1');
 
-            @fwrite($fp, preg_replace('/profile -->.*<!-- \/profile/','profile -->Cached '.gmdate("d M Y H:i:s").'<!-- /profile',ob_get_contents()));
-            @fclose($fp);
+            @gzwrite($fp, preg_replace('/profile -->.*<!-- \/profile/','profile -->Cached '.gmdate("d M Y H:i:s").'<!-- /profile',ob_get_contents()));
+            @gzclose($fp);
 			ob_end_flush();
 		}
 	}
