@@ -175,5 +175,5 @@ while($kill1 = $list->getKill())
 	}
 }
 $sxe->addChild('cachedUntil', $date);
-
+header("Content-Type: text/xml");
 echo $sxe->asXML();
