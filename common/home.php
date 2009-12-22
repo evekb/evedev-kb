@@ -153,32 +153,41 @@ class pHome extends pageAssembly
 		}
 		return $html;
 	}
+	//! Set up the menu.
 
-	function menu()
+	//! Prepare all the base menu options.
+	function menuSetup()
 	{
-	// Display the menu for previous and next weeks.
-		$menubox = new box("Menu");
-		$menubox->setIcon("menu-item.gif");
-		$menubox->addOption("caption","Navigation");
+		// Display the menu for previous and next weeks.
+		$this->addMenuItem("caption","Navigation");
 
 		if($this->view == 'kills') $suffix = '&amp;view=kills';
 		elseif($this->view == 'losses') $suffix .= '&amp;view=losses';
 		if($this->scl_id) $suffixscl = '&amp;scl_id='.$this->scl_id;
 
-		$menubox->addOption("link","Previous ".$this->getPeriodName(),
+		$this->addMenuItem("link","Previous ".$this->getPeriodName(),
 			"?a=home&amp;" . $this->getPreviousPeriodLink() . $suffix.$suffixscl);
 		if(!$this->isCurrentPeriod())
 		{
-			$menubox->addOption("link","Next ".$this->getPeriodName(),
+			$this->addMenuItem("link","Next ".$this->getPeriodName(),
 				"?a=home&amp;" . $this->getNextPeriodLink() . $suffix.$suffixscl);
 		}
-		$menubox->addOption("link", "Kills",
+		$this->addMenuItem("link", "Kills",
 			"?a=home&amp;" . $this->getCurrentPeriodLink() . '&amp;view=kills'.$suffixscl);
-		$menubox->addOption("link", "Losses",
+		$this->addMenuItem("link", "Losses",
 			"?a=home&amp;" . $this->getCurrentPeriodLink() . '&amp;view=losses'.$suffixscl);
-		if(config::get('show_comb_home')) $menubox->addOption("link",
+		if(config::get('show_comb_home')) $this->addMenuItem("link",
 				$weektext."All Kills",
 				"?a=home&amp;" . $this->getCurrentPeriodLink() . $suffixscl);
+		return "";
+	}
+	//! Build the menu.
+
+	//! Add all preset options to the menu.
+	function menu()
+	{
+		$menubox = new box("Menu");
+		$menubox->setIcon("menu-item.gif");
 		foreach($this->menuOptions as $options)
 		{
 			if(isset($options[2]))
@@ -240,6 +249,7 @@ class pHome extends pageAssembly
 	function context()
 	{
 		parent::__construct();
+		$this->queue('menuSetup');
 		$this->queue('menu');
 		$this->queue('clock');
 		$this->queue('topLists');

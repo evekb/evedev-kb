@@ -40,6 +40,7 @@ class pPilotDetail extends pageAssembly
 	function context()
 	{
 		parent::__construct();
+		$this->queue("menuSetup");
 		$this->queue("menu");
 		$this->queue("points");
 	}
@@ -249,9 +250,22 @@ class pPilotDetail extends pageAssembly
 		}
 		return $html;
 	}
+	//! Set up the menu.
+
+	//! Prepare all the base menu options.
+	function menuSetup()
+	{
+		$this->addMenuItem("caption","Kills &amp; losses");
+		$this->addMenuItem("link","Recent activity", "?a=pilot_detail&amp;plt_id=".$this->pilot->getID()."&amp;view=recent");
+		$this->addMenuItem("link","Kills", "?a=pilot_detail&amp;plt_id=".$this->pilot->getID()."&amp;view=kills");
+		$this->addMenuItem("link","Losses", "?a=pilot_detail&amp;plt_id=".$this->pilot->getID()."&amp;view=losses");
+		$this->addMenuItem("caption","Statistics");
+		$this->addMenuItem("link","Ships &amp; weapons", "?a=pilot_detail&amp;plt_id=".$this->pilot->getID()."&amp;view=ships_weapons");
+		return "";
+	}
 	//! Build the menu.
 
-	//! Additional options that have been set are added to the menu.
+	//! Add all preset options to the menu.
 	function menu()
 	{
 		$menubox = new box("Menu");

@@ -35,6 +35,7 @@ class pContractDetail extends pageAssembly
 	function context()
 	{
 		parent::__construct();
+		$this->queue("menuSetup");
 		$this->queue("menu");
 		$this->queue("topLists");
 	}
@@ -238,19 +239,26 @@ class pContractDetail extends pageAssembly
 		}
 		return $html;
 	}
+	//! Set up the menu.
+
+	//! Prepare all the base menu options.
+	function menuSetup()
+	{
+		$this->addMenuItem("caption","Overview");
+		$this->addMenuItem("link","Target overview", "?a=cc_detail&amp;ctr_id=".$this->ctr_id);
+		$this->addMenuItem("caption","Kills &amp; losses");
+		$this->addMenuItem("link","Recent activity", "?a=cc_detail&amp;ctr_id=".$this->ctr_id."&amp;view=recent_activity");
+		$this->addMenuItem("link","All kills", "?a=cc_detail&amp;ctr_id=".$this->ctr_id."&amp;view=kills");
+		$this->addMenuItem("link","All losses", "?a=cc_detail&amp;ctr_id=".$this->ctr_id."&amp;view=losses");
+		return "";
+	}
 	//! Build the menu.
 
-	//! Additional options that have been set are added to the menu.
+	//! Add all preset options to the menu.
 	function menu()
 	{
 		$menubox = new box("Menu");
 		$menubox->setIcon("menu-item.gif");
-		$menubox->addOption("caption","Overview");
-		$menubox->addOption("link","Target overview", "?a=cc_detail&amp;ctr_id=".$this->ctr_id);
-		$menubox->addOption("caption","Kills &amp; losses");
-		$menubox->addOption("link","Recent activity", "?a=cc_detail&amp;ctr_id=".$this->ctr_id."&amp;view=recent_activity");
-		$menubox->addOption("link","All kills", "?a=cc_detail&amp;ctr_id=".$this->ctr_id."&amp;view=kills");
-		$menubox->addOption("link","All losses", "?a=cc_detail&amp;ctr_id=".$this->ctr_id."&amp;view=losses");
 		foreach($this->menuOptions as $options)
 		{
 			if(isset($options[2]))

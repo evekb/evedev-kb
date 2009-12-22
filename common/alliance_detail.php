@@ -595,6 +595,7 @@ class pAllianceDetail extends pageAssembly
 	function context()
 	{
 		parent::__construct();
+		$this->queue("menuSetup");
 		$this->queue("menu");
 	}
 
@@ -605,27 +606,6 @@ class pAllianceDetail extends pageAssembly
 	{
 		$menubox = new Box("Menu");
 		$menubox->setIcon("menu-item.gif");
-		$menubox->addOption("caption","Kills &amp; losses");
-		$menubox->addOption("link","Recent activity", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID());
-		$menubox->addOption("link","Kills", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=kills");
-		$menubox->addOption("link","Losses", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=losses");
-		$menubox->addOption("caption","Corp statistics");
-		$menubox->addOption("link","Top killers", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=corp_kills");
-		$menubox->addOption("link","Top losers", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=corp_losses");
-		$menubox->addOption("link","Destroyed ships", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=corp_kills_class");
-		$menubox->addOption("link","Lost ships", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=corp_losses_class");
-		$menubox->addOption("caption","Pilot statistics");
-		$menubox->addOption("link","Top killers", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=pilot_kills");
-		if (config::get('kill_points'))
-		{
-			$menubox->addOption('link', "Top scorers", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=pilot_scores");
-		}
-		$menubox->addOption("link","Top losers", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=pilot_losses");
-		$menubox->addOption("link","Destroyed ships", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=kills_class");
-		$menubox->addOption("link","Lost ships", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=losses_class");
-		$menubox->addOption("caption","Global statistics");
-		$menubox->addOption("link","Ships &amp; weapons", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=ships_weapons");
-		$menubox->addOption("link","Most violent systems", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=violent_systems");
 		foreach($this->menuOptions as $options)
 		{
 			if(isset($options[2]))
@@ -634,6 +614,35 @@ class pAllianceDetail extends pageAssembly
 				$menubox->addOption($options[0],$options[1]);
 		}
 		return $menubox->generate();
+	}
+	//! Set up the menu.
+
+	//! Additional options that have been set are added to the menu.
+	function menuSetup()
+	{
+		$menubox = new Box("Menu");
+		$menubox->setIcon("menu-item.gif");
+		$this->addMenuItem("caption","Kills &amp; losses");
+		$this->addMenuItem("link","Recent activity", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID());
+		$this->addMenuItem("link","Kills", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=kills");
+		$this->addMenuItem("link","Losses", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=losses");
+		$this->addMenuItem("caption","Corp statistics");
+		$this->addMenuItem("link","Top killers", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=corp_kills");
+		$this->addMenuItem("link","Top losers", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=corp_losses");
+		$this->addMenuItem("link","Destroyed ships", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=corp_kills_class");
+		$this->addMenuItem("link","Lost ships", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=corp_losses_class");
+		$this->addMenuItem("caption","Pilot statistics");
+		$this->addMenuItem("link","Top killers", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=pilot_kills");
+		if (config::get('kill_points'))
+		{
+			$this->addMenuItem('link', "Top scorers", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=pilot_scores");
+		}
+		$this->addMenuItem("link","Top losers", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=pilot_losses");
+		$this->addMenuItem("link","Destroyed ships", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=kills_class");
+		$this->addMenuItem("link","Lost ships", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=losses_class");
+		$this->addMenuItem("caption","Global statistics");
+		$this->addMenuItem("link","Ships &amp; weapons", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=ships_weapons");
+		$this->addMenuItem("link","Most violent systems", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=violent_systems");
 	}
 	//! Add an item to the menu in standard box format.
 

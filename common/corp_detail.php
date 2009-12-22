@@ -38,6 +38,7 @@ class pCorpDetail extends pageAssembly
 	function context()
 	{
 		parent::__construct();
+		$this->queue("menuSetup");
 		$this->queue("menu");
 	}
 
@@ -579,29 +580,36 @@ class pCorpDetail extends pageAssembly
 		}
 		return $html;
 	}
+	//! Set up the menu.
+
+	//! Prepare all the base menu options.
+	function menuSetup()
+	{
+		$this->addMenuItem("caption","Kills &amp; losses");
+		$this->addMenuItem("link","Recent activity", "?a=corp_detail&amp;crp_id=" . $this->corp->getID());
+		$this->addMenuItem("link","Kills", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=kills");
+		$this->addMenuItem("link","Losses", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=losses");
+		$this->addMenuItem("caption","Pilot statistics");
+		$this->addMenuItem("link","Top killers", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=pilot_kills");
+
+		if (config::get('kill_points'))
+			$this->addMenuItem("link","Top scorers", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=pilot_scores");
+		$this->addMenuItem("link","Top solokillers", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=pilot_solo");
+		$this->addMenuItem("link","Top damagedealers", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=pilot_damage");
+		$this->addMenuItem("link","Top griefers", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=pilot_griefer");
+		$this->addMenuItem("link","Top losers", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=pilot_losses");
+		$this->addMenuItem("caption","Global statistics");
+		$this->addMenuItem("link","Ships &amp; weapons", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=ships_weapons");
+		$this->addMenuItem("link","Most violent systems", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=violent_systems");
+		return "";
+	}
 	//! Build the menu.
 
-	//! Additional options that have been set are added to the menu.
+	//! Add all preset options to the menu.
 	function menu()
 	{
 		$menubox = new box("Menu");
 		$menubox->setIcon("menu-item.gif");
-		$menubox->addOption("caption","Kills &amp; losses");
-		$menubox->addOption("link","Recent activity", "?a=corp_detail&amp;crp_id=" . $this->corp->getID());
-		$menubox->addOption("link","Kills", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=kills");
-		$menubox->addOption("link","Losses", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=losses");
-		$menubox->addOption("caption","Pilot statistics");
-		$menubox->addOption("link","Top killers", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=pilot_kills");
-
-		if (config::get('kill_points'))
-			$menubox->addOption("link","Top scorers", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=pilot_scores");
-		$menubox->addOption("link","Top solokillers", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=pilot_solo");
-		$menubox->addOption("link","Top damagedealers", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=pilot_damage");
-		$menubox->addOption("link","Top griefers", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=pilot_griefer");
-		$menubox->addOption("link","Top losers", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=pilot_losses");
-		$menubox->addOption("caption","Global statistics");
-		$menubox->addOption("link","Ships &amp; weapons", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=ships_weapons");
-		$menubox->addOption("link","Most violent systems", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=violent_systems");
 		foreach($this->menuOptions as $options)
 		{
 			if(isset($options[2]))

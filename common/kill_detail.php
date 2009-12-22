@@ -43,6 +43,7 @@ class pKillDetail extends pageAssembly
 	function context()
 	{
 		parent::__construct();
+		$this->queue("menuSetup");
 		$this->queue("menu");
 		$this->queue("points");
 		$this->queue("damageBox");
@@ -1030,19 +1031,17 @@ class pKillDetail extends pageAssembly
 
 		return $smarty->fetch(get_tpl('kill_detail_damage_box'));
 	}
-	function menu()
+	function menuSetup()
 	{
-		$menubox=new Box("Menu");
-		$menubox->setIcon("menu-item.gif");
-		$menubox->addOption("caption", "View");
-		$menubox->addOption("link",
+		$this->addMenuItem("caption", "View");
+		$this->addMenuItem("link",
 			"Killmail",
 			"javascript:sndReq('index.php?a=kill_mail&amp;kll_id=" . $this->kill->getID()
 			. "');ReverseContentDisplay('popup')");
 
 		if (config::get('kd_EFT'))
 		{
-			$menubox->addOption("link",
+			$this->addMenuItem("link",
 				"EFT Fitting",
 				"javascript:sndReq('index.php?a=eft_fitting&amp;kll_id=" . $this->kill->getID()
 				. "');ReverseContentDisplay('popup')");
@@ -1050,33 +1049,42 @@ class pKillDetail extends pageAssembly
 
 		if (config::get('kd_showeft2eve'))
 		{
-			$menubox->addOption("link", "EFT To EVE", "javascript:sndReq('index.php?a=convertinkilldetail');ReverseContentDisplay('popup')");
+			$this->addMenuItem("link", "EFT To EVE", "javascript:sndReq('index.php?a=convertinkilldetail');ReverseContentDisplay('popup')");
 		}
 
 		if ($this->kill->relatedKillCount() > 1 || $this->kill->relatedLossCount() > 1 ||
 			((ALLIANCE_ID || CORP_ID || PILOT_ID) && $this->kill->relatedKillCount() + $this->kill->relatedLossCount() > 1))
 		{
-			$menubox->addOption("link", "Related kills (" . $this->kill->relatedKillCount() . "/" . $this->kill->relatedLossCount() . ")",
+			$this->addMenuItem("link", "Related kills (" . $this->kill->relatedKillCount() . "/" . $this->kill->relatedLossCount() . ")",
 				"?a=kill_related&amp;kll_id=" . $this->kill->getID());
 		}
 
 		if ($this->page->isAdmin())
 		{
-			$menubox->addOption("caption", "Admin");
-			$menubox->addOption("link",
+			$this->addMenuItem("caption", "Admin");
+			$this->addMenuItem("link",
 				"Delete",
 				"javascript:openWindow('?a=admin_kill_delete&amp;kll_id=" . $this->kill->getID()
 				. "', null, 420, 300, '' );");
 
 			if (isset($_GET['view']) && $_GET['view'] == 'FixSlot')
 			{
-				$menubox->addOption("link", "Adjust Values", "?a=kill_detail&amp;kll_id=" . $this->kill->getID() . "");
+				$this->addMenuItem("link", "Adjust Values", "?a=kill_detail&amp;kll_id=" . $this->kill->getID() . "");
 			}
 			else
 			{
-				$menubox->addOption("link", "Fix Slots", "?a=kill_detail&amp;kll_id=" . $this->kill->getID() . "&amp;view=FixSlot");
+				$this->addMenuItem("link", "Fix Slots", "?a=kill_detail&amp;kll_id=" . $this->kill->getID() . "&amp;view=FixSlot");
 			}
 		}
+		return "";
+	}
+	//! Build the menu.
+
+	//! Add all preset options to the menu.
+	function menu()
+	{
+		$menubox=new Box("Menu");
+		$menubox->setIcon("menu-item.gif");
 		foreach($this->menuOptions as $options)
 		{
 			if(isset($options[2]))

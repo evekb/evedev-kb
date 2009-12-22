@@ -88,20 +88,28 @@ class pSystemDetail extends pageAssembly
 	function context()
 	{
 		parent::__construct();
+		$this->queue("menuSetup");
 		$this->queue("menu");
 	}
 	
+	//! Set up the menu.
+
+	//! Prepare all the base menu options.
+	function menuSetup()
+	{
+		$this->addMenuItem("caption","Navigation");
+		$this->addMenuItem("link","All kills", "?a=system_detail&amp;sys_id=".$this->sys_id."&amp;view=kills");
+		$this->addMenuItem("link","All losses", "?a=system_detail&amp;sys_id=".$this->sys_id."&amp;view=losses");
+		$this->addMenuItem("link","Recent Activity", "?a=system_detail&amp;sys_id=".$this->sys_id."&amp;view=recent");
+		return "";
+	}
 	//! Build the menu.
 
-	//! Additional options that have been set are added to the menu.
+	//! Add all preset options to the menu.
 	function menu()
 	{
 		$menubox = new box("Menu");
 		$menubox->setIcon("menu-item.gif");
-		$menubox->addOption("caption","Navigation");
-		$menubox->addOption("link","All kills", "?a=system_detail&amp;sys_id=".$this->sys_id."&amp;view=kills");
-		$menubox->addOption("link","All losses", "?a=system_detail&amp;sys_id=".$this->sys_id."&amp;view=losses");
-		$menubox->addOption("link","Recent Activity", "?a=system_detail&amp;sys_id=".$this->sys_id."&amp;view=recent");
 		foreach($this->menuOptions as $options)
 		{
 			if(isset($options[2]))
