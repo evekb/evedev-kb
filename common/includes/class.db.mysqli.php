@@ -473,8 +473,7 @@ class DBCachedQuery_mysqli
         }
         else
         {
-            var_dump($ta);
-            trigger_error('No suitable handler for query found.',E_USER_WARNING);
+            trigger_error('No suitable handler for query found. "'.$ta[0].'"',E_USER_WARNING);
             return false;
         }
 
