@@ -126,16 +126,35 @@ class thumb
 				$row = $qry->getRow();
 				if (!$id = $row['plt_externalid'])
 				{
-				// there is no such id so set it to 0
+					// there is no such id so set it to 0
 					$this->_id = 0;
 					$this->_thumb = 'img/portrait_0_'.$this->_size.'.jpg';
 					return;
 				}
 			}
-			// in case of a dead eve server we only want to wait 2 seconds
-			@ini_set('default_socket_timeout', 2);
-			if (function_exists('curl_init'))
+			// Assume external id < 100,000 is NPC structure/ship
+			if($this->_id < 100000)
 			{
+				if(file_exists("img/ships/64_64/".$this->_id.".png"))
+				{
+					$img = imagecreatefrompng("img/ships/64_64/".$this->_id.".png");
+					if(!file_exists(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2)))
+						mkdir(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2));
+					if(!file_exists(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2)))
+						mkdir(KB_CACHEDIR.'/img/pilots/'.substr($this->_id,0,2).'/'.substr($this->_id,2,2));
+				}
+				else
+				{
+					// there is no such image so set it to 0
+					$this->_id = 0;
+					$this->_thumb = 'img/portrait_0_'.$this->_size.'.jpg';
+					return;
+				}
+			}
+			elseif (function_exists('curl_init'))
+			{
+				// in case of a dead eve server we only want to wait 2 seconds
+				@ini_set('default_socket_timeout', 2);
 				$ch = curl_init();
 				curl_setopt($ch, CURLOPT_URL, 'http://img.eve.is/serv.asp?s=256&c='.$this->_id);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -155,6 +174,8 @@ class thumb
 			}
 			else
 			{
+				// in case of a dead eve server we only want to wait 2 seconds
+				@ini_set('default_socket_timeout', 2);
 				$file = @file_get_contents('http://img.eve.is/serv.asp?s=256&c='.$this->_id);
 				if ($img = @imagecreatefromstring($file))
 				{

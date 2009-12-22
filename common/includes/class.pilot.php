@@ -2,6 +2,7 @@
 require_once('class.corp.php');
 require_once('class.item.php');
 require_once('class.thumb.php');
+require_once('class.db.mysqli.prepared.php');
 
 //! Creates a new Pilot or fetches an existing one from the database.
 class Pilot
@@ -40,6 +41,21 @@ class Pilot
                     $this->execQuery();
                     if($this->externalid_) return $this->externalid_;
 
+					$pqry = new DBPreparedQuery();
+					$sql = "SELECT typeID FROM kb3_invtypes, kb3_pilots WHERE typeName = plt_name AND plt_id = ?";
+					$id = "";
+					$pqry->prepare($sql);
+					$pqry->bind_param('i', $this->id_);
+					$pqry->bind_result($id);
+					if($pqry->execute())
+					{
+						if($pqry->recordCount())
+						{
+							$pqry->fetch_prepared();
+							$this->setCharacterID($id);
+							return $this->externalid_;
+						}
+					}
                     $pilotname = str_replace(" ", "%20", $this->getName() );
                     require_once("common/includes/class.eveapi.php");
                     $myID = new API_NametoID();
