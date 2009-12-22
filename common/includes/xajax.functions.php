@@ -5,7 +5,6 @@
 
 require_once('common/xajax/xajax.php');
 
-$xajax->configure("javascript URI", "common/xajax/");
 $xajax->register(XAJAX_FUNCTION, "doAjaxSearch");
 
 edk_xajax::xajax();
@@ -98,19 +97,19 @@ function doAjaxSearch($searchphrase='', $type='pilot')
 				switch($type)
 				{
 					case "pilot":
-						$result .= "?a=pilot_detail&amp;plt_id=$id'>";
+						$result .= "/?a=pilot_detail&amp;plt_id=$id'>";
 						break;
 					case "corp":
-						$result .= "?a=corp_detail&amp;crp_id=$id'>";
+						$result .= "/?a=corp_detail&amp;crp_id=$id'>";
 						break;
 					case "alliance":
-						$result .= "?a=alliance_detail&amp;all_id=$id'>";
+						$result .= "/?a=alliance_detail&amp;all_id=$id'>";
 						break;
 					case "system":
-						$result .= "?a=system_detail&amp;sys_id=$id'>";
+						$result .= "/?a=system_detail&amp;sys_id=$id'>";
 						break;
 					case "item":
-						$result .= "?a=invtype&amp;id=$id'>";
+						$result .= "/?a=invtype&amp;id=$id'>";
 						break;
 				}
 				$result .= $name1."</a></td><td>".$name2."</td></tr>";
