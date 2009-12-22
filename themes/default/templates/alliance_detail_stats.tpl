@@ -20,7 +20,7 @@
 	</tr>
 	<tr class="kb-table-row-even">
 		<td class="kb-table-cell"><b>Efficiency:</b></td>
-		<td class="kb-table-cell"><b>{$efficiency}</b></td>
+		<td class="kb-table-cell"><b>{$efficiency}%</b></td>
 	</tr>
 </table>
 <br/>
