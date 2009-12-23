@@ -753,29 +753,6 @@ class DBMemcachedQuery_mysqli
         $this->d = true;
     }
 
-    //! Check if this query has been cached.
-
-    /*
-     * \return true if this query has been cached.
-     */
-    function checkCache()
-    {
-		if($this->_nocache) return false;
-        global $mc;
-
-        // only cache selects
-        // we don't use select ... into so there is no problem
-        $this->_sql = str_replace(array("\r\n", "\n"), ' ', $this->_sql);
-        if (strtolower(substr($this->_sql, 0, 6)) != 'select' && strtolower(substr($this->_sql, 0, 4)) != 'show')
-        return false;
-
-        $cached = $mc->get(KB_SITE . '_sql_' . $this->_hash);
-        if($cached) {
-            return true;
-        }
-
-        return false;
-    }
     function genCache()
     {
         global $mc;
@@ -827,19 +804,20 @@ class DBMemcachedQuery_mysqli
         $this->_cache = array();
         $this->_cached = false;
 
-        $cached = $mc->get(KB_SITE . '_sql_' . $this->_hash);
-        if($cached) {
-            $this->_cache = $cached;
-            $this->_cached = true;
-            $this->_currrow = 0;
-            $this->executed_ = true;
-            $this->queryCachedCount(true);
-            return true;
-        }
-
+		if(!$this->_nocache)
+		{
+			$cached = $mc->get(KB_SITE . '_sql_' . $this->_hash);
+			if($cached) {
+				$this->_cache = $cached;
+				$this->_cached = true;
+				$this->_currrow = 0;
+				$this->executed_ = true;
+				$this->queryCachedCount(true);
+				return true;
+			}
+		}
         // we got no or no valid cache so open the connection and run the query
         $this->dbconn_ = new DBConnection_mysqli;
-		//if(isset($this->resid_)) $this->resid_->free();
 
         $t1 = strtok(microtime(), ' ') + strtok('');
 
@@ -1005,4 +983,3 @@ class DBMemcachedQuery_mysqli
         return $this->dbconn_->id()->rollback();
     }
 }
-?>
