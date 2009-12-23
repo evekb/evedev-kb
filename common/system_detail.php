@@ -20,6 +20,8 @@ class pSystemDetail extends pageAssembly
 		
 		$this->queue("start");
 		$this->queue("map");
+		$this->queue("statSetup");
+		$this->queue("summaryTable");
 		$this->queue("killList");
 	}
 	
@@ -45,7 +47,24 @@ class pSystemDetail extends pageAssembly
 	{
 		return $this->smarty->fetch(get_tpl("system_detail_map"));
 	}
-	
+	//! Set up the stats used by the stats and summary table functions
+	function statSetup()
+	{
+		$this->kill_summary = new KillSummaryTable();
+		$this->kill_summary->setSystem($this->sys_id);
+		if(config::get('kill_classified')) $this->kill_summary->setEndDate(gmdate('Y-m-d H:i',strtotime('now - '.(config::get('kill_classified')*3600).' hours')));
+		involved::load($this->kill_summary, 'kill');
+		$this->kill_summary->generate();
+		return "";
+	}
+	//! Build the summary table showing all kills and losses for this corporation.
+	function summaryTable()
+	{
+		if($this->view != '' && $this->view != 'kills'
+			&& $this->view != 'losses') return '';
+		return $this->kill_summary->generate();
+	}
+
 	//! Build the killlists that are needed for the options selected.
 	function killList()
 	{
