@@ -140,6 +140,12 @@ class KillSummaryTable
 		else $this->inv_all_[] = $alliance->getID();
 	}
 
+	function setSystem($system)
+	{
+		if(is_numeric($system)) $this->system_[] = $system;
+		else $this->system_[] = $system->getID();
+	}
+
 	// do it faster, baby!
 	function getkills()
 	{
@@ -148,56 +154,59 @@ class KillSummaryTable
 			echo 'mode not supported<br>';
 			exit;
 		}
-		if( count($this->inv_all_) == 1 && !$this->inv_crp_ && !$this->inv_plt_ && $this->setDateFilter() == "")
+		if($this->setDateFilter() == "" && empty($this->system_))
 		{
-			$allsum = new allianceSummary($this->inv_all_[0]);
-			$summary = $allsum->getSummary();
-			foreach($summary as $key => $row)
+			if( count($this->inv_all_) == 1 && !$this->inv_crp_ && !$this->inv_plt_)
 			{
-				$this->entry_[$row['class_name']] = array('id' => $key,
-					'kills' => $row['killcount'], 'kills_isk' => $row['killisk'],
-					'losses' => $row['losscount'], 'losses_isk' => $row['lossisk']);
+				$allsum = new allianceSummary($this->inv_all_[0]);
+				$summary = $allsum->getSummary();
+				foreach($summary as $key => $row)
+				{
+					$this->entry_[$row['class_name']] = array('id' => $key,
+						'kills' => $row['killcount'], 'kills_isk' => $row['killisk'],
+						'losses' => $row['losscount'], 'losses_isk' => $row['lossisk']);
 
-				$this->tkcount_ += $row['killcount'];
-				$this->tkisk_ += $row['killisk'];
-				$this->tlcount_ += $row['losscount'];
-				$this->tlisk_ += $row['lossisk'];
+					$this->tkcount_ += $row['killcount'];
+					$this->tkisk_ += $row['killisk'];
+					$this->tlcount_ += $row['losscount'];
+					$this->tlisk_ += $row['lossisk'];
+				}
+				return;
 			}
-			return;
-		}
-		elseif( count($this->inv_crp_) == 1 && !$this->inv_all_ && !$this->inv_plt_ && $this->setDateFilter() == "")
-		{
-			$crpsum = new corpSummary($this->inv_crp_[0]);
-			$summary = $crpsum->getSummary();
-			foreach($summary as $key => $row)
+			elseif( count($this->inv_crp_) == 1 && !$this->inv_all_ && !$this->inv_plt_)
 			{
-				$this->entry_[$row['class_name']] = array('id' => $key,
-					'kills' => $row['killcount'], 'kills_isk' => $row['killisk'],
-					'losses' => $row['losscount'], 'losses_isk' => $row['lossisk']);
+				$crpsum = new corpSummary($this->inv_crp_[0]);
+				$summary = $crpsum->getSummary();
+				foreach($summary as $key => $row)
+				{
+					$this->entry_[$row['class_name']] = array('id' => $key,
+						'kills' => $row['killcount'], 'kills_isk' => $row['killisk'],
+						'losses' => $row['losscount'], 'losses_isk' => $row['lossisk']);
 
-				$this->tkcount_ += $row['killcount'];
-				$this->tkisk_ += $row['killisk'];
-				$this->tlcount_ += $row['losscount'];
-				$this->tlisk_ += $row['lossisk'];
+					$this->tkcount_ += $row['killcount'];
+					$this->tkisk_ += $row['killisk'];
+					$this->tlcount_ += $row['losscount'];
+					$this->tlisk_ += $row['lossisk'];
+				}
+				return;
 			}
-			return;
-		}
-		elseif( count($this->inv_plt_) == 1 && !$this->inv_all_ && !$this->inv_crp_ && $this->setDateFilter() == "")
-		{
-			$pltsum = new pilotSummary($this->inv_plt_[0]);
-			$summary = $pltsum->getSummary();
-			foreach($summary as $key => $row)
+			elseif( count($this->inv_plt_) == 1 && !$this->inv_all_ && !$this->inv_crp_)
 			{
-				$this->entry_[$row['class_name']] = array('id' => $key,
-					'kills' => $row['killcount'], 'kills_isk' => $row['killisk'],
-					'losses' => $row['losscount'], 'losses_isk' => $row['lossisk']);
+				$pltsum = new pilotSummary($this->inv_plt_[0]);
+				$summary = $pltsum->getSummary();
+				foreach($summary as $key => $row)
+				{
+					$this->entry_[$row['class_name']] = array('id' => $key,
+						'kills' => $row['killcount'], 'kills_isk' => $row['killisk'],
+						'losses' => $row['losscount'], 'losses_isk' => $row['lossisk']);
 
-				$this->tkcount_ += $row['killcount'];
-				$this->tkisk_ += $row['killisk'];
-				$this->tlcount_ += $row['losscount'];
-				$this->tlisk_ += $row['lossisk'];
+					$this->tkcount_ += $row['killcount'];
+					$this->tkisk_ += $row['killisk'];
+					$this->tlcount_ += $row['losscount'];
+					$this->tlisk_ += $row['lossisk'];
+				}
+				return;
 			}
-			return;
 		}
 
 		$this->entry_ = array();
@@ -223,37 +232,49 @@ class KillSummaryTable
 		$sql .= ' INNER JOIN kb3_ship_classes scl ON ( scl.scl_id = shp.shp_class )';
 
 
+		$sqlop = " WHERE ";
 		if ($this->inv_all_)
 		{
 			$sql .= " INNER JOIN kb3_inv_all inv ON (inv.ina_kll_id = kll.kll_id)
-				WHERE inv.ina_all_id in (".implode(',', $this->inv_all_)." ) ";
+				".$sqlop."inv.ina_all_id in (".implode(',', $this->inv_all_)." ) ";
 			if($startdate) $sql .=" AND inv.ina_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
 			if($enddate) $sql .=" AND inv.ina_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+			$sqlop = " AND ";
 		}
 		elseif ($this->inv_crp_)
 		{
 			$sql .= " INNER JOIN kb3_inv_crp inv ON (inv.inc_kll_id = kll.kll_id)
-				WHERE inv.inc_crp_id in (".implode(',', $this->inv_crp_)." ) ";
+				".$sqlop."inv.inc_crp_id in (".implode(',', $this->inv_crp_)." ) ";
 			if($startdate) $sql .=" AND inv.inc_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
 			if($enddate) $sql .=" AND inv.inc_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+			$sqlop = " AND ";
 		}
 		elseif ($this->inv_plt_)
 		{
 			$sql .= " INNER JOIN kb3_inv_detail inv ON (inv.ind_kll_id = kll.kll_id)
-					WHERE inv.ind_plt_id in (".implode(',', $this->inv_plt_)." ) ";
+					".$sqlop."inv.ind_plt_id in (".implode(',', $this->inv_plt_)." ) ";
 			if($startdate) $sql .=" AND inv.ind_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
 			if($enddate) $sql .=" AND inv.ind_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+			$sqlop = " AND ";
 		}
 		else
 		{
-			$sqlop = " WHERE ";
 			if($startdate)
 			{
 				$sql .= $sqlop." kll.kll_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
 				$sqlop = " AND ";
 			}
-			if($enddate) $sql .= $sqlop." kll.kll_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+			if($enddate)
+			{
+				$sql .= $sqlop." kll.kll_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+				$sqlop = " AND ";
+			}
 		}
+			if($this->system_)
+			{
+				$sql .= $sqlop." kll.kll_system_id = ".join(',', $this->system_)." ";
+				$sqlop = " AND ";
+			}
 
 		$sql .= 'GROUP BY scl_class order by scl_class';
 
@@ -284,16 +305,23 @@ class KillSummaryTable
 		{
 			$sql .= $sqlop.' kll.kll_all_id IN ( '.implode(',', $this->inv_all_).' ) ';
 			$sql .= 'AND EXISTS (SELECT 1 FROM kb3_inv_all ina WHERE kll.kll_id = ina_kll_id AND ina.ina_all_id NOT IN ( '.implode(',', $this->inv_all_).' ) limit 0,1) ';
+			$sqlop = " AND ";
 		}
 		elseif ($this->inv_crp_)
 		{
 			$sql .= $sqlop.' kll.kll_crp_id IN ( '.implode(',', $this->inv_crp_).' ) ';
 			$sql .= 'AND EXISTS (SELECT 1 FROM kb3_inv_crp inc WHERE kll.kll_id = inc_kll_id AND inc.inc_crp_id NOT IN ( '.implode(',', $this->inv_crp_).' ) limit 0,1) ';
+			$sqlop = " AND ";
 		}
 		elseif ($this->inv_plt_)
 		{
 			$sql .= $sqlop.' kll.kll_victim_id IN ( '.implode(',', $this->inv_plt_).' ) ';
 			$sql .= ' AND EXISTS (SELECT 1 FROM kb3_inv_detail ind WHERE kll.kll_id = ind_kll_id AND ind.ind_plt_id NOT IN ( '.implode(',', $this->inv_plt_).' ) limit 0,1) ';
+			$sqlop = " AND ";
+		}
+		if($this->system_)
+		{
+			$sql .= $sqlop." kll.kll_system_id = ".join(',', $this->system_)." ";
 		}
 		$sql .= 'GROUP BY scl_class order by scl_class';
 

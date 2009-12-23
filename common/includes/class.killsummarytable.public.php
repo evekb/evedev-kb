@@ -53,6 +53,10 @@ class KillSummaryTablePublic extends KillSummaryTable
             $sql .= ' inner join kb3_inv_detail ind on ( ind.ind_all_id in ( '.join(',', $this->inv_all_).' ) and kll.kll_id = ind.ind_kll_id ) ';
         }
 		$sqlop = " WHERE ";
+		if($this->system_)
+		{
+			$sql .= $sqlop." kll.kll_system_id in ".join(',', $this->system_)." ";
+		}
 		if($startdate)
 		{
 			$sql .= $sqlop." kll.kll_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
