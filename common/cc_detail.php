@@ -21,7 +21,6 @@ class pContractDetail extends pageAssembly
 
 		$this->view =  preg_replace('/[^a-zA-Z0-9_-]/','',$_GET['view']);
 		$this->viewList = array();
-		$this->contract = new Contract($this->ctr_id);
 
 		$this->menuOptions = array();
 
@@ -46,6 +45,7 @@ class pContractDetail extends pageAssembly
 	 */
 	function start()
 	{
+		$this->contract = new Contract($this->ctr_id);
 		if(!$this->contract->validate())
 		{
 			$this->page = new Page('Campaign details');
