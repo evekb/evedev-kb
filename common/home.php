@@ -148,8 +148,8 @@ class pHome extends pageAssembly
 			$pagesplitter = new PageSplitter($klist->getCount(), $this->killcount);
 			$table = new KillListTable($klist);
 			if($this->showcombined) $table->setCombined(true);
-			$html .= $table->generate();
-			$html .= $pagesplitter->generate();
+			$pagesplit = $pagesplitter->generate();
+			$html .= $pagesplit.$table->generate().$pagesplit;
 		}
 		return $html;
 	}

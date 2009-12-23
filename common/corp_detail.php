@@ -57,7 +57,7 @@ class pCorpDetail extends pageAssembly
 			if($this->crp_external_id)
 			{
 				$qry = new DBQuery();
-				$qry->execute('SELECT crp_id FROM kb3_corps WHERE crp_externalid = '.$this->crp_external_id);
+				$qry->execute('SELECT crp_id FROM kb3_corps WHERE crp_external_id = '.$this->crp_external_id);
 				if($qry->recordCount())
 				{
 					$row = $qry->getRow();
@@ -271,8 +271,8 @@ class pCorpDetail extends pageAssembly
 				$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 				$table = new KillListTable($list);
 				$table->setDayBreak(false);
-				$html .= $table->generate();
-				$html .= $pagesplitter->generate();
+				$pagesplit = $pagesplitter->generate();
+				$html .= $pagesplit."<br /><br />".$table->generate().$pagesplit;
 
 				break;
 			case "losses":
@@ -288,8 +288,8 @@ class pCorpDetail extends pageAssembly
 
 				$table = new KillListTable($list);
 				$table->setDayBreak(false);
-				$html .= $table->generate();
-				$html .= $pagesplitter->generate();
+				$pagesplit = $pagesplitter->generate();
+				$html .= $pagesplit."<br /><br />".$table->generate().$pagesplit;
 
 				break;
 			case "pilot_kills":

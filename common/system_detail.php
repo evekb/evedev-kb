@@ -68,7 +68,7 @@ class pSystemDetail extends pageAssembly
 	//! Build the killlists that are needed for the options selected.
 	function killList()
 	{
-
+		global $smarty;
 		if(isset($this->viewList[$this->view])) return call_user_func_array($this->viewList[$this->view], array(&$this));
 
 		$klist = new KillList();
@@ -85,20 +85,18 @@ class pSystemDetail extends pageAssembly
 		$klist->setLimit(20);
 
 		if ($this->view == 'recent' || !isset($this->view))
-			$html .= "<div class='kb-kills-header'>20 most recent kills</div>";
-		elseif ($this->view == 'losses')
-			$html .= "<div class='kb-kills-header'>All losses</div>";
+			$smarty->assign('klheader', config::get('killcount').' most recent kills');
+		elseif($this->view == 'losses')
+			$smarty->assign('klheader', 'All losses');
 		else
-			$html .= "<div class='kb-kills-header'>All kills</div>";
+			$smarty ->assign('klheader', config::get('killcount').' most recent kills');
 
-		$this->pagesplitter = new PageSplitter($klist->getCount(), config::get('killcount'));
+		$pagesplitter = new PageSplitter($klist->getCount(), config::get('killcount'));
 
 		$table = new KillListTable($klist);
-		$html .= $table->generate();
-		if (is_object($this->pagesplitter))
-		{
-			$html .= $this->pagesplitter->generate();
-		}
+		$smarty->assign('klsplit',$pagesplitter->generate());
+		$smarty->assign('kltable',$table->generate());
+		$html = $smarty->fetch(get_tpl('system_detail'));
 		
 		return $html;
 	}

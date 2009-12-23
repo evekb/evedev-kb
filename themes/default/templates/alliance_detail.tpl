@@ -5,10 +5,12 @@
 {$losstable}
 {elseif $view == 'kills'}
 <div class="kb-kills-header">All kills</div>
+{$splitter}<br /><br />
 {$killtable}
 {$splitter}
 {elseif $view == 'losses'}
 <div class="kb-kills-header">All losses</div>
+{$splitter}<br /><br />
 {$losstable}
 {$splitter}
 {elseif $view=='ships_weapons'}

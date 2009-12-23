@@ -165,8 +165,8 @@ class pPilotDetail extends pageAssembly
 				$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 				$table = new KillListTable($list);
 				$table->setDayBreak(false);
-				$html .= $table->generate();
-				$html .= $pagesplitter->generate();
+				$pagesplit = $pagesplitter->generate();
+				$html .= $pagesplit."<br /><br />".$table->generate().$pagesplit;
 
 				break;
 			case "losses":
@@ -182,8 +182,8 @@ class pPilotDetail extends pageAssembly
 
 				$table = new KillListTable($list);
 				$table->setDayBreak(false);
-				$html .= $table->generate();
-				$html .= $pagesplitter->generate();
+				$pagesplit = $pagesplitter->generate();
+				$html .= $pagesplit."<br /><br />".$table->generate().$pagesplit;
 				break;
 			case "ships_weapons":
 				$html .= "<div class='block-header2'>Ships & weapons used</div>";
