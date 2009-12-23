@@ -27,6 +27,7 @@ class pAllianceDetail extends pageAssembly
 		$this->menuOptions = array();
 
 		$this->queue("start");
+		$this->queue("statSetup");
 		$this->queue("stats");
 		$this->queue("summaryTable");
 		$this->queue("killList");
@@ -112,18 +113,21 @@ class pAllianceDetail extends pageAssembly
 		$smarty->assign('all_name', $this->alliance->getName());
 		$smarty->assign('all_id', $this->alliance->getID());
 	}
+	//! Set up the stats needed for stats and summaryTable functions
+	function statSetup()
+	{
+		$this->kill_summary = new KillSummaryTable();
+		$this->kill_summary->addInvolvedAlliance($this->all_id);
+		$this->kill_summary->generate();
+		return "";
+	}
+
 	//! Show the overall statistics for this alliance.
 	function stats()
 	{
 		global $smarty;
 		// The summary table is also used by the stats. Whichever is called
 		// first generates the table.
-		if(!isset($this->kill_summary))
-		{
-			$this->kill_summary = new KillSummaryTable();
-			$this->kill_summary->addInvolvedAlliance($this->all_id);
-			$this->kill_summary->generate();
-		}
 		if (file_exists("img/alliances/".$this->alliance->getUnique().".png"))
 			$smarty->assign('all_img', $this->alliance->getUnique());
 		else
@@ -139,17 +143,13 @@ class pAllianceDetail extends pageAssembly
 		return $smarty->fetch(get_tpl('alliance_detail_stats'));
 	}
 
-	//! Build the summary table showing all kills and losses for this alliance.
+	//! Display the summary table showing all kills and losses for this alliance.
 	function summaryTable()
 	{
 		if($this->view != '' && $this->view != 'recent_activity'
 			&& $this->view != 'kills' && $this->view != 'losses') return '';
 		// The summary table is also used by the stats. Whichever is called
 		// first generates the table.
-		if(isset($this->kill_summary)) return $this->kill_summary->generate();
-
-		$this->kill_summary = new KillSummaryTable();
-		$this->kill_summary->addInvolvedAlliance($this->all_id);
 		return $this->kill_summary->generate();
 	}
 

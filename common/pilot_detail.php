@@ -30,6 +30,7 @@ class pPilotDetail extends pageAssembly
 		$this->menuOptions = array();
 
 		$this->queue("start");
+		$this->queue("statSetup");
 		$this->queue("stats");
 		$this->queue("summaryTable");
 		$this->queue("killList");
@@ -86,11 +87,9 @@ class pPilotDetail extends pageAssembly
 		$this->corp = $this->pilot->getCorp();
 		$this->alliance = $this->corp->getAlliance();
 	}
-	//! Build the summary table showing all kills and losses for this pilot.
-	function summaryTable()
+	//! Set up the stats used by stats and summaryTable functions.
+	function statSetup()
 	{
-		if(is_null($this->klist) || is_null($this->llist))
-		{
 			$this->klist = new KillList();
 			$this->llist = new KillList();
 			$this->klist->addInvolvedPilot($this->pilot);
@@ -104,30 +103,16 @@ class pPilotDetail extends pageAssembly
 				$this->summary = new KillSummaryTable($this->klist, $this->llist);
 				if ($this->view == "ships_weapons") $this->summary->setFilter(false);
 			}
-		}
-		$html .= $this->summary->generate();
-		return $html;
+	}
+	//! Build the summary table showing all kills and losses for this pilot.
+	function summaryTable()
+	{
+		return $this->summary->generate();
 	}
 
 	//! Show the overall statistics for this alliance.
 	function stats()
 	{
-		if(is_null($this->klist) || is_null($this->llist))
-		{
-			$this->klist = new KillList();
-			$this->llist = new KillList();
-			$this->klist->addInvolvedPilot($this->pilot);
-			$this->llist->addVictimPilot($this->pilot);
-			$this->klist->getAllKills();
-			$this->llist->getAllKills();
-			$this->points = $this->klist->getPoints();
-			$this->lpoints = $this->llist->getPoints();
-			if(!isset($this->kill_summary))
-			{
-				$this->summary = new KillSummaryTable($this->klist, $this->llist);
-				if ($this->view == "ships_weapons") $this->summary->setFilter(false);
-			}
-		}
 		global $smarty;
 		$smarty->assign('portrait_URL',$this->pilot->getPortraitURL(128));
 		$smarty->assign('corp_id',$this->corp->getID());

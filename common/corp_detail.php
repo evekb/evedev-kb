@@ -28,6 +28,7 @@ class pCorpDetail extends pageAssembly
 		$this->menuOptions = array();
 
 		$this->queue("start");
+		$this->queue("statSetup");
 		$this->queue("stats");
 		$this->queue("summaryTable");
 		$this->queue("killList");
@@ -107,7 +108,13 @@ class pCorpDetail extends pageAssembly
 		}
 		$this->monthname = kbdate("F", strtotime("2000-".$this->month."-2"));
 	}
-
+	//! Set up the stats used by the stats and summary table functions
+	function statSetup()
+	{
+		$this->kill_summary = new KillSummaryTable();
+		$this->kill_summary->addInvolvedCorp($this->crp_id);
+		$this->kill_summary->generate();
+	}
 	//! Build the summary table showing all kills and losses for this corporation.
 	function summaryTable()
 	{
@@ -115,25 +122,14 @@ class pCorpDetail extends pageAssembly
 			&& $this->view != 'losses') return '';
 		// The summary table is also used by the stats. Whichever is called
 		// first generates the table.
-		if(isset($this->kill_summary)) return $this->kill_summary->generate();
-
-		$this->kill_summary = new KillSummaryTable();
-		$this->kill_summary->addInvolvedCorp($this->crp_id);
 		return $this->kill_summary->generate();
 	}
-
 	//! Show the overall statistics for this corporation.
 	function stats()
 	{
 		global $smarty;
 		// The summary table is also used by the stats. Whichever is called
 		// first generates the table.
-		if(!isset($this->kill_summary))
-		{
-			$this->kill_summary = new KillSummaryTable();
-			$this->kill_summary->addInvolvedCorp($this->crp_id);
-			$this->kill_summary->generate();
-		}
 		$corpname = str_replace(" ", "%20", $this->corp->getName() );
 		$myID = new API_NametoID();
 		$myID->setNames($corpname);
