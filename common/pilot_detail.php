@@ -255,12 +255,6 @@ class pPilotDetail extends pageAssembly
 	{
 		$menubox = new box("Menu");
 		$menubox->setIcon("menu-item.gif");
-		$menubox->addOption("caption","Kills &amp; losses");
-		$menubox->addOption("link","Recent activity", "?a=pilot_detail&amp;plt_id=".$this->pilot->getID()."&amp;view=recent");
-		$menubox->addOption("link","Kills", "?a=pilot_detail&amp;plt_id=".$this->pilot->getID()."&amp;view=kills");
-		$menubox->addOption("link","Losses", "?a=pilot_detail&amp;plt_id=".$this->pilot->getID()."&amp;view=losses");
-		$menubox->addOption("caption","Statistics");
-		$menubox->addOption("link","Ships &amp; weapons", "?a=pilot_detail&amp;plt_id=".$this->pilot->getID()."&amp;view=ships_weapons");
 		foreach($this->menuOptions as $options)
 		{
 			if(isset($options[2]))
