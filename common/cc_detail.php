@@ -48,16 +48,13 @@ class pContractDetail extends pageAssembly
 	{
 		if(!$this->contract->validate())
 		{
-			$this->page = new Page('Contract details');
-			$this->page->generate( 'No valid contract ID specified');
+			$this->page = new Page('Campaign details');
+			$this->page->generate( 'No valid campaign ID specified');
 			exit;
 		}
 
-		if ($this->contract->getCampaign())
-			$title = 'Campaign details';
-		else
-			$title = 'Contract details';
-
+		$title = 'Campaign details';
+		
 		$this->page = new Page($title.' - '.$this->contract->getName());
 	}
 
@@ -69,10 +66,7 @@ class pContractDetail extends pageAssembly
 		involved::load($tklist,'kill');
 
 		$tklist->generate();
-		if ($this->contract->getCampaign())
-			$campaign = "campaign";
-		else
-			$campaign = "contract";
+		$campaign = "campaign";
 		$tkbox = new AwardBox($tklist, "Top killers", "kills in this ".$campaign, "kills", "eagle");
 
 		$html = $tkbox->generate();
@@ -104,10 +98,6 @@ class pContractDetail extends pageAssembly
 	{
 		global $smarty;
 
-		if ($this->contract->getCampaign())
-			$smarty->assign('campaign', true);
-		else
-			$smarty->assign('campaign', false);
 		if ($this->contract->getEndDate() == "")
 			$smarty->assign('contract_enddate', "Active");
 		else

@@ -436,12 +436,12 @@ class ContractList
 			$sql .= " and ( ctr_ended is null or now() <= ctr_ended )";
 		elseif ($this->active_ == "no")
 			$sql .= " and ( now() >= ctr_ended )";
-
+/*
 		if ($this->campaigns_)
 			$sql .= " and ctr.ctr_campaign = 1";
 		else
 			$sql .= " and ctr.ctr_campaign = 0";
-
+*/
 		$sql .= " order by ctr_ended, ctr_started desc";
 		// if ( $this->limit_ )
 		// $sql .= " limit ".( $this->page_ / $this->limit_ ).", ".$this->limit_;
