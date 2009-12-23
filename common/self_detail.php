@@ -1,18 +1,20 @@
 <?php
 if(PILOT_ID)
 {
-	header("Location: ".KB_HOST."?a=pilot_detail&plt_id=".PILOT_ID);
+	$_GET['plt_id'] = PILOT_ID;
+	include('pilot_detail.php');
 }
 elseif(CORP_ID)
 {
-	header("Location: ".KB_HOST."?a=corp_detail&crp_id=".CORP_ID);
+	$_GET['crp_id'] = CORP_ID;
+	include('corp_detail.php');
 }
 elseif(ALLIANCE_ID)
 {
-	header("Location: ".KB_HOST."?a=alliance_detail&all_id=".ALLIANCE_ID);
+	$_GET['all_id'] = ALLIANCE_ID;
+	include('alliance_detail.php');
 }
 else
 {
-	header("Location: ".KB_HOST."?a=about");
+	include("about.php");
 }
-die;
