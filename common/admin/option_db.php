@@ -1,6 +1,6 @@
 <?php
 options::cat('Maintenance', 'Database', 'Table Checks');
-options::fadd('This checks automatically your database', 'none', 'custom', array('admin_db', 'checkDatabase'), array('admin_db', 'none'));
+//options::fadd('This checks automatically your database', 'none', 'custom', array('admin_db', 'checkDatabase'), array('admin_db', 'none'));
 options::fadd('Current SQL cache size', 'none', 'custom', array('admin_db', 'checkCache'), array('admin_db', 'killCache'));
 options::fadd('Reinstall CCP DB', 'none', 'custom', array('admin_db', 'CCPDBlink'));
 
@@ -66,12 +66,12 @@ class admin_db
 	//! Create an option to link to the database upgrade page.
 	function CCPDBlink()
 	{
-		if(!file_exists("upgrade/CCPDB/update.php"))
+		if(!file_exists("update/CCPDB/update.php"))
 			return "Database update installer is not present.";
 		if(!file_exists("packages/database/kb3_dgmtypeattributes/table.xml"))
 			return "Database packages are not installed.";
 
-		return "<a href='".KB_HOST."/upgrade/index.php?package=CCPDB&do=reset'>".
+		return "<a href='".KB_HOST."/update/index.php?package=CCPDB&do=reset'>".
 			"Reinstall</a>";
 	}
 }
