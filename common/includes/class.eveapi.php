@@ -57,7 +57,6 @@ class API_KillLog
         $this->API_NoSpam_ = config::get('API_NoSpam');
 		$this->API_CacheTime_ = ApiCache::get('API_CachedUntil_' . $keyindex);
 		$this->API_UseCaching_ = config::get('API_UseCache');
-		$this->API_CCPErrorCorrecting = config::get('API_CCPErrorCorrecting');
         $this->keyindex_ = $keyindex;
 
 
@@ -217,19 +216,6 @@ class API_KillLog
                     case "CHARACTERNAME":
 						$this->pname_ = $v;
 
-						// Error Correction is on (0 = on, 1 = off(I know, just don't ask))
-						if ( $this->API_CCPErrorCorrecting == 0 )
-						{
-							if ( ($this->charid_ != "0" ) && (strlen($this->pname_) == 0) )
-							{
-								// name is blank but ID is valid - convert ID into name
-								$this->myIDName->clear();
-								$this->myIDName->setIDs($this->charid_);
-								$this->Output_ .= $this->myIDName->fetchXML();
-								$myNames = $this->myIDName->getIDData();
-								$this->pname_ = $myNames[0]['name'];
-							}
-						}
                         break;
 					case "CORPORATIONID":
                         $this->corporationID_ = $v;
@@ -237,38 +223,12 @@ class API_KillLog
                     case "CORPORATIONNAME":
 						$this->corporation_ = $v;
 
-						// Error Correction is on (0 = on, 1 = off(I know, just don't ask))
-						if ( $this->API_CCPErrorCorrecting == 0 )
-						{
-							if ( ($this->corporationID_ != "0" ) && (strlen($this->corporation_) == 0) )
-							{ // name is blank but ID is valid - convert ID into name
-								$this->myIDName->clear();
-								$this->myIDName->setIDs($this->corporationID_);
-								$this->Output_ .= $this->myIDName->fetchXML();
-								$myNames = $this->myIDName->getIDData();
-								$this->corporation_ = $myNames[0]['name'];
-							}
-						}
                         break;
                     case "ALLIANCEID":
                         $this->allianceID_ = $v;
                         break;
                     case "ALLIANCENAME":
 						$this->alliance_ = $v;
-
-						// Error Correction is on (0 = on, 1 = off(I know, just don't ask))
-						//if ( $this->API_CCPErrorCorrecting == 0 )
-						// conditional branch removed - ALWAYS fix alliance name bugs
-						{
-							if ( ($this->allianceID_ != "0" ) && (strlen($this->alliance_) == 0) )
-							{ // name is blank but ID is valid - convert ID into name
-								$this->myIDName->clear();
-								$this->myIDName->setIDs($this->allianceID_);
-								$this->Output_ .= $this->myIDName->fetchXML();
-								$myNames = $this->myIDName->getIDData();
-								$this->alliance_ = $myNames[0]['name'];
-							}
-						}
 
 						if (strlen($this->alliance_) == 0)
 							$this->alliance_ = "NONE";
@@ -406,7 +366,7 @@ class API_KillLog
                     $this->pname_ = $this->moonname_;
                     //$this->shipname_ = "Unknown"; // this is done else mail will not parse
                     $this->isposkill_ = true;
-                } elseif (($this->moonid_ == 0) && ($this->pname_ == "") && ($this->charid_ != 0)) {
+                } elseif (($this->moonid_ == 0) && ($this->pname_ == "") && ($this->charid_ == 0)) {
 					// catches unanchored POS modules - as moon is unknown, we will use system name instead
 					$this->pname_ = $this->systemname_;
                     $this->isposkill_ = true;
@@ -4702,10 +4662,10 @@ class API_ServerStatus
 // loads a generic XML sheet that requires no API Login as such
 function LoadGlobalData($path)
 {
-	$temppath = substr($path, 0, strlen($path) - 14);
+	$temppath = substr($path, 0, strlen($path) - 9);
 	$configvalue = "API" . str_replace("/", "_", $temppath);
 
-	$CachedTime = ApiCache::get($configvalue);
+$CachedTime = ApiCache::get($configvalue);
 	$UseCaching = config::get('API_UseCache');
 
 	// API Caching system, If we're still under cachetime reuse the last XML, if not download the new one. Helps with Bug hunting and just better all round.
@@ -4934,4 +4894,3 @@ function ConvertTimestamp($timeStampGMT)
 
 	return $cachetime;
 }
-?>
