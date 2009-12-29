@@ -48,6 +48,7 @@ class APIAllianceMod
 					$ExecutorCorp = $myCorpAPI->getCorporationName();
 				}
 				// Build Data array
+				$membercorp["corpExternalID"] = $myCorpAPI->getCorporationID();
 				$membercorp["corpName"] = $myCorpAPI->getCorporationName();
 				$membercorp["ticker"] = $myCorpAPI->getTicker();
 				$membercorp["members"] = $myCorpAPI->getMemberCount();
@@ -125,7 +126,7 @@ class APIAllianceMod
 		foreach ( (array)$home->allianceCorps as $tempcorp )
 		{
 			$html .= "<tr class='kb-table-row-even'>";
-			$html .= "<td class='kb-table-cell'><a href=\"?a=search&amp;searchtype=corp&amp;searchphrase=" . urlencode($tempcorp["corpName"]) . "\">" . $tempcorp["corpName"] . "</a></td>";
+			$html .= "<td class='kb-table-cell'><a href=\"?a=corp_detail&crp_external_id=" . $tempcorp["corpExternalID"] . "\">" . $tempcorp["corpName"] . "</a></td>";
 			$html .= "<td class='kb-table-cell' align='center'>" . $tempcorp["ticker"] . "</td>";
 			$html .= "<td class='kb-table-cell' align='center'>" . $tempcorp["members"] . "</td>";
 			$html .= "<td class='kb-table-cell' align='center'>" . $tempcorp["joinDate"] . "</td>";
