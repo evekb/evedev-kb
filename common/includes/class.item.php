@@ -59,7 +59,7 @@ class Item
 		$d_s = 0;
 		$o_s = 0;
 	}
-	elseif ($size == 32 || $size == 48)
+	elseif ($size == 48)
 	{
 		$show_style .= '_'.config::get('fp_highstyle');
 		$t_s = config::get('fp_ttag');
@@ -284,7 +284,7 @@ class Item
         else
         $query = "select groupID
                         from kb3_invtypes
-                        where typeName = '".slashfix($name)."'";
+                       where typeName = '".slashfix($name)."'";
         $qry->execute($query);
 
         $row = $qry->getRow();
