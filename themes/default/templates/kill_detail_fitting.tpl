@@ -61,7 +61,7 @@
 
 		{* Killmail API verification*}
 		{if $showverify}
-			<div style="position:absolute; left:382px; top:0px; width:398px; height:398px; z-index:3;">
+			<div style="position:absolute; left:382px; top:0px; width:16px; height:16px; z-index:3;">
 			{if $verify_yesno}
 				<img border="0" style="position:absolute; height:16px; width:16px;" src='{$img_url}/items/24_24/icon09_09.png' alt='Kill verified' title="Kill verified ID: {$verify_id}" />
 			{else}
