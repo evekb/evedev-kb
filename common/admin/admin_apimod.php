@@ -160,11 +160,6 @@ if ($_POST['submit'] || $_POST['import']  )
     else
         config::set('API_MultipleMode', '1');
 
-	if ($_POST['API_CCPErrorCorrecting'])
-        config::set('API_CCPErrorCorrecting', '0');
-    else
-        config::set('API_CCPErrorCorrecting', '1');
-	
 	if ($_POST['API_extendedtimer_sovereignty'])
         config::set('API_extendedtimer_sovereignty', '0');
     else
@@ -557,11 +552,6 @@ if ($_POST['apilog'])
     	$html .= " checked=\"checked\"";
 	$html .= "></td></tr>";
 
-	$html .= "<tr><td height=30px width=150px>Enable CCP error correction? </td>";
-	$html .= "<td><input type=checkbox name=API_CCPErrorCorrecting id=API_CCPErrorCorrecting";
-	if (!config::get('API_CCPErrorCorrecting'))
-    	$html .= " checked=\"checked\"";
-	$html .= "></td></tr>";
 	// Import
 	$html .= "<tr><td height=\"10\"></td></tr>"; // spacer
 	$html .= "<tr><td colspan=\"2\"><input type=submit id=submit name=import value=\"Import Mails\"></td></tr>";
