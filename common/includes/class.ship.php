@@ -1,49 +1,80 @@
 <?php
 
-/**
- *  Changes
- *  11/23/06 - function getActualValue()
- *             Returns actual value of the ship unrounded, rounding is retarded but
- *             I dont want to fuck anything else up - Coni
- *
-*/
-
 class Ship
 {
-    function Ship($id = 0)
+    function Ship($id = 0, $externalFlag = false)
     {
-        $this->id_ = intval($id);
+		if($externalFlag)
+		{
+			$this->externalid_ = intval($id);
+			$this->id_ = 0;
+		}
+        else
+		{
+			$this->id_ = intval($id);
+			$this->externalid_ = 0;
+		}
     }
+	//! Return the id for this Ship.
 
+	/*!
+	 * \return integer id for this Ship.
+	 */
     function getID()
     {
-        return $this->id_;
+        if($this->id_) return $this->id_;
+		elseif($this->externalid_)
+		{
+			$this->execQuery();
+			return $this->id_;
+		}
+		return 0;
     }
+	//! Return the external id for this Ship.
 
+	/*!
+	 * \return integer external id for this Ship.
+	 */
     function getExternalID()
     {
 		if(!$this->externalid_) $this->execQuery();
         return $this->externalid_;
     }
+	//! Return the name of this Ship.
 
+	/*!
+	 * \return string name of this Ship.
+	 */
     function getName()
     {
-        if ($this->shipname_ == "") $this->execQuery();
+        if (empty($this->shipname_)) $this->execQuery();
         return $this->shipname_;
     }
+	//! Return the ShipClass for this Ship.
 
+	/*!
+	 * \return ShipClass object for this Ship.
+	 */
     function getClass()
     {
         if (!$this->shipclass_) $this->execQuery();
         return $this->shipclass_;
     }
+	//! Return the tech level of this Ship.
 
+	/*!
+	 * \return integer tech level for this Ship.
+	 */
     function getTechLevel()
     {
         if (!$this->shiptechlevel_) $this->execQuery();
         return $this->shiptechlevel_;
     }
+	//! Return the URL for a portrait of this Ship.
 
+	/*!
+	 * \return string containing valid URL for a portrait of this Ship.
+	 */
     function getImage($size)
     {
         if (!$this->externalid_)
@@ -52,21 +83,30 @@ class Ship
         }
         return IMG_URL."/ships/".$size."_".$size."/".$this->externalid_.".png";
     }
+	//! Return the base price of this Ship.
 
-    function setName($shipname)
-    {
-        $this->shipname_ = $shipname;
-    }
-
-    function setClass($shipclass)
-    {
-        $this->shipclass_ = $shipclass;
-    }
-
+	/*!
+	 * \return a number representing the baseprice of this Ship.
+	 */
     function getPrice()
     {
 		if(!$this->value_) $this->execQuery();
         return $this->value_;
+    }
+
+	//! Set the name of this ship.
+
+	//! \param $shipname the name to set for this Ship
+    function setName($shipname)
+    {
+        $this->shipname_ = $shipname;
+    }
+	//! Set the class of this ship.
+
+	//! \param $shipclass the class object to set for this Ship
+    function setClass($shipclass)
+    {
+        $this->shipclass_ = $shipclass;
     }
 
     function execQuery()
@@ -78,7 +118,8 @@ class Ship
 			$this->sql_ = "select * from kb3_ships shp
 						   inner join kb3_ship_classes scl on shp.shp_class = scl.scl_id";
 			$this->sql_ .= ' left join kb3_item_price itm on (shp.shp_externalid = itm.typeID) ';
-			$this->sql_ .= " where shp.shp_id = ".$this->id_;
+			if($this->externalid_) $this->sql_ .= " where shp.shp_externalid = ".$this->externalid_;
+			else $this->sql_ .= " where shp.shp_id = ".$this->id_;
 
 			$this->qry_->execute($this->sql_);
 			$row = $this->qry_->getRow();
@@ -93,16 +134,29 @@ class Ship
 			}
         }
     }
+	//! Look up a Ship by name.
 
+	/*!
+	 * \param $name a string containing a ship name.
+	 */
     function lookup($name)
     {
-        $qry = new DBQuery();
-        $qry->execute("select *
-                        from kb3_ships
-                       where shp_name = '".slashfix($name)."'");
+		$pqry = new DBPreparedQuery();
+		$pqry->prepare("select shp_id, shp_name, shp_techlevel, shp_externalid, price, shp_baseprice, shp_class from kb3_ships left join kb3_item_price on (shp_externalid = typeID) where shp_name = ?");
+		$pqry->bind_param('s', $name);
+		$baseprice=0;
+		$price = 0;
+		$scl_id = 0;
+		$pqry->bind_result($this->id_, $this->shipname_, $this->shiptechlevel_,
+			$this->externalid_, $price, $baseprice, $scl_id);
+		if(!$pqry->execute() || !$pqry->recordCount()) return false;
+		else $pqry->fetch_prepared();
 
-        $row = $qry->getRow();
-        if ($row['shp_id']) $this->id_ = $row['shp_id'];
+		$this->shipclass_ = new ShipClass($scl_id);
+		if (!$this->value_ = $price)
+		{
+			$this->value_ = $baseprice;
+		}
     }
 }
 
@@ -195,4 +249,3 @@ class ShipClass
         }
     }
 }
-?>
