@@ -19,6 +19,7 @@ class pKillDetail extends pageAssembly
 		if(isset($_GET['kll_id'])) $this->kll_id = intval($_GET['kll_id']);
 		else $this->kll_id = 0;
 		if(isset($_GET['kll_external_id'])) $this->kll_external_id = intval($_GET['kll_external_id']);
+		elseif(isset($_GET['kll_ext_id'])) $this->kll_external_id = intval($_GET['kll_ext_id']);
 		else $this->kll_external_id = 0;
 		if(isset($_GET['nolimit'])) $this->nolimit = true;
 		else $this->nolimit = false;

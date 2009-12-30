@@ -21,7 +21,9 @@ class pPilotDetail extends pageAssembly
 		parent::__construct();
 		$this->scl_id = intval($_GET['scl_id']);
 		$this->plt_id = intval($_GET['plt_id']);
-		$this->plt_external_id = intval($_GET['plt_external_id']);
+		if(isset($_GET['plt_external_id'])) $this->plt_external_id = intval($_GET['plt_external_id']);
+		elseif(isset($_GET['plt_ext_id'])) $this->plt_external_id = intval($_GET['plt_ext_id']);
+		else $this->plt_external_id = 0;
 		$this->view =  preg_replace('/[^a-zA-Z0-9_-]/','',$_GET['view']);
 		$this->viewList = array();
 		$this->klist = null;

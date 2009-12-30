@@ -19,7 +19,9 @@ class pAllianceDetail extends pageAssembly
 		parent::__construct();
 		$this->scl_id = intval($_GET['scl_id']);
 		$this->all_id = intval($_GET['all_id']);
-		$this->all_external_id = intval($_GET['all_external_id']);
+		if(isset($_GET['all_external_id'])) $this->all_external_id = intval($_GET['all_external_id']);
+		elseif(isset($_GET['all_ext_id'])) $this->all_external_id = intval($_GET['all_ext_id']);
+		else $this->all_external_id = 0;
 		$this->view = $_GET['view'];
 		$this->viewList = array();
 		$this->crp_id = intval($_GET['crp_id']);

@@ -19,9 +19,11 @@ class pCorpDetail extends pageAssembly
 	function __construct()
 	{
 		parent::__construct();
-		$this->scl_id = intval($_GET['scl_id']);
-		$this->crp_id = intval($_GET['crp_id']);
-		$this->crp_external_id = intval($_GET['crp_external_id']);
+		if(isset($_GET['scl_id'])) $this->scl_id = intval($_GET['scl_id']);
+		else $this->scl_id = false;
+		if(isset($_GET['crp_id'])) $this->crp_id = intval($_GET['crp_id']);
+		if(isset($_GET['crp_external_id'])) $this->crp_external_id = intval($_GET['crp_external_id']);
+		elseif(isset($_GET['crp_ext_id'])) $this->crp_external_id = intval($_GET['crp_ext_id']);
 		$this->view = $_GET['view'];
 		$this->viewList = array();
 
@@ -56,15 +58,13 @@ class pCorpDetail extends pageAssembly
 		{
 			if($this->crp_external_id)
 			{
-				$qry = new DBQuery();
-				$qry->execute('SELECT crp_id FROM kb3_corps WHERE crp_external_id = '.$this->crp_external_id);
-				if($qry->recordCount())
-				{
-					$row = $qry->getRow();
-					$this->crp_id = $row['crp_id'];
-				}
+				$this->corp = new Corporation($this->crp_external_id, true);
 			}
-			elseif(CORP_ID) $this->crp_id = CORP_ID;
+			elseif(CORP_ID)
+			{
+				$this->crp_id = CORP_ID;
+				$this->corp = new Corporation($this->crp_id);
+			}
 			else
 			{
 				$html = 'That corporation does not exist.';
@@ -73,8 +73,8 @@ class pCorpDetail extends pageAssembly
 			}
 
 		}
-		$this->all_id = intval($_GET['all_id']);
-		$this->corp = new Corporation($this->crp_id);
+		else $this->corp = new Corporation($this->crp_id);
+		if(isset($_GET['all_id'])) $this->all_id = intval($_GET['all_id']);
 		$this->alliance = $this->corp->getAlliance();
 
 		$this->month = intval($_GET['m']);
