@@ -4,7 +4,7 @@
 require_once('common/includes/class.db.php');
 require_once('common/includes/class.config.php');
 
-define('DB_TYPE', 'mysqli');
+if(!defined('DB_TYPE')) define('DB_TYPE', 'mysqli');
 define('DB_TYPE_USED', 'mysqli');
 require_once('common/includes/class.db.mysqli.php');
 
@@ -26,7 +26,7 @@ if ($value >= 4.1)
 }
 else
 {
-	die("EDK 2.0 requires MySQL version 4.1+. Your version is ".$value);
+	die("EDK 3 requires MySQL version 4.1+. Your version is ".$value);
 	define('KB_MYSQL41', false);
 }
 
