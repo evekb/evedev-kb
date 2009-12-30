@@ -73,6 +73,12 @@ class KillListTable
 			$kll['fbcorp'] = $kill->getFBCorpName();
 			$kll['system'] = $kill->getSolarSystemName();
 			$kll['systemsecurity'] = $kill->getSolarSystemSecurity();
+			$kll['victimid'] = $kill->getVictimID();
+			$kll['victimcorpid'] = $kill->getVictimCorpID();
+			$kll['victimallianceid'] = $kill->getVictimAllianceID();
+			$kll['victimshipid'] = $kill->getVictimShipExternalID();
+			$kll['fbid'] = $kill->getFBPilotID();
+			$kll['fbcorpid'] = $kill->getFBCorpID();
 			if (config::get('killlist_involved')) $kll['inv'] = $kill->getInvolvedPartyCount();
 			$kll['timestamp'] = $kill->getTimeStamp();
 			if (config::get('killlist_alogo'))

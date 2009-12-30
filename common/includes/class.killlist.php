@@ -214,9 +214,12 @@ class KillList
 							scl.scl_id, scl.scl_class, scl.scl_value,
 							sys.sys_name, sys.sys_sec,
 							fbplt.plt_name as fbplt_name,
+							fbplt.plt_id as fbplt_id,
 							fbplt.plt_externalid as fbplt_externalid,
 							fbcrp.crp_name as fbcrp_name,
-							fbali.all_name as fball_name';
+							fbali.all_name as fball_name,
+							fbcrp.crp_id as fbcrp_id,
+							fbali.all_id as fball_id';
 				event::call('killlist_select_expr', $this);
 			}
 
@@ -553,6 +556,9 @@ class KillList
 			$kill->setFBPilotName($row['fbplt_name']);
 			$kill->setFBCorpName($row['fbcrp_name']);
 			$kill->setFBAllianceName($row['fball_name']);
+			$kill->setFBPilotID($row['fbplt_id']);
+			$kill->setFBCorpID($row['fbcrp_id']);
+			$kill->setFBAllianceID($row['fball_id']);
 			$kill->setKillPoints($row['kll_points']);
 			$kill->setExternalID($row['kll_external_id']);
 			$kill->setISKLoss($row['kll_isk_loss']);

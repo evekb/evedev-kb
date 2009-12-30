@@ -140,6 +140,7 @@ class Kill
 
 	function getFBPilotID()
 	{
+		if(isset($this->fbpilotid_)) return $this->fbpilotid_;
 		$this->execQuery();
 		if (!$this->fbpilotid_) return "null";
 		else return $this->fbpilotid_;
@@ -153,6 +154,7 @@ class Kill
 
 	function getFBCorpID()
 	{
+		if(isset($this->fbcorpid_)) return $this->fbcorpid_;
 		$this->execQuery();
 		if (!$this->fbcorpid_) return "null";
 		else return $this->fbcorpid_;
@@ -166,6 +168,7 @@ class Kill
 
 	function getFBAllianceID()
 	{
+		if(isset($this->fballianceid_)) return $this->fballianceid_;
 		$this->execQuery();
 		if (!$this->fballianceid_) return "null";
 		else return $this->fballianceid_;
