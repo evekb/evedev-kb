@@ -9,6 +9,7 @@ class Corporation
 
     /*!
      * \param $id The corporation ID.
+	 * \param $externalIDFlag true if the id is the external id.
      */
 	function Corporation($id = 0, $externalIDFlag = false)
 	{
@@ -16,7 +17,7 @@ class Corporation
 		else $this->id_ = intval($id);
 		$this->executed_ = false;
 	}
-	//! Return whether this corporation is an NPC corporation.
+	//! Return true if this corporation is an NPC corporation.
 	function isNPCCorp()
 	{
 		global $corp_npc;
@@ -36,54 +37,61 @@ class Corporation
 		return preg_replace('/[^a-z0-9]/', '', strtolower($this->getName()));
 	}
 	//! Return a URL for the icon of this corporation.
+
+	/*! If a cached image exists then return the direct url. Otherwise return
+	 *  a link to the thumbnail page.
+	 *
+	 * \param $size The size in pixels of the image needed.
+	 */
 	function getPortraitURL($size = 64)
 	{
-            $this->getExternalID();
+		$this->getExternalID();
 
-            if($this->isNPCCorp() || file_exists('img/corps/'.$this->getUnique().'.png')) {
-                if($this->externalid_ && file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->externalid_,0,2).'/'.$this->externalid_.'_'.$size.'.png'))
-                        return KB_CACHEDIR.'/img/corps/'.substr($this->externalid_,0,2).'/'.$this->externalid_.'_'.$size.'.png';
-                        
-                if($size == 128)
-                {
-                    if($this->externalid_ > 1000001 && $this->externalid_ < 1000183)
-                        return 'img/corps/c'.$this->externalid_.'.png';
-                    else return 'img/corps/'.$this->getUnique().'.png';
-                }
-                elseif($this->externalid_ > 1000001 && $this->externalid_ < 1000183)
-                    return '?a=thumb&amp;type=npc&amp;id=c'.$this->externalid_.'&amp;size='.$size;
-                    else return '?a=thumb&amp;type=npc&amp;id='.$this->getUnique().'&amp;size='.$size;
-            }
-            else {
-                if($this->externalid_ && file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->externalid_,0,2).'/'.$this->externalid_.'_'.$size.'.jpg'))
-                    return KB_CACHEDIR.'/img/corps/'.substr($this->externalid_,0,2).'/'.$this->externalid_.'_'.$size.'.jpg';
-            }
-            return '?a=thumb&amp;type=corp&amp;id='.$this->externalid_.'&amp;size='.$size;
+		if($this->isNPCCorp() || file_exists('img/corps/'.$this->getUnique().'.png')) {
+			if($this->externalid_ && file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->externalid_,0,2).'/'.$this->externalid_.'_'.$size.'.png'))
+				return KB_CACHEDIR.'/img/corps/'.substr($this->externalid_,0,2).'/'.$this->externalid_.'_'.$size.'.png';
+
+			if($size == 128)
+			{
+				if($this->externalid_ > 1000001 && $this->externalid_ < 1000183)
+					return 'img/corps/c'.$this->externalid_.'.png';
+				else return 'img/corps/'.$this->getUnique().'.png';
+			}
+			elseif($this->externalid_ > 1000001 && $this->externalid_ < 1000183)
+				return '?a=thumb&amp;type=npc&amp;id=c'.$this->externalid_.'&amp;size='.$size;
+			else return '?a=thumb&amp;type=npc&amp;id='.$this->getUnique().'&amp;size='.$size;
+		}
+		else {
+			if($this->externalid_ && file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->externalid_,0,2).'/'.$this->externalid_.'_'.$size.'.jpg'))
+				return KB_CACHEDIR.'/img/corps/'.substr($this->externalid_,0,2).'/'.$this->externalid_.'_'.$size.'.jpg';
+		}
+		return '?a=thumb&amp;type=corp&amp;id='.$this->externalid_.'&amp;size='.$size;
 	}
 
 	//! Return the corporation CCP ID.
-        /*! When populateList is true, the lookup will return 0 in favour of getting the
-         *  external ID from CCP. This helps the kill_detail page load times.
-         */
+
+	/*! When populateList is true, the lookup will return 0 in favour of getting the
+	 *  external ID from CCP. This helps the kill_detail page load times.
+	 */
 	function getExternalID()
 	{
 		if($this->externalid_) return $this->externalid_;
 		$this->execQuery();
 		if(!$populateList)
-                {
-                    if($this->externalid_) return $this->externalid_;
+		{
+			if($this->externalid_) return $this->externalid_;
 
-                    $corpname = str_replace(" ", "%20", $this->getName() );
-                    require_once("common/includes/class.eveapi.php");
-                    $myID = new API_NametoID();
-                    $myID->setNames($corpname);
-                    $myID->fetchXML();
-                    $myNames = $myID->getNameData();
-                    if($this->setExternalID($myNames[0]['characterID']))
-                            return $this->externalid_;
-                    else return 0;
-                }
-                else return 0;
+			$corpname = str_replace(" ", "%20", $this->getName() );
+			require_once("common/includes/class.eveapi.php");
+			$myID = new API_NametoID();
+			$myID->setNames($corpname);
+			$myID->fetchXML();
+			$myNames = $myID->getNameData();
+			if($this->setExternalID($myNames[0]['characterID']))
+				return $this->externalid_;
+			else return 0;
+		}
+		else return 0;
 	}
 
 	//! Return the corporation ID.
