@@ -313,7 +313,7 @@ class pHome extends pageAssembly
 	}
 
 	function setMonth($month, $year)
-	{echo('x'.$month.'x'.$year.'x');
+	{
 		$month = (int)$month;
 		$year = (int)$year;
 		if($month < 1 || $month > 12 || $year < 2000)
