@@ -78,6 +78,7 @@ class pSystemDetail extends pageAssembly
 		else
 			involved::load($klist,'kill');
 		$klist->addSystem($this->system);
+		if(config::get('kill_classified')) $klist->setEndDate(gmdate('Y-m-d H:i',strtotime('now - '.(config::get('kill_classified')*3600).' hours')));
 		if ($_GET['scl_id'])
 			$klist->addVictimShipClass(intval($_GET['scl_id']));
 		else
