@@ -108,6 +108,7 @@ class pHome extends pageAssembly
 
 	function killList()
 	{
+//		return (date('m').'x'.gmdate('m'));
 		if(isset($this->viewList[$this->view])) return call_user_func_array($this->viewList[$this->view], array(&$this));
 
 		global $smarty;
@@ -312,7 +313,7 @@ class pHome extends pageAssembly
 	}
 
 	function setMonth($month, $year)
-	{
+	{echo('x'.$month.'x'.$year.'x');
 		$month = (int)$month;
 		$year = (int)$year;
 		if($month < 1 || $month > 12 || $year < 2000)
@@ -344,7 +345,7 @@ class pHome extends pageAssembly
 			$this->nyear = $this->year;
 		}
 		$this->periodName = 'Month';
-		$this->period = gmdate('F', strtotime($this->year.' + '.$this->month.' months')).', '.$this->year;
+		$this->period = date('F', mktime(0,0,0,$this->month, 1,$this->year)).', '.$this->year;
 		$this->currentTime =
 			($this->month == kbdate('m') && $this->year == getYear());
 		$this->previousPeriodLink = 'm='.$this->pmonth.'&amp;y='.$this->pyear;
@@ -369,7 +370,7 @@ class pHome extends pageAssembly
 	//! Return the text name of the current time period.
 	function getCurrentPeriod()
 	{
-		return $this->period;;
+		return $this->period;
 	}
 
 	//! Return a string to add to a url to generate the current time period.

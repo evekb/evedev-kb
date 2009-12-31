@@ -74,9 +74,39 @@ $config = new Config(KB_SITE);
 $ApiCache = new ApiCache(KB_SITE);
 define('KB_HOST', config::get('cfg_kbhost'));
 define('MAIN_SITE', config::get('cfg_mainsite'));
-define('THEME_URL', config::get('cfg_kbhost').'/themes/'.config::get('theme_name'));
 define('IMG_URL', config::get('cfg_img'));
 define('KB_TITLE', config::get('cfg_kbtitle'));
+if(isset($_GET['theme']))
+{
+	$themename = preg_replace('/[^0-9a-zA-Z-_]/','',$_GET['theme']);
+	if(!is_dir("themes/".$themename))
+	{
+		$themename = config::get('theme_name');
+		$stylename = config::get('style_name');
+	}
+	else
+	{
+		if(isset($_GET['style']))
+		{
+			$stylename = preg_replace('/[^0-9a-zA-Z-_]/','',$_GET['style']);
+			if(!file_exists("themes/".$themename."/".$stylename.".css"))
+				$stylename = config::get('style_name');
+		}
+		else $stylename = $themename;
+	}
+}
+else
+{
+	$themename = config::get('theme_name');
+	if(isset($_GET['style']))
+	{
+		$stylename = preg_replace('/[^0-9a-zA-Z-_]/','',$_GET['style']);
+		if(!file_exists("themes/".$themename."/".$stylename.".css"))
+			$stylename = config::get('style_name');
+	}
+	else $stylename = config::get('style_name');
+}
+define('THEME_URL', config::get('cfg_kbhost').'/themes/'.$themename);
 
 // pilot id not fully implemented yet.
 if (0 && config::get('cfg_pilotid'))
@@ -213,23 +243,17 @@ if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK Feedfetcher') !== false) $page = 'fe
 // setting up smarty and feed it with some config
 require_once('common/smarty/Smarty.class.php');
 $smarty = new Smarty();
-if(is_dir('./themes/'.config::get('theme_name').'/templates'))
-	$smarty->template_dir = './themes/'.config::get('theme_name').'/templates';
+if(is_dir('./themes/'.$themename.'/templates'))
+	$smarty->template_dir = './themes/'.$themename.'/templates';
 else $smarty->template_dir = './themes/default/templates';
 
-$smarty->compile_dir = KB_CACHEDIR.'/templates_c';
+if(!is_dir(KB_CACHEDIR.'/templates_c/'.$themename))
+	mkdir(KB_CACHEDIR.'/templates_c/'.$themename);
+$smarty->compile_dir = KB_CACHEDIR.'/templates_c/'.$themename.'/';
+
 $smarty->cache_dir = KB_CACHEDIR.'/data';
 $smarty->assign('theme_url', THEME_URL);
-if(isset($_GET['style']))
-{
-	$stylename = preg_replace('/[^0-9a-zA-Z-_]/','',$_GET['style']);
-	if(file_exists("themes/".config::get('theme_name')."/".$stylename.".css"))
-	{
-		$smarty->assign('style', $stylename);
-	}
-	else $smarty->assign('style', config::get('style_name'));
-}
-else $smarty->assign('style', config::get('style_name'));
+$smarty->assign('style', $stylename);
 $smarty->assign('img_url', IMG_URL);
 $smarty->assign('kb_host', KB_HOST);
 $smarty->assign_by_ref('config', $config);
