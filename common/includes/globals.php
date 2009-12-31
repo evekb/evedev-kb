@@ -56,8 +56,9 @@ function roundsec($sec)
  */
 function get_tpl($name)
 {
+	global $themename;
 	event::call('get_tpl', $name);
-	if(config::get('theme_name')== 'default')
+	if($themename == 'default')
 	{
 		if (IS_IGB)
 		{
@@ -70,7 +71,7 @@ function get_tpl($name)
 	}
 	if (IS_IGB)
 	{
-		if(file_exists('./themes/'.config::get('theme_name').'/templates/igb_'.$name.'.tpl'))
+		if(file_exists('./themes/'.$themename.'/templates/igb_'.$name.'.tpl'))
 		{
 			return 'igb_'.$name.'.tpl';
 		}
@@ -79,7 +80,7 @@ function get_tpl($name)
 			return '../../default/templates/igb_'.$name.'.tpl';
 		}
 	}
-	if(file_exists('./themes/'.config::get('theme_name').'/templates/'.$name.'.tpl'))
+	if(file_exists('./themes/'.$themename.'/templates/'.$name.'.tpl'))
 	{
 		return $name.'.tpl';
 	}
@@ -104,12 +105,7 @@ function kbdate($format, $timestamp = null)
 
 function getYear()
 {
-	$test = kbdate('o');
-	if ($test == 'o')
-	{
-		$test = kbdate('Y');
-	}
-	return $test;
+	return kbdate('Y');
 }
 
 //! Return start date for the given week, month, year or date.
