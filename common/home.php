@@ -108,7 +108,6 @@ class pHome extends pageAssembly
 
 	function killList()
 	{
-//		return (date('m').'x'.gmdate('m'));
 		if(isset($this->viewList[$this->view])) return call_user_func_array($this->viewList[$this->view], array(&$this));
 
 		global $smarty;
@@ -276,7 +275,7 @@ class pHome extends pageAssembly
 		if(((int)$week) < 1 || ((int)$week) > 53 || ((int)$year) < 2000)
 		{
 			$week = kbdate('W');
-			$year = getYear();
+			$year = kbdate('Y');
 		}
 
 		$this->week = (int)$week;
@@ -306,7 +305,7 @@ class pHome extends pageAssembly
 		$this->periodName = 'Week';
 		$this->period = 'Week '.$this->week.', '.$this->year;
 		$this->currentTime =
-			($this->week == kbdate('W') && $this->year == getYear());
+			($this->week == kbdate('W') && $this->year == kbdate('o'));
 		$this->previousPeriodLink = 'w='.$this->pweek.'&amp;y='.$this->pyear;
 		$this->nextPeriodLink = 'w='.$this->nweek.'&amp;y='.$this->nyear;
 		$this->currentPeriodLink = 'w='.$this->week.'&amp;y='.$this->year;
@@ -347,7 +346,7 @@ class pHome extends pageAssembly
 		$this->periodName = 'Month';
 		$this->period = date('F', mktime(0,0,0,$this->month, 1,$this->year)).', '.$this->year;
 		$this->currentTime =
-			($this->month == kbdate('m') && $this->year == getYear());
+			($this->month == kbdate('m') && $this->year == kbdate('Y'));
 		$this->previousPeriodLink = 'm='.$this->pmonth.'&amp;y='.$this->pyear;
 		$this->nextPeriodLink = 'm='.$this->nmonth.'&amp;y='.$this->nyear;
 		$this->currentPeriodLink = 'm='.$this->month.'&amp;y='.$this->year;
@@ -426,11 +425,11 @@ class pHome extends pageAssembly
 		{
  			if(config::get('show_monthly'))
 			{
-				$this->setMonth(kbdate('m'), getYear());
+				$this->setMonth(kbdate('m'), kbdate('Y'));
 			}
 			else
 			{
-				$this->setWeek(kbdate('W'), getYear());
+				$this->setWeek(kbdate('W'), kbdate('o'));
 			}
 		}
 	}
