@@ -11,14 +11,13 @@ All EVE graphics and data used are property of <a href="http://www.ccpgames.com/
 <b>Current developers:</b>
 <br />{section name=i loop=$current_developer}{$current_developer[i]}{if ($smarty.section.i.index + 1) < count($current_developer)}, {/if}{/section}
 <br />
-<b>Inactive developers:</b>
+<b>Previous developers:</b>
 <br />{section name=i loop=$developer}{$developer[i]}{if ($smarty.section.i.index + 1) < count($developer)}, {/if}{/section}
 <br />
 <b>Contributors:</b>
 <br />{section name=i loop=$contributor}{$contributor[i]}{if ($smarty.section.i.index + 1) < count($contributor)}, {/if}{/section}<br />
 <br />
 This killboard currently contains: <b>{$kills}</b> killmails,
-<b>{$items}</b> destroyed items,
 <b>{$pilots}</b> pilots,
 <b>{$corps}</b> corporations and
 <b>{$alliances}</b> alliances.<br />
@@ -31,15 +30,12 @@ This killboard currently contains: <b>{$kills}</b> killmails,
 <div class="block-header2">Kill points</div>
 Administrator option.<br />
 <br />
-If enabled, every kill is assigned a point value. Based on the shiptype destroyed, and the number and types of ships involved in the kill, the number of points indicates the difficulty of the kill... As a result, a gank will get a lot less points awarded than a kill in a small engagement.<br />
+If enabled, every kill is assigned a point value. Based on the shiptype destroyed, and the number and types of ships involved in the kill, the number of points indicates the difficulty of the kill. As a result, a gank will get a lot less points awarded than a kill in a small engagement.<br />
 <br />
 <div class="block-header2">Efficiency</div>
-Each shipclass has an ISK value assigned. These are based on the average amount of ISK that would have been lost if the ship was destroyed, taking current average market prices, insurance costs and insurance payouts into account.<br />
-<br />
-Efficiency is calculated as the ratio of damage done in ISK versus the damage received in ISK. This comes down to <i>
-damagedone / (damagedone + damagereceived ) * 100</i>
-.<br />
-<br />
+Efficiency is calculated as the ratio of damage done in ISK of ship and modules versus the damage received in ISK. This comes down to <i>
+damagedone / (damagedone + damagereceived ) * 100</i>.<br />
+<br />{if 0}
 <div class="block-header2">Ship values</div>
 The shipclasses and average ISK value are as follows:<br />
 <br />
@@ -59,4 +55,4 @@ The shipclasses and average ISK value are as follows:<br />
 	</td>
 </tr>
 {/section}
-</table>
+</table>{/if}

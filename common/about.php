@@ -25,17 +25,20 @@ class pAbout extends pageAssembly
 		// Current active developers
 		$currentDeveloper = array(
 			'Hon Kovell',
-			'mastergamer');
+			'mastergamer',
+			'FriedRoadKill', // Parser, db updates and image packs
+		);
 
 		// Inactive developers
 		$developer = array(
 			'exi',
 			'Beansman',
-			'Ralle030583');
+			'Ralle030583',
+			'Captain Thunk' // API mod
+		);
 
 		// Other contributors
 		$contributor = array(
-			'FriedRoadKill', // Parser, db updates and image packs
 			'Karbowiak',
 			'JaredC01',
 			'liquidism',
@@ -43,7 +46,6 @@ class pAbout extends pageAssembly
 			'Coni',
 			'bunjiboys',
 			'EDG',
-			'Captain Thunk' // API mod
 		);
 		sort($developer);
 		sort($contributor);
@@ -60,9 +62,6 @@ class pAbout extends pageAssembly
 		$qry->execute("SELECT COUNT(*) AS cnt FROM kb3_kills");
 		$row = $qry->getRow();
 		$kills = $row['cnt'];
-		$qry->execute("SELECT SUM(itd_quantity) AS cnt FROM kb3_items_destroyed");
-		$row = $qry->getRow();
-		$items = $row['cnt'];
 		$qry->execute("SELECT COUNT(*) AS cnt FROM kb3_pilots");
 		$row = $qry->getRow();
 		$pilots = $row['cnt'];
