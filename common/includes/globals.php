@@ -124,23 +124,18 @@ function getYear()
 function makeStartDate($week = 0, $year = 0, $month = 0, $startweek = 0, $startdate = 0)
 {
 	$qstartdate=0;
-	if(intval($year)>0)
+	if(intval($year)>2000)
 	{
 		if($week)
 		{
-			if ($week == 1)
-				$qstartdate = strtotime($year.'-1-1 00:00 UTC');
-			else
-				$qstartdate = strtotime('last Monday +'.($week-1).' weeks UTC', strtotime($year.'-1-1'));
+			if($week < 10) $week = '0'.$week;
+			$qstartdate = strtotime($year.'W'.$week.' UTC');
 		}
 		elseif($month)
 			$qstartdate = strtotime($year.'-'.$month.'-1 00:00 UTC');
 		elseif($startweek)
 		{
-			if ($startweek == 1)
-				$qstartdate = strtotime($year.'-1-1 00:00 UTC');
-			else
-				$qstartdate = strtotime('last Monday +'.($week-1).' weeks UTC', strtotime($year.'-1-1'));
+			$qstartdate = strtotime($year.'W'.$startweek.' UTC');
 		}
 		else
 			$qstartdate = strtotime($year.'-1-1 00:00 UTC');
@@ -165,10 +160,8 @@ function makeEndDate($week = 0, $year = 0, $month = 0, $enddate = 0)
 	{
 		if($week)
 		{
-			if ($week == 53)
-				$qenddate = strtotime(($year).'-12-31 23:59 UTC');
-			else
-				$qenddate = strtotime('last Monday +'.($week).' weeks -1 minute UTC', strtotime($year.'-1-1'));
+			if($week < 10) $week = '0'.$week;
+			$qenddate = strtotime($year.'W'.$week.' +7days -1second UTC');
 		}
 		else if($month)
 			{
