@@ -105,7 +105,12 @@ function kbdate($format, $timestamp = null)
 
 function getYear()
 {
-	return kbdate('Y');
+	$test = kbdate('o');
+	if ($test == 'o')
+	{
+		$test = kbdate('Y');
+	}
+	return $test;
 }
 
 //! Return start date for the given week, month, year or date.
@@ -118,29 +123,31 @@ function getYear()
  */
 function makeStartDate($week = 0, $year = 0, $month = 0, $startweek = 0, $startdate = 0)
 {
-		$qstartdate=0;
-		if(intval($year)>0)
+	$qstartdate=0;
+	if(intval($year)>0)
+	{
+		if($week)
 		{
-			if($week)
-			{
-				if ($week == 1)
-					{$qstartdate = strtotime($year.'-1-1 00:00 UTC');}
-				else
-					{$qstartdate = strtotime('last Monday +'.($week-1).' weeks UTC', strtotime($year.'-1-1'));}
-			}
-			else if($month)
-				{$qstartdate = strtotime($year.'-'.$month.'-1 00:00 UTC');}
-			else if($startweek)
-			{
-				if ($startweek == 1) {$qstartdate = strtotime($year.'-1-1 00:00 UTC');}
-				else{$qstartdate = strtotime('last Monday +'.($week-1).' weeks UTC', strtotime($year.'-1-1'));}
-			}
+			if ($week == 1)
+				$qstartdate = strtotime($year.'-1-1 00:00 UTC');
 			else
-				{$qstartdate = strtotime($year.'-1-1 00:00 UTC');}
+				$qstartdate = strtotime('last Monday +'.($week-1).' weeks UTC', strtotime($year.'-1-1'));
 		}
-		//If set use the latest startdate and earliest enddate set.
-		if($startdate && $qstartdate < strtotime($startdate." UTC")) $qstartdate = strtotime($startdate." UTC");
-		return $qstartdate;
+		elseif($month)
+			$qstartdate = strtotime($year.'-'.$month.'-1 00:00 UTC');
+		elseif($startweek)
+		{
+			if ($startweek == 1)
+				$qstartdate = strtotime($year.'-1-1 00:00 UTC');
+			else
+				$qstartdate = strtotime('last Monday +'.($week-1).' weeks UTC', strtotime($year.'-1-1'));
+		}
+		else
+			$qstartdate = strtotime($year.'-1-1 00:00 UTC');
+	}
+	//If set use the latest startdate and earliest enddate set.
+	if($startdate && $qstartdate < strtotime($startdate." UTC")) $qstartdate = strtotime($startdate." UTC");
+	return $qstartdate;
 }
 
 //! Return end date for the given week, month, year or date.
@@ -154,25 +161,25 @@ function makeStartDate($week = 0, $year = 0, $month = 0, $startweek = 0, $startd
  */
 function makeEndDate($week = 0, $year = 0, $month = 0, $enddate = 0)
 {
-		if($year)
+	if($year)
+	{
+		if($week)
 		{
-			if($week)
-			{
-				if ($week == 53)
-					$qenddate = strtotime(($year).'-12-31 23:59 UTC');
-				else
-					$qenddate = strtotime('last Monday +'.($week).' weeks -1 minute UTC', strtotime($year.'-1-1'));
-			}
-			else if($month)
+			if ($week == 53)
+				$qenddate = strtotime(($year).'-12-31 23:59 UTC');
+			else
+				$qenddate = strtotime('last Monday +'.($week).' weeks -1 minute UTC', strtotime($year.'-1-1'));
+		}
+		else if($month)
 			{
 				if($month == 12) $qenddate = strtotime(($year).'-12-31 23:59 UTC');
 				else $qenddate = strtotime(($year).'-'.($month + 1).'-1 00:00 - 1 minute UTC');
 			}
 			else
 				$qenddate = strtotime(($year).'-12-31 23:59 UTC');
-		}
-		//If set use the earliest enddate.
-		if($enddate && (!$qenddate || ($qenddate && $qenddate > strtotime($enddate." UTC")))) $qenddate = strtotime($enddate." UTC");
+	}
+	//If set use the earliest enddate.
+	if($enddate && (!$qenddate || ($qenddate && $qenddate > strtotime($enddate." UTC")))) $qenddate = strtotime($enddate." UTC");
 
-		return $qenddate;
+	return $qenddate;
 }
