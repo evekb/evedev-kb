@@ -47,6 +47,7 @@ options::fadd('Show Top Damage Dealer/Final Blow Boxes', 'kd_showbox', 'checkbox
 options::fadd('Show involved parties summary', 'kd_showext', 'checkbox');
 options::fadd('Include dropped value in total loss', 'kd_droptototal', 'checkbox');
 
+options::fadd('Show T2 items tag', 'kd_ttag', 'checkbox');
 options::fadd('Show Faction items tag', 'kd_ftag', 'checkbox');
 options::fadd('Show Deadspace items tag', 'kd_dtag', 'checkbox');
 options::fadd('Show Officer items tag', 'kd_otag', 'checkbox');
@@ -285,6 +286,7 @@ class admin_appearance
 	 */
 	function changeTheme()
 	{
+		global $themename;
 		if(options::getPrevious('theme_name') == $_POST['option_theme_name']) return;
 
 		$themename = preg_replace('/[^a-zA-Z0-9-_]/', '', $_POST['option_theme_name']);
@@ -296,11 +298,13 @@ class admin_appearance
 		global $smarty;
 		$smarty->assign('theme_url', config::get('cfg_kbhost').'/themes/'.$themename);
 		$smarty->template_dir = './themes/'.$themename.'/templates';
-		admin_appearance::removeOld(0, KB_CACHEDIR.'/templates_c', false);
+		$smarty->compile_dir = KB_CACHEDIR.'/templates_c/'.$themename.'/';
+		admin_appearance::removeOld(0, KB_CACHEDIR.'/templates_c', true);
 	}
 	//! Updates style before page is displayed.
 	function changeStyle()
 	{
+		global $themename;
 		if(options::getPrevious('theme_name') != $_POST['option_theme_name'])
 		{
 			$themename = preg_replace('/[^a-zA-Z0-9-_]/', '', $_POST['option_theme_name']);
@@ -363,10 +367,9 @@ class admin_appearance
 			if ($recurse && file_exists("{$dir}{$fname}") && is_dir("{$dir}{$fname}")
 				 && substr($fname,0,1) != "." && $fname !== ".." )
 			{
-				$del = $del + admin_acache::remove_old($hours, $dir.$fname."/");
+				$del = $del + admin_appearance::removeOld($hours, $dir.$fname."/");
 			}
 		}
 		return $del;
 	}
 }
-?>
