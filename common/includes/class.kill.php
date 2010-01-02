@@ -91,7 +91,7 @@ class Kill
 
 	function getVictimCorpID()
 	{
-		$this->execQuery();
+		if(empty($this->victimcorpid_))	$this->execQuery();
 		return $this->victimcorpid_;
 	}
 
@@ -396,7 +396,7 @@ class Kill
 			}
 		}
 
-		if (config::get('km_cache_enabled')) file_put_contents(config::get('km_cache_dir')."/".$this->getID().".txt", $mail);
+		if (config::get('km_cache_enabled')) file_put_contents(KB_MAILCACHEDIR."/".$this->getID().".txt", $mail);
 
 		return $mail;
 	}
