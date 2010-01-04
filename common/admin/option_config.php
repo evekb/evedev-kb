@@ -1,4 +1,7 @@
 <?php
+options::cat('Advanced', 'Configuration', 'Available updates');
+options::fadd('Code updates', 'none', 'custom', array('update', 'codeCheck'));
+options::fadd('Database updates', 'none', 'custom', array('update', 'dbCheck'));
 options::cat('Advanced', 'Configuration', 'Killboard Configuration');
 options::fadd('Display profiling information', 'cfg_profile', 'checkbox');
 options::fadd('Killboard Title', 'cfg_kbtitle', 'edit:size:50');
@@ -13,6 +16,7 @@ options::fadd('Remove Losses Page', 'public_losses', 'checkbox');
 options::fadd('Stats Page', 'public_stats', 'select',array('admin_config', 'createSelectStats'));
 
 options::cat('Advanced', 'Configuration', 'Corp/Alliance ID');
+options::fadd('PILOT_ID', 'cfg_pilotid', 'custom', array('admin_config', 'createPilot'),array('admin_config', 'reload'));
 options::fadd('CORP_ID', 'cfg_corpid', 'custom', array('admin_config', 'createCorp'),array('admin_config', 'reload'));
 options::fadd('ALLIANCE_ID', 'cfg_allianceid', 'custom', array('admin_config', 'createAlliance'), array('admin_config', 'reload'));
 
@@ -67,10 +71,25 @@ class admin_config
 
         return $options;
     }
+	function createPilot()
+	{
+		$qry = new DBQuery();
+		if(isset($_POST['option_cfg_pilotid'])) $plt_id=intval($_POST['option_cfg_pilotid']);
+		else $plt_id = PILOT_ID;
+		$qry->execute("SELECT plt_name FROM kb3_pilots WHERE plt_id = ".$plt_id);
+		$html = '<input type="text" id="option_cfg_pilotid" name="option_cfg_pilotid" value="'.$plt_id.'" size="5" maxlength="15" />';
+		if(!$qry->recordCount()) return $html;
+		$res = $qry->getRow();
+		return $html . ' &nbsp;('.$res['plt_name'].')';
+	}
 	function createCorp()
 	{
 		$qry = new DBQuery();
-		if(isset($_POST['option_cfg_corpid'])) $crp_id=intval($_POST['option_cfg_corpid']);
+		if(isset($_POST['option_cfg_pilotid'])) $plt_id = intval($_POST['option_cfg_pilotid']);
+		else $plt_id = PILOT_ID;
+
+		if($plt_id) $crp_id = 0;
+		elseif(isset($_POST['option_cfg_corpid'])) $crp_id=intval($_POST['option_cfg_corpid']);
 		else $crp_id = CORP_ID;
 		$qry->execute("SELECT crp_name FROM kb3_corps WHERE crp_id = ".$crp_id);
 		$html = '<input type="text" id="option_cfg_corpid" name="option_cfg_corpid" value="'.$crp_id.'" size="5" maxlength="15" />';
@@ -81,9 +100,20 @@ class admin_config
 	function createAlliance()
 	{
 		$qry = new DBQuery();
-		if(isset($_POST['option_cfg_corpid'])) $crp_id=intval($_POST['option_cfg_corpid']);
-		else $crp_id = CORP_ID;
-		if($crp_id) $all_id=0;
+		if(isset($_POST['option_cfg_pilotid']))
+		{
+			$plt_id = intval($_POST['option_cfg_pilotid']);
+		}
+		else $plt_id = PILOT_ID;
+		if(isset($_POST['option_cfg_corpid'])) 
+		{
+			$crp_id = intval($_POST['option_cfg_corpid']);
+		}
+		else
+		{
+			$crp_id = CORP_ID;
+		}
+		if($plt_id || $crp_id) $all_id = 0;
 		elseif($_POST['option_cfg_allianceid']) $all_id=intval($_POST['option_cfg_allianceid']);
 		else $all_id = ALLIANCE_ID;
 		$qry->execute("SELECT all_name FROM kb3_alliances WHERE all_id = ".$all_id);
@@ -97,4 +127,32 @@ class admin_config
 		header("Location: http://".$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'?'.$_SERVER['QUERY_STRING']);
 	}
 }
-?>
+
+class update
+{
+	//! Check if board is at latest update
+
+	/*
+	 * Display a link to update or show that no update is needed.
+	 */
+	function codeCheck()
+	{
+		update::checkStatus();
+		return "<div>Not done yet</div>";
+	}
+	//! Check if database is at latest update
+
+	/*
+	 * Display a link to update or show that no update is needed.
+	 */
+	function dbCheck()
+	{
+		update::checkStatus();
+		return "<div>Not done yet</div>";
+	}
+	//! Updates status xml if necessary.
+	function checkStatus()
+	{
+		return;
+	}
+}
