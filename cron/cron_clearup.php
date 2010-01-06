@@ -10,7 +10,7 @@ require_once('common/includes/db.php');
 
 remove_old(7 * 24, KB_QUERYCACHEDIR.'/');
 remove_old(7 * 24, KB_PAGECACHEDIR.'/'.KB_SITE.'/', true);
-remove_old(1 * 24, KB_CACHEDIR."/templates_c/");
+remove_old(1 * 24, KB_CACHEDIR."/templates_c/", true);
 remove_old(7 * 24, KB_MAILCACHEDIR.'/');
 remove_old(30 * 24, KB_CACHEDIR.'/', true);
 
