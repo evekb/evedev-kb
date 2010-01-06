@@ -59,6 +59,7 @@ class pCorpDetail extends pageAssembly
 			if($this->crp_external_id)
 			{
 				$this->corp = new Corporation($this->crp_external_id, true);
+				$this->crp_id = $this->corp->getID();
 			}
 			elseif(CORP_ID)
 			{
@@ -71,6 +72,7 @@ class pCorpDetail extends pageAssembly
 				$this->page->generate($html);
 				exit;
 			}
+//			var_dump($this->corp)
 
 		}
 		else $this->corp = new Corporation($this->crp_id);
