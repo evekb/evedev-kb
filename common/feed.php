@@ -58,7 +58,7 @@ if ($y)
 }
 elseif (!isset($_GET['lastkllid']))
 {
-	$klist->setYear(kbdate("Y"));
+	$klist->setYear(kbdate("o"));
 }
 
 $kid = intval($_GET['lastkllid']);
@@ -262,6 +262,5 @@ if ($_GET['gz'])
 }
 else
 {
-	echo $html;
+echo $html;
 }
-?>

@@ -18,7 +18,7 @@ require_once('common/includes/class.alliance.php');
 $page = new Page("Administration - Feed Syndication " . $feedversion);
 $page->setCachable(false);
 $page->setAdmin();
-$validurl = "/^(http|https):\/\/([A-Za-z0-9_]+(:[A-Za-z0-9_]+)?@)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}((:[0-9]{1,5})?\/.*)?$/i";
+$validurl = "/^(http|https):\/\/([A-Za-z0-9_]+(:[A-Za-z0-9_]+)?@)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*((:[0-9]{1,5})?\/.*)?$/i";
 $html .= "<script language=\"JavaScript\">function checkAll(checkname, exby) {for (i = 0; i < checkname.length; i++)checkname[i].checked = exby.checked? true:false}</script>";
 $html .= "<table class=kb-subtable>";
 
@@ -91,6 +91,12 @@ for ($i = 1; $i <= $feedcount; $i++)
 // building the request query and fetching of the feeds
 if ($_POST['fetch'])
 {
+	if (PILOT_ID && !MASTER)
+	{
+		$pilot = new Pilot(PILOT_ID);
+		$myid = '&pilot=' . urlencode($pilot->getName());
+	}
+
     if (CORP_ID && !MASTER)
     {
         $corp = new Corporation(CORP_ID);
@@ -118,8 +124,6 @@ if ($_POST['fetch'])
                 $str .= '&apikills=1';
             if ($_POST['fetch_losses'])
                 $str .= "&losses=1";
-            if (!config::get('fetch_compress'))
-                $str .= "&gz=1";
             if ($_POST['range1'] && $_POST['range2'])
             {
                 if ($_POST['range1'] > $_POST['range2'])
@@ -194,7 +198,7 @@ $html .= "</td></tr><br></table><br><br><br>";
 $html .= "<table><tr><td height=20px width=150px><b>First week:</b></td>";
 $html .= '<td><select name="range1">';
 $now = gmdate("W");
-for ($i = 1; $i <= 52; $i++)
+for ($i = 1; $i <= 53; $i++)
 {
     if ($now == $i)
         $html .= '<option selected="selected "value="' . $i . '">' . $i . '</option>';
@@ -220,7 +224,7 @@ $html .= '<td><select name="year">';
 for($dateit = 2005; $dateit <= gmdate('Y'); $dateit++)
 {
         $html .='<option ';
-        if($dateit == gmdate('Y')) $html .= 'selected="selected"';
+        if($dateit == gmdate('o')) $html .= 'selected="selected"';
         $html .=' value="'.$dateit.'">'.$dateit.'</option> ';
 }
 $html .= '</select>';
@@ -239,12 +243,6 @@ $html .= "<td><input type=text size=50 class=password name=fetch_comment id=fetc
 if (config::get('fetch_comment'))
     $html .= config::get('fetch_comment');
 $html .= "\"><br><i> (leave blank for none)</i><br></td></tr>";
-$html .= "<tr><td height=30px width=150px><b>Enable compression?</b></td>";
-$html .= "<td><input type=checkbox name=fetch_compress id=fetch_compress";
-if (!config::get('fetch_compress'))
-    $html .= " checked=\"checked\"";
-$html .= "><i> (enables GZip compression for feeds that support this feature, for streams that do not support GZip compression regular html mode will be used automatically)</i></td>";
-$html .= "</tr>";
 $html .= "<tr><td height=30px width=150px><b>Verbose mode?</b></td>";
 $html .= "<td><input type=checkbox name=fetch_verbose id=fetch_verbose";
 if (config::get('fetch_verbose'))
@@ -257,5 +255,3 @@ $html .= "</form>";
 $page->addContext($menubox->generate());
 $page->setContent($html);
 $page->generate();
-
-?>

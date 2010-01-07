@@ -92,20 +92,14 @@ class Fetcher
 			$http = new http_request($fetchurl);
 			$http->set_useragent("EDK Feedfetcher ".$feedversion);
 			$http->set_timeout(120);
-			//$http->set_cookie('PHPSESSID', 'a2bb4a7485eaba91b9d8db6aafd8ec5d');
+			$http->set_header("Accept-Encoding: gzip");
 			$data = $http->get_content();
 			if($data == '') return "<i>Error getting XML data from ".$fetchurl."</i><br>".$http->getError()."<br>";
 
-			//$data = trim(preg_replace('<<!--.*?-->>', '', $data)); // remove <!-- Cached --> message, else it will break gzinflate
-			$data = preg_replace('<<!--.*?-->>', '', $data); // remove <!-- Cached --> message, else it will break gzinflate
-			if (!@gzinflate($data))
-			{
-				$cprs = "raw HTML stream";
-			} else
-			{
-				$data = gzinflate($data);
-				$cprs = "GZip compressed stream";
-			}
+			if(strpos($http->get_header(),"Content-Encoding: gzip")
+				&& gzinflate(substr($data,10)))
+					$data = gzinflate(substr($data,10));
+			$data = trim($data); // helps with broken sites that add extra white space.
 			file_put_contents($this->feedfilename, $data);
 			
 			// Process all new pilots and corps
@@ -218,16 +212,16 @@ class Fetcher
 		if (config::get('fetch_verbose') )
 		{
 			if ($this->x)
-				$this->html .= "<div class=block-header2>".$this->x." kills added from feed: ".$url."<br>".$str." <i><br>(".$cprs.")</i><br><br></div>";
+				$this->html .= "<div class=block-header2>".$this->x." kills added from feed: ".$url."<br>".$str." <br></div>";
 			else
-				$this->html .= "<div class=block-header2>No kills added from feed: ".$url."<br>".$str." <i><br>(".$cprs.")</i><br><br></div>";
+				$this->html .= "<div class=block-header2>No kills added from feed: ".$url."<br>".$str." <br><br></div>";
 		}
 		else
 		{
 			if ($this->x)
-				$this->html .= "<div class=block-header2>".$this->x." kills added from feed: ".$url." <i>(".$cprs.")</i><br><br></div>";
+				$this->html .= "<div class=block-header2>".$this->x." kills added from feed: ".$url." <br><br></div>";
 			else
-				$this->html .= "<div class=block-header2>No kills added from feed: ".$url." <i>(".$cprs.")</i><br><br></div>";
+				$this->html .= "<div class=block-header2>No kills added from feed: ".$url." <br><br></div>";
 		}
 
 		return $this->html;

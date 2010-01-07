@@ -29,7 +29,7 @@ require_once('common/includes/db.php');
 
 $config = new Config(KB_SITE);
 
-$validurl = "/^(http|https):\/\/([A-Za-z0-9_]+(:[A-Za-z0-9_]+)?@)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}((:[0-9]{1,5})?\/.*)?$/i";
+$validurl = "/^(http|https):\/\/([A-Za-z0-9_]+(:[A-Za-z0-9_]+)?@)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*((:[0-9]{1,5})?\/.*)?$/i";
 
 // load the config from the database
 if (config::get('fetch_feed_count'))
@@ -38,15 +38,35 @@ else
     $feedcount = 1;
 
 // corporation OR alliance id
-if (config::get('cfg_corpid'))
+if (config::get('cfg_pilotid'))
 {
-    define('CORP_ID', intval(config::get('cfg_corpid')));
-    define('ALLIANCE_ID', 0);
+	define('PILOT_ID', intval(config::get('cfg_pilotid')) );
+	define('CORP_ID', 0);
+	define('ALLIANCE_ID', 0);
+}
+elseif (config::get('cfg_corpid'))
+{
+	define('PILOT_ID', 0);
+	define('CORP_ID', intval(config::get('cfg_corpid')));
+	define('ALLIANCE_ID', 0);
+}
+elseif(config::get('cfg_allianceid'))
+{
+	define('PILOT_ID', 0);
+	define('CORP_ID', 0);
+	define('ALLIANCE_ID', intval(config::get('cfg_allianceid')));
 }
 else
 {
-    define('CORP_ID', 0);
-    define('ALLIANCE_ID', intval(config::get('cfg_allianceid')));
+	define('PILOT_ID', 0);
+	define('CORP_ID', 0);
+	define('ALLIANCE_ID', 0);
+}
+
+if (PILOT_ID && !MASTER)
+{
+    $pilot = new Pilot(PILOT_ID);
+    $myid = '&pilot=' . urlencode($pilot->getName());
 }
 
 if (CORP_ID && !MASTER)
