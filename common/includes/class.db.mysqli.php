@@ -471,6 +471,11 @@ class DBCachedQuery_mysqli
         {
             return false;
         }
+        elseif ($ta[0] == 'truncate')
+        {
+			if($ta[1] == 'table') $tables[] = $ta[2];
+            else $tables[] = $ta[1];
+        }
         else
         {
             trigger_error('No suitable handler for query found. "'.$ta[0].'"',E_USER_WARNING);
