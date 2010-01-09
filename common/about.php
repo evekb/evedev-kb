@@ -24,14 +24,14 @@ class pAbout extends pageAssembly
 	{
 		// Current active developers
 		$currentDeveloper = array(
-			'Hon Kovell',
-			'mastergamer',
+			'Hon Kovell', // Various stuff (EDK2-3)
+			'mastergamer', // Different various stuff
 			'FriedRoadKill', // Parser, db updates and image packs
 		);
 
 		// Inactive developers
 		$developer = array(
-			'exi',
+			'exi', // Various stuff (EDK <2)
 			'Beansman',
 			'Ralle030583',
 			'Captain Thunk' // API mod

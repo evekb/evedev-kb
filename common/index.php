@@ -108,7 +108,6 @@ else
 }
 define('THEME_URL', config::get('cfg_kbhost').'/themes/'.$themename);
 
-// pilot id not fully implemented yet.
 if (config::get('cfg_pilotid'))
 {
 	define('PILOT_ID', intval(config::get('cfg_pilotid')) );
