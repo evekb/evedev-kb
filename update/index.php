@@ -27,11 +27,6 @@ $url="http://".$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
 if($_SERVER['QUERY_STRING'] != "") $url .= '?'.$_SERVER['QUERY_STRING'];
 
 
-if(isset($_GET['do']) && $_GET['do'] == 'force')
-{
-	$url=preg_replace('/(\?|&)do=force/','',$url);
-	config::set('DBUpdate', '001');
-}
 $smarty = new Smarty();
 $smarty->compile_dir = getcwd()."/".KB_CACHEDIR.'/templates_c';
 $smarty->cache_dir = getcwd()."/".KB_CACHEDIR.'/data';
@@ -53,6 +48,12 @@ if (!session::isAdmin())
 		$smarty->display('update.tpl');
 		die;
 	}
+}
+
+if(isset($_GET['do']) && $_GET['do'] == 'force')
+{
+	$url=preg_replace('/(\?|&)do=force/','',$url);
+	config::set('DBUpdate', '001');
 }
 
 if(isset($_GET['package']))
