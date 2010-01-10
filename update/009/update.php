@@ -6,7 +6,7 @@ function update009()
 	//Checking if this Update already done
 	if (CURRENT_DB_UPDATE < "009" )
 	{
-		$qry = new DBQuery();
+		$qry = new DBQuery(true);
 		$sql = "CREATE TABLE IF NOT EXISTS `kb3_sum_alliance` (
 		  `asm_all_id` int(11) NOT NULL DEFAULT '0',
 		  `asm_shp_id` int(3) NOT NULL DEFAULT '0',

@@ -110,7 +110,7 @@ function updateDB()
 
 function update_slot_of_group($id,$oldSlot = 0 ,$newSlot)
 {
-	$qry  = new DBQuery();
+	$qry  = new DBQuery(true);
 	$query = "UPDATE kb3_item_types
 				SET itt_slot = $newSlot WHERE itt_id = $id and itt_slot = $oldSlot;";
 	$qry->execute($query);
@@ -129,7 +129,7 @@ function update_slot_of_group($id,$oldSlot = 0 ,$newSlot)
 
 function move_item_to_group($id,$oldGroup ,$newGroup)
 {
-	$qry  = new DBQuery();
+	$qry  = new DBQuery(true);
 	$query = "UPDATE kb3_invtypes
 				SET groupID = $newGroup
 				WHERE typeID = $id AND groupID = $oldGroup;";
