@@ -476,6 +476,14 @@ class DBCachedQuery_mysqli
 			if($ta[1] == 'table') $tables[] = $ta[2];
             else $tables[] = $ta[1];
         }
+        elseif ($ta[0] == 'lock')
+        {
+            return false;
+        }
+        elseif ($ta[0] == 'unlock')
+        {
+            return false;
+        }
         else
         {
             trigger_error('No suitable handler for query found. "'.$ta[0].'"',E_USER_WARNING);
