@@ -115,8 +115,6 @@ for ($i = 1; $i <= $feedcount; $i++)
             $str .= '&friend=1';
 		if (isset($apikills[$i]))
 			$str .= '&apikills=1';
-        if (!config::get('fetch_compress'))
-            $str .= "&gz=1";
         // If a last kill id is specified fetch all kills since then
         if($feedlast[$i] > 0)
         {
