@@ -248,7 +248,7 @@ else $smarty->template_dir = './themes/default/templates';
 
 if(!is_dir(KB_CACHEDIR.'/templates_c/'.$themename))
 	mkdir(KB_CACHEDIR.'/templates_c/'.$themename);
-$smarty->compile_dir = KB_CACHEDIR.'/templates_c/'.$themename.'/';
+$smarty->compile_dir = KB_CACHEDIR.'/templates_c/'.$themename;
 
 $smarty->cache_dir = KB_CACHEDIR.'/data';
 $smarty->assign('theme_url', THEME_URL);
