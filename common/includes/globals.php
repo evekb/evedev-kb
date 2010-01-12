@@ -113,6 +113,17 @@ function getYear()
 	return $test;
 }
 
+//! Return the number of weeks in the given year.
+
+/*! \param $year the year to count weeks for. Default is the current year.
+ *  \return the number of weeks in the given year.
+ */
+function getWeeks($year = null)
+{
+	if(is_null($year)) $year = getYear();
+	$weeks = date('W', mktime(1, 0, 0, 12, 31, $year));
+	return $weeks == 1 ? 52 : $weeks;
+}
 //! Return start date for the given week, month, year or date.
 
 /*!

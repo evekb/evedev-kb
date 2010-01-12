@@ -271,28 +271,30 @@ class pHome extends pageAssembly
 	}
 	function setWeek($week, $year)
 	{
-	// If a valid week and year are given then show that week.
-		if(((int)$week) < 1 || ((int)$week) > 53 || ((int)$year) < 2000)
+		$week = intval($week);
+		$year = intval($year);
+		// If a valid week and year are given then show that week.
+		if(($year) < 2000 || ($week) < 1 || ($week) > getWeeks($year))
 		{
 			$week = kbdate('W');
-			$year = kbdate('Y');
+			$year = kbdate('o');
 		}
 
-		$this->week = (int)$week;
+		$this->week = $week;
 		if($this->week < 10) $this->week = '0'.$this->week;
-		$this->year = (int)$year;
+		$this->year = $year;
 
 		if ($this->week == 1)
 		{
 			$this->pyear = $this->year - 1;
-			$this->pweek = 53;
+			$this->pweek = getWeeks($this->pyear);
 		}
 		else
 		{
 			$this->pyear = $this->year;
 			$this->pweek = $this->week - 1;
 		}
-		if ($this->week == 53)
+		if ($this->week == getWeeks($this->year))
 		{
 			$this->nweek = 1;
 			$this->nyear = $this->year + 1;
