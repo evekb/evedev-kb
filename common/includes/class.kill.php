@@ -438,10 +438,9 @@ class Kill
 			$sql = 'SELECT COUNT(*) as count FROM kb3_inv_detail WHERE ind_kll_id = '.
 				$kll_id.' AND (ind_plt_id,ind_dmgdone) IN ('.implode(',', $invList).')';
 
-			$qry->execute($sql);
-			$row = $qry->getRow();
+			$qryinv->execute($sql);
+			$row = $qryinv->getRow();
 			if($row['count'] == count($this->involvedparties_)) return $kll_id;
-			else return 0;
 		}
 		return 0;
 	}
@@ -1458,4 +1457,3 @@ class DetailedInv extends InvolvedParty
 	}
 
 }
-?>
