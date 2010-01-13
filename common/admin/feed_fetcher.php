@@ -38,7 +38,8 @@ class Fetcher
 		$this->title = "";
 		$this->description = "";
 		$this->link = "";
-		$this->x=0;
+		$this->killsAdded=0;
+		$this->killsSkipped=0;
 	}
 	//! Fetch a new feed.
 
@@ -59,7 +60,8 @@ class Fetcher
 		//                $this->trackurl_ = $trackurl;
 		$this->trackfriend_ = $trackfriend;
 		$this->trackkey_ = $trackkey;
-		$this->x=0;
+		$this->killsAdded = 0;
+		$this->killsSkipped = 0;
 		$fetchurl = $url.$str."&board=".urlencode(KB_TITLE);
 		if(strpos($fetchurl, 'apikills=1')) $this->apikills = true;
 		else $this->apikills = false;
@@ -91,7 +93,7 @@ class Fetcher
 
 			$http = new http_request($fetchurl);
 			$http->set_useragent("EDK Feedfetcher ".$feedversion);
-			$http->set_timeout(120);
+			$http->set_timeout(60);
 			$http->set_header("Accept-Encoding: gzip");
 			$data = $http->get_content();
 			if($data == '') return "<i>Error getting XML data from ".$fetchurl."</i><br>".$http->getError()."<br>";
@@ -201,7 +203,7 @@ class Fetcher
 			unlink($this->feedfilename);
 			@unlink($this->feedfilename.'.stat');
 			@unlink($this->feedfilename.'.tstat');
-			return "<i>Error getting XML data from ".$fetchurl."</i><br><br>";
+			return "<i>Error getting XML data from ".$fetchurl."</i><br><br>\n";
 		}
 
 		xml_parser_free($xml_parser);
@@ -211,17 +213,11 @@ class Fetcher
 
 		if (config::get('fetch_verbose') )
 		{
-			if ($this->x)
-				$this->html .= "<div class=block-header2>".$this->x." kills added from feed: ".$url."<br>".$str." <br></div>";
-			else
-				$this->html .= "<div class=block-header2>No kills added from feed: ".$url."<br>".$str." <br><br></div>";
+				$this->html .= "<div class=block-header2>".$this->killsAdded." kills added and ".$this->killsSkipped." kills skipped from feed: ".$url."<br>".$str." <br></div>\n";
 		}
 		else
 		{
-			if ($this->x)
-				$this->html .= "<div class=block-header2>".$this->x." kills added from feed: ".$url." <br><br></div>";
-			else
-				$this->html .= "<div class=block-header2>No kills added from feed: ".$url." <br><br></div>";
+				$this->html .= "<div class=block-header2>".$this->killsAdded." kills added and ".$this->killsSkipped." kills skipped from feed: ".$url." <br><br></div>\n";
 		}
 
 		return $this->html;
@@ -297,15 +293,16 @@ class Fetcher
 					if ( $killid <= 0 )
 					{
 						if ( $killid == 0 && config::get('fetch_verbose') )
-							$this->html .= "Killmail ".intval($this->title)." is malformed. ".$this->uurl." Kill ID = ".$this->title." <br>";
+							$this->html .= "Killmail ".intval($this->title)." is malformed. ".$this->uurl." Kill ID = ".$this->title." <br>\n";
 						if ( $killid == -1 && config::get('fetch_verbose') )
-							$this->html .= "Killmail ".intval($this->title)." already posted <a href=\"?a=kill_detail&amp;kll_id=".$parser->dupeid_."\">here</a>.<br>";
+							$this->html .= "Killmail ".intval($this->title)." already posted <a href=\"?a=kill_detail&amp;kll_id=".$parser->dupeid_."\">here</a>.<br>\n";
 						if ( $killid == -2 && config::get('fetch_verbose') )
-							$this->html .= "Killmail ".intval($this->title)." is not related to ".KB_TITLE.".<br>";
+							$this->html .= "Killmail ".intval($this->title)." is not related to ".KB_TITLE.".<br>\n";
 						if ( $killid == -3 && config::get('fetch_verbose') )
-							$this->html .= "Killmail ".intval($this->title)." already posted <a href=\"?a=kill_detail&amp;kll_external_id=".$this->apiID."\">here</a>.<br>";
+							$this->html .= "Killmail ".intval($this->title)." already posted <a href=\"?a=kill_detail&amp;kll_external_id=".$this->apiID."\">here</a>.<br>\n";
 						if ( $killid == -4 && config::get('fetch_verbose') )
-							$this->html .= "Killmail ".intval($this->title)." too old to post with current settings.<br>";
+							$this->html .= "Killmail ".intval($this->title)." too old to post with current settings.<br>\n";
+						$this->killsSkipped++;
 					}
 					else
 					{
@@ -322,7 +319,7 @@ class Fetcher
 							$comments = new Comments($killid);
 							$comments->addComment("Feed Syndication ", config::get('fetch_comment')." mail fetched from: ".$this->uurl);
 						}
-						$this->x++;
+						$this->killsAdded++;
 					}
 					if( $this->idordered && intval($this->title) > 0)
 					{

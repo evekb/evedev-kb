@@ -28,7 +28,7 @@ require_once('common/admin/feed_fetcher.php');
 
 $config = new Config(KB_SITE);
 // maximum amount of kills to return.
-$maxreturned = 100;
+$maxreturned = 200;
 $html = '<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
   	<channel>
