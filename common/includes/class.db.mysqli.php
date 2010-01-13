@@ -520,6 +520,7 @@ class DBCachedQuery_mysqli
             $bsize += strlen(join('', $row));
             if ($bsize > $this->_maxcachesize)
             {
+				unset($this->_cache);
                 $this->_cache[] = array();
                 $this->_cached = false;
                 $this->rewind();
@@ -555,6 +556,7 @@ class DBCachedQuery_mysqli
     {
         $this->_sql = trim($sql);
         $this->_hash = md5($this->_sql);
+		unset($this->_cache);
         $this->_cache = array();
         $this->_cached = false;
 
@@ -611,9 +613,9 @@ class DBCachedQuery_mysqli
 				$this->resid_->free();
 				unset($this->resid_);
 			}
-        }
-
-        $this->queryCount(true);
+		}
+		
+		$this->queryCount(true);
         return true;
     }
 
@@ -786,6 +788,7 @@ class DBMemcachedQuery_mysqli
             $bsize += strlen(join('', $row));
             if ($bsize > $this->_maxcachesize)
             {
+				unset($this->_cache);
                 $this->_cache[] = array();
                 $this->_cached = false;
                 $this->rewind();
@@ -814,6 +817,7 @@ class DBMemcachedQuery_mysqli
 
         $this->_sql = trim($sql);
         $this->_hash = md5($this->_sql);
+		unset($this->_cache);
         $this->_cache = array();
         $this->_cached = false;
 
