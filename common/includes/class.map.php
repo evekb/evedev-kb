@@ -26,6 +26,7 @@ class MapView
         $this->bgcolor_ = array(30, 30, 30);
         $this->normalcolor_ = array(81, 103, 146);
         $this->hlcolor_ = array(200, 200, 200);
+		$this->showsysnames_ = false;
     }
 
     function setbgcolor($r, $g, $b)
@@ -85,20 +86,21 @@ class MapView
 
     function setSystemID($systemid)
     {
-        $this->systemid_ = $systemid;
-
-        $sql = 'select reg.reg_id, reg.reg_name, con.con_id, con.con_name, sys.sys_name, sys.sys_sec
-                from kb3_regions reg, kb3_constellations con, kb3_systems sys
-	       where reg.reg_id = con.con_reg_id
-	         and con.con_id = sys.sys_con_id
-		 and sys.sys_id = '.$this->systemid_;
+        $sql = 'select reg.reg_id, reg.reg_name, con.con_id, con.con_name,
+			sys.sys_name, sys.sys_sec, sys.sys_eve_id
+			from kb3_regions reg, kb3_constellations con, kb3_systems sys
+			where reg.reg_id = con.con_reg_id
+			and con.con_id = sys.sys_con_id
+			and (sys.sys_eve_id = '.intval($systemid).' OR sys.sys_id = '
+			.intval($systemid).')';
 
         $qry = new DBQuery();
         $qry->execute($sql);
 		if(!$qry->recordCount()) die;
         $row = $qry->getRow();
 
-        $this->conid_ = $row['con_id'];
+        $this->systemid_ = $row['sys_eve_id'];
+		$this->conid_ = $row['con_id'];
         $this->regionid_ = $row['reg_id'];
         $this->conname_ = $row['con_name'];
         $this->regname_ = $row['reg_name'];
@@ -129,32 +131,43 @@ class MapView
 
     function generate()
     {
-        $sql = 'select sys.sys_x, sys.sys_y, sys.sys_z, sys.sys_sec,
-                   sys.sys_id, sys.sys_name, sys.sys_eve_id, sjp.sjp_to, con.con_id,
-          	       con.con_name, reg.reg_id, reg.reg_name,
-    		       reg.reg_x, reg.reg_z
-                   from kb3_systems sys, kb3_system_jumps sjp,
-    		       kb3_constellations con, kb3_regions reg
-                   where con.con_id = sys.sys_con_id
-                   and reg.reg_id = con.con_reg_id
-                   and sjp.sjp_from = sys.sys_eve_id';
-
         if ($this->mode_ == "map")
         {
+		    $sql = 'select sys.sys_x, sys.sys_y, sys.sys_z, sys.sys_sec,
+					sys.sys_eve_id, sjp.sjp_to,
+					reg.reg_id
+				from kb3_systems sys, kb3_system_jumps sjp,
+					kb3_constellations con, kb3_regions reg
+				where con.con_id = sys.sys_con_id
+					and reg.reg_id = con.con_reg_id
+					and sjp.sjp_from = sys.sys_eve_id';
+
             $regioncache = KB_CACHEDIR.'/map/'.KB_SITE.'_'.$this->regionid_.'_'.$this->imgwidth_.'.png';
             $caption = $this->regname_;
         }
         elseif ($this->mode_ == "region")
         {
+		    $sql = 'select sys.sys_x, sys.sys_y, sys.sys_z, sys.sys_sec,
+					sys.sys_name, sys.sys_eve_id, sjp.sjp_to
+				from kb3_systems sys, kb3_system_jumps sjp,
+					kb3_constellations con
+				where con.con_id = sys.sys_con_id
+					and sjp.sjp_from = sys.sys_eve_id
+					and con.con_reg_id = '.$this->regionid_;
             $regioncache = KB_CACHEDIR.'/map/'.KB_SITE.'_'.$this->conid_.'_'.$this->imgwidth_.'.png';
-            $sql .= " and reg.reg_id = ".$this->regionid_;
             $caption = $this->conname_;
         }
         elseif ($this->mode_ == "cons")
         {
+			$sql = 'select sys.sys_x, sys.sys_y, sys.sys_z, sys.sys_sec,
+					sys.sys_name, sys.sys_eve_id, sjp.sjp_to, con.con_name
+				from kb3_systems sys, kb3_system_jumps sjp,
+					kb3_constellations con
+				where con.con_id = sys.sys_con_id
+					and sjp.sjp_from = sys.sys_eve_id
+					and con.con_id = '.$this->conid_;
             $regioncache = KB_CACHEDIR.'/map/'.KB_SITE.'_'.$this->systemid_.'_'.$this->imgwidth_.'.png';
 
-            $sql .= " and con.con_id = ".$this->conid_;
             $caption = $this->sysname_." (".roundsec($this->syssec_).")";
         }
         if (file_exists($regioncache))
@@ -218,13 +231,19 @@ class MapView
                 {
                     $sc = 0;
                 }
-                $sys[$i][4] = $row['sys_id'];
-                $sys[$i][5] = $row['sys_name'];
+				if ($this->mode_ == "map")
+				{
+	                $sys[$i][9] = $row['reg_id'];
+				}
+				elseif ($this->mode_ == "region")
+				{
+	                $sys[$i][7] = $row['con_id'];
+				}
+				elseif ($this->mode_ == "cons")
+				{
+					$sys[$i][5] = $row['sys_name'];
+				}
                 $sys[$i][6] = $row['sys_sec'];
-                $sys[$i][7] = $row['con_id'];
-                $sys[$i][8] = $row['con_name'];
-                $sys[$i][9] = $row['reg_id'];
-                $sys[$i][10] = $row['reg_name'];
                 $pi = $i;
             }
             $dx = abs($maxx - $minx);
@@ -246,23 +265,29 @@ class MapView
                 $n = $mini;
                 while ($n <= $maxi)
                 {
+					if(!isset($sys[$n]))
+					{
+						$n++;
+						continue;
+					}
                     $px = $this->offset_ + ($sys[$n][0] - $minx) * $xscale;
                     $py = $this->offset_ + ($sys[$n][1] - $minz) * $yscale;
 
                     $line_col = imagecolorallocate($img, $this->linecolor_[0], $this->linecolor_[1], $this->linecolor_[2]);
 
-                    for ($m = 0; $m <= $sys[$n][3]; $m++)
-                    {
-                        $sys_to = $sys[$n][2][$m];
+                    if(isset($sys[$n][3]))
+						for ($m = 0; $m <= $sys[$n][3]; $m++)
+						{
+							$sys_to = $sys[$n][2][$m];
 
-                        if ($sys[$sys_to][4] != "")
-                        {
-                            $px_to = $this->offset_ + ($sys[$sys_to][0] - $minx) * $xscale;
-                            $py_to = $this->offset_ + ($sys[$sys_to][1] - $minz) * $yscale;
+							if (isset($sys[$sys_to]))
+							{
+								$px_to = $this->offset_ + ($sys[$sys_to][0] - $minx) * $xscale;
+								$py_to = $this->offset_ + ($sys[$sys_to][1] - $minz) * $yscale;
 
-                            imageline($img, $px, $py, $px_to, $py_to, $line_col);
-                        }
-                    }
+								imageline($img, $px, $py, $px_to, $py_to, $line_col);
+							}
+						}
 
                     $n++;
                 }
@@ -271,6 +296,11 @@ class MapView
             $n = $mini;
             while ($n <= $maxi)
             {
+				if(!isset($sys[$n]))
+				{
+					$n++;
+					continue;
+				}
                 $px = round($this->offset_ + ($sys[$n][0] - $minx) * $xscale);
                 $py = round($this->offset_ + ($sys[$n][1] - $minz) * $yscale);
 
@@ -290,7 +320,7 @@ class MapView
                 }
                 if ($this->mode_ == "cons")
                 {
-                    if ($sys[$n][4] == $this->systemid_)
+                    if ($n == $this->systemid_)
                         $color = imagecolorallocate($img, $this->hlcolor_[0], $this->hlcolor_[1], $this->hlcolor_[2]);
                     else
                         $color = $this->secColor($img, $sys[$n][6]);
@@ -374,4 +404,3 @@ class MapView
         imagepng($img);
     }
 }
-?>
