@@ -7,7 +7,7 @@
 
 @set_time_limit(0);
 @ini_set('memory_limit',999999999);
-$feedversion = "v1.7";
+$feedversion = "v1.8";
 
 require_once( "common/includes/class.kill.php" );
 require_once( "common/includes/class.parser.php" );
@@ -42,16 +42,16 @@ class Fetcher
 	}
 	//! Fetch a new feed.
 
-        /*! Use the input parameters to fetch a feed, parse it and add new kills
-         * to the db.
-         * \param $url The base URL of the feed to fetch
-         * \param $str The query string to add to the base URL.
-         * \param $trackfriend Either 'on' or blank. Defines whether to fetch
-         * friendly kills
-         * \param $trackkey The configuration key to use when storing feed in
-         * the db.
-         * \return HTML output summarising the results of the fetch.
-         */
+	/*! Use the input parameters to fetch a feed, parse it and add new kills
+	 * to the db.
+	 * \param $url The base URL of the feed to fetch
+	 * \param $str The query string to add to the base URL.
+	 * \param $trackfriend Either 'on' or blank. Defines whether to fetch
+	 * friendly kills
+	 * \param $trackkey The configuration key to use when storing feed in
+	 * the db.
+	 * \return HTML output summarising the results of the fetch.
+	 */
 
 	function grab($url, $str, $trackfriend = '', $trackkey = '')
 	{
@@ -77,8 +77,8 @@ class Fetcher
 
 		if(file_exists($this->feedfilename))
 		{
-            // Give up trying to parse the cached file after a day.
-            if (time() - filemtime($this->feedfilename) > 24 * 60 * 60 )
+		// Give up trying to parse the cached file after a day.
+			if (time() - filemtime($this->feedfilename) > 24 * 60 * 60 )
 			{
 				unlink($this->feedfilename);
 				@unlink($this->feedfilename.'.stat');
@@ -98,10 +98,10 @@ class Fetcher
 
 			if(strpos($http->get_header(),"Content-Encoding: gzip")
 				&& gzinflate(substr($data,10)))
-					$data = gzinflate(substr($data,10));
+				$data = gzinflate(substr($data,10));
 			$data = trim($data); // helps with broken sites that add extra white space.
 			file_put_contents($this->feedfilename, $data);
-			
+
 			// Process all new pilots and corps
 			// First check any are present.
 			if(strpos($data,"Corp: "))
@@ -208,7 +208,7 @@ class Fetcher
 		unlink($this->feedfilename);
 		@unlink($this->feedfilename.'.stat');
 		@unlink($this->feedfilename.'.tstat');
-		
+
 		if (config::get('fetch_verbose') )
 		{
 			if ($this->x)
@@ -229,7 +229,7 @@ class Fetcher
 	//! XML start of element parser.
 	function startElement($parser, $name, $attrs)
 	{
-		//	if ($this->insideitem)
+	//	if ($this->insideitem)
 		$this->tag = $name;
 		//else
 		if ($name == "ITEM")
@@ -244,7 +244,7 @@ class Fetcher
 	//! XML end of element parser.
 	function endElement($parser, $name)
 	{
-		//global $this->html;
+	//global $this->html;
 
 		if ($name == "ITEM")
 		{
@@ -266,7 +266,7 @@ class Fetcher
 				}
 				else
 				{
-					//Check age of mail
+				//Check age of mail
 					if(config::get('filter_apply'))
 					{
 						$filterdate = config::get('filter_date');
@@ -309,12 +309,12 @@ class Fetcher
 					}
 					else
 					{
-//						$qry = new DBQuery();
+					//						$qry = new DBQuery();
 						if(strpos($this->uurl, '?')) $logurl = substr($this->uurl,0,strpos($this->uurl, '?')).'?a=kill_detail&kll_id='.intval($this->title);
 						else $logurl = uurl.'?a=kill_detail&kll_id='.intval($this->title);
 						logger::logKill($killid, $logurl);
-//						$qry->execute( "insert into kb3_log (log_kll_id, log_site, log_ip_address, log_timestamp) values( ".
-//							$killid.", '".KB_SITE."','".$logurl."',now() )" );
+						//						$qry->execute( "insert into kb3_log (log_kll_id, log_site, log_ip_address, log_timestamp) values( ".
+						//							$killid.", '".KB_SITE."','".$logurl."',now() )" );
 						$this->html .= "Killmail ".intval($this->title)." successfully posted <a href=\"?a=kill_detail&kll_id=".$killid."\">here</a>.<br>";
 
 						if (config::get('fetch_comment'))
