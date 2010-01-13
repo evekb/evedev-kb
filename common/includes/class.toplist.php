@@ -870,8 +870,7 @@ class TopShipListTable
 		$html .= "<tr class='kb-table-header'>";
 		$html .= "<td class='kb-table-cell' align='center' colspan='2'>Ship</td>";
 		$html .= "<td class='kb-table-cell' align='center' width='60'>Kills</td>";
-		$html .= "</tr>";
-
+		$html .= "</tr>\n";
 		$odd = true;
 		while ($row = $this->toplist_->getRow())
 		{
@@ -887,12 +886,12 @@ class TopShipListTable
 				$class = "kb-table-row-even";
 				$odd = true;
 			}
-			$html .= "<tr class='".$class."'>";
-			$html .= "<td><img src=\"".$ship->getImage(32)."\" /></td>";
-			$html .= "<td class='kb-table-cell' width='200'><b>".$ship->getName()."</b><br />".$shipclass->getName()."</td>";
-			$html .= "<td class='kb-table-cell' align='center'><b>".$row['cnt']."</b></td>";
+			$html .= "<tr style='height:32px' class='".$class."'>\n";
+			$html .= "\t<td width='32' valign='top' align='left'><span style=\"position:absolute; border: none; height:32px; width:32px; text-align:left;\"><img src=\"".$ship->getImage(32)."\" width='32' height='32' border='0' /></span></td>\n";
+			$html .= "\t<td class='kb-table-cell' width='200'><b>".$ship->getName()."</b><br />".$shipclass->getName()."</td>\n";
+			$html .= "\t<td class='kb-table-cell' align='center'><b>".$row['cnt']."</b></td>\n";
 
-			$html .= "</tr>";
+			$html .= "</tr>\n";
 		}
 
 		$html .= "</table>";
@@ -925,6 +924,8 @@ class TopWeaponList extends TopList
 
 	function generate()
 	{
+		// Does not need to be distinct (i.e. weapon was used by two different
+		// pilots on one kill, but in this case using distinct is twice as fast.
 		$sql = "select count(distinct ind.ind_kll_id) as cnt, ind.ind_wep_id as itm_id
 				from kb3_inv_detail ind
 				inner join kb3_kills kll on (kll.kll_id = ind.ind_kll_id)
@@ -941,8 +942,7 @@ class TopWeaponList extends TopList
 
 		$this->setSQLTop($sql);
 		// since ccps database doesnt have icons for ships this will also fix the ship as weapon bug
-		$sqlbottom .=" and itm.icon != ''".
-			" and itm.typeName != 'Unknown'".
+		$sqlbottom .=" and (itm.icon != '' OR groupID = 100)".
 			" group by ind.ind_wep_id order by 1 desc limit 20";
 		$this->setSQLBottom($sqlbottom);
 	}
@@ -992,4 +992,3 @@ class TopWeaponListTable
 		return $html;
 	}
 }
-?>
