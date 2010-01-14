@@ -314,6 +314,8 @@ class DBCachedQuery_mysqli
         // maximum size of a cached result set (512kB)
         $this->_maxcachesize = 524288;
         $this->d = true;
+		$this->maxmem = preg_replace('/M/', '000000', ini_get('memory_limit')) * 0.8;
+		if(!$this->maxmem) $this->maxmem = 128000000;
     }
     //! Check if this query has been cached and the cache valid.
 
@@ -510,15 +512,16 @@ class DBCachedQuery_mysqli
             return false;
         }
 
-        $bsize = 0;
+		$bsize = 0;
         while ($row = $this->getRow())
         {
             $this->_cache[] = $row;
 
             // if the bytesize of the table exceeds the limit we'll abort
             // the cache generation and leave this query unbuffered
+			// If we're running out of memory then run uncached.
             $bsize += strlen(join('', $row));
-            if ($bsize > $this->_maxcachesize)
+            if ($bsize > $this->_maxcachesize || $this->maxmem < memory_get_usage())
             {
 				unset($this->_cache);
                 $this->_cache[] = array();
@@ -785,8 +788,9 @@ class DBMemcachedQuery_mysqli
         {
             $this->_cache[] = $row;
 
+			// If we're running out of memory then run uncached.
             $bsize += strlen(join('', $row));
-            if ($bsize > $this->_maxcachesize)
+            if ($bsize > $this->_maxcachesize || $this->maxmem < memory_get_usage())
             {
 				unset($this->_cache);
                 $this->_cache[] = array();
