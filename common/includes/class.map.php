@@ -142,7 +142,6 @@ class MapView
 					and reg.reg_id = con.con_reg_id
 					and sjp.sjp_from = sys.sys_eve_id';
 
-            $regioncache = KB_CACHEDIR.'/map/'.KB_SITE.'_'.$this->regionid_.'_'.$this->imgwidth_.'.png';
             $caption = $this->regname_;
         }
         elseif ($this->mode_ == "region")
@@ -154,7 +153,6 @@ class MapView
 				where con.con_id = sys.sys_con_id
 					and sjp.sjp_from = sys.sys_eve_id
 					and con.con_reg_id = '.$this->regionid_;
-            $regioncache = KB_CACHEDIR.'/map/'.KB_SITE.'_'.$this->conid_.'_'.$this->imgwidth_.'.png';
             $caption = $this->conname_;
         }
         elseif ($this->mode_ == "cons")
@@ -166,10 +164,9 @@ class MapView
 				where con.con_id = sys.sys_con_id
 					and sjp.sjp_from = sys.sys_eve_id
 					and con.con_id = '.$this->conid_;
-            $regioncache = KB_CACHEDIR.'/map/'.KB_SITE.'_'.$this->systemid_.'_'.$this->imgwidth_.'.png';
-
             $caption = $this->sysname_." (".roundsec($this->syssec_).")";
         }
+        $regioncache = $this->getCacheFileName();
         if (file_exists($regioncache))
         {
             header("Content-type: image/png");
@@ -403,4 +400,28 @@ class MapView
         header("Content-type: image/png");
         imagepng($img);
     }
+	//! Generate filename to use for the cache file.
+	function getCacheFileName()
+	{
+        if ($this->mode_ == "map")
+        {
+            $cache = KB_CACHEDIR.'/img/map/'.KB_SITE.'/'.$this->regionid_.'_'.$this->imgwidth_.'.png';
+        }
+        elseif ($this->mode_ == "region")
+        {
+            $cache = KB_CACHEDIR.'/img/map/'.KB_SITE.'/'.$this->conid_.'_'.$this->imgwidth_.'.png';
+        }
+        elseif ($this->mode_ == "cons")
+        {
+            $cache = KB_CACHEDIR.'/img/map/'.KB_SITE.'/'.$this->systemid_.'_'.$this->imgwidth_.'.png';
+        }
+		else return;
+
+		if(!is_dir(KB_CACHEDIR.'/img/map/'.KB_SITE))
+		{
+			if(!is_dir(KB_CACHEDIR.'/img/map')) mkdir(KB_CACHEDIR.'/img/map');
+			mkdir(KB_CACHEDIR.'/img/map/'.KB_SITE);
+		}
+		return $cache;
+	}
 }
