@@ -165,15 +165,15 @@ class admin_acache
 			admin_acache::removeOld(0, KB_PAGECACHEDIR.'/'.KB_SITE, true);
 			admin_acache::removeOld(0, KB_CACHEDIR.'/templates_c', false);
 			admin_acache::removeOld(0, KB_MAILCACHEDIR, false);
-			admin_acache::clearQCache();
 			admin_acache::removeOld(0, KB_CACHEDIR.'/img', true);
 			admin_acache::removeOld(0, KB_CACHEDIR.'/data', false);
 			admin_acache::removeOld(0, KB_CACHEDIR.'/map', false);
 			admin_acache::removeOld(0, KB_CACHEDIR.'/api', false);
-			$qry = new DBQuery();
+			$qry = new DBQuery(true);
 			$qry->execute("DELETE FROM kb3_sum_alliance");
 			$qry->execute("DELETE FROM kb3_sum_corp");
 			$qry->execute("DELETE FROM kb3_sum_pilot");
+			admin_acache::clearQCache();
 			$_POST['option_clear_all'] == 'off';
         }
 		return;
