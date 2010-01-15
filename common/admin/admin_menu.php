@@ -48,9 +48,10 @@ options::oldMenu('Features', "Standings", "?a=admin_standings");
 
 options::oldMenu('Appearance', "Map Options", "?a=admin_mapoptions");
 
+options::oldMenu('Advanced', "Post Permissions", "?a=admin_postperm");
 options::oldMenu('Advanced', "Ship Values", "?a=admin_shp_val");
 options::oldMenu('Advanced', "Item Values", "?a=admin_value_editor");
-options::oldMenu('Advanced', "Post Permissions", "?a=admin_postperm");
+options::oldMenu('Advanced', "Value Fetch", "?a=admin_value_fetch");
 
 options::oldMenu('Features', "Modules", "?a=admin_mods");
 
@@ -69,4 +70,4 @@ options::oldMenu('- Logout -', "Logout", "?a=logout");
 #options::oldMenu('User', 'Titles', '?a=admin_titles');
 
 options::oldMenu('Appearance', "Top Navigation", "?a=admin_navmanager");
-?>
+

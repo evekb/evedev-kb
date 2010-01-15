@@ -86,4 +86,3 @@ Class Fetcher
 		return $i;
 	}
 }
-?>
