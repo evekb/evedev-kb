@@ -6,6 +6,8 @@
  * startdate = unix timestamp for start date
  * enddate = unix timestamp for end date
  * lastID = return all kills from lastID on (ordered by kll_id)
+ * range = return all kills between lastID and lastID + range
+ *     (limited by $maxkillsreturned)
  * allkills = also return results without an external id set
  * pilot = pilot id to retrieve kills for
  * corp =  corp id to retrieve kills for
@@ -15,13 +17,14 @@
  *
  */
 
-$maxkillsreturned = 100;
+$maxkillsreturned = 200;
+if(isset($_GET['range']))
 require_once('common/includes/class.killlist.php');
 $list = new KillList();
 if(!isset($_GET['allkills'])) $list->setAPIKill();
 $list->setLimit($maxkillsreturned);
 $list->setOrdered(true);
-$list->setOrderBy(' kll.kll_external_id DESC ');
+$list->setOrderBy(' kll.kll_external_id ASC ');
 $qry = new DBQuery();
 if(isset($_GET['alliance']))
 {
@@ -78,9 +81,13 @@ if(isset($_GET['region']))
 	$row = $qry->getRow();
 	$list->addRegion($row['reg_id']);
 }
-if(isset($_GET['lastID'])) $list->setMinExtID(intval($_GET['lastID']));
+if(isset($_GET['lastID']))
+{
+	$list->setMinExtID(intval($_GET['lastID']));
+	if(isset($_GET['range'])) $list->setMaxExtID(intval($_GET['lastID'] + $_GET['range']));
+}
 if(isset($_GET['startdate'])) $list->setStartDate(intval($_GET['startdate']));
-if(isset($_GET['enddate'])) $list->setStartDate(intval($_GET['enddate']));
+if(isset($_GET['enddate'])) $list->setEndDate(intval($_GET['enddate']));
 $date = gmdate('Y-m-d H:i:s');
 /*
 $text = "<?xml version='1.0' encoding='UTF-8'?>
