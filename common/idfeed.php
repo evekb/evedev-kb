@@ -18,7 +18,7 @@
  */
 
 $maxkillsreturned = 200;
-if(isset($_GET['range']))
+
 require_once('common/includes/class.killlist.php');
 $list = new KillList();
 if(!isset($_GET['allkills'])) $list->setAPIKill();
