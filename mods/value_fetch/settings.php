@@ -5,7 +5,7 @@ $version = "22/9 2009 - 1";
 // Get from config
 $url = config::get('fetchurl');
 $timestamp = config::get('lastfetch');
-$time = date(DateTime::RFC822, $timestamp);
+$time = date('r', $timestamp);
 if ($url == null)
 {
 	$url = "http://eve.no-ip.de/prices/30d/prices-all.xml";
