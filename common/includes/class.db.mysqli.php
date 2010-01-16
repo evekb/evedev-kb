@@ -486,6 +486,10 @@ class DBCachedQuery_mysqli
         {
             return false;
         }
+        elseif ($ta[0] == 'set')
+        {
+            return false;
+        }
         else
         {
             trigger_error('No suitable handler for query found. "'.$ta[0].'"',E_USER_WARNING);
