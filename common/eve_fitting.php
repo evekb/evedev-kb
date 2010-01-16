@@ -167,7 +167,7 @@ foreach ($slots as $i => $empty)
 			{
 				$xml .= "qty=\"1\" ";
 				$xml .= "slot=\"".$slots[$i]."\" ";
-				$xml .= "\"type\"=\"".$a_item['Name']."\"/>\n";
+				$xml .= "type=\"".$a_item['Name']."\"/>\n";
 			}
 			else
 			{
