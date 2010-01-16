@@ -24,13 +24,13 @@ require_once('kbconfig.php');
 require_once('common/includes/globals.php');
 require_once('common/includes/class.config.php');
 require_once('common/includes/db.php');
-require_once('common/includes/class.fetcher.php');
+require_once('common/includes/class.valuefetcher.php');
 
 $url = config::get('fetchurl');
 if ($url == null || $url == "")
 	$url = "http://eve.no-ip.de/prices/30d/prices-all.xml";
 
-$fetch = new Fetcher($url);
+$fetch = new valueFetcher($url);
 
 // Fetch
 $count = $fetch->fetch_values();

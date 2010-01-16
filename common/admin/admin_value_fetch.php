@@ -11,7 +11,7 @@ if($_POST['submit'])
 	error_reporting(0);
 
 	require_once('common/admin/admin_menu.php');
-	require_once('class.fetcher.php');
+	require_once('class.valuefetcher.php');
 	/**
 	* 	Author: Niels Brink� (HyperBeanie)
 	*
@@ -30,7 +30,7 @@ if($_POST['submit'])
 	if (!$url) $url = "http://eve.no-ip.de/prices/30d/prices-all.xml";
 	config::set('fetchurl', $url);
 
-	$fetch = new Fetcher($url);
+	$fetch = new valueFetcher($url);
 
 	$html = "<center>";
 	try

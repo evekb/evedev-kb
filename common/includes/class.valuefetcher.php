@@ -1,8 +1,8 @@
 <?php
-Class Fetcher
+class valueFetcher
 {
 	var $url;
-	function Fetcher($file)
+	function valueFetcher($file)
 	{
 		// Check the input
 		if ($file == null || $file == "")
