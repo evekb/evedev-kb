@@ -52,7 +52,7 @@ options::fadd('Show Faction items tag', 'kd_ftag', 'checkbox');
 options::fadd('Show Deadspace items tag', 'kd_dtag', 'checkbox');
 options::fadd('Show Officer items tag', 'kd_otag', 'checkbox');
 options::fadd('Show Fitting Panel', 'fp_show', 'checkbox');
-options::fadd('Export EFT fittings', 'kd_EFT', 'checkbox');
+options::fadd('Show Fitting Exports', 'kd_EFT', 'checkbox');
 options::fadd('Show API verification', 'kd_verify', 'checkbox');
 options::fadd('Limit involved parties', 'kd_involvedlimit', 'edit:size:4', '', '', 'Leave blank for no limit.');
 

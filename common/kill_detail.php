@@ -1046,11 +1046,9 @@ class pKillDetail extends pageAssembly
 				"EFT Fitting",
 				"javascript:sndReq('index.php?a=eft_fitting&amp;kll_id=" . $this->kill->getID()
 				. "');ReverseContentDisplay('popup')");
-		}
-
-		if (config::get('kd_showeft2eve'))
-		{
-			$this->addMenuItem("link", "EFT To EVE", "javascript:sndReq('index.php?a=convertinkilldetail');ReverseContentDisplay('popup')");
+			$this->addMenuItem("link",
+				"EvE Fitting",
+				"?a=eve_fitting&amp;kll_id=" . $this->kill->getID());
 		}
 
 		if ($this->kill->relatedKillCount() > 1 || $this->kill->relatedLossCount() > 1 ||
