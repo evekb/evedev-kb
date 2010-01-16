@@ -92,7 +92,26 @@ $out = '';
 $feed = array();
 $friend = array();
 $apikills = array();
-for ($i = 1; $i <= $feedcount; $i++)
+$i = 1;
+if(isset($_GET['feed']))
+{
+	$i = intval($_GET['feed']);
+	if(!$i) $i = 1;
+	elseif($feedcount > $i) $feedcount = $i;
+}
+elseif(isset($argv[0]))
+{
+	foreach($argv as $arg)
+	{
+		if(substr($arg, 0, 5) == "feed=")
+		{
+			$i = intval(substr($arg,5));
+			if(!$i) $i = 1;
+			elseif($feedcount > $i) $feedcount = $i;
+		}
+	}
+}
+for (; $i <= $feedcount; $i++)
 {
     $str = config::get('fetch_url_' . $i);
     $tmp = explode(':::', $str);

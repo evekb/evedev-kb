@@ -61,7 +61,26 @@ $myEveAPI->iscronjob_ = true;
 
 $keycount = config::get('API_Key_count');
 
-for ($i = 1; $i <= $keycount; $i++)
+$i = 1;
+if(isset($_GET['feed']))
+{
+	$i = intval($_GET['feed']);
+	if(!$i) $i = 1;
+	elseif($keycount > $i) $keycount = $i;
+}
+elseif(isset($argv[0]))
+{
+	foreach($argv as $arg)
+	{
+		if(substr($arg, 0, 5) == "feed=")
+		{
+			$i = intval(substr($arg,5));
+			if(!$i) $i = 1;
+			elseif($keycount > $i) $keycount = $i;
+		}
+	}
+}
+for (; $i <= $keycount; $i++)
 {
     $keyindex = $i;
     $myEveAPI->Output_ = "Importing Mails for " . $config->get("API_Name_" . $i);
