@@ -1,7 +1,10 @@
 <?php
-//options::cat('Advanced', 'Configuration', 'Available updates');
-//options::fadd('Code updates', 'none', 'custom', array('update', 'codeCheck'));
-//options::fadd('Database updates', 'none', 'custom', array('update', 'dbCheck'));
+require_once('update/CCPDB/xml.parser.php');
+require_once('common/includes/class.config.php');
+
+options::cat('Advanced', 'Configuration', 'Available updates');
+options::fadd('Code updates', 'none', 'custom', array('update', 'codeCheck'));
+options::fadd('Database updates', 'none', 'custom', array('update', 'dbCheck'));
 options::cat('Advanced', 'Configuration', 'Killboard Configuration');
 options::fadd('Display profiling information', 'cfg_profile', 'checkbox');
 options::fadd('Killboard Title', 'cfg_kbtitle', 'edit:size:50');
@@ -130,6 +133,8 @@ class admin_config
 
 class update
 {
+	private static $codeVersion;
+	private static $dbVersion;
 	//! Check if board is at latest update
 
 	/*
@@ -138,7 +143,11 @@ class update
 	function codeCheck()
 	{
 		update::checkStatus();
-		return "<div>Not done yet</div>";
+		if(update::$codeVersion > Config::get('upd_codeVersion'))
+		{
+			return "<div>Code updates are available, <a href=?a=admin_upgrade>here</a></div><br/>";
+		}
+		return "<div>No updates available</div>";
 	}
 	//! Check if database is at latest update
 
@@ -148,11 +157,24 @@ class update
 	function dbCheck()
 	{
 		update::checkStatus();
-		return "<div>Not done yet</div>";
+		if(update::$dbVersion > Config::get('upd_dbVersion'))
+		{
+			return "<div>Database updates are available, <a href=?a=admin_upgrade>here</a></div><br/>";
+		}
+		return "<div>No updates available</div>";
 	}
 	//! Updates status xml if necessary.
 	function checkStatus()
 	{
+		$xml = new UpdateXMLParser();		
+		if($xml->getXML() < 3)
+		{
+		    $xml->retrieveData();
+		    {
+			update::$codeVersion = $xml->getLatestCodeVersion();
+			update::$dbVersion = $xml->getLatestDBVersion();
+		    }
+		}
 		return;
 	}
 }

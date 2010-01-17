@@ -11,6 +11,7 @@ define('KB_CACHEDIR', 'cache');
 define('KB_PAGECACHEDIR', KB_CACHEDIR.'/page');
 define('KB_MAILCACHEDIR', KB_CACHEDIR.'/mails');
 define('KB_QUERYCACHEDIR', KB_CACHEDIR.'/SQL');
+define('KB_UPDATE_URL', 'http://evedev-kb.googlecode.com/files');
 
 // current version: major.minor.sub
 // unpair numbers for minor = development version
