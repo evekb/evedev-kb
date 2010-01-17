@@ -209,14 +209,15 @@ class TopList
 /*		if ($this->inv_plt_)
             $this->sql_ .= " inner join kb3_inv_detail inp
                                  on ( inp.ind_plt_id in ( ".implode(",", $this->inv_plt_)." ) and kll.kll_id = inp.ind_kll_id ) ";
+*/
         if ($this->inv_crp_)
             $this->sql_ .= " inner join kb3_inv_crp inc
-	                         on ( inc.inc_crp_id in ( ".implode(",", $this->inv_crp_)." ) and kll.kll_id = inc.inc_kll_id ) ";
+	                         on ( kll.kll_id = inc.inc_kll_id ) ";
 
         if ($this->inv_all_)
             $this->sql_ .= " inner join kb3_inv_all ina
-                                 on ( ina.ina_all_id in ( ".implode(",", $this->inv_all_)." ) and kll.kll_id = ina.ina_kll_id ) ";
-*/
+                                 on ( kll.kll_id = ina.ina_kll_id ) ";
+
 		if (count($this->exclude_scl_))
 		{
 			$this->sql_ .= " inner join kb3_ships shp
@@ -242,53 +243,88 @@ class TopList
 		// victim filter
 		if ($this->mixedvictims_)
 		{
-			$this->sql_ .= " where ( 1 = 0 ";
-			$op = "or";
+			$this->sql_ .= " WHERE ( ";
+			$op = "";
 		}
 		else
 		{
-			$this->sql_ .= ' where 1=1 ';
-			$op = "and";
+			$op = " WHERE ";
 		}
 
 		if ($this->vic_plt_)
+		{
 			$this->sql_ .= " ".$op." kll.kll_victim_id in ( ".implode(",", $this->vic_plt_)." )";
+			$op = " or ";
+		}
 		if ($this->vic_crp_)
+		{
 			$this->sql_ .= " ".$op." kll.kll_crp_id in ( ".implode(",", $this->vic_crp_)." )";
+			$op = " or ";
+		}
 		if ($this->vic_all_)
+		{
 			$this->sql_ .= " ".$op." kll.kll_all_id in ( ".implode(",", $this->vic_all_)." )";
-
+			$op = " or ";
+		}
 		if ($this->mixedvictims_)
+		{
 			$this->sql_ .= " ) ";
+			$op = " AND ";
+		}
 
 		if ($this->inv_plt_)
-			$this->sql_ .= " AND ind.ind_plt_id in ( ".implode(",", $this->inv_plt_)." ) ";
+		{
+			$this->sql_ .= $op." ind.ind_plt_id in ( ".implode(",", $this->inv_plt_)." ) ";
+			$op = " AND ";
+		}
 		if ($this->inv_crp_)
-			$this->sql_ .= " AND ind.ind_crp_id in ( ".implode(",", $this->inv_crp_)." ) ";
+		{
+			$this->sql_ .= $op." inc.inc_crp_id in ( ".implode(",", $this->inv_crp_)." ) ";
+			$op = " AND ";
+		}
 		if ($this->inv_all_)
-			$this->sql_ .= " AND ind.ind_all_id in ( ".implode(",", $this->inv_all_)." ) ";
+		{
+			$this->sql_ .= $op." ina.ina_all_id in ( ".implode(",", $this->inv_all_)." ) ";
+			$op = " AND ";
+		}
 
 		if (count($this->vic_scl_id_))
-			$this->sql_ .= "and shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
+		{
+			$this->sql_ .= $op." shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
+			$op = " AND ";
+		}
 
 		if (count($this->systems_))
 		{
-			$this->sql_ .= " and kll.kll_system_id in ( ".implode($this->systems_, ",").") ";
+			$this->sql_ .= $op." kll.kll_system_id in ( ".implode($this->systems_, ",").") ";
+			$op = " AND ";
 		}
 
 		// timestamp filter
 		//$this->sql_ .= $this->getDateFilter();
 		$qstartdate = makeStartDate($this->weekno_, $this->yearno_, $this->monthno_, $this->startweekno_, $this->startDate_);
 		$qenddate = makeEndDate($this->weekno_, $this->yearno_, $this->monthno_, $this->endDate_);
-		if ($this->vic_plt_ || $this->vic_crp_ || $this->vic_all_)
-			$this->sql_ .= $this->getDateFilter();
-		if($this->inv_plt_ || $this->inv_crp_ || $this->inv_all_)
-		{
-			if($qstartdate) $this->sql_ .= " AND ind.ind_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
-			if($qenddate) $this->sql_ .= " AND ind.ind_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
-		}
-		else if (!($this->vic_plt_ || $this->vic_crp_ || $this->vic_all_))
+		if ($this->vic_plt_ || $this->vic_crp_ || $this->vic_all_
+			|| !($this->inv_plt_ || $this->inv_crp_ || $this->inv_all_))
 				$this->sql_ .= $this->getDateFilter();
+        if ($this->inv_crp_)
+		{
+			if($qstartdate) $this->sql_ .= $op." inc.inc_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
+			if($qenddate) $this->sql_ .= " AND inc.inc_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
+			$op = " AND ";
+		}
+		if ($this->inv_all_)
+		{
+			if($qstartdate) $this->sql_ .= $op." ina.ina_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
+			if($qenddate) $this->sql_ .= " AND ina.ina_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
+			$op = " AND ";
+		}
+		if($this->inv_plt_)
+		{
+			if($qstartdate) $this->sql_ .= $op." ind.ind_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
+			if($qenddate) $this->sql_ .= " AND ind.ind_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
+			$op = " AND ";
+		}
 /*
 		if($this->inv_plt_)
 		{
