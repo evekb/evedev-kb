@@ -17,7 +17,11 @@ class TopList
 		$this->regions_ = array();
 		$this->systems_ = array();
 	}
+	//! Include or exclude pods/noob ships/shuttles.
 
+	/*!
+	 *  \param $flag true to show P/N/S, false to remove.
+	 */
 	function setPodsNoobShips($flag)
 	{
 		if (!$flag)
@@ -28,7 +32,12 @@ class TopList
 		}
 		else
 		{
-			$this->exclude_scl_ = array();
+			if (($idx = array_search(2, $this->exclude_scl_)) !== FALSE)
+				unset($this->exclude_scl_[$idx]);
+			if (($idx = array_search(3, $this->exclude_scl_)) !== FALSE)
+				unset($this->exclude_scl_[$idx]);
+			if (($idx = array_search(11, $this->exclude_scl_)) !== FALSE)
+				unset($this->exclude_scl_[$idx]);
 		}
 	}
 
@@ -345,11 +354,11 @@ class TopKillsList extends TopList
                             limit 30");
 		if (count($this->vic_scl_id))
 		{
-			$this->setPodsNoobShips(false);
+			$this->setPodsNoobShips(true);
 		}
 		else
 		{
-			$this->setPodsNoobShips(true);
+			$this->setPodsNoobShips(config::get('podnoobs'));
 		}
 	}
 }
@@ -374,11 +383,11 @@ class TopCorpKillsList extends TopList
                             limit 30");
 		if (count($this->vic_scl_id))
 		{
-			$this->setPodsNoobShips(false);
+			$this->setPodsNoobShips(true);
 		}
 		else
 		{
-			$this->setPodsNoobShips(true);
+			$this->setPodsNoobShips(config::get('podnoobs'));
 		}
 	}
 }
@@ -397,19 +406,13 @@ class TopScoreList extends TopList
 	      inner join kb3_inv_detail ind
 		      on ( ind.ind_kll_id = kll.kll_id )
               inner join kb3_pilots plt
-	 	      on ( plt.plt_id = ind.ind_plt_id ";
-		if ($this->inv_crp_)
-			$sql .= " and ind.ind_crp_id in ( ".implode(",", $this->inv_crp_)." )";
-		if ($this->inv_all_)
-			$sql .= " and ind.ind_all_id in ( ".implode(",", $this->inv_all_)." )";
-
-		$sql .= ")";
+	 	      on ( plt.plt_id = ind.ind_plt_id )";
 
 		$this->setSQLTop($sql);
 
 		$this->setSQLBottom("group by ind.ind_plt_id order by 1 desc
                             limit 30");
-	// $this->setPodsNoobShips(false);
+	 $this->setPodsNoobShips(config::get('podnoobs'));
 	}
 }
 
@@ -428,7 +431,7 @@ class TopLossesList extends TopList
                             limit 30");
 		if (!count($this->vic_scl_id_))
 		{
-			$this->setPodsNoobShips(false);
+			$this->setPodsNoobShips(config::get('podnoobs'));
 		}
 	}
 }
@@ -448,11 +451,11 @@ class TopCorpLossesList extends TopList
                             limit 30");
 		if (count($this->vic_scl_id))
 		{
-			$this->setPodsNoobShips(false);
+			$this->setPodsNoobShips(true);
 		}
 		else
 		{
-			$this->setPodsNoobShips(true);
+			$this->setPodsNoobShips(config::get('podnoobs'));
 		}
 	}
 }
@@ -478,7 +481,7 @@ class TopFinalBlowList extends TopList
 
 		$this->setSQLBottom("AND ind.ind_plt_id = kll.kll_fb_plt_id group by ind.ind_plt_id order by cnt desc
                             limit 30 /* TopFinalBlowList */");
-		$this->setPodsNoobShips(false);
+		$this->setPodsNoobShips(config::get('podnoobs'));
 	}
 }
 
@@ -506,7 +509,7 @@ class TopDamageDealerList extends TopList
 
 		$this->setSQLBottom("group by ind.ind_plt_id order by 1 desc
                             limit 30");
-		$this->setPodsNoobShips(false);
+		$this->setPodsNoobShips(config::get('podnoobs'));
 	}
 }
 
@@ -535,7 +538,7 @@ class TopSoloKillerList extends TopList
 			"GROUP BY ind.ind_plt_id ".
 			"ORDER BY cnt DESC ".
 			"LIMIT 30");
-		$this->setPodsNoobShips(false);
+		$this->setPodsNoobShips(config::get('podnoobs'));
 	}
 }
 
