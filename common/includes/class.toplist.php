@@ -281,11 +281,13 @@ class TopList
 		{
 			$this->sql_ .= $op." inc.inc_crp_id in ( ".implode(",", $this->inv_crp_)." ) ";
 			$op = " AND ";
+			$this->sql_ .= $op." ind.ind_crp_id in ( ".implode(",", $this->inv_crp_)." ) ";
 		}
 		if ($this->inv_all_)
 		{
 			$this->sql_ .= $op." ina.ina_all_id in ( ".implode(",", $this->inv_all_)." ) ";
 			$op = " AND ";
+			$this->sql_ .= $op." ind.ind_all_id in ( ".implode(",", $this->inv_all_)." ) ";
 		}
 
 		if (count($this->vic_scl_id_))
@@ -325,23 +327,6 @@ class TopList
 			if($qenddate) $this->sql_ .= " AND ind.ind_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
 			$op = " AND ";
 		}
-/*
-		if($this->inv_plt_)
-		{
-			if($qstartdate) $this->sql_ .= " AND ind.ind_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
-			if($qenddate) $this->sql_ .= " AND ind.ind_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
-		}
-        if ($this->inv_crp_)
-		{
-			if($qstartdate) $this->sql_ .= " AND inc_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
-			if($qenddate) $this->sql_ .= " AND inc_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
-		}
-        if ($this->inv_all_)
-		{
-			if($qstartdate) $this->sql_ .= " AND ina_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
-			if($qenddate) $this->sql_ .= " AND ina_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
-		}
- */
 		$this->sql_ .= " ".$this->sqlbottom_;
 		// echo $this->sql_."<br /><br />";
 		$this->qry_->execute($this->sql_);
