@@ -1,5 +1,5 @@
 <?php 
-require_once('common/PclZip/pclzip.lib.php');
+require_once('common/pclzip/pclzip.lib.php');
 
 class Zip
 {
