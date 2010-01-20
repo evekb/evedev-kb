@@ -250,7 +250,7 @@ foreach ($kills as $id => $timestamp)
 				<title>'.$id.'</title>
 				<description><![CDATA[ '.$kill->getRawMail().' ]]></description>
 				<guid>?a=kill_detail&amp;kll_id='.$id.'</guid>
-				<pubDate>'.strftime("%a, %d %b %Y %T %Z", strtotime($timestamp))."</pubDate>\n";
+				<pubDate>'.strftime("%a, %d %b %Y %H:%M:%S %Z", strtotime($timestamp))."</pubDate>\n";
 	if($kill->getExternalID()) $html .= "<apiID>".$kill->getExternalID()."</apiID>\n";
 	$html .= "</item>\n";
 }
