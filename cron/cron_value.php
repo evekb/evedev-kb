@@ -16,8 +16,22 @@
 @set_time_limit(0);
 
 // Has to be run from the KB main directory for nested includes to work
-//$KB_HOME = "/home/www/killboard/";
-$KB_HOME = preg_replace('/([\/\\\\]cron)$/', '', getcwd());
+if(file_exists(getcwd().'/cron_value.php'))
+{
+	// current working directory minus last 5 letters of string ("/cron")
+	$KB_HOME = preg_replace('/[\/\\\\]cron$/', '', getcwd());
+}
+elseif(file_exists(__FILE__))
+{
+	$KB_HOME = preg_replace('/[\/\\\\]cron[\/\\\\]cron_value\.php$/', '', __FILE__);
+}
+else die("Set \$KB_HOME to the killboard root in cron/cron_value.php.");
+
+// If the above doesn't work - place your working directory path to killboard root below - comment out the above two lines and uncomment the two below
+
+// Edit the path below with your webspace directory to the killboard root folder - also check your php folder is correct as defined by the first line of this file
+//$KB_HOME = "/home/yoursite/public_html/kb";
+
 chdir($KB_HOME);
 
 require_once('kbconfig.php');

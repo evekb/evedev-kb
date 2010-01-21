@@ -1,4 +1,4 @@
-#!/usr/bin/php 
+#!/usr/bin/php
 <?php
 // check your php folder is correct as defined by the first line of this file
 
@@ -13,16 +13,23 @@ if(function_exists("set_time_limit"))
 
 $cronStartTime = microtime(true);
 
-// current working directory minus last 5 letters of string ("/cron")
-$KB_HOME = preg_replace('/[\/\\\\]cron$/', '', getcwd());
-
-chdir($KB_HOME); 
+if(file_exists(getcwd().'/cron_import.php'))
+{
+	// current working directory minus last 5 letters of string ("/cron")
+	$KB_HOME = preg_replace('/[\/\\\\]cron$/', '', getcwd());
+}
+elseif(file_exists(__FILE__))
+{
+	$KB_HOME = preg_replace('/[\/\\\\]cron[\/\\\\]cron_import\.php$/', '', __FILE__);
+}
+else die("Set \$KB_HOME to the killboard root in cron/cron_import.php.");
 
 // If the above doesn't work - place your working directory path to killboard root below - comment out the above two lines and uncomment the two below
 
 // Edit the path below with your webspace directory to the killboard root folder - also check your php folder is correct as defined by the first line of this file
 //$KB_HOME = "/home/yoursite/public_html/kb";
-//chdir($KB_HOME); 
+
+chdir($KB_HOME);
 
 require_once( "kbconfig.php" );
 require_once( "common/includes/globals.php" );
