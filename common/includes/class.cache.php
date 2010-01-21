@@ -110,20 +110,18 @@ class cache
 				// less bandwidth. Possibly more useful if we keep an index.
 				// filename, age, hash. Age would be used for cache clearing.
 				$etag=md5($cachefile.$timestamp);
+				if(strpos($_SERVER['HTTP_ACCEPT_ENCODING'],"gzip") !== false)
+					$etag .= 'gz';
+				header("Etag: \"".$etag."\"");
+
 				header("Last-Modified: ".gmdate("D, d M Y H:i:s", $timestamp)." GMT");
-				//Breaks comment posting. Page is not reloaded until expiry time
-				//thus missing comments posted by others.
-				//header('Expires: ' . gmdate('D, d M Y H:i:s', $timestamp + $cachetime) . ' GMT');
-				header("Etag: ".$etag);
-				header("Cache-Control:");
-				header('Pragma:');
 
 				// There was a reason for having both checks. etag not always
 				// checked maybe?
-				if (trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag ||
+				if (strpos($_SERVER['HTTP_IF_NONE_MATCH'], $etag) !== false ||
 					@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $timestamp)
 				{
-					header("HTTP/1.1 304 Not Modified");
+					header($_SERVER["SERVER_PROTOCOL"]." 304 Not Modified");
 					exit;
 				}
 
@@ -141,9 +139,6 @@ class cache
 		if (strpos($_SERVER['REQUEST_URI'],'thumb') ||
 			strpos($_SERVER['REQUEST_URI'],'mapview'))
 				header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 7776000) . ' GMT');
-		header("Etag: ".md5($cachefile.time()));
-		header("Cache-Control:");
-		header('Pragma:');
 	}
 	//! Generate the cache for the current page.
 	function generate()
@@ -166,6 +161,14 @@ class cache
 
             @gzwrite($fp, preg_replace('/profile -->.*<!-- \/profile/','profile -->Cached '.gmdate("d M Y H:i:s").'<!-- /profile',ob_get_contents()));
             @gzclose($fp);
+			// Set the headers to match the new cache file.
+			$timestamp = @filemtime($cachefile);
+			$etag = md5($cachefile.$timestamp );
+			if(strpos($_SERVER['HTTP_ACCEPT_ENCODING'],"gzip") !== false)
+				$etag .= 'gz';
+
+			header("Etag: \"".$etag."\"");
+			header("Last-Modified: ".gmdate("D, d M Y H:i:s", $timestamp)." GMT");
 			ob_end_flush();
 		}
 	}

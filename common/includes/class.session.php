@@ -7,6 +7,7 @@ class session
 		session_name("EDK_".preg_replace('/[^a-zA-Z0-9_-]/', '',KB_SITE));
 		if (isset($_COOKIE[session_name()]))
 		{
+			session_cache_limiter("private");
 			session_start();
 			if (isset($_SESSION['user']))
 			{
