@@ -5,7 +5,7 @@
  * This is the EVE Development Network Killboard (EDK)
 
  * Check out the EVE-Development Network for support, 
- * bugfixes and new versions at http://www.eve-dev.net
+ * bugfixes and new versions at http://www.eve-id.net
 
  * Requirements:
 
