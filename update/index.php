@@ -53,7 +53,10 @@ if (!session::isAdmin())
 if(isset($_GET['do']) && $_GET['do'] == 'force')
 {
 	$url=preg_replace('/(\?|&)do=force/','',$url);
-	config::set('DBUpdate', '001');
+	if(isset($_GET['level'])) config::set('DBUpdate', intval($_GET['level']));
+	else config::set('DBUpdate', '001');
+	$url=preg_replace('/(\?|&)level=[0-9]*/','',$url);
+	$smarty->assign('url',$url);
 }
 
 if(isset($_GET['package']))

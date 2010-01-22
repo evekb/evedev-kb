@@ -100,9 +100,9 @@ function update012()
 		if(config::get('012updatestatus') <5)
 		{
 			$step = 10000;
-			$qry->execute("SELECT COUNT(*) as cnt FROM kb3_kills");
-			$result = $qry->getRow();
-			$max = $result['cnt'];
+			//$qry->execute("SELECT MAX(kll_id) as cnt FROM kb3_kills");
+			//$result = $qry->getRow();
+			//$max = $result['cnt'];
 			if(!config::get('012_5_status')) config::set('012_5_status','0');
 			// add times to kb3_inv_detail.
 			$qry->execute("UPDATE kb3_inv_detail join kb3_kills on ind_kll_id = kll_id
@@ -110,7 +110,9 @@ function update012()
 				WHERE ind_timestamp < '0001-01-01'
 				AND kll_id >= ".config::get('012_5_status')."
 				AND kll_id < ".(config::get('012_5_status') + $step));
-			if($max < config::get('012_5_status') + $step)
+			$qry->execute("SELECT MIN(kll_id) as next FROM kb3_kills WHERE kll_id >= ".(config::get('012_5_status') + $step));
+			$row = $qry->getRow();
+			if(!isset($row['next']) || $row['next'] == null)
 			{
 				config::set('012updatestatus',5);
 				config::del('012_5_status');
@@ -121,7 +123,7 @@ function update012()
 			}
 			else
 			{
-				config::set('012_5_status', config::get('012_5_status') + $step);
+				config::set('012_5_status', $row['next']);
 				$smarty->assign('refresh',1);
 				$smarty->assign('content', "12. kb3_inv_detail timestamp updated rows ".(config::get('012_5_status') - $step)." - ".config::get('012_5_status'));
 				$smarty->display('update.tpl');
@@ -131,9 +133,9 @@ function update012()
 		if(config::get('012updatestatus') <6)
 		{
 			$step = 10000;
-			$qry->execute("SELECT COUNT(*) as cnt FROM kb3_kills");
-			$result = $qry->getRow();
-			$max = $result['cnt'];
+			//$qry->execute("SELECT MAX(kll_id) as cnt FROM kb3_kills");
+			//$result = $qry->getRow();
+			//$max = $result['cnt'];
 			if(!config::get('012_6_status')) config::set('012_6_status','0');
 			// add times to kb3_inv_detail.
 			$qry->execute("INSERT IGNORE INTO kb3_inv_all
@@ -142,7 +144,9 @@ function update012()
 				WHERE ind_kll_id >= ".config::get('012_6_status')."
 					AND ind_kll_id < ".(config::get('012_6_status') + $step)."
 				GROUP BY ind_kll_id, ind_all_id");
-			if($max < config::get('012_6_status') + $step)
+			$qry->execute("SELECT MIN(kll_id) as next FROM kb3_kills WHERE kll_id >= ".(config::get('012_6_status') + $step));
+			$row = $qry->getRow();
+			if(!isset($row['next']) || $row['next'] == null)
 			{
 				config::del('012_6_status');
 				config::set('012updatestatus',6);
@@ -153,7 +157,7 @@ function update012()
 			}
 			else
 			{
-				config::set('012_6_status', config::get('012_6_status') + $step);
+				config::set('012_6_status', $row['next']);
 
 				$smarty->assign('refresh',1);
 				$out = "12. kb3_inv_all rows ".(config::get('012_6_status') - $step);
@@ -167,9 +171,9 @@ function update012()
 		{
 			$step = 10000;
 			// add times to kb3_inv_detail.
-			$qry->execute("SELECT COUNT(*) as cnt FROM kb3_kills");
-			$result = $qry->getRow();
-			$max = $result['cnt'];
+			//$qry->execute("SELECT MAX(kll_id) as cnt FROM kb3_kills");
+			//$result = $qry->getRow();
+			//$max = $result['cnt'];
 			if(!config::get('012_7_status')) config::set('012_7_status','0');
 
 			$qry->execute("INSERT IGNORE INTO kb3_inv_crp
@@ -178,7 +182,9 @@ function update012()
 				WHERE ind_kll_id >= ".config::get('012_7_status')."
 					AND ind_kll_id < ".(config::get('012_7_status') + $step)."
 				GROUP BY ind_kll_id, ind_crp_id");
-			if($max < config::get('012_7_status') + $step)
+			$qry->execute("SELECT MIN(kll_id) as next FROM kb3_kills WHERE kll_id >= ".(config::get('012_7_status') + $step));
+			$row = $qry->getRow();
+			if(!isset($row['next']) || $row['next'] == null)
 			{
 				config::del('012_7_status');
 				config::set('012updatestatus',7);
@@ -189,7 +195,7 @@ function update012()
 			}
 			else
 			{
-				config::set('012_7_status', config::get('012_7_status') + $step);
+				config::set('012_7_status', $row['next']);
 				$smarty->assign('refresh',1);
 				$out = "12. kb3_inv_crp rows ".(config::get('012_7_status') - $step);
 				$out.= " - ".config::get('012_7_status')." added.";
