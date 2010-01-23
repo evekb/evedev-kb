@@ -65,7 +65,7 @@
 			{if $verify_yesno}
 				<img border="0" style="position:absolute; height:16px; width:16px;" src='{$img_url}/items/24_24/icon09_09.png' alt='Kill verified' title="Kill verified ID: {$verify_id}" />
 			{else}
-				<img border="0" style="position:absolute; height:16px; width:16px;" src='{$img_url}/items/24_24/icon09_13.png' alt='Kill not verified' title="Kill not verfied" />
+				<img border="0" style="position:absolute; height:16px; width:16px;" src='{$img_url}/items/24_24/icon09_13.png' alt='Kill not verified' title="Kill not verified" />
 			{/if}
 			</div>
 		{/if}
