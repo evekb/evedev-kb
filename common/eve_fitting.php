@@ -99,9 +99,6 @@ $slots = array(3 => "low slot",
 	7 => "subsystem slot",
 	6 => "drone bay");
 
-header("Content-Type: text/xml");
-header('Content-Disposition: attachment; filename="'.$shipname.'.xml"');
-
 
 // Some tools require xml formatted with indents.
 // So let's do this the ugly way
@@ -181,4 +178,20 @@ foreach ($slots as $i => $empty)
 }
 $xml .= "\t\t</fitting>\n\t</fittings>";
 
-echo $xml;
+if(!IS_IGB)
+{
+	header("Content-Type: text/xml");
+	header('Content-Disposition: attachment; filename="'.$shipname.'.xml"');
+	echo $xml;
+}
+else
+{
+	echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" ';
+	echo '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> ';
+	echo '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" dir="ltr">';
+	echo "<head><title>Eve fitting xml</title></head><body><form action = ''>\n<table><tr><td>\n<textarea id=\"fitting\" name=\"fitting\" cols=\"80\" rows=\"40\" readonly=\"readonly\">\n";
+	echo htmlspecialchars($xml, ENT_NOQUOTES);
+	echo "\n</textarea></td></tr>";
+	echo '<tr><td><input type="button" value="Select All" onclick="this.form.fitting.select();this.form.fitting.focus(); document.execCommand(\'Copy\')" />';
+	echo "</td></tr></table></form></body></html>";
+}
