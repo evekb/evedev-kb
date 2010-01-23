@@ -33,7 +33,7 @@ function update013()
 			{
 				if($testresult['Key_name'] == 'kll_id')
 					$indexkexists = true;
-				if($testresult['Key_name'] == 'site_kll_id')
+				if($testresult['Key_name'] == 'kll_site_id')
 					$indexsexists = true;
 			}
 			if($indexkexists)
@@ -48,7 +48,7 @@ function update013()
 			}
 			if(!$indexsexists)
 			{
-				$qry->execute("ALTER TABLE `kb3_comments` ADD INDEX `site_kll_id` ( `site` , `kll_id` ) ");
+				$qry->execute("ALTER TABLE `kb3_comments` ADD INDEX `kll_site_id` ( `kll_id`, `site` ) ");
 				config::set('013updatestatus',3);
 
 				$smarty->assign('refresh',1);
