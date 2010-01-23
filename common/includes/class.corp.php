@@ -157,7 +157,7 @@ class Corporation
      * \param $name The name of the new corporation.
      * \param $alliance The alliance this corporation belongs to.
      * \param $timestamp The timestamp the corporation's details were updated.
-     * \param $externalid The external CCP ID for the alliance.
+     * \param $externalid The external CCP ID for the corporation.
      */
 	function add($name, $alliance, $timestamp, $externalid = 0, $loadExternals = true)
 	{

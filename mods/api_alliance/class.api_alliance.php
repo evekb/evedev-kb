@@ -23,13 +23,12 @@ class APIAllianceMod
 	{
 		$tempMyCorp = new Corporation();
 
-		$myAlliName = $home->alliance->getName();
-
 		$myAlliAPI = new AllianceAPI();
 		$myAlliAPI->fetchalliances();
-		$myAlliAPI->UpdateAlliances();
 
-		$myAlliance = $myAlliAPI->LocateAlliance( $myAlliName );
+		// Use alliance ID if we have it
+		if($home->alliance->getExternalID()) $myAlliance = $myAlliAPI->LocateAllianceID( $home->alliance->getExternalID() );
+		else $myAlliance = $myAlliAPI->LocateAlliance( $home->alliance->getName() );
 
 		if($home->alliance->isFaction()) $home->page->setTitle('Faction details - '.$home->alliance->getName() . " [" . $myAlliance["shortName"] . "]");
 		else $home->page->setTitle('Alliance details - '.$home->alliance->getName() . " [" . $myAlliance["shortName"] . "]");
@@ -63,7 +62,7 @@ class APIAllianceMod
 				$tempMyCorp->lookup($myCorpAPI->getCorporationName());
 				if ($tempMyCorp->getID() == 0)
 				{
-					$tempMyCorp->add($myCorpAPI->getCorporationName(), $home->alliance , substr($tempcorp["startDate"], 0, 16));
+					$tempMyCorp->add($myCorpAPI->getCorporationName(), $home->alliance , substr($tempcorp["startDate"], $myCorpAPI->getCorporationID(), 16));
 				}
 
 				$membercorp = array();
@@ -126,7 +125,7 @@ class APIAllianceMod
 		foreach ( (array)$home->allianceCorps as $tempcorp )
 		{
 			$html .= "<tr class='kb-table-row-even'>";
-			$html .= "<td class='kb-table-cell'><a href=\"?a=corp_detail&crp_external_id=" . $tempcorp["corpExternalID"] . "\">" . $tempcorp["corpName"] . "</a></td>";
+			$html .= "<td class='kb-table-cell'><a href=\"?a=corp_detail&crp_ext_id=" . $tempcorp["corpExternalID"] . "\">" . $tempcorp["corpName"] . "</a></td>";
 			$html .= "<td class='kb-table-cell' align='center'>" . $tempcorp["ticker"] . "</td>";
 			$html .= "<td class='kb-table-cell' align='center'>" . $tempcorp["members"] . "</td>";
 			$html .= "<td class='kb-table-cell' align='center'>" . $tempcorp["joinDate"] . "</td>";

@@ -132,14 +132,9 @@ class pCorpDetail extends pageAssembly
 		global $smarty;
 		// The summary table is also used by the stats. Whichever is called
 		// first generates the table.
-		$corpname = str_replace(" ", "%20", $this->corp->getName() );
-		$myID = new API_NametoID();
-		$myID->setNames($corpname);
-		$html .= $myID->fetchXML();
-		$myNames = $myID->getNameData();
 
 		$myAPI = new API_CorporationSheet();
-		$myAPI->setCorpID($myNames[0]['characterID']);
+		$myAPI->setCorpID($this->corp->getExternalID());
 
 		$result .= $myAPI->fetchXML();
 

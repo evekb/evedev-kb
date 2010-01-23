@@ -1341,20 +1341,21 @@ class AllianceAPI
         foreach ($alliances as $arraykey => $arrayvalue)
         {
             $tempally = $arrayvalue;
+			if($tempally['allianceName'] == $name) return $tempally;
 
-            foreach ($tempally as $key => $value)
-            {
-                switch ($key)
-                {
-                    case "allianceName":
-                        //return $tempally;
-						if ( $value == $name )
-						{
-							return $tempally;
-						}
-                        break;
-                }
-            }
+//            foreach ($tempally as $key => $value)
+//            {
+//                switch ($key)
+//                {
+//                    case "allianceName":
+//                        //return $tempally;
+//						if ( $value == $name )
+//						{
+//							return $tempally;
+//						}
+//                        break;
+//                }
+//            }
         }
 		return false;
 	}
@@ -1372,20 +1373,20 @@ class AllianceAPI
         foreach ($alliances as $arraykey => $arrayvalue)
         {
             $tempally = $arrayvalue;
-
-            foreach ($tempally as $key => $value)
-            {
-                switch ($key)
-                {
-                    case "allianceID":
-                        //return $tempally;
-						if ( $value == $id )
-						{
-							return $tempally;
-						}
-                        break;
-                }
-            }
+			if($tempally['allianceID'] == $id) return $tempally;
+//            foreach ($tempally as $key => $value)
+//            {
+//                switch ($key)
+//                {
+//                    case "allianceID":
+//                        //return $tempally;
+//						if ( $value == $id )
+//						{
+//							return $tempally;
+//						}
+//                        break;
+//                }
+//            }
         }
 		return false;
 	}
@@ -1402,8 +1403,10 @@ class AllianceAPI
 		{
 			// Remove every single corp in the Killboard DB from their current Alliance
 			$db = new DBQuery(true);
+			$db->execute("SELECT all_id FROM kb3_alliances WHERE all_name LIKE 'None'");
+			$row = $db->getRow();
 			$db->execute("UPDATE kb3_corps
-							SET crp_all_id = 14");
+							SET crp_all_id = ".$row['all_id']);
 		}
 
 		$alliances = $this->alliances_;
@@ -4665,7 +4668,7 @@ function LoadGlobalData($path)
 	$temppath = substr($path, 0, strlen($path) - 9);
 	$configvalue = "API" . str_replace("/", "_", $temppath);
 
-$CachedTime = ApiCache::get($configvalue);
+	$CachedTime = ApiCache::get($configvalue);
 	$UseCaching = config::get('API_UseCache');
 
 	// API Caching system, If we're still under cachetime reuse the last XML, if not download the new one. Helps with Bug hunting and just better all round.
