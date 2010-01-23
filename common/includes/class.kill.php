@@ -769,7 +769,7 @@ class Kill
 	{
 		if(isset($this->commentcount_)) return $this->commentcount_;
 		$qry = new DBQuery();
-		$sql = "SELECT count(id) as comments FROM kb3_comments WHERE kll_id = '$kll_id'";
+		$sql = "SELECT count(id) as comments FROM kb3_comments WHERE kll_id = '$kll_id' AND (site = '".KB_SITE."' OR site IS NULL)";
 		// return 0 if query fails. May be incorrect but is harmless here
 		if(!$qry->execute($sql)) return 0;
 		$result = $qry->getRow();

@@ -443,7 +443,7 @@ class KillList
 			{
 				$this->sqlouterbottom_ .= ") list";
 				if($this->involved_) $this->sqlouterbottom_ .= ' join kb3_inv_detail ind ON (ind.ind_kll_id = list.kll_id)';
-				if($this->comments_) $this->sqlouterbottom_ .= ' left join kb3_comments com ON (list.kll_id = com.kll_id)';
+				if($this->comments_) $this->sqlouterbottom_ .= ' left join kb3_comments com ON (list.kll_id = com.kll_id AND (site = "'.KB_SITE.'" OR site IS NULL))';
 				$this->sqlouterbottom_ .= " group by list.kll_id";
 				// Outer query also needs to be ordered, if there's an order
 				if ($this->ordered_)
