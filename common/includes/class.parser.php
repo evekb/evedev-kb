@@ -108,8 +108,8 @@ class Parser
         $this->alliances = &$alliances;
         $this->ships = &$ships;
         $this->items = &$items;
-        //trim out any multiple spaces that may exist
-        $this->killmail_ = preg_replace('/ +/', ' ', $this->killmail_);
+        //trim out any multiple spaces that may exist -
+        //$this->killmail_ = preg_replace('/ +/', ' ', $this->killmail_);
 
         // header section
         $involvedpos = strpos($this->killmail_, "Involved parties:");
@@ -139,7 +139,7 @@ class Parser
 
         for($counter = 0; $counter <= $upper_limit; $counter++)
         {
-            if(preg_match("/Victim: (.*)/", $victim[$counter], $matches))
+	    if(preg_match("/Victim: (.*)/", $victim[$counter], $matches))
             {
                 if($matches[1])
                     $victimname = $matches[1];
