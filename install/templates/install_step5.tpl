@@ -15,7 +15,7 @@
     </form>
     <br/>
     {if $res_check}
-	<table class="kb-table" width="400px">
+	<table class="kb-table" width="400">
 	<tr class="kb-table-header">
 	<td colspan="2">Results</td></tr>
 	{section name=result loop=$results}
@@ -23,8 +23,8 @@
 		<tr><td>{$results[result].descr}</td><td><a href="{$results[result].link}</a></td></tr>
 	    {/strip}
 	{/section}
-    {/if}
     </table>
+    {/if}
     <br/>
 {else}
     <p>Your selection has been saved, please proceed.</p>

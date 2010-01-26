@@ -169,14 +169,14 @@ if (!empty($_REQUEST['sub']) && $_REQUEST['sub'] == 'data')
 				{
 					echo '<br/>Finished importing this file.<br/>';
 					echo '<meta http-equiv="refresh" content="1; URL=?step=4&sub=data" />';
-					echo 'Automatic reload in 1s for next chunk. <a href="?step=4&sub=data">Manual Link</a><br/>';
+					echo 'Automatic reload in 1s for next chunk. <a href="?step=4&amp;sub=data">Manual Link</a><br/>';
 					$_SESSION['sqlinsert']++;
 				}
 				else
 				{
 					echo $error;
 					echo '<meta http-equiv="refresh" content="20; URL=?step=4&sub=data" />';
-					echo 'Automatic reload in 20s for next chunk because an error occurred. <a href="?step=4&sub=data">Manual Link</a><br/>';
+					echo 'Automatic reload in 20s for next chunk because an error occurred. <a href="?step=4&amp;sub=data">Manual Link</a><br/>';
 				}
 
 				$did = true;
@@ -261,7 +261,7 @@ if (!empty($_REQUEST['sub']) && $_REQUEST['sub'] == 'data')
 				}
 				$_SESSION['sqlinsert']++;
 				echo '<meta http-equiv="refresh" content="1; URL=?step=4&sub=data" />';
-				echo 'Automatic reload in 1s for next chunk. <a href="?step=4&sub=data">Manual Reload</a><br/>';
+				echo 'Automatic reload in 1s for next chunk. <a href="?step=4&amp;sub=data">Manual Reload</a><br/>';
 				$did = true;
 				break 2;
 			}
@@ -292,7 +292,7 @@ if (!empty($_REQUEST['sub']) && $_REQUEST['sub'] == 'data')
 		}
 		if ($stoppage)
 		{
-			echo 'An error has occured with one of the tables. Please <a href="?step=4&do=reset">reset</a> and try again.<br/>';
+			echo 'An error has occured with one of the tables. Please <a href="?step=4&amp;do=reset">reset</a> and try again.<br/>';
 		}
 		else
 		{
@@ -300,7 +300,7 @@ if (!empty($_REQUEST['sub']) && $_REQUEST['sub'] == 'data')
 			echo 'You can now create or search for your corporation/alliance: <a href="?step=5">Next Step --&gt;</a><br/>';
 		}
 	}
-	echo '<br/>Use <a href="?step=4&sub=datasel&do=reset">reset</a> to step back to the optional package selection.<br/>';
+	echo '<br/>Use <a href="?step=4&amp;sub=datasel&amp;do=reset">reset</a> to step back to the optional package selection.<br/>';
 }
 ?>
 <div class="block-header2">MySQL Data Import</div>
@@ -318,7 +318,7 @@ echo '<br/>';
 if (!$structadd && (empty($_REQUEST['sub']) || ($_REQUEST['sub'] != 'datasel' && $_REQUEST['sub'] != 'data')))
 {
 	echo 'All of the table structures seem to be in the database.<br/>';
-	echo 'Please proceed with <a href="?step=4&sub=datasel">importing the data</a><br/>';
+	echo 'Please proceed with <a href="?step=4&amp;sub=datasel">importing the data</a><br/>';
 
 	echo '<br/><br/>If you have aborted the installation and you already have the data in your tables, you may now <a href="?step=5">bypass the import</a><br/>';
 	echo 'To make sure, I will check some table data for you now:<br/><br/>';
@@ -352,7 +352,7 @@ if (!$structadd && (empty($_REQUEST['sub']) || ($_REQUEST['sub'] != 'datasel' &&
 }
 elseif ($structadd)
 {
-	echo 'Table structures have to be added. Please <a href="?step=4&sub=struct">create them</a>.<br/>';
+	echo 'Table structures have to be added. Please <a href="?step=4&amp;sub=struct">create them</a>.<br/>';
 }
 
 if (isset($_REQUEST['sub']) && $_REQUEST['sub'] == 'datasel')
@@ -372,7 +372,7 @@ if (isset($_REQUEST['sub']) && $_REQUEST['sub'] == 'datasel')
     }
     ?>
 <tr><td width="120"></td><td><input type=submit name=submit value="Ok"></td></tr>
-</table>
+</table></form>
 <?php
 }
 ?>

@@ -1,4 +1,5 @@
 <?php
+//error_reporting(E_ERROR);
 include_once('../common/smarty/Smarty.class.php');
 
 //May be a bit overkill to use smarty here, but this way the html is in the template

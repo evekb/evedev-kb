@@ -57,6 +57,6 @@ cache_dir	cache/cache
 km_cache_dir	cache/mails
 summarytable	1
 cfg_qcache	0
-DBUpdate	012
+DBUpdate	013
 cache_update	*
 cache_time	10

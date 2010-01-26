@@ -114,6 +114,7 @@ $smarty->display('install_step2.tpl');
 
 function checkdir($dir)
 {
+	$text = '';
     if (!file_exists($dir))
     {
         $text = '<b>Creating '.$dir.' for you...</b><br/>';

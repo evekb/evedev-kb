@@ -1,5 +1,9 @@
 <?php
-if(!$installrunning) {header('Location: index.php');die();}
+if(!$installrunning)
+{
+	header('Location: index.php');
+	die();
+}
 $stoppage = true;
 global $smarty;
 
@@ -57,79 +61,191 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'create')
 }
 if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'select')
 {
-    $_SESSION['sett']['aid'] = $_REQUEST['a'];
-    $_SESSION['sett']['cid'] = $_REQUEST['c'];
-    $stoppage = false;
+	$_SESSION['sett']['aid'] = $_REQUEST['a'];
+	$_SESSION['sett']['cid'] = $_REQUEST['c'];
+	$stoppage = false;
 }
 if ($stoppage)
 {
 
-    if (!empty($_REQUEST['searchphrase']) && strlen($_REQUEST['searchphrase']) >= 3)
-    {
-	switch ($_REQUEST['searchtype'])
+	if (!empty($_REQUEST['searchphrase']) && strlen($_REQUEST['searchphrase']) >= 3)
 	{
-	    case "corp":
-		$query = "SELECT crp.crp_id, crp.crp_name, ali.all_name
+		switch ($_REQUEST['searchtype'])
+		{
+			case "corp":
+				$query = "SELECT crp.crp_id, crp.crp_name, ali.all_name
 			FROM kb3_corps crp, kb3_alliances ali
-			WHERE lower( crp.crp_name ) LIKE lower( '%".addslashes(stripslashes($_REQUEST['searchphrase']))."%' )
+			WHERE crp.crp_name LIKE '%".addslashes(stripslashes($_REQUEST['searchphrase']))."%'
 			AND crp.crp_all_id = ali.all_id
 			ORDER BY crp.crp_name";
-		break;
-	    case "alliance":
-		$query = "SELECT ali.all_id, ali.all_name
+				break;
+			case "alliance":
+				$query = "SELECT ali.all_id, ali.all_name
 			FROM kb3_alliances ali
-			WHERE lower( ali.all_name ) LIKE lower( '%".addslashes(stripslashes($_REQUEST['searchphrase']))."%' )
+			WHERE ali.all_name LIKE '%".addslashes(stripslashes($_REQUEST['searchphrase']))."%'
 			ORDER BY ali.all_name";
-		break;
-	}
+				break;
+		}
 
-	$result = mysql_query($query);
+		$result = mysql_query($query);
 
-	$unsharp = true;
-	$results = array();
-	while ($row = mysql_fetch_assoc($result))
-	{
-	    switch ($_REQUEST['searchtype'])
-	    {
-		case 'corp':
-		    $link = "?step=5&do=select&a=0&c=".$row['crp_id'].'">Select';
-		    $descr = 'Corp '.$row['crp_name'].', member of '.$row['all_name'];
-		    if ($row['crp_name'] == addslashes(stripslashes($_REQUEST['searchphrase'])))
-		    {
-			$unsharp = false;
-		    }
-		    break;
-		case 'alliance':
-		    $link = '?step=5&do=select&c=0&a='.$row['all_id'].'">Select';
-		    $descr = 'Alliance '.$row['all_name'];
-		    if ($row['all_name'] == addslashes(stripslashes($_REQUEST['searchphrase'])))
-		    {
-			$unsharp = false;
-		    }
-		    break;
-	    }
-	    $results[] = array('descr' => $descr, 'link' => $link);
+		$unsharp = true;
+		$results = array();
+		while ($row = mysql_fetch_assoc($result))
+		{
+			switch ($_REQUEST['searchtype'])
+			{
+				case 'corp':
+					$link = "?step=5&amp;do=select&amp;a=0&amp;c=".$row['crp_id'].'">Select';
+					$descr = 'Corp '.$row['crp_name'].', member of '.$row['all_name'];
+					if ($row['crp_name'] == addslashes(stripslashes($_REQUEST['searchphrase'])))
+					{
+						$unsharp = false;
+					}
+					break;
+				case 'alliance':
+					$link = '?step=5&amp;do=select&amp;c=0&amp;a='.$row['all_id'].'">Select';
+					$descr = 'Alliance '.$row['all_name'];
+					if (strtolower($row['all_name']) == strtolower(stripslashes($_REQUEST['searchphrase'])))
+					{
+						$unsharp = false;
+					}
+					break;
+			}
+			$results[] = array('descr' => $descr, 'link' => $link);
+		}
+		if (!count($results) || $unsharp)
+		{
+			$name = str_replace(" ", "%20", stripslashes($_REQUEST['searchphrase']) );
+			$api = new Api();
+			$idArr = $api->getCharId($name);
+
+			// If a name was found check if it belongs to a corp.
+			if(!empty($idArr['characterID']))
+			{
+				$api = new Api();
+				$cidArr = $api->getCorpInfo($idArr['characterID']);
+			}
+
+			if ($_REQUEST['searchtype'] == 'corp')
+			{
+				// If a name was found check that it belongs to a corp.
+				if(empty($cidArr['corporationID']))
+				{
+					$link = '?step=5&amp;do=create&amp;c='.stripslashes($_REQUEST['searchphrase']).'&amp;a=0">Create';
+					$descr = 'Corporation not found. Check spelling.';
+				}
+				else
+				{
+					$link = '?step=5&amp;do=create&amp;c='.htmlentities($idArr['characterName']).'&amp;a=0">Create';
+					$descr = 'Corporation: '.htmlentities($idArr['characterName']);
+				}
+			}
+			else
+			{
+				// Could check against the alliance xml but the download is big
+				// enough to risk timeouts. For now just check if name exists
+				// and is not a corporation.
+				if(empty($idArr['characterID']) || !empty($cidArr['corporationID']))
+				{
+					$link = '?step=5&amp;do=create&amp;a='.stripslashes($_REQUEST['searchphrase']).'&amp;c=0">Create';
+					$descr = 'Alliance not found. Check spelling.';
+				}
+				else
+				{
+					$link = '?step=5&amp;do=create&amp;a='.htmlentities($idArr['characterName']).'&amp;c=0">Create';
+					$descr = 'Alliance: '.htmlentities($idArr['characterName']);
+				}
+			}
+			$results[] = array('descr' => $descr, 'link' => $link);
+		}
+		$smarty->assign('res_check', count($results) > 0);
+		$smarty->assign('results', $results);
 	}
-	if (!count($results) || $unsharp)
-	{
-	    if ($_REQUEST['searchtype'] == 'corp')
-	    {
-		$link = '?step=5&do=create&c='.stripslashes($_REQUEST['searchphrase']).'&a=0">Create';
-		$descr = 'Corporation: '.stripslashes($_REQUEST['searchphrase']);
-	    }
-	    else
-	    {
-		$link = '?step=5&do=create&a='.stripslashes($_REQUEST['searchphrase']).'&c=0">Create';
-		$descr = 'Alliance: '.stripslashes($_REQUEST['searchphrase']);
-	    }
-	    $results[] = array('descr' => $descr, 'link' => $link);
-	}
-	$smarty->assign('res_check', count($results) > 0);
-	$smarty->assign('results', $results);
-    }
 }
 $smarty->assign('stoppage', $stoppage);
-$smarty->assign('conflict', $_SESSION['sett']['aid'] == 0 && $_SESSION['sett']['cid'] == 0);
+$smarty->assign('conflict', empty($_SESSION['sett']['aid']) && empty($_SESSION['sett']['cid']));
 $smarty->assign('nextstep', $_SESSION['state']+1);
 $smarty->display('install_step5.tpl');
-?>
+
+class Api
+{
+    function Api()
+    {
+        $this->apiroot_ = "api.eve-online.com";
+    }
+
+    function getCharId($name)
+    {
+        // make the Namelist
+        $query="names=".str_replace(' ', '%20', $name);
+
+        return getdata($this->apiroot_,"/eve/CharacterID.xml.aspx",$query);
+    }
+    function getCorpInfo($id)
+    {
+		$query = "corporationID=".$id;
+        return getdata($this->apiroot_,"/corp/CorporationSheet.xml.aspx",$query);
+    }
+}
+
+function getdata($apiroot, $target, $query)
+{
+    $fp = fsockopen($apiroot, 80);
+
+    if (!$fp)
+    {
+        $id = 0;
+		$name = "";
+		$corp = "";
+    } else {
+        // request the xml
+        fputs ($fp, "POST $target HTTP/1.0\r\n");
+        fputs ($fp, "Host: $apiroot\r\n");
+        fputs ($fp, "Content-Type: application/x-www-form-urlencoded\r\n");
+        fputs ($fp, "User-Agent: EDKInstaller\r\n");
+        fputs ($fp, "Content-Length: " . strlen($query) . "\r\n");
+        fputs ($fp, "Connection: close\r\n\r\n");
+        fputs ($fp, "$query\r\n");
+
+        // retrieve contents
+        $contents = "";
+		$id = "";
+		$name = "";
+		$corp = "";
+        while (!feof($fp))
+            $contents .= fgets($fp);
+
+        // close connection
+        fclose($fp);
+        // Retrieve Char ID
+        $start = strpos($contents, "characterID=\"");
+        if ($start !== FALSE)
+            $id = substr($contents, $start + strlen("characterID=\""));
+
+        $start = strpos($id, "\"");
+        if ($start !== FALSE)
+            $id = substr($id, 0, (strlen(substr($id, $start)))*(-1));
+		$id = intval($id);
+
+		// Retrieve Char Name
+        $start = strpos($contents, "row name=\"");
+        if ($start !== FALSE)
+            $name = substr($contents, $start + strlen("row name=\""));
+
+        $start = strpos($name, "\"");
+        if ($start !== FALSE)
+            $name = substr($name, 0, (strlen(substr($name, $start)))*(-1));
+
+		// Retrieve Corporation ID
+        $start = strpos($contents, "<corporationID>");
+        if ($start !== FALSE)
+            $corp = substr($contents, $start + strlen("<corporationID>"));
+
+        $start = strpos($corp, "</corporationID>");
+        if ($start !== FALSE)
+            $corp = substr($corp, 0, (strlen(substr($corp, $start)))*(-1));
+		$corp = intval($corp);
+    }
+    return array('characterID' => $id, 'characterName' => $name, 'corporationID' => $corp);
+}

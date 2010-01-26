@@ -7,7 +7,7 @@ $amb_img = '../img/sta_bad.png';
 global $smarty;
 $smarty->assign('db_image', $fail_img);
 
-if (!empty($_REQUEST['submit']))
+if (!empty($_POST['submit']) && $_POST['submit'] == 'Test')
 {
 	$_SESSION['sql']['host'] = $_POST['host'];
 	$_SESSION['sql']['user'] = $_POST['user'];
@@ -23,31 +23,34 @@ if (empty($_SESSION['sql']['host']))
 else $host = $_SESSION['sql']['host'];
 
 //check if we already have a config file
-$smarty->assign('conf_exists', file_exists('../kbconfig.php') && filesize('../kbconfig.php') > 0);
     
-if (file_exists('../kbconfig.php')) $smarty->assign('conf_image', $amb_img);
-if (file_exists('../kbconfig.php') && filesize('../kbconfig.php') > 0)
+if (file_exists('../kbconfig.php') && (empty($_POST['submit']) || $_POST['submit'] != 'Test'))
 {
-	include_once('../kbconfig.php');
-	$_SESSION['sql'] = array();
-	$_SESSION['sql']['host'] = DB_HOST;
-
-	if($_SESSION['sql']['host'] != "DB_HOST")
+	if (filesize('../kbconfig.php') > 0)
 	{
-		$_SESSION['sql']['user'] = DB_USER;
-		$_SESSION['sql']['pass'] = DB_PASS;
-		$_SESSION['sql']['db'] = DB_NAME;
-		$_SESSION['sql']['engine'] = DB_TYPE;
+		$smarty->assign('conf_exists', true);
+		$smarty->assign('conf_image', $amb_img);
+		include_once('../kbconfig.php');
+		$_SESSION['sql'] = array();
+		$_SESSION['sql']['host'] = DB_HOST;
+
+		if($_SESSION['sql']['host'] != "DB_HOST")
+		{
+			$_SESSION['sql']['user'] = DB_USER;
+			$_SESSION['sql']['pass'] = DB_PASS;
+			$_SESSION['sql']['db'] = DB_NAME;
+			$_SESSION['sql']['engine'] = "InnoDB";
+		}
+		else {
+			clearConnectionStrings();
+			$_SESSION['sql']['host'] = $host;
+			$smarty->assign('conf_exists', false);
+		}
 	}
-	else {
+	else
+	{
 		clearConnectionStrings();
-		$_SESSION['sql']['host'] = $host;
-		$smarty->assign('conf_exists', false);
 	}
-}
-else
-{
-    clearConnectionStrings();
 }
 if (empty($_SESSION['sql']['host']))
 	$smarty->assign('db_host', $host);
