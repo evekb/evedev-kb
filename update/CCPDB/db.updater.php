@@ -22,10 +22,11 @@ class DBUpdater
     function runQueries()
     {
 	$fp = gzopen($this->fileName, 'r');
+    $qry = new DBQuery(true);
 	while(!feof($fp))
 	{
 	    $line = fgets($fp);
-	    $qry = new DBNormalQuery(true);
+		if(empty($line)) continue;
 	    $qry->execute($line);
 	    $qry->queryCount(true);   
 	}
@@ -33,4 +34,4 @@ class DBUpdater
 	return $qry->queryCount();
     }
 }
-?>
+

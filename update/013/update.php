@@ -52,7 +52,7 @@ function update013()
 				config::set('013updatestatus',3);
 
 				$smarty->assign('refresh',1);
-				$smarty->assign('content', "13. kb3_comments site_kll_id index added");
+				$smarty->assign('content', "13. kb3_comments kll_site_id index added");
 				$smarty->display('update.tpl');
 				die();
 			}

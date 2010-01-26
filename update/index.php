@@ -50,6 +50,13 @@ if (!session::isAdmin())
 	}
 }
 
+if(phpversion() < 5)
+{
+	$smarty->assign('content', "PHP version 5.0 or higher is required. You have version ".phpversion());
+	$smarty->display('update.tpl');
+	die;
+}
+
 if(isset($_GET['do']) && $_GET['do'] == 'force')
 {
 	$url=preg_replace('/(\?|&)do=force/','',$url);
