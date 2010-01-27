@@ -56,17 +56,17 @@ $page = str_replace('.', '', $_GET['a']);
 $page = str_replace('/', '', $page);
 if ($page == '' || $page == 'index')
 {
-    $page = 'home';
+	$page = 'home';
 }
 
 // check for the igb
 if (strpos($_SERVER['HTTP_USER_AGENT'], 'EVE-IGB') !== FALSE)
 {
-    define('IS_IGB', true);
+	define('IS_IGB', true);
 }
 else
 {
-    define('IS_IGB', false);
+	define('IS_IGB', false);
 }
 
 // load the config from the database
@@ -143,24 +143,24 @@ session::init();
 // reinforced management
 if (config::get('auto_reinforced'))
 {
-    // first check if we are in reinforced
-    if (config::get('is_reinforced'))
-    {
-        // every 1/x request we check for disabling RF
-        if (rand(1, config::get('reinforced_rf_prob')) == 1)
-        {
-            cache::checkLoad();
-        }
-    }
-    else
-    {
-        // reinforced not active
-        // check for load and activate reinforced if needed
-        if (rand(1, config::get('reinforced_prob')) == 1)
-        {
-            cache::checkLoad();
-        }
-    }
+	// first check if we are in reinforced
+	if (config::get('is_reinforced'))
+	{
+		// every 1/x request we check for disabling RF
+		if (rand(1, config::get('reinforced_rf_prob')) == 1)
+		{
+			cache::checkLoad();
+		}
+	}
+	else
+	{
+		// reinforced not active
+		// check for load and activate reinforced if needed
+		if (rand(1, config::get('reinforced_prob')) == 1)
+		{
+			cache::checkLoad();
+		}
+	}
 }
 
 if(config::get('DBUpdate') < LATEST_DB_UPDATE)
@@ -191,40 +191,40 @@ if(config::get('DBUpdate') < LATEST_DB_UPDATE)
 // all admin files are now in the admin directory and preload the menu
 if (substr($page, 0, 5) == 'admin')
 {
-    require_once('common/admin/admin_menu.php');
-    $page = 'admin/'.$page;
+	require_once('common/admin/admin_menu.php');
+	$page = 'admin/'.$page;
 }
 
 // old modcode for loading settings
 if (substr($page, 0, 9) == 'settings_')
 {
-    $settingsPage = true;
+	$settingsPage = true;
 }
 else
 {
-    $settingsPage = false;
+	$settingsPage = false;
 }
 $mods_active = explode(',', config::get('mods_active'));
 $modOverrides = false;
 $modconflicts = array();
 foreach ($mods_active as $mod)
 {
-    // load all active modules which need initialization
-    if (file_exists('mods/'.$mod.'/init.php'))
-    {
-        include('mods/'.$mod.'/init.php');
-    }
-    if (file_exists('mods/'.$mod.'/'.$page.'.php'))
-    {
+	// load all active modules which need initialization
+	if (file_exists('mods/'.$mod.'/init.php'))
+	{
+		include('mods/'.$mod.'/init.php');
+	}
+	if (file_exists('mods/'.$mod.'/'.$page.'.php'))
+	{
 		$modconflicts[] = $mod;
-        $modOverrides = true;
-        $modOverride = $mod;
-    }
+		$modOverrides = true;
+		$modOverride = $mod;
+	}
 	if(count($modconflicts)>1)
 	{
 		echo "<html><head></head><body>There are multiple active mods ".
-			"for this page. Only one may be active at a time. All others ".
-			"must be deactivated in the admin panel.<br>";
+				"for this page. Only one may be active at a time. All others ".
+				"must be deactivated in the admin panel.<br>";
 		foreach($modconflicts as $modname) echo $modname." <br> ";
 		echo "</body>";
 		die();
@@ -234,7 +234,7 @@ $none = '';
 event::call('mods_initialised', $none);
 if (!$settingsPage && !file_exists('common/'.$page.'.php') && !$modOverrides)
 {
-    $page = 'home';
+	$page = 'home';
 }
 // Serve feeds to feed fetchers.
 if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK Feedfetcher') !== false) $page = 'feed';
@@ -258,8 +258,8 @@ $smarty->assign('kb_host', KB_HOST);
 $smarty->assign_by_ref('config', $config);
 $smarty->assign('is_IGB', IS_IGB);
 
-// pilot id not fully implemented yet.
-if (0 && config::get('cfg_pilotid'))
+// Set the name of the board owner.
+if (config::get('cfg_pilotid'))
 {
 	require_once('common/includes/class.pilot.php');
 	$pilot=new Pilot(PILOT_ID);
@@ -288,22 +288,22 @@ cache::check($page);
 if(isset($boardMessage)) $smarty->assign('message', $boardMessage);
 if ($settingsPage)
 {
-    if (!session::isAdmin())
-    {
-        header('Location: ?a=login');
-        echo '<a href="?a=login">Login</a>';
-        exit;
-    }
+	if (!session::isAdmin())
+	{
+		header('Location: ?a=login');
+		echo '<a href="?a=login">Login</a>';
+		exit;
+	}
 
-    include('mods/'.substr($page, 9, strlen($page)-9).'/settings.php');
+	include('mods/'.substr($page, 9, strlen($page)-9).'/settings.php');
 }
 elseif ($modOverrides)
 {
-    include('mods/'.$modOverride.'/'.$page.'.php');
+	include('mods/'.$modOverride.'/'.$page.'.php');
 }
 else
 {
-    include('common/'.$page.'.php');
+	include('common/'.$page.'.php');
 }
 
 cache::generate();
