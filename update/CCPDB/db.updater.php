@@ -27,6 +27,7 @@ class DBUpdater
 	{
 	    $line = fgets($fp);
 		if(empty($line)) continue;
+		if(stripos($line, '--') == 0) continue;
 	    $qry->execute($line);
 	    $qry->queryCount(true);   
 	}

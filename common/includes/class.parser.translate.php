@@ -224,6 +224,15 @@ class Translate
             $this->killmail_ = preg_replace($search, $replace, $this->killmail_);
         }
 
+	if($this->language_ == 'dom11')
+	{
+	    $search = 'Eifyr and Co ';
+	    $replace = 'Eifyr and Co. ';
+	    
+            $this->killmail_ = str_replace($search, $replace, $this->killmail_);
+	    var_dump($this->killmail_);
+	}
+
         return $this->killmail_;
     }
 }

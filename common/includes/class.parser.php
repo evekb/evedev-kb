@@ -54,8 +54,11 @@ class Parser
         $timestamp = substr($this->killmail_, 0, 16);
         $timestamp = str_replace('.', '-', $timestamp);
 
-
-        $dom_release = '2009-12-03 12:00:00';
+	$dom11_release = '2010-01-21 12:00:00';
+	if(strtotime($timestamp) < strtotime($dom11_release))
+            $this->preparse('dom11');
+	 
+	$dom_release = '2009-12-03 12:00:00';
         if(strtotime($timestamp) < strtotime($dom_release))
             $this->preparse('dominion');
 
@@ -792,7 +795,7 @@ class Parser
 
     function preparse($set)
     {
-        $translate = new Translate($set);
+	$translate = new Translate($set);
         $this->killmail_ = $translate->getTranslation($this->killmail_);
     }
 	//! Return alliance from cached list or look up a new name.
