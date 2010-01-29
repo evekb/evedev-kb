@@ -1,15 +1,29 @@
 -------------------------------------------
-Eve Development Network Killboard v3.0.0 alpha
+Eve Development Network Killboard v3.0.0 
 -------------------------------------------
 
 VERSION HISTORY
-v3.0
-PHP5 support only. PHP 4 may work in some cases.
+v3.0.0
+PHP5 support only. PHP 4 may work in some cases but is not supported.
 External ID for kills, corps and alliances added
 large database handling improved
 extended theme support
 event driven page modification
-
+-------------------------------------------
+-------------------------------------------
+v2.0.10 (svn r488)
+Date function works in php4
+-------------------------------------------
+v2.0.9 (svn r486)
+Year end date handling fixed.
+missing rank mod images returned.
+Dominion parser and db
+-------------------------------------------
+v2.0.8 (svn r479)
+Board updated with Dominion installation DB and IGB pages changed.
+PHP4 compatibility improved
+Rank mod no longer gives EWAR award for missile use.
+-------------------------------------------
 v2.0.7 (svn r476)
 PHP4 compatibility improved
 Install speed increased
@@ -18,7 +32,7 @@ session handling improved
 corrected ship class filtering
 pilot's corp reset correctly
 eve-dev references changed to eve-id
-
+-------------------------------------------
 v2.0.6 (svn r459)
 Security fixes
 Updated parser
