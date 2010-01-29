@@ -1,15 +1,16 @@
 <?php
 
-class Navigation{
+class Navigation
+{
 
 	function Navigation()
 	{
 		// checking if a minimum navigation exists
 		$this->check_navigationtable();
 
-        $this->sql_start = "SELECT * FROM kb3_navigation";
-        $this->sql_end = " AND KBSITE = '" . KB_SITE . "' ORDER BY posnr";
-        $this->type_ = 'top';
+		$this->sql_start = "SELECT * FROM kb3_navigation";
+		$this->sql_end = " AND KBSITE = '" . KB_SITE . "' ORDER BY posnr";
+		$this->type_ = 'top';
 	}
 
 	function execQuery()
@@ -19,10 +20,12 @@ class Navigation{
 		$query = $this->sql_start;
 		$query .= " WHERE nav_type = '$this->type_'";
 
-		if (Killboard::hasContracts() == false){
+		if (Killboard::hasContracts() == false)
+		{
 			$query .= " AND url != '?a=contracts'";
 		}
-		if (Killboard::hasCampaigns() == false){
+		if (Killboard::hasCampaigns() == false)
+		{
 			$query .= " AND url != '?a=campaigns'";
 		}
 		if (config::get('public_losses'))
@@ -35,14 +38,15 @@ class Navigation{
 		}
 		if (config::get('public_stats')=='remove')
 		{
-			$query .= " AND url != '?a=stats'";
+			$query .= " AND url != '?a=self_detail'";
 		}
 		$query .= " AND (page = '".$this->site_."' OR page = 'ALL_PAGES') AND hidden = 0";
 		$query .= $this->sql_end;
 		$this->qry->execute($query);
 	}
 
-	function getRow(){
+	function getRow()
+	{
 		return $this->qry->getRow();
 	}
 
@@ -51,39 +55,33 @@ class Navigation{
 		$this->type_ = $type;
 	}
 
-	function setSite($site){
+	function setSite($site)
+	{
 		$this->site_ = $site;
 	}
 
 	function generateMenu()
-    {
-    	$this->site_ = $site;
-    	$this->execQuery();
+	{
+		$this->site_ = $site;
+		$this->execQuery();
 
-        $menu = new Menu();
-    	while ($row = $this->getRow())
-    	{
-    		// i know thats a bad hack
-    		$url = $row['url'] .'" target="'.$row['target'];
-    		$menu->add($url , $row['descr']);
-    	}
-        return $menu;
-    }
-
-    function generateMenuBox()
-    {
-    	// TODO
-    }
-
-    function check_navigationtable(){
-		if (CORP_ID)
+		$menu = new Menu();
+		while ($row = $this->getRow())
 		{
-		    $statlink = '?a=corp_detail&amp;crp_id='.CORP_ID;
+			// i know thats a bad hack
+			$url = $row['url'] .'" target="'.$row['target'];
+			$menu->add($url , $row['descr']);
 		}
-		elseif (ALLIANCE_ID)
-		{
-		    $statlink = '?a=alliance_detail&amp;all_id='.ALLIANCE_ID;
-		}
+		return $menu;
+	}
+
+	function generateMenuBox()
+	{
+		// TODO
+	}
+
+	function check_navigationtable()
+	{
 		$sql = "select count(KBSITE) as cnt from kb3_navigation WHERE KBSITE = '".KB_SITE."'";
 		$qry = new DBQuery(true);
 		// return false if query fails
@@ -93,7 +91,6 @@ class Navigation{
 		{
 			$queries = "INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr`,`page` ,`hidden`,`KBSITE`) VALUES ('top',1,'Home','?a=home','_self',1,'ALL_PAGES',0,'".KB_SITE."');
 				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Campaigns','?a=campaigns','_self',2,'ALL_PAGES',0,'".KB_SITE."');
-				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Contracts','?a=contracts','_self',3,'ALL_PAGES',0,'".KB_SITE."');
 				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Post Mail','?a=post','_self',4,'ALL_PAGES',0,'".KB_SITE."');
 				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Stats','?a=self_detail','_self',5,'ALL_PAGES',0,'".KB_SITE."');
 				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Awards','?a=awards','_self',6,'ALL_PAGES',0,'".KB_SITE."');
@@ -101,16 +98,15 @@ class Navigation{
 				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Search','?a=search','_self',8,'ALL_PAGES',0,'".KB_SITE."');
 				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Admin','?a=admin','_self',9,'ALL_PAGES',0,'".KB_SITE."');
 				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'About','?a=about','_self',10,'ALL_PAGES',0,'".KB_SITE."');";
-		 	$query = explode("\n", $queries);
-		 	$qry = new DBQuery(true);
+			$query = explode("\n", $queries);
+			$qry = new DBQuery(true);
 			foreach ($query as $querystring)
 			{
 				if ($string = trim(str_replace(');', ')', $querystring)))
 				{
-				    $qry->execute($string);
+					$qry->execute($string);
 				}
 			}
 		}
 	}
 }
-?>
