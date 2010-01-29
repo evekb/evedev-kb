@@ -189,110 +189,6 @@ class DBNormalQuery_mysqli
     {
         return mysqli_rollback($this->dbconn_->id());
     }
-	//! Prepare a statement.
-	
-	/* \param $sql String containing a prepared statement.
-	 * \return true on success and false on failure.
-	 */
-	function prepare($sql)
-	{
-		$this->stmt = $this->dbconn_->id()->prepare($sql);
-		if(!$this->stmt)
-		{
-            if(defined('KB_PROFILE'))
-			{
-				DBDebug::recordError("Database error: ".$this->stmt->error);
-				DBDebug::recordError("SQL: ".$sql);
-			}
-            if (defined('DB_HALTONERROR') && DB_HALTONERROR)
-            {
-                echo "Database error: " . $this->stmt->error . "<br>";
-                echo "SQL: " . $sql . "<br>";
-                exit;
-            }
-            else
-            {
-                return false;
-            }
-		}
-		return true;
-	}
-	//! Bind the prepared query parameters to the given variables.
-
-	/*! bound parameters can not be changed. While this can be changed as per
-	 * bind_results it would break future caching. For now it stays unbound.
-	 */
-	function bind_param()
-	{
-		$arr[0]=$this->stmt;
-		$args = func_get_args();
-		$Args = array();
-        foreach($args as $k => &$arg){
-            $Args[$k] = &$arg;
-        }
- 		array_unshift($Args,$this->stmt);
-		return call_user_func_array('mysqli_stmt_bind_param',$Args);
-	}
-	//! Bind the prepared query results to the given variables.
-
-	/*! The hideous argument list is there as func_get_args only returns a copy
-	 * of the arguments rather than a reference so references to the original
-	 * arguments do not reach the prepared statement.
-	 */
-
-	function bind_result(&$arg0=null, &$arg1=null, &$arg2=null, &$arg3=null,
-		&$arg4=null, &$arg5=null, &$arg6=null, &$arg7=null, &$arg8=null,
-		&$arg9=null, &$arg10=null, &$arg11=null, &$arg12=null, &$arg13=null,
-		&$arg14=null, &$arg15=null, &$arg16=null, &$arg17=null, &$arg18=null,
-		&$arg19=null)
-	{
-		/*
-		 * Only returns a reference to the original variable if &$arg is used
-		 * in function definition so might as well use them directly.
-		 *
-		 *
-        $stack = debug_backtrace();
-        $args = array();
-        if (isset($stack[0]["args"]))
-            for($i=0; $i < count($stack[0]["args"]); $i++)
-                $args[$i] = & $stack[0]["args"][$i];
-        return call_user_func_array(array($this->stmt,'bind_result'),$args);
-		*/
-		$args = array();
-		for($i=0;$i<func_num_args();$i++)
-		{
-			$temparg = 'arg'.$i;
-			$args[$i] = & $$temparg;
-		}
-		return call_user_func_array(array($this->stmt,'bind_result'),$args);
-	}
-	function execute_prepared()
-	{
-		if(!$this->stmt->execute())
-		{
-            if(defined('KB_PROFILE'))
-			{
-				DBDebug::recordError("Database error: ".$this->dbconn_->id()->error);
-				DBDebug::recordError("SQL: ".$sql);
-			}
-            if (defined('DB_HALTONERROR') && DB_HALTONERROR)
-            {
-                echo "Database error: " . $this->dbconn_->id()->error . "<br>";
-                echo "SQL: " . $sql . "<br>";
-                exit;
-            }
-            else
-            {
-                return false;
-            }
-		}
-		$this->stmt->store_result();
-		return true;
-	}
-	function fetch_prepared()
-	{
-		return $this->stmt->fetch();
-	}
 }
 //! mysqli file-cached query class. Manages SQL queries to a MySQL DB using mysqli.
 class DBCachedQuery_mysqli
@@ -492,7 +388,7 @@ class DBCachedQuery_mysqli
         }
         else
         {
-            trigger_error('No suitable handler for query found. "'.$ta[0].'"',E_USER_WARNING);
+            trigger_error('No suitable handler for query found. "'.$ta[0].'"',E_USER_NOTICE);
             return false;
         }
 
