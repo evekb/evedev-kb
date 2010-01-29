@@ -230,7 +230,6 @@ class Translate
 	    $replace = 'Eifyr and Co. ';
 	    
             $this->killmail_ = str_replace($search, $replace, $this->killmail_);
-	    var_dump($this->killmail_);
 	}
 
         return $this->killmail_;
