@@ -164,7 +164,7 @@ if(count($page_error) == 0)
 		$qry = new DBQuery(true);
 		$qry->execute("INSERT INTO `kb3_config` (cfg_site, cfg_key, cfg_value) ".
 		    "SELECT cfg_site, 'upd_codeVersion', '{$piece['version']}' FROM `kb3_config` ".
-		    "GROUP BY cfg_site ON DUPLICATE KEY UPDATE cfg_value = {$piece['version']};");
+		    "GROUP BY cfg_site ON DUPLICATE KEY UPDATE cfg_value = '{$piece['version']}';");
 		$codeversion = $piece['version'];
 
 		//kill the template and page caches
