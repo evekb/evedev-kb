@@ -188,7 +188,7 @@ class TopList
 	{
 		$qstartdate = makeStartDate($this->weekno_, $this->yearno_, $this->monthno_, $this->startweekno_, $this->startDate_);
 		$qenddate = makeEndDate($this->weekno_, $this->yearno_, $this->monthno_, $this->endDate_);
-		if($qstartdate || $qenddate) $sql .= " AND ";
+		if($qstartdate || $qenddate)
 		{
 			if($qstartdate) $sql .= " kll.kll_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
 			if($qstartdate && $qenddate) $sql .= " AND ";
@@ -308,7 +308,10 @@ class TopList
 		$qenddate = makeEndDate($this->weekno_, $this->yearno_, $this->monthno_, $this->endDate_);
 		if ($this->vic_plt_ || $this->vic_crp_ || $this->vic_all_
 			|| !($this->inv_plt_ || $this->inv_crp_ || $this->inv_all_))
-				$this->sql_ .= $this->getDateFilter();
+				{
+					$this->sql_ .= $op.$this->getDateFilter();
+					$op = " AND ";
+				}
         if ($this->inv_crp_)
 		{
 			if($qstartdate) $this->sql_ .= $op." inc.inc_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
