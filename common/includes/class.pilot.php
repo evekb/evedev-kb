@@ -237,11 +237,14 @@ class Pilot
 					return $this->id_;
 				}
 			}
-			$qryI->execute("insert into kb3_pilots (plt_name, plt_crp_id, plt_externalid, plt_updated) values (
+			$qry->execute("insert into kb3_pilots (plt_name, plt_crp_id, plt_externalid, plt_updated) values (
                                                         '".$name."',
                                                         ".$corp->getID().",
                                                         ".$externalID.",
-                                                        date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s'))");
+                                                        date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s'))
+														ON DUPLICATE KEY UPDATE plt_crp_id=".$corp->getID().",
+                                                        plt_externalid=".$externalID.",
+                                                        plt_updated=date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s')");
 			$this->id_ = $qry->getInsertID();
 			$this->name_ = $name;
 			$this->corp_ = $corp->getID();
