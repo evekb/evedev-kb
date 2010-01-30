@@ -2,6 +2,7 @@
 require_once('common/includes/class.toplist.php');
 
 $page = new Page('Awards');
+$page->addHeader('<meta name="robots" content="index, nofollow" />');
 
 $month = $_GET['m'];
 $year = $_GET['y'];

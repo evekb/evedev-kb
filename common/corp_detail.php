@@ -53,6 +53,7 @@ class pCorpDetail extends pageAssembly
 	function start()
 	{
 		$this->page = new Page('Corporation details');
+		$this->page->addHeader('<meta name="robots" content="index, nofollow" />');
 
 		if(!$this->crp_id)
 		{

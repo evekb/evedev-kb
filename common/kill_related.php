@@ -5,6 +5,9 @@ require_once('common/includes/class.killlist.php');
 require_once('common/includes/class.killlisttable.php');
 require_once('common/includes/class.killsummarytable.php');
 
+$page = new Page('Related kills & losses');
+$page->addHeader('<meta name="robots" content="index, nofollow" />');
+
 $scl_id = intval($_GET['scl_id']);
 if (!$kll_id = intval($_GET['kll_id']))
 {
@@ -58,8 +61,6 @@ if(CORP_ID == $kill->getVictimCorpID() || ALLIANCE_ID == $kill->getVictimAllianc
 //
 // Profit
 
-
-$page = new Page('Related kills & losses');
 
 // this is a fast query to get the system and timestamp
 $rqry = new DBQuery();

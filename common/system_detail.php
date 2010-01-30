@@ -32,6 +32,9 @@ class pSystemDetail extends pageAssembly
 	 */
 	function start()
 	{
+		$this->page = new Page();
+		$this->page->addHeader('<meta name="robots" content="noindex, nofollow" />');
+
 		if (!$this->sys_id)
 		{
 			echo 'no valid id supplied<br/>';
@@ -39,7 +42,7 @@ class pSystemDetail extends pageAssembly
 		}
 		$this->system = new SolarSystem($this->sys_id);
 		$this->menuOptions = array();
-		$this->page = new Page('System details - '.$this->system->getName());
+		$this->page->setTitle('System details - '.$this->system->getName());
 		$this->smarty->assign('sys_id',$this->sys_id);
 	}
 	

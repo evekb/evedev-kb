@@ -42,6 +42,8 @@ class pAllianceDetail extends pageAssembly
 	 */
 	function start()
 	{
+		$this->page = new Page();
+		$this->page->addHeader('<meta name="robots" content="index, nofollow" />');
 		if (!$this->all_id && !$this->all_external_id)
 		{
 			if (ALLIANCE_ID)
@@ -109,8 +111,8 @@ class pAllianceDetail extends pageAssembly
 		$smarty->assign('nmonth', $this->nmonth);
 		$smarty->assign('nyear', $this->nyear);
 		$this->alliance = new Alliance($this->all_id);
-		if($this->alliance->isFaction()) $this->page = new Page('Faction details - '.$this->alliance->getName());
-		else $this->page = new Page('Alliance details - '.$this->alliance->getName());
+		if($this->alliance->isFaction()) $this->page->setTitle('Faction details - '.$this->alliance->getName());
+		else $this->page->setTitle('Alliance details - '.$this->alliance->getName());
 
 		$smarty->assign('all_name', $this->alliance->getName());
 		$smarty->assign('all_id', $this->alliance->getID());

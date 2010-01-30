@@ -55,6 +55,8 @@ class pPilotDetail extends pageAssembly
 	 */
 	function start()
 	{
+		$this->page = new Page();
+		$this->page->addHeader('<meta name="robots" content="index, nofollow" />');
 
 		if(!$this->plt_id)
 		{
@@ -78,7 +80,7 @@ class pPilotDetail extends pageAssembly
 
 		}
 		$this->pilot = new Pilot($this->plt_id);
-		$this->page = new Page('Pilot details - '.$this->pilot->getName());
+		$this->page->setTitle('Pilot details - '.$this->pilot->getName());
 
 		if (!$this->pilot->exists())
 		{

@@ -45,6 +45,7 @@ class pContractDetail extends pageAssembly
 	 */
 	function start()
 	{
+		$this->page = new Page();
 		$this->contract = new Contract($this->ctr_id);
 		if(!$this->contract->validate())
 		{
@@ -55,7 +56,9 @@ class pContractDetail extends pageAssembly
 
 		$title = 'Campaign details';
 		
-		$this->page = new Page($title.' - '.$this->contract->getName());
+		$this->page->setTitle($title.' - '.$this->contract->getName());
+		$this->page->addHeader('<meta name="robots" content="index, nofollow" />');
+
 	}
 
 	//! Build the toplists to highlight efforts.

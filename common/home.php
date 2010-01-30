@@ -25,6 +25,8 @@ class pHome extends pageAssembly
 
 	function start()
 	{
+		$this->page = new Page();
+		if(isset($_GET['scl_id'])) $this->page->addHeader('<meta name="robots" content="noindex, nofollow" />');
 		$this->menuOptions = array();
 
 		$this->scl_id = intval($_GET['scl_id']);
@@ -42,9 +44,9 @@ class pHome extends pageAssembly
 		if(isset($_GET['y'])) $year = intval($_GET['y']);
 		$this->setTime($week, $year, $month);
 
-		if($this->view == 'kills') $this->page = new Page('Kills - '.$this->getCurrentPeriod());
-		elseif($this->view == 'losses') $this->page = new Page('Losses - '.$this->getCurrentPeriod());
-		else $this->page = new Page($this->getCurrentPeriod());
+		if($this->view == 'kills') $this->page->setTitle('Kills - '.$this->getCurrentPeriod());
+		elseif($this->view == 'losses') $this->page->setTitle('Losses - '.$this->getCurrentPeriod());
+		else $this->page->setTitle($this->getCurrentPeriod());
 	}
 	//! Check if summary tables are enabled and if so return a table for this week.
 	function summaryTable()
