@@ -1,26 +1,26 @@
 <?php
 if (!$sig_name = $_GET['s'])
 {
-    $sig_name = 'default';
+	$sig_name = 'default';
 }
 $sig_name = str_replace('.', '', $sig_name);
 $sig_name = str_replace('/', '', $sig_name);
 
 function errorPic($string)
 {
-    $im = imagecreate(200, 60);
-    $black = imagecolorallocate($im, 0, 0, 0);
-    $red = imagecolorallocate($im, 250, 200, 20);
-    imagefill($im, 1, 1, $black);
-    imagestring($im, 3, 10, 10, 'Error: '.$string, $red);
-    header('Content-Type: image/jpeg');
-    imagejpeg($im);
-    exit;
+	$im = imagecreate(200, 60);
+	$black = imagecolorallocate($im, 0, 0, 0);
+	$red = imagecolorallocate($im, 250, 200, 20);
+	imagefill($im, 1, 1, $black);
+	imagestring($im, 3, 10, 10, 'Error: '.$string, $red);
+	header('Content-Type: image/jpeg');
+	imagejpeg($im);
+	exit;
 }
 
 if (!$plt_id = intval($_GET['i']))
 {
-    errorPic('No pilot id specified.');
+	errorPic('No pilot id specified.');
 }
 require_once("common/includes/class.pilot.php");
 require_once("common/includes/class.corp.php");
@@ -30,7 +30,7 @@ require_once("common/includes/class.killlist.php");
 $pilot = new Pilot($plt_id);
 if (!$pilot->exists())
 {
-    errorPic('That pilot doesnt exist.');
+	errorPic('That pilot doesnt exist.');
 }
 $pilot->getPortraitURL(256);
 $corp = $pilot->getCorp();
@@ -39,39 +39,41 @@ $alliance = $corp->getAlliance();
 // we dont generate pictures for non-member
 if (ALLIANCE_ID && $alliance->getID() != ALLIANCE_ID)
 {
-    errorPic('Wrong alliance.');
+	errorPic('Wrong alliance.');
 }
 elseif (CORP_ID && $corp->getID() != CORP_ID)
 {
-    errorPic('Wrong corporation.');
+	errorPic('Wrong corporation.');
 }
 
 $id = abs(crc32($sig_name));
 // check for cached version
 if (file_exists(KB_CACHEDIR.'/data/sig_'.$id.'_'.$plt_id))
 {
-    $age = filemtime(KB_CACHEDIR.'/data/sig_'.$id.'_'.$plt_id);
+	$age = filemtime(KB_CACHEDIR.'/data/sig_'.$id.'_'.$plt_id);
 
-    // cache files for 30 minutes
-    if (time() - $age < 30*60)
-    {
-        if (file_exists('mods/signature_generator/signatures/'.$sig_name.'/typ.png'))
-        {
-            header('Content-Type: image/png');
-        }
-        else
-        {
-            header('Content-Type: image/jpeg');
-        }
-        readfile(KB_CACHEDIR.'/data/sig_'.$id.'_'.$plt_id);
-        return;
-    }
+	// cache files for 30 minutes
+	if (time() - $age < 30*60)
+	{
+		if (file_exists('mods/signature_generator/signatures/'.$sig_name.'/typ.png'))
+		{
+			header('Content-Type: image/png');
+		}
+		else
+		{
+			header('Content-Type: image/jpeg');
+		}
+		readfile(KB_CACHEDIR.'/data/sig_'.$id.'_'.$plt_id);
+		return;
+	}
 }
 
 $pid = $pilot->getExternalID();
-if (file_exists(KB_CACHEDIR.'/portraits/'.$pid.'_256.jpg'))
+if (file_exists(KB_CACHEDIR.'/img/pilots/'.substr($id,0,2).'/'.
+substr($id,2,2).'/'.$id.'_256.jpg'))
 {
-	touch(KB_CACHEDIR.'/portraits/'.$pid.'_256.jpg');
+	touch(KB_CACHEDIR.'/img/pilots/'.substr($id,0,2).'/'.
+			substr($id,2,2).'/'.$id.'_256.jpg');
 }
 else
 {
@@ -80,7 +82,8 @@ else
 	$file = @file_get_contents('http://img.eve.is/serv.asp?s=256&c='.$pid);
 	if ($img = @imagecreatefromstring($file))
 	{
-		$fp = fopen(KB_CACHEDIR.'/portraits/'.$pid.'_256.jpg', 'w');
+		$fp = fopen(KB_CACHEDIR.'/img/pilots/'.substr($id,0,2).'/'.
+				substr($id,2,2).'/'.$id.'_256.jpg', 'w');
 		fwrite($fp, $file);
 		fclose($fp);
 	}
@@ -96,7 +99,8 @@ else
 
 		if ($img = @imagecreatefromstring($file))
 		{
-			$fp = fopen(KB_CACHEDIR.'/portraits/'.$id.'_256.jpg', 'w');
+			$fp = fopen(KB_CACHEDIR.'/img/pilots/'.substr($id,0,2).'/'.
+					substr($id,2,2).'/'.$id.'_256.jpg', 'w');
 			fwrite($fp, $file);
 		}
 	}
@@ -106,7 +110,7 @@ else
 // check template
 if (!is_dir('mods/signature_generator/signatures/'.$sig_name))
 {
-    errorPic('Template not found.');
+	errorPic('Template not found.');
 }
 
 // let the template do the work, we just output $im
@@ -114,13 +118,12 @@ require('mods/signature_generator/signatures/'.$sig_name.'/'.$sig_name.'.php');
 
 if (file_exists('mods/signature_generator/signatures/'.$sig_name.'/typ.png'))
 {
-    header('Content-Type: image/png');
-    imagepng($im, 'cache/data/sig_'.$id.'_'.$plt_id);
+	header('Content-Type: image/png');
+	imagepng($im, 'cache/data/sig_'.$id.'_'.$plt_id);
 }
 else
 {
-    header('Content-Type: image/jpeg');
-    imagejpeg($im, 'cache/data/sig_'.$id.'_'.$plt_id, 90);
+	header('Content-Type: image/jpeg');
+	imagejpeg($im, 'cache/data/sig_'.$id.'_'.$plt_id, 90);
 }
 readfile(KB_CACHEDIR.'/data/sig_'.$id.'_'.$plt_id);
-?>
