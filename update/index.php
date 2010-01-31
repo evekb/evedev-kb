@@ -26,6 +26,12 @@ session::init();
 $url="http://".$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
 if($_SERVER['QUERY_STRING'] != "") $url .= '?'.$_SERVER['QUERY_STRING'];
 
+// Make sure there are no caching issues.
+header("Cache-Control: no-store, no-cache, must-revalidate");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+header("Last-Modified: Mon, 26 Jul 1997 05:00:00 GMT");
 
 $smarty = new Smarty();
 $smarty->compile_dir = getcwd()."/".KB_CACHEDIR.'/templates_c';
