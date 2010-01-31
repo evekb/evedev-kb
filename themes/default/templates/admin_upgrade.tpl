@@ -36,13 +36,13 @@
 		</td>
 		<td>
 		    {if !$codeList[idx].cached || !$codeList[idx].hash_match}
-			<a href="?a=admin_upgrade&code_dl_ref={$codeList[idx].version}">Download</a>
+			<a href="?a=admin_upgrade&amp;code_dl_ref={$codeList[idx].version}">Download</a>
 			{if !$codeList[idx].hash_match}
 			    <span style="text-decoration: blink">!!</span><br/>
 			{/if}
 		    {/if}
 		    {if $codeList[idx].hash_match && $codeList[idx].lowest}
-			<a href="?a=admin_upgrade&code_apply_ref={$codeList[idx].version}">Apply</a>
+			<a href="?a=admin_upgrade&amp;code_apply_ref={$codeList[idx].version}">Apply</a>
 		    {else}
 			^<br/>
 		    {/if}
@@ -87,13 +87,13 @@
 		</td>
 		<td>
 		    {if !$dbList[idx].cached || !$dbList[idx].hash_match}
-			<a href="?a=admin_upgrade&db_dl_ref={$dbList[idx].version}">Download</a>
+			<a href="?a=admin_upgrade&amp;db_dl_ref={$dbList[idx].version}">Download</a>
 			{if !$dbList[idx].hash_match}
 			    <span style="text-decoration: blink">!!</span><br/>
 			{/if}
 		    {/if}
 		    {if $dbList[idx].hash_match && $dbList[idx].lowest}
-			<a href="?a=admin_upgrade&db_apply_ref={$dbList[idx].version}">Apply</a>
+			<a href="?a=admin_upgrade&amp;db_apply_ref={$dbList[idx].version}">Apply</a>
 		    {else}
 			^<br/>
 		    {/if}
@@ -113,5 +113,5 @@
     {/if}
 <br/>
 The update description file will be retrieved again at: <b>{$update_time} GMT</b><br/>
-You can force the update description file to retrieved now by clicking on the <a href="?a=admin_upgrade&refresh">link</a><br/><br/>
+You can force the update description file to retrieved now by clicking on the <a href="?a=admin_upgrade&amp;refresh">link</a><br/><br/>
 Alternatively, you can refresh the page by clicking on the <a href="?a=admin_upgrade">link</a><br/>
