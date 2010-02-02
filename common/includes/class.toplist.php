@@ -271,6 +271,7 @@ class TopList
 			$this->sql_ .= " ) ";
 			$op = " AND ";
 		}
+		if ($this->vic_plt_ || $this->vic_crp_ || $this->vic_all_) $op = " AND ";
 
 		if ($this->inv_plt_)
 		{
@@ -331,6 +332,7 @@ class TopList
 			$op = " AND ";
 		}
 		$this->sql_ .= " ".$this->sqlbottom_;
+		$this->sql_ .= " /* toplist */";
 		// echo $this->sql_."<br /><br />";
 		$this->qry_->execute($this->sql_);
 	}
