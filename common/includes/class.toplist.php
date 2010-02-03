@@ -273,22 +273,36 @@ class TopList
 		}
 		if ($this->vic_plt_ || $this->vic_crp_ || $this->vic_all_) $op = " AND ";
 
+		if($this->mixedinvolved_)
+		{
+			$this->sql_ .= " ( ";
+			$op = '';
+		}
 		if ($this->inv_plt_)
 		{
 			$this->sql_ .= $op." ind.ind_plt_id in ( ".implode(",", $this->inv_plt_)." ) ";
-			$op = " AND ";
+			$op = " OR ";
 		}
 		if ($this->inv_crp_)
 		{
-			$this->sql_ .= $op." inc.inc_crp_id in ( ".implode(",", $this->inv_crp_)." ) ";
-			$op = " AND ";
-			$this->sql_ .= $op." ind.ind_crp_id in ( ".implode(",", $this->inv_crp_)." ) ";
+			$this->sql_ .= $op." ( inc.inc_crp_id in ( ".implode(",", $this->inv_crp_)." ) ";
+			$this->sql_ .= " AND ind.ind_crp_id in ( ".implode(",", $this->inv_crp_)." ) ) ";
+			$op = " OR ";
 		}
 		if ($this->inv_all_)
 		{
-			$this->sql_ .= $op." ina.ina_all_id in ( ".implode(",", $this->inv_all_)." ) ";
+			$this->sql_ .= $op." ( ina.ina_all_id in ( ".implode(",", $this->inv_all_)." ) ";
+			$this->sql_ .= " AND ind.ind_all_id in ( ".implode(",", $this->inv_all_)." ) ) ";
+			$op = " OR ";
+		}
+		if($this->mixedinvolved_)
+		{
+			$this->sql_ .= " ) ";
+		}
+
+		if($this->inv_plt_ || $this->inv_crp_ || $this->inv_all_)
+		{
 			$op = " AND ";
-			$this->sql_ .= $op." ind.ind_all_id in ( ".implode(",", $this->inv_all_)." ) ";
 		}
 
 		if (count($this->vic_scl_id_))
@@ -303,16 +317,20 @@ class TopList
 			$op = " AND ";
 		}
 
-		// timestamp filter
-		//$this->sql_ .= $this->getDateFilter();
-		$qstartdate = makeStartDate($this->weekno_, $this->yearno_, $this->monthno_, $this->startweekno_, $this->startDate_);
-		$qenddate = makeEndDate($this->weekno_, $this->yearno_, $this->monthno_, $this->endDate_);
+		// Add dates
 		if ($this->vic_plt_ || $this->vic_crp_ || $this->vic_all_
 			|| !($this->inv_plt_ || $this->inv_crp_ || $this->inv_all_))
 				{
-					$this->sql_ .= $op.$this->getDateFilter();
-					$op = " AND ";
+					if($this->getDateFilter())
+					{
+						$this->sql_ .= $op.$this->getDateFilter();
+						$op = " AND ";
+					}
 				}
+
+		$qstartdate = makeStartDate($this->weekno_, $this->yearno_, $this->monthno_, $this->startweekno_, $this->startDate_);
+		$qenddate = makeEndDate($this->weekno_, $this->yearno_, $this->monthno_, $this->endDate_);
+
         if ($this->inv_crp_)
 		{
 			if($qstartdate) $this->sql_ .= $op." inc.inc_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
@@ -331,6 +349,11 @@ class TopList
 			if($qenddate) $this->sql_ .= " AND ind.ind_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
 			$op = " AND ";
 		}
+		
+		// This is a little ugly but is needed since the bottom can start with
+		// AND or GROUP BY.
+		if($op == " WHERE ") $this->sql_ .= $op." 1=1 ";
+
 		$this->sql_ .= " ".$this->sqlbottom_;
 		$this->sql_ .= " /* toplist */";
 		// echo $this->sql_."<br /><br />";
