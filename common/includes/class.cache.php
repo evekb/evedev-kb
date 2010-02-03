@@ -184,7 +184,9 @@ class cache
 	function genCacheName($subdir = false)
 	{
 		global $themename, $stylename;
-		$filename = md5($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].IS_IGB.$themename.$stylename).'.cache';
+		$basename = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].IS_IGB.$themename.$stylename;
+		event::call('cacheNaming', $basename);
+		$filename = md5($basename).'.cache';
 		if($subdir) return substr($filename,0,1);
 		else return KB_PAGECACHEDIR.'/'.KB_SITE.'/'.substr($filename,0,1).'/'.$filename;
 	}
