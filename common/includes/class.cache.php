@@ -42,8 +42,9 @@ class cache
 			return false;
 		}
 		// Don't cache the image files.
-		if (strpos($_SERVER['REQUEST_URI'],'thumb') ||
-			strpos($_SERVER['REQUEST_URI'],'mapview')) return false;
+		if ($page == 'thumb' ||
+			$page == 'mapview' ||
+			$page == 'sig') return false;
 		if (config::get('auto_reinforced') && config::get('is_reinforced') && count($_POST) == 0)
 		{
 			return true;

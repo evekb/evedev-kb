@@ -32,7 +32,7 @@ if (!$pilot->exists())
 {
 	errorPic('That pilot doesnt exist.');
 }
-$pilot->getPortraitURL(256);
+
 $corp = $pilot->getCorp();
 $alliance = $corp->getAlliance();
 
@@ -69,21 +69,20 @@ if (file_exists(KB_CACHEDIR.'/data/sig_'.$id.'_'.$plt_id))
 }
 
 $pid = $pilot->getExternalID();
-if (file_exists(KB_CACHEDIR.'/img/pilots/'.substr($id,0,2).'/'.
-substr($id,2,2).'/'.$id.'_256.jpg'))
+$cachePath = KB_CACHEDIR.'/img/pilots/'.substr($pid,0,2).'/'.substr($pid,2,2).'/'.$pid.'_256.jpg';
+
+if (!file_exists($cachePath))
 {
-	touch(KB_CACHEDIR.'/img/pilots/'.substr($id,0,2).'/'.
-			substr($id,2,2).'/'.$id.'_256.jpg');
-}
-else
-{
+	if(!is_dir(KB_CACHEDIR.'/img/pilots/'.substr($pid,0,2).'/'))
+			mkdir(KB_CACHEDIR.'/img/pilots/'.substr($pid,0,2).'/');
+	if(!is_dir(KB_CACHEDIR.'/img/pilots/'.substr($pid,0,2).'/'.substr($pid,2,2).'/'))
+			mkdir(KB_CACHEDIR.'/img/pilots/'.substr($pid,0,2).'/'.substr($pid,2,2).'/');
 	// in case of a dead eve server we only want to wait 5 seconds
 	@ini_set('default_socket_timeout', 5);
 	$file = @file_get_contents('http://img.eve.is/serv.asp?s=256&c='.$pid);
 	if ($img = @imagecreatefromstring($file))
 	{
-		$fp = fopen(KB_CACHEDIR.'/img/pilots/'.substr($id,0,2).'/'.
-				substr($id,2,2).'/'.$id.'_256.jpg', 'w');
+		$fp = fopen($cachePath, 'w');
 		fwrite($fp, $file);
 		fclose($fp);
 	}
@@ -99,8 +98,7 @@ else
 
 		if ($img = @imagecreatefromstring($file))
 		{
-			$fp = fopen(KB_CACHEDIR.'/img/pilots/'.substr($id,0,2).'/'.
-					substr($id,2,2).'/'.$id.'_256.jpg', 'w');
+			$fp = fopen($cachePath, 'w');
 			fwrite($fp, $file);
 		}
 	}

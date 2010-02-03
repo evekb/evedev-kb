@@ -5,7 +5,7 @@ class Config
 	private static $configSite = null;
 	private static $configCache = array();
 	//! Set up the config for the given site.
-	
+
 	/*!
 	 *  \param $site The site to configure for. Default is KB_SITE define.
 	 */
@@ -49,7 +49,7 @@ class Config
 			}
 		}
 		$config_init = true;
-		
+
 		if (self::get('post_password') === null)
 		{
 			// no config supplied, generate standard one
@@ -69,7 +69,7 @@ class Config
 
 	function put($key, $data)
 	{
-		self::$configCache = $data;
+		self::$configCache[$key] = $data;
 	}
 
 	function del($key)
@@ -129,4 +129,3 @@ class Config
 		return self::$configCache[$key];
 	}
 }
-

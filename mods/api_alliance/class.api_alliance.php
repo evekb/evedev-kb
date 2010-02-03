@@ -62,7 +62,7 @@ class APIAllianceMod
 				$tempMyCorp->lookup($myCorpAPI->getCorporationName());
 				if ($tempMyCorp->getID() == 0)
 				{
-					$tempMyCorp->add($myCorpAPI->getCorporationName(), $home->alliance , substr($tempcorp["startDate"], $myCorpAPI->getCorporationID(), 16));
+					$tempMyCorp->add($myCorpAPI->getCorporationName(), $home->alliance , substr($tempcorp["startDate"], 0, 16),$myCorpAPI->getCorporationID());
 				}
 
 				$membercorp = array();
