@@ -182,6 +182,12 @@ class DBNormalQuery_mysqli
      */
     function autocommit($commit = true)
     {
+		if(defined('KB_PROFILE') && KB_PROFILE == 3)
+		{
+			if(!$commit) DBDebug::recordError("Transaction started.");
+			else DBDebug::recordError("Transaction ended.");
+		}
+
         return $this->dbconn_->id()->autocommit($commit);
     }
     //! Rollback all queries in the current transaction.
@@ -637,6 +643,12 @@ class DBCachedQuery_mysqli
      */
     function autocommit($commit = true)
     {
+		if(defined('KB_PROFILE') && KB_PROFILE == 3)
+		{
+			if(!$commit) DBDebug::recordError("Transaction started.");
+			else DBDebug::recordError("Transaction ended.");
+		}
+
         if(!$this->dbconn_) $this->dbconn_ = new DBConnection_mysqli();
         return $this->dbconn_->id()->autocommit($commit);
     }
@@ -892,6 +904,12 @@ class DBMemcachedQuery_mysqli
      */
     function autocommit($commit = true)
     {
+		if(defined('KB_PROFILE') && KB_PROFILE == 3)
+		{
+			if(!$commit) DBDebug::recordError("Transaction started.");
+			else DBDebug::recordError("Transaction ended.");
+		}
+
         if(!$this->dbconn_) $this->dbconn_ = new DBConnection_mysqli();
         return $this->dbconn_->id()->autocommit($commit);
     }
