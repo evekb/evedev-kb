@@ -41,7 +41,9 @@ class event
                 $cb = explode('::', $callback);
                 if (is_callable($cb))
                 {
-                    if (is_object($object))
+					// TODO: If nothing is breaking the array form should be
+					// standard so references are passed.
+                    if (true || is_object($object))
                     {
                         //call_user_func($cb, &$object);
                         call_user_func_array($cb, array(&$object));
