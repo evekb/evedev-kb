@@ -972,17 +972,13 @@ class Kill
 
 	function add($id = null)
 	{
-		if (!$this->solarsystem_->getID())
-		{
-			echo 'INTERNAL ERROR; SOLARSYSTEM NOT FOUND; PLEASE CONTACT A DEV WITH THIS MESSAGE<br/>';
-			var_dump($this->solarsystem_);
-			var_dump($this->solarsystemname_);
-			return 0;
-		}
 		// If value isn't already calculated then do so now. Don't update the
 		// stored value since at this point it does not exist.
 		if(!is_numeric($this->iskloss_)) $this->calculateISKLoss(false);
 
+		// Start a transaction here to capture the duplicate check.
+		$qry = new DBQuery();
+		$qry->autocommit(false);
 		$dupe = $this->getDupe(true);
 		if ($dupe == 0)
 		{
@@ -1001,6 +997,7 @@ class Kill
 			$this->dupeid_ = $dupe;
 			$this->id_ = -1;
 		}
+		$qry->autocommit(true);
 		return $this->id_;
 	}
 
