@@ -1,4 +1,4 @@
-<br/>
+<!-- battle_overview.tpl --><br/>
 <div class="kb-kills-header">Battle Summary for {$system}, {$firstts|date_format:"%Y-%m-%d %H:%M"} - {$lastts|date_format:"%H:%M"}</div>
 <table border="0" width="100%" cellspacing="0" cellpadding="0">
 <tr><td width="49%" valign="top">
@@ -84,4 +84,4 @@
 </td>
 </tr>
 </table>
-<br/>
+<br/><!-- /battle_overview.tpl -->

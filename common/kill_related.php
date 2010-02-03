@@ -154,7 +154,7 @@ foreach($invCorp as $ic) $lslist->addVictimCorp($ic);
 foreach($invAll as $ia) $lslist->addVictimAlliance($ia);
 
 $summarytable = new KillSummaryTable($kslist, $lslist);
-$html .= $summarytable->generate();
+$smarty->assign('summarytable', $summarytable->generate());
 
 $klist = new KillList();
 $klist->setOrdered(true);
@@ -509,18 +509,26 @@ else
 $smarty->assign('firstts', $firstts);
 $smarty->assign('lastts', $lastts);
 
-$html .= $smarty->fetch(get_tpl('battle_overview'));
-
-$html .= '<div class="kb-kills-header">Battle Statistics</div>';
-$html .= "<table class=kb-table width=\"100%\" border=\"0\" cellspacing=1><tr class=kb-table-row-even>";
+$smarty->assign('overview', $smarty->fetch(get_tpl('battle_overview')));
 
 $kill_summary = new KillSummaryTable($klist, $llist);
-$summary_html = $kill_summary->generate();
+$kill_summary->generate();
+$stats['kills'] = $kill_summary->getTotalKills();
+$stats['losses'] = $kill_summary->getTotalLosses();
+$stats['killISKM'] = round($kill_summary->getTotalKillISK()/1000000, 2);
+$stats['lossISKM'] = round($kill_summary->getTotalLossISK()/1000000, 2);
+$stats['killISKB'] = round($stats['killISKM']/1000, 2);
+$stats['lossISKB'] = round($stats['lossISKM']/1000, 2);
+if ($kill_summary->getTotalKillISK())
+{
+    $stats['efficiency'] = round($kill_summary->getTotalKillISK() / ($kill_summary->getTotalKillISK() + $kill_summary->getTotalLossISK()) * 100, 2);
+}
+else
+{
+    $stats['efficiency'] = 0;
+}
+$smarty->assign_by_ref('stats', $stats);
 
-$html .= "<td class=kb-table-cell width=180><b>Kills:</b></td><td class=kl-kill>".$kill_summary->getTotalKills()."</td></tr>";
-$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Losses:</b></td><td class=kl-loss>".$kill_summary->getTotalLosses()."</td></tr>";
-$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Damage done (ISK):</b></td><td class=kl-kill>".round($kill_summary->getTotalKillISK()/1000000000, 2)."B - ".round($kill_summary->getTotalKillISK()/1000000, 2)."M</td></tr>";
-$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Damage received (ISK):</b></td><td class=kl-loss>".round($kill_summary->getTotalLossISK()/1000000000, 2)."B - ".round($kill_summary->getTotalLossISK()/1000000, 2)."M</td></tr>";
 if ($kill_summary->getTotalKillISK())
 {
     $efficiency = round($kill_summary->getTotalKillISK() / ($kill_summary->getTotalKillISK() + $kill_summary->getTotalLossISK()) * 100, 2);
@@ -530,21 +538,11 @@ else
     $efficiency = 0;
 }
 
-$html .= "<tr class=kb-table-row-even><td class=kb-table-cell><b>Efficiency:</b></td><td class=kb-table-cell><b>" . $efficiency . "%</b></td></tr>";
-
-$html .= "</table>";
-$html .= "<br/>";
-
-
-$html .= "<div class=\"kb-kills-header\">Related kills</div>";
-
 $ktable = new KillListTable($klist);
-$html .= $ktable->generate();
-
-$html .= "<div class=\"kb-losses-header\">Related losses</div>";
+$smarty->assign('kills', $ktable->generate());
 
 $ltable = new KillListTable($llist);
-$html .= $ltable->generate();
+$smarty->assign('losses', $ltable->generate());
 
 $menubox = new Box("Menu");
 $menubox->setIcon("menu-item.gif");
@@ -555,6 +553,6 @@ $menubox->addOption("link", "Back to Killmail", "?a=kill_detail&amp;kll_id=".$kl
 $menubox->addOption("link", "Kills &amp; losses", "?a=kill_related&amp;kll_id=".$kll_id);
 $page->addContext($menubox->generate());
 
-$page->setContent($html);
+//$page->setContent($html);
+$page->setContent($smarty->fetch(get_tpl('kill_related')));
 $page->generate();
-?>
