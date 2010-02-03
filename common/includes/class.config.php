@@ -69,7 +69,7 @@ class Config
 
 	function put($key, $data)
 	{
-		self::$configCache = $data;
+		self::$configCache[$key] = $data;
 	}
 
 	function del($key)
