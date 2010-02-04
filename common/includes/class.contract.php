@@ -544,27 +544,41 @@ class ContractListTable
 					$list = &$contract->klist_;
 				}
 
-				$sql = 'select count(kll_id) AS ships, sum(kll_isk_loss) as isk from (select distinct kll_id,
-						kll_isk_loss FROM kb3_kills kll
-                        inner join kb3_systems sys on ( sys.sys_id = kll.kll_system_id )';
+				$sql = 'select count(kll_id) AS ships, sum(kll_isk_loss) as isk from (';
+
+				$invcount = count($list->inv_all_) + count($list->inv_crp_) + count($list->inv_plt_);
+				if($invcount > 1) $sql .= 'select distinct kll_id, kll_isk_loss FROM kb3_kills kll ';
+				else $sql .= 'select kll_id, kll_isk_loss FROM kb3_kills kll ';
+
 				if ($list->regions_)
 				{
-					$sql .= ' inner join kb3_constellations con
-    	                   on ( con.con_id = sys.sys_con_id
-    			           and con.con_reg_id in ( '.join(',', $list->regions_).' ) )';
+					$sql .= ' inner join kb3_systems sys on ( sys.sys_id = kll.kll_system_id )
+							inner join kb3_constellations con
+							on ( con.con_id = sys.sys_con_id
+							and con.con_reg_id in ( '.join(',', $list->regions_).' ) )';
 				}
-				if ($list->systems_)
-				{
-					$sql .= ' and kll.kll_system_id in ( '.join(',', $list->systems_).')';
-				}
-				if ($list->inv_crp_ || $list->inv_all_ || $list->inv_plt_)
+				if ($list->inv_plt_)
 				{
 					$sql .= ' inner join kb3_inv_detail ind on ( kll.kll_id = ind.ind_kll_id ) ';
 				}
-
-				if($list->getDateFilter())
+				if ($list->inv_crp_ )
 				{
-					$sql .= " WHERE ".$list->getDateFilter();
+					$sql .= ' inner join kb3_inv_corp inc on ( kll.kll_id = inc.inc_kll_id ) ';
+				}
+				if ($list->inv_all_ )
+				{
+					$sql .= ' inner join kb3_inv_all ina on ( kll.kll_id = ina.ina_kll_id ) ';
+				}
+
+				if($list->startDate_)
+				{
+					$sql .= " WHERE kll.kll_timestamp >= '".$list->startDate_."' ";
+					if ($list->inv_plt_)
+						$sql .= " AND ind.ind_timestamp >= '".$list->startDate_."' ";
+					if ($list->inv_crp_ )
+						$sql .= " AND inc.inc_timestamp >= '".$list->startDate_."' ";
+					if ($list->inv_all_ )
+						$sql .= " AND ina.ina_timestamp >= '".$list->startDate_."' ";
 					$sqlwhereop = ' AND ';
 				}
 				else $sqlwhereop = ' WHERE ';
@@ -590,15 +604,14 @@ class ContractListTable
 					$sqlwhereop = ' AND ';
 				}
 
-
 				$tmp = array();
 				if ($list->inv_crp_)
 				{
-					$tmp[] = 'ind.ind_crp_id in ( '.join(',', $list->inv_crp_).')';
+					$tmp[] = 'inc.inc_crp_id in ( '.join(',', $list->inv_crp_).')';
 				}
 				if ($list->inv_all_)
 				{
-					$tmp[] = 'ind.ind_all_id in ( '.join(',', $list->inv_all_).')';
+					$tmp[] = 'ina.ina_all_id in ( '.join(',', $list->inv_all_).')';
 				}
 				if ($list->inv_plt_)
 				{
@@ -612,8 +625,12 @@ class ContractListTable
 					$sqlwhereop = ' AND ';
 				}
 
+				if ($list->systems_)
+				{
+					$sql .= $sqlwhereop.' kll.kll_system_id in ( '.join(',', $list->systems_).')';
+				}
 				$sql .= ') as kb3_shadow';
-				$sql .= " -- contract: getTableStats";
+				$sql .= " /* contract: getTableStats */";
 				$result = $qry->execute($sql);
 				$row = $qry->getRow($result);
 
@@ -656,76 +673,5 @@ class ContractListTable
 
 			return $smarty->fetch(get_tpl('contractlisttable')).$pagesplitter->generate();
 		}
-
-		// old stuff, not used anymore (kept for reference)
-		if ($this->contractlist_->getCount())
-		{
-			$rowid = 0;
-			$html .= "<table class=kb-table width=\"98%\" align=center cellspacing=1>";
-			$html .= "<tr class=kb-table-header>";
-			$html .= "<td class=kb-table-cell width=180>Name</td>";
-			$html .= "<td class=kb-table-cell width=80 align=center>Start date</td>";
-			if ($this->contractlist_->getActive() == "no")
-				$html .= "<td class=kb-table-cell width=80 align=center>End date</td>";
-			$html .= "<td class=kb-table-cell width=50 align=center>Kills</td>";
-			$html .= "<td class=kb-table-cell width=70 align=center>ISK (M)</td>";
-			$html .= "<td class=kb-table-cell width=50 align=center>Losses</td>";
-			$html .= "<td class=kb-table-cell width=70 align=center>ISK (M)</td>";
-			$html .= "<td class=kb-table-cell width=70 align=center colspan=2>Efficiency</td>";
-			$html .= "</tr>";
-
-			$odd = false;
-			$rowclass = "kb-table-row-even";
-			while ($contract = $this->contractlist_->getContract())
-			{
-				if ($odd)
-				{
-					$rowclass = "kb-table-row-even";
-					$odd = false;
-				}
-				else
-				{
-					$rowclass = "kb-table-row-odd";
-					$odd = true;
-				}
-
-				$html .= "<tr class=".$rowclass." onmouseover=\"this.className='kb-table-row-hover';\" onmouseout=\"this.className='".$rowclass."';\" onClick=\"window.location.href='?a=cc_detail&ctr_id=".$contract->getID()."';\">";
-				$html .= "<td class=kb-table-cell><b>".$contract->getName()."</b></td>";
-				$html .= "<td class=kb-table-cell align=center>".substr($contract->getStartDate(), 0, 10)."</td>";
-				if ($this->contractlist_->getActive() == "no")
-				{
-					if ($contract->getEndDate() == "")
-						$ended = "Active";
-					else
-						$ended = substr($contract->getEndDate(), 0, 10);
-					$html .= "<td class=kb-table-cell align=center>".$ended."</td>";
-				}
-				if ($contract->getKills() == 0)
-					$kclass = "kl-null";
-				else
-					$kclass = "kl-kill";
-
-				if ($contract->getLosses() == 0)
-					$lclass = "kl-null";
-				else
-					$lclass = "kl-loss";
-
-				$html .= "<td class=".$kclass." align=center>".$contract->getKills()."</td>";
-				$html .= "<td class=".$kclass." align=center>".round($contract->getKillISK()/1000000, 2)."</td>";
-				$html .= "<td class=".$lclass." align=center>".$contract->getLosses()."</td>";
-				$html .= "<td class=".$lclass." align=center>".round($contract->getLossISK()/1000000, 2)."</td>";
-				$bar = new BarGraph($contract->getEfficiency(), 100, 75);
-				$html .= "<td class=kb-table-cell align=center width=40><b>".$contract->getEfficiency()."%</b></td>";
-				$html .= "<td class=kb-table-cell align=left width=75>".$bar->generate()."</td>";
-				$html .= "</tr>";
-			}
-			$html .= "</table>";
-			$pagesplitter = new PageSplitter($this->contractlist_->getCount(), 10);
-			$html .= $pagesplitter->generate();
-		}
-		else $html .= "None.";
-
-		return $html;
 	}
 }
-?>
