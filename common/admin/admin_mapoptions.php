@@ -8,60 +8,62 @@ $page->setTitle('Administration - Mapoptions');
 
 if ($_POST['submit'])
 {
-    config::checkCheckbox('map_map_showlines');
-    config::checkCheckbox('map_reg_showlines');
-    config::checkCheckbox('map_region_cache');
-    config::checkCheckbox('map_con_showlines');
-    config::checkCheckbox('map_con_shownames');
-    config::checkCheckbox('map_map_security');
-    config::checkCheckbox('map_reg_security');
-    config::checkCheckbox('map_con_security');
+	config::checkCheckbox('map_map_showlines');
+	config::checkCheckbox('map_reg_showlines');
+	config::checkCheckbox('map_con_showlines');
+	config::checkCheckbox('map_con_shownames');
+	config::checkCheckbox('map_map_security');
+	config::checkCheckbox('map_reg_security');
+	config::checkCheckbox('map_con_security');
 
-    foreach ($_POST as $key => $value)
-    {
-        if (strpos($key, '_cl_'))
-        {
-            if ($value)
-            {
-                if (substr($value,0,1) == '#')
-                {
-                    $value = 'x'.substr($value, 1, 2).',x'.substr($value, 3, 2).',x'.substr($value, 5, 2);
-                }
-                $value = preg_replace('/[^a-fA-F0-9,x]/', '', $value);
-                $tmp = explode(',', $value);
-                if (count($tmp) != 3)
-                {
-                    continue;
-                }
-                $val = array();
-                for ($i = 0; $i < 3; $i++)
-                {
-                    if (preg_match('/[a-fA-Fx]/', $tmp[$i]))
-                    {
-                        $tmp[$i] = str_replace('x', '', $tmp[$i]);
-                        $tmp[$i] = base_convert($tmp[$i], 16, 10);
-                    }
-                    $val[$i] = min(max($tmp[$i], 0), 255);
-                }
-                $string = implode(',', $val);
-                config::set($key, $string);
-            }
-            else
-            {
-                config::del($key);
-            }
-        }
-    }
+	foreach ($_POST as $key => $value)
+	{
+		if (strpos($key, '_cl_'))
+		{
+			if ($value)
+			{
+				if (substr($value,0,1) == '#')
+				{
+					$value = 'x'.substr($value, 1, 2).',x'.substr($value, 3, 2).',x'.substr($value, 5, 2);
+				}
+				$value = preg_replace('/[^a-fA-F0-9,x]/', '', $value);
+				$tmp = explode(',', $value);
+				if (count($tmp) != 3)
+				{
+					continue;
+				}
+				$val = array();
+				for ($i = 0; $i < 3; $i++)
+				{
+					if (preg_match('/[a-fA-Fx]/', $tmp[$i]))
+					{
+						$tmp[$i] = str_replace('x', '', $tmp[$i]);
+						$tmp[$i] = base_convert($tmp[$i], 16, 10);
+					}
+					$val[$i] = min(max($tmp[$i], 0), 255);
+				}
+				$string = implode(',', $val);
+				config::set($key, $string);
+			}
+			else
+			{
+				config::del($key);
+			}
+		}
+	}
 
-    // on submit delete all region cache files
-    $dir = opendir(KB_CACHEDIR.'/map');
-    while ($file = readdir($dir))
-    {
-        if (strpos($file, '.png'))
-        {
-            @unlink(KB_CACHEDIR.'/map/'.$file);
-        }
-    }
+	// on submit delete all region cache files
+	if(is_dir(KB_CACHEDIR.'/img/map/'.KB_SITE))
+	{
+		$dir = opendir(KB_CACHEDIR.'/img/map/'.KB_SITE);
+		while ($file = readdir($dir))
+		{
+			if (strpos($file, '.png'))
+			{
+				@unlink(KB_CACHEDIR.'/img/map/'.KB_SITE.'/'.$file);
+			}
+		}
+	}
 }
 
 $options = array();
@@ -75,7 +77,6 @@ $options[0]['color'][] = array('descr' => 'Normalcolor', 'name' => 'map_map_cl_n
 $options[0]['color'][] = array('descr' => 'Highlightcolor', 'name' => 'map_map_cl_hl');
 
 $options[1]['name'] = 'Constellation Options';
-$options[1]['option'][] = array('descr' => 'Cache const maps', 'name' => 'map_region_cache');
 $options[1]['option'][] = array('descr' => 'Show Lines', 'name' => 'map_reg_showlines');
 $options[1]['option'][] = array('descr' => 'Paint Security', 'name' => 'map_reg_security');
 $options[1]['color'][] = array('descr' => 'Linecolor', 'name' => 'map_reg_cl_line');
@@ -101,4 +102,3 @@ $html = $smarty->fetch(get_tpl('admin_mapoptions'));
 $page->addContext($menubox->generate());
 $page->setContent($html);
 $page->generate();
-?>

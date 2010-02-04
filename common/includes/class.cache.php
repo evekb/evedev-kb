@@ -135,11 +135,7 @@ class cache
 			if(!ini_get('zlib.output_compression')) ob_start("ob_gzhandler");
 			else ob_start();
 		}
-		else if(!ini_get('zlib.output_compression')) ob_start("ob_gzhandler");
-		header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
-		if (strpos($_SERVER['REQUEST_URI'],'thumb') ||
-			strpos($_SERVER['REQUEST_URI'],'mapview'))
-				header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 7776000) . ' GMT');
+		if(!ini_get('zlib.output_compression')) ob_start("ob_gzhandler");
 	}
 	//! Generate the cache for the current page.
 	function generate()
