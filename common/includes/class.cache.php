@@ -20,31 +20,31 @@ class cache
 		$array = explode(' ', $load);
 		if ((float)$array[0] > (float)config::get('reinforced_threshold'))
 		{
-		// put killboard into RF
+			// put killboard into RF
 			config::set('is_reinforced', 1);
 		}
 		elseif ((float)$array[0] > (float)config::get('reinforced_disable_threshold') && config::get('is_reinforced'))
 		{
-		// do nothing, we are in RF, load is dropping but stil over disabling threshold
+			// do nothing, we are in RF, load is dropping but stil over disabling threshold
 		}
 		else
 		{
-		// load low, dont enter reinforced
+			// load low, dont enter reinforced
 			config::set('is_reinforced', 0);
 		}
 	}
 	//! Check if the current page should be cached.
 	function shouldCache($page = '')
 	{
-	// never cache for admins
+		// never cache for admins
 		if (session::isAdmin())
 		{
 			return false;
 		}
 		// Don't cache the image files.
 		if ($page == 'thumb' ||
-			$page == 'mapview' ||
-			$page == 'sig') return false;
+				$page == 'mapview' ||
+				$page == 'sig') return false;
 		if (config::get('auto_reinforced') && config::get('is_reinforced') && count($_POST) == 0)
 		{
 			return true;
@@ -120,7 +120,7 @@ class cache
 				// There was a reason for having both checks. etag not always
 				// checked maybe?
 				if (strpos($_SERVER['HTTP_IF_NONE_MATCH'], $etag) !== false ||
-					@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $timestamp)
+						@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $timestamp)
 				{
 					header($_SERVER["SERVER_PROTOCOL"]." 304 Not Modified");
 					exit;
@@ -135,7 +135,11 @@ class cache
 			if(!ini_get('zlib.output_compression')) ob_start("ob_gzhandler");
 			else ob_start();
 		}
-		if(!ini_get('zlib.output_compression')) ob_start("ob_gzhandler");
+		// Don't turn on gzip when sending images.
+		elseif (!strpos($_SERVER['REQUEST_URI'],'thumb')
+			&& !strpos($_SERVER['REQUEST_URI'],'mapview')
+			&& !ini_get('zlib.output_compression')) ob_start("ob_gzhandler");
+
 	}
 	//! Generate the cache for the current page.
 	function generate()
@@ -154,10 +158,10 @@ class cache
 				mkdir(KB_PAGECACHEDIR.'/'.KB_SITE.'/'.cache::genCacheName(true));
 			}
 			// Use the minimum compression. The difference is minor in our usage.
-            $fp = @gzopen($cachefile, 'wb1');
+			$fp = @gzopen($cachefile, 'wb1');
 
-            @gzwrite($fp, preg_replace('/profile -->.*<!-- \/profile/','profile -->Cached '.gmdate("d M Y H:i:s").'<!-- /profile',ob_get_contents()));
-            @gzclose($fp);
+			@gzwrite($fp, preg_replace('/profile -->.*<!-- \/profile/','profile -->Cached '.gmdate("d M Y H:i:s").'<!-- /profile',ob_get_contents()));
+			@gzclose($fp);
 			// Set the headers to match the new cache file.
 			$timestamp = @filemtime($cachefile);
 			$etag = md5($cachefile.$timestamp );
@@ -176,7 +180,7 @@ class cache
 	 * level specific cache files.
 	 *
 	 *  \return string of path and filename for the current page's cachefile.
-	 */
+	*/
 	function genCacheName($subdir = false)
 	{
 		global $themename, $stylename;
