@@ -199,6 +199,22 @@ class options
             return $smarty->fetch(get_tpl('admin_options_edit'));
         }
 
+        if ($element['type'] == 'password')
+        {
+            $smarty->assign_by_ref('opt', $element);
+
+            if (!$options['size'])
+            {
+                $options['size'] = 20;
+            }
+            if (!$options['maxlength'])
+            {
+                $options['maxlength'] = 80;
+            }
+            $smarty->assign_by_ref('options', $options);
+            return $smarty->fetch(get_tpl('admin_options_password'));
+        }
+
         if ($element['type'] == 'textarea')
         {
             $smarty->assign_by_ref('opt', $element);
