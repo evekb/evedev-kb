@@ -69,6 +69,7 @@ class KillListTable
 			$kll['victim'] = $kill->getVictimName();
 			$kll['victimcorp'] = $kill->getVictimCorpName();
 			$kll['victimalliancename'] = $kill->getVictimAllianceName();
+			$kll['victimiskloss'] = $kill->getISKLoss();
 			$kll['fb'] = $kill->getFBPilotName();
 			$kll['fbcorp'] = $kill->getFBCorpName();
 			$kll['system'] = $kill->getSolarSystemName();
