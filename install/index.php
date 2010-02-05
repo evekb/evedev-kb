@@ -7,6 +7,7 @@ $smarty = new Smarty();
 $smarty->template_dir = './templates';
 //as much as i don't want it, the compiled templates directory is needed
 $smarty->compile_dir = './templates_c';
+if(!is_writeable('./templates_c')) chmod('./templates_c', 755);
 
 $installrunning = true;
 session_start();
