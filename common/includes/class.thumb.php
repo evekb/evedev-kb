@@ -2,11 +2,11 @@
 
 class thumb
 {
-	private $id = 0;
-	private $size = 256;
-	private $type = 'pilot';
-	private $encoding = 'jpeg';
-	private $thumb = '';
+	protected $id = 0;
+	protected $size = 256;
+	protected $type = 'pilot';
+	protected $encoding = 'jpeg';
+	protected $thumb = '';
 
 	function thumb($str_id, $size, $type = 'pilot')
 	{
@@ -298,25 +298,13 @@ class thumb
 			curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, 2);
 			$file = curl_exec($ch);
 			curl_close($ch);
-			if ($img = @imagecreatefromstring($file))
-			{
-				$fp = fopen(KB_CACHEDIR.'/img/pilots/'.substr($this->id,0,2).'/'.substr($this->id,2,2).'/'.$this->id.'_256.jpg', 'w');
-				fwrite($fp, $file);
-				fclose($fp);
-			}
 		}
 		else
 		{
 			// in case of a dead eve server we only want to wait 2 seconds
 			@ini_set('default_socket_timeout', 2);
 			$file = @file_get_contents('http://img.eve.is/serv.asp?s=256&c='.$this->id);
-			if ($img = @imagecreatefromstring($file))
-			{
-				$fp = fopen(KB_CACHEDIR.'/img/pilots/'.substr($this->id,0,2).'/'.substr($this->id,2,2).'/'.$this->id.'_256.jpg', 'w');
-				fwrite($fp, $file);
-				fclose($fp);
-			}
-			else
+			if($file === false)
 			{
 				// try alternative access via fsockopen
 				// happens if allow_url_fopen wrapper is false
@@ -325,13 +313,14 @@ class thumb
 				$url = 'http://img.eve.is/serv.asp?s=256&c='.$this->id;
 				$http = new http_request($url);
 				$file = $http->get_content();
-
-				if ($img = @imagecreatefromstring($file))
-				{
-					$fp = fopen(KB_CACHEDIR.'/img/pilots/'.substr($this->id,0,2).'/'.substr($this->id,2,2).'/'.$this->id.'_256.jpg', 'w');
-					fwrite($fp, $file);
-				}
 			}
+		}
+		if ($img = @imagecreatefromstring($file))
+		{
+			$fp = fopen(KB_CACHEDIR.'/img/pilots/'.substr($this->id,0,2).'/'.substr($this->id,2,2).'/'.$this->id.'_256.jpg', 'w');
+			if(!$fp) die("\nImage could not be fetched."); // Let's see those error messages.
+			fwrite($fp, $file);
+			fclose($fp);
 		}
 		return $img;
 	}
@@ -352,7 +341,7 @@ class thumbInt extends thumb
 {
 	function thumbInt($int_id, $size, $type)
 	{
-		$this->type = $type;
+		$this->size = $size;
 		switch($this->type)
 		{
 			case 'pilot':
@@ -360,7 +349,7 @@ class thumbInt extends thumb
 				require_once('common/includes/class.pilot.php');
 				$pilot = new Pilot($int_id);
 				$this->id = $pilot->getExternalID();
-				$this->size = $size;
+
 				$this->type = 'pilot';
 				$this->encoding = 'jpeg';
 
@@ -376,7 +365,6 @@ class thumbInt extends thumb
 					$this->id = 0;
 				}
 				$this->id = $corp->getExternalID();
-				$this->size = $size;
 				$this->encoding = 'jpeg';
 
 				if($this->type == 'npc')
@@ -390,7 +378,6 @@ class thumbInt extends thumb
 
 			default:
 				$this->id = $str_id;
-				$this->size = $size;
 				$this->type = $type;
 				$this->encoding = 'jpeg';
 
