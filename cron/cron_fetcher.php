@@ -52,49 +52,8 @@ if (config::get('fetch_feed_count'))
 else
     $feedcount = 1;
 
-// corporation OR alliance id
-if (config::get('cfg_pilotid'))
-{
-	define('PILOT_ID', intval(config::get('cfg_pilotid')) );
-	define('CORP_ID', 0);
-	define('ALLIANCE_ID', 0);
-}
-elseif (config::get('cfg_corpid'))
-{
-	define('PILOT_ID', 0);
-	define('CORP_ID', intval(config::get('cfg_corpid')));
-	define('ALLIANCE_ID', 0);
-}
-elseif(config::get('cfg_allianceid'))
-{
-	define('PILOT_ID', 0);
-	define('CORP_ID', 0);
-	define('ALLIANCE_ID', intval(config::get('cfg_allianceid')));
-}
-else
-{
-	define('PILOT_ID', 0);
-	define('CORP_ID', 0);
-	define('ALLIANCE_ID', 0);
-}
+$myid = getID();
 
-if (PILOT_ID && !MASTER)
-{
-    $pilot = new Pilot(PILOT_ID);
-    $myid = '&pilot=' . urlencode($pilot->getName());
-}
-
-if (CORP_ID && !MASTER)
-{
-    $corp = new Corporation(CORP_ID);
-    $myid = '&corp=' . urlencode($corp->getName());
-}
-
-if (ALLIANCE_ID && !MASTER)
-{
-    $alli = new Alliance(ALLIANCE_ID);
-    $myid = '&alli=' . urlencode($alli->getName());
-}
 define('KB_TITLE', config::get('cfg_kbtitle'));
 define('DB_USE_CCP', true);
 
@@ -148,7 +107,7 @@ for (; $i <= $feedcount; $i++)
         if ($friend[$i])
             $str .= '&friend=1';
 		if (isset($apikills[$i]))
-			$str .= '&apikills=1';
+			$str .= '&APIkills=1';
         // If a last kill id is specified fetch all kills since then
         if($feedlast[$i] > 0)
         {
@@ -193,3 +152,50 @@ if ($out)
 }
 
 echo "Time taken = ".(microtime(true) - $cronStartTime)." seconds.";
+
+function getID()
+{
+	// Set pilot OR corporation OR alliance id
+	if (config::get('cfg_pilotid'))
+	{
+		define('PILOT_ID', intval(config::get('cfg_pilotid')) );
+		define('CORP_ID', 0);
+		define('ALLIANCE_ID', 0);
+	}
+	elseif (config::get('cfg_corpid'))
+	{
+		define('PILOT_ID', 0);
+		define('CORP_ID', intval(config::get('cfg_corpid')));
+		define('ALLIANCE_ID', 0);
+	}
+	elseif(config::get('cfg_allianceid'))
+	{
+		define('PILOT_ID', 0);
+		define('CORP_ID', 0);
+		define('ALLIANCE_ID', intval(config::get('cfg_allianceid')));
+	}
+	else
+	{
+		define('PILOT_ID', 0);
+		define('CORP_ID', 0);
+		define('ALLIANCE_ID', 0);
+	}
+
+	if (PILOT_ID && !MASTER)
+	{
+		$pilot = new Pilot(PILOT_ID);
+		$myid = '&pilot=' . urlencode($pilot->getName());
+	}
+	else if (CORP_ID && !MASTER)
+	{
+		$corp = new Corporation(CORP_ID);
+		$myid = '&corp=' . urlencode($corp->getName());
+	}
+
+	else if (ALLIANCE_ID && !MASTER)
+	{
+		$alli = new Alliance(ALLIANCE_ID);
+		$myid = '&alli=' . urlencode($alli->getName());
+	}
+	return $myid;
+}
