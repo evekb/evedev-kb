@@ -66,13 +66,17 @@ $out = '';
 $feed = array();
 $friend = array();
 $apikills = array();
+
+// Check if we have been asked to fetch a specific feed
 $i = 1;
+// Check query string
 if(isset($_GET['feed']))
 {
 	$i = intval($_GET['feed']);
 	if(!$i) $i = 1;
 	elseif($feedcount > $i) $feedcount = $i;
 }
+// Check command line arguments
 elseif(isset($argv[0]))
 {
 	foreach($argv as $arg)
@@ -85,6 +89,11 @@ elseif(isset($argv[0]))
 		}
 	}
 }
+
+// Fetch each feed.
+// Try to fetch all kills since the previous fetch. Otherwise fetch by week.
+// Fetch the combined feed first. If this only returns kills then it is a <2.0
+// board so do another fetch for losses.
 for (; $i <= $feedcount; $i++)
 {
     $str = config::get('fetch_url_' . $i);
