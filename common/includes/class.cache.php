@@ -60,6 +60,11 @@ class cache
 	//! Check if the current page is cached and valid then send it if so.
 	function check($page)
 	{
+		// Set an old expiry date to discourage the browser from trying to
+		// cache the page.
+		if($page != 'mapview' && $page != 'sig')
+			header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+		
 		$usegz = config::get('cfg_compress')
 			&& !ini_get('zlib.output_compression');
 		$cachefile = cache::genCacheName();
