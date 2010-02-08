@@ -1,40 +1,7 @@
 <?php
-
-class DBConnection
-{
-	function DBConnection()
-	{
-		static $conn_id;
-
-		if (is_resource($conn_id))
-		{
-			$this->id_ = $conn_id;
-			return;
-		}
-		if(defined('DB_PORT'))
-		{
-			if (!$this->id_ = mysql_connect(DB_HOST.':'.DB_PORT, DB_USER, DB_PASS))
-				die("Unable to connect to mysql database.");
-		}
-		else
-		{
-			if (!$this->id_ = mysql_connect(DB_HOST, DB_USER, DB_PASS))
-				die("Unable to connect to mysql database.");
-		}
-		mysql_select_db(DB_NAME);
-		$conn_id = $this->id_;
-	}
-
-	function id()
-	{
-		return $this->id_;
-	}
-
-	function affectedRows()
-	{
-		return mysql_affected_rows($this->id_);
-	}
-}
+require_once 'class.dbbasequery.php';
+require_once 'class.dbconnection.php';
+require_once('class.dbdebug.php');
 
 class DBQuery
 {
@@ -45,34 +12,7 @@ class DBQuery
 	// object actions to it
 	function __construct($forceNormal = false)
 	{
-		if (DB_TYPE_USED === 'mysqli' )
-		{
-			if (defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE === true)
-			{
-				$object = new DBMemCachedQuery_mysqli($forceNormal);
-			}
-			elseif (defined('DB_USE_QCACHE') && DB_USE_QCACHE === true)
-			{
-				$object = new DBCachedQuery_mysqli($forceNormal);
-			}
-			else
-			{
-				$object = new DBNormalQuery_mysqli();
-			}
-		}
-		elseif (defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE === true && !$forceNormal)
-		{
-			$object = new DBMemCachedQuery();
-		}
-		elseif (defined('DB_USE_QCACHE') && DB_USE_QCACHE === true && !$forceNormal)
-		{
-			$object = new DBCachedQuery();
-		}
-		else
-		{
-			$object = new DBNormalQuery();
-		}
-		$this->object = $object;
+		$this->object = DBFactory::getDBQuery($forceNormal);
 	}
 
 	function __call($name, $args)
@@ -107,22 +47,7 @@ class DBQuery
 	function DBQuery($forceNormal = false)
 	{
 		$object = &$this->getRef($this);
-		if (DB_TYPE_USED === 'mysqli' )
-		{
-			if (defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE === true && !$forceNormal)
-			{
-				$object = new DBMemCachedQuery_mysqli();
-			}
-			elseif (defined('DB_USE_QCACHE') && DB_USE_QCACHE === true && !$forceNormal)
-			{
-				$object = new DBCachedQuery_mysqli();
-			}
-			else
-			{
-				$object = new DBNormalQuery_mysqli();
-			}
-		}
-		elseif (defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE === true && !$forceNormal)
+		if (defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE === true && !$forceNormal)
 		{
 			$object = new DBMemCachedQuery();
 		}
@@ -142,64 +67,39 @@ class DBQuery
 	}
 }
 
-//! mysql uncached query class. Manages SQL queries to a MySQL DB using mysql.
-class DBNormalQuery
+//! mysqli uncached query class. Manages SQL queries to a MySQL DB using mysqli.
+class DBNormalQuery extends DBBaseQuery
 {
-//! Prepare a connection for a new mysql query.
+	private $resid;
+	//! Prepare a connection for a new mysqli query.
 	function DBNormalQuery()
 	{
-		static $totalexectime = 0;
-		$this->totalexectime_ = &$totalexectime;
 		$this->executed_ = false;
-		$this->dbconn_ = new DBConnection;
-	}
-
-	//! Return the count of queries performed.
-
-    /*!
-     * \param $increase if true then increment the count.
-     * \return the count of queries so far.
-     */
-	function queryCount($increase = false)
-	{
-		static $count;
-
-		if ($increase)
-		{
-			$count++;
-		}
-
-		return $count;
-	}
-
-	//! Return the count of cached queries performed - 0 for uncaches queries.
-	function queryCachedCount($increase = false)
-	{
-		return 0;
+		self::$dbconn = new DBConnection();
 	}
 
 	//! Execute an SQL string.
 
-    /*
+	/*
      * If DB_HALTONERROR is set then this will exit on an error.
      * \return false on error or true if successful.
-     */
+	*/
 	function execute($sql)
 	{
 		$t1 = strtok(microtime(), ' ') + strtok('');
 
-		$this->resid_ = mysql_query($sql, $this->dbconn_->id());
+		$this->resid = mysqli_query(self::$dbconn->id(),$sql);
 
-		if (!$this->resid_ || mysql_errno($this->dbconn_->id()))
+		if ($this->resid === false || self::$dbconn->id()->errno)
 		{
 			if(defined('KB_PROFILE'))
 			{
-				DBDebug::recordError("Database error: ".mysql_error($this->dbconn_->id()));
+				DBDebug::recordError("Database error: ".self::$dbconn->id()->error);
 				DBDebug::recordError("SQL: ".$sql);
 			}
 			if (defined('DB_HALTONERROR') && DB_HALTONERROR)
 			{
-				echo "Database error: " . mysql_error($this->dbconn_->id()) . "<br>";
+				echo "Database error: " . self::$dbconn->id()->error . "<br>";
 				echo "SQL: " . $sql . "<br>";
 				exit;
 			}
@@ -209,154 +109,73 @@ class DBNormalQuery
 			}
 		}
 
-		$this->exectime_ = strtok(microtime(), ' ') + strtok('') - $t1;
-		$this->totalexectime_ += $this->exectime_;
+		$this->exectime = strtok(microtime(), ' ') + strtok('') - $t1;
+		self::$totalexectime += $this->exectime;
 		$this->executed_ = true;
 
-		if(defined('KB_PROFILE')) DBDebug::profile($sql);
+		if(defined('KB_PROFILE')) DBDebug::profile($sql, $this->exectime);
 
 		$this->queryCount(true);
 
 		return true;
 	}
-
 	//! Return the number of rows returned by the last query.
 	function recordCount()
 	{
-		return mysql_num_rows($this->resid_);
-	}
-
-	//! Return the next row of results from the last query.
-	function getRow()
-	{
-		if ($this->resid_)
+		if ($this->resid)
 		{
-			return mysql_fetch_assoc($this->resid_);
+			return $this->resid->num_rows;
 		}
 		return false;
 	}
-
+	//! Return the next row of results from the last query.
+	function getRow()
+	{
+		if ($this->resid)
+		{
+			return $this->resid->fetch_assoc();
+		}
+		return false;
+	}
 	//! Reset list of results to return the first row from the last query.
 	function rewind()
 	{
-		@mysql_data_seek($this->resid_, 0);
+		@mysqli_data_seek($this->resid, 0);
 	}
-
 	//! Return the auto-increment ID from the last insert operation.
 	function getInsertID()
 	{
-		return mysql_insert_id();
+		return self::$dbconn->id()->insert_id;
 	}
-
-	//! Return the execution time of the last query.
-	function execTime()
-	{
-		return $this->exectime_;
-	}
-
-	//! Return true if a query has been executed or false if none has been.
-	function executed()
-	{
-		return $this->executed_;
-	}
-
 	//! Return the most recent error message for the DB connection.
 	function getErrorMsg()
 	{
-		$msg = $this->sql_ . "<br>";
-		$msg .= "Query failed. " . mysql_error($this->dbconn_->id());
+		$msg .= "<br>Query failed. " . mysqli_error(self::$dbconn->id());
 
 		return $msg;
 	}
 	//! Set the autocommit status.
 
-	//! Not implemented with mysql library
+	/*! The default of true commits after every query.
+     * If set to false the queries will not be commited until autocommit is set
+     * to true.
+     *  \param $commit The new autocommit status.
+     *  \return true on success and false on failure.
+	*/
 	function autocommit($commit = true)
 	{
-		return false;
+		if(defined('KB_PROFILE') && KB_PROFILE == 3)
+		{
+			if(!$commit) DBDebug::recordError("Transaction started.");
+			else DBDebug::recordError("Transaction ended.");
+		}
+		
+		return self::$dbconn->id()->autocommit($commit);
 	}
-
 	//! Rollback all queries in the current transaction.
-
-	//! Not implemented with mysql library
 	function rollback()
 	{
-		return false;
+		return mysqli_rollback(self::$dbconn->id());
 	}
 }
 
-class DBDebug
-{
-	function recordError($text)
-	{
-		$qerrfile = "/tmp/EDKprofile.lst";
-		if($text) file_put_contents($qerrfile, $text."\n", FILE_APPEND);
-	}
-	function profile($sql, $text='')
-	{
-		$qerrfile = "/tmp/EDKprofile.lst";
-		if($text) file_put_contents($qerrfile, $text."\n", FILE_APPEND);
-		if (KB_PROFILE == 2)
-		{
-			file_put_contents($qerrfile, $sql . "\nExecution time: " . $this->exectime_ . "\n", FILE_APPEND);
-		}
-		if (KB_PROFILE == 3)
-		{
-			if(DB_TYPE == 'mysqli' && strtolower(substr($sql,0,6))=='select')
-			{
-				$this->dbconn_ = new DBConnection_mysqli;
-				$prof_out_ext = $prof_out_exp = '';
-				$prof_qry= mysqli_query($this->dbconn_->id(),'EXPLAIN extended '.$sql.";");
-				while($prof_row = mysqli_fetch_assoc($prof_qry))
-					$prof_out_exp .= implode(' | ', $prof_row)."\n";
-				$prof_qry= mysqli_query($this->dbconn_->id(),'show warnings');
-
-				while($prof_row = mysqli_fetch_assoc($prof_qry))
-					$prof_out_ext .= implode(' | ', $prof_row)."\n";
-				file_put_contents($qerrfile, $sql . "\n".
-					$prof_out_ext. $prof_out_exp.
-					"\n-- Execution time: " . $this->exectime_ . " --\n", FILE_APPEND);
-			}
-			else file_put_contents($qerrfile, $sql."\nExecution time: ".$this->exectime_."\n", FILE_APPEND);
-		}
-
-		if (KB_PROFILE == 4)
-		{
-			if($this->exectime_ > 0.1 && strtolower(substr($sql,0,6))=='select')
-			{
-				$this->dbconn_ = new DBConnection_mysqli;
-				$prof_out_exp = $prof_out_exp = '';
-				$prof_qry= mysqli_query($this->dbconn_->id(),'EXPLAIN extended '.$sql);
-				while($prof_row = mysqli_fetch_assoc($prof_qry))
-					$prof_out_exp .= implode(' | ', $prof_row)."\n";
-				$prof_qry= mysqli_query($this->dbconn_->id(),'show warnings');
-
-				while($prof_row = mysqli_fetch_assoc($prof_qry))
-					$prof_out_ext .= implode(' | ', $prof_row)."\n";
-				file_put_contents($qerrfile, $sql . "\n".
-					$prof_out_ext. $prof_out_exp.
-					"\n-- Execution time: " . $this->exectime_ . " --\n", FILE_APPEND);
-			}
-		}
-
-	}
-	function killCache()
-    {
-		if(!is_dir(KB_QUERYCACHEDIR)) return;
-		$dir = opendir(KB_QUERYCACHEDIR);
-		while ($line = readdir($dir))
-		{
-			if (strstr($line, 'qcache_qry') !== false)
-			{
-				@unlink(KB_QUERYCACHEDIR.'/'.$line);
-			}
-			elseif (strstr($line, 'qcache_tbl') !== false)
-			{
-				@unlink(KB_QUERYCACHEDIR.'/'.$line);
-			}
-		}
-	}
-
-}
-
-?>

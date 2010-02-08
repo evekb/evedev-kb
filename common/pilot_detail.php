@@ -62,7 +62,7 @@ class pPilotDetail extends pageAssembly
 		{
 			if($this->plt_external_id)
 			{
-				$qry = new DBQuery();
+				$qry = DBFactory::getDBQuery();
 				$qry->execute('SELECT plt_id FROM kb3_pilots WHERE plt_externalid = '.$this->plt_external_id);
 				if($qry->recordCount())
 				{

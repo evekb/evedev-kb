@@ -1,4 +1,5 @@
 <?php
+require_once('class.dbprepared.php');
 
 class Ship
 {

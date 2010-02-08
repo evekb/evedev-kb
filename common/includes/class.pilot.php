@@ -2,7 +2,7 @@
 require_once('class.corp.php');
 require_once('class.item.php');
 require_once('class.thumb.php');
-require_once('class.db.mysqli.prepared.php');
+require_once('class.dbprepared.php');
 
 //! Creates a new Pilot or fetches an existing one from the database.
 class Pilot

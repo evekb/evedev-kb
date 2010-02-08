@@ -117,7 +117,7 @@ class Page
 		$smarty->assign('profile_sql_cached', $qry->queryCachedCount());
 		$smarty->assign('profile_sql', $qry->queryCount());
 		$smarty->assign('profile_time', round($this->processingtime_,4));
-		$smarty->assign('sql_time', round($qry->totalexectime_,4));
+		$smarty->assign('sql_time', round($qry->getTotalTime(),4));
 		if($this->isAdmin() || config::get('cfg_profile') || intval(KB_PROFILE)) $smarty->assign('profile', 1);
 		$smarty->assign('content_html', $this->contenthtml_);
 		if (config::get('user_showmenu'))

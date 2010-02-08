@@ -1,38 +1,55 @@
 <?php
-require_once('common/includes/class.db.mysqli.php');
+require_once('class.dbdebug.php');
+require_once('class.dbconnection.php');
+require_once('class.db.php');
+
 //! mysqli uncached query class. Manages SQL queries to a MySQL DB using mysqli.
 class DBPreparedQuery
 {
+	static protected $totalexectime = 0;
+	protected $exectime = 0;
+	static protected $dbconn = null;
+	static protected $queryCount = 0;
+	static protected $queryCachedCount = 0;
+	protected $stmt = null;
+	
 //! Prepare a connection for a new mysqli query.
 	function DBPreparedQuery()
 	{
 		$this->executed_ = false;
-		$this->dbconn_ = new DBConnection_mysqli;
-		static $totalexectime = 0;
-		$this->totalexectime_ = &$totalexectime;
+		self::$dbconn = new DBConnection();
 	}
-	//! Return the count of queries performed.
+    //! Return the count of queries performed.
 
     /*!
      * \param $increase if true then increment the count.
      * \return the count of queries so far.
      */
-	function queryCount($increase = false)
-	{
-		static $count;
+    public static function queryCount($increase = false)
+    {
+        if ($increase)
+        {
+            self::$queryCount++;
+        }
 
-		if ($increase)
-		{
-			$count++;
-		}
+        return self::$queryCount;
+    }
 
-		return $count;
-	}
-	//! Return the count of cached queries performed - 0 for uncache queries.
-	function queryCachedCount($increase = false)
-	{
-		return 0;
-	}
+    //! Return the count of cached queries performed.
+
+    /*!
+     * \param $increase if true then increment the count.
+     * \return the count of queries so far.
+     */
+    public static function queryCachedCount($increase = false)
+    {
+        if ($increase)
+        {
+            self::$queryCachedCount++;
+        }
+
+        return self::$queryCachedCount;
+    }
 	//! Execute the prepared command.
 
     /*
@@ -47,10 +64,6 @@ class DBPreparedQuery
 	function recordCount()
 	{
 		if($this->stmt) return $this->stmt->num_rows;
-		if ($this->resid_)
-		{
-			return $this->resid_->num_rows;
-		}
 		return false;
 	}
 	//! Return the auto-increment ID from the last insert operation.
@@ -65,8 +78,8 @@ class DBPreparedQuery
 		{
 			return "Prepared statement failed: ".$this->stmt->errno;
 		}
-		$msg = $this->sql_ . "<br>";
-		$msg .= "Query failed. " . mysqli_error($this->dbconn_->id());
+		$msg = "<br>Query failed. "
+			. mysqli_error(self::$dbconn->id());
 
 		return $msg;
 	}
@@ -80,12 +93,12 @@ class DBPreparedQuery
      */
 	function autocommit($commit = true)
 	{
-		return $this->dbconn_->id()->autocommit($commit);
+		return self::$dbconn->id()->autocommit($commit);
 	}
 	//! Rollback all queries in the current transaction.
 	function rollback()
 	{
-		return mysqli_rollback($this->dbconn_->id());
+		return mysqli_rollback(self::$dbconn->id());
 	}
 	//! Prepare a statement.
 
@@ -94,7 +107,7 @@ class DBPreparedQuery
 	 */
 	function prepare($sql)
 	{
-		$this->stmt = $this->dbconn_->id()->prepare($sql);
+		$this->stmt = self::$dbconn->id()->prepare($sql);
 		if(!$this->stmt)
 		{
 			if(defined('KB_PROFILE'))
@@ -170,16 +183,17 @@ class DBPreparedQuery
      */
 	function execute_prepared()
 	{
+		$t1 = strtok(microtime(), ' ') + strtok('');
 		if(!$this->stmt->execute())
 		{
 			if(defined('KB_PROFILE'))
 			{
-				DBDebug::recordError("Database error: ".$this->dbconn_->id()->error);
+				DBDebug::recordError("Database error: ".self::$dbconn->id()->error);
 				DBDebug::recordError("SQL: ".$sql);
 			}
 			if (defined('DB_HALTONERROR') && DB_HALTONERROR)
 			{
-				echo "Database error: " . $this->dbconn_->id()->error . "<br>";
+				echo "Database error: " . self::$dbconn->id()->error . "<br>";
 				echo "SQL: " . $sql . "<br>";
 				exit;
 			}
@@ -189,6 +203,8 @@ class DBPreparedQuery
 			}
 		}
 		$this->stmt->store_result();
+		$this->exectime = strtok(microtime(), ' ') + strtok('') - $t1;
+		self::$totalexectime += $this->exectime;
 		return true;
 	}
 	//! Fetch the next results of the prepared statement into bound variables.
