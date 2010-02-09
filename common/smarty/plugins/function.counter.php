@@ -2,7 +2,7 @@
 /**
  * Smarty plugin
  * @package Smarty
- * @subpackage plugins
+ * @subpackage PluginsFunction
  */
 
 
@@ -15,24 +15,24 @@
  * @author Monte Ohrt <monte at ohrt dot com>
  * @link http://smarty.php.net/manual/en/language.function.counter.php {counter}
  *       (Smarty online manual)
- * @param array parameters
- * @param Smarty
+ * @param array $params parameters
+ * @param object $smarty Smarty object
+ * @param object $template template object
  * @return string|null
  */
-function smarty_function_counter($params, &$smarty)
+function smarty_function_counter($params, $smarty, $template)
 {
-    static $counters = array();
 
     $name = (isset($params['name'])) ? $params['name'] : 'default';
-    if (!isset($counters[$name])) {
-        $counters[$name] = array(
+    if (!isset($template->plugin_data['counter'][$name])) {
+        $template->plugin_data['counter'][$name] = array(
             'start'=>1,
             'skip'=>1,
             'direction'=>'up',
             'count'=>1
             );
     }
-    $counter =& $counters[$name];
+    $counter = &$template->plugin_data['counter'][$name];
 
     if (isset($params['start'])) {
         $counter['start'] = $counter['count'] = (int)$params['start'];
@@ -43,7 +43,7 @@ function smarty_function_counter($params, &$smarty)
     }
 
     if (isset($counter['assign'])) {
-        $smarty->assign($counter['assign'], $counter['count']);
+        $template->assign($counter['assign'], $counter['count']);
     }
     
     if (isset($params['print'])) {
@@ -74,7 +74,5 @@ function smarty_function_counter($params, &$smarty)
     return $retval;
     
 }
-
-/* vim: set expandtab: */
 
 ?>

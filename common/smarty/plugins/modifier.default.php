@@ -2,7 +2,7 @@
 /**
  * Smarty plugin
  * @package Smarty
- * @subpackage plugins
+ * @subpackage PluginsModifier
  */
 
 
@@ -26,7 +26,4 @@ function smarty_modifier_default($string, $default = '')
     else
         return $string;
 }
-
-/* vim: set expandtab: */
-
 ?>

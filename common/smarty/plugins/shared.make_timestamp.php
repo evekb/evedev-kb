@@ -2,7 +2,7 @@
 /**
  * Smarty shared plugin
  * @package Smarty
- * @subpackage plugins
+ * @subpackage PluginsShared
  */
 
 
@@ -11,7 +11,7 @@
  * Purpose:  used by other smarty functions to make a timestamp
  *           from a string.
  * @author   Monte Ohrt <monte at ohrt dot com>
- * @param string
+ * @param string $string
  * @return string
  */
 function smarty_make_timestamp($string)
@@ -40,7 +40,4 @@ function smarty_make_timestamp($string)
     return $time;
 
 }
-
-/* vim: set expandtab: */
-
 ?>

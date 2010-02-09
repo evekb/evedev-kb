@@ -2,7 +2,7 @@
 /**
  * Smarty plugin
  * @package Smarty
- * @subpackage plugins
+ * @subpackage PluginsModifier
  */
 
 
@@ -15,9 +15,9 @@
  * @link http://smarty.php.net/manual/en/language.modifier.count.characters.php
  *          count_characters (Smarty online manual)
  * @author   Monte Ohrt <monte at ohrt dot com>
- * @param string
- * @param boolean include whitespace in the character count
- * @return integer
+ * @param string $string input string
+ * @param boolean $include_spaces include whitespace in the character count
+ * @return integer number of characters
  */
 function smarty_modifier_count_characters($string, $include_spaces = false)
 {
@@ -26,7 +26,4 @@ function smarty_modifier_count_characters($string, $include_spaces = false)
 
     return preg_match_all("/[^\s]/",$string, $match);
 }
-
-/* vim: set expandtab: */
-
 ?>

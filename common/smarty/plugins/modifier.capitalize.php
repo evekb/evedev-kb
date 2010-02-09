@@ -2,7 +2,7 @@
 /**
  * Smarty plugin
  * @package Smarty
- * @subpackage plugins
+ * @subpackage PluginsModifier
  */
 
 
@@ -38,6 +38,4 @@ function smarty_modifier_capitalize_ucfirst($string, $uc_digits = null)
     else
         return $string[0];
 }
-
-
 ?>
