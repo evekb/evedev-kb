@@ -563,7 +563,7 @@ class ContractListTable
 				}
 				if ($list->inv_crp_ )
 				{
-					$sql .= ' inner join kb3_inv_corp inc on ( kll.kll_id = inc.inc_kll_id ) ';
+					$sql .= ' inner join kb3_inv_crp inc on ( kll.kll_id = inc.inc_kll_id ) ';
 				}
 				if ($list->inv_all_ )
 				{
