@@ -63,8 +63,10 @@ class cache
 		// Set an old expiry date to discourage the browser from trying to
 		// cache the page.
 		if($page != 'mapview' && $page != 'sig')
+		{
 			header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
-		
+			header('Cache-Control: no-cache');
+		}
 		$usegz = config::get('cfg_compress')
 			&& !ini_get('zlib.output_compression');
 		$cachefile = cache::genCacheName();
