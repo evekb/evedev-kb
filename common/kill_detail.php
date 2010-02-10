@@ -136,7 +136,7 @@ class pKillDetail extends pageAssembly
 		require_once('common/includes/class.alliance.php');
 
 		global $smarty;
-		if(!file_exists('img/panel/'.config::get('fp_theme').'png')) config::set('fp_theme','apoc');
+		if(!file_exists('img/panel/'.config::get('fp_theme').'.png')) config::set('fp_theme','apoc');
 		$smarty->assign('panel_colour', config::get('fp_theme'));
 		$smarty->assign('showiskd', config::get('kd_showiskd'));
 
