@@ -1,7 +1,7 @@
 <form method="post" action="?a=register">
 {if $error}
-{include file=error.tpl}
-<br/><br/>
+<div class="block-header2">Error</div>
+{$error}<br/><br/>
 {/if}
 <table class="kb-subtable">
 <tr>
