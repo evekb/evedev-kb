@@ -22,5 +22,3 @@ define('DB_PASS', '{$pass}');
 define('DB_TYPE', 'mysqli');
 define('DB_PORT', '3306');
 
-// please make sure that there is no space behind the closing tag
-?>
