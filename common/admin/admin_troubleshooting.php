@@ -108,8 +108,8 @@ if (ini_get('allow_url_fopen'))
 //yes this is a mess, pew pew and programming dont mix =P
 function find_SQL_Version()
 {
-	$conn = new DBConnection;
-	$value = (float) mysql_get_server_info($conn->id_);
+	$conn = new DBConnection_mysqli();
+	$value = (float) mysqli_get_server_info($conn->id());
 	return $value;
 // shell_exec is often not supported so ask the connection instead.
 //   $output = shell_exec('mysql -V');
@@ -131,4 +131,3 @@ $html .= "</table>";
 $page->setContent($html);
 $page->addContext($menubox->generate());
 $page->generate();
-?>
