@@ -4,8 +4,9 @@
 //! Contains methods to create and retrieve a complete cache of the current page.
 class cache
 {
-//! Check the server load using /proc/loadavg.
-	function checkLoad()
+	private static $cacheName = null;
+	//! Check the server load using /proc/loadavg.
+	public static function checkLoad()
 	{
 		if (PHP_OS != 'Linux')
 		{
@@ -34,7 +35,7 @@ class cache
 		}
 	}
 	//! Check if the current page should be cached.
-	function shouldCache($page = '')
+	private static function shouldCache($page = '')
 	{
 		// never cache for admins
 		if (session::isAdmin())
@@ -58,7 +59,7 @@ class cache
 		return false;
 	}
 	//! Check if the current page is cached and valid then send it if so.
-	function check($page)
+	public static function check($page)
 	{
 		// Set an old expiry date to discourage the browser from trying to
 		// cache the page.
@@ -102,18 +103,18 @@ class cache
 			if(file_exists($cachefile)) $timestamp = @filemtime($cachefile);
 			else $timestamp = 0;
 
-			if(config::get('cache_update') == '*')
-				if(file_exists(KB_PAGECACHEDIR.'/killadded.mk'))
-					if($timestamp < @filemtime(KB_PAGECACHEDIR.'/killadded.mk'))
+			if(config::get('cache_update') == '*'
+				&& file_exists(KB_PAGECACHEDIR.'/killadded.mk')
+				&& $timestamp < @filemtime(KB_PAGECACHEDIR.'/killadded.mk'))
+					$timestamp = 0;
+			else
+			{
+				$cacheupdate = explode(',', config::get('cache_update'));
+				if (($page != '' && in_array($page, $cacheupdate))
+					&& file_exists(KB_PAGECACHEDIR.'/killadded.mk')
+					&& $timestamp < @filemtime(KB_PAGECACHEDIR.'/killadded.mk'))
 						$timestamp = 0;
-					else
-					{
-						$cacheupdate = explode(',', config::get('cache_update'));
-						if (($page != '' && in_array($page, $cacheupdate)))
-							if(file_exists(KB_PAGECACHEDIR.'/killadded.mk'))
-								if($timestamp < @filemtime(KB_PAGECACHEDIR.'/killadded.mk'))
-									$timestamp = 0;
-					}
+			}
 			if (time() - $cachetime < $timestamp)
 			{
 				// Alternatively, use a hash of the file. More cpu for a little
@@ -155,7 +156,7 @@ class cache
 		elseif($usegz) ob_start("ob_gzhandler");
 	}
 	//! Generate the cache for the current page.
-	function generate()
+	public static function generate()
 	{
 		if (cache::shouldCache())
 		{
@@ -196,23 +197,26 @@ class cache
 	 *
 	 *  \return string of path and filename for the current page's cachefile.
 	*/
-	function genCacheName($subdir = false)
+	private static function genCacheName($subdir = false)
 	{
+		if(isset(self::$cacheName) && !$subdir) return self::$cacheName;
+
 		global $themename, $stylename;
 		$basename = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].IS_IGB.$themename.$stylename;
 		event::call('cacheNaming', $basename);
 		$filename = md5($basename).'.cache';
 		if($subdir) return substr($filename,0,1);
-		else return KB_PAGECACHEDIR.'/'.KB_SITE.'/'.substr($filename,0,1).'/'.$filename;
+		self::$cacheName = KB_PAGECACHEDIR.'/'.KB_SITE.'/'.substr($filename,0,1).'/'.$filename;
+		return self::$cacheName;
 	}
 	//! Remove the cache of the current page.
-	function deleteCache()
+	public static function deleteCache()
 	{
 		$cachefile = cache::genCacheName();
 		@unlink($cachefile);
 	}
 	//! Mark the cached page as still current without rebuilding it.
-	function touchCache()
+	public static function touchCache()
 	{
 		if(! config::get('cache_enabled') ) return;
 		if (!file_exists(KB_PAGECACHEDIR.'/'.KB_SITE))
@@ -220,7 +224,7 @@ class cache
 		touch(cache::genCacheName());
 	}
 	//! Notify the cache that a kill has been added.
-	function notifyKillAdded()
+	public static function notifyKillAdded()
 	{
 		if(! config::get('cache_enabled') ) return;
 		if (!file_exists(KB_PAGECACHEDIR))
