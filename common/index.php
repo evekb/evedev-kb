@@ -52,6 +52,7 @@ require_once('common/includes/xajax.functions.php');
 @set_magic_quotes_runtime(0);
 
 // remove some chars from the request string to avoid 'hacking'-attempts
+if(!isset($_GET['a'])) $_GET['a'] = 'home';
 $page = str_replace('.', '', $_GET['a']);
 $page = str_replace('/', '', $page);
 if ($page == '' || $page == 'index')
