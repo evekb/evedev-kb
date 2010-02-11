@@ -880,7 +880,7 @@ class API_KillLog
             $keystring .= '&beforeKillID=' . $refid;
 
         $path = '/' . $typestring . '/Killlog.xml.aspx';
-        $fp = fsockopen("api.eve-online.com", 80);
+        $fp = @fsockopen("api.eve-online.com", 80);
 
         if (!$fp)
         {
@@ -894,7 +894,7 @@ class API_KillLog
             fputs ($fp, "Content-Length: " . strlen($keystring) . "\r\n");
             fputs ($fp, "Connection: close\r\n\r\n");
             fputs ($fp, $keystring."\r\n");
-
+			stream_set_timeout($fp, 10);
             // retrieve contents
             $contents = "";
             while (!feof($fp))
@@ -1092,7 +1092,7 @@ class APIChar
     function loaddata($apistring)
     {
         $path = '/account/Characters.xml.aspx';
-        $fp = fsockopen("api.eve-online.com", 80);
+        $fp = @fsockopen("api.eve-online.com", 80);
 
         if (!$fp)
         {
@@ -1106,6 +1106,7 @@ class APIChar
             fputs ($fp, "Content-Length: " . strlen($apistring) . "\r\n");
             fputs ($fp, "Connection: close\r\n\r\n");
             fputs ($fp, $apistring."\r\n");
+			stream_set_timeout($fp, 10);
 
             // retrieve contents
             $contents = "";
@@ -2591,7 +2592,7 @@ class API_Standings
 
 		if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($CachedTime) > 0) || ($UseCaching == 1)  || !$cacheexists )// if API_UseCache = 1 (off) then don't use cache
     	{
-        	$fp = fsockopen("api.eve-online.com", 80);
+        	$fp = @fsockopen("api.eve-online.com", 80);
 
         	if (!$fp)
         	{
@@ -2605,6 +2606,7 @@ class API_Standings
             	fputs ($fp, "Content-Length: " . strlen($keystring) . "\r\n");
             	fputs ($fp, "Connection: close\r\n\r\n");
             	fputs ($fp, $keystring."\r\n");
+				stream_set_timeout($fp, 10);
 
             	// retrieve contents
             	$contents = "";
@@ -2944,7 +2946,7 @@ class API_CharacterSheet
 		// if API_UseCache = 1 (off) then don't use cache
 		if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($CachedTime) > 0) || ($UseCaching == 1)  || !$cacheexists )
     	{
-        	$fp = fsockopen("api.eve-online.com", 80);
+        	$fp = @fsockopen("api.eve-online.com", 80);
 
         	if (!$fp)
         	{
@@ -2958,6 +2960,7 @@ class API_CharacterSheet
             	fputs ($fp, "Content-Length: " . strlen($keystring) . "\r\n");
             	fputs ($fp, "Connection: close\r\n\r\n");
             	fputs ($fp, $keystring."\r\n");
+				stream_set_timeout($fp, 10);
 
            	 	// retrieve contents
             	$contents = "";
@@ -3218,7 +3221,7 @@ class API_SkillInTraining
 		// if API_UseCache = 1 (off) then don't use cache
 		if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($CachedTime) > 0) || ($UseCaching == 1)  || !$cacheexists )
     	{
-        	$fp = fsockopen("api.eve-online.com", 80);
+        	$fp = @fsockopen("api.eve-online.com", 80);
 
         	if (!$fp)
         	{
@@ -3232,6 +3235,7 @@ class API_SkillInTraining
             	fputs ($fp, "Content-Length: " . strlen($keystring) . "\r\n");
             	fputs ($fp, "Connection: close\r\n\r\n");
             	fputs ($fp, $keystring."\r\n");
+				stream_set_timeout($fp, 10);
 
            	 	// retrieve contents
             	$contents = "";
@@ -3480,7 +3484,7 @@ class API_StarbaseList
 		// if API_UseCache = 1 (off) then don't use cache
 		if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($CachedTime) > 0) || ($UseCaching == 1)  || !$cacheexists )
     	{
-        	$fp = fsockopen("api.eve-online.com", 80);
+        	$fp = @fsockopen("api.eve-online.com", 80);
 
         	if (!$fp)
         	{
@@ -3494,6 +3498,7 @@ class API_StarbaseList
             	fputs ($fp, "Content-Length: " . strlen($keystring) . "\r\n");
             	fputs ($fp, "Connection: close\r\n\r\n");
             	fputs ($fp, $keystring."\r\n");
+				stream_set_timeout($fp, 10);
 
            	 	// retrieve contents
             	$contents = "";
@@ -3844,7 +3849,7 @@ class API_StarbaseDetail
 		// if API_UseCache = 1 (off) then don't use cache
 		if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($CachedTime) > 0) || ($UseCaching == 1)  || !$cacheexists )
     	{
-        	$fp = fsockopen("api.eve-online.com", 80);
+        	$fp = @fsockopen("api.eve-online.com", 80);
 
         	if (!$fp)
         	{
@@ -3858,6 +3863,7 @@ class API_StarbaseDetail
             	fputs ($fp, "Content-Length: " . strlen($keystring) . "\r\n");
             	fputs ($fp, "Connection: close\r\n\r\n");
             	fputs ($fp, $keystring."\r\n");
+				stream_set_timeout($fp, 10);
 
            	 	// retrieve contents
             	$contents = "";
@@ -4228,7 +4234,7 @@ class API_CorporationSheet
 		// if API_UseCache = 1 (off) then don't use cache
 		if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($CachedTime) > 0) || ($UseCaching == 1)  || !$cacheexists )
     	{
-        	$fp = fsockopen("api.eve-online.com", 80);
+        	$fp = @fsockopen("api.eve-online.com", 80);
 
         	if (!$fp)
         	{
@@ -4242,6 +4248,7 @@ class API_CorporationSheet
             	fputs ($fp, "Content-Length: " . strlen($keystring) . "\r\n");
             	fputs ($fp, "Connection: close\r\n\r\n");
             	fputs ($fp, $keystring."\r\n");
+				stream_set_timeout($fp, 10);
 
            	 	// retrieve contents
             	$contents = "";
@@ -4394,7 +4401,7 @@ class API_NametoID
         $path = '/eve/CharacterID.xml.aspx';
 
 
-        $fp = fsockopen("api.eve-online.com", 80);
+        $fp = @fsockopen("api.eve-online.com", 80);
 
         if (!$fp)
         {
@@ -4408,6 +4415,7 @@ class API_NametoID
             fputs ($fp, "Content-Length: " . strlen($keystring) . "\r\n");
             fputs ($fp, "Connection: close\r\n\r\n");
             fputs ($fp, $keystring."\r\n");
+			stream_set_timeout($fp, 10);
 
            	 // retrieve contents
             $contents = "";
@@ -4543,7 +4551,7 @@ class API_IDtoName
         $path = '/eve/CharacterName.xml.aspx';
 
 
-        $fp = fsockopen("api.eve-online.com", 80);
+        $fp = @fsockopen("api.eve-online.com", 80);
 
         if (!$fp)
         {
@@ -4557,6 +4565,7 @@ class API_IDtoName
             fputs ($fp, "Content-Length: " . strlen($keystring) . "\r\n");
             fputs ($fp, "Connection: close\r\n\r\n");
             fputs ($fp, $keystring."\r\n");
+			stream_set_timeout($fp, 10);
 
            	 // retrieve contents
             $contents = "";
@@ -4684,7 +4693,7 @@ function LoadGlobalData($path)
 
 	if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($CachedTime) > 0) || ($UseCaching == 1)  || !$cacheexists )// if API_UseCache = 1 (off) then don't use cache
     {
-        $fp = fsockopen("api.eve-online.com", 80);
+        $fp = @fsockopen("api.eve-online.com", 80);
 
         if (!$fp)
         {
@@ -4698,6 +4707,7 @@ function LoadGlobalData($path)
             fputs ($fp, "Content-Length: 0\r\n");
             fputs ($fp, "Connection: close\r\n\r\n");
             fputs ($fp, "\r\n");
+			stream_set_timeout($fp, 10);
 
            	 // retrieve contents
             $contents = "";
