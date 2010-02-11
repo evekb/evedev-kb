@@ -16,102 +16,75 @@
 
 class role
 {
-    function role()
-    {
-        trigger_error('The class "role" may only be invoked statically.', E_USER_ERROR);
-    }
+	private static $roles;
 
-    function register($role_name, $role_descr)
-    {
-        // store role as hardcoded
-        role::_put($role_name, $role_descr, true);
-    }
+	function role()
+	{
+		trigger_error('The class "role" may only be invoked statically.', E_USER_ERROR);
+	}
 
-    function init()
-    {
-        $db = new DBQuery();
+	public static function register($role_name, $role_descr)
+	{
+		// store role as hardcoded
+		role::_put($role_name, $role_descr, true);
+	}
 
-        $db->execute('select rol_name, rol_descr from kb3_roles where rol_site=\''.KB_SITE."'");
-        while ($row = $db->getRow())
-        {
-            role::_put($row['rol_name'], $row['rol_descr']);
-            role::_put($row['rol_name'], $row['rol_descr'], true);
-        }
-        role::register('admin', 'Basic Admin Role');
-    }
-
-    // look if we should only return hardcoded roles
-    function &get($hard = false)
-    {
-        $cache = &role::_getCache();
-
-        $list = array();
-        foreach ($cache['keys'] as $key => $value)
-        {
-            if (in_array($key, $cache['hard']))
-            {
-                if ($hard)
-                {
-                    $list[$key] = $value;
-                }
-            }
-            else
-            {
-                if (!$hard)
-                {
-                    $list[$key] = $value;
-                }
-            }
-        }
-        return $list;
-    }
-
-    function _put($key, $data, $hard = false)
-    {
-    	$cache = &role::_getCache();
-    	if ($hard)
-    	{
-    	    $cache['hard'][$key] = $key;
-    	    if (!isset($cache['keys'][$key]))
-    	    {
-    	        // this indicates a hard role without a database entry
-    	        // generate an identification number
-    	        $id = abs(crc32($key));
-
-    	        // insert it into the database
-	            $db = new DBQuery();
-    	        $db->execute('INSERT INTO `kb3_roles` VALUES("'.$id.'", "'.KB_SITE.'", "'.$key.'", "'.$data.'");');
-			}
-		}
-		$cache['keys'][$key] = $data;
-    }
-
-    function _get($key)
-    {
-    	$cache = &role::_getCache();
-
-    	if (!isset($cache['keys'][$key]))
-    	{
-    	    return null;
-    	}
-    	return $cache['keys'][$key];
-    }
-
-    function &_getCache()
-    {
-    	static $cache;
-
-    	if (!isset($cache))
-        {
+	public static function init()
+	{
+		if (!isset(self::$roles))
+		{
 			$qry = new DBQuery();
 			$qry->execute('select rol_id,rol_name, rol_descr from kb3_roles where rol_site=\''.KB_SITE."' order by rol_name");
 			while ($row = $qry->getRow())
 			{
-				$cache['keys'][$row['rol_name']] = $row['rol_descr'];
-				$cache['hard'][$row['rol_name']] = $row['rol_descr'];
-    		}
+				self::$roles['keys'][$row['rol_name']] = $row['rol_descr'];
+				self::$roles['hard'][$row['rol_name']] = $row['rol_descr'];
+			}
+			role::register('admin', 'Basic Admin Role');
 		}
-		return $cache;
-    }
+
+	}
+
+	// look if we should only return hardcoded roles
+	public static function &get($hard = false)
+	{
+		$list = array();
+		foreach (self::$roles['keys'] as $key => $value)
+		{
+			if (in_array($key, self::$roles['hard']))
+			{
+				if ($hard)
+				{
+					$list[$key] = $value;
+				}
+			}
+			else
+			{
+				if (!$hard)
+				{
+					$list[$key] = $value;
+				}
+			}
+		}
+		return $list;
+	}
+
+	private static function _put($key, $data, $hard = false)
+	{
+		if ($hard)
+		{
+			self::$roles['hard'][$key] = $key;
+			if (!isset(self::$roles['keys'][$key]))
+			{
+				// this indicates a hard role without a database entry
+				// generate an identification number
+				$id = abs(crc32($key));
+
+				// insert it into the database
+				$db = new DBQuery();
+				$db->execute('INSERT INTO `kb3_roles` VALUES("'.$id.'", "'.KB_SITE.'", "'.$key.'", "'.$data.'");');
+			}
+		}
+		self::$roles['keys'][$key] = $data;
+	}
 }
-?>

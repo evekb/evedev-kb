@@ -2,25 +2,30 @@
 //! Creates a new Alliance or fetches an existing one from the database.
 class Alliance
 {
+	private $id;
+	private $externalid;
+	private $executed;
+	private $name;
     //! Create a new Alliance object from the given $id.
     
     /*!
      * \param $id The alliance ID.
+	 * \param $external true/false. Whether the given id is internal or external
      */
-    function Alliance($id = 0, $externalIDFlag = false)
+    function Alliance($id = 0, $external = false)
 	{
-		if($externalIDFlag) $this->externalid_=intval($id);
-		else $this->id_ = intval($id);
-        $this->executed_ = false;
-		$this->name_ = '';
+		if($external) $this->externalid=intval($id);
+		else $this->id = intval($id);
+        $this->executed = false;
+		$this->name = '';
     }
 
 	//! Return the alliance CCP ID.
 	function getExternalID()
 	{
-		if($this->externalid_) return $this->externalid_;
+		if($this->externalid) return $this->externalid;
 		$this->execQuery();
-		if($this->externalid_) return $this->externalid_;
+		if($this->externalid) return $this->externalid;
 
 		$allname = str_replace(" ", "%20", $this->getName() );
 		require_once("common/includes/class.eveapi.php");
@@ -29,48 +34,48 @@ class Alliance
 		$myID->fetchXML();
 		$myNames = $myID->getNameData();
 		if($this->setExternalID($myNames[0]['characterID']))
-			return $this->externalid_;
+			return $this->externalid;
 		else return 0;
 	}
 
 	//! Return the alliance ID.
 	function getID()
     {
-		if($this->id_) return $this->id_;
-		elseif($this->externalid_)
+		if($this->id) return $this->id;
+		elseif($this->externalid)
 		{
 			$this->execQuery();
-			return $this->id_;
+			return $this->id;
 		}
 		else return 0;
     }
     //! Return the alliance name stripped of all non-ASCII non-alphanumeric characters.
     function getUnique()
     {
-		if(!$this->name_) $this->execQuery();
-        return preg_replace('/[^a-zA-Z0-9]/', '', $this->name_);
+		if(!$this->name) $this->execQuery();
+        return preg_replace('/[^a-zA-Z0-9]/', '', $this->name);
     }
     //! Return the alliance name.
     function getName()
     {
-        if(!$this->name_) $this->execQuery();
-        return $this->name_;
+        if(!$this->name) $this->execQuery();
+        return $this->name;
     }
     //! Fetch the alliance details from the database using the id given on construction.
     function execQuery()
     {
-        if (!$this->executed_)
+        if (!$this->executed)
         {
 			$qry = new DBQuery();
 			$sql = "select * from kb3_alliances where ";
-			if($this->externalid_) $sql .= "all_external_id = ".$this->externalid_;
-			else $sql .= "all_id = ".$this->id_;
+			if($this->externalid) $sql .= "all_external_id = ".$this->externalid;
+			else $sql .= "all_id = ".$this->id;
 			$qry->execute($sql);
             $row = $qry->getRow();
-			$this->id_ = $row['all_id'];
-			$this->name_ = $row['all_name'];
-			$this->externalid_ = intval($row['all_external_id']);
-			$this->executed_ = true;
+			$this->id = $row['all_id'];
+			$this->name = $row['all_name'];
+			$this->externalid = intval($row['all_external_id']);
+			$this->executed = true;
         }
     }
     //! Add a new alliance to the database or update the details of an existing one.
@@ -107,10 +112,10 @@ class Alliance
 					$row = $qry->getRow();
 					$qry->execute("UPDATE kb3_alliances SET all_name = '".slashfix($name)."' WHERE all_external_id = ".$externalid);
 
-					$this->id_ = $row['all_id'];
-					$this->name_ = slashfix($name);
-					$this->externalid_ = $row['all_external_id'];
-					return $this->id_;
+					$this->id = $row['all_id'];
+					$this->name = slashfix($name);
+					$this->externalid = $row['all_external_id'];
+					return $this->id;
 				}
 				$qry->execute("insert into kb3_alliances ".
 					"(all_id, all_name, all_external_id) values ".
@@ -119,27 +124,27 @@ class Alliance
             else $qry->execute("insert into kb3_alliances ".
 				"(all_id, all_name) values ".
 				"(null, '".slashfix($name)."')");
-            $this->id_ = $qry->getInsertID();
+            $this->id = $qry->getInsertID();
         }
         else
         {
             $row = $qry->getRow();
-            $this->id_ = $row['all_id'];
-			$this->name_ = slashfix($name);
-			$this->externalid_ = intval($row['all_external_id']);
+            $this->id = $row['all_id'];
+			$this->name = slashfix($name);
+			$this->externalid = intval($row['all_external_id']);
         }
     }
 	//! Set the CCP external ID for this alliance.
 	function setExternalID($externalid)
 	{
 		$externalid = intval($externalid);
-		if($externalid && $this->id_)
+		if($externalid && $this->id)
 		{
 			$this->execQuery();
 			$qry = new DBQuery();
-			if($qry->execute("UPDATE kb3_alliances SET all_external_id = ".$externalid." WHERE all_id = ".$this->id_))
+			if($qry->execute("UPDATE kb3_alliances SET all_external_id = ".$externalid." WHERE all_id = ".$this->id))
 			{
-				$this->externalid_ = $externalid;
+				$this->externalid = $externalid;
 				return true;
 			}
 		}
@@ -177,4 +182,3 @@ class Alliance
 		}
 	}
 }
-?>

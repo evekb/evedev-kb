@@ -2,15 +2,14 @@
 
 class DBDebug
 {
-	function recordError($text)
+	public static function recordError($text)
 	{
 		$qerrfile = "/tmp/EDKprofile.lst";
 		if($text) file_put_contents($qerrfile, $text."\n", FILE_APPEND);
 	}
-	function profile($sql, $time = 0)
+	public static function profile($sql, $time = 0)
 	{
 		$qerrfile = "/tmp/EDKprofile.lst";
-		if($text) file_put_contents($qerrfile, $text."\n", FILE_APPEND);
 		if (KB_PROFILE == 2)
 		{
 			file_put_contents($qerrfile, $sql . "\nExecution time: " . $time . "\n", FILE_APPEND);
@@ -55,7 +54,7 @@ class DBDebug
 		}
 
 	}
-	function killCache()
+	public static function killCache()
 	{
 		if(!is_dir(KB_QUERYCACHEDIR)) return;
 		$dir = opendir(KB_QUERYCACHEDIR);

@@ -26,9 +26,9 @@ class Config
 		return false;
 	}
 
-	function init()
+	public static function init()
 	{
-		global $config_init;
+		static $config_init = false;
 
 		if ($config_init)
 		{
@@ -67,12 +67,12 @@ class Config
 		}
 	}
 
-	function put($key, $data)
+	public static function put($key, $data)
 	{
 		self::$configCache[$key] = $data;
 	}
 
-	function del($key)
+	public static function del($key)
 	{
 		if (isset(self::$configCache[$key]))
 		{
@@ -84,7 +84,7 @@ class Config
                        AND cfg_site = '".self::$configSite."'");
 	}
 
-	function set($key, $value)
+	public static function set($key, $value)
 	{
 		// only update the database when the old value differs
 		if (isset(self::$configCache[$key]))
@@ -111,16 +111,7 @@ class Config
 		$qry->execute($sql);
 	}
 
-	function &get($key)
-	{
-		if (!isset(self::$configCache[$key]))
-		{
-			return null;
-		}
-		return self::$configCache[$key];
-	}
-
-	function &getnumerical($key)
+	public static function &get($key)
 	{
 		if (!isset(self::$configCache[$key]))
 		{

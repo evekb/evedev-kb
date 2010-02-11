@@ -39,32 +39,6 @@ class DBQuery
 	{
 		return $this->object->$name;
 	}
-
-	// php4 style object overloading
-	// we just hijack $this but we need to use a helper
-	// function for this because php5 fatals if it sees
-	// $this = ... in the src
-	function DBQuery($forceNormal = false)
-	{
-		$object = &$this->getRef($this);
-		if (defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE === true && !$forceNormal)
-		{
-			$object = new DBMemCachedQuery();
-		}
-		elseif (defined('DB_USE_QCACHE') && DB_USE_QCACHE === true && !$forceNormal)
-		{
-			$object = new DBCachedQuery();
-		}
-		else
-		{
-			$object = new DBNormalQuery();
-		}
-	}
-
-	function &getRef(&$var)
-	{
-		return $var;
-	}
 }
 
 //! mysqli uncached query class. Manages SQL queries to a MySQL DB using mysqli.

@@ -13,14 +13,14 @@ event::register('mods_initialised', 'edk_xajax::lateProcess');
 
 class edk_xajax
 {
-	function xajax()
+	public static function xajax()
 	{
 		global $xajax_enable;
 		$xajax_enable = true;
 	}
 
 	// on page assembly check whether or not xajax is needed
-	function insertHTML($obj)
+	public static function insertHTML($obj)
 	{
 		global $xajax_enable;
 		if (!isset($xajax_enable))
@@ -32,7 +32,7 @@ class edk_xajax
 		$obj->addBody($xajax->getJavascript("common/xajax/"));
 	}
 
-	function lateProcess()
+	public static function lateProcess()
 	{
 		// let all mods know we're here so they can register their functions
 		event::call('xajax_initialised', $this);
@@ -48,7 +48,7 @@ class edk_xajax
 // Catch calls from old mods.
 class mod_xajax
 {
-	function xajax()
+	public static function xajax()
 	{
 		edk_xajax::xajax();
 	}
