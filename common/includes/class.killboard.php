@@ -4,7 +4,7 @@ class Killboard
 {
     function hasCampaigns($active = false)
     {
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();;
         $sql = "select ctr_id
                  from kb3_contracts
 	         where ctr_campaign = 1
@@ -16,7 +16,7 @@ class Killboard
 
     function hasContracts($active = false)
     {
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();;
         $sql = "select ctr_id
                  from kb3_contracts
                  where ctr_campaign = 0

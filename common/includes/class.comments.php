@@ -25,7 +25,7 @@ class Comments
     { 
         global $smarty;
         
-        $qry = new DBQuery(true);
+        $qry = DBFactory::getDBQuery(true);;
 		// NULL site id is shown on all boards
         $qry->execute("SELECT *,id FROM kb3_comments WHERE `kll_id` = '".
             $this->id_."' AND (site = '".KB_SITE."' OR site IS NULL) order by posttime asc");
@@ -50,7 +50,7 @@ class Comments
         $comment = $this->bbencode($text); 
 
         $name = slashfix(strip_tags($name)); 
-        $qry = new DBQuery(true);
+        $qry = DBFactory::getDBQuery(true);;
         $qry->execute("INSERT INTO kb3_comments (`kll_id`,`site`, `comment`,`name`,`posttime`, `ip`)
                        VALUES ('".$this->id_."','".KB_SITE."','".$comment."','".$name."','".kbdate('Y-m-d H:i:s')."', '".logger::getip()."')");
         $id = $qry->getInsertID(); 
@@ -67,7 +67,7 @@ class Comments
      */
     function delComment($c_id) 
     { 
-        $qry = new DBQuery(true); 
+        $qry = DBFactory::getDBQuery(true);; 
         $qry->execute("DELETE FROM kb3_comments WHERE id='".$c_id); 
     } 
     //! Set whether to post the raw comment text or bbencode it.

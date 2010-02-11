@@ -506,7 +506,7 @@ class pCorpDetail extends pageAssembly
 							order by kills desc
 							limit 25";
 
-				$qry = new DBQuery();
+				$qry = DBFactory::getDBQuery();;
 				$qry->execute($sql);
 				$odd = false;
 				$counter = 1;
@@ -548,7 +548,7 @@ class pCorpDetail extends pageAssembly
 							order by kills desc
 							limit 25";
 
-				$qry = new DBQuery();
+				$qry = DBFactory::getDBQuery();;
 				$qry->execute($sql);
 				$odd = false;
 				$counter = 1;

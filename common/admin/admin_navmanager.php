@@ -51,7 +51,7 @@ elseif ($_POST['show'])
 }
 
 $html .= '<div class="block-header2">Navigation for intern pages</div>';
-$qry = new DBQuery(true);
+$qry = DBFactory::getDBQuery(true);;
 $query = "select * from kb3_navigation WHERE intern = 1 AND KBSITE = '".KB_SITE."' AND descr <> 'About';";
 $result = $qry->execute($query);
 
@@ -94,7 +94,7 @@ if ($result)
     $html .= "</table>";
 }
 $html .= "<div class='block-header2'>Navigation for extern pages</div>";
-$qry = new DBQuery(true);
+$qry = DBFactory::getDBQuery(true);;
 $query = "select * from kb3_navigation WHERE intern = 0 AND KBSITE = '".KB_SITE."';";
 $result = $qry->execute($query);
 
@@ -156,7 +156,7 @@ if ($result)
 }
 
 $html .= "<div class='block-header2'>Order of the pages in Top Navigation Bar</div>";
-$qry = new DBQuery(true);
+$qry = DBFactory::getDBQuery(true);;
 $query = "select * from kb3_navigation WHERE nav_type = 'top' AND KBSITE = '".KB_SITE."' ORDER BY posnr ;";
 $result = $qry->execute($query);
 
@@ -190,7 +190,7 @@ $page->generate();
 
 function increasePriority($id)
 {
-    $qry = new DBQuery(true);
+    $qry = DBFactory::getDBQuery(true);;
     $query = "SELECT posnr FROM kb3_navigation WHERE ID = $id AND KBSITE = '".KB_SITE."'";
     $qry->execute($query);
     $row = $qry->getRow();
@@ -204,7 +204,7 @@ function increasePriority($id)
 }
 function decreasePriority($id)
 {
-    $qry = new DBQuery(true);
+    $qry = DBFactory::getDBQuery(true);;
     $query = "SELECT posnr FROM kb3_navigation WHERE ID = $id AND KBSITE = '".KB_SITE."'";
     $qry->execute($query);
     $row = $qry->getRow();
@@ -219,26 +219,26 @@ function decreasePriority($id)
 
 function renamePage($id, $name)
 {
-    $qry = new DBQuery(true);
+    $qry = DBFactory::getDBQuery(true);;
     $query = "UPDATE kb3_navigation SET descr ='$name' WHERE ID=$id";
     $qry->execute($query);
 }
 
 function changeUrl($id, $url)
 {
-    $qry = new DBQuery(true);
+    $qry = DBFactory::getDBQuery(true);;
     $query = "UPDATE kb3_navigation SET url ='$url' WHERE ID=$id";
     $qry->execute($query);
 }
 function changeTarget($id, $target)
 {
-    $qry = new DBQuery(true);
+    $qry = DBFactory::getDBQuery(true);;
     $query = "UPDATE kb3_navigation SET target ='$target' WHERE ID=$id";
     $qry->execute($query);
 }
 function newPage($descr, $url, $target)
 {
-    $qry = new DBQuery(true);
+    $qry = DBFactory::getDBQuery(true);;
     $query = "SELECT max(posnr) as nr FROM kb3_navigation WHERE nav_type='top' AND KBSITE = '".KB_SITE."'";
     $qry->execute($query);
     $row = $qry->getRow();
@@ -248,13 +248,13 @@ function newPage($descr, $url, $target)
 }
 function delPage($id)
 {
-    $qry = new DBQuery(true);
+    $qry = DBFactory::getDBQuery(true);;
     $query = "DELETE FROM kb3_navigation WHERE ID=$id";
     $qry->execute($query);
 }
 function chgHideStatus($id,$status)
 {
-    $qry = new DBQuery(true);
+    $qry = DBFactory::getDBQuery(true);;
     $query = "UPDATE kb3_navigation SET hidden ='$status' WHERE ID=$id";
     $qry->execute($query);
 }

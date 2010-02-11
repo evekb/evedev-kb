@@ -141,7 +141,7 @@ class admin_acache
         }
         if ($_POST['option_clear_sum'] == 'on')
         {
-			$qry = new DBQuery();
+			$qry = DBFactory::getDBQuery();;
 			$qry->execute("DELETE FROM kb3_sum_alliance");
 			$qry->execute("DELETE FROM kb3_sum_corp");
 			$qry->execute("DELETE FROM kb3_sum_pilot");
@@ -169,7 +169,7 @@ class admin_acache
 			admin_acache::removeOld(0, KB_CACHEDIR.'/data', false);
 			admin_acache::removeOld(0, KB_CACHEDIR.'/map', false);
 			admin_acache::removeOld(0, KB_CACHEDIR.'/api', false);
-			$qry = new DBQuery(true);
+			$qry = DBFactory::getDBQuery(true);;
 			$qry->execute("DELETE FROM kb3_sum_alliance");
 			$qry->execute("DELETE FROM kb3_sum_corp");
 			$qry->execute("DELETE FROM kb3_sum_pilot");

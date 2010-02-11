@@ -16,7 +16,7 @@ class Navigation
 	function execQuery()
 	{
 		require_once('common/includes/class.killboard.php');
-		$this->qry = new DBQuery();
+		$this->qry = DBFactory::getDBQuery();;
 		$query = $this->sql_start;
 		$query .= " WHERE nav_type = '$this->type_'";
 
@@ -83,7 +83,7 @@ class Navigation
 	function check_navigationtable()
 	{
 		$sql = "select count(KBSITE) as cnt from kb3_navigation WHERE KBSITE = '".KB_SITE."'";
-		$qry = new DBQuery(true);
+		$qry = DBFactory::getDBQuery(true);;
 		// return false if query fails
 		if(!$qry->execute($sql)) return false;
 		if(!($row = $qry->getRow())) return false;
@@ -99,7 +99,7 @@ class Navigation
 				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Admin','?a=admin','_self',9,'ALL_PAGES',0,'".KB_SITE."');
 				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'About','?a=about','_self',10,'ALL_PAGES',0,'".KB_SITE."');";
 			$query = explode("\n", $queries);
-			$qry = new DBQuery(true);
+			$qry = DBFactory::getDBQuery(true);;
 			foreach ($query as $querystring)
 			{
 				if ($string = trim(str_replace(');', ')', $querystring)))

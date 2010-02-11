@@ -11,7 +11,7 @@ class TopList
 {
 	function TopList()
 	{
-		$this->qry_ = new DBQuery();
+		$this->qry_ = DBFactory::getDBQuery();;
 		$this->exclude_scl_ = array();
 		$this->vic_scl_id_ = array();
 		$this->regions_ = array();

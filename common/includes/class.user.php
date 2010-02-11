@@ -14,7 +14,7 @@ class user
         {
             return true;
         }
-        $db = new DBQuery(true);
+        $db = DBFactory::getDBQuery(true);;
         $db->execute('select * from kb3_user
                       left join kb3_user_extra on kb3_user.usr_id = kb3_user_extra.use_usr_id
                       left join kb3_user_titles on kb3_user.usr_id = kb3_user_titles.ust_usr_id
@@ -48,7 +48,7 @@ class user
 
 		if ($row['ust_ttl_id'])
 		{
-			$db2 = new DBQuery(true);
+			$db2 = DBFactory::getDBQuery(true);;
 			$db2->execute('select distinct rol_name from kb3_titles_roles a,kb3_roles b where a.rol_id=b.rol_id and  a.ttl_id='.$row['ust_ttl_id']);
 			while ($ttle = $db2->getRow())
 			{
@@ -131,7 +131,7 @@ class user
     // login,pass,pilot
     function register($login, $password, $pilot = null, $p_charid = null)
     {
-        $db = new DBQuery(true);
+        $db = DBFactory::getDBQuery(true);;
 
         $values[] = KB_SITE;
         $values[] = $login;

@@ -12,8 +12,8 @@ class valueFetcher
 
 	function updateShips()
 	{
-		$qry = new DBQuery();
-		$qryins = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
+		$qryins = DBFactory::getDBQuery();;
 		$str = "SELECT ship.shp_id as id, item.price as price FROM kb3_ships ship JOIN kb3_item_price item ON item.typeID = ship.shp_externalid WHERE item.price > 0";
 		$i = 0;
 		$qry->execute($str);
@@ -58,7 +58,7 @@ class valueFetcher
 		// prepare counter
 		$i = 0;
 		// New query
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 
 		// Check that file contains data
 		if(!count($sxe->result[0]->rowset[0])) return 0;

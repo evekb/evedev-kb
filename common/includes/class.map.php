@@ -101,7 +101,7 @@ class MapView
 			and (sys.sys_eve_id = '.intval($systemid).' OR sys.sys_id = '
 				.intval($systemid).')';
 
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute($sql);
 		if(!$qry->recordCount()) die;
 		$row = $qry->getRow();
@@ -178,7 +178,7 @@ class MapView
 			$caption = $this->sysname_." (".roundsec($this->syssec_).")";
 		}
 
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute($sql) or die($qry->getErrorMsg());
 
 		if (!$img) $img = imagecreatetruecolor($this->imgwidth_, $this->imgheight_);

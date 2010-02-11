@@ -90,7 +90,7 @@ class Parser
     {
         if($this->externalID) //if we have this mail already, don't parse
         {
-            $qry = new DBQuery();
+            $qry = DBFactory::getDBQuery();;
             $qry->execute('SELECT kll_id FROM kb3_kills WHERE kll_external_id = '.$this->externalID);
             if($qry->recordCount())
             {
@@ -604,7 +604,7 @@ class Parser
                 // existing kill.
                 if($this->externalID)
                 {
-                    $qry = new DBQuery();
+                    $qry = DBFactory::getDBQuery();;
                     $qry->execute("UPDATE kb3_kills SET kll_external_id = ".
                         $this->externalID." WHERE kll_id = ".$this->dupeid_);
                 }
@@ -668,7 +668,7 @@ class Parser
 
             if($this->externalID)
             {
-                $qry = new DBQuery();
+                $qry = DBFactory::getDBQuery();;
                 $qry->execute("UPDATE kb3_kills SET kll_external_id = ".$this->externalID." WHERE kll_id = ".$this->dupeid_);
             }
         }

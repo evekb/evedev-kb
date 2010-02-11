@@ -14,7 +14,7 @@ $sql = 'SELECT * FROM kb3_item_types d
 	$html .= '<td><a href="?a=itemdb&id='.$il.'">'.$il.'</a></td>';
     }	 
     $html .= "</tr></table><br><br>";
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();;
     $qry->execute($sql);
     $html .= "<table class=kb-table cellspacing=1>";
     $html .= "<tr class=kb-table-header><td width=400>Group Name</td></tr>";

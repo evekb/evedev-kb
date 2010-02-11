@@ -86,7 +86,7 @@ if(count($page_error) == 0)
 		$update->runQueries();
 
 		Config::set('upd_dbVersion', $piece['version']);
-		$qry = new DBQuery(true);
+		$qry = DBFactory::getDBQuery(true);;
 		$qry->execute("INSERT INTO `kb3_config` (cfg_site, cfg_key, cfg_value) ".
 		    "SELECT cfg_site, 'upd_dbVersion', '{$piece['version']}' FROM `kb3_config` ".
 		    "GROUP BY cfg_site ON DUPLICATE KEY UPDATE cfg_value = '{$piece['version']}';");
@@ -161,7 +161,7 @@ if(count($page_error) == 0)
 		    $page_error[] = $readingZip->getErrors();
 
 		Config::set('upd_CodeVersion', $piece['version']);
-		$qry = new DBQuery(true);
+		$qry = DBFactory::getDBQuery(true);;
 		$qry->execute("INSERT INTO `kb3_config` (cfg_site, cfg_key, cfg_value) ".
 		    "SELECT cfg_site, 'upd_codeVersion', '{$piece['version']}' FROM `kb3_config` ".
 		    "GROUP BY cfg_site ON DUPLICATE KEY UPDATE cfg_value = '{$piece['version']}';");

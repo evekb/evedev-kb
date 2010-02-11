@@ -76,7 +76,7 @@ if ($_POST['clearapicache'])
 		}
 	}
 	// drop table
-	$db = new DBQuery(true);
+	$db = DBFactory::getDBQuery(true);;
 	$db->execute("TRUNCATE TABLE `kb3_apicache`");
 	$html .= "Cache cleared.<br>";
 	$html .= "<script type=\"text/javascript\">window.location = \"?a=admin_apimod\"</script>"; //*/
@@ -273,7 +273,7 @@ if ($_POST['apilog'])
 			WHERE log_site = "' .KB_SITE . '" 
 			ORDER BY log_timestamp DESC limit 250';
 
-	$qry = new DBQuery();
+	$qry = DBFactory::getDBQuery();;
 	$qry->execute($sql) or die($qry->getErrorMsg());
 
 	$html .= '<table class="kb-table">';
@@ -573,7 +573,7 @@ function getPlayerDetails( $characteridentitifier )
 {
     $sql = 'select plts.plt_id, plts.plt_name from kb3_pilots plts where plts.plt_externalid = "' . $characteridentitifier . '"';
 
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();;
     $qry->execute($sql);
     $row = $qry->getRow();
 
@@ -589,7 +589,7 @@ function getPlayerDetails( $characteridentitifier )
 
 function checkDBforAPI()
 {
-	$qry = new DBQuery();
+	$qry = DBFactory::getDBQuery();;
 	
 	// check kb3_kills table and if necessary add extra field for API kll_external_id
 	$isKB3KillsUpdated = false;

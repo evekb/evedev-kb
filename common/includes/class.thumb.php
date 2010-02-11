@@ -120,7 +120,7 @@ class thumb
 			if ($this->id)
 			{
 				// check for a valid, known external id
-				$qry = new DBQuery();
+				$qry = DBFactory::getDBQuery();;
 				$qry->execute('SELECT plt_externalid FROM kb3_pilots WHERE plt_externalid = '.$this->id.' LIMIT 1');
 				if (!$qry->recordCount())
 				{

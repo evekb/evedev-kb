@@ -59,7 +59,7 @@ class pAllianceDetail extends pageAssembly
 
 		if(!$this->all_id && $this->all_external_id)
 		{
-			$qry = new DBQuery();
+			$qry = DBFactory::getDBQuery();;
 			$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_external_id = ".$this->all_external_id);
 			if($qry->recordCount())
 			{
@@ -255,7 +255,7 @@ class pAllianceDetail extends pageAssembly
 				$sql = "select scl_id, scl_class from kb3_ship_classes
 					where scl_class not in ('Drone','Unknown') order by scl_class";
 
-				$qry = new DBQuery();
+				$qry = DBFactory::getDBQuery();;
 				$qry->execute($sql);
 				while ($row = $qry->getRow())
 				{
@@ -293,7 +293,7 @@ class pAllianceDetail extends pageAssembly
 				$sql = "select scl_id, scl_class from kb3_ship_classes
 					where scl_class not in ('Drone','Unknown') order by scl_class";
 
-				$qry = new DBQuery();
+				$qry = DBFactory::getDBQuery();;
 				$qry->execute($sql);
 				while ($row = $qry->getRow())
 				{
@@ -332,7 +332,7 @@ class pAllianceDetail extends pageAssembly
 				$sql = "select scl_id, scl_class from kb3_ship_classes
 					where scl_class not in ('Drone','Unknown') order by scl_class";
 
-				$qry = new DBQuery();
+				$qry = DBFactory::getDBQuery();;
 				$qry->execute($sql);
 				while ($row = $qry->getRow())
 				{
@@ -370,7 +370,7 @@ class pAllianceDetail extends pageAssembly
 				$sql = "select scl_id, scl_class from kb3_ship_classes
 					where scl_class not in ('Drone','Unknown') order by scl_class";
 
-				$qry = new DBQuery();
+				$qry = DBFactory::getDBQuery();;
 				$qry->execute($sql);
 				while ($row = $qry->getRow())
 				{
@@ -528,7 +528,7 @@ class pAllianceDetail extends pageAssembly
 							order by kills desc
 							limit 25";
 
-				$qry = new DBQuery();
+				$qry = DBFactory::getDBQuery();;
 				$qry->execute($sql);
 				$odd = false;
 				$counter = 1;
@@ -567,7 +567,7 @@ class pAllianceDetail extends pageAssembly
 							order by kills desc
 							limit 25";
 
-				$qry = new DBQuery();
+				$qry = DBFactory::getDBQuery();;
 				$qry->execute($sql);
 				$odd = false;
 				$counter = 1;

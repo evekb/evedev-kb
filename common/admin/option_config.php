@@ -78,7 +78,7 @@ class admin_config
     }
 	function createPilot()
 	{
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		if(isset($_POST['option_cfg_pilotid'])) $plt_id=intval($_POST['option_cfg_pilotid']);
 		else $plt_id = PILOT_ID;
 		$qry->execute("SELECT plt_name FROM kb3_pilots WHERE plt_id = ".$plt_id);
@@ -89,7 +89,7 @@ class admin_config
 	}
 	function createCorp()
 	{
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		if(isset($_POST['option_cfg_pilotid'])) $plt_id = intval($_POST['option_cfg_pilotid']);
 		else $plt_id = PILOT_ID;
 
@@ -104,7 +104,7 @@ class admin_config
 	}
 	function createAlliance()
 	{
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		if(isset($_POST['option_cfg_pilotid']))
 		{
 			$plt_id = intval($_POST['option_cfg_pilotid']);

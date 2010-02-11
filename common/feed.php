@@ -219,13 +219,13 @@ if (!$kid)
 {
 	asort($kills);
 }
-$qry = new DBQuery();
+$qry = DBFactory::getDBQuery();;
 // If kills returned = $maxreturned assume that it was limited and set
 // last kill as the lower of highest kill id returned or highest non-classified
 // kill
 if($klist->getCount() != $maxreturned)
 {
-	$qry = new DBQuery();
+	$qry = DBFactory::getDBQuery();;
 	if(config::get('kill_classified'))
 	{
 		$qry->execute('SELECT max(kll_id) as finalkill FROM kb3_kills WHERE kll_timestamp < "'.(date('Y-m-d H:i:s',time()-config::get('kill_classified')*60*60)).'"');

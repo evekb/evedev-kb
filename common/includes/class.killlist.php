@@ -6,7 +6,7 @@ class KillList
 {
 	function KillList()
 	{
-		$this->qry_ = new DBQuery();
+		$this->qry_ = DBFactory::getDBQuery();;
 		$this->killpointer_ = 0;
 		$this->kills_ = 0;
 		$this->losses_ = 0;
@@ -456,7 +456,7 @@ class KillList
 			if ($this->limit_) $this->sql_ .= " limit ".$this->limit_." OFFSET ".$this->offset_;
 			elseif ($this->plimit_)
 			{
-				$splitq = new DBQuery();
+				$splitq = DBFactory::getDBQuery();;
 				$ssql = 'SELECT COUNT(1) as cnt FROM '.$this->sqlinner_.$this->sql_;
 
 				$splitq->execute($ssql);

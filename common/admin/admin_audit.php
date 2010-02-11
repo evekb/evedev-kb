@@ -10,7 +10,7 @@ $sql = 'SELECT log_kll_id, log_ip_address, log_timestamp, kll_timestamp, plt_nam
 			AND plt.plt_id = kll_fb_plt_id
 			ORDER BY log_timestamp DESC limit 250';
 
-$qry = new DBQuery();
+$qry = DBFactory::getDBQuery();;
 $qry->execute($sql) or die($qry->getErrorMsg());
 
 $html .= '<table class="kb-table">';

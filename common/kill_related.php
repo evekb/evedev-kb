@@ -63,7 +63,7 @@ if(CORP_ID == $kill->getVictimCorpID() || ALLIANCE_ID == $kill->getVictimAllianc
 
 
 // this is a fast query to get the system and timestamp
-$rqry = new DBQuery();
+$rqry = DBFactory::getDBQuery();;
 if(isset($_GET['adjacent']))
 	$rsql = 'SELECT kll_timestamp, b.sys_id from kb3_kills
 	join kb3_systems a ON (a.sys_id = kll_system_id)
@@ -87,7 +87,7 @@ $query = 'SELECT kll.kll_timestamp AS ts FROM kb3_kills kll WHERE kll.kll_system
             ') AND kll.kll_timestamp <= "'.(date('Y-m-d H:i:s',strtotime($basetime) +  4 * 60 * 60)).'"'.
             ' AND kll.kll_timestamp >= "'.(date('Y-m-d H:i:s',strtotime($basetime) -  4 * 60 * 60)).'"'.
             ' ORDER BY kll.kll_timestamp ASC';
-$qry = new DBQuery();
+$qry = DBFactory::getDBQuery();;
 $qry->execute($query);
 $ts = array();
 while ($row = $qry->getRow())
@@ -189,7 +189,7 @@ function handle_involved($kill, $side)
     global $pilots;
 
     // we need to get all involved pilots, killlists dont supply them
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();;
     $sql = "select ind_plt_id, ind_crp_id, ind_all_id, ind_sec_status, ind_shp_id, ind_wep_id,
             typeName, plt_name, crp_name, all_name, shp_name, scl_points, scl_id, shp_externalid
             from kb3_inv_detail

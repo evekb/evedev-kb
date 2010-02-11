@@ -217,7 +217,7 @@ class KillSummaryTable
 		$startdate = makeStartDate($this->weekno_, $this->yearno_, $this->monthno_, $this->startweekno_, $this->startDate_);
 		$enddate = makeEndDate($this->weekno_, $this->yearno_, $this->monthno_, $this->endDate_);
 
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute($sql);
 		while ($row = $qry->getRow())
 		{
@@ -278,7 +278,7 @@ class KillSummaryTable
 
 		$sql .= 'GROUP BY scl_class order by scl_class';
 
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute($sql);
 		while ($row = $qry->getRow())
 		{
@@ -325,7 +325,7 @@ class KillSummaryTable
 		}
 		$sql .= 'GROUP BY scl_class order by scl_class';
 
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute($sql);
 		while ($row = $qry->getRow())
 		{
@@ -349,7 +349,7 @@ class KillSummaryTable
                    where scl_class not in ( 'Drone', 'Unknown' )
                   order by scl_class";
 
-			$qry = new DBQuery();
+			$qry = DBFactory::getDBQuery();;
 			$qry->execute($sql) or die($qry->getErrorMsg());
 			while ($row = $qry->getRow())
 			{

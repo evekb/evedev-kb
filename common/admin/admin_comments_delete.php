@@ -6,7 +6,7 @@ $page->setAdmin();
 
 if ($_GET['confirm'])
 {
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();;
     $qry->execute("delete from kb3_comments where id='".$_GET['c_id']."'");
     $html .= "Comment ID \"".$_GET['c_id']."\" deleted!";
     $html .= "<br><br><a href=\"javascript:window.close();\">[close]</a>";
@@ -14,7 +14,7 @@ if ($_GET['confirm'])
 else
 {
     $html .= "Confirm deletion of Comment ID \"".$_GET['c_id']."\": ";
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();;
     $qry->execute("SELECT id, name, comment FROM kb3_comments WHERE `id`='".$_GET['c_id']."'");
     if ($qry->recordCount() == 0)
     {

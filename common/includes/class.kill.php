@@ -17,7 +17,7 @@ class Kill
 		$id = intval($id);
 		if($id && $external)
 		{
-			$qry = new DBQuery();
+			$qry = DBFactory::getDBQuery();;
 			$qry->execute("SELECT kll_id FROM kb3_kills WHERE kll_external_id = ".$id);
 			if($qry->recordCount())
 			{
@@ -408,7 +408,7 @@ class Kill
 			$this->execQuery();
 		}
 		$dupe = 0;
-		$qry = new DBQuery(true);
+		$qry = DBFactory::getDBQuery(true);;
 		if (!$this->getFBPilotID() || !$this->victimid_)
 			return 0;
 		$sql = "SELECT kll_id
@@ -422,7 +422,7 @@ class Kill
 		if($this->externalid_) $sql .= " AND (kll_external_id = ".$this->externalid_." OR kll_external_id IS NULL)";
         $sql .= "             AND kll_id != ".$this->id_;
 		$qry->execute($sql);
-		$qryinv = new DBQuery(true);
+		$qryinv = DBFactory::getDBQuery(true);;
 
 		while ($row = $qry->getRow())
 		{
@@ -449,9 +449,9 @@ class Kill
 	{
 		if (!$this->timestamp_)
 		{
-			$qry = new DBQuery();
+			$qry = DBFactory::getDBQuery();;
 
-			$this->qry_ = new DBQuery();
+			$this->qry_ = DBFactory::getDBQuery();;
 			$this->sql_ = "select kll.kll_id, kll.kll_timestamp, plt.plt_name,
                           crp.crp_name, ali.all_name, ali.all_id, kll.kll_ship_id,
                           kll.kll_system_id, kll.kll_ship_id, kll.kll_external_id,
@@ -663,7 +663,7 @@ class Kill
 	function getInvolvedPartyCount()
 	{
 		if(isset($this->involvedcount_)) return $this->involvedcount_;
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute("select max(ind_order)+1 inv from kb3_inv_detail where ind_kll_id = ". $this->id_);
 		$result = $qry->getRow();
 		$this->involvedcount_ = $result['inv'];
@@ -727,7 +727,7 @@ class Kill
 				AND kll_system_id = ".$this->solarsystem_->getID();
 		}
 		$sql .= " /* related kill count */ ";
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		if(!$qry->execute($sql)) return 0;
 		$res=$qry->getRow();
 		$this->relatedkillcount_ = $res['kills'];
@@ -758,7 +758,7 @@ class Kill
 		}
 
 		$sql .= "/* related loss count */";
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		if(!$qry->execute($sql)) return 0;
 		$res=$qry->getRow();
 		$this->relatedlosscount_ = $res['losses'];
@@ -768,7 +768,7 @@ class Kill
 	function countComment($kll_id)
 	{
 		if(isset($this->commentcount_)) return $this->commentcount_;
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$sql = "SELECT count(id) as comments FROM kb3_comments WHERE kll_id = '$kll_id' AND (site = '".KB_SITE."' OR site IS NULL)";
 		// return 0 if query fails. May be incorrect but is harmless here
 		if(!$qry->execute($sql)) return 0;
@@ -977,7 +977,7 @@ class Kill
 		if(!is_numeric($this->iskloss_)) $this->calculateISKLoss(false);
 
 		// Start a transaction here to capture the duplicate check.
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->autocommit(false);
 		$dupe = $this->getDupe(true);
 		if ($dupe == 0)
@@ -1019,7 +1019,7 @@ class Kill
 			$this->dmgtaken = 0;
 		}
 
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$sql = "INSERT INTO kb3_kills
             (kll_id , kll_timestamp , kll_victim_id , kll_all_id , kll_crp_id , kll_ship_id , kll_system_id , kll_fb_plt_id , kll_points , kll_dmgtaken, kll_external_id, kll_isk_loss)
             VALUES (".$qid.",
@@ -1191,7 +1191,7 @@ class Kill
 	{
 		if (!$this->id_)
 			return;
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->autocommit(false);
 		summaryCache::delKill($this);
 
@@ -1349,7 +1349,7 @@ class DestroyedItem
 			return $this->item_->row_['baseprice'];
 		}
 		$this->value = 0;
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute("select basePrice, price
 					from kb3_invtypes
 					left join kb3_item_price on kb3_invtypes.typeID=kb3_item_price.typeID
@@ -1370,7 +1370,7 @@ class DestroyedItem
 		//returns the value of an item
 		$value = 0; 				// Set 0 value incase nothing comes back
 		$id = $this->item_->getID(); // get Item ID
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute("select itm_value from kb3_items where itm_id= '".$id."'");
 		$row = $qry->getRow();
 		$value = $row['itm_value'];
@@ -1391,7 +1391,7 @@ class DestroyedItem
 		}
 		else
 		{
-			$qry = new DBQuery();
+			$qry = DBFactory::getDBQuery();;
 			$qry->execute("select itl_id from kb3_item_locations where itl_location = '".$this->location_."'");
 			$row = $qry->getRow();
 			$id = $row['itl_id'];

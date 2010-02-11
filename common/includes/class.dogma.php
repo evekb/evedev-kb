@@ -4,7 +4,7 @@ class dogma
 {
     function dogma($itemID)
     {
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();;
         $query = 'select * from kb3_invtypes
                     left join kb3_item_types on itt_id = groupID
                     where typeID = '.$itemID;
@@ -75,7 +75,7 @@ class dogma
     function resolveTypeID($id)
     {
         $id = intval($id);
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();;
         $qry->execute('select typeName from kb3_invtypes where typeID='.$id);
         $row = $qry->getRow();
         return $row['typeName'];
@@ -84,7 +84,7 @@ class dogma
     function resolveGroupID($id)
     {
         $id = intval($id);
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();;
         $qry->execute('select itt_name from kb3_item_types where itt_id='.$id);
         $row = $qry->getRow();
         return $row['itt_name'];
@@ -93,7 +93,7 @@ class dogma
     function resolveAttributeID($id)
     {
         $id = intval($id);
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();;
         $qry->execute('select displayName from kb3_dgmattributetypes where attributeID='.$id);
         $row = $qry->getRow();
         return $row['displayName'];

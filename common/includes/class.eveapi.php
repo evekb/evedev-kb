@@ -142,7 +142,7 @@ class API_KillLog
             $this->Output_ .= "<div class=block-header2>No kills added, ". $this->malformedmails_ . " malformed, " . $this->ignoredmails_." ignored and " . $this->verified_ . " verified from feed: " . config::get('API_Name_'.$keyindex) . " which contained ".$this->totalmails_." mails.<br></div>";
 
 		// Write to kb3_apilog
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		if ($this->iscronjob_)
 			$logtype = "Cron Job";
 		else
@@ -304,7 +304,7 @@ class API_KillLog
                     case "SOLARSYSTEMID": // convert to system name and fetch system security - DONE
                         $sql = 'select sys.sys_name, sys.sys_sec from kb3_systems sys where sys.sys_eve_id = '.$v;
 
-                        $qry = new DBQuery();
+                        $qry = DBFactory::getDBQuery();;
                         $qry->execute($sql);
                         $row = $qry->getRow();
 
@@ -393,7 +393,7 @@ class API_KillLog
 					// update Victim portrait while we're here
                     $sql = 'select plts.plt_id, plts.plt_externalid from kb3_pilots plts where plts.plt_name = "' . $this->pname_ . '"';
 
-					$qry = new DBQuery();
+					$qry = DBFactory::getDBQuery();;
                     $qry->execute($sql);
                     $row = $qry->getRow();
                     if ($qry->recordCount() != 0)
@@ -488,7 +488,7 @@ class API_KillLog
 						// update Attacker portrait while we're here
                         $sql = 'select plts.plt_id, plts.plt_externalid from kb3_pilots plts where plts.plt_name = "' . $this->pname_ . '"';
 
-                        $qry = new DBQuery();
+                        $qry = DBFactory::getDBQuery();;
                         $qry->execute($sql);
                         $row = $qry->getRow();
                         if ($qry->recordCount() != 0)
@@ -848,7 +848,7 @@ class API_KillLog
                     }
                 }
             } else {
-                $qry = new DBQuery();
+                $qry = DBFactory::getDBQuery();;
                 $qry->execute( "insert into kb3_log	values( ".$killid.", '".KB_SITE."','API ".APIVERSION."',now() )" );
                 $this->Output_ .= "API Killmail ID:".$this->killid_. " successfully imported <a href=\"?a=kill_detail&amp;kll_id=".$killid."\">here</a> as KB ID:". $killid ."<br>";
 
@@ -964,13 +964,13 @@ class API_KillLog
 
 	function VerifyKill($killid, $mailid)
 	{
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
         $qry->execute( "UPDATE `kb3_kills` SET `kll_external_id` = '" . $killid . "' WHERE `kb3_kills`.`kll_id` =" . $mailid . " LIMIT 1" );
 	}
 
 	function isKillIDVerified($killid)
 	{
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
         $qry->execute( "SELECT * FROM `kb3_kills` WHERE `kll_external_id` =" . $killid );
 		$row = $qry->getRow();
 		return $row['kll_external_id'];
@@ -1004,7 +1004,7 @@ class APIChar
             // check if chars eveid exists in kb
             $sql = 'select plts.plt_id, plts.plt_externalid from kb3_pilots plts where plts.plt_name = "' . $this->chars_[$x]['Name'] . '"';
 
-            $qry = new DBQuery();
+            $qry = DBFactory::getDBQuery();;
             $qry->execute($sql);
             if ($qry->recordCount() != 0)
             {
@@ -1280,7 +1280,7 @@ class AllianceAPI
         if (!isset($this->alliances_))
             return false;
 
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();;
         $qry->execute("DROP TABLE IF EXISTS `kb3_all_corp`;");
         $qry->execute("CREATE TABLE kb3_all_corp (
               all_id bigint(3) unsigned default '0',
@@ -1403,7 +1403,7 @@ class AllianceAPI
 		if ($andCorps)
 		{
 			// Remove every single corp in the Killboard DB from their current Alliance
-			$db = new DBQuery(true);
+			$db = DBFactory::getDBQuery(true);;
 			$db->execute("SELECT all_id FROM kb3_alliances WHERE all_name LIKE 'None'");
 			$row = $db->getRow();
 			$db->execute("UPDATE kb3_corps
@@ -2749,7 +2749,7 @@ class API_CharacterSheet
 
 			$sql = 'select plts.plt_id, plts.plt_externalid from kb3_pilots plts where plts.plt_name = "' . $usersname . '"';
 
-    		$qry = new DBQuery();
+    		$qry = DBFactory::getDBQuery();;
 			$qry->execute($sql);
    		 	$row = $qry->getRow();
 
@@ -3079,7 +3079,7 @@ class API_SkillInTraining
 
 			$sql = 'select plts.plt_id, plts.plt_externalid from kb3_pilots plts where plts.plt_name = "' . $usersname . '"';
 
-    		$qry = new DBQuery();
+    		$qry = DBFactory::getDBQuery();;
 			$qry->execute($sql);
    		 	$row = $qry->getRow();
 
@@ -3323,7 +3323,7 @@ class API_StarbaseList
 
 			$sql = 'select plts.plt_id, plts.plt_externalid from kb3_pilots plts where plts.plt_name = "' . $usersname . '"';
 
-    		$qry = new DBQuery();
+    		$qry = DBFactory::getDBQuery();;
 			$qry->execute($sql);
    		 	$row = $qry->getRow();
 
@@ -3392,7 +3392,7 @@ class API_StarbaseList
 							$tempdata['locationID'] = $v;
 							$sql = 'select sys.sys_name, sys.sys_sec from kb3_systems sys where sys.sys_eve_id = '.$v;
 
-                        	$qry = new DBQuery();
+                        	$qry = DBFactory::getDBQuery();;
                         	$qry->execute($sql);
                         	$row = $qry->getRow();
 
@@ -3639,7 +3639,7 @@ class API_StarbaseDetail
 
 			$sql = 'select plts.plt_id, plts.plt_externalid from kb3_pilots plts where plts.plt_name = "' . $usersname . '"';
 
-    		$qry = new DBQuery();
+    		$qry = DBFactory::getDBQuery();;
 			$qry->execute($sql);
    		 	$row = $qry->getRow();
 
@@ -4037,7 +4037,7 @@ class API_CorporationSheet
 
 			$sql = 'select plts.plt_id, plts.plt_externalid from kb3_pilots plts where plts.plt_name = "' . $usersname . '"';
 
-    		$qry = new DBQuery();
+    		$qry = DBFactory::getDBQuery();;
 			$qry->execute($sql);
    		 	$row = $qry->getRow();
 
@@ -4753,7 +4753,7 @@ function gettypeIDname($id)
 {
 	$sql = 'select inv.typeName from kb3_invtypes inv where inv.typeID = ' . $id;
 
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();;
     $qry->execute($sql);
     $row = $qry->getRow();
 
@@ -4767,7 +4767,7 @@ function getgroupID($id)
 {
 	$sql = 'select inv.groupID from kb3_invtypes inv where inv.typeID = ' . $id;
 
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();;
     $qry->execute($sql);
     $row = $qry->getRow();
 
@@ -4781,7 +4781,7 @@ function getgroupIDname($id)
 {
 	$sql = 'select itt.itt_name from kb3_item_types itt where itt.itt_id = ' . $id;
 
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();;
     $qry->execute($sql);
     $row = $qry->getRow();
 
@@ -4795,7 +4795,7 @@ function gettypeIDrank($id)
 {
 	$sql = 'select att.value from kb3_dgmtypeattributes att where att.typeID = ' . $id . ' and att.attributeID = 275';
 
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();;
     $qry->execute($sql);
     $row = $qry->getRow();
 
@@ -4809,7 +4809,7 @@ function getMoonName($id)
 {
 	if ($id != 0)
 	{
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();;
 		$sql = "SHOW TABLES LIKE 'kb3_moons'";
         $qry->execute($sql);
 		if(!$qry->recordCount()) return "";
@@ -4832,7 +4832,7 @@ function FindThunk()
 { // round about now would probably be a good time for apologising about my sense of humour :oD
     $sql = 'select plts.plt_id, plts.plt_externalid from kb3_pilots plts where plts.plt_name = "Captain Thunk"';
 
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();;
     $qry->execute($sql);
     $row = $qry->getRow();
 
@@ -4853,7 +4853,7 @@ function Update_CorpID($corpName, $corpID)
 {
 	if ( (strlen($corpName) != 0) && ($corpID != 0) )
 	{
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute( "SELECT * FROM `kb3_corps` WHERE `crp_name` = '" . slashfix($corpName) . "'");
 
 		if ($qry->recordCount() != 0)
@@ -4874,7 +4874,7 @@ function Update_AllianceID($allianceName, $allianceID)
 {
 	if ( ($allianceName != "NONE") && ($allianceID != 0) )
 	{
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute( "SELECT * FROM `kb3_alliances` WHERE `all_name` = '" . slashfix($allianceName) . "'");
 
 		if ($qry->recordCount() != 0)

@@ -92,7 +92,7 @@ if (isset($_POST['killmail']))
             }
 
             logger::logKill($killid);
-//			$qry = new DBQuery();
+//			$qry = DBFactory::getDBQuery();;
 //            $qry->execute("insert into kb3_log (log_kll_id, log_site, log_ip_address, log_timestamp) values(".
 //                    $killid.",'".KB_SITE."','".getip()."', now())");
 

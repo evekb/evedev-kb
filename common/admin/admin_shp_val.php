@@ -13,7 +13,7 @@ if ($_REQUEST['opt'] == 'search')
     if ($id = intval($_REQUEST['searchid']))
     {
         $query = 'select count(shp_id) as cnt from kb3_ships_values where shp_id='.$id;
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();;
         $qry->execute($query);
         $data = $qry->getRow();
         if ($data['cnt'] >= 1)
@@ -45,7 +45,7 @@ if ($_REQUEST['opt'] == 'search')
                          from kb3_ships shp inner join kb3_ship_classes scl on (shp.shp_class = scl.scl_id)
                          left join kb3_ships_values ksb on (shp.shp_id = ksb.shp_id)';
         $order = ' order by shp.shp_name asc';
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();;
         $qry->execute($query.$searchstr.$order);
         while ($data = $qry->getRow())
         {
@@ -100,7 +100,7 @@ if ($_REQUEST['opt'] == 'search')
 }
 if ($_REQUEST['opt'] == 'add')
 {
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();;
     if (!isset($_POST['ship']))
     {
         $_POST['ship'] = array();
@@ -158,7 +158,7 @@ if (!isset($_REQUEST['opt']))
     $html .= '</form><br />';
 
     $html .= "<div class='block-header2'>View/Change Shipvalues</div>";
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();;
     $query = 'select kbs.shp_id as id, shp.shp_externalid as ext, shp.shp_name, shp.shp_class, kbs.shp_value,
 				shp.shp_baseprice, scl.scl_class, shp.shp_techlevel, scl.scl_value
 				from kb3_ships_values kbs

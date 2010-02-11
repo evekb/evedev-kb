@@ -126,7 +126,7 @@ class Corporation
      */
 	function lookup($name)
 	{
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute("select * from kb3_corps
                        where crp_name = '".slashfix($name)."'");
 		$row = $qry->getRow();
@@ -140,7 +140,7 @@ class Corporation
 	{
 		if (!$this->executed_)
 		{
-			$qry = new DBQuery();
+			$qry = DBFactory::getDBQuery();;
 			$sql = "select * from kb3_corps where ";
 			if($this->externalid_) $sql .= "crp_external_id = ".$this->externalid_;
 			else $sql .= "crp_id = ".$this->id_;
@@ -163,7 +163,7 @@ class Corporation
 	function add($name, $alliance, $timestamp, $externalid = 0, $loadExternals = true)
 	{
 		$name = slashfix($name);
-		$qry = new DBQuery(true);
+		$qry = DBFactory::getDBQuery(true);;
 		$qry->execute("select * from kb3_corps
 		               where crp_name = '".$name."'");
 		// If the corp name is not present in the db add it.
@@ -263,7 +263,7 @@ class Corporation
 		if(isset($this->updated_))
 			if(is_null($this->updated_) || strtotime($timestamp." UTC") > $this->updated_) return true;
 			else return false;
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute("select crp_id from kb3_corps
 		               where crp_id = ".$this->id_."
 		               and ( crp_updated < date_format( '".$timestamp."', '%Y.%m.%d %H:%i' )
@@ -282,7 +282,7 @@ class Corporation
 		if($externalid && $this->id_)
 		{
 			$this->execQuery();
-			$qry = new DBQuery(true);
+			$qry = DBFactory::getDBQuery(true);;
 			$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_external_id = ".$externalid." AND crp_id <> ".$this->id_);
 			if($qry->recordCount())
 			{
@@ -313,7 +313,7 @@ class Corporation
 	//! Returns an array of pilots we know to be in this corp.
 	function getMemberList()
 	{
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute("SELECT plt_id FROM kb3_pilots
                        WHERE plt_crp_id = " . $this->id_);
 

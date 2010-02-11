@@ -66,7 +66,7 @@ class Alliance
     {
         if (!$this->executed)
         {
-			$qry = new DBQuery();
+			$qry = DBFactory::getDBQuery();;
 			$sql = "select * from kb3_alliances where ";
 			if($this->externalid) $sql .= "all_external_id = ".$this->externalid;
 			else $sql .= "all_id = ".$this->id;
@@ -85,7 +85,7 @@ class Alliance
      */
     function add($name, $externalid = false)
     {
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();;
         $qry->execute("select * from kb3_alliances where all_name = '".slashfix($name)."'");
 
         if ($qry->recordCount() == 0)
@@ -141,7 +141,7 @@ class Alliance
 		if($externalid && $this->id)
 		{
 			$this->execQuery();
-			$qry = new DBQuery();
+			$qry = DBFactory::getDBQuery();;
 			if($qry->execute("UPDATE kb3_alliances SET all_external_id = ".$externalid." WHERE all_id = ".$this->id))
 			{
 				$this->externalid = $externalid;

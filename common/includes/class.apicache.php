@@ -28,7 +28,7 @@ class ApiCache
 			return;
 		}
 
-		$db = new DBQuery(true);
+		$db = DBFactory::getDBQuery(true);;
 		$db->execute('select * from kb3_apicache where cfg_site=\''.KB_SITE."'");
 		while ($row = $db->getRow())
 		{
@@ -53,7 +53,7 @@ class ApiCache
 			unset(self::$cache[$key]);
 		}
 
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute("delete from kb3_apicache where cfg_key = '".$key."'
         		       and cfg_site = '".KB_SITE."'");
 	}
@@ -80,7 +80,7 @@ class ApiCache
 		}
 		$value = addslashes($value);
 
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$sql = "INSERT INTO kb3_apicache (cfg_site, cfg_key, cfg_value) VALUES ('".
 			KB_SITE."','".$key."','".$value.
 			"') ON DUPLICATE KEY UPDATE cfg_value = '".$value."'";

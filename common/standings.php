@@ -5,7 +5,7 @@ require_once('common/includes/class.alliance.php');
 $page = new Page();
 $page->setTitle('Standings');
 
-$qry = new DBQuery();
+$qry = DBFactory::getDBQuery();;
 if (CORP_ID)
 {
     $qry->execute('SELECT * FROM kb3_standings WHERE sta_from='.CORP_ID.' AND sta_from_type=\'c\' ORDER BY sta_value DESC');

@@ -4,7 +4,7 @@
 */
 
 function verify_sync_table() {
-	$query = new DBQuery();
+	$query = DBFactory::getDBQuery();;
 
 	$query->execute("SHOW TABLES LIKE 'kb3_eve_central'");
 	if ($query->recordCount() == 0) {
@@ -25,7 +25,7 @@ function verify_sync_table() {
 *	Retrieve the item value from EVE Central
 */
 function ec_get_value($item_id) {
-    $query = new DBQuery();
+    $query = DBFactory::getDBQuery();;
 
     $query->execute("SELECT item_price, unix_timestamp(last_updated) last_upd FROM kb3_eve_central WHERE item_id=$item_id");
     // If there's 1 record, then we have an archived value.
@@ -49,7 +49,7 @@ function ec_get_value($item_id) {
 */
 function ask_eve_central($item_id) {
 	file_put_contents(KB_CACHEDIR.'/evecentral/activity.log', "Handling from live.\n", FILE_APPEND);
-	$query = new DBQuery();
+	$query = DBFactory::getDBQuery();;
 	if (function_exists('curl_init'))
 	{
 		$ch = curl_init();
@@ -96,7 +96,7 @@ function ask_eve_central($item_id) {
 *	Wrapper to do all to work.  Updates the items table based on the cached or live data.
 */
 function ec_update_value($item_id) {
-    $query = new DBQuery();
+    $query = DBFactory::getDBQuery();;
 
     // Don't try if we can't open URLs with fopen.
 	// Do to!

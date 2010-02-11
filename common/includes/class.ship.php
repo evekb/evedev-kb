@@ -114,7 +114,7 @@ class Ship
     {
         if (!$this->qry_)
         {
-			$this->qry_ = new DBQuery();
+			$this->qry_ = DBFactory::getDBQuery();;
 
 			$this->sql_ = "select * from kb3_ships shp
 						   inner join kb3_ship_classes scl on shp.shp_class = scl.scl_id";
@@ -168,7 +168,7 @@ class ShipClass
         if (!$id) $id = 0;
         $this->id_ = intval($id);
 
-        $this->qry_ = new DBQuery();
+        $this->qry_ = DBFactory::getDBQuery();;
     }
 
     function getID()

@@ -35,7 +35,7 @@ class Config
 			return;
 		}
 
-		$db = new DBQuery();
+		$db = DBFactory::getDBQuery();;
 		$db->execute("SELECT * FROM kb3_config WHERE cfg_site='".self::$configSite."'");
 		while ($row = $db->getRow())
 		{
@@ -79,7 +79,7 @@ class Config
 			unset(self::$configCache[$key]);
 		}
 
-		$qry = new DBQuery(true);
+		$qry = DBFactory::getDBQuery(true);;
 		$qry->execute("DELETE FROM kb3_config WHERE cfg_key = '{$key}'
                        AND cfg_site = '".self::$configSite."'");
 	}
@@ -106,7 +106,7 @@ class Config
 		}
 		$value = addslashes($value);
 
-		$qry = new DBQuery(true);
+		$qry = DBFactory::getDBQuery(true);;
 		$sql = "INSERT INTO kb3_config (cfg_site, cfg_key, cfg_value) VALUES ('".self::$configSite."','{$key}','{$value}') ON DUPLICATE KEY UPDATE cfg_value = '{$value}'";
 		$qry->execute($sql);
 	}

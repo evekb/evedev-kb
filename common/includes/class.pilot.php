@@ -135,7 +135,7 @@ class Pilot
 				$this->valid_ = false;
 				return;
 			}
-			$this->qry_ = new DBQuery();
+			$this->qry_ = DBFactory::getDBQuery();;
 			$this->sql_ = 'select * from kb3_pilots plt, kb3_corps crp, kb3_alliances ali
             	  	       where crp.crp_id = plt.plt_crp_id
             		       and ali.all_id = crp.crp_all_id ';
@@ -189,9 +189,9 @@ class Pilot
 	{
 		$name = slashfix($name);
 	// Check if pilot exists with a non-cached query.
-		$qry = new DBQuery(true);
+		$qry = DBFactory::getDBQuery(true);;
 		// Insert or update a pilot with a cached query to update cache.
-		$qryI = new DBQuery(true);
+		$qryI = DBFactory::getDBQuery(true);;
 		$qry->execute("select *
                         from kb3_pilots
                        where plt_name = '".$name."'");
@@ -279,7 +279,7 @@ class Pilot
 		if(isset($this->updated_))
 			if(is_null($this->updated_) || strtotime($timestamp." UTC") > $this->updated_) return true;
 			else return false;
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute("select plt_id
                         from kb3_pilots
                        where plt_id = ".$this->id_."
@@ -302,7 +302,7 @@ class Pilot
 			return false;
 		}
 		$this->externalid_ = intval($externalID);
-		$qry = new DBQuery(true);
+		$qry = DBFactory::getDBQuery(true);;
 		$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_externalid = ".$this->externalid_." AND plt_id <> ".$this->id_);
 		if($qry->recordCount())
 		{
@@ -330,7 +330,7 @@ class Pilot
      */
     function lookup($name)
     {
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();;
         $qry->execute("select * from kb3_pilots
                        where plt_name = '".slashfix($name)."'");
         $row = $qry->getRow();

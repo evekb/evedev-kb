@@ -599,7 +599,7 @@ class pKillDetail extends pageAssembly
 				if (isset($_POST['submit']) && $_POST['submit'] == 'UpdateValue')
 				{
 				// Send new value for item to the database
-					$qry = new DBQuery();
+					$qry = DBFactory::getDBQuery();;
 					$qry->autocommit(false);
 					if(isset($_POST['SID']))
 					{
@@ -647,7 +647,7 @@ class pKillDetail extends pageAssembly
 				$Val  =$_POST[$IID];
 				$table=$_POST['TYPE'];
 				$old  =$_POST['OLDSLOT'];
-				$qry  =new DBQuery();
+				$qry  =DBFactory::getDBQuery();;
 				$qry->execute("UPDATE kb3_items_" . $table . " SET itd_itl_id ='" . $Val . "' WHERE itd_itm_id=" . $IID
 					. " AND itd_kll_id = " . $KID . " AND itd_itl_id = " . $old);
 			}

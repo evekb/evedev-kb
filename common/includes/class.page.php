@@ -113,7 +113,7 @@ class Page
 		$this->timeend_ = strtok(microtime(), ' ') + strtok('');
 		$this->processingtime_ = $this->timeend_ - $this->timestart_;
 
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$smarty->assign('profile_sql_cached', $qry->queryCachedCount());
 		$smarty->assign('profile_sql', $qry->queryCount());
 		$smarty->assign('profile_time', round($this->processingtime_,4));

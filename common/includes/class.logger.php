@@ -74,7 +74,7 @@ class logger
 	{
 		if(is_null($note)) $note = logger::getip();
 
-		$qry = new DBQuery(true);
+		$qry = DBFactory::getDBQuery(true);;
 		$qry->execute("INSERT INTO kb3_log (log_kll_id, log_site, log_ip_address, log_timestamp) values(".
 				$killid.",'".KB_SITE."','".$note."', now())");
 	}

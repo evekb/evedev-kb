@@ -7,7 +7,7 @@ if ($_POST['action'] == 'search')
 {
     $hitlist = array();
     $search = slashfix($_POST['search']);
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();;
     $qry->execute('select usr_login from kb3_user where usr_login like '."'%".$search."%'");
     while ($row = $qry->getRow())
     {
@@ -23,7 +23,7 @@ if ($_POST['action'] == 'search')
 }
 elseif ($_POST['action'] == 'assign')
 {
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();;
     $tmp = role::_get($_POST['role']);
     var_dump($tmp);
     #$qry->execute('select usr_login from kb3_user where usr_login like '."'%".$search."%'");

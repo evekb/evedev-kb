@@ -21,7 +21,7 @@ if ('POST' == $_SERVER['REQUEST_METHOD'] AND isset($_POST['update_value'])) {
 	$item = $_POST['itm_id'];
 	$value = $_POST['value'];
 	$query = "UPDATE kb3_item_price SET price='$value' WHERE typeID=$item";
-	$qry = new DBQuery();
+	$qry = DBFactory::getDBQuery();;
 	$qry->execute($query);
 	$smarty->assign('success', 'Manual update of item price was successful.');
 }
@@ -50,7 +50,7 @@ $where = join (' AND ', $where);
 // And make it alphabetical
 $sql .= $where . " ORDER BY itm.typeName";
 
-$qry = new DBQuery();
+$qry = DBFactory::getDBQuery();;
 $qry->execute($sql);
 
 while ($row = $qry->getRow())

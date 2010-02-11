@@ -67,7 +67,7 @@ class allianceSummary
 			return false;
 		}
 
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute("SELECT 1 FROM kb3_sum_alliance WHERE asm_all_id = ".$this->all_id_);
 		if(!$qry->recordCount())
 			$this->buildSummary($this->all_id_);
@@ -93,7 +93,7 @@ class allianceSummary
 	{
 		$all_id = intval($all_id);
 		if(!$all_id) return false;
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->autocommit(false);
 		$sql = "CREATE TEMPORARY TABLE `tmp_all_summary` (
 		  `asm_all_id` int(11) NOT NULL DEFAULT '0',
@@ -138,7 +138,7 @@ class allianceSummary
 	function addKill($kill)
 	{
 		$alls = array();
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute("SELECT 1 FROM kb3_sum_alliance WHERE asm_all_id = ".$kill->getVictimAllianceID());
 		if($qry->recordCount())
 		{
@@ -174,7 +174,7 @@ class allianceSummary
 	function delKill($kill)
 	{
 		$alls = array();
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute("SELECT 1 FROM kb3_sum_alliance WHERE asm_all_id = ".$kill->getVictimAllianceID());
 		// No summary table to remove kill from so skip.
 		if($qry->recordCount())
@@ -208,7 +208,7 @@ class allianceSummary
 	function update($kill, $difference)
 	{
 		$alls = array();
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute("SELECT 1 FROM kb3_sum_alliance WHERE asm_all_id = ".$kill->getVictimAllianceID());
 		// No summary table to remove kill from so skip.
 		if($qry->recordCount())
@@ -255,7 +255,7 @@ class corpSummary extends allianceSummary
 			return false;
 		}
 
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute("SELECT 1 FROM kb3_sum_corp WHERE csm_crp_id = ".$this->crp_id_);
 		if(!$qry->recordCount())
 			$this->buildSummary($this->crp_id_);
@@ -281,7 +281,7 @@ class corpSummary extends allianceSummary
 	{
 		$crp_id = intval($crp_id);
 		if(!$crp_id) return false;
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->autocommit(false);
 		$sql = "CREATE TEMPORARY TABLE `tmp_sum_corp` (
 		  `csm_crp_id` int(11) NOT NULL DEFAULT '0',
@@ -328,7 +328,7 @@ class corpSummary extends allianceSummary
 	function addKill($kill)
 	{
 		$alls = array();
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute("SELECT 1 FROM kb3_sum_corp WHERE csm_crp_id = ".$kill->getVictimcorpID());
 		if($qry->recordCount())
 		{
@@ -364,7 +364,7 @@ class corpSummary extends allianceSummary
 	function delKill($kill)
 	{
 		$alls = array();
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute("SELECT 1 FROM kb3_sum_corp WHERE csm_crp_id = ".$kill->getVictimCorpID());
 		// No summary table to remove kill from so skip.
 		if($qry->recordCount())
@@ -398,7 +398,7 @@ class corpSummary extends allianceSummary
 	function update($kill, $difference)
 	{
 		$alls = array();
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute("SELECT 1 FROM kb3_sum_corp WHERE csm_crp_id = ".$kill->getVictimCorpID());
 		// No summary table to remove kill from so skip.
 		if($qry->recordCount())
@@ -445,7 +445,7 @@ class pilotSummary extends allianceSummary
 			return false;
 		}
 
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute("SELECT 1 FROM kb3_sum_pilot WHERE psm_plt_id = ".$this->plt_id_);
 		if(!$qry->recordCount())
 			$this->buildSummary($this->plt_id_);
@@ -471,7 +471,7 @@ class pilotSummary extends allianceSummary
 	{
 		$plt_id = intval($plt_id);
 		if(!$plt_id) return false;
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->autocommit(false);
 		$sql = "CREATE TEMPORARY TABLE `tmp_sum_pilot` (
 		  `psm_plt_id` int(11) NOT NULL DEFAULT '0',
@@ -513,7 +513,7 @@ class pilotSummary extends allianceSummary
 	function addKill($kill)
 	{
 		$alls = array();
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute("SELECT 1 FROM kb3_sum_pilot WHERE psm_plt_id = ".$kill->getVictimID());
 		if($qry->recordCount())
 		{
@@ -549,7 +549,7 @@ class pilotSummary extends allianceSummary
 	function delKill($kill)
 	{
 		$alls = array();
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute("SELECT 1 FROM kb3_sum_pilot WHERE psm_plt_id = ".$kill->getVictimID());
 		// No summary table to remove kill from so skip.
 		if($qry->recordCount())
@@ -583,7 +583,7 @@ class pilotSummary extends allianceSummary
 	function update($kill, $difference)
 	{
 		$alls = array();
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute("SELECT 1 FROM kb3_sum_pilot WHERE psm_plt_id = ".$kill->getVictimID());
 		// No summary table to remove kill from so skip.
 		if($qry->recordCount())

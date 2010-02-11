@@ -273,7 +273,7 @@ class Fetcher
 					// on this board.
 					elseif($this->apiID = intval($this->apiID))
 					{
-						$qry = new DBQuery();
+						$qry = DBFactory::getDBQuery();;
 						$qry->execute("SELECT 1 FROM kb3_kills WHERE kll_external_id = ".$this->apiID);
 						if(!$qry->recordCount())
 						{
@@ -306,7 +306,7 @@ class Fetcher
 					}
 					else
 					{
-					//						$qry = new DBQuery();
+					//						$qry = DBFactory::getDBQuery();;
 						if(strpos($this->uurl, '?')) $logurl = substr($this->uurl,0,strpos($this->uurl, '?')).'?a=kill_detail&kll_id='.intval($this->title);
 						else $logurl = uurl.'?a=kill_detail&kll_id='.intval($this->title);
 						logger::logKill($killid, $logurl);
@@ -375,7 +375,7 @@ class Fetcher
 	//! \param $names array of corp names indexed by pilot name.
 	function addPilotNames($names)
 	{
-		$qry = new DBQuery(true);
+		$qry = DBFactory::getDBQuery(true);;
 		$checklist = array();
 		foreach($names as $pilot =>$corp)
 		{
@@ -419,7 +419,7 @@ class Fetcher
 	//! \param $names array of corp names indexed by pilot name.
 	function addCorpNames($names)
 	{
-		$qry = new DBQuery(true);
+		$qry = DBFactory::getDBQuery(true);;
 		$checklist = array();
 		foreach($names as $corp =>$all)
 		{

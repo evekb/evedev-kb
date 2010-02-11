@@ -28,7 +28,7 @@ if ($_POST['searchphrase'] != "" && strlen($_POST['searchphrase']) >= 3)
                    and plt.plt_crp_id = crp.crp_id
                  order by plt.plt_name";
     $header = "<td>Pilot</td><td>Corporation</td>";
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();;
     if (!$qry->execute($sql))
         die ($qry->getErrorMsg());
 

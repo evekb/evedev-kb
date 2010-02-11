@@ -26,7 +26,7 @@ if ($_REQUEST['searchphrase'] != "" && strlen($_REQUEST['searchphrase']) >= 3)
             break;
     }
 
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();;
     $qry->execute($sql);
 
     while ($row = $qry->getRow())
@@ -68,7 +68,7 @@ if ($val = $_REQUEST['standing'])
     $fields[] = str_replace(',', '.', $val);
     $fields[] = slashfix($_REQUEST['comment']);
 
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();;
     $qry->execute('INSERT INTO kb3_standings VALUES (\''.join("','", $fields).'\')');
 }
 if ($_REQUEST['del'])
@@ -86,12 +86,12 @@ if ($_REQUEST['del'])
     $totyp = substr($_REQUEST['del'], 0, 1);
     $toid = intval(substr($_REQUEST['del'], 1));
 
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();;
     $qry->execute('DELETE FROM kb3_standings WHERE sta_from='.$fromid.' AND sta_from_type=\''.$fromtyp.'\'
                                              AND sta_to='.$toid.' AND sta_to_type=\''.$totyp.'\' LIMIT 1');
 }
 
-$qry = new DBQuery();
+$qry = DBFactory::getDBQuery();;
 if (CORP_ID)
 {
     $qry->execute('SELECT * FROM kb3_standings WHERE sta_from='.CORP_ID.' AND sta_from_type=\'c\' ORDER BY sta_value DESC');

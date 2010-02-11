@@ -32,7 +32,7 @@ if ($_POST['searchphrase'] != "" && strlen($_POST['searchphrase']) >= 3)
             break;
     }
 
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();;
     if (!$qry->execute($sql))
     {
         die($qry->getErrorMsg());

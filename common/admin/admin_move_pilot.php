@@ -20,7 +20,7 @@ if (!$pilot->exists())
 if($_POST['confirm'])
 {
 	$sql = "UPDATE `kb3_pilots` SET `plt_crp_id` = '".$_POST['crp_id']."' WHERE `plt_id` =".$_POST['plt_id'];
-	$qry = new DBQuery();
+	$qry = DBFactory::getDBQuery();;
 	$qry->execute($sql);
 	$html .= "Pilot Moved";
 }
@@ -39,7 +39,7 @@ if($_REQUEST['crp'])
 if($_POST['search'])
 {
 	$sql = "SELECT * FROM `kb3_corps` WHERE crp_name LIKE '%".$_POST['search']."%'";
-	$qry = new DBQuery();
+	$qry = DBFactory::getDBQuery();;
 	$qry->execute($sql);
 										//$html .= $sql ;
 	$html .= "<div class=block-header2>Results</div>";

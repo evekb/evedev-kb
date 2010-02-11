@@ -25,12 +25,12 @@ class Contract
 		if ($this->qry_)
 			return;
 
-		$this->qry_ = new DBQuery();
+		$this->qry_ = DBFactory::getDBQuery();;
 		// general
 		$sql = "select * from kb3_contracts ctr
                 where ctr.ctr_id = ".$this->ctr_id_;
 
-		$this->qry_ = new DBQuery();
+		$this->qry_ = DBFactory::getDBQuery();;
 		if (!$this->qry_->execute($sql))
 			die($this->qry_->getErrorMsg());
 
@@ -46,7 +46,7 @@ class Contract
                 where ctd.ctd_ctr_id = ".$row['ctr_id']."
 	            order by 3, 2, 1 -- get corps & alliances for contract";
 
-		$caqry = new DBQuery();
+		$caqry = DBFactory::getDBQuery();;
 		if (!$caqry->execute($sql))
 		{
 			check_contracts();
@@ -202,7 +202,7 @@ class Contract
 
 	function add($name, $type, $startdate, $enddate = "")
 	{
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		if ($type == "campaign") $campaign = 1;
 		else $campaign = 0;
 		if ($enddate != "") $enddate = "'".$enddate." 23:59:59'";
@@ -230,7 +230,7 @@ class Contract
 
 	function remove()
 	{
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 
 		$qry->execute("delete from kb3_contracts
                        where ctr_id = ".$this->ctr_id_);
@@ -241,7 +241,7 @@ class Contract
 
 	function validate()
 	{
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 
 		$qry->execute("select * from kb3_contracts
                        where ctr_id = ".$this->ctr_id_."
@@ -313,7 +313,7 @@ class ContractTarget
 	{
 		if ($this->name_ == "")
 		{
-			$qry = new DBQuery();
+			$qry = DBFactory::getDBQuery();;
 			switch ($this->type_)
 			{
 				case "corp":
@@ -370,7 +370,7 @@ class ContractTarget
 
 	function add()
 	{
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$sql = "insert into kb3_contract_details
                      values ( ".$this->contract_->getID().",";
 		switch ($this->type_)
@@ -393,7 +393,7 @@ class ContractTarget
 
 	function remove()
 	{
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$sql = "delete from kb3_contract_details
                     where ctd_ctr_id = ".$this->contract_->getID();
 		switch ($this->type_)
@@ -419,7 +419,7 @@ class ContractList
 {
 	function ContractList()
 	{
-		$this->qry_ = new DBQuery();
+		$this->qry_ = DBFactory::getDBQuery();;
 		$this->active_ = "both";
 		$this->contractcounter_ = 1;
 	}
@@ -445,7 +445,7 @@ class ContractList
 		$sql .= " order by ctr_ended, ctr_started desc";
 		// if ( $this->limit_ )
 		// $sql .= " limit ".( $this->page_ / $this->limit_ ).", ".$this->limit_;
-		$this->qry_ = new DBQuery();
+		$this->qry_ = DBFactory::getDBQuery();;
 		$this->qry_->execute($sql) or die($this->qry_->getErrorMsg());
 	}
 
@@ -526,7 +526,7 @@ class ContractListTable
 
 	function getTableStats()
 	{
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		while ($contract = $this->contractlist_->getContract())
 		{
 		// generate all neccessary objects within the contract

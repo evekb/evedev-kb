@@ -58,7 +58,7 @@ class pAbout extends pageAssembly
 	
 	function stats()
 	{
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute("SELECT COUNT(*) AS cnt FROM kb3_kills");
 		$row = $qry->getRow();
 		$kills = $row['cnt'];
@@ -86,7 +86,7 @@ class pAbout extends pageAssembly
 			where scl_class not in ( 'Drone', 'Unknown' )
 			order by scl_value";
 
-		$qry = new DBQuery();
+		$qry = DBFactory::getDBQuery();;
 		$qry->execute($sql);
 
 		$shipcl = array();

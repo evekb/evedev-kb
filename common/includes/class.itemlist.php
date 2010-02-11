@@ -11,7 +11,7 @@ class ItemList
         $this->price_ = $price;
         $this->location_ = $location;
         $this->executed_ = false;
-        $this->qry_ = new DBQuery();
+        $this->qry_ = DBFactory::getDBQuery();;
     }
     
     // Add an itemID to the list of items to check.

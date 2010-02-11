@@ -1,6 +1,7 @@
 <?php
 // An ajax search function for this page is in common/includes/xajax.functions.php
 require_once('class.pageAssembly.php');
+require_once('common/includes/xajax.functions.php');
 
 
 class pSearch extends pageAssembly
@@ -73,7 +74,7 @@ class pSearch extends pageAssembly
 					$sql = "select typeID, typeName from kb3_invtypes where typeName like ('%".$this->searchphrase."%')";
 					break;
 			}
-			$qry = new DBQuery();
+			$qry = DBFactory::getDBQuery();;
 			if (!$qry->execute($sql))
 			{
 				die ($qry->getErrorMsg());

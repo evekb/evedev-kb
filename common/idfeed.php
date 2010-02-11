@@ -25,7 +25,7 @@ if(!isset($_GET['allkills'])) $list->setAPIKill();
 $list->setLimit($maxkillsreturned);
 $list->setOrdered(true);
 $list->setOrderBy(' kll.kll_external_id ASC ');
-$qry = new DBQuery();
+$qry = DBFactory::getDBQuery();;
 if(isset($_GET['alliance']))
 {
 	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_external_id = ".intval($_GET['alliance']." LIMIT 1"));

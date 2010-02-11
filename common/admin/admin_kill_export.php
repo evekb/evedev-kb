@@ -131,7 +131,7 @@ if (isset($_SESSION['admin_kill_export']['select']))
                 break;
         }
 
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();;
         $qry->execute($sql);
 
         while ($row = $qry->getRow())

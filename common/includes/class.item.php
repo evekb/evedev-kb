@@ -134,7 +134,7 @@ class Item
     	// if item has no slot get the slot from parent item
         if ($this->row_['itt_slot'] == 0)
         {
-            $qry = new DBQuery();
+            $qry = DBFactory::getDBQuery();;
             $query = "select itt_slot from kb3_item_types
                         inner join kb3_dgmtypeattributes d
                         where itt_id = d.value
@@ -156,7 +156,7 @@ class Item
         if (!$this->executed_)
         {
             if (!$this->id_)return false;
-            if (!isset($this->qry_)) $this->qry_ = new DBQuery();
+            if (!isset($this->qry_)) $this->qry_ = DBFactory::getDBQuery();;
 
             $this->sql_ = "select inv.*, kb3_item_types.*, dga.value as techlevel, itp.price, dc.value as usedcharge, dl.value as usedlauncher
                                from kb3_invtypes inv
@@ -180,7 +180,7 @@ class Item
     function lookup($name)
     {
         $name = trim($name);
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();;
         $query = "select typeID as itm_id from kb3_invtypes itm
                   where typeName = '".slashfix($name)."'";
         $qry->execute($query);
@@ -198,7 +198,7 @@ class Item
     // return typeID by name, dont change $this->id_
     function get_item_id($name)
     {
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();;
         $query = "select typeID as itm_id
                   from kb3_invtypes
                   where typeName = '".slashfix($name)."'";
@@ -211,7 +211,7 @@ class Item
     function get_used_launcher_group($name = null)
     {
         if(is_null($name) && $this->qry_->executed_) return $this->row_['usedlauncher'];
-             $qry  = new DBQuery();
+             $qry  = DBFactory::getDBQuery();;
              // I dont think CCP will change this attribute in near future ;-)
              $query = "SELECT value
                      FROM kb3_dgmtypeattributes d
@@ -225,7 +225,7 @@ class Item
     function get_used_charge_size($name = null)
     {
         if(is_null($name) && $this->executed_) return $this->row_['usedcharge'];
-             $qry  = new DBQuery();
+             $qry  = DBFactory::getDBQuery();;
              // I dont think CCP will change this attribute in near future ;-)
         if(is_null($name))
              $query = "SELECT value
@@ -276,7 +276,7 @@ class Item
     function get_group_id($name = null)
     {
         if(is_null($name) && $this->executed_) return $this->row_['groupID'];
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();;
         if(is_null($name))
         $query = "select groupID
                         from kb3_invtypes

@@ -6,7 +6,7 @@ class SolarSystem
     function SolarSystem($id = 0)
     {
         $this->id_ = $id;
-        $this->qry_ = new DBQuery();
+        $this->qry_ = DBFactory::getDBQuery();;
     }
 
     function getID()
@@ -83,7 +83,7 @@ class SolarSystem
 
     function lookup($name)
     {
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();;
         $qry->execute("select *
                        from kb3_systems
                        where sys_name = '".slashfix($name)."'");
@@ -120,7 +120,7 @@ class Region
     {
         if (!$this->qry_)
         {
-            $this->qry_ = new DBQuery();
+            $this->qry_ = DBFactory::getDBQuery();;
             $this->qry_->execute("select * from kb3_regions
 	                        where reg_id = ".$this->id_);
             $this->row_ = $this->qry_->getRow();

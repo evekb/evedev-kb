@@ -150,7 +150,7 @@ if ($_GET['op'] == "edit")
 					break;
 			}
 
-			$qry = new DBQuery();
+			$qry = DBFactory::getDBQuery();;
 			$qry->execute($sql) or die($qry->getErrorMsg());
 
 			if ($qry->recordCount() > 0)

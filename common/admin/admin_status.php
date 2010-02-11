@@ -3,7 +3,7 @@ require_once('common/admin/admin_menu.php');
 
 $page = new Page('Administration - Troubleshooting');
 $page->setAdmin();
-$qry = new DBQuery(true);
+$qry = DBFactory::getDBQuery(true);;
 $qry->execute("SELECT cfg_key, cfg_value FROM kb3_config WHERE cfg_site = '".
 	KB_SITE."' AND cfg_key NOT LIKE 'API_%' AND cfg_key NOT LIKE '%password%'");
 $html = "<h2>Config Settings</h2>";
@@ -15,7 +15,7 @@ while($row = $qry->getRow())
 $html .= "</table>";
 
 $qry->execute('SHOW TABLES');
-$qry2 = new DBQuery(true);
+$qry2 = DBFactory::getDBQuery(true);;
 //$html .= '<form><textarea class="indexing" name="indexing" cols="60" rows="30" readonly="readonly">';
 $html .= "<h2>Index Settings</h2>";
 	$html .= "<table>";
