@@ -4,40 +4,40 @@ require_once('common/includes/class.toplist.php');
 $page = new Page('Awards');
 $page->addHeader('<meta name="robots" content="index, nofollow" />');
 
-$month = $_GET['m'];
-$year = $_GET['y'];
+$month = intval($_GET['m']);
+$year = intval($_GET['y']);
 
 if ($month == '')
-    $month = kbdate('m') - 1;
+	$month = kbdate('m') - 1;
 
 if ($year == '')
-    $year = kbdate('Y');
+	$year = kbdate('Y');
 
 if ($month == 0)
 {
-    $month = 12;
-    $year = $year - 1;
+	$month = 12;
+	$year = $year - 1;
 }
 
 if ($month == 12)
 {
-    $nmonth = 1;
-    $nyear = $year + 1;
+	$nmonth = 1;
+	$nyear = $year + 1;
 }
 else
 {
-    $nmonth = $month + 1;
-    $nyear = $year;
+	$nmonth = $month + 1;
+	$nyear = $year;
 }
 if ($month == 1)
 {
-    $pmonth = 12;
-    $pyear = $year - 1;
+	$pmonth = 12;
+	$pyear = $year - 1;
 }
 else
 {
-    $pmonth = $month - 1;
-    $pyear = $year;
+	$pmonth = $month - 1;
+	$pyear = $year;
 }
 
 $monthname = kbdate("F", strtotime("2000-".$month."-2"));
@@ -55,13 +55,13 @@ $awardboxes[] = $tkbox->generate();
 // top scorers
 if (config::get('kill_points'))
 {
-    $tklist = new TopScoreList();
-    $tklist->setMonth($month);
-    $tklist->setYear($year);
-    involved::load($tklist,'kill');
+	$tklist = new TopScoreList();
+	$tklist->setMonth($month);
+	$tklist->setYear($year);
+	involved::load($tklist,'kill');
 
-    $tklist->generate();
-    $tkbox = new AwardBox($tklist, "Top scorers", "points", "points", "redcross");
+	$tklist->generate();
+	$tkbox = new AwardBox($tklist, "Top scorers", "points", "points", "redcross");
 	$awardboxes[] = $tkbox->generate();
 }
 // top solo killers
@@ -83,7 +83,6 @@ $tklist->generate();
 $tkbox = new AwardBox($tklist, "Top damagedealers", "kills w/ most damage", "kills", "wing1");
 $awardboxes[] = $tkbox->generate();
 
-$html .= "</tr><tr>";
 // top final blows
 $tklist = new TopFinalBlowList();
 $tklist->setMonth($month);
@@ -131,9 +130,9 @@ $menubox->setIcon("menu-item.gif");
 $menubox->addOption("caption", "Navigation");
 $menubox->addOption("link", "Previous month ", "?a=awards&amp;m=".$pmonth."&amp;y=".$pyear);
 if (! ($month == kbdate("m") - 1 && $year == kbdate("Y")))
-    $menubox->addOption("link", "Next month", "?a=awards&amp;m=".$nmonth."&amp;y=".$nyear);
+	$menubox->addOption("link", "Next month", "?a=awards&amp;m=".$nmonth."&amp;y=".$nyear);
 $page->addContext($menubox->generate());
 
 $page->setContent($smarty->fetch(get_tpl('awards')));
 $page->generate();
-?>
+
