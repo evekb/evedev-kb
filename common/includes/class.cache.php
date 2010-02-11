@@ -20,31 +20,31 @@ class cache
 		$array = explode(' ', $load);
 		if ((float)$array[0] > (float)config::get('reinforced_threshold'))
 		{
-		// put killboard into RF
+			// put killboard into RF
 			config::set('is_reinforced', 1);
 		}
 		elseif ((float)$array[0] > (float)config::get('reinforced_disable_threshold') && config::get('is_reinforced'))
 		{
-		// do nothing, we are in RF, load is dropping but stil over disabling threshold
+			// do nothing, we are in RF, load is dropping but stil over disabling threshold
 		}
 		else
 		{
-		// load low, dont enter reinforced
+			// load low, dont enter reinforced
 			config::set('is_reinforced', 0);
 		}
 	}
 	//! Check if the current page should be cached.
 	function shouldCache($page = '')
 	{
-	// never cache for admins
+		// never cache for admins
 		if (session::isAdmin())
 		{
 			return false;
 		}
 		// Don't cache the image files.
 		if ($page == 'thumb' ||
-			$page == 'mapview' ||
-			$page == 'sig') return false;
+				$page == 'mapview' ||
+				$page == 'sig') return false;
 		if (config::get('auto_reinforced') && config::get('is_reinforced') && count($_POST) == 0)
 		{
 			return true;
@@ -60,6 +60,15 @@ class cache
 	//! Check if the current page is cached and valid then send it if so.
 	function check($page)
 	{
+		// Set an old expiry date to discourage the browser from trying to
+		// cache the page.
+		if($page != 'mapview' && $page != 'sig')
+		{
+			header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+			header('Cache-Control: no-cache');
+		}
+		$usegz = config::get('cfg_compress')
+			&& !ini_get('zlib.output_compression');
 		$cachefile = cache::genCacheName();
 		// If the cache doesn't exist then we don't need to check times.
 		if (cache::shouldCache($page) && file_exists(cache::genCacheName()))
@@ -111,8 +120,9 @@ class cache
 				// less bandwidth. Possibly more useful if we keep an index.
 				// filename, age, hash. Age would be used for cache clearing.
 				$etag=md5($cachefile.$timestamp);
-				if(strpos($_SERVER['HTTP_ACCEPT_ENCODING'],"gzip") !== false)
-					$etag .= 'gz';
+				if($usegz
+					&& strpos($_SERVER['HTTP_ACCEPT_ENCODING'],"gzip") !== false)
+						$etag .= 'gz';
 				header("Etag: \"".$etag."\"");
 
 				header("Last-Modified: ".gmdate("D, d M Y H:i:s", $timestamp)." GMT");
@@ -120,32 +130,37 @@ class cache
 				// There was a reason for having both checks. etag not always
 				// checked maybe?
 				if (strpos($_SERVER['HTTP_IF_NONE_MATCH'], $etag) !== false ||
-					@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $timestamp)
+						@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $timestamp)
 				{
 					header($_SERVER["SERVER_PROTOCOL"]." 304 Not Modified");
 					exit;
 				}
 
-				if(!ini_get('zlib.output_compression')) ob_start("ob_gzhandler");
+				if($usegz) ob_start("ob_gzhandler");
 				else ob_start();
 				@readgzfile($cachefile);
 				ob_end_flush();
 				exit();
 			}
-			if(!ini_get('zlib.output_compression')) ob_start("ob_gzhandler");
+			if($usegz) ob_start("ob_gzhandler");
 			else ob_start();
 		}
-		else if(!ini_get('zlib.output_compression')) ob_start("ob_gzhandler");
-		header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
-		if (strpos($_SERVER['REQUEST_URI'],'thumb') ||
-			strpos($_SERVER['REQUEST_URI'],'mapview'))
-				header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 7776000) . ' GMT');
+		// Don't turn on gzip when sending images.
+		elseif (cache::shouldCache($page))
+		{
+			if($usegz) ob_start("ob_gzhandler");
+			else ob_start();
+		}
+		// If the page cache is off we still compress pages if asked.
+		elseif($usegz) ob_start("ob_gzhandler");
 	}
 	//! Generate the cache for the current page.
 	function generate()
 	{
 		if (cache::shouldCache())
 		{
+			$usegz = config::get('cfg_compress')
+				&& !ini_get('zlib.output_compression');
 			$cachefile = cache::genCacheName();
 
 			// Create directories if needed.
@@ -157,15 +172,15 @@ class cache
 			{
 				mkdir(KB_PAGECACHEDIR.'/'.KB_SITE.'/'.cache::genCacheName(true));
 			}
-			// Use the minimum compression. The difference is minor in our usage.
-            $fp = @gzopen($cachefile, 'wb1');
+			// Use the minimum compression. The size difference is minor for our usage.
+			$fp = @gzopen($cachefile, 'wb1');
 
-            @gzwrite($fp, preg_replace('/profile -->.*<!-- \/profile/','profile -->Cached '.gmdate("d M Y H:i:s").'<!-- /profile',ob_get_contents()));
-            @gzclose($fp);
+			@gzwrite($fp, preg_replace('/profile -->.*<!-- \/profile/','profile -->Cached '.gmdate("d M Y H:i:s").'<!-- /profile',ob_get_contents()));
+			@gzclose($fp);
 			// Set the headers to match the new cache file.
 			$timestamp = @filemtime($cachefile);
 			$etag = md5($cachefile.$timestamp );
-			if(strpos($_SERVER['HTTP_ACCEPT_ENCODING'],"gzip") !== false)
+			if($usegz && strpos($_SERVER['HTTP_ACCEPT_ENCODING'],"gzip") !== false)
 				$etag .= 'gz';
 
 			header("Etag: \"".$etag."\"");
@@ -180,11 +195,13 @@ class cache
 	 * level specific cache files.
 	 *
 	 *  \return string of path and filename for the current page's cachefile.
-	 */
+	*/
 	function genCacheName($subdir = false)
 	{
 		global $themename, $stylename;
-		$filename = md5($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].IS_IGB.$themename.$stylename).'.cache';
+		$basename = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].IS_IGB.$themename.$stylename;
+		event::call('cacheNaming', $basename);
+		$filename = md5($basename).'.cache';
 		if($subdir) return substr($filename,0,1);
 		else return KB_PAGECACHEDIR.'/'.KB_SITE.'/'.substr($filename,0,1).'/'.$filename;
 	}

@@ -5,6 +5,7 @@ require_once('common/includes/class.config.php');
 options::cat('Advanced', 'Configuration', 'Available updates');
 options::fadd('Code updates', 'none', 'custom', array('update', 'codeCheck'));
 options::fadd('Database updates', 'none', 'custom', array('update', 'dbCheck'));
+
 options::cat('Advanced', 'Configuration', 'Killboard Configuration');
 options::fadd('Display profiling information', 'cfg_profile', 'checkbox');
 options::fadd('Killboard Title', 'cfg_kbtitle', 'edit:size:50');
@@ -12,6 +13,7 @@ options::fadd('Killboard Host', 'cfg_kbhost', 'edit:size:50','', array('admin_co
 options::fadd('Image base URL', 'cfg_img', 'edit:size:50','', array('admin_config', 'checkImg'));
 options::fadd('Main Webpage Link', 'cfg_mainsite', 'edit:size:50');
 options::fadd('Allow Masterfeed', 'feed_allowmaster', 'checkbox');
+options::fadd('Compress pages', 'cfg_compress', 'checkbox','','','Enable unless you encounter errors');
 
 options::cat('Advanced', 'Configuration', 'Public-Mode');
 options::fadd('Only Kills in SummaryTables', 'public_summarytable', 'checkbox','','','CORP_ID and ALLIANCE_ID in config has to be 0 to work "public"');
@@ -108,7 +110,7 @@ class admin_config
 			$plt_id = intval($_POST['option_cfg_pilotid']);
 		}
 		else $plt_id = PILOT_ID;
-		if(isset($_POST['option_cfg_corpid'])) 
+		if(isset($_POST['option_cfg_corpid']))
 		{
 			$crp_id = intval($_POST['option_cfg_corpid']);
 		}
@@ -142,10 +144,11 @@ class update
 	 */
 	function codeCheck()
 	{
+		if(!class_exists('DOMDocument')) return "The required DOMDocument libraries in PHP are not installed.";
 		update::checkStatus();
 		if(update::$codeVersion > Config::get('upd_codeVersion'))
 		{
-			return "<div>Code updates are available, <a href=?a=admin_upgrade>here</a></div><br/>";
+			return "<div>Code updates are available, <a href='?a=admin_upgrade'>here</a></div><br/>";
 		}
 		return "<div>No updates available</div>";
 	}
@@ -156,17 +159,18 @@ class update
 	 */
 	function dbCheck()
 	{
+		if(!class_exists('DOMDocument')) return "The required DOMDocument libraries in PHP are not installed.";
 		update::checkStatus();
 		if(update::$dbVersion > Config::get('upd_dbVersion'))
 		{
-			return "<div>Database updates are available, <a href=?a=admin_upgrade>here</a></div><br/>";
+			return "<div>Database updates are available, <a href='?a=admin_upgrade'>here</a></div><br/>";
 		}
 		return "<div>No updates available</div>";
 	}
 	//! Updates status xml if necessary.
 	function checkStatus()
 	{
-		$xml = new UpdateXMLParser();		
+		$xml = new UpdateXMLParser();
 		if($xml->getXML() < 3)
 		{
 		    $xml->retrieveData();
