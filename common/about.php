@@ -53,7 +53,9 @@ class pAbout extends pageAssembly
 		$this->smarty->assign_by_ref('current_developer', $currentDeveloper);
 		$this->smarty->assign_by_ref('developer', $developer);
 		$this->smarty->assign('contributor', $contributor);
-		$this->smarty->assign('version', KB_VERSION." ".KB_RELEASE." rev ".SVN_REV);
+		if(SVN_REV == "") $svn_rev = " rev ".SVN_REV;
+		else $svn_rev = "";
+		$this->smarty->assign('version', KB_VERSION." ".KB_RELEASE.$svn_rev);
 	}
 	
 	function stats()
@@ -119,4 +121,3 @@ $html = $about->assemble();
 $about->page->setContent($html);
 
 $about->page->generate();
-?>
