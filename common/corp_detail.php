@@ -187,7 +187,7 @@ class pCorpDetail extends pageAssembly
 			{
 				$html .= "<a href=\"?a=alliance_detail&amp;all_id=".$this->alliance->getID()."\">".$this->alliance->getName()."</a>";
 			}
-			$html .= "</td><td class=\"kb-table-cell\" width=\"65\"><b>CEO:</b></td><td class=\"kb-table-cell\"><a href=\"?a=search&amp;searchtype=pilot&amp;searchphrase=" . urlencode($myAPI->getCeoName()) . "\">" . $myAPI->getCeoName() . "</a></td></tr>";
+			$html .= "</td><td class=\"kb-table-cell\" width=\"65\"><b>CEO:</b></td><td class=\"kb-table-cell\"><a href=\"?a=pilot_detail&amp;plt_ext_id=" . $myAPI->getCeoID() . "\">" . $myAPI->getCeoName() . "</a></td></tr>";
 			$html .= "<tr class=\"kb-table-row-even\"><td class=\"kb-table-cell\"><b>Kills:</b></td><td class=\"kl-kill\">".$this->kill_summary->getTotalKills()."</td>";
 			$html .= "<td class=\"kb-table-cell\"><b>HQ:</b></td><td class=\"kb-table-cell\">" . $myAPI->getStationName() . "</td></tr>";
 			$html .= "<tr class=\"kb-table-row-even\"><td class=\"kb-table-cell\"><b>Losses:</b></td><td class=\"kl-loss\">".$this->kill_summary->getTotalLosses()."</td>";
