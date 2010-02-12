@@ -227,7 +227,7 @@ class TopList
 
 		if (count($this->vic_scl_id_))
 		{
-			$this->sql_ .= " straight_join kb3_ships shp
+			$this->sql_ .= " inner join kb3_ships shp
 	  		         on ( shp.shp_id = kll.kll_ship_id )";
 		}
 
