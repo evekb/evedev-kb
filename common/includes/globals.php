@@ -3,7 +3,7 @@
 $svnrevision = '$Revision$';
 $svnrevision = trim(substr($svnrevision, 10, strlen($svnrevision)-11));
 
-define('SVN_REV', "Dev ".$svnrevision);
+define('SVN_REV', $svnrevision);
 
 if(!defined('LATEST_DB_UPDATE')) define('LATEST_DB_UPDATE',"013");
 
