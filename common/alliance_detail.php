@@ -6,6 +6,7 @@ require_once('common/includes/class.killlisttable.php');
 require_once('common/includes/class.killsummarytable.php');
 require_once('common/includes/class.toplist.php');
 require_once('common/includes/class.pageAssembly.php');
+require_once("common/includes/class.eveapi.php");
 
 class pAllianceDetail extends pageAssembly
 {
@@ -73,8 +74,8 @@ class pAllianceDetail extends pageAssembly
 			}
 		}
 
-		$this->month = $_GET['m'];
-		$this->year = $_GET['y'];
+		$this->month = intval($_GET['m']);
+		$this->year = intval($_GET['y']);
 
 		if ($this->month == '')
 			$this->month = kbdate('m');
@@ -129,22 +130,134 @@ class pAllianceDetail extends pageAssembly
 	//! Show the overall statistics for this alliance.
 	function stats()
 	{
-		global $smarty;
-		// The summary table is also used by the stats. Whichever is called
-		// first generates the table.
-		if (file_exists("img/alliances/".$this->alliance->getUnique().".png"))
-			$smarty->assign('all_img', $this->alliance->getUnique());
+		$tempMyCorp = new Corporation();
+
+		$myAlliAPI = new AllianceAPI();
+		$myAlliAPI->fetchalliances();
+
+		// Use alliance ID if we have it
+		if($this->alliance->getExternalID()) $myAlliance = $myAlliAPI->LocateAllianceID( $this->alliance->getExternalID() );
+		else $myAlliance = $myAlliAPI->LocateAlliance( $this->alliance->getName() );
+
+		if($this->alliance->isFaction()) $this->page->setTitle('Faction details - '.$this->alliance->getName() . " [" . $myAlliance["shortName"] . "]");
+		else $this->page->setTitle('Alliance details - '.$this->alliance->getName() . " [" . $myAlliance["shortName"] . "]");
+
+		$myCorpAPI = new API_CorporationSheet();
+
+		if ($myAlliance)
+		{
+			foreach ( (array)$myAlliance["memberCorps"] as $tempcorp)
+			{
+				$myCorpAPI->setCorpID($tempcorp["corporationID"]);
+				$result .= $myCorpAPI->fetchXML();
+
+				if ($tempcorp["corporationID"] == $myAlliance["executorCorpID"])
+				{
+					$ExecutorCorp = $myCorpAPI->getCorporationName();
+					$ExecutorCorpID = $myCorpAPI->getCorporationID();
+				}
+				// Build Data array
+				$membercorp["corpExternalID"] = $myCorpAPI->getCorporationID();
+				$membercorp["corpName"] = $myCorpAPI->getCorporationName();
+				$membercorp["ticker"] = $myCorpAPI->getTicker();
+				$membercorp["members"] = $myCorpAPI->getMemberCount();
+				$membercorp["joinDate"] = $tempcorp["startDate"];
+				$membercorp["taxRate"] = $myCorpAPI->getTaxRate() . "%";
+				$membercorp["url"] = $myCorpAPI->getUrl();
+
+				$this->allianceCorps[] = $membercorp;
+
+				// Check if corp is known to EDK DB, if not, add it.
+				$tempMyCorp->Corporation();
+				$tempMyCorp->lookup($myCorpAPI->getCorporationName());
+				if ($tempMyCorp->getID() == 0)
+				{
+					$tempMyCorp->add($myCorpAPI->getCorporationName(), $this->alliance , substr($tempcorp["startDate"], 0, 16),$myCorpAPI->getCorporationID());
+				}
+
+				$membercorp = array();
+				unset($membercorp);
+			}
+
+			$html .= "<table class='kb-table' width=\"100%\" border=\"0\" cellspacing='1'><tr class='kb-table-row-even'><td rowspan='8' width='128' align='center' bgcolor='black'>";
+
+			if (file_exists("img/alliances/".$this->alliance->getUnique().".png"))
+			{
+				$html .= "<img src=\"".IMG_URL."/alliances/".$this->alliance->getUnique().".png\" border=\"0\" /></td>";
+			}
+			else
+			{
+				$html .= "<img src=\"".IMG_URL."/alliances/default.gif\" border=\"0\" /></td>";
+			}
+			if(!isset($this->kill_summary))
+			{
+				$this->kill_summary = new KillSummaryTable();
+				$this->kill_summary->addInvolvedAlliance($this->alliance);
+				$this->kill_summary->generate();
+			}
+
+			$html .= "<td class='kb-table-cell' width='150'><b>Kills:</b></td><td class='kl-kill'>".$this->kill_summary->getTotalKills()."</td>";
+			$html .= "<td class='kb-table-cell' width='65'><b>Executor:</b></td><td class='kb-table-cell'><a href=\"?a=corp_detail&amp;crp_ext_id=" . $ExecutorCorpID . "\">" . $ExecutorCorp . "</a></td></tr>";
+			$html .= "<tr class='kb-table-row-even'><td class='kb-table-cell'><b>Losses:</b></td><td class='kl-loss'>".$this->kill_summary->getTotalLosses()."</td>";
+			$html .= "<td class='kb-table-cell'><b>Members:</b></td><td class='kb-table-cell'>" . $myAlliance["memberCount"] . "</td></tr>";
+			$html .= "<tr class='kb-table-row-even'><td class='kb-table-cell'><b>Damage done (ISK):</b></td><td class='kl-kill'>".round($this->kill_summary->getTotalKillISK()/1000000000, 2)."B</td>";
+			$html .= "<td class='kb-table-cell'><b>Start Date:</b></td><td class='kb-table-cell'>" . $myAlliance["startDate"] . "</td></tr>";
+			$html .= "<tr class='kb-table-row-even'><td class='kb-table-cell'><b>Damage received (ISK):</b></td><td class='kl-loss'>".round($this->kill_summary->getTotalLossISK()/1000000000, 2)."B</td>";
+			$html .= "<td class='kb-table-cell'><b>Number of Corps:</b></td><td class='kb-table-cell'>" . count($myAlliance["memberCorps"]) . "</td></tr>";
+			if ($this->kill_summary->getTotalKillISK())
+			{
+				 $efficiency = round($this->kill_summary->getTotalKillISK() / ($this->kill_summary->getTotalKillISK() + $this->kill_summary->getTotalLossISK()) * 100, 2);
+			}
+			else
+			{
+				$efficiency = 0;
+			}
+
+			$html .= "<tr class='kb-table-row-even'><td class='kb-table-cell'><b>Efficiency:</b></td><td class='kb-table-cell'><b>" . $efficiency . "%</b></td>";
+			$html .= "<td class='kb-table-cell'></td><td class='kb-table-cell'></td></tr>";
+
+			$html .= "</table><br />";
+			return $html;
+		}
 		else
-			$smarty->assign('all_img', 'default');
-		$smarty->assign('totalkills', $this->kill_summary->getTotalKills());
-		$smarty->assign('totallosses', $this->kill_summary->getTotalLosses());
-		$smarty->assign('totalkisk', round($this->kill_summary->getTotalKillISK()/1000000000, 2));
-		$smarty->assign('totallisk', round($this->kill_summary->getTotalLossISK()/1000000000, 2));
-		if ($this->kill_summary->getTotalKillISK())
-			$smarty->assign('efficiency', round($this->kill_summary->getTotalKillISK() / ($this->kill_summary->getTotalKillISK() + $this->kill_summary->getTotalLossISK()) * 100, 2));
-		else
-			$smarty->assign('efficiency', '0');
-		return $smarty->fetch(get_tpl('alliance_detail_stats'));
+		{
+			global $smarty;
+			// The summary table is also used by the stats. Whichever is called
+			// first generates the table.
+			if (file_exists("img/alliances/".$this->alliance->getUnique().".png"))
+				$smarty->assign('all_img', $this->alliance->getUnique());
+			else
+				$smarty->assign('all_img', 'default');
+			$smarty->assign('totalkills', $this->kill_summary->getTotalKills());
+			$smarty->assign('totallosses', $this->kill_summary->getTotalLosses());
+			$smarty->assign('totalkisk', round($this->kill_summary->getTotalKillISK()/1000000000, 2));
+			$smarty->assign('totallisk', round($this->kill_summary->getTotalLossISK()/1000000000, 2));
+			if ($this->kill_summary->getTotalKillISK())
+				$smarty->assign('efficiency', round($this->kill_summary->getTotalKillISK() / ($this->kill_summary->getTotalKillISK() + $this->kill_summary->getTotalLossISK()) * 100, 2));
+			else
+				$smarty->assign('efficiency', '0');
+			return $smarty->fetch(get_tpl('alliance_detail_stats'));
+		}
+	}
+
+	function corpList()
+	{
+		$html = "<br /><table class='kb-table' width=\"100%\" border=\"0\" cellspacing='1'><tr class='kb-table-header'>";
+		$html .= "<td class='kb-table-cell'><b>Corporation Name</b></td><td class='kb-table-cell' align='center'><b>Ticker</b></td><td class='kb-table-cell' align='center'><b>Members</b></td><td class='kb-table-cell' align='center'><b>Join Date</b></td><td class='kb-table-cell' align='center'><b>Tax Rate</b></td><td class='kb-table-cell'><b>Website</b></td></tr>";
+		foreach ( (array)$this->allianceCorps as $tempcorp )
+		{
+			$html .= "<tr class='kb-table-row-even'>";
+			$html .= "<td class='kb-table-cell'><a href=\"?a=corp_detail&amp;crp_ext_id=" . $tempcorp["corpExternalID"] . "\">" . $tempcorp["corpName"] . "</a></td>";
+			$html .= "<td class='kb-table-cell' align='center'>" . $tempcorp["ticker"] . "</td>";
+			$html .= "<td class='kb-table-cell' align='center'>" . $tempcorp["members"] . "</td>";
+			$html .= "<td class='kb-table-cell' align='center'>" . $tempcorp["joinDate"] . "</td>";
+			$html .= "<td class='kb-table-cell' align='center'>" . $tempcorp["taxRate"] . "</td>";
+			if($tempcorp["url"]) $html .= "<td class='kb-table-cell'><a href=\"" . $tempcorp["url"] . "\">" . $tempcorp["url"] . "</a></td>";
+			else $html .= "<td class='kb-table-cell'></td>";
+			$html .= "</tr>";
+		}
+		$html .= "</table><br />";
+		return $html;
 	}
 
 	//! Display the summary table showing all kills and losses for this alliance.
@@ -590,6 +703,8 @@ class pAllianceDetail extends pageAssembly
 				$html .= "</table>";
 				$html .= "</td></tr></table>";
 				$smarty->assign('html', $html);
+			case 'corp_list':
+				return $this->corpList();
 			break;
 		}
 		return $smarty->fetch(get_tpl('alliance_detail'));
@@ -631,6 +746,7 @@ class pAllianceDetail extends pageAssembly
 		$this->addMenuItem("link","Kills", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=kills");
 		$this->addMenuItem("link","Losses", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=losses");
 		$this->addMenuItem("caption","Corp statistics");
+		$this->addMenuItem("link","Corp List", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=corp_list");
 		$this->addMenuItem("link","Top killers", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=corp_kills");
 		$this->addMenuItem("link","Top losers", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=corp_losses");
 		$this->addMenuItem("link","Destroyed ships", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=corp_kills_class");
