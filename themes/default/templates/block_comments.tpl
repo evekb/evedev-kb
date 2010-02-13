@@ -20,13 +20,13 @@
 {/section}
         <tr><td><form id="postform" name="postform" method="post" action=""><table><tr>
           <td align="center">
-            <textarea class="comment" name="comment" cols="55" rows="5" style="width: 340px;" onkeyup="limitText(this.form.comment,document.getElementById('countdown'),200);" onkeypress="limitText(this.form.comment,document.getElementById('countdown'),200);"></textarea>
+            <textarea class="comment" name="comment" cols="55" rows="5" style="width: 340px;" onkeyup="limitText(this.form.comment,document.getElementById('countdown'),500);" onkeypress="limitText(this.form.comment,document.getElementById('countdown'),500);"></textarea>
           </td>
         </tr>
         <tr>
           <td>
             <br/>
-            <span title="countdown" id="countdown">200</span> Letters left<br/>
+            <span title="countdown" id="countdown">500</span> Letters left<br/>
             <b>Name:</b>
             <input {if $username} disabled="disabled" {/if}style="position:relative; right:-3px;" class="comment-button" name="name" type="text" size="24" maxlength="24" {if $username}value="{$username}" {/if}/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 {if $config->get('comments_pw') and !$page->isAdmin()}
