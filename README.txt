@@ -1,8 +1,15 @@
 -------------------------------------------
-Eve Development Network Killboard v3.0.0 
+Eve Development Network Killboard v3.0.1
 -------------------------------------------
 
 VERSION HISTORY
+v3.0.1
+Toplist speed fixes.
+Campaign speed fixes.
+Pages no longer allow incorrect caching.
+Signatures display correctly.
+Kill detail themes work again.
+-------------------------------------------
 v3.0.0
 PHP5 support only. PHP 4 may work in some cases but is not supported.
 External ID for kills, corps and alliances added
