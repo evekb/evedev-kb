@@ -41,8 +41,6 @@
         <td align="left" valign="top" width="360">
             <div class="block-header">Attributes</div>
             <table class="kb-table" width="360" border="0" cellspacing="1">
-            {php}$this->assign('attribs', array('techLevel','propulsionFusionStrength','propulsionIonStrength','propulsionMagpulseStrength',
-                                                'propulsionPlasmaStrength'));{/php}
             {foreach from=$item->attrib key=i item=key}
                 <tr class="{cycle name=ccl}">
                     <td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon{$key.icon}.png" border="0" /></td>
