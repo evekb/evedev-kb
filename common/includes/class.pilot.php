@@ -7,7 +7,9 @@ require_once('class.dbprepared.php');
 //! Creates a new Pilot or fetches an existing one from the database.
 class Pilot
 {
-//! Create a new Pilot object from the given $id.
+	private $executed = false;
+
+	//! Create a new Pilot object from the given $id.
 
     /*!
      * \param $id The pilot ID.
@@ -36,38 +38,38 @@ class Pilot
 	function getExternalID($populateList = false)
 	{
 		if($this->externalid_) return $this->externalid_;
-                if(!$populateList)
-                {
-                    $this->execQuery();
-                    if($this->externalid_) return $this->externalid_;
+		if(!$populateList)
+		{
+			$this->execQuery();
+			if($this->externalid_) return $this->externalid_;
 
-					$pqry = new DBPreparedQuery();
-					$sql = "SELECT typeID FROM kb3_invtypes, kb3_pilots WHERE typeName = plt_name AND plt_id = ?";
-					$id = "";
-					$pqry->prepare($sql);
-					$pqry->bind_param('i', $this->id_);
-					$pqry->bind_result($id);
-					if($pqry->execute())
-					{
-						if($pqry->recordCount())
-						{
-							$pqry->fetch_prepared();
-							$this->setCharacterID($id);
-							return $this->externalid_;
-						}
-					}
-                    $pilotname = str_replace(" ", "%20", $this->getName() );
-                    require_once("common/includes/class.eveapi.php");
-                    $myID = new API_NametoID();
-                    $myID->setNames($pilotname);
-                    $myID->fetchXML();
-                    $myNames = $myID->getNameData();
+			$pqry = new DBPreparedQuery();
+			$sql = "SELECT typeID FROM kb3_invtypes, kb3_pilots WHERE typeName = plt_name AND plt_id = ?";
+			$id = "";
+			$pqry->prepare($sql);
+			$pqry->bind_param('i', $this->id_);
+			$pqry->bind_result($id);
+			if($pqry->execute())
+			{
+				if($pqry->recordCount())
+				{
+					$pqry->fetch_prepared();
+					$this->setCharacterID($id);
+					return $this->externalid_;
+				}
+			}
+			$pilotname = str_replace(" ", "%20", $this->getName() );
+			require_once("common/includes/class.eveapi.php");
+			$myID = new API_NametoID();
+			$myID->setNames($pilotname);
+			$myID->fetchXML();
+			$myNames = $myID->getNameData();
 
-                    if($this->setCharacterID($myNames[0]['characterID']))
-                        return $this->externalid_;
-                    else return 0;
-                }
-                else return 0;
+			if($this->setCharacterID($myNames[0]['characterID']))
+				return $this->externalid_;
+			else return 0;
+		}
+		else return 0;
 	}
 	//! Return the pilot name.
 	function getName()
@@ -128,26 +130,33 @@ class Pilot
 	//! Fetch the pilot details from the database using the id given on construction.
 	function execQuery()
 	{
-		if (!$this->qry_)
+		if (!$this->executed)
 		{
 			if(!$this->externalid_ && !$this->id_)
 			{
 				$this->valid_ = false;
 				return;
 			}
-			$this->qry_ = DBFactory::getDBQuery();;
+			$qry = DBFactory::getDBQuery();;
 			$this->sql_ = 'select * from kb3_pilots plt, kb3_corps crp, kb3_alliances ali
             	  	       where crp.crp_id = plt.plt_crp_id
             		       and ali.all_id = crp.crp_all_id ';
 			if($this->externalid_) $this->sql_ .= 'and plt.plt_externalid = '.$this->externalid_;
 			else $this->sql_ .= 'and plt.plt_id = '.$this->id_;
-			$this->qry_->execute($this->sql_) or die($this->qry_->getErrorMsg());
-			//$this->row_ = $this->qry_->getRow();
-			$row = $this->qry_->getRow();
-			if (!$row)
+			$qry->execute($this->sql_) or die($qry->getErrorMsg());
+			if($this->externalid_ && !$qry->recordCount())
+			{
+				$this->fetchPilot();
 				$this->valid_ = false;
+			}
+			else
+			if (!$qry->recordCount())
+			{
+				$this->valid_ = false;
+			}
 			else
 			{
+				$row = $qry->getRow();
 				$this->valid_ = true;
 				$this->id_ = $row['plt_id'];
 				$this->name_ = $row['plt_name'];
@@ -155,6 +164,7 @@ class Pilot
 				$this->externalid_ = intval($row['plt_externalid']);
 
 			}
+			$this->executed = true;
 		}
 	}
 	//! Return the corporation this pilot is a member of.
@@ -340,4 +350,29 @@ class Pilot
 		$this->alliance_ = $row['plt_crp_id'];
 		$this->updated_ = strtotime($row['plt_updated']." UTC");
     }
+	
+	//! Fetch the pilot name from CCP using the stored external ID.
+
+	/*!
+	 * Corporation will be set to Unknown.
+	 */
+	private function fetchPilot()
+	{
+		if(is_null($this->externalid_)) return false;
+
+		require_once("common/includes/class.eveapi.php");
+		$myID = new API_IDtoName();
+		$myID->setIDs($this->externalid_);
+		$myID->fetchXML();
+		$myNames = $myID->getIDData();
+		
+		$alliance = new Alliance();
+		$alliance->add("Unknown");
+		
+		$corp = new Corporation();
+		$corp->add("Unknown", $alliance, '2000-01-01 00:00:00');
+
+		$this->add(slashfix($myNames[0]['name']), $corp,
+			$myID->getCurrentTime(), intval($myNames[0]['characterID']));
+	}
 }

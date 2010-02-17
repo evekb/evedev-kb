@@ -2,10 +2,11 @@
 //! Creates a new Alliance or fetches an existing one from the database.
 class Alliance
 {
-	private $id;
-	private $externalid;
-	private $executed;
-	private $name;
+	private $id = false;
+	private $externalid = false;
+	private $executed = false;
+	private $name = null;
+
     //! Create a new Alliance object from the given $id.
     
     /*!
@@ -14,10 +15,8 @@ class Alliance
      */
     function Alliance($id = 0, $external = false)
 	{
-		if($external) $this->externalid=intval($id);
+		if($external) $this->externalid = intval($id);
 		else $this->id = intval($id);
-        $this->executed = false;
-		$this->name = '';
     }
 
 	//! Return the alliance CCP ID.
@@ -52,16 +51,21 @@ class Alliance
     //! Return the alliance name stripped of all non-ASCII non-alphanumeric characters.
     function getUnique()
     {
-		if(!$this->name) $this->execQuery();
+		if(is_null($this->name)) $this->execQuery();
         return preg_replace('/[^a-zA-Z0-9]/', '', $this->name);
     }
     //! Return the alliance name.
     function getName()
     {
-        if(!$this->name) $this->execQuery();
+        if(is_null($this->name)) $this->execQuery();
         return $this->name;
     }
     //! Fetch the alliance details from the database using the id given on construction.
+
+	/*!
+	 * If no record is found but we have an external ID then the result
+	 * will be fetched from CCP.
+	 */
     function execQuery()
     {
         if (!$this->executed)
@@ -71,10 +75,15 @@ class Alliance
 			if($this->externalid) $sql .= "all_external_id = ".$this->externalid;
 			else $sql .= "all_id = ".$this->id;
 			$qry->execute($sql);
-            $row = $qry->getRow();
-			$this->id = $row['all_id'];
-			$this->name = $row['all_name'];
-			$this->externalid = intval($row['all_external_id']);
+			if($this->externalid && !$qry->recordCount()) $this->fetchAlliance();
+			else if($qry->recordCount())
+			{
+				$row = $qry->getRow();
+				$this->id = $row['all_id'];
+				$this->name = $row['all_name'];
+				$this->externalid = intval($row['all_external_id']);
+			}
+
 			$this->executed = true;
         }
     }
@@ -180,5 +189,22 @@ class Alliance
 				return KB_CACHEDIR.'/img/alliances/'.$this->getUnique().'_'.$size.'.png';
 			else return '?a=thumb&amp;type=alliance&amp;id='.$this->getUnique().'&amp;size='.$size;
 		}
+	}
+
+	/*!
+	 * Fetch the alliance name from CCP using the stored external ID.
+	 */
+	private function fetchAlliance()
+	{
+		if(is_null($this->externalid)) return false;
+
+		require_once("common/includes/class.eveapi.php");
+		$myID = new API_IDtoName();
+		$myID->setIDs($this->externalid);
+		$myID->fetchXML();
+		$myNames = $myID->getIDData();
+
+		$this->add(slashfix($myNames[0]['name']),
+			intval($myNames[0]['characterID']));
 	}
 }

@@ -6,7 +6,13 @@ require_once('class.dbprepared.php');
 //! Creates a new Corporation or fetches an existing one from the database.
 class Corporation
 {
-//! Create a new Corporation object from the given $id.
+	private $id;
+	private $externalid;
+	private $name;
+	private $alliance;
+	private $updated;
+	
+	//! Create a new Corporation object from the given $id.
 
     /*!
      * \param $id The corporation ID.
@@ -14,9 +20,8 @@ class Corporation
      */
 	function Corporation($id = 0, $externalIDFlag = false)
 	{
-		if($externalIDFlag) $this->externalid_=intval($id);
-		else $this->id_ = intval($id);
-		$this->executed_ = false;
+		if($externalIDFlag) $this->externalid=intval($id);
+		else $this->id = intval($id);
 	}
 	//! Return true if this corporation is an NPC corporation.
 	function isNPCCorp()
@@ -24,17 +29,17 @@ class Corporation
 		global $corp_npc;
 		if (in_array($this->getName(), $corp_npc))
 			return true;
-		if($this->externalid_ > 1000001 && $this->externalid_ < 1000183)
+		if($this->externalid > 1000001 && $this->externalid < 1000183)
 			return true;
 		// These are NPC alliances but they may show up as corps on mails.
-		if($this->externalid_ > 500000 && $this->externalid_ < 500021)
+		if($this->externalid > 500000 && $this->externalid < 500021)
 			return true;
 	}
 
 	//! Return the corporation name stripped of all non-ASCII non-alphanumeric characters.
 	function getUnique()
 	{
-		if(!$this->name_) $this->execQuery();
+		if(!$this->name) $this->execQuery();
 		return preg_replace('/[^a-z0-9]/', '', strtolower($this->getName()));
 	}
 	//! Return a URL for the icon of this corporation.
@@ -49,24 +54,24 @@ class Corporation
 		$this->getExternalID();
 
 		if($this->isNPCCorp() || file_exists('img/corps/'.$this->getUnique().'.png')) {
-			if($this->externalid_ && file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->externalid_,0,2).'/'.$this->externalid_.'_'.$size.'.png'))
-				return KB_CACHEDIR.'/img/corps/'.substr($this->externalid_,0,2).'/'.$this->externalid_.'_'.$size.'.png';
+			if($this->externalid && file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->externalid,0,2).'/'.$this->externalid.'_'.$size.'.png'))
+				return KB_CACHEDIR.'/img/corps/'.substr($this->externalid,0,2).'/'.$this->externalid.'_'.$size.'.png';
 
 			if($size == 128)
 			{
-				if($this->externalid_ > 1000001 && $this->externalid_ < 1000183)
-					return 'img/corps/c'.$this->externalid_.'.png';
+				if($this->externalid > 1000001 && $this->externalid < 1000183)
+					return 'img/corps/c'.$this->externalid.'.png';
 				else return 'img/corps/'.$this->getUnique().'.png';
 			}
-			elseif($this->externalid_ > 1000001 && $this->externalid_ < 1000183)
-				return '?a=thumb&amp;type=npc&amp;id=c'.$this->externalid_.'&amp;size='.$size;
+			elseif($this->externalid > 1000001 && $this->externalid < 1000183)
+				return '?a=thumb&amp;type=npc&amp;id=c'.$this->externalid.'&amp;size='.$size;
 			else return '?a=thumb&amp;type=npc&amp;id='.$this->getUnique().'&amp;size='.$size;
 		}
 		else {
-			if($this->externalid_ && file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->externalid_,0,2).'/'.$this->externalid_.'_'.$size.'.jpg'))
-				return KB_CACHEDIR.'/img/corps/'.substr($this->externalid_,0,2).'/'.$this->externalid_.'_'.$size.'.jpg';
+			if($this->externalid && file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->externalid,0,2).'/'.$this->externalid.'_'.$size.'.jpg'))
+				return KB_CACHEDIR.'/img/corps/'.substr($this->externalid,0,2).'/'.$this->externalid.'_'.$size.'.jpg';
 		}
-		return '?a=thumb&amp;type=corp&amp;id='.$this->externalid_.'&amp;size='.$size;
+		return '?a=thumb&amp;type=corp&amp;id='.$this->externalid.'&amp;size='.$size;
 	}
 
 	//! Return the corporation CCP ID.
@@ -76,11 +81,11 @@ class Corporation
 	 */
 	function getExternalID()
 	{
-		if($this->externalid_) return $this->externalid_;
+		if($this->externalid) return $this->externalid;
 		$this->execQuery();
 		if(!$populateList)
 		{
-			if($this->externalid_) return $this->externalid_;
+			if($this->externalid) return $this->externalid;
 
 			$corpname = str_replace(" ", "%20", $this->getName() );
 			require_once("common/includes/class.eveapi.php");
@@ -89,7 +94,7 @@ class Corporation
 			$myID->fetchXML();
 			$myNames = $myID->getNameData();
 			if($this->setExternalID($myNames[0]['characterID']))
-				return $this->externalid_;
+				return $this->externalid;
 			else return 0;
 		}
 		else return 0;
@@ -98,26 +103,26 @@ class Corporation
 	//! Return the corporation ID.
 	function getID()
 	{
-		if($this->id_) return $this->id_;
-		elseif($this->externalid_)
+		if($this->id) return $this->id;
+		elseif($this->externalid)
 		{
 			$this->execQuery();
-			return $this->id_;
+			return $this->id;
 		}
 		else return 0;
 	}
 	//! Return the corporation name.
 	function getName()
 	{
-		if(!$this->name_) $this->execQuery();
-		return $this->name_;
+		if(!$this->name) $this->execQuery();
+		return $this->name;
 	}
 
 	//! Return an alliance object for the alliance this corporation belongs to.
 	function getAlliance()
 	{
-		if(!$this->alliance_) $this->execQuery();
-		return new Alliance($this->alliance_);
+		if(!$this->alliance) $this->execQuery();
+		return new Alliance($this->alliance);
 	}
 	//! Lookup a corporation name and set this object to use the details found.
 
@@ -130,26 +135,33 @@ class Corporation
 		$qry->execute("select * from kb3_corps
                        where crp_name = '".slashfix($name)."'");
 		$row = $qry->getRow();
-		$this->id_ = intval($row['crp_id']);
-		$this->name_ = $row['crp_name'];
-		$this->externalid_ = intval($row['crp_external_id']);
-		$this->alliance_ = $row['crp_all_id'];
+		$this->id = intval($row['crp_id']);
+		$this->name = $row['crp_name'];
+		$this->externalid = intval($row['crp_external_id']);
+		$this->alliance = $row['crp_all_id'];
 	}
 	//! Search the database for the corporation details for this object.
+
+	/*!
+	 * If no record is found but we have an external ID then the result
+	 * will be fetched from CCP.
+	 */
 	function execQuery()
 	{
-		if (!$this->executed_)
+		$qry = DBFactory::getDBQuery();;
+		$sql = "select * from kb3_corps where ";
+		if($this->externalid) $sql .= "crp_external_id = ".$this->externalid;
+		else $sql .= "crp_id = ".$this->id;
+		$qry->execute($sql);
+		// If we have an external ID but no local record then fetch from CCP.
+		if($this->externalid && !$qry->recordCount()) $this->fetchCorp();
+		else if($qry->recordCount())
 		{
-			$qry = DBFactory::getDBQuery();;
-			$sql = "select * from kb3_corps where ";
-			if($this->externalid_) $sql .= "crp_external_id = ".$this->externalid_;
-			else $sql .= "crp_id = ".$this->id_;
-			$qry->execute($sql);
 			$row = $qry->getRow();
-			$this->id_ = intval($row['crp_id']);
-			$this->name_ = $row['crp_name'];
-			$this->externalid_ = intval($row['crp_external_id']);
-			$this->alliance_ = $row['crp_all_id'];
+			$this->id = intval($row['crp_id']);
+			$this->name = $row['crp_name'];
+			$this->externalid = intval($row['crp_external_id']);
+			$this->alliance = $row['crp_all_id'];
 		}
 	}
 	//! Add a new corporation to the database or update the details of an existing one.
@@ -192,12 +204,12 @@ class Corporation
 					$row = $qry->getRow();
 					$qry->execute("UPDATE kb3_corps SET crp_name = '".$name."' WHERE crp_external_id = ".$externalid);
 
-					$this->id_ = $row['crp_id'];
-					$this->name_ = $name;
-					$this->externalid_ = $row['crp_external_id'];
-					$this->alliance_ = $row['crp_all_id'];
-					$this->updated_ = strtotime($row['crp_updated']." UTC");
-					if(!$this->updated_) $this->updated_ = 0;
+					$this->id = $row['crp_id'];
+					$this->name = $name;
+					$this->externalid = $row['crp_external_id'];
+					$this->alliance = $row['crp_all_id'];
+					$this->updated = strtotime($row['crp_updated']." UTC");
+					if(!$this->updated) $this->updated = 0;
 					// Now check if the alliance needs to be updated.
 					if ($row['crp_all_id'] != $alliance->getID() && $this->isUpdatable($timestamp))
 					{
@@ -205,11 +217,11 @@ class Corporation
 									   set crp_all_id = '.$alliance->getID().', ';
 						$sql .= "crp_updated = date_format( '".
 							$timestamp."','%Y.%m.%d %H:%i:%s') ".
-							"where crp_id = ".$this->id_;
+							"where crp_id = ".$this->id;
 						$qry->execute($sql);
-						$this->alliance_ = $alliance;
+						$this->alliance = $alliance;
 					}
-					return $this->id_;
+					return $this->id;
 				}
 			}
 			// Neither corp name or external id was found so add this corp as new
@@ -222,20 +234,20 @@ class Corporation
 					"(crp_name, crp_all_id, crp_updated) ".
 					"values ('".$name."',".$alliance->getID().
 					",date_format('".$timestamp."','%Y.%m.%d %H:%i:%s'))");
-			$this->id_ = $qry->getInsertID();
-			$this->name_ = $name;
-			$this->alliance_ = $alliance->getID();
-			if($externalid) $this->externalid_ = $externalid;
-			$this->updated_ = strtotime(preg_replace("/\./","-",$timestamp)." UTC");
+			$this->id = $qry->getInsertID();
+			$this->name = $name;
+			$this->alliance = $alliance->getID();
+			if($externalid) $this->externalid = $externalid;
+			$this->updated = strtotime(preg_replace("/\./","-",$timestamp)." UTC");
 		}
 		else
 		{
 			$row = $qry->getRow();
-			$this->id_ = $row['crp_id'];
-			$this->name_ = $row['crp_name'];
-			$this->externalid_ = $row['crp_external_id'];
-			$this->alliance_ = $row['crp_all_id'];
-			$this->updated_ = strtotime($row['crp_updated']." UTC");
+			$this->id = $row['crp_id'];
+			$this->name = $row['crp_name'];
+			$this->externalid = $row['crp_external_id'];
+			$this->alliance = $row['crp_all_id'];
+			$this->updated = strtotime($row['crp_updated']." UTC");
 			if ($row['crp_all_id'] != $alliance->getID() && $this->isUpdatable($timestamp))
 			{
 				$sql = 'update kb3_corps
@@ -244,13 +256,13 @@ class Corporation
 					$sql .= 'crp_external_id = '.intval(externalid).', ';
 				$sql .= "crp_updated = date_format( '".
 					$timestamp."','%Y.%m.%d %H:%i:%s') ".
-					"where crp_id = ".$this->id_;
+					"where crp_id = ".$this->id;
 				$qry->execute($sql);
-				$this->alliance_ = $alliance;
+				$this->alliance = $alliance;
 			}
 		}
 
-		return $this->id_;
+		return $this->id;
 	}
 	//! Return whether this corporation was updated before the given timestamp.
 
@@ -260,12 +272,12 @@ class Corporation
 	function isUpdatable($timestamp)
 	{
 		$timestamp = preg_replace("/\./","-",$timestamp);
-		if(isset($this->updated_))
-			if(is_null($this->updated_) || strtotime($timestamp." UTC") > $this->updated_) return true;
+		if(isset($this->updated))
+			if(is_null($this->updated) || strtotime($timestamp." UTC") > $this->updated) return true;
 			else return false;
 		$qry = DBFactory::getDBQuery();;
 		$qry->execute("select crp_id from kb3_corps
-		               where crp_id = ".$this->id_."
+		               where crp_id = ".$this->id."
 		               and ( crp_updated < date_format( '".$timestamp."', '%Y.%m.%d %H:%i' )
 			           or crp_updated is null )");
 		return $qry->recordCount() == 1;
@@ -279,31 +291,31 @@ class Corporation
 	function setExternalID($externalid)
 	{
 		$externalid = intval($externalid);
-		if($externalid && $this->id_)
+		if($externalid && $this->id)
 		{
 			$this->execQuery();
 			$qry = DBFactory::getDBQuery(true);;
-			$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_external_id = ".$externalid." AND crp_id <> ".$this->id_);
+			$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_external_id = ".$externalid." AND crp_id <> ".$this->id);
 			if($qry->recordCount())
 			{
 				$result = $qry->getRow();
 				$old_id = $result['crp_id'];
 				$qry->autocommit(false);
-				$qry->execute("UPDATE kb3_pilots SET crp_id = ".$old_id." WHERE crp_id = ".$this->id_);
-				$qry->execute("UPDATE kb3_kills SET kll_crp_id = ".$old_id." WHERE kll_crp_id = ".$this->id_);
-				$qry->execute("UPDATE kb3_inv_detail SET ind_crp_id = ".$old_id." WHERE ind_crp_id = ".$this->id_);
-				$qry->execute("UPDATE kb3_inv_crp SET inc_crp_id = ".$old_id." WHERE inc_crp_id = ".$this->id_);
-				$qry->execute("UPDATE kb3_corps SET crp_name = '".$this->name_."' where crp_id = ".$old_id);
-				$qry->execute("DELETE FROM kb3_corps WHERE crp_id = ".$this->id_);
-				$qry->execute("DELETE FROM kb3_sum_corp WHERE csm_crp_id = ".$this->id_);
+				$qry->execute("UPDATE kb3_pilots SET crp_id = ".$old_id." WHERE crp_id = ".$this->id);
+				$qry->execute("UPDATE kb3_kills SET kll_crp_id = ".$old_id." WHERE kll_crp_id = ".$this->id);
+				$qry->execute("UPDATE kb3_inv_detail SET ind_crp_id = ".$old_id." WHERE ind_crp_id = ".$this->id);
+				$qry->execute("UPDATE kb3_inv_crp SET inc_crp_id = ".$old_id." WHERE inc_crp_id = ".$this->id);
+				$qry->execute("UPDATE kb3_corps SET crp_name = '".$this->name."' where crp_id = ".$old_id);
+				$qry->execute("DELETE FROM kb3_corps WHERE crp_id = ".$this->id);
+				$qry->execute("DELETE FROM kb3_sum_corp WHERE csm_crp_id = ".$this->id);
 				$qry->execute("DELETE FROM kb3_sum_corp WHERE csm_crp_id = ".$old_id);
 				$qry->autocommit(true);
-				$this->id_ = $old_id;
+				$this->id = $old_id;
 				return true;
 			}
-			if($qry->execute("UPDATE kb3_corps SET crp_external_id = ".$externalid." where crp_id = ".$this->id_))
+			if($qry->execute("UPDATE kb3_corps SET crp_external_id = ".$externalid." where crp_id = ".$this->id))
 			{
-				$this->externalid_ = $externalid;
+				$this->externalid = $externalid;
 				return true;
 			}
 		}
@@ -315,7 +327,7 @@ class Corporation
 	{
 		$qry = DBFactory::getDBQuery();;
 		$qry->execute("SELECT plt_id FROM kb3_pilots
-                       WHERE plt_crp_id = " . $this->id_);
+                       WHERE plt_crp_id = " . $this->id);
 
 		if ($qry->recordCount() < 1)
 			return null;
@@ -329,5 +341,28 @@ class Corporation
 			}
 		}
 		return $list;
+	}
+
+	//! Fetch corporation name and alliance from CCP using the stored external ID.
+	private function fetchCorp()
+	{
+		if(isnull($this->external_id)) return false;
+
+		require_once("common/includes/class.eveapi.php");
+		$myID = new API_IDtoName();
+		$myID->setIDs($this->external_id);
+		$myID->fetchXML();
+		$myNames = $myID->getIDData();
+		if(empty($myNames[0]['name'])) return false;
+
+		$myAPI = new API_CorporationSheet();
+		$myAPI->setCorpID($this->external_id);
+		$result = $myAPI->fetchXML();
+		if(!empty($result)) return false;
+		
+		$alliance = new Alliance($myAPI->getAllianceID(), true);
+
+		$this->add(slashfix($myNames[0]['name']), $alliance,
+			$myAPI->getCurrentTime(), intval($myNames[0]['characterID']));
 	}
 }
