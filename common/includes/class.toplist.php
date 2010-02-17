@@ -9,13 +9,14 @@ require_once("class.ship.php");
 
 class TopList
 {
+	private $exc_vic_scl = array();
+	private $inc_vic_scl = array();
+	private $regions_ = array();
+	private $systems_ = array();
+	private $qry_ = null;
+
 	function TopList()
 	{
-		$this->qry_ = DBFactory::getDBQuery();;
-		$this->exclude_scl_ = array();
-		$this->vic_scl_id_ = array();
-		$this->regions_ = array();
-		$this->systems_ = array();
 	}
 	//! Include or exclude pods/noob ships/shuttles.
 
@@ -26,18 +27,9 @@ class TopList
 	{
 		if (!$flag)
 		{
-			array_push($this->exclude_scl_, 2);
-			array_push($this->exclude_scl_, 3);
-			array_push($this->exclude_scl_, 11);
-		}
-		else
-		{
-			if (($idx = array_search(2, $this->exclude_scl_)) !== FALSE)
-				unset($this->exclude_scl_[$idx]);
-			if (($idx = array_search(3, $this->exclude_scl_)) !== FALSE)
-				unset($this->exclude_scl_[$idx]);
-			if (($idx = array_search(11, $this->exclude_scl_)) !== FALSE)
-				unset($this->exclude_scl_[$idx]);
+			$this->excludeVictimShipClass(2);
+			$this->excludeVictimShipClass(3);
+			$this->excludeVictimShipClass(11);
 		}
 	}
 
@@ -99,17 +91,62 @@ class TopList
 			$this->mixedvictims_ = true;
 	}
 
+	/**
+	 * Set a victim ship class to include.
+	 *
+	 * If this is set then only ship classes set will be in the output.
+	 *
+	 * @param int $shipclass
+	 */
 	function addVictimShipClass($shipclass)
 	{
-		array_push($this->vic_scl_id_, $shipclass->getID());
+		if(!is_numeric($shipclass)) $scl_id = $shipclass->getID();
+		else $scl_id = intval($shipclass);
+		$this->inc_vic_scl[$scl_id] = $scl_id;
+		unset ($this->exc_vic_scl[$scl_id]);
 	}
 
+	/**
+	 * Set a victim ship class to exclude.
+	 *
+	 * If this is set then only ship classes not set will be in the output.
+	 *
+	 * @param int $shipclass
+	 */
+	function excludeVictimShipClass($shipclass)
+	{
+		if(!is_numeric($shipclass)) $scl_id = $shipclass->getID();
+		else $scl_id = intval($shipclass);
+		$this->exc_vic_scl[$scl_id] = $scl_id;
+		unset ($this->inc_vic_scl[$scl_id]);
+	}
+
+	/**
+	 * Set a victim ship type to include.
+	 *
+	 * If this is set then only ship types set will be in the output.
+	 *
+	 * @param int $ship
+	 */
 	function addVictimShip($ship)
 	{
+		$ship = intval($ship);
+		$this->inc_vic_shp[$ship] = $ship;
+		unset ($this->exc_vic_shp[$ship]);
 	}
 
-	function addItemDestroyed($item)
+	/**
+	 * Set a victim ship type to exclude.
+	 *
+	 * If this is set then only ship types not set will be in the output.
+	 *
+	 * @param int $ship
+	 */
+	function excludeVictimShip($ship)
 	{
+		$ship = intval($ship);
+		$this->exc_vic_shp[$ship] = $ship;
+		unset ($this->inc_vic_shp[$ship]);
 	}
 
 	function addRegion($region)
@@ -133,8 +170,6 @@ class TopList
 		else $page = 1;
 		$this->plimit_ = $pagesplitter->getSplit();
 		$this->poffset_ = ($page * $this->plimit_) - $this->plimit_;
-	// echo $this->offset_;
-	// echo $this->limit_;
 	}
 
 	function setWeek($weekno)
@@ -218,16 +253,9 @@ class TopList
             $this->sql_ .= " inner join kb3_inv_all ina
                                  on ( kll.kll_id = ina.ina_kll_id ) ";
 
-		if (count($this->exclude_scl_))
+		if (count($this->inc_vic_scl) || count($this->exc_vic_scl))
 		{
-			$this->sql_ .= " inner join kb3_ships shp
-	  		         on ( shp.shp_id = kll.kll_ship_id and
-                                     shp.shp_class not in ( ".implode(",", $this->exclude_scl_)." ) )";
-		}
-
-		if (count($this->vic_scl_id_))
-		{
-			$this->sql_ .= " inner join kb3_ships shp
+			$this->sql_ .= " straight_join kb3_ships shp
 	  		         on ( shp.shp_id = kll.kll_ship_id )";
 		}
 
@@ -250,6 +278,19 @@ class TopList
 		{
 			$op = " WHERE ";
 		}
+
+		if (count($this->exc_vic_scl))
+		{
+			$this->sql_ .= $op." shp.shp_class not in ( ".implode(",", $this->exc_vic_scl)." ) ";
+			$op = " AND ";
+		}
+
+		if (count($this->inc_vic_scl))
+		{
+			$this->sql_ .= $op." shp.shp_class in ( ".implode(",", $this->inc_vic_scl)." ) ";
+			$op = " AND ";
+		}
+
 
 		if ($this->vic_plt_)
 		{
@@ -305,12 +346,6 @@ class TopList
 			$op = " AND ";
 		}
 
-		if (count($this->vic_scl_id_))
-		{
-			$this->sql_ .= $op." shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
-			$op = " AND ";
-		}
-
 		if (count($this->systems_))
 		{
 			$this->sql_ .= $op." kll.kll_system_id in ( ".implode($this->systems_, ",").") ";
@@ -349,23 +384,23 @@ class TopList
 			if($qenddate) $this->sql_ .= " AND ind.ind_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
 			$op = " AND ";
 		}
-		
+
 		// This is a little ugly but is needed since the bottom can start with
 		// AND or GROUP BY.
 		if($op == " WHERE ") $this->sql_ .= $op." 1=1 ";
 
 		$this->sql_ .= " ".$this->sqlbottom_;
 		$this->sql_ .= " /* toplist */";
-		// echo $this->sql_."<br /><br />";
-		$this->qry_->execute($this->sql_);
+		$this->qry = DBFactory::getDBQuery();
+		$this->qry->execute($this->sql_);
 	}
 
 	function getRow()
 	{
-		if (!$this->qry_->executed())
+		if (is_null($this->qry))
 			$this->execQuery();
 
-		$row = $this->qry_->getRow();
+		$row = $this->qry->getRow();
 		return $row;
 	}
 
@@ -478,7 +513,7 @@ class TopLossesList extends TopList
                            from kb3_kills kll");
 		$this->setSQLBottom("group by kll.kll_victim_id order by 1 desc
                             limit 30");
-		if (!count($this->vic_scl_id_))
+		if (!count($this->inc_vic_scl))
 		{
 			$this->setPodsNoobShips(config::get('podnoobs'));
 		}
@@ -675,12 +710,12 @@ class TopCapitalShipKillerList extends TopList
 
 		$this->setSQLBottom("group by ind.ind_plt_id order by 1 desc
                             limit 30");
-		$this->addVictimShipClass(new ShipClass(20)); // freighter
-		$this->addVictimShipClass(new ShipClass(19)); // dread
-		$this->addVictimShipClass(new ShipClass(27)); // carrier
-		$this->addVictimShipClass(new ShipClass(28)); // mothership
-		$this->addVictimShipClass(new ShipClass(26)); // titan
-		$this->addVictimShipClass(new ShipClass(29)); // cap. industrial
+		$this->addVictimShipClass(20); // freighter
+		$this->addVictimShipClass(19); // dread
+		$this->addVictimShipClass(27); // carrier
+		$this->addVictimShipClass(28); // mothership
+		$this->addVictimShipClass(26); // titan
+		$this->addVictimShipClass(29); // cap. industrial
 	}
 }
 
