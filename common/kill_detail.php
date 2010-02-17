@@ -510,10 +510,10 @@ class pKillDetail extends pageAssembly
 		global $smarty;
 		$smarty->assign_by_ref('invAllies', $this->InvAllies);
 		$smarty->assign_by_ref('invShips', $this->InvShips);
-		$smarty->assign_by_ref('alliesCount', count($this->InvAllies));
+		$smarty->assign('alliesCount', count($this->InvAllies));
 		if($this->ownKill) $smarty->assign('kill',true);
 		else $smarty->assign('kill',false);
-		$smarty->assign('involvedPartyCount', $this->kill->getInvolvedPartyCount()); // Anne Sapyx 07/05/2008
+		$smarty->assign('involvedPartyCount', $this->kill->getInvolvedPartyCount());
 		$smarty->assign('showext', config::get('kd_showext'));
 
 		return $smarty->fetch(get_tpl('kill_detail_inv_sum'));
