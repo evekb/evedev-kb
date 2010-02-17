@@ -11,10 +11,31 @@ class TopList
 {
 	private $exc_vic_scl = array();
 	private $inc_vic_scl = array();
+	private $exc_vic_shp = array();
+	private $inc_vic_shp = array();
+
+	private $inv_all = array();
+	private $inv_crp = array();
+	private $inv_plt = array();
+
+	private $vic_all = array();
+	private $vic_crp = array();
+	private $vic_plt = array();
+
+	private $mixedvictims = false;
+	private $mixedinvolved = false;
+
 	private $regions_ = array();
 	private $systems_ = array();
-	private $qry_ = null;
+	private $qry = null;
 
+	private $weekno_ = 0;
+	private $yearno_ = 0;
+	private $monthno_ = 0;
+	private $startweekno_ = 0;
+	private $startDate_ = 0;
+	private $endDate_ = 0;
+	
 	function TopList()
 	{
 	}
@@ -45,53 +66,53 @@ class TopList
 
 	function addInvolvedPilot($pilot)
 	{
-		if(is_numeric($pilot)) $this->inv_plt_[] = $pilot;
-		else $this->inv_plt_[] = $pilot->getID();
-		if ($this->inv_crp_ || $this->inv_all_)
-			$this->mixedinvolved_ = true;
+		if(is_numeric($pilot)) $this->inv_plt[] = $pilot;
+		else $this->inv_plt[] = $pilot->getID();
+		if ($this->inv_crp || $this->inv_all)
+			$this->mixedinvolved = true;
 	}
 
 	function addInvolvedCorp($corp)
 	{
-		if(is_numeric($corp)) $this->inv_crp_[] = $corp;
-		else $this->inv_crp_[] = $corp->getID();
-		if ($this->inv_plt_ || $this->inv_all_)
-			$this->mixedinvolved_ = true;
+		if(is_numeric($corp)) $this->inv_crp[] = $corp;
+		else $this->inv_crp[] = $corp->getID();
+		if ($this->inv_plt || $this->inv_all)
+			$this->mixedinvolved = true;
 	}
 
 	function addInvolvedAlliance($alliance)
 	{
-		if(is_numeric($alliance)) $this->inv_all_[] = $alliance;
-		else $this->inv_all_[] = $alliance->getID();
-		if ($this->inv_plt_ || $this->inv_crp_)
-			$this->mixedinvolved_ = true;
+		if(is_numeric($alliance)) $this->inv_all[] = $alliance;
+		else $this->inv_all[] = $alliance->getID();
+		if ($this->inv_plt || $this->inv_crp)
+			$this->mixedinvolved = true;
 	}
 
 	function addVictimPilot($pilot)
 	{
-		if(is_numeric($pilot)) $this->vic_plt_[] = $pilot;
-		else $this->vic_plt_[] = $pilot->getID();
-		if ($this->vic_crp_ || $this->vic_all_)
-			$this->mixedvictims_ = true;
+		if(is_numeric($pilot)) $this->vic_plt[] = $pilot;
+		else $this->vic_plt[] = $pilot->getID();
+		if ($this->vic_crp || $this->vic_all)
+			$this->mixedvictims = true;
 	}
 
 	function addVictimCorp($corp)
 	{
-		if(is_numeric($corp)) $this->vic_crp_[] = $corp;
-		else $this->vic_crp_[] = $corp->getID();
-		if ($this->vic_plt_ || $this->vic_all_)
-			$this->mixedvictims_ = true;
+		if(is_numeric($corp)) $this->vic_crp[] = $corp;
+		else $this->vic_crp[] = $corp->getID();
+		if ($this->vic_plt || $this->vic_all)
+			$this->mixedvictims = true;
 	}
 
 	function addVictimAlliance($alliance)
 	{
-		if(is_numeric($alliance)) $this->vic_all_[] = $alliance;
-		else $this->vic_all_[] = $alliance->getID();
-		if ($this->vic_plt_ || $this->vic_crp_)
-			$this->mixedvictims_ = true;
+		if(is_numeric($alliance)) $this->vic_all[] = $alliance;
+		else $this->vic_all[] = $alliance->getID();
+		if ($this->vic_plt || $this->vic_crp)
+			$this->mixedvictims = true;
 	}
 
-	/**
+	/*!
 	 * Set a victim ship class to include.
 	 *
 	 * If this is set then only ship classes set will be in the output.
@@ -106,7 +127,7 @@ class TopList
 		unset ($this->exc_vic_scl[$scl_id]);
 	}
 
-	/**
+	/*!
 	 * Set a victim ship class to exclude.
 	 *
 	 * If this is set then only ship classes not set will be in the output.
@@ -121,7 +142,7 @@ class TopList
 		unset ($this->inc_vic_scl[$scl_id]);
 	}
 
-	/**
+	/*!
 	 * Set a victim ship type to include.
 	 *
 	 * If this is set then only ship types set will be in the output.
@@ -135,7 +156,7 @@ class TopList
 		unset ($this->exc_vic_shp[$ship]);
 	}
 
-	/**
+	/*!
 	 * Set a victim ship type to exclude.
 	 *
 	 * If this is set then only ship types not set will be in the output.
@@ -241,15 +262,15 @@ class TopList
 	{
 		$this->sql_ .= $this->sqltop_;
 		// involved
-/*		if ($this->inv_plt_)
+/*		if ($this->inv_plt)
             $this->sql_ .= " inner join kb3_inv_detail inp
-                                 on ( inp.ind_plt_id in ( ".implode(",", $this->inv_plt_)." ) and kll.kll_id = inp.ind_kll_id ) ";
+                                 on ( inp.ind_plt_id in ( ".implode(",", $this->inv_plt)." ) and kll.kll_id = inp.ind_kll_id ) ";
 */
-        if ($this->inv_crp_)
+        if ($this->inv_crp)
             $this->sql_ .= " inner join kb3_inv_crp inc
 	                         on ( kll.kll_id = inc.inc_kll_id ) ";
 
-        if ($this->inv_all_)
+        if ($this->inv_all)
             $this->sql_ .= " inner join kb3_inv_all ina
                                  on ( kll.kll_id = ina.ina_kll_id ) ";
 
@@ -269,7 +290,7 @@ class TopList
 		}
 
 		// victim filter
-		if ($this->mixedvictims_)
+		if ($this->mixedvictims)
 		{
 			$this->sql_ .= " WHERE ( ";
 			$op = "";
@@ -291,57 +312,69 @@ class TopList
 			$op = " AND ";
 		}
 
+		if (count($this->exc_vic_shp))
+		{
+			$this->sql_ .= $op." kll.kll_ship_id not in ( ".implode(",", $this->exc_vic_shp)." ) ";
+			$op = " AND ";
+		}
 
-		if ($this->vic_plt_)
+		if (count($this->inc_vic_shp))
 		{
-			$this->sql_ .= " ".$op." kll.kll_victim_id in ( ".implode(",", $this->vic_plt_)." )";
+			$this->sql_ .= $op." kll.kll_ship_id in ( ".implode(",", $this->inc_vic_shp)." ) ";
+			$op = " AND ";
+		}
+
+
+		if ($this->vic_plt)
+		{
+			$this->sql_ .= " ".$op." kll.kll_victim_id in ( ".implode(",", $this->vic_plt)." )";
 			$op = " or ";
 		}
-		if ($this->vic_crp_)
+		if ($this->vic_crp)
 		{
-			$this->sql_ .= " ".$op." kll.kll_crp_id in ( ".implode(",", $this->vic_crp_)." )";
+			$this->sql_ .= " ".$op." kll.kll_crp_id in ( ".implode(",", $this->vic_crp)." )";
 			$op = " or ";
 		}
-		if ($this->vic_all_)
+		if ($this->vic_all)
 		{
-			$this->sql_ .= " ".$op." kll.kll_all_id in ( ".implode(",", $this->vic_all_)." )";
+			$this->sql_ .= " ".$op." kll.kll_all_id in ( ".implode(",", $this->vic_all)." )";
 			$op = " or ";
 		}
-		if ($this->mixedvictims_)
+		if ($this->mixedvictims)
 		{
 			$this->sql_ .= " ) ";
 			$op = " AND ";
 		}
-		if ($this->vic_plt_ || $this->vic_crp_ || $this->vic_all_) $op = " AND ";
+		if ($this->vic_plt || $this->vic_crp || $this->vic_all) $op = " AND ";
 
-		if($this->mixedinvolved_)
+		if($this->mixedinvolved)
 		{
 			$this->sql_ .= " ( ";
 			$op = '';
 		}
-		if ($this->inv_plt_)
+		if ($this->inv_plt)
 		{
-			$this->sql_ .= $op." ind.ind_plt_id in ( ".implode(",", $this->inv_plt_)." ) ";
+			$this->sql_ .= $op." ind.ind_plt_id in ( ".implode(",", $this->inv_plt)." ) ";
 			$op = " OR ";
 		}
-		if ($this->inv_crp_)
+		if ($this->inv_crp)
 		{
-			$this->sql_ .= $op." ( inc.inc_crp_id in ( ".implode(",", $this->inv_crp_)." ) ";
-			$this->sql_ .= " AND ind.ind_crp_id in ( ".implode(",", $this->inv_crp_)." ) ) ";
+			$this->sql_ .= $op." ( inc.inc_crp_id in ( ".implode(",", $this->inv_crp)." ) ";
+			$this->sql_ .= " AND ind.ind_crp_id in ( ".implode(",", $this->inv_crp)." ) ) ";
 			$op = " OR ";
 		}
-		if ($this->inv_all_)
+		if ($this->inv_all)
 		{
-			$this->sql_ .= $op." ( ina.ina_all_id in ( ".implode(",", $this->inv_all_)." ) ";
-			$this->sql_ .= " AND ind.ind_all_id in ( ".implode(",", $this->inv_all_)." ) ) ";
+			$this->sql_ .= $op." ( ina.ina_all_id in ( ".implode(",", $this->inv_all)." ) ";
+			$this->sql_ .= " AND ind.ind_all_id in ( ".implode(",", $this->inv_all)." ) ) ";
 			$op = " OR ";
 		}
-		if($this->mixedinvolved_)
+		if($this->mixedinvolved)
 		{
 			$this->sql_ .= " ) ";
 		}
 
-		if($this->inv_plt_ || $this->inv_crp_ || $this->inv_all_)
+		if($this->inv_plt || $this->inv_crp || $this->inv_all)
 		{
 			$op = " AND ";
 		}
@@ -353,8 +386,8 @@ class TopList
 		}
 
 		// Add dates
-		if ($this->vic_plt_ || $this->vic_crp_ || $this->vic_all_
-			|| !($this->inv_plt_ || $this->inv_crp_ || $this->inv_all_))
+		if ($this->vic_plt || $this->vic_crp || $this->vic_all
+			|| !($this->inv_plt || $this->inv_crp || $this->inv_all))
 				{
 					if($this->getDateFilter())
 					{
@@ -366,19 +399,19 @@ class TopList
 		$qstartdate = makeStartDate($this->weekno_, $this->yearno_, $this->monthno_, $this->startweekno_, $this->startDate_);
 		$qenddate = makeEndDate($this->weekno_, $this->yearno_, $this->monthno_, $this->endDate_);
 
-        if ($this->inv_crp_)
+        if ($this->inv_crp)
 		{
 			if($qstartdate) $this->sql_ .= $op." inc.inc_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
 			if($qenddate) $this->sql_ .= " AND inc.inc_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
 			$op = " AND ";
 		}
-		if ($this->inv_all_)
+		if ($this->inv_all)
 		{
 			if($qstartdate) $this->sql_ .= $op." ina.ina_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
 			if($qenddate) $this->sql_ .= " AND ina.ina_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
 			$op = " AND ";
 		}
-		if($this->inv_plt_)
+		if($this->inv_plt)
 		{
 			if($qstartdate) $this->sql_ .= $op." ind.ind_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
 			if($qenddate) $this->sql_ .= " AND ind.ind_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
@@ -426,10 +459,10 @@ class TopKillsList extends TopList
               inner join kb3_pilots plt
 	 	      on ( plt.plt_id = ind.ind_plt_id )";
 /*
- 		if ($this->inv_crp_)
-			$sql .= " and ind.ind_crp_id in ( ".implode(",", $this->inv_crp_)." )";
-		if ($this->inv_all_)
-			$sql .= " and ind.ind_all_id in ( ".implode(",", $this->inv_all_)." )";
+ 		if ($this->inv_crp)
+			$sql .= " and ind.ind_crp_id in ( ".implode(",", $this->inv_crp)." )";
+		if ($this->inv_all)
+			$sql .= " and ind.ind_all_id in ( ".implode(",", $this->inv_all)." )";
 		$sql .= ")";
 */
 		$this->setSQLTop($sql);
@@ -556,8 +589,8 @@ class TopFinalBlowList extends TopList
 		$sql = "select count(ind.ind_kll_id) as cnt, kll.kll_fb_plt_id as plt_id
                 from kb3_inv_detail ind
                 inner join kb3_kills kll on (ind.ind_kll_id = kll.kll_id ";
-		if ($this->inv_crp_)
-			$sql .= " and ind.ind_crp_id in ( ".implode(",", $this->inv_crp_)." )";
+		if ($this->inv_crp)
+			$sql .= " and ind.ind_crp_id in ( ".implode(",", $this->inv_crp)." )";
 
 		$sql .= ")";
 
@@ -584,8 +617,8 @@ class TopDamageDealerList extends TopList
 		      on ( ind.ind_kll_id = kll.kll_id and ind.ind_order = 0)
               inner join kb3_pilots plt
 	 	      on ( plt.plt_id = ind.ind_plt_id ";
-		if ($this->inv_crp_)
-			$sql .= " and plt.plt_crp_id in ( ".implode(",", $this->inv_crp_)." )";
+		if ($this->inv_crp)
+			$sql .= " and plt.plt_crp_id in ( ".implode(",", $this->inv_crp)." )";
 
 		$sql .= ")";
 
@@ -610,8 +643,8 @@ class TopSoloKillerList extends TopList
 			" FROM kb3_inv_detail ind".
 			" JOIN kb3_kills kll ON kll.kll_id = ind.ind_kll_id AND ind.ind_order = 0 ";
 
-		if ($this->inv_crp_)
-			$sql .= " AND ind.ind_crp_id IN ( ".implode(",", $this->inv_crp_)." ) ";
+		if ($this->inv_crp)
+			$sql .= " AND ind.ind_crp_id IN ( ".implode(",", $this->inv_crp)." ) ";
 
 		$this->setSQLTop($sql);
 
@@ -641,8 +674,8 @@ class TopPodKillerList extends TopList
 		      on ( ind.ind_kll_id = kll.kll_id )
               inner join kb3_pilots plt
 	 	      on ( plt.plt_id = ind.ind_plt_id";
-		if ($this->inv_crp_)
-			$sql .= " and plt.plt_crp_id in ( ".implode(",", $this->inv_crp_)." )";
+		if ($this->inv_crp)
+			$sql .= " and plt.plt_crp_id in ( ".implode(",", $this->inv_crp)." )";
 
 		$sql .= ")";
 
@@ -650,7 +683,7 @@ class TopPodKillerList extends TopList
 
 		$this->setSQLBottom("group by ind.ind_plt_id order by 1 desc
                             limit 30");
-		$this->addVictimShipClass(new ShipClass(2)); // capsule
+		$this->addVictimShipClass(2); // capsule
 	}
 }
 
@@ -669,8 +702,8 @@ class TopGrieferList extends TopList
 		      on ( ind.ind_kll_id = kll.kll_id )
               inner join kb3_pilots plt
 	 	      on ( plt.plt_id = ind.ind_plt_id";
-		if ($this->inv_crp_)
-			$sql .= " and plt.plt_crp_id in ( ".implode(",", $this->inv_crp_)." )";
+		if ($this->inv_crp)
+			$sql .= " and plt.plt_crp_id in ( ".implode(",", $this->inv_crp)." )";
 
 		$sql .= ")";
 
@@ -678,11 +711,11 @@ class TopGrieferList extends TopList
 
 		$this->setSQLBottom("group by ind.ind_plt_id order by 1 desc
                             limit 30");
-		$this->addVictimShipClass(new ShipClass(20)); // freighter
-		$this->addVictimShipClass(new ShipClass(22)); // exhumer
-		$this->addVictimShipClass(new ShipClass(7)); // industrial
-		$this->addVictimShipClass(new ShipClass(12)); // barge
-		$this->addVictimShipClass(new ShipClass(14)); // transport
+		$this->addVictimShipClass(20); // freighter
+		$this->addVictimShipClass(22); // exhumer
+		$this->addVictimShipClass(7); // industrial
+		$this->addVictimShipClass(12); // barge
+		$this->addVictimShipClass(14); // transport
 	}
 }
 
@@ -701,8 +734,8 @@ class TopCapitalShipKillerList extends TopList
 		      on ( ind.ind_kll_id = kll.kll_id )
               inner join kb3_pilots plt
 	 	      on ( plt.plt_id = ind.ind_plt_id";
-		if ($this->inv_crp_)
-			$sql .= " and plt.plt_crp_id in ( ".implode(",", $this->inv_crp_)." )";
+		if ($this->inv_crp)
+			$sql .= " and plt.plt_crp_id in ( ".implode(",", $this->inv_crp)." )";
 
 		$sql .= ")";
 
@@ -781,16 +814,16 @@ class TopContractScoreList extends TopScoreList
 			switch ($target->getType())
 			{
 				case "corp":
-					$this->addVictimCorp(new Corporation($target->getID()));
+					$this->addVictimCorp($target->getID());
 					break;
 				case "alliance":
-					$this->addVictimAlliance(new Alliance($target->getID()));
+					$this->addVictimAlliance($target->getID());
 					break;
 				case "region":
-					$this->addRegion(new Region($target->getID()));
+					$this->addRegion($target->getID());
 					break;
 				case "system":
-					$this->addSystem(new SolarSystem($target->getID()));
+					$this->addSystem($target->getID());
 					break;
 			}
 		}
