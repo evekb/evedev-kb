@@ -17,12 +17,11 @@ class known_members
 	{
 		if(config::get('mod_knownmembers_own'))
 		{
-			$home->alliance->getID();
 			if (ALLIANCE_ID && $home->alliance->getID() == ALLIANCE_ID)
 			{
 				$can_view = 1;
 			}
-			elseif (CORP_ID && $corp->getID() == CORP_ID)
+			elseif (CORP_ID && $home->crp_id == CORP_ID)
 			{
 				$can_view = 1;
 			}
