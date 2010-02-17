@@ -11,6 +11,9 @@ require_once('common/includes/class.pageAssembly.php');
 
 class pCorpDetail extends pageAssembly
 {
+		private $viewList = array();
+		private $menuOptions = array();
+
 	//! Construct the Pilot Details object.
 
 	/** Set up the basic variables of the class and add the functions to the
@@ -19,15 +22,6 @@ class pCorpDetail extends pageAssembly
 	function __construct()
 	{
 		parent::__construct();
-		if(isset($_GET['scl_id'])) $this->scl_id = intval($_GET['scl_id']);
-		else $this->scl_id = false;
-		if(isset($_GET['crp_id'])) $this->crp_id = intval($_GET['crp_id']);
-		if(isset($_GET['crp_external_id'])) $this->crp_external_id = intval($_GET['crp_external_id']);
-		elseif(isset($_GET['crp_ext_id'])) $this->crp_external_id = intval($_GET['crp_ext_id']);
-		$this->view = $_GET['view'];
-		$this->viewList = array();
-
-		$this->menuOptions = array();
 
 		$this->queue("start");
 		$this->queue("statSetup");
@@ -55,6 +49,13 @@ class pCorpDetail extends pageAssembly
 		$this->page = new Page('Corporation details');
 		$this->page->addHeader('<meta name="robots" content="index, nofollow" />');
 
+		if(isset($_GET['scl_id'])) $this->scl_id = intval($_GET['scl_id']);
+		else $this->scl_id = false;
+		if(isset($_GET['crp_id'])) $this->crp_id = intval($_GET['crp_id']);
+		if(isset($_GET['crp_external_id'])) $this->crp_external_id = intval($_GET['crp_external_id']);
+		elseif(isset($_GET['crp_ext_id'])) $this->crp_external_id = intval($_GET['crp_ext_id']);
+		$this->view = $_GET['view'];
+
 		if(!$this->crp_id)
 		{
 			if($this->crp_external_id)
@@ -73,7 +74,6 @@ class pCorpDetail extends pageAssembly
 				$this->page->generate($html);
 				exit;
 			}
-//			var_dump($this->corp)
 
 		}
 		else $this->corp = new Corporation($this->crp_id);

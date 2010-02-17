@@ -11,6 +11,16 @@ require_once('common/includes/class.pageAssembly.php');
 
 class pPilotDetail extends pageAssembly
 {
+	private $viewList = array();
+	private $klist = null;
+	private $llist = null;
+	private $menuOptions = array();
+
+	// TODO: Make these private and add access functions for mods to use.
+	public $scl_id = false;
+	public $plt_id = false;
+	public $page = null;
+
 	//! Construct the Pilot Details object.
 
 	/** Set up the basic variables of the class and add the functions to the
@@ -19,24 +29,12 @@ class pPilotDetail extends pageAssembly
 	function __construct()
 	{
 		parent::__construct();
-		$this->scl_id = intval($_GET['scl_id']);
-		$this->plt_id = intval($_GET['plt_id']);
-		if(isset($_GET['plt_external_id'])) $this->plt_external_id = intval($_GET['plt_external_id']);
-		elseif(isset($_GET['plt_ext_id'])) $this->plt_external_id = intval($_GET['plt_ext_id']);
-		else $this->plt_external_id = 0;
-		$this->view =  preg_replace('/[^a-zA-Z0-9_-]/','',$_GET['view']);
-		$this->viewList = array();
-		$this->klist = null;
-		$this->llist = null;
-
-		$this->menuOptions = array();
 
 		$this->queue("start");
 		$this->queue("statSetup");
 		$this->queue("stats");
 		$this->queue("summaryTable");
 		$this->queue("killList");
-
 	}
 
 	//! Reset the assembly object to prepare for creating the context.
@@ -58,19 +56,25 @@ class pPilotDetail extends pageAssembly
 		$this->page = new Page();
 		$this->page->addHeader('<meta name="robots" content="index, nofollow" />');
 
+		$this->scl_id = intval($_GET['scl_id']);
+		$this->plt_id = intval($_GET['plt_id']);
+		if(isset($_GET['plt_external_id'])) $this->plt_external_id = intval($_GET['plt_external_id']);
+		elseif(isset($_GET['plt_ext_id'])) $this->plt_external_id = intval($_GET['plt_ext_id']);
+		else $this->plt_external_id = 0;
+		$this->view =  preg_replace('/[^a-zA-Z0-9_-]/','',$_GET['view']);
+
 		if(!$this->plt_id)
 		{
 			if($this->plt_external_id)
 			{
-				$qry = DBFactory::getDBQuery();
-				$qry->execute('SELECT plt_id FROM kb3_pilots WHERE plt_externalid = '.$this->plt_external_id);
-				if($qry->recordCount())
-				{
-					$row = $qry->getRow();
-					$this->plt_id = $row['plt_id'];
-				}
+				$this->pilot = new Pilot($this->plt_external_id, true);
+				$this->pltid = $this->pilot->getID();
 			}
-			elseif(PILOT_ID) $this->plt_id = PILOT_ID;
+			elseif(PILOT_ID)
+			{
+				$this->plt_id = PILOT_ID;
+				$this->pilot = new Pilot(PILOT_ID);
+			}
 			else
 			{
 				$html = 'That pilot doesn\'t exist.';
@@ -79,7 +83,7 @@ class pPilotDetail extends pageAssembly
 			}
 
 		}
-		$this->pilot = new Pilot($this->plt_id);
+		else $this->pilot = new Pilot($this->plt_id);
 		$this->page->setTitle('Pilot details - '.$this->pilot->getName());
 
 		if (!$this->pilot->exists())
