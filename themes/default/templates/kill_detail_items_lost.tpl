@@ -93,10 +93,6 @@
 {cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
 {if $item_values}
 	<tr class="{cycle name="ccl"}">
-		<td align="right" colspan="3"><b>Damage taken:</b></td>
-		<td align="right">{$victimDamageTaken|number_format}</td>
-	</tr>
-	<tr class="{cycle name="ccl"}">
 		<td colspan="3"><div align="right"><strong>Total Module Loss:</strong></div></td>
 		<td align="right">{$itemValue}</td>
 	</tr>
@@ -104,6 +100,10 @@
 		<td style="border: 1px solid {$dropped_colour};" colspan="3"><div align="right"><strong>Total Module Drop:</strong></div></td>
 		<td style="border: 1px solid green;" align="right">{$dropValue}</td>
 	</tr>
+	{if $BPOValue > 0}<tr class="{cycle name="ccl"}" style="background-color: {$dropped_colour};">
+		<td style="border: 1px solid {$dropped_colour};" colspan="3"><div align="right"><strong>Blueprints (not counted in weekly total):</strong></div></td>
+		<td style="border: 1px solid green;" align="right">{$BPOValue}</td>
+	</tr>{/if}
 	<tr class="{cycle name="ccl"}">
 		<td colspan="3"><div align="right"><strong>Ship Loss:</strong></div></td>
 		<td align="right">{$shipValue}</td>

@@ -160,6 +160,8 @@ class pKillDetail extends pageAssembly
 					$value=$destroyed->getValue();
 					$this->TotalValue+=$value * $i_qty;
 					$formatted=$destroyed->getFormattedValue();
+
+					if(strpos($item->getName(), 'Blueprint') !== false) $this->bp_value += $value * $i_qty;
 				}
 
 				$i_name     =$item->getName();
@@ -260,6 +262,8 @@ class pKillDetail extends pageAssembly
 					$value=$dropped->getValue();
 					$this->dropvalue+=$value * $i_qty;
 					$formatted=$dropped->getFormattedValue();
+
+					if(config::get('kd_droptototal') && strpos($item->getName(), 'Blueprint') !== false) $this->bp_value += $value * $i_qty;
 				}
 
 				$i_name     =$item->getName();
@@ -723,11 +727,13 @@ class pKillDetail extends pageAssembly
 		$TotalLoss=number_format($this->TotalValue + $this->ShipValue, 2);
 		$this->ShipValue=number_format($this->ShipValue, 2);
 		$this->dropvalue=number_format($this->dropvalue, 2);
+		$this->bp_value = number_format($this->bp_value, 2);
 
 		$smarty->assign('itemValue', $Formatted);
 		$smarty->assign('dropValue', $this->dropvalue);
 		$smarty->assign('shipValue', $this->ShipValue);
 		$smarty->assign('totalLoss', $TotalLoss);
+		$smarty->assign('BPOValue', $this->bp_value);
 
 		return $smarty->fetch(get_tpl('kill_detail_items_lost'));
 
