@@ -703,9 +703,10 @@ class pAllianceDetail extends pageAssembly
 				$html .= "</table>";
 				$html .= "</td></tr></table>";
 				$smarty->assign('html', $html);
+				break;
 			case 'corp_list':
 				return $this->corpList();
-			break;
+				break;
 		}
 		return $smarty->fetch(get_tpl('alliance_detail'));
 	}
