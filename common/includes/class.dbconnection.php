@@ -4,41 +4,42 @@
 //! Establishes the connection to the database.
 class DBConnection
 {
-	//! Set up a mysqli DB connection.
-	function DBConnection()
-	{
-		static $conn_id;
+	static $conn_id = null;
 
-		if ($conn_id)
+	//! Set up a mysqli DB connection.
+	private static function init()
+	{
+		if (isset(self::$conn_id))
 		{
-			$this->id_ = $conn_id;
 			return;
 		}
 		if(defined('DB_PORT'))
-		{
-			if (!$this->id_ = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT))
-				die("Unable to connect to mysql database.");
-			if(method_exists($this->id_,'set_charset')) $this->id_->set_charset('utf8');
-		}
+			self::$conn_id = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
 		else
-		{
-			if (!$this->id_ = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME))
-				die("Unable to connect to mysql database.");
-			if(method_exists($this->id_,'set_charset')) $this->id_->set_charset('utf8');
-		}
+			self::$conn_id = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
-		//mysqli_select_db(DB_NAME);
-		$conn_id = $this->id_;
+		if (mysqli_connect_error() != null)
+		{
+			if(defined('KB_PROFILE'))
+			{
+				require_once('class.dbdebug.php');
+				DBDEBUG::recordError('Connect Error('.mysqli_connect_errno().') '.mysqli_connect_error());
+			}
+			die(mysqli_connect_error()."<br />\nUnable to connect to mysql database.");
+		}
+		if(method_exists(self::$conn_id,'set_charset')) self::$conn_id->set_charset('utf8');
 	}
 	//! Return the connection id for this connection. Used for connection specific commands.
-	function id()
+	public static function id()
 	{
-		return $this->id_;
+		if(is_null(self::$conn_id)) self::init();
+		return self::$conn_id;
 	}
 	//! Return the number of rows affected by a query.
-	function affectedRows()
+	public static function affectedRows()
 	{
-		return mysqli_affected_rows($this->id_);
+		if(is_null(self::$conn_id)) self::init();
+		return mysqli_affected_rows(self::$conn_id);
 	}
 }
 

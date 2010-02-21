@@ -8,8 +8,8 @@ require_once('common/includes/class.config.php');
 if(!defined('DB_TYPE')) define('DB_TYPE', 'mysqli');
 require_once('common/includes/class.db.php');
 
-$conn = new DBConnection;
-$value = (float) mysqli_get_server_info($conn->id_);
+$conn = new DBConnection();
+$value = (float) mysqli_get_server_info($conn->id());
 
 if ($value < 5)
 {
