@@ -234,7 +234,7 @@ class thumb
 	{
 		if (!file_exists('img/alliances/'.$this->id.'.png'))
 		{
-			$this->id = 0;
+			$this->id = 'default';
 		}
 		$img = imagecreatefrompng('img/alliances/'.$this->id.'.png');
 		if ($img)
