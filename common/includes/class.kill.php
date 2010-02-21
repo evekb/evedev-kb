@@ -664,7 +664,7 @@ class Kill
 	{
 		if(isset($this->involvedcount_)) return $this->involvedcount_;
 		$qry = DBFactory::getDBQuery();;
-		$qry->execute("select max(ind_order)+1 inv from kb3_inv_detail where ind_kll_id = ". $this->id_);
+		$qry->execute("select count(*) inv from kb3_inv_detail where ind_kll_id = ". $this->id_);
 		$result = $qry->getRow();
 		$this->involvedcount_ = $result['inv'];
 		return $result['inv'];
@@ -694,7 +694,7 @@ class Kill
 		if($this->relatedkillcount_) return $this->relatedkillcount_;
 		if(ALLIANCE_ID)
 		{
-			$sql .="SELECT COUNT(ina_kll_id) AS kills FROM kb3_inv_all INNER JOIN
+			$sql ="SELECT COUNT(ina_kll_id) AS kills FROM kb3_inv_all INNER JOIN
 				kb3_kills ON (kll_id = ina_kll_id) WHERE 
 				ina_all_id = ".ALLIANCE_ID." AND 
 				ina_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
@@ -703,7 +703,7 @@ class Kill
 		}
 		else if(CORP_ID)
 		{
-			$sql .="SELECT COUNT(inc_kll_id) AS kills FROM kb3_inv_crp INNER JOIN
+			$sql ="SELECT COUNT(inc_kll_id) AS kills FROM kb3_inv_crp INNER JOIN
 				kb3_kills ON (kll_id = inc_kll_id) WHERE 
 				inc_crp_id = ".CORP_ID." AND 
 				inc_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
@@ -712,7 +712,7 @@ class Kill
 		}
 		else if(PILOT_ID)
 		{
-			$sql .="SELECT COUNT(ind_kll_id) AS kills FROM kb3_inv_detail INNER JOIN
+			$sql ="SELECT COUNT(ind_kll_id) AS kills FROM kb3_inv_detail INNER JOIN
 				kb3_kills ON (kll_id = ind_kll_id) WHERE 
 				ind_plt_id = ".PILOT_ID." AND 
 				ind_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
@@ -721,7 +721,7 @@ class Kill
 		}
 		else
 		{
-			$sql .="SELECT COUNT(kll_id) AS kills FROM kb3_kills WHERE
+			$sql ="SELECT COUNT(kll_id) AS kills FROM kb3_kills WHERE
 				kll_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
 				AND kll_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
 				AND kll_system_id = ".$this->solarsystem_->getID();
@@ -1334,7 +1334,7 @@ class DestroyedItem
 
 	function getValue()
 	{
-		if ($this->value)
+		if (isset($this->value))
 		{
 			return $this->value;
 		}
