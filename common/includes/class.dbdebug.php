@@ -2,17 +2,16 @@
 
 class DBDebug
 {
+	private static $qerrfile = "/tmp/EDKprofile.lst";
 	public static function recordError($text)
 	{
-		$qerrfile = "/tmp/EDKprofile.lst";
-		if($text) file_put_contents($qerrfile, $text."\n", FILE_APPEND);
+		if($text) file_put_contents(self::$qerrfile, $text."\n", FILE_APPEND);
 	}
 	public static function profile($sql, $time = 0)
 	{
-		$qerrfile = "/tmp/EDKprofile.lst";
 		if (KB_PROFILE == 2)
 		{
-			file_put_contents($qerrfile, $sql . "\nExecution time: " . $time . "\n", FILE_APPEND);
+			file_put_contents(self::$qerrfile, $sql . "\nExecution time: " . $time . "\n", FILE_APPEND);
 		}
 		if (KB_PROFILE == 3)
 		{
@@ -27,11 +26,11 @@ class DBDebug
 
 				while($prof_row = mysqli_fetch_assoc($prof_qry))
 					$prof_out_ext .= implode(' | ', $prof_row)."\n";
-				file_put_contents($qerrfile, $sql . "\n".
+				file_put_contents(self::$qerrfile, $sql . "\n".
 						$prof_out_ext. $prof_out_exp.
 						"\n-- Execution time: " . $time . " --\n", FILE_APPEND);
 			}
-			else file_put_contents($qerrfile, $sql."\nExecution time: ".$time."\n", FILE_APPEND);
+			else file_put_contents(self::$qerrfile, $sql."\nExecution time: ".$time."\n", FILE_APPEND);
 		}
 
 		if (KB_PROFILE == 4)
@@ -47,7 +46,7 @@ class DBDebug
 
 				while($prof_row = mysqli_fetch_assoc($prof_qry))
 					$prof_out_ext .= implode(' | ', $prof_row)."\n";
-				file_put_contents($qerrfile, $sql . "\n".
+				file_put_contents(self::$qerrfile, $sql . "\n".
 						$prof_out_ext. $prof_out_exp.
 						"\n-- Execution time: " . $time . " --\n", FILE_APPEND);
 			}
