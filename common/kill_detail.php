@@ -91,6 +91,7 @@ class pKillDetail extends pageAssembly
 		$this->finalblow = false;
 
 		$this->commenthtml = '';
+		// Check for posted comments.
 		// If a comment is being posted then we won't exit this block.
 		if(isset($_POST['comment']) && config::get('comments'))
 		{
@@ -130,6 +131,13 @@ class pKillDetail extends pageAssembly
 				$this->commenthtml = 'Error: Wrong Password';
 			}
 		}
+		// Check admin update options.
+		if ($this->page->isAdmin())
+		{
+			$this->updatePrices();
+			$this->fixSlots();
+		}
+
 		require_once('common/includes/class.killsummarytable.php');
 		require_once('common/includes/class.pilot.php');
 		require_once('common/includes/class.corp.php');
@@ -145,7 +153,7 @@ class pKillDetail extends pageAssembly
 	}
 	function fittingSetup()
 	{
-	// ship fitting
+		// ship fitting
 		if (count($this->kill->destroyeditems_) > 0)
 		{
 			$this->dest_array=array();
@@ -338,8 +346,6 @@ class pKillDetail extends pageAssembly
 
 			}
 		}
-
-
 	}
 	function involvedSetup()
 	{
@@ -594,67 +600,10 @@ class pKillDetail extends pageAssembly
 	function itemsLost()
 	{
 		global $smarty;
+
 		if (config::get('item_values'))
 		{
 			$smarty->assign('item_values', 'true');
-
-			if ($this->page->isAdmin())
-			{
-				if (isset($_POST['submit']) && $_POST['submit'] == 'UpdateValue')
-				{
-				// Send new value for item to the database
-					$qry = DBFactory::getDBQuery();;
-					$qry->autocommit(false);
-					if(isset($_POST['SID']))
-					{
-						$SID = intval($_POST['SID']);
-						$Val = preg_replace('/[^0-9]/','',$_POST[$SID]);
-						$qry->execute("INSERT INTO kb3_item_price (typeID, price) VALUES ('".$SID."', '".$Val."') ON DUPLICATE KEY UPDATE price = '".$Val."'");
-						$victimship = $this->kill->getVictimShip();
-						$this->kill->setVictimShip(new Ship($victimship->getID() ));
-					}
-					else
-					{
-						$IID = intval($_POST['IID']);
-						$Val = preg_replace('/[^0-9]/','',$_POST[$IID]);
-						$qry->execute("INSERT INTO kb3_item_price (typeID, price) VALUES ('".$IID."', '".$Val."') ON DUPLICATE KEY UPDATE price = '".$Val."'");
-						foreach($this->kill->destroyeditems_ as $i => $ditem)
-						{
-							$item = $ditem->getItem();
-							if($item->getID() == $IID) $this->kill->destroyeditems_[$i]->value = $Val;
-						}
-						foreach($this->kill->droppeditems_ as $i=> $ditem)
-						{
-							$item = $ditem->getItem();
-							if($item->getID() == $IID) $this->kill->droppeditems_[$i]->value = $Val;
-						}
-					}
-					$qry->execute("UPDATE kb3_kills SET kll_isk_loss = ".$this->kill->calculateISKLoss()." WHERE kll_id = ".$this->kill->getID());
-					$qry->autocommit(true);
-				}
-			}
-		}
-
-		if ($this->page->isAdmin())
-		{
-			if (isset($_GET['view']) && $_GET['view'] == 'FixSlot')
-			{
-				$smarty->assign('fixSlot', 'true');
-			}
-
-			$smarty->assign('admin', 'true');
-
-			if (isset($_POST['submit']) && $_POST['submit'] == 'UpdateSlot')
-			{
-				$IID  =$_POST['IID'];
-				$KID  =$_POST['KID'];
-				$Val  =$_POST[$IID];
-				$table=$_POST['TYPE'];
-				$old  =$_POST['OLDSLOT'];
-				$qry  =DBFactory::getDBQuery();;
-				$qry->execute("UPDATE kb3_items_" . $table . " SET itd_itl_id ='" . $Val . "' WHERE itd_itm_id=" . $IID
-					. " AND itd_kll_id = " . $KID . " AND itd_itl_id = " . $old);
-			}
 		}
 		// preparing slot layout
 		$slot_array=array();
@@ -1144,6 +1093,67 @@ class pKillDetail extends pageAssembly
 	function addMenuItem($type, $name, $url = '')
 	{
 		$this->menuOptions[] = array($type, $name, $url);
+	}
+	//! Update the stored value of an item and the total value of this kill.
+
+	//! Input values are taken from the query string.
+	private function updatePrices()
+	{
+		global $smarty;
+		if (config::get('item_values'))
+		{
+			if (isset($_POST['submit']) && $_POST['submit'] == 'UpdateValue')
+			{
+				// Send new value for item to the database
+				$qry = DBFactory::getDBQuery();;
+				$qry->autocommit(false);
+				if(isset($_POST['SID']))
+				{
+					$SID = intval($_POST['SID']);
+					$Val = preg_replace('/[^0-9]/','',$_POST[$SID]);
+					$qry->execute("INSERT INTO kb3_item_price (typeID, price) VALUES ('".$SID."', '".$Val."') ON DUPLICATE KEY UPDATE price = '".$Val."'");
+				}
+				else
+				{
+					$IID = intval($_POST['IID']);
+					$Val = preg_replace('/[^0-9]/','',$_POST[$IID]);
+					$qry->execute("INSERT INTO kb3_item_price (typeID, price) VALUES ('".$IID."', '".$Val."') ON DUPLICATE KEY UPDATE price = '".$Val."'");
+					foreach($this->kill->destroyeditems_ as $i => $ditem)
+					{
+						if($ditem->getItem()->getID() == $IID) $this->kill->destroyeditems_[$i]->value = $Val;
+					}
+					foreach($this->kill->droppeditems_ as $i=> $ditem)
+					{
+						if($ditem->getItem()->getID() == $IID) $this->kill->droppeditems_[$i]->value = $Val;
+					}
+				}
+				$qry->execute("UPDATE kb3_kills SET kll_isk_loss = ".$this->kill->calculateISKLoss()." WHERE kll_id = ".$this->kill->getID());
+				$qry->autocommit(true);
+			}
+
+		}
+	}
+	private function fixSlots()
+	{
+		global $smarty;
+		if (isset($_GET['view']) && $_GET['view'] == 'FixSlot')
+		{
+			$smarty->assign('fixSlot', 'true');
+		}
+
+		$smarty->assign('admin', 'true');
+
+		if (isset($_POST['submit']) && $_POST['submit'] == 'UpdateSlot')
+		{
+			$IID  =$_POST['IID'];
+			$KID  =$_POST['KID'];
+			$Val  =$_POST[$IID];
+			$table=$_POST['TYPE'];
+			$old  =$_POST['OLDSLOT'];
+			$qry  =DBFactory::getDBQuery();;
+			$qry->execute("UPDATE kb3_items_" . $table . " SET itd_itl_id ='" . $Val . "' WHERE itd_itm_id=" . $IID
+				. " AND itd_kll_id = " . $KID . " AND itd_itl_id = " . $old);
+		}
 	}
 }
 
