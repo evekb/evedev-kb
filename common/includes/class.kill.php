@@ -552,12 +552,12 @@ class Kill
 
 					$ship->shipclass_ = new ShipClass($row['shp_class']);
 					$ship->shipclass_->name_ = $row['scl_class'];
-					
+
 					$weapon = new Item($row['ind_wep_id']);
 					$weapon->row_['typeName'] = $row['typeName'];
 					$weapon->row_['typeID'] = $row['ind_wep_id'];
 					$weapon->row_['itm_externalid'] = $row['ind_wep_id'];
-					
+
 					$involved = new DetailedInv($pilot,
 						$row['ind_sec_status'],
 						$corp,
@@ -695,8 +695,8 @@ class Kill
 		if(ALLIANCE_ID)
 		{
 			$sql ="SELECT COUNT(ina_kll_id) AS kills FROM kb3_inv_all INNER JOIN
-				kb3_kills ON (kll_id = ina_kll_id) WHERE 
-				ina_all_id = ".ALLIANCE_ID." AND 
+				kb3_kills ON (kll_id = ina_kll_id) WHERE
+				ina_all_id = ".ALLIANCE_ID." AND
 				ina_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
 				AND ina_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
 				AND kll_system_id = ".$this->solarsystem_->getID();
@@ -704,8 +704,8 @@ class Kill
 		else if(CORP_ID)
 		{
 			$sql ="SELECT COUNT(inc_kll_id) AS kills FROM kb3_inv_crp INNER JOIN
-				kb3_kills ON (kll_id = inc_kll_id) WHERE 
-				inc_crp_id = ".CORP_ID." AND 
+				kb3_kills ON (kll_id = inc_kll_id) WHERE
+				inc_crp_id = ".CORP_ID." AND
 				inc_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
 				AND inc_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
 				AND kll_system_id = ".$this->solarsystem_->getID();
@@ -713,8 +713,8 @@ class Kill
 		else if(PILOT_ID)
 		{
 			$sql ="SELECT COUNT(ind_kll_id) AS kills FROM kb3_inv_detail INNER JOIN
-				kb3_kills ON (kll_id = ind_kll_id) WHERE 
-				ind_plt_id = ".PILOT_ID." AND 
+				kb3_kills ON (kll_id = ind_kll_id) WHERE
+				ind_plt_id = ".PILOT_ID." AND
 				ind_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
 				AND ind_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
 				AND kll_system_id = ".$this->solarsystem_->getID();
@@ -813,7 +813,7 @@ class Kill
 		if($externalid) $this->externalid_ = $externalid;
 		else $this->externalid_ = 0;
 	}
-	
+
 	function setVictim($victim)
 	{
 		$this->victim_ = $victim;
@@ -1224,6 +1224,16 @@ class Kill
 	function addDroppedItem($dropped)
 	{
 		array_push($this->droppeditems_, $dropped);
+	}
+	/*! Return the array of involved parties.
+	*
+	* \return InvolvedParty[].
+	*
+	*/
+	function getInvolved()
+	{
+		$this->execQuery();
+		return $this->involvedparties_;
 	}
 }
 
