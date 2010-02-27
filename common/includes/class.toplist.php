@@ -172,12 +172,14 @@ class TopList
 
 	function addRegion($region)
 	{
-		array_push($this->regions_, $region->getID());
+		if(is_numeric($system)) array_push($this->regions_, $region->getID());
+		else array_push($this->regions_, $region->getID());
 	}
 
 	function addSystem($system)
 	{
-		array_push($this->systems_, $system->getID());
+		if(is_numeric($system)) array_push($this->systems_, $system);
+		else array_push($this->systems_, $system->getID());
 	}
 
 	function addGroupBy($groupby)
@@ -775,16 +777,16 @@ class TopContractKillsList extends TopKillsList
 			switch ($target->getType())
 			{
 				case "corp":
-					$this->addVictimCorp(new Corporation($target->getID()));
+					$this->addVictimCorp($target->getID());
 					break;
 				case "alliance":
-					$this->addVictimAlliance(new Alliance($target->getID()));
+					$this->addVictimAlliance($target->getID());
 					break;
 				case "region":
-					$this->addRegion(new Region($target->getID()));
+					$this->addRegion($target->getID());
 					break;
 				case "system":
-					$this->addSystem(new SolarSystem($target->getID()));
+					$this->addSystem($target->getID());
 					break;
 			}
 		}
