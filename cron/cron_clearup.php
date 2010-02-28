@@ -37,7 +37,7 @@ remove_old(30 * 24, KB_CACHEDIR.'/', true);
  */
 function remove_old($hours, $dir, $recurse = false)
 {
-	if(is_dir($dir)) return 0;
+	if(!is_dir($dir)) return 0;
 	$seconds = $hours*60*60;
 	$del = 0;
 	$files = scandir($dir);
