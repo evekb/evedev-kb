@@ -7,7 +7,7 @@
 		<td class="item-icon" width="32"><img width="32" height="32" src="{$img_url}/{$slot.img}" alt="{$slot.text}" border="0" /></td>
 		<td colspan="2" class="kb-table-cell"><b>{$slot.text}</b> </td>
     {if $config->get('item_values')}
-		<td align="center" class="kb-table-cell"><b>Value</b></td>
+		<td align="center" class="kb-table-cell"><b>Current Value</b></td>
     {/if}
 	</tr>
     {foreach from=$destroyed.$slotindex item="i"}
@@ -122,7 +122,7 @@
 	</tr>
         {/if}
 	<tr class="{cycle name="ccl"}" style="background-color: #600000;">
-		<td style="border: 1px solid #600000;" colspan="3"><div align="right"><strong>Total Loss:</strong></div></td>
+		<td style="border: 1px solid #600000;" colspan="3"><div align="right"><strong>Total Loss at current prices:</strong></div></td>
 		<td style="border: 1px solid #C00000;" align="right">{$totalLoss}</td>
 	</tr>
 {/if}

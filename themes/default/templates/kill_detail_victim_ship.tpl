@@ -15,7 +15,7 @@
 	</tr>
 	{if $showiskd}
 	<tr class="{cycle name="ccl"}">
-		<td colspan="2" class="kb-table-cell"><b>Total ISK Loss:</b></td>
+		<td colspan="2" class="kb-table-cell"><b>ISK Loss at time of kill:</b></td>
 		<td class="kb-table-cell">{$totalLoss}</td>
 	</tr>
 	<tr class="{cycle name="ccl"}">
