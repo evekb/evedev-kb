@@ -4,12 +4,12 @@ require_once('common/includes/class.kill.php');
 $page = new Page("Administration - Deletion of Comment ID \"".$_GET['c_id']."\"");
 $page->setAdmin();
 
-if ($_GET['confirm'])
+if ($_POST['confirm'])
 {
     $qry = DBFactory::getDBQuery();;
     $qry->execute("delete from kb3_comments where id='".$_GET['c_id']."'");
     $html .= "Comment ID \"".$_GET['c_id']."\" deleted!";
-    $html .= "<br><br><a href=\"javascript:window.close();\">[close]</a>";
+    $html .= "<br /><br /><a href=\"javascript:window.close();\">[close]</a>";
 }
 else
 {
@@ -19,7 +19,7 @@ else
     if ($qry->recordCount() == 0)
     {
         // no commment
-        $html .= "Error: comment does not exist<br>\n";
+        $html .= "Error: comment does not exist<br />\n";
     }
     else
     {
@@ -27,11 +27,13 @@ else
         {
             $name = $data['name'];
             $comment = $data['comment'];
-            $html .= "<div class=\"comment-text\"><a href=\"?a=search&searchtype=pilot&searchphrase=".$name."\">".$name."</a>:<p>".$comment."</p>";
-            $html .= "</div><br/>";
+            $html .= "<div class=\"comment-text\"><a href=\"?a=search&amp;searchtype=pilot&amp;searchphrase=".$name."\">".$name."</a>:<p>".$comment."</p>";
+            $html .= "</div><br />";
         }
-        $html .= "<button onClick=\"window.location.href='?a=admin_comments_delete&confirm=yes&c_id=" . $_GET['c_id'] . "'\">Yes</button> ";
-        $html .= "<button onClick=\"window.close();\">No</button>";
+        $html .= "<form action='' method='post'>";
+        $html .= "<input type='submit' name='confirm' value='Yes' /> ";
+        $html .= "<button onclick=\"window.close();\">No</button>";
+        $html .= "</form>";        
     }
 }
 $page->setContent($html);
