@@ -71,7 +71,7 @@ class admin_db
 		if(!file_exists("packages/database/kb3_dgmtypeattributes/table.xml"))
 			return "Database packages are not installed.";
 
-		return "<a href='".KB_HOST."/update/index.php?package=CCPDB&do=reset'>".
+		return "<a href='".KB_HOST."/update/index.php?package=CCPDB&amp;do=reset'>".
 			"Reinstall</a>";
 	}
 }
