@@ -47,7 +47,6 @@ require_once('common/includes/class.session.php');
 require_once('common/includes/class.cache.php');
 require_once('common/includes/class.involvedloader.php');
 require_once('common/includes/xajax.functions.php');
-require_once('class.cachehandler.php');
 
 // smarty doesnt like it
 @set_magic_quotes_runtime(0);
