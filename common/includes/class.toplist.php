@@ -172,7 +172,7 @@ class TopList
 
 	function addRegion($region)
 	{
-		if(is_numeric($system)) array_push($this->regions_, $region);
+		if(is_numeric($region)) array_push($this->regions_, $region);
 		else array_push($this->regions_, $region->getID());
 	}
 
