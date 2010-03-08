@@ -11,7 +11,7 @@ class Corporation
 	private $name;
 	private $alliance;
 	private $updated;
-	
+
 	//! Create a new Corporation object from the given $id.
 
     /*!
@@ -346,7 +346,7 @@ class Corporation
 	//! Fetch corporation name and alliance from CCP using the stored external ID.
 	private function fetchCorp()
 	{
-		if(isnull($this->external_id)) return false;
+		if(is_null($this->external_id)) return false;
 
 		require_once("common/includes/class.eveapi.php");
 		$myID = new API_IDtoName();
@@ -359,7 +359,7 @@ class Corporation
 		$myAPI->setCorpID($this->external_id);
 		$result = $myAPI->fetchXML();
 		if(!empty($result)) return false;
-		
+
 		$alliance = new Alliance($myAPI->getAllianceID(), true);
 
 		$this->add(slashfix($myNames[0]['name']), $alliance,
