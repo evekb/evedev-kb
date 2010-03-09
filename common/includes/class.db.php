@@ -71,6 +71,8 @@ class DBNormalQuery extends DBBaseQuery
 				DBDebug::recordError("Database error: ".self::$dbconn->id()->error);
 				DBDebug::recordError("SQL: ".$sql);
 			}
+			trigger_error("SQL error (".self::$dbconn->id()->error, E_USER_WARNING);
+			
 			if (defined('DB_HALTONERROR') && DB_HALTONERROR)
 			{
 				echo "Database error: " . self::$dbconn->id()->error . "<br>";
@@ -114,7 +116,7 @@ class DBNormalQuery extends DBBaseQuery
 	//! Reset list of results to return the first row from the last query.
 	function rewind()
 	{
-		@mysqli_data_seek($this->resid, 0);
+		if(!is_null($this->resid_)) @mysqli_data_seek($this->resid_, 0);
 	}
 	//! Return the auto-increment ID from the last insert operation.
 	function getInsertID()
