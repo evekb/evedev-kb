@@ -8,7 +8,7 @@ class involved
         trigger_error('The class "involved" may only be invoked statically.', E_USER_ERROR);
     }
 
-    function load(&$killlist, $type = 'kill')
+    public static function load(&$killlist, $type = 'kill')
     {
         if ($type == 'kill')
         {
@@ -40,4 +40,3 @@ class involved
     }
 
 }
-?>
