@@ -668,6 +668,8 @@ class DBMemcachedQuery_mysqli
 
         // maximum size of a cached result set (512kB)
         $this->_maxcachesize = 524288;
+		$this->maxmem = preg_replace('/M/', '000000', ini_get('memory_limit')) * 0.8;
+		if(!$this->maxmem) $this->maxmem = 128000000;
         $this->d = true;
     }
 
