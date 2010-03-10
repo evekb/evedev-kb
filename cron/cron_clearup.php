@@ -23,12 +23,20 @@ require_once('common/includes/globals.php');
 require_once('common/includes/class.config.php');
 require_once('common/includes/db.php');
 
+// disable query caching while the script is running.
+$qcache = config::get('cfg_qcache');
+if($qcache) config::set('cfg_qcache', 0);
+$pcache = config::get('cache_enabled');
+if($pcache) config::set('cache_enabled', 0);
+
 remove_old(7 * 24, KB_QUERYCACHEDIR.'/');
 remove_old(7 * 24, KB_PAGECACHEDIR.'/'.KB_SITE.'/', true);
 remove_old(1 * 24, KB_CACHEDIR."/templates_c/", true);
 remove_old(7 * 24, KB_MAILCACHEDIR.'/');
 remove_old(30 * 24, KB_CACHEDIR.'/', true);
 
+if($qcache) config::set('cfg_qcache', 1);
+if($pcache) config::set('cache_enabled', 1);
 //! Remove old files from the given directory.
 
 /*! \param $hours The oldest a file can be before being removed.
