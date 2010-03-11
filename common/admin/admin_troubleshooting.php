@@ -120,9 +120,11 @@ function find_SQL_Version()
 $sqlver = 'MYSQL version: ' . find_SQL_Version();
 $phpver = 'PHP version: ' . phpversion();
 $html .= '<div class="block-header2">Server</div>';
-$html .= '<img src="'.IMG_URL .'/panel/working.jpg" border="0" alt="" />';
+if(phpversion() > 5) $html .= '<img src="'.IMG_URL .'/panel/working.jpg" border="0" alt="" />';
+else $html .= '<img src="'.IMG_URL .'/panel/error.jpg" border="0" alt="" />';
 $html .= "  $phpver  <br />";
-$html .= '<img src="'.IMG_URL .'/panel/working.jpg" border="0" alt="" />';
+if(find_SQL_Version() >= 5) $html .= '<img src="'.IMG_URL .'/panel/working.jpg" border="0" alt="" />';
+else $html .= '<img src="'.IMG_URL .'/panel/error.jpg" border="0" alt="" />';
 $html .= "  $sqlver";
 
 
