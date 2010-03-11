@@ -24,6 +24,23 @@ if (file_exists('../kbconfig.php'))
 	}
 }
 
+//PHP version check
+$php_ok = phpversion() >= "5";
+$mysqli_ok = function_exists("mysqli_connect");
+
+$smarty->assign("php_ok", $php_ok);
+$smarty->assign("mysqli_ok", $mysqli_ok);
+
+if ($php_ok && $mysqli_ok)
+{
+	$smarty->assign("php_image", $pass_img);
+}
+else
+{
+	$smarty->assign("php_image", $fail_img);
+	$stoppage = true;
+}
+
 // graphics
 $smarty->assign('gd_exists', function_exists('imagecreatefromstring'));
 if (function_exists('imagecreatefromstring'))

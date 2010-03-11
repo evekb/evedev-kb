@@ -5,7 +5,20 @@
     <br/>
 {/if}
 
-<div class="block-header2"><img src="{$gd_image}" border="0" alt=""> Graphics</div>
+<div class="block-header2"><img src="{$php_image}" border="0" alt=""> PHP Version &amp; Extensions</div>
+{if $php_ok}
+Your version of PHP is OK.
+{else}
+Your version of PHP does not meet the minimum requirements. You must be running at least PHP5. Ask your host to fix this.
+{/if}
+<br />
+{if $mysqli_ok}
+You have the MySQLi extension installed and working.
+{else}
+You don't appear to have the MySQLi extension installed. You need to ask your host to install it.
+{/if}
+
+<br /><br /><div class="block-header2"><img src="{$gd_image}" border="0" alt=""> Graphics</div>
 {if $gd_exists}<b>GD is available.</b><br/>
     {if !$gd_truecolour}Your GD is outdated and will cause problems, please contact your system administrator to upgrade to GD 2.0 or higher.<br/>
     {/if}
