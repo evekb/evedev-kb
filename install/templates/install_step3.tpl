@@ -27,18 +27,22 @@
 	Connected to MySQL server
 	{if $test_sql}
 		running Version '{$test_version}'.<br/>
-		{if $test_select}
-		Successfully selected database '{$db_db}', everything seems fine. Please continue.<br/>
+		{if $version_ok}
+			{if $test_select}
+			Successfully selected database '{$db_db}', everything seems fine. Please continue.<br/>
+			{else}
+			Could not select the database: '{$test_error}'<br/>
+			{/if}
+			{if $test_inno}
+			<br/>Checking database engine InnoDB... <br/>
+				{if !$test_error_inno}
+					InnoDB is supported on your MySQL Server.<br />
+				{else}
+					Error: InnoDB is not supported on your MySQL Server.<br />
+				{/if}
+			{/if}
 		{else}
-		Could not select the database: '{$test_error}'<br/>
-		{/if}
-		{if $test_inno}
-		<br/>Checking database engine InnoDB... <br/>
-		{if !$test_error_inno}
-			InnoDB is supported on your MySQL Server.<br />
-		{else}
-			Error: InnoDB is not supported on your MySQL Server.<br />
-		{/if}
+		This version of MySQL is not supported. You must ask your host to upgrade.
 		{/if}
 	{else}
 		... something went wrong:<br/>{$test_error}<br/>

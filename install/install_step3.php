@@ -78,34 +78,41 @@ if ($_SESSION['sql']['db'])
 	    else
 	    {
 		    $smarty->assign('test_version', $result['version']);
-		    $smarty->assign('test_select', mysql_select_db($_SESSION['sql']['db']));
-		    if (mysql_select_db($_SESSION['sql']['db']))
-		    {
-			    $stoppage = false;
-			    $smarty->assign('db_image', $pass_img);
-			    //InnoDB check
-			    if ($stoppage == false && $_SESSION['sql']['engine'] == 'InnoDB')
-			    {
-				    $smarty->assign('test_inno', true);
-				    $stoppage = true;
+		    $version_ok = $result['version'] >= "5";
+		    $smarty->assign("version_ok", $version_ok);
+		    if (!$version_ok)
+				$stoppage = true;
+			else
+			{
+				$smarty->assign('test_select', mysql_select_db($_SESSION['sql']['db']));
+				if (mysql_select_db($_SESSION['sql']['db']))
+				{
+					$stoppage = false;
+					$smarty->assign('db_image', $pass_img);
+					//InnoDB check
+					if ($stoppage == false && $_SESSION['sql']['engine'] == 'InnoDB')
+					{
+						$smarty->assign('test_inno', true);
+						$stoppage = true;
 
-				    $result = mysql_query('SHOW ENGINES;');
-				    while (($row = mysql_fetch_row($result)) &&  $stoppage == true){
-					    if ($row[0] == 'InnoDB'){
-						    if ($row[1] == 'YES' || $row[1] == 'DEFAULT'){ // (YES / NO / DEFAULT)
-							    $stoppage = false;
-						    }
-					    }
-				    }
-				    if ($stoppage){
-					    $smarty->assign('db_image', $fail_img);
-					    $smarty->assign('test_error_inno', true);
-				    }
-			    }
-		    }
-		    else
-		    {
-			    $smarty->assign('test_error', mysql_error());
+						$result = mysql_query('SHOW ENGINES;');
+						while (($row = mysql_fetch_row($result)) &&  $stoppage == true){
+							if ($row[0] == 'InnoDB'){
+								if ($row[1] == 'YES' || $row[1] == 'DEFAULT'){ // (YES / NO / DEFAULT)
+									$stoppage = false;
+								}
+							}
+						}
+						if ($stoppage){
+							$smarty->assign('db_image', $fail_img);
+							$smarty->assign('test_error_inno', true);
+						}
+					}
+				}
+				else
+				{
+					$smarty->assign('test_error', mysql_error());
+				}
 		    }
 	    }
     }
