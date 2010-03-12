@@ -55,7 +55,8 @@ abstract class DBBaseQuery
 	//! Return the auto-increment ID from the last insert operation.
 	public function getInsertID()
 	{
-		return $this->dbconn_->id()->insert_id;
+		if(is_null(self::$dbconn)) return null;
+		return self::$dbconn->id()->insert_id;
 	}
 
 	//! Return the execution time of the last query.
