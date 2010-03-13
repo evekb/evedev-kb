@@ -5,6 +5,7 @@ abstract class DBBaseQuery
 {
 	static protected $totalexectime = 0;
 	protected $exectime = 0;
+	protected $executed = false;
 	static protected $dbconn = null;
 	static protected $queryCount = 0;
 	static protected $queryCachedCount = 0;
@@ -72,7 +73,7 @@ abstract class DBBaseQuery
 	//! Return true if a query has been executed or false if none has been.
 	public function executed()
 	{
-		return $this->executed_;
+		return $this->executed;
 	}
 	//! Return the most recent error message for the DB connection.
 	abstract public function getErrorMsg();
