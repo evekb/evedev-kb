@@ -184,6 +184,261 @@ if ($scl_id)
     $llist->addVictimShipClass($scl_id);
 }
 
+$destroyed = $pods = array();
+$pilots = array('a' => array(), 'e' => array());
+$kslist->rewind();
+$classified = false;
+while ($kill = $kslist->getKill())
+{
+    if (in_array($kill->getVictimAllianceID(), $invAll)
+			 || in_array($kill->getVictimCorpID(), $invCorp))
+	{
+		handle_involved($kill, 'e');
+		handle_destroyed($kill, 'a');
+	}
+	else
+	{
+		handle_involved($kill, 'a');
+		handle_destroyed($kill, 'e');
+	}
+    if ($kill->isClassified())
+    {
+        $classified = true;
+    }
+}
+$lslist->rewind();
+while ($kill = $lslist->getKill())
+{
+    if (in_array($kill->getVictimAllianceID(), $victimAll)
+			 || in_array($kill->getVictimCorpID(), $victimCorp))
+	{
+		handle_involved($kill, 'a');
+		handle_destroyed($kill, 'e');
+	}
+	else
+	{
+		handle_involved($kill, 'e');
+		handle_destroyed($kill, 'a');
+	}
+    if ($kill->isClassified())
+    {
+        $classified = true;
+    }
+}
+
+// sort pilot ships, order pods after ships
+foreach ($pilots as $side => $pilot)
+{
+    foreach ($pilot as $id => $kll)
+    {
+        usort($pilots[$side][$id], 'cmp_ts_func');
+    }
+}
+
+// sort arrays, ships with high points first
+uasort($pilots['a'], 'cmp_func');
+uasort($pilots['e'], 'cmp_func');
+
+// now get the pods out and mark the ships the've flown as podded
+foreach ($pilots as $side => $pilot)
+{
+    foreach ($pilot as $id => $kll)
+    {
+        $max = count($kll);
+        for ($i = 0; $i < $max; $i++)
+        {
+            if ($kll[$i]['ship'] == 'Capsule')
+            {
+                if (isset($kll[$i-1]['sid']) && isset($kll[$i]['destroyed']))
+                {
+                    $pilots[$side][$id][$i-1]['podded'] = true;
+                    $pilots[$side][$id][$i-1]['podid'] = $kll[$i]['kll_id'];
+                    unset($pilots[$side][$id][$i]);
+                }
+                else
+                {
+                    // now sort out all pods from pilots who previously flown a real ship
+                    $valid_ship = false;
+                    foreach ($kll as $ship)
+                    {
+                        if ($ship['ship'] != 'Capsule')
+                        {
+                            $valid_ship = true;
+                            break;
+                        }
+                    }
+                    if ($valid_ship)
+                    {
+                        unset($pilots[$side][$id][$i]);
+                    }
+                }
+            }
+        }
+    }
+}
+
+$smarty->assignByRef('pilots_a', $pilots['a']);
+$smarty->assignByRef('pilots_e', $pilots['e']);
+
+$pod = new Ship(6);
+$smarty->assign('podpic', $pod->getImage(32));
+$smarty->assign('friendlycnt', count($pilots['a']));
+$smarty->assign('hostilecnt', count($pilots['e']));
+if ($classified)
+{
+    $smarty->assign('system', 'Classified System');
+}
+else
+{
+	$kill = new Kill($kll_id);
+	if(!isset($_GET['adjacent'])) $smarty->assign('system', $kill->getSolarSystemName());
+	else
+	{
+		$sysnames = array();
+		foreach($systems as $sys_id)
+		{
+			$system = new SolarSystem($sys_id);
+			$sysnames[] = $system->getName();
+		}
+		$smarty->assign('system', implode(', ', $sysnames));
+	}
+}
+$smarty->assign('firstts', $firstts);
+$smarty->assign('lastts', $lastts);
+
+$smarty->assign('overview', $smarty->fetch(get_tpl('battle_overview')));
+
+$kill_summary = new KillSummaryTable($klist, $llist);
+$kill_summary->generate();
+$stats['kills'] = $kill_summary->getTotalKills();
+$stats['losses'] = $kill_summary->getTotalLosses();
+$stats['killISKM'] = round($kill_summary->getTotalKillISK()/1000000, 2);
+$stats['lossISKM'] = round($kill_summary->getTotalLossISK()/1000000, 2);
+$stats['killISKB'] = round($stats['killISKM']/1000, 2);
+$stats['lossISKB'] = round($stats['lossISKM']/1000, 2);
+if ($kill_summary->getTotalKillISK())
+{
+    $stats['efficiency'] = round($kill_summary->getTotalKillISK() / ($kill_summary->getTotalKillISK() + $kill_summary->getTotalLossISK()) * 100, 2);
+}
+else
+{
+    $stats['efficiency'] = 0;
+}
+$smarty->assignByRef('stats', $stats);
+
+if ($kill_summary->getTotalKillISK())
+{
+    $efficiency = round($kill_summary->getTotalKillISK() / ($kill_summary->getTotalKillISK() + $kill_summary->getTotalLossISK()) * 100, 2);
+}
+else
+{
+    $efficiency = 0;
+}
+
+$ktable = new KillListTable($klist);
+$smarty->assign('kills', $ktable->generate());
+
+$ltable = new KillListTable($llist);
+$smarty->assign('losses', $ltable->generate());
+
+$menubox = new Box("Menu");
+$menubox->setIcon("menu-item.gif");
+$menubox->addOption("caption", "View");
+if(!isset($_GET['adjacent'])) $menubox->addOption("link", "Include adjacent", "?a=kill_related&amp;adjacent&amp;kll_id=".$kll_id);
+else $menubox->addOption("link", "Remove adjacent", "?a=kill_related&amp;kll_id=".$kll_id);
+$menubox->addOption("link", "Back to Killmail", "?a=kill_detail&amp;kll_id=".$kll_id);
+$menubox->addOption("link", "Kills &amp; losses", "?a=kill_related&amp;kll_id=".$kll_id);
+$page->addContext($menubox->generate());
+
+//$page->setContent($html);
+$page->setContent($smarty->fetch(get_tpl('kill_related')));
+$page->generate();
+
+function cmp_func($a, $b)
+{
+    // select the biggest fish of that pilot
+    $t_scl = 0;
+    foreach ($a as $i => $ai)
+    {
+        if ($ai['scl'] > $t_scl)
+        {
+            $t_scl = $ai['scl'];
+            $cur_i = $i;
+        }
+    }
+    $a = $a[$cur_i];
+
+    $t_scl = 0;
+    foreach ($b as $i => $bi)
+    {
+        if ($bi['scl'] > $t_scl)
+        {
+            $t_scl = $bi['scl'];
+            $cur_i = $i;
+        }
+    }
+    $b = $b[$cur_i];
+
+    if ($a['scl'] > $b['scl'])
+    {
+        return -1;
+    }
+    // sort after points, shipname, pilotname
+    elseif ($a['scl'] == $b['scl'])
+    {
+        if ($a['ship'] == $b['ship'])
+        {
+            if ($a['name'] > $b['name'])
+            {
+                return 1;
+            }
+            return -1;
+        }
+        elseif ($a['ship'] > $b['ship'])
+        {
+            return 1;
+        }
+        return -1;
+    }
+    return 1;
+}
+
+function is_destroyed($pilot)
+{
+    global $destroyed;
+
+    if ($result = array_search((string)$pilot, $destroyed))
+    {
+        global $smarty;
+
+        $smarty->assign('kll_id', $result);
+        return true;
+    }
+    return false;
+}
+
+function podded($pilot)
+{
+    global $pods;
+
+    if ($result = array_search((string)$pilot, $pods))
+    {
+        global $smarty;
+
+        $smarty->assign('pod_kll_id', $result);
+        return true;
+    }
+    return false;
+}
+
+function cmp_ts_func($a, $b)
+{
+    if ($a['ts'] < $b['ts'])
+    {
+        return -1;
+    }
+    return 1;
+}
 function handle_involved($kill, $side)
 {
     global $pilots;
@@ -319,240 +574,3 @@ function handle_destroyed($kill, $side)
            'corp' => $kill->getVictimCorpName(), 'alliance' => $kill->getVictimAllianceName(), 'aid' => $kill->getVictimAllianceID(),
            'ship' => $kill->getVictimShipname(), 'sid' => $ship->getID(), 'cid' => $kill->getVictimCorpID(), 'ts' => $ts);
 }
-
-$destroyed = $pods = array();
-$pilots = array('a' => array(), 'e' => array());
-$kslist->rewind();
-$classified = false;
-while ($kill = $kslist->getKill())
-{
-    handle_involved($kill, 'a');
-    handle_destroyed($kill, 'e');
-    if ($kill->isClassified())
-    {
-        $classified = true;
-    }
-}
-$lslist->rewind();
-while ($kill = $lslist->getKill())
-{
-    handle_involved($kill, 'e');
-    handle_destroyed($kill, 'a');
-    if ($kill->isClassified())
-    {
-        $classified = true;
-    }
-}
-function cmp_func($a, $b)
-{
-    // select the biggest fish of that pilot
-    $t_scl = 0;
-    foreach ($a as $i => $ai)
-    {
-        if ($ai['scl'] > $t_scl)
-        {
-            $t_scl = $ai['scl'];
-            $cur_i = $i;
-        }
-    }
-    $a = $a[$cur_i];
-
-    $t_scl = 0;
-    foreach ($b as $i => $bi)
-    {
-        if ($bi['scl'] > $t_scl)
-        {
-            $t_scl = $bi['scl'];
-            $cur_i = $i;
-        }
-    }
-    $b = $b[$cur_i];
-
-    if ($a['scl'] > $b['scl'])
-    {
-        return -1;
-    }
-    // sort after points, shipname, pilotname
-    elseif ($a['scl'] == $b['scl'])
-    {
-        if ($a['ship'] == $b['ship'])
-        {
-            if ($a['name'] > $b['name'])
-            {
-                return 1;
-            }
-            return -1;
-        }
-        elseif ($a['ship'] > $b['ship'])
-        {
-            return 1;
-        }
-        return -1;
-    }
-    return 1;
-}
-
-function is_destroyed($pilot)
-{
-    global $destroyed;
-
-    if ($result = array_search((string)$pilot, $destroyed))
-    {
-        global $smarty;
-
-        $smarty->assign('kll_id', $result);
-        return true;
-    }
-    return false;
-}
-
-function podded($pilot)
-{
-    global $pods;
-
-    if ($result = array_search((string)$pilot, $pods))
-    {
-        global $smarty;
-
-        $smarty->assign('pod_kll_id', $result);
-        return true;
-    }
-    return false;
-}
-
-function cmp_ts_func($a, $b)
-{
-    if ($a['ts'] < $b['ts'])
-    {
-        return -1;
-    }
-    return 1;
-}
-
-// sort pilot ships, order pods after ships
-foreach ($pilots as $side => $pilot)
-{
-    foreach ($pilot as $id => $kll)
-    {
-        usort($pilots[$side][$id], 'cmp_ts_func');
-    }
-}
-
-// sort arrays, ships with high points first
-uasort($pilots['a'], 'cmp_func');
-uasort($pilots['e'], 'cmp_func');
-
-// now get the pods out and mark the ships the've flown as podded
-foreach ($pilots as $side => $pilot)
-{
-    foreach ($pilot as $id => $kll)
-    {
-        $max = count($kll);
-        for ($i = 0; $i < $max; $i++)
-        {
-            if ($kll[$i]['ship'] == 'Capsule')
-            {
-                if (isset($kll[$i-1]['sid']) && isset($kll[$i]['destroyed']))
-                {
-                    $pilots[$side][$id][$i-1]['podded'] = true;
-                    $pilots[$side][$id][$i-1]['podid'] = $kll[$i]['kll_id'];
-                    unset($pilots[$side][$id][$i]);
-                }
-                else
-                {
-                    // now sort out all pods from pilots who previously flown a real ship
-                    $valid_ship = false;
-                    foreach ($kll as $ship)
-                    {
-                        if ($ship['ship'] != 'Capsule')
-                        {
-                            $valid_ship = true;
-                            break;
-                        }
-                    }
-                    if ($valid_ship)
-                    {
-                        unset($pilots[$side][$id][$i]);
-                    }
-                }
-            }
-        }
-    }
-}
-
-$smarty->assign_by_ref('pilots_a', $pilots['a']);
-$smarty->assign_by_ref('pilots_e', $pilots['e']);
-
-$pod = new Ship(6);
-$smarty->assign('podpic', $pod->getImage(32));
-$smarty->assign('friendlycnt', count($pilots['a']));
-$smarty->assign('hostilecnt', count($pilots['e']));
-if ($classified)
-{
-    $smarty->assign('system', 'Classified System');
-}
-else
-{
-	$kill = new Kill($kll_id);
-	if(!isset($_GET['adjacent'])) $smarty->assign('system', $kill->getSolarSystemName());
-	else
-	{
-		$sysnames = array();
-		foreach($systems as $sys_id)
-		{
-			$system = new SolarSystem($sys_id);
-			$sysnames[] = $system->getName();
-		}
-		$smarty->assign('system', implode(', ', $sysnames));
-	}
-}
-$smarty->assign('firstts', $firstts);
-$smarty->assign('lastts', $lastts);
-
-$smarty->assign('overview', $smarty->fetch(get_tpl('battle_overview')));
-
-$kill_summary = new KillSummaryTable($klist, $llist);
-$kill_summary->generate();
-$stats['kills'] = $kill_summary->getTotalKills();
-$stats['losses'] = $kill_summary->getTotalLosses();
-$stats['killISKM'] = round($kill_summary->getTotalKillISK()/1000000, 2);
-$stats['lossISKM'] = round($kill_summary->getTotalLossISK()/1000000, 2);
-$stats['killISKB'] = round($stats['killISKM']/1000, 2);
-$stats['lossISKB'] = round($stats['lossISKM']/1000, 2);
-if ($kill_summary->getTotalKillISK())
-{
-    $stats['efficiency'] = round($kill_summary->getTotalKillISK() / ($kill_summary->getTotalKillISK() + $kill_summary->getTotalLossISK()) * 100, 2);
-}
-else
-{
-    $stats['efficiency'] = 0;
-}
-$smarty->assign_by_ref('stats', $stats);
-
-if ($kill_summary->getTotalKillISK())
-{
-    $efficiency = round($kill_summary->getTotalKillISK() / ($kill_summary->getTotalKillISK() + $kill_summary->getTotalLossISK()) * 100, 2);
-}
-else
-{
-    $efficiency = 0;
-}
-
-$ktable = new KillListTable($klist);
-$smarty->assign('kills', $ktable->generate());
-
-$ltable = new KillListTable($llist);
-$smarty->assign('losses', $ltable->generate());
-
-$menubox = new Box("Menu");
-$menubox->setIcon("menu-item.gif");
-$menubox->addOption("caption", "View");
-if(!isset($_GET['adjacent'])) $menubox->addOption("link", "Include adjacent", "?a=kill_related&amp;adjacent&amp;kll_id=".$kll_id);
-else $menubox->addOption("link", "Remove adjacent", "?a=kill_related&amp;kll_id=".$kll_id);
-$menubox->addOption("link", "Back to Killmail", "?a=kill_detail&amp;kll_id=".$kll_id);
-$menubox->addOption("link", "Kills &amp; losses", "?a=kill_related&amp;kll_id=".$kll_id);
-$page->addContext($menubox->generate());
-
-//$page->setContent($html);
-$page->setContent($smarty->fetch(get_tpl('kill_related')));
-$page->generate();
