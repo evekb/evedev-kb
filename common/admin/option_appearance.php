@@ -184,26 +184,19 @@ class admin_appearance
         $dir = "banner/";
         if (is_dir($dir))
         {
-            if ($dh = opendir($dir))
+            if ($dh = scandir($dir))
             {
-                while (($file = readdir($dh)) !== false)
+                foreach($dh as $file)
                 {
                     $file = substr($file, 0);
                     if (!is_dir($dir.$file))
                     {
-                        if (config::get('style_banner') == $file)
-                        {
-                            $state = 1;
-                        }
-                        else
-                        {
-                            $state = 0;
-                        }
+                        if (config::get('style_banner') == $file) $state = 1;
+                        else $state = 0;
 
                         $options[] = array('value' => $file, 'descr' => $file, 'state' => $state);
                     }
                 }
-                closedir($dh);
             }
         }
         return $options;
@@ -214,32 +207,25 @@ class admin_appearance
 	//! \return HTML for the style selection dropdown list.
     function createSelectStyle()
     {
+		$options = array();
         $dir = "themes/".config::get('theme_name')."/";
+
         if (is_dir($dir))
         {
-            if ($dh = opendir($dir))
+            if ($dh = scandir($dir))
             {
-                while (($file = readdir($dh)) !== false)
+                foreach($dh as $file)
                 {
                     if (!is_dir($dir.$file))
                     {
-                        if (substr($file, -4) != ".css")
-                        {
-                            continue;
-                        }
-                        if (config::get('style_name').'.css' == $file)
-                        {
-                            $state = 1;
-                        }
-                        else
-                        {
-                            $state = 0;
-                        }
+                        if (substr($file, -4) != ".css") continue;
+
+                        if (config::get('style_name').'.css' == $file) $state = 1;
+                        else $state = 0;
 
                         $options[] = array('value' => substr($file,0,-4), 'descr' => substr($file,0,-4), 'state' => $state);
                     }
                 }
-                closedir($dh);
             }
         }
         return $options;
@@ -249,32 +235,25 @@ class admin_appearance
 	//! \return HTML for the theme selection dropdown list.
 	function createSelectTheme()
     {
+		$options = array();
         $dir = "themes/";
+
         if (is_dir($dir))
         {
-            if ($dh = opendir($dir))
+            if ($dh = scandir($dir))
             {
-                while (($file = readdir($dh)) !== false)
+                foreach($dh as $file)
                 {
                     if (is_dir($dir.$file))
                     {
                         if ($file == "." || $file == ".." || $file == ".svn")
-                        {
                             continue;
-                        }
-                        if (config::get('theme_name') == $file)
-                        {
-                            $state = 1;
-                        }
-                        else
-                        {
-                            $state = 0;
-                        }
+                        if (config::get('theme_name') == $file) $state = 1;
+                        else $state = 0;
 
                         $options[] = array('value' => $file, 'descr' => $file, 'state' => $state);
                     }
                 }
-                closedir($dh);
             }
         }
         return $options;
@@ -299,7 +278,7 @@ class admin_appearance
 		$smarty->assign('theme_url', config::get('cfg_kbhost').'/themes/'.$themename);
 		$smarty->template_dir = './themes/'.$themename.'/templates';
 		$smarty->compile_dir = KB_CACHEDIR.'/templates_c/'.$themename.'/';
-		admin_appearance::removeOld(0, KB_CACHEDIR.'/templates_c', true);
+		admin_appearance::removeOld(0, KB_CACHEDIR.'/templates_c/', true);
 	}
 	//! Updates style before page is displayed.
 	function changeStyle()
@@ -350,6 +329,7 @@ class admin_appearance
 	 */
 	function removeOld($hours, $dir, $recurse = false)
 	{
+		$del = 0;
 		if(!session::isAdmin()) return false;
 		if(strpos($dir, '.') !== false) return false;
 		if(!is_dir($dir)) return false;
