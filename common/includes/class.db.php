@@ -48,7 +48,6 @@ class DBNormalQuery extends DBBaseQuery
 	//! Prepare a connection for a new mysqli query.
 	function DBNormalQuery()
 	{
-		$this->executed_ = false;
 		self::$dbconn = new DBConnection();
 	}
 
@@ -87,7 +86,7 @@ class DBNormalQuery extends DBBaseQuery
 
 		$this->exectime = strtok(microtime(), ' ') + strtok('') - $t1;
 		self::$totalexectime += $this->exectime;
-		$this->executed_ = true;
+		$this->executed = true;
 
 		if(defined('KB_PROFILE')) DBDebug::profile($sql, $this->exectime);
 
