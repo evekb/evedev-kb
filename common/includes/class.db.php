@@ -115,7 +115,7 @@ class DBNormalQuery extends DBBaseQuery
 	//! Reset list of results to return the first row from the last query.
 	function rewind()
 	{
-		if(!is_null($this->resid_)) @mysqli_data_seek($this->resid_, 0);
+		if(!is_null($this->resid)) @mysqli_data_seek($this->resid, 0);
 	}
 	//! Return the auto-increment ID from the last insert operation.
 	function getInsertID()
