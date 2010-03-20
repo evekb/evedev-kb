@@ -1,4 +1,5 @@
 <?php
+require_once('class.dbconnection.php');
 
 //! Base DB query class.
 abstract class DBBaseQuery
@@ -74,6 +75,12 @@ abstract class DBBaseQuery
 	public function executed()
 	{
 		return $this->executed;
+	}
+	//! Return an escaped string for use in a query.
+	public static function escape($string)
+	{
+		if(is_null(self::$dbconn)) self::$dbconn = new DBConnection();
+		return self::$dbconn->id()->real_escape_string($string);
 	}
 	//! Return the most recent error message for the DB connection.
 	abstract public function getErrorMsg();
