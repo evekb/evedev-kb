@@ -32,7 +32,7 @@ class Smarty_Internal_Template extends Smarty_Internal_Data {
     public $resource_name = null;
     public $resource_object = null;
     private $isExisting = null;
-    public $templateUid = '';
+    public $templateUid = ''; 
     // Template source
     public $template_filepath = null;
     public $template_source = null;
@@ -68,7 +68,7 @@ class Smarty_Internal_Template extends Smarty_Internal_Data {
     // storage for block data
     public $block_data = array(); 
     // required plugins
-    public $required_plugins = array('compiled' => array(), 'cache' => array());
+    public $required_plugins = array('compiled' => array(), 'nocache' => array());
 
     /**
     * Create template data object
@@ -104,7 +104,7 @@ class Smarty_Internal_Template extends Smarty_Internal_Data {
         } 
         // load cache resource
         if (!$this->resource_object->isEvaluated && ($this->caching == SMARTY_CACHING_LIFETIME_CURRENT || $this->caching == SMARTY_CACHING_LIFETIME_SAVED)) {
-            $this->cache_resource_object = $this->smarty->loadCacheResource();
+            $this->cache_resource_object = $this->smarty->cache->loadResource();
         } 
     } 
 
@@ -260,7 +260,7 @@ class Smarty_Internal_Template extends Smarty_Internal_Data {
             // compiling succeded
             if (!$this->resource_object->isEvaluated) {
                 // write compiled template
-                Smarty_Internal_Write_File::writeFile($this->getCompiledFilepath(), $this->compiled_template, $this->smarty); 
+                Smarty_Internal_Write_File::writeFile($this->getCompiledFilepath(), $this->compiled_template, $this->smarty);
             } 
         } else {
             // error compiling template
@@ -336,9 +336,12 @@ class Smarty_Internal_Template extends Smarty_Internal_Data {
     {
         if ($this->isCached === null) {
             $this->isCached = false;
-            if (($this->caching == SMARTY_CACHING_LIFETIME_CURRENT || $this->caching == SMARTY_CACHING_LIFETIME_SAVED) && !$this->resource_object->isEvaluated && !$this->force_compile && !$this->force_cache) {
+            if (($this->caching == SMARTY_CACHING_LIFETIME_CURRENT || $this->caching == SMARTY_CACHING_LIFETIME_SAVED) && !$this->resource_object->isEvaluated) {
+                if (!isset($this->cache_resource_object)) {
+                    $this->cache_resource_object = $this->smarty->loadCacheResource();
+                } 
                 $cachedTimestamp = $this->getCachedTimestamp();
-                if ($cachedTimestamp === false) {
+                if ($cachedTimestamp === false || $this->force_compile || $this->force_cache) {
                     return $this->isCached;
                 } 
                 if ($this->caching === SMARTY_CACHING_LIFETIME_SAVED || ($this->caching == SMARTY_CACHING_LIFETIME_CURRENT && (time() <= ($cachedTimestamp + $this->cache_lifetime) || $this->cache_lifetime < 0))) {
@@ -448,8 +451,13 @@ class Smarty_Internal_Template extends Smarty_Internal_Data {
         } 
         if ($this->parent instanceof Smarty_Template or $this->parent instanceof Smarty_Internal_Template) {
             $this->parent->properties['file_dependency'] = array_merge($this->parent->properties['file_dependency'], $this->properties['file_dependency']);
-            $this->parent->required_plugins['compiled'] = array_merge($this->parent->required_plugins['compiled'], $this->required_plugins['compiled']);
-            $this->parent->required_plugins['cache'] = array_merge($this->parent->required_plugins['cache'], $this->required_plugins['cache']);
+            foreach($this->required_plugins as $code => $tmp1) {
+                foreach($tmp1 as $name => $tmp) {
+                    foreach($tmp as $type => $data) {
+                        $this->parent->required_plugins[$code][$name][$type] = $data;
+                    } 
+                } 
+            } 
         } 
         if ($this->smarty->debugging) {
             Smarty_Internal_Debug::end_render($this);
@@ -481,7 +489,7 @@ class Smarty_Internal_Template extends Smarty_Internal_Data {
             eval("?>" . $output);
             $this->rendered_content = ob_get_clean(); 
             // write cache file content
-            $this->writeCachedContent($output); 
+            $this->writeCachedContent($output);
             if ($this->smarty->debugging) {
                 Smarty_Internal_Debug::end_cache($this);
             } 
@@ -643,7 +651,7 @@ class Smarty_Internal_Template extends Smarty_Internal_Data {
     * @param string $resource_type return resource type
     * @param string $resource_name return resource name
     */
-    private function getResourceTypeName ($template_resource, &$resource_type, &$resource_name)
+    protected function getResourceTypeName ($template_resource, &$resource_type, &$resource_name)
     {
         if (strpos($template_resource, ':') === false) {
             // no resource given, use default
@@ -657,7 +665,7 @@ class Smarty_Internal_Template extends Smarty_Internal_Data {
                 $resource_type = 'file';
                 $resource_name = $template_resource;
             } else {
-                $resource_type = strtolower($resource_type);
+                $resource_type = $resource_type;
             } 
         } 
     } 
@@ -668,7 +676,7 @@ class Smarty_Internal_Template extends Smarty_Internal_Data {
     * @param string $resource_type template resource type
     * @return object resource handler object
     */
-    private function loadTemplateResourceHandler ($resource_type)
+    protected function loadTemplateResourceHandler ($resource_type)
     { 
         // try registered resource
         if (isset($this->smarty->_plugins['resource'][$resource_type])) {
@@ -719,18 +727,20 @@ class Smarty_Internal_Template extends Smarty_Internal_Data {
         if (!$cache) {
             if (!empty($this->required_plugins['compiled'])) {
                 $plugins_string = '<?php ';
-                foreach($this->required_plugins['compiled'] as $plugin_name => $data) {
-                    $plugin = 'smarty_' . $data['type'] . '_' . $plugin_name;
-                    $plugins_string .= "if (!is_callable('{$plugin}')) include '{$data['file']}';\n";
+                foreach($this->required_plugins['compiled'] as $tmp) {
+                    foreach($tmp as $data) {
+                        $plugins_string .= "if (!is_callable('{$data['function']}')) include '{$data['file']}';\n";
+                    } 
                 } 
                 $plugins_string .= '?>';
             } 
-            if (!empty($this->required_plugins['cache'])) {
+            if (!empty($this->required_plugins['nocache'])) {
                 $this->has_nocache_code = true;
                 $plugins_string .= "<?php echo '/*%%SmartyNocache:{$this->properties['nocache_hash']}%%*/<?php ";
-                foreach($this->required_plugins['cache'] as $plugin_name => $data) {
-                    $plugin = 'smarty_' . $data['type'] . '_' . $plugin_name;
-                    $plugins_string .= "if (!is_callable(\'{$plugin}\')) include \'{$data['file']}\';\n";
+                foreach($this->required_plugins['nocache'] as $tmp) {
+                    foreach($tmp as $data) {
+                        $plugins_string .= "if (!is_callable(\'{$data['function']}\')) include \'{$data['file']}\';\n";
+                    } 
                 } 
                 $plugins_string .= "?>/*/%%SmartyNocache:{$this->properties['nocache_hash']}%%*/';?>\n";
             } 
@@ -791,13 +801,6 @@ class Smarty_Internal_Template extends Smarty_Internal_Data {
     public function fetch ()
     {
         return $this->smarty->fetch($this);
-    } 
-    /**
-    * wrapper for is_cached
-    */
-    public function is_cached ()
-    {
-        return $this->iscached($this);
     } 
 } 
 
