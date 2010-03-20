@@ -34,11 +34,16 @@ $invCorp = array();
 // the board has an owner swap sides if necessary so board owner is the killer
 foreach ($kill->involvedparties_ as $inv)
 {
-	if($inv->getAlliance()->getName() != 'None'
-            && $inv->getAllianceID() != $kill->getVictimAllianceID())
-                $invAll[$inv->getAllianceID()] = $inv->getAllianceID();
+	if($inv->getAlliance()->getName() != 'None')
+	{
+		if($inv->getAllianceID() != $kill->getVictimAllianceID())
+		{
+			$invAll[$inv->getAllianceID()] = $inv->getAllianceID();
+		}
+	}
 	elseif($inv->getCorpID() != $kill->getVictimCorpID())
-            $invCorp[$inv->getCorpID()] = $inv->getCorpID();
+		$invCorp[$inv->getCorpID()] = $inv->getCorpID();
+
 }
 if($kill->getVictimAllianceName() != 'None' )
 	$victimAll[$kill->getVictimAllianceID()] = $kill->getVictimAllianceID();
