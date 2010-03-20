@@ -21,7 +21,7 @@ class options
 	// field = generic, subfield = look and feel, name = banner, type = select
 	public static function add($field, $subfield, $set, $description, $name, $type, $buildcallback = '', $onchange = '', $hint = '')
 	{
-		self::$data[$field][$subfield][$set][] = array('descr' => $description, 'name' => $name, 'type' => $type,
+		self::$data[$field][$subfield][$set][$name] = array('descr' => $description, 'name' => $name, 'type' => $type,
 			'callback' => $buildcallback,
 			'onchange' => $onchange, 'hint' => $hint);
 	}
@@ -31,7 +31,7 @@ class options
 	{
 		global $options_faddcat;
 
-		self::$data[$options_faddcat[0]][$options_faddcat[1]][$options_faddcat[2]][] = array('descr' => $description, 'name' => $name, 'type' => $type,
+		self::$data[$options_faddcat[0]][$options_faddcat[1]][$options_faddcat[2]][$name] = array('descr' => $description, 'name' => $name, 'type' => $type,
 			'callback' => $buildcallback,
 			'onchange' => $onchange, 'hint' => $hint);
 	}
@@ -167,19 +167,19 @@ class options
 
 			$option = call_user_func($element['callback']);
 			$smarty->assign('options', $option);
-			$smarty->assign_by_ref('opt', $element);
+			$smarty->assignByRef('opt', $element);
 			return $smarty->fetch(get_tpl('admin_options_select'));
 		}
 
 		if ($element['type'] == 'checkbox')
 		{
-			$smarty->assign_by_ref('opt', $element);
+			$smarty->assignByRef('opt', $element);
 			return $smarty->fetch(get_tpl('admin_options_checkbox'));
 		}
 
 		if ($element['type'] == 'edit')
 		{
-			$smarty->assign_by_ref('opt', $element);
+			$smarty->assignByRef('opt', $element);
 
 			if (!$options['size'])
 			{
@@ -189,13 +189,13 @@ class options
 			{
 				$options['maxlength'] = 80;
 			}
-			$smarty->assign_by_ref('options', $options);
+			$smarty->assignByRef('options', $options);
 			return $smarty->fetch(get_tpl('admin_options_edit'));
 		}
 
 		if ($element['type'] == 'password')
 		{
-			$smarty->assign_by_ref('opt', $element);
+			$smarty->assignByRef('opt', $element);
 
 			if (!$options['size'])
 			{
@@ -205,13 +205,13 @@ class options
 			{
 				$options['maxlength'] = 80;
 			}
-			$smarty->assign_by_ref('options', $options);
+			$smarty->assignByRef('options', $options);
 			return $smarty->fetch(get_tpl('admin_options_password'));
 		}
 
 		if ($element['type'] == 'textarea')
 		{
-			$smarty->assign_by_ref('opt', $element);
+			$smarty->assignByRef('opt', $element);
 
 			if (!$options['cols'])
 			{
@@ -221,7 +221,7 @@ class options
 			{
 				$options['rows'] = 24;
 			}
-			$smarty->assign_by_ref('options', $options);
+			$smarty->assignByRef('options', $options);
 			return $smarty->fetch(get_tpl('admin_options_textarea'));
 		}
 
@@ -235,7 +235,7 @@ class options
 			}
 
 			$element['html'] = call_user_func($element['callback']);
-			$smarty->assign_by_ref('opt', $element);
+			$smarty->assignByRef('opt', $element);
 			return $smarty->fetch(get_tpl('admin_options_custom'));
 		}
 
@@ -272,25 +272,16 @@ class options
 		return $menubox->generate();
 	}
 
-	// private data storage to store all options
-	public static function &_getData()
-	{
-		return self::$data;
-	}
-
 	// Return the value of an option before it was changed
 	public static function getPrevious($key)
 	{
 		$current = &self::$data[urldecode($_POST['field'])][urldecode($_POST['sub'])];
-		foreach ($current as &$elements)
+		foreach ($current as $element)
 		{
-			foreach ($elements as &$element)
+			if (isset($element[$key]) && $element[$key]['name'] == $key)
 			{
-				if ($element['name'] == $key)
-				{
-					if(isset($element['previous'])) return $element['previous'];
-					else return config::get($element['name']);
-				}
+				if(isset($element[$key]['previous'])) return $element[$key]['previous'];
+				else return config::get($element[$key]['name']);
 			}
 		}
 		return '';

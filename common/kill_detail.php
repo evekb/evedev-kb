@@ -399,7 +399,7 @@ class pKillDetail extends pageAssembly
 			$this->involved[$i]['alliURL']   ="?a=alliance_detail&amp;all_id=" . $alliance->getID();
 			$this->involved[$i]['alliName']  =$alliance->getName();
 			$this->involved[$i]['shipName']  =$ship->getName();
-			$this->involved[$i]['shipID']    =$ship->externalid_;
+			$this->involved[$i]['shipID']    =$ship->getExternalID();
 			$this->involved[$i]['damageDone']=$inv->dmgdone_;
 			$shipclass                 =$ship->getClass();
 
@@ -518,8 +518,8 @@ class pKillDetail extends pageAssembly
 	function involvedSummary()
 	{
 		global $smarty;
-		$smarty->assign_by_ref('invAllies', $this->InvAllies);
-		$smarty->assign_by_ref('invShips', $this->InvShips);
+		$smarty->assignByRef('invAllies', $this->InvAllies);
+		$smarty->assignByRef('invShips', $this->InvShips);
 		$smarty->assign('alliesCount', count($this->InvAllies));
 		if($this->ownKill) $smarty->assign('kill',true);
 		else $smarty->assign('kill',false);
@@ -531,7 +531,7 @@ class pKillDetail extends pageAssembly
 	function involved()
 	{
 		global $smarty;
-		$smarty->assign_by_ref('involved', $this->involved);
+		$smarty->assignByRef('involved', $this->involved);
 		return $smarty->fetch(get_tpl('kill_detail_inv'));
 	}
 
@@ -591,7 +591,7 @@ class pKillDetail extends pageAssembly
 
 			$comments = new Comments($this->kll_id);
 
-			$smarty->assign_by_ref('page', $this->page);
+			$smarty->assignByRef('page', $this->page);
 
 			return $this->commenthtml.$comments->getComments();
 		}
@@ -655,10 +655,10 @@ class pKillDetail extends pageAssembly
 			'text'  => 'Fitted - Subsystems',
 			'items' => array()
 		);
-		$smarty->assign_by_ref('slots', $slot_array);
+		$smarty->assignByRef('slots', $slot_array);
 
-		$smarty->assign_by_ref('destroyed', $this->dest_array);
-		$smarty->assign_by_ref('dropped', $this->drop_array);
+		$smarty->assignByRef('destroyed', $this->dest_array);
+		$smarty->assignByRef('dropped', $this->drop_array);
 
 		if ($this->TotalValue >= 0)
 		{
@@ -698,15 +698,15 @@ class pKillDetail extends pageAssembly
 		$smarty->assign('victimShipClass', $ship->getClass());
 		$smarty->assign('victimShipImage', $ship->getImage(64));
 		$smarty->assign('victimShipName', $ship->getName());
-		$smarty->assign('victimShipID', $ship->externalid_);
+		$smarty->assign('victimShipID', $ship->getExternalID());
 		$smarty->assign('victimShipClassName', $shipclass->getName());
 		if($this->page->isAdmin()) $smarty->assign('ship', $ship);
 
 		include_once('common/includes/class.dogma.php');
 
-		$ssc=new dogma($ship->externalid_);
+		$ssc=new dogma($ship->getExternalID());
 
-		$smarty->assign_by_ref('ssc', $ssc);
+		$smarty->assignByRef('ssc', $ssc);
 
 		if ($this->kill->isClassified())
 		{
@@ -936,13 +936,13 @@ class pKillDetail extends pageAssembly
 				}
 			}
 		}
-		$smarty->assign_by_ref('fitting_high', $this->fitting_array[1]);
-		$smarty->assign_by_ref('fitting_med', $this->fitting_array[2]);
-		$smarty->assign_by_ref('fitting_low', $this->fitting_array[3]);
-		$smarty->assign_by_ref('fitting_rig', $this->fitting_array[5]);
-		$smarty->assign_by_ref('fitting_sub', $this->fitting_array[7]);
-		$smarty->assign_by_ref('fitting_ammo_high', $hiammo);
-		$smarty->assign_by_ref('fitting_ammo_mid', $midammo);
+		$smarty->assignByRef('fitting_high', $this->fitting_array[1]);
+		$smarty->assignByRef('fitting_med', $this->fitting_array[2]);
+		$smarty->assignByRef('fitting_low', $this->fitting_array[3]);
+		$smarty->assignByRef('fitting_rig', $this->fitting_array[5]);
+		$smarty->assignByRef('fitting_sub', $this->fitting_array[7]);
+		$smarty->assignByRef('fitting_ammo_high', $hiammo);
+		$smarty->assignByRef('fitting_ammo_mid', $midammo);
 		$smarty->assign('showammo', config::get('fp_showammo'));
 
 		if(config::get('kd_verify'))

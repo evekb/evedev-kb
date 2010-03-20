@@ -95,8 +95,8 @@ $options[2]['color'][] = array('descr' => 'Backgroundcolor', 'name' => 'map_con_
 $options[2]['color'][] = array('descr' => 'Normalcolor', 'name' => 'map_con_cl_normal');
 $options[2]['color'][] = array('descr' => 'Highlightcolor', 'name' => 'map_con_cl_hl');
 
-$smarty->assign_by_ref('config', $config);
-$smarty->assign_by_ref('options', $options);
+$smarty->assignByRef('config', $config);
+$smarty->assignByRef('options', $options);
 $html = $smarty->fetch(get_tpl('admin_mapoptions'));
 
 $page->addContext($menubox->generate());

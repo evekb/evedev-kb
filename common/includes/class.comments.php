@@ -34,7 +34,7 @@ class Comments
             $this->comments_[] = array('time' => $row['posttime'], 'name' => $row['name'],
               'comment' => stripslashes($row['comment']), 'id' => $row['id'], 'ip' => $row['ip']);
         } 
-        $smarty->assign_by_ref('comments', $this->comments_);
+        $smarty->assignByRef('comments', $this->comments_);
 		$smarty->assign('norep', time()%3700);
         return $smarty->fetch(get_tpl('block_comments')); 
     } 

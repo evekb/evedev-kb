@@ -50,8 +50,8 @@ class pAbout extends pageAssembly
 		sort($developer);
 		sort($contributor);
 
-		$this->smarty->assign_by_ref('current_developer', $currentDeveloper);
-		$this->smarty->assign_by_ref('developer', $developer);
+		$this->smarty->assignByRef('current_developer', $currentDeveloper);
+		$this->smarty->assignByRef('developer', $developer);
 		$this->smarty->assign('contributor', $contributor);
 		if(SVN_REV != "") $svn_rev = " rev ".SVN_REV;
 		else $svn_rev = "";

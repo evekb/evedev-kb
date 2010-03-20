@@ -130,7 +130,7 @@ class pSearch extends pageAssembly
 						die;
 					}
 				}
-				$smarty->assign_by_ref('results', $results);
+				$smarty->assignByRef('results', $results);
 			}
 		}
 		return '';

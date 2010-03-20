@@ -22,7 +22,7 @@ $page = new Page('Item details - '.$item->get('typeName'));
 $page->addHeader('<meta name="robots" content="noindex, nofollow" />');
 #$dump = var_export($item, true);
 #$smarty->assign('dump', $dump);
-$smarty->assign_by_ref('item', $item);
+$smarty->assignByRef('item', $item);
 
 if ($item->get('itt_cat') == 6)
 {

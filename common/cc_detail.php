@@ -165,7 +165,7 @@ class pContractDetail extends pageAssembly
 					$curtargets['bar'] = $bar->generate();
 					$targets[] = $curtargets;
 				}
-				$smarty->assign_by_ref('targets', $targets);
+				$smarty->assignByRef('targets', $targets);
 				$html .= $smarty->fetch(get_tpl('cc_detail_lists'));
 				break;
 			case "recent_activity":

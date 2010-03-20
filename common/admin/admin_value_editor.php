@@ -57,7 +57,7 @@ while ($row = $qry->getRow())
 {
     $results[] = array('id' => $row['typeID'], 'name' => $row['typeName'], 'value' => $row['price']);
 }
-$smarty->assign_by_ref('results', $results);
+$smarty->assignByRef('results', $results);
 
 // Stuff we don't want to display.
 // There's a lot more than this, but the item DB has quite a few items and I haven't filtered it all out yet.
@@ -82,13 +82,13 @@ while ($row = $qry->getRow())
 }
 
 // Chuck it all at smarty
-$smarty->assign_by_ref('item_types', $types);
+$smarty->assignByRef('item_types', $types);
 $smarty->assign('mod', 'value_editor');
-$smarty->assign_by_ref('eve_central_exists', $eve_central_exists);
-$smarty->assign_by_ref('type', $type);
+$smarty->assign('eve_central_exists', $eve_central_exists);
+$smarty->assign('type', $type);
 
 $page->addContext($menubox->generate());
 // override the smarty path, get the mod template, set it back.
 $page->setContent($smarty->fetch(get_tpl('value_editor')));
 $page->generate();
-?>
+

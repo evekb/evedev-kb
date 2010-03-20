@@ -120,7 +120,7 @@ $tklist->generate();
 $tkbox = new AwardBox($tklist, "Top ISK killers", "capital shipkills", "kills", "wing2");
 $awardboxes[] = $tkbox->generate();
 
-$smarty->assign_by_ref('awardboxes', $awardboxes);
+$smarty->assignByRef('awardboxes', $awardboxes);
 $smarty->assign('month', $monthname);
 $smarty->assign('year', $year);
 $smarty->assign('boxcount', count($awardboxes));

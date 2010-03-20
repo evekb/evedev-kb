@@ -139,7 +139,7 @@ class KillListTable
 			$kl[] = array('kills' => $kills, 'date' => strtotime($prevdate));
 		}
 
-		$smarty->assign_by_ref('killlist', $kl);
+		$smarty->assignByRef('killlist', $kl);
 		return $smarty->fetch(get_tpl('killlisttable'));
 	}
 }

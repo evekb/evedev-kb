@@ -256,7 +256,7 @@ $smarty->assign('theme_url', THEME_URL);
 $smarty->assign('style', $stylename);
 $smarty->assign('img_url', IMG_URL);
 $smarty->assign('kb_host', KB_HOST);
-$smarty->assign_by_ref('config', $config);
+$smarty->assignByRef('config', $config);
 $smarty->assign('is_IGB', IS_IGB);
 
 // Set the name of the board owner.

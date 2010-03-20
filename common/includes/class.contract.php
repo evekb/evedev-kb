@@ -6,35 +6,46 @@ require_once("class.pagesplitter.php");
 
 class Contract
 {
+	private $alliances = array();
+	private $corps = array();
+	private $regions = array();
+	private $systems = array();
+	private $ctr_id_ = 0;
+	private $contracttargets_ = array();
+	private $contractpointer_ = 0;
+	private $executed = false;
+	private $klist_ = null;
+	private $llist_ = null;
+	private $ctr_name_ = '';
+	private $ctr_started_ = '';
+	private $ctr_ended_ = '';
+	private $campaign_ = 0;
+
 	function Contract($ctr_id = 0)
 	{
 		$this->ctr_id_ = intval($ctr_id);
-		$this->contracttargets_ = array();
 
 		// overall kill/losslist
 		$this->klist_ = new KillList();
 		$this->llist_ = new KillList();
 		involved::load($this->klist_,'kill');
 		involved::load($this->llist_,'loss');
-		$this->contractpointer_ = 0;
-		$this->qry_ = null;
 	}
 
 	function execQuery()
 	{
-		if ($this->qry_)
+		if ($this->executed)
 			return;
-
-		$this->qry_ = DBFactory::getDBQuery();;
+		$qry = DBFactory::getDBQuery();;
 		// general
 		$sql = "select * from kb3_contracts ctr
                 where ctr.ctr_id = ".$this->ctr_id_;
 
-		$this->qry_ = DBFactory::getDBQuery();;
-		if (!$this->qry_->execute($sql))
-			die($this->qry_->getErrorMsg());
+		if (!$qry->execute($sql))
+			die($qry->getErrorMsg());
+		$this->executed = true;
 
-		$row = $this->qry_->getRow();
+		$row = $qry->getRow();
 		$this->ctr_name_ = $row['ctr_name'];
 		$this->ctr_started_ = $row['ctr_started'];
 		$this->ctr_ended_ = $row['ctr_ended'];
@@ -61,21 +72,25 @@ class Contract
 			{
 				$this->klist_->addVictimCorp($carow['ctd_crp_id']);
 				$this->llist_->addInvolvedCorp($carow['ctd_crp_id']);
+				$this->corps[] = $carow['ctd_crp_id'];
 			}
 			elseif ($carow['ctd_all_id'])
 			{
 				$this->klist_->addVictimAlliance($carow['ctd_all_id']);
 				$this->llist_->addInvolvedAlliance($carow['ctd_all_id']);
+				$this->alliances[] = $carow['ctd_all_id'];
 			}
 			elseif ($carow['ctd_reg_id'])
 			{
 				$this->klist_->addRegion($carow['ctd_reg_id']);
 				$this->llist_->addRegion($carow['ctd_reg_id']);
+				$this->regions[] = $carow['ctd_reg_id'];
 			}
 			elseif ($carow['ctd_sys_id'])
 			{
 				$this->klist_->addSystem($carow['ctd_sys_id']);
 				$this->llist_->addSystem($carow['ctd_sys_id']);
+				$this->systems[] = $carow['ctd_sys_id'];
 			}
 		}
 
@@ -131,13 +146,25 @@ class Contract
 	function getCorps()
 	{
 		$this->execQuery();
-		return $this->corps_;
+		return $this->corps;
 	}
 
 	function getAlliances()
 	{
 		$this->execQuery();
-		return $this->alliances_;
+		return $this->alliances;
+	}
+
+	function getSystems()
+	{
+		$this->execQuery();
+		return $this->systems;
+	}
+
+	function getRegions()
+	{
+		$this->execQuery();
+		return $this->regions;
 	}
 
 	function getKills()
@@ -417,11 +444,13 @@ class ContractTarget
 
 class ContractList
 {
+	public $qry_ = null;
+	private $active_ = "both";
+	private $contractcounter_ = 1;
+
 	function ContractList()
 	{
 		$this->qry_ = DBFactory::getDBQuery();;
-		$this->active_ = "both";
-		$this->contractcounter_ = 1;
 	}
 
 	function execQuery()
@@ -507,27 +536,36 @@ class ContractList
 	{
 		return $this->active_;
 	}
+
+	public function rewind()
+	{
+		$this->contractcounter_ = 1;
+		$this->qry_->rewind();
+	}
 }
 
 class ContractListTable
 {
+	private $contractlist = null;
+	private $paginate = null;
+
 	function ContractListTable($contractlist)
 	{
-		$this->contractlist_ = $contractlist;
+		$this->contractlist = $contractlist;
 	}
 
 	function paginate($paginate, $page = 1)
 	{
 		if (!$page) $page = 1;
-		$this->paginate_ = $paginate;
-		$this->contractlist_->setLimit($paginate);
-		$this->contractlist_->setPage($page);
+		$this->paginate = $paginate;
+		$this->contractlist->setLimit($paginate);
+		$this->contractlist->setPage($page);
 	}
 
 	function getTableStats()
 	{
 		$qry = DBFactory::getDBQuery();;
-		while ($contract = $this->contractlist_->getContract())
+		while ($contract = $this->contractlist->getContract())
 		{
 		// generate all neccessary objects within the contract
 			$contract->execQuery();
@@ -535,99 +573,95 @@ class ContractListTable
 
 			for ($i = 0; $i < 2; $i++)
 			{
-				if ($i == 0)
-				{
-					$list = &$contract->llist_;
-				}
-				else
-				{
-					$list = &$contract->klist_;
-				}
-
 				$sql = 'select count(kll_id) AS ships, sum(kll_isk_loss) as isk from (';
 
-				$invcount = count($list->inv_all_) + count($list->inv_crp_) + count($list->inv_plt_);
+				if($i) $invcount = count($contract->getAlliances()) + count($contract->getCorps());
+				else $invcount = 0;
 				if($invcount > 1) $sql .= 'select distinct kll_id, kll_isk_loss FROM kb3_kills kll ';
 				else $sql .= 'select kll_id, kll_isk_loss FROM kb3_kills kll ';
 
-				if ($list->regions_)
+				if ($contract->getRegions())
 				{
 					$sql .= ' inner join kb3_systems sys on ( sys.sys_id = kll.kll_system_id )
 							inner join kb3_constellations con
 							on ( con.con_id = sys.sys_con_id
-							and con.con_reg_id in ( '.join(',', $list->regions_).' ) )';
+							and con.con_reg_id in ( '.join(',', $contract->getRegions()).' ) )';
 				}
-				if ($list->inv_plt_)
+				if(!$i)
 				{
-					$sql .= ' inner join kb3_inv_detail ind on ( kll.kll_id = ind.ind_kll_id ) ';
+					if ($contract->getCorps() )
+					{
+						$sql .= ' inner join kb3_inv_crp inc on ( kll.kll_id = inc.inc_kll_id ) ';
+					}
+					if ($contract->getAlliances() )
+					{
+						$sql .= ' inner join kb3_inv_all ina on ( kll.kll_id = ina.ina_kll_id ) ';
+					}
 				}
-				if ($list->inv_crp_ )
+				else
 				{
-					$sql .= ' inner join kb3_inv_crp inc on ( kll.kll_id = inc.inc_kll_id ) ';
+					if(PILOT_ID) $sql .= ' inner join kb3_inv_detail ind on ( kll.kll_id = ind.ind_kll_id ) ';
+					else if(CORP_ID) $sql .= ' inner join kb3_inv_crp inc on ( kll.kll_id = inc.inc_kll_id ) ';
+					else if(ALLIANCE_ID) $sql .=' inner join kb3_inv_all ina on ( kll.kll_id = ina.ina_kll_id ) ';
 				}
-				if ($list->inv_all_ )
+				if($contract->getStartDate())
 				{
-					$sql .= ' inner join kb3_inv_all ina on ( kll.kll_id = ina.ina_kll_id ) ';
-				}
-
-				if($list->startDate_)
-				{
-					$sql .= " WHERE kll.kll_timestamp >= '".$list->startDate_."' ";
-					if ($list->inv_plt_)
-						$sql .= " AND ind.ind_timestamp >= '".$list->startDate_."' ";
-					if ($list->inv_crp_ )
-						$sql .= " AND inc.inc_timestamp >= '".$list->startDate_."' ";
-					if ($list->inv_all_ )
-						$sql .= " AND ina.ina_timestamp >= '".$list->startDate_."' ";
+					$sql .= " WHERE kll.kll_timestamp >= '".$contract->getStartDate()."' ";
+					if ($i && $contract->getCorps() )
+						$sql .= " AND inc.inc_timestamp >= '".$contract->getStartDate()."' ";
+					if ($i && $contract->getAlliances() )
+						$sql .= " AND ina.ina_timestamp >= '".$contract->getStartDate()."' ";
 					$sqlwhereop = ' AND ';
 				}
 				else $sqlwhereop = ' WHERE ';
 
 				$tmp = array();
-				if ($list->vic_plt_)
+				if(!$i)
 				{
-					$tmp[] = 'kll.kll_victim_id in ( '.join(',', $list->vic_plt_).' )';
+					if ($contract->getCorps())
+					{
+						$tmp[] = 'inc.inc_crp_id in ( '.join(',', $contract->getCorps()).')';
+					}
+					if ($contract->getAlliances())
+					{
+						$tmp[] = 'ina.ina_all_id in ( '.join(',', $contract->getAlliances()).')';
+					}
+					if (count($tmp))
+					{
+						$sql .= $sqlwhereop.' (';
+						$sql .= join(' or ', $tmp);
+						$sql .= ')';
+						$sqlwhereop = ' AND ';
+					}
+					$tmp = array();
+					if(PILOT_ID) $sql .= 'AND kll.kll_victim_id = '.PILOT_ID." ";
+					else if(CORP_ID) $sql .= 'AND kll.kll_crp_id = '.CORP_ID." ";
+					else if(ALLIANCE_ID) $sql .= ' AND kll.kll_all_id = '.ALLIANCE_ID." ";
 				}
-				if ($list->vic_crp_)
+				else
 				{
-					$tmp[] = 'kll.kll_crp_id in ( '.join(',', $list->vic_crp_).' )';
+					if ($contract->getCorps())
+					{
+						$tmp[] = 'kll.kll_crp_id in ( '.join(',', $contract->getCorps()).' )';
+					}
+					if ($contract->getAlliances())
+					{
+						$tmp[] = 'kll.kll_all_id in ( '.join(',', $contract->getAlliances()).' )';
+					}
+					if (count($tmp))
+					{
+						$sql .= $sqlwhereop.' (';
+						$sql .= join(' or ', $tmp);
+						$sql .= ')';
+						$sqlwhereop = ' AND ';
+					}
+					if(PILOT_ID) $sql .= ' AND ind.ind_plt_id = '.PILOT_ID." ";
+					else if(CORP_ID) $sql .= ' AND inc.inc_crp_id = '.CORP_ID." ";
+					else if(ALLIANCE_ID) $sql .= '  AND ina.ina_all_id = '.ALLIANCE_ID." ";
 				}
-				if ($list->vic_all_)
+				if ($contract->getSystems())
 				{
-					$tmp[] = 'kll.kll_all_id in ( '.join(',', $list->vic_all_).' )';
-				}
-				if (count($tmp))
-				{
-					$sql .= $sqlwhereop.' (';
-					$sql .= join(' or ', $tmp);
-					$sql .= ')';
-					$sqlwhereop = ' AND ';
-				}
-
-				$tmp = array();
-				if ($list->inv_crp_)
-				{
-					$tmp[] = 'inc.inc_crp_id in ( '.join(',', $list->inv_crp_).')';
-				}
-				if ($list->inv_all_)
-				{
-					$tmp[] = 'ina.ina_all_id in ( '.join(',', $list->inv_all_).')';
-				}
-				if ($list->inv_plt_)
-				{
-					$tmp[] = 'ind.ind_plt_id in ( '.join(',', $list->inv_plt_).')';
-				}
-				if (count($tmp))
-				{
-					$sql .= $sqlwhereop.' (';
-					$sql .= join(' or ', $tmp);
-					$sql .= ')';
-					$sqlwhereop = ' AND ';
-				}
-
-				if ($list->systems_)
-				{
-					$sql .= $sqlwhereop.' kll.kll_system_id in ( '.join(',', $list->systems_).')';
+					$sql .= $sqlwhereop.' kll.kll_system_id in ( '.join(',', $contract->getSystems()).')';
 				}
 				$sql .= ') as kb3_shadow';
 				$sql .= " /* contract: getTableStats */";
@@ -656,8 +690,7 @@ class ContractListTable
 			$tbldata[] = array_merge(array('name' => $contract->getName(), 'startdate' => $contract->getStartDate(), 'bar' => $bar->generate(),
 				'enddate' => $contract->getEndDate(), 'efficiency' => $efficiency, 'id' => $contract->getID()), $kdata, $ldata);
 		}
-		$this->contractlist_->contractcounter_ = 1;
-		$this->contractlist_->qry_->rewind();
+		$this->contractlist->rewind();
 		return $tbldata;
 	}
 
@@ -667,9 +700,9 @@ class ContractListTable
 		{
 			global $smarty;
 
-			$smarty->assign('contract_getactive', $this->contractlist_->getActive());
-			$smarty->assign_by_ref('contracts', $table);
-			$pagesplitter = new PageSplitter($this->contractlist_->getCount(), 10);
+			$smarty->assign('contract_getactive', $this->contractlist->getActive());
+			$smarty->assignByRef('contracts', $table);
+			$pagesplitter = new PageSplitter($this->contractlist->getCount(), 10);
 
 			return $smarty->fetch(get_tpl('contractlisttable')).$pagesplitter->generate();
 		}
