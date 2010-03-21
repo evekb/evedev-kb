@@ -607,9 +607,9 @@ class ContractListTable
 				if($contract->getStartDate())
 				{
 					$sql .= " WHERE kll.kll_timestamp >= '".$contract->getStartDate()."' ";
-					if ($i && $contract->getCorps() )
+					if ((!$i && $contract->getCorps()) || ($i && CORP_ID))
 						$sql .= " AND inc.inc_timestamp >= '".$contract->getStartDate()."' ";
-					if ($i && $contract->getAlliances() )
+					if ((!$i && $contract->getAlliances()) && ($i && ALLIANCE_ID))
 						$sql .= " AND ina.ina_timestamp >= '".$contract->getStartDate()."' ";
 					$sqlwhereop = ' AND ';
 				}
