@@ -23,6 +23,7 @@ options::fadd('Allow out-of-game registration', 'user_noigb', 'checkbox');
 
 options::cat('Appearance', 'Front Page', 'Front Page');
 options::fadd('Combine kills and losses', 'show_comb_home', 'checkbox');
+options::fadd('Display region names', 'killlist_regionnames', 'checkbox');
 options::fadd('Display comment count', 'comments_count', 'checkbox');
 options::fadd('Display involved count', 'killlist_involved', 'checkbox');
 options::fadd('Display alliance logos', 'killlist_alogo', 'checkbox');

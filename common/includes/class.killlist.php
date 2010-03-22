@@ -212,7 +212,7 @@ class KillList
 							shp.shp_class, shp.shp_name,
 							shp.shp_externalid, shp.shp_id,
 							scl.scl_id, scl.scl_class, scl.scl_value,
-							sys.sys_name, sys.sys_sec,
+							sys.sys_id, sys.sys_name, sys.sys_sec,
 							fbplt.plt_name as fbplt_name,
 							fbplt.plt_id as fbplt_id,
 							fbplt.plt_externalid as fbplt_externalid,
@@ -541,6 +541,7 @@ class KillList
 
 			$kill = new Kill($row['kll_id']);
 			$kill->setTimeStamp($row['kll_timestamp']);
+			$kill->setSolarSystem(new SolarSystem($row['sys_id']));
 			$kill->setSolarSystemName($row['sys_name']);
 			$kill->setSolarSystemSecurity($row['sys_sec']);
 			$kill->setVictimName($row['plt_name']);

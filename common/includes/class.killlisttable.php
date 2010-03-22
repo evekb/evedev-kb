@@ -73,6 +73,8 @@ class KillListTable
 			$kll['fb'] = $kill->getFBPilotName();
 			$kll['fbcorp'] = $kill->getFBCorpName();
 			$kll['system'] = $kill->getSolarSystemName();
+			if (config::get('killlist_regionnames'))
+				$kll['region'] = $kill->getSystem()->getRegionName();
 			$kll['systemsecurity'] = $kill->getSolarSystemSecurity();
 			$kll['victimid'] = $kill->getVictimID();
 			$kll['victimcorpid'] = $kill->getVictimCorpID();
