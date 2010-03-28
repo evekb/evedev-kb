@@ -1,7 +1,5 @@
 <?php
 
-set_error_handler(array('EDKError', 'handler'),E_ALL & ~(E_STRICT | E_NOTICE | E_DEPRECATED) );
-
 class EDKError
 {
 	public static function handler  ( $errno  , $errstr  , $errfile, $errline, $errcontext)
