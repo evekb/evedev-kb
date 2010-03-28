@@ -4,578 +4,667 @@ require_once('common/includes/class.alliance.php');
 require_once('common/includes/class.killlist.php');
 require_once('common/includes/class.killlisttable.php');
 require_once('common/includes/class.killsummarytable.php');
+require_once('common/includes/class.pageAssembly.php');
 
-$page = new Page('Related kills & losses');
-$page->addHeader('<meta name="robots" content="index, nofollow" />');
-
-$scl_id = intval($_GET['scl_id']);
-if (!$kll_id = intval($_GET['kll_id']))
+class pKillRelated extends pageAssembly
 {
-    echo 'No valid kill id specified';
-    exit;
-}
-$kill = new Kill($kll_id);
-$kill->setDetailedInvolved();
-if(!$kill->exists())
-{
-    echo 'No valid kill id specified';
-    exit;
-}
-if($kill->isClassified())
-{
-	Header("Location: ".KB_HOST."/?a=kill_detail&kll_id=".$kll_id);
-	die();
-}
-$victimAll = array();
-$invAll = array();
-$victimCorp = array();
-$invCorp = array();
-// Find all involved parties not in the same corp/alliance as the victim. If
-// the board has an owner swap sides if necessary so board owner is the killer
-foreach ($kill->involvedparties_ as $inv)
-{
-	if($inv->getAlliance()->getName() != 'None')
+	function __construct()
 	{
-		if($inv->getAllianceID() != $kill->getVictimAllianceID())
+		parent::__construct();
+		if(isset($_GET['kll_id'])) $this->kll_id = intval($_GET['kll_id']);
+		else $this->kll_id = 0;
+		if(isset($_GET['kll_external_id'])) $this->kll_external_id = intval($_GET['kll_external_id']);
+		elseif(isset($_GET['kll_ext_id'])) $this->kll_external_id = intval($_GET['kll_ext_id']);
+		else $this->kll_external_id = 0;
+
+		$this->menuOptions = array();
+
+		$this->queue("start");
+		$this->queue("getInvolved");
+		$this->queue("buildStats");
+		$this->queue("summaryTable");
+		$this->queue("overview");
+		$this->queue("battleStats");
+		$this->queue("killList");
+	}
+
+	//! Reset the assembly object to prepare for creating the context.
+	function context()
+	{
+		parent::__construct();
+		$this->queue("menuSetup");
+		$this->queue("menu");
+	}
+
+	//! Start constructing the page.
+
+	/*! Prepare all the shared variables such as dates and check alliance ID.
+	 *
+	 */
+	function start()
+	{
+		$this->page = new Page('Related kills & losses');
+		$this->page->addHeader('<meta name="robots" content="index, nofollow" />');
+
+		$scl_id = intval($_GET['scl_id']);
+		if (!$this->kll_id = intval($_GET['kll_id']))
 		{
-			$invAll[$inv->getAllianceID()] = $inv->getAllianceID();
+			echo 'No valid kill id specified';
+			exit;
 		}
-	}
-	elseif($inv->getCorpID() != $kill->getVictimCorpID())
-		$invCorp[$inv->getCorpID()] = $inv->getCorpID();
-
-}
-if($kill->getVictimAllianceName() != 'None' )
-	$victimAll[$kill->getVictimAllianceID()] = $kill->getVictimAllianceID();
-else $victimCorp[$kill->getVictimCorpID()] = $kill->getVictimCorpID();
-
-if(CORP_ID == $kill->getVictimCorpID() || ALLIANCE_ID == $kill->getVictimAllianceID())
-{
-	$tmp = $victimAll;
-	$victimAll = $invAll;
-	$invAll = $tmp;
-	$tmp = $victimCorp;
-	$victimCorp = $invCorp;
-	$invCorp = $tmp;
-}
-
-// Check which side board owner is on and make that the kill side. The other
-// side is the loss side. If board owner is on neither then victim is the loss
-// side.
-// Check if killlist works like this.
-//
-// Profit
-
-
-// this is a fast query to get the system and timestamp
-$rqry = DBFactory::getDBQuery();;
-if(isset($_GET['adjacent']))
-	$rsql = 'SELECT kll_timestamp, b.sys_id from kb3_kills
-	join kb3_systems a ON (a.sys_id = kll_system_id)
-	join kb3_system_jumps on (sjp_from = a.sys_eve_id)
-	join kb3_systems b ON (b.sys_eve_id = sjp_to)
-	where kll_id = '.$kll_id.' UNION
-	SELECT kll_timestamp, kll_system_id as sys_id from kb3_kills
-	where kll_id = '.$kll_id;
-else
-	$rsql = 'SELECT kll_timestamp, kll_system_id as sys_id from kb3_kills
-	where kll_id = '.$kll_id;
-$rqry->execute($rsql);
-while($rrow = $rqry->getRow())
-{
-	$systems[] = $rrow['sys_id'];
-	$basetime = $rrow['kll_timestamp'];
-}
-
-        // now we get all kills in that system for +-4 hours
-$query = 'SELECT kll.kll_timestamp AS ts FROM kb3_kills kll WHERE kll.kll_system_id IN ('.implode(',', $systems).
-            ') AND kll.kll_timestamp <= "'.(date('Y-m-d H:i:s',strtotime($basetime) +  4 * 60 * 60)).'"'.
-            ' AND kll.kll_timestamp >= "'.(date('Y-m-d H:i:s',strtotime($basetime) -  4 * 60 * 60)).'"'.
-            ' ORDER BY kll.kll_timestamp ASC';
-$qry = DBFactory::getDBQuery();;
-$qry->execute($query);
-$ts = array();
-while ($row = $qry->getRow())
-{
-    $time = strtotime($row['ts']);
-    $ts[intval(date('H', $time))][] = $row['ts'];
-}
-
-// this tricky thing looks for gaps of more than 1 hour and creates an intersection
-$baseh = date('H', strtotime($basetime));
-$maxc = count($ts);
-$times = array();
-for ($i = 0; $i < $maxc; $i++)
-{
-    $h = ($baseh+$i) % 24;
-    if (!isset($ts[$h]))
-    {
-        break;
-    }
-    foreach ($ts[$h] as $timestamp)
-    {
-        $times[] = $timestamp;
-    }
-}
-for ($i = 0; $i < $maxc; $i++)
-{
-    $h = ($baseh-$i) % 24;
-    if ($h < 0)
-    {
-        $h += 24;
-    }
-    if (!isset($ts[$h]))
-    {
-        break;
-    }
-    foreach ($ts[$h] as $timestamp)
-    {
-        $times[] = $timestamp;
-    }
-}
-unset($ts);
-asort($times);
-
-// we got 2 resulting timestamps
-$firstts = array_shift($times);
-$lastts = array_pop($times);
-
-$kslist = new KillList();
-$kslist->setOrdered(true);
-foreach($systems as $system) $kslist->addSystem($system);
-$kslist->setStartDate($firstts);
-$kslist->setEndDate($lastts);
-//involved::load($kslist,'kill');
-foreach($invCorp as $ic) $kslist->addInvolvedCorp($ic);
-foreach($invAll as $ia) $kslist->addInvolvedAlliance($ia);
-
-$lslist = new KillList();
-$lslist->setOrdered(true);
-foreach($systems as $system) $lslist->addSystem($system);
-$lslist->setStartDate($firstts);
-$lslist->setEndDate($lastts);
-//involved::load($lslist,'loss');
-foreach($invCorp as $ic) $lslist->addVictimCorp($ic);
-foreach($invAll as $ia) $lslist->addVictimAlliance($ia);
-
-$summarytable = new KillSummaryTable($kslist, $lslist);
-$smarty->assign('summarytable', $summarytable->generate());
-
-$klist = new KillList();
-$klist->setOrdered(true);
-$klist->setCountComments(true);
-$klist->setCountInvolved(true);
-foreach($systems as $system) $klist->addSystem($system);
-$klist->setStartDate($firstts);
-$klist->setEndDate($lastts);
-//involved::load($klist,'kill');
-foreach($invCorp as $ic) $klist->addInvolvedCorp($ic);
-foreach($invAll as $ia) $klist->addInvolvedAlliance($ia);
-
-$llist = new KillList();
-$llist->setOrdered(true);
-$llist->setCountComments(true);
-$llist->setCountInvolved(true);
-foreach($systems as $system) $llist->addSystem($system);
-$llist->setStartDate($firstts);
-$llist->setEndDate($lastts);
-//involved::load($llist,'loss');
-foreach($invCorp as $ic) $llist->addVictimCorp($ic);
-foreach($invAll as $ia) $llist->addVictimAlliance($ia);
-
-if ($scl_id)
-{
-    $klist->addVictimShipClass($scl_id);
-    $llist->addVictimShipClass($scl_id);
-}
-
-$destroyed = $pods = array();
-$pilots = array('a' => array(), 'e' => array());
-$kslist->rewind();
-$classified = false;
-while ($kill = $kslist->getKill())
-{
-    if (in_array($kill->getVictimAllianceID(), $invAll)
-			 || in_array($kill->getVictimCorpID(), $invCorp))
-	{
-		handle_involved($kill, 'e');
-		handle_destroyed($kill, 'a');
-	}
-	else
-	{
-		handle_involved($kill, 'a');
-		handle_destroyed($kill, 'e');
-	}
-    if ($kill->isClassified())
-    {
-        $classified = true;
-    }
-}
-$lslist->rewind();
-while ($kill = $lslist->getKill())
-{
-    if (in_array($kill->getVictimAllianceID(), $victimAll)
-			 || in_array($kill->getVictimCorpID(), $victimCorp))
-	{
-		handle_involved($kill, 'a');
-		handle_destroyed($kill, 'e');
-	}
-	else
-	{
-		handle_involved($kill, 'e');
-		handle_destroyed($kill, 'a');
-	}
-    if ($kill->isClassified())
-    {
-        $classified = true;
-    }
-}
-
-// sort pilot ships, order pods after ships
-foreach ($pilots as $side => $pilot)
-{
-    foreach ($pilot as $id => $kll)
-    {
-        usort($pilots[$side][$id], 'cmp_ts_func');
-    }
-}
-
-// sort arrays, ships with high points first
-uasort($pilots['a'], 'cmp_func');
-uasort($pilots['e'], 'cmp_func');
-
-// now get the pods out and mark the ships the've flown as podded
-foreach ($pilots as $side => $pilot)
-{
-    foreach ($pilot as $id => $kll)
-    {
-        $max = count($kll);
-        for ($i = 0; $i < $max; $i++)
-        {
-            if ($kll[$i]['ship'] == 'Capsule')
-            {
-                if (isset($kll[$i-1]['sid']) && isset($kll[$i]['destroyed']))
-                {
-                    $pilots[$side][$id][$i-1]['podded'] = true;
-                    $pilots[$side][$id][$i-1]['podid'] = $kll[$i]['kll_id'];
-                    unset($pilots[$side][$id][$i]);
-                }
-                else
-                {
-                    // now sort out all pods from pilots who previously flown a real ship
-                    $valid_ship = false;
-                    foreach ($kll as $ship)
-                    {
-                        if ($ship['ship'] != 'Capsule')
-                        {
-                            $valid_ship = true;
-                            break;
-                        }
-                    }
-                    if ($valid_ship)
-                    {
-                        unset($pilots[$side][$id][$i]);
-                    }
-                }
-            }
-        }
-    }
-}
-
-$smarty->assignByRef('pilots_a', $pilots['a']);
-$smarty->assignByRef('pilots_e', $pilots['e']);
-
-$pod = new Ship(6);
-$smarty->assign('podpic', $pod->getImage(32));
-$smarty->assign('friendlycnt', count($pilots['a']));
-$smarty->assign('hostilecnt', count($pilots['e']));
-if ($classified)
-{
-    $smarty->assign('system', 'Classified System');
-}
-else
-{
-	$kill = new Kill($kll_id);
-	if(!isset($_GET['adjacent'])) $smarty->assign('system', $kill->getSolarSystemName());
-	else
-	{
-		$sysnames = array();
-		foreach($systems as $sys_id)
+		$this->kill = new Kill($this->kll_id);
+		$this->kill->setDetailedInvolved();
+		if(!$this->kill->exists())
 		{
-			$system = new SolarSystem($sys_id);
-			$sysnames[] = $system->getName();
+			echo 'No valid kill id specified';
+			exit;
 		}
-		$smarty->assign('system', implode(', ', $sysnames));
-	}
-}
-$smarty->assign('firstts', $firstts);
-$smarty->assign('lastts', $lastts);
-
-$smarty->assign('overview', $smarty->fetch(get_tpl('battle_overview')));
-
-$kill_summary = new KillSummaryTable($klist, $llist);
-$kill_summary->generate();
-$stats['kills'] = $kill_summary->getTotalKills();
-$stats['losses'] = $kill_summary->getTotalLosses();
-$stats['killISKM'] = round($kill_summary->getTotalKillISK()/1000000, 2);
-$stats['lossISKM'] = round($kill_summary->getTotalLossISK()/1000000, 2);
-$stats['killISKB'] = round($stats['killISKM']/1000, 2);
-$stats['lossISKB'] = round($stats['lossISKM']/1000, 2);
-if ($kill_summary->getTotalKillISK())
-{
-    $stats['efficiency'] = round($kill_summary->getTotalKillISK() / ($kill_summary->getTotalKillISK() + $kill_summary->getTotalLossISK()) * 100, 2);
-}
-else
-{
-    $stats['efficiency'] = 0;
-}
-$smarty->assignByRef('stats', $stats);
-
-if ($kill_summary->getTotalKillISK())
-{
-    $efficiency = round($kill_summary->getTotalKillISK() / ($kill_summary->getTotalKillISK() + $kill_summary->getTotalLossISK()) * 100, 2);
-}
-else
-{
-    $efficiency = 0;
-}
-
-$ktable = new KillListTable($klist);
-$smarty->assign('kills', $ktable->generate());
-
-$ltable = new KillListTable($llist);
-$smarty->assign('losses', $ltable->generate());
-
-$menubox = new Box("Menu");
-$menubox->setIcon("menu-item.gif");
-$menubox->addOption("caption", "View");
-if(!isset($_GET['adjacent'])) $menubox->addOption("link", "Include adjacent", "?a=kill_related&amp;adjacent&amp;kll_id=".$kll_id);
-else $menubox->addOption("link", "Remove adjacent", "?a=kill_related&amp;kll_id=".$kll_id);
-$menubox->addOption("link", "Back to Killmail", "?a=kill_detail&amp;kll_id=".$kll_id);
-$menubox->addOption("link", "Kills &amp; losses", "?a=kill_related&amp;kll_id=".$kll_id);
-$page->addContext($menubox->generate());
-
-//$page->setContent($html);
-$page->setContent($smarty->fetch(get_tpl('kill_related')));
-$page->generate();
-
-function cmp_func($a, $b)
-{
-    // select the biggest fish of that pilot
-    $t_scl = 0;
-    foreach ($a as $i => $ai)
-    {
-        if ($ai['scl'] > $t_scl)
-        {
-            $t_scl = $ai['scl'];
-            $cur_i = $i;
-        }
-    }
-    $a = $a[$cur_i];
-
-    $t_scl = 0;
-    foreach ($b as $i => $bi)
-    {
-        if ($bi['scl'] > $t_scl)
-        {
-            $t_scl = $bi['scl'];
-            $cur_i = $i;
-        }
-    }
-    $b = $b[$cur_i];
-
-    if ($a['scl'] > $b['scl'])
-    {
-        return -1;
-    }
-    // sort after points, shipname, pilotname
-    elseif ($a['scl'] == $b['scl'])
-    {
-        if ($a['ship'] == $b['ship'])
-        {
-            if ($a['name'] > $b['name'])
-            {
-                return 1;
-            }
-            return -1;
-        }
-        elseif ($a['ship'] > $b['ship'])
-        {
-            return 1;
-        }
-        return -1;
-    }
-    return 1;
-}
-
-function is_destroyed($pilot)
-{
-    global $destroyed;
-
-    if ($result = array_search((string)$pilot, $destroyed))
-    {
-        global $smarty;
-
-        $smarty->assign('kll_id', $result);
-        return true;
-    }
-    return false;
-}
-
-function podded($pilot)
-{
-    global $pods;
-
-    if ($result = array_search((string)$pilot, $pods))
-    {
-        global $smarty;
-
-        $smarty->assign('pod_kll_id', $result);
-        return true;
-    }
-    return false;
-}
-
-function cmp_ts_func($a, $b)
-{
-    if ($a['ts'] < $b['ts'])
-    {
-        return -1;
-    }
-    return 1;
-}
-function handle_involved($kill, $side)
-{
-    global $pilots;
-
-    // we need to get all involved pilots, killlists dont supply them
-    $qry = DBFactory::getDBQuery();;
-    $sql = "select ind_plt_id, ind_crp_id, ind_all_id, ind_sec_status, ind_shp_id, ind_wep_id,
-            typeName, plt_name, crp_name, all_name, shp_name, scl_points, scl_id, shp_externalid
-            from kb3_inv_detail
-            left join kb3_invtypes on ind_wep_id=typeID
-            left join kb3_pilots on ind_plt_id=plt_id
-            left join kb3_corps on ind_crp_id=crp_id
-            left join kb3_alliances on ind_all_id=all_id
-            left join kb3_ships on ind_shp_id=shp_id
-            left join kb3_ship_classes on shp_class=scl_id
-            where ind_kll_id = ".$kill->getID()."
-            order by ind_order";
-
-    $qry->execute($sql);
-    while ($row = $qry->getRow())
-    {
-        //$ship = new Ship($row['ind_shp_id']);
-        //$shipc = $ship->getClass();
-
-        // check for npc names (copied from pilot class)
-        $pos = strpos($row['plt_name'], "#");
-        if ($pos !== false)
-        {
-            $name = explode("#", $row['plt_name']);
-            $item = new Item($name[2]);
-            $row['plt_name'] = $item->getName();
-        }
-
-
-        // dont set pods as ships for pilots we already have
-        if (isset($pilots[$side][$row['ind_plt_id']]))
-        {
-            if ($row['scl_id'] == 18 || $row['scl_id'] == 2)
-            {
-                continue;
-            }
-        }
-
-        // search for ships with the same id
-        if (isset($pilots[$side][$row['ind_plt_id']]))
-        {
-            foreach ($pilots[$side][$row['ind_plt_id']] as $id => $_ship)
-            {
-                if ($row['ind_shp_id'] == $_ship['sid'])
-                {
-                    // we already got that pilot in this ship, continue
-                    continue 2;
-                }
-            }
-        }
-/*
-		// Replace pods and unknowns
-		if(isset($pilots[$side][$row['ind_plt_id']]))
+		if($this->kill->isClassified())
 		{
-			foreach ($pilots[$side][$row['ind_plt_id']] as $id => &$_ship)
-            {
-                if ($_ship['shpclass'] == 18 || $_ship['shpclass'] == 2)
+			Header("Location: ".KB_HOST."/?a=kill_detail&kll_id=".$this->kll_id);
+			die();
+		}
+//		$this->getInvolved();
+//		$this->buildStats();
+	}
+	public function getInvolved()
+	{
+		$this->victimAll = array();
+		$this->invAll = array();
+		$this->victimCorp = array();
+		$this->invCorp = array();
+		// Find all involved parties not in the same corp/alliance as the victim. If
+		// the board has an owner swap sides if necessary so board owner is the killer
+		foreach ($this->kill->involvedparties_ as $inv)
+		{
+			if($inv->getAlliance()->getName() != 'None')
+			{
+				if($inv->getAllianceID() != $this->kill->getVictimAllianceID())
 				{
-					$shipimage = IMG_URL.'/ships/32_32/'.$row['shp_externalid'].'.png';
-					$_ship['sid'] = $row['ind_shp_id'];
-					$_ship['spic'] = $shipimage;
-					$_ship['ts'] = strtotime($kill->getTimeStamp());
-					$_ship['scl'] = $row['scl_points'];
-					$_ship['ship'] = $row['shp_name'];
-					$_ship['weapon'] = $row['itm_name'];
-					$_ship['shpclass'] = $row['scl_id'];
-					continue 2;
+					$this->invAll[$inv->getAllianceID()] = $inv->getAllianceID();
+				}
+			}
+			elseif($inv->getCorpID() != $this->kill->getVictimCorpID())
+				$this->invCorp[$inv->getCorpID()] = $inv->getCorpID();
+
+		}
+		if($this->kill->getVictimAllianceName() != 'None' )
+			$this->victimAll[$this->kill->getVictimAllianceID()] = $this->kill->getVictimAllianceID();
+		else $this->victimCorp[$this->kill->getVictimCorpID()] = $this->kill->getVictimCorpID();
+
+		// Check which side board owner is on and make that the kill side. The other
+		// side is the loss side. If board owner is on neither then victim is the loss
+		// side.
+		if(CORP_ID == $this->kill->getVictimCorpID() || ALLIANCE_ID == $this->kill->getVictimAllianceID())
+		{
+			$tmp = $this->victimAll;
+			$this->victimAll = $this->invAll;
+			$this->invAll = $tmp;
+			$tmp = $this->victimCorp;
+			$this->victimCorp = $this->invCorp;
+			$this->invCorp = $tmp;
+		}
+	}
+	public function buildStats()
+	{
+		// this is a fast query to get the system and timestamp
+		$rqry = DBFactory::getDBQuery();
+		if(isset($_GET['adjacent']))
+			$rsql = 'SELECT kll_timestamp, b.sys_id from kb3_kills
+			join kb3_systems a ON (a.sys_id = kll_system_id)
+			join kb3_system_jumps on (sjp_from = a.sys_eve_id)
+			join kb3_systems b ON (b.sys_eve_id = sjp_to)
+			where kll_id = '.$this->kll_id.' UNION
+			SELECT kll_timestamp, kll_system_id as sys_id from kb3_kills
+			where kll_id = '.$this->kll_id;
+		else
+			$rsql = 'SELECT kll_timestamp, kll_system_id as sys_id from kb3_kills
+			where kll_id = '.$this->kll_id;
+		$rqry->execute($rsql);
+		while($rrow = $rqry->getRow())
+		{
+			$this->systems[] = $rrow['sys_id'];
+			$basetime = $rrow['kll_timestamp'];
+		}
+
+				// now we get all kills in that system for +-4 hours
+		$query = 'SELECT kll.kll_timestamp AS ts FROM kb3_kills kll WHERE kll.kll_system_id IN ('.implode(',', $this->systems).
+					') AND kll.kll_timestamp <= "'.(date('Y-m-d H:i:s',strtotime($basetime) +  4 * 60 * 60)).'"'.
+					' AND kll.kll_timestamp >= "'.(date('Y-m-d H:i:s',strtotime($basetime) -  4 * 60 * 60)).'"'.
+					' ORDER BY kll.kll_timestamp ASC';
+		$qry = DBFactory::getDBQuery();
+		$qry->execute($query);
+		$ts = array();
+		while ($row = $qry->getRow())
+		{
+			$time = strtotime($row['ts']);
+			$ts[intval(date('H', $time))][] = $row['ts'];
+		}
+
+		// this tricky thing looks for gaps of more than 1 hour and creates an intersection
+		$baseh = date('H', strtotime($basetime));
+		$maxc = count($ts);
+		$times = array();
+		for ($i = 0; $i < $maxc; $i++)
+		{
+			$h = ($baseh+$i) % 24;
+			if (!isset($ts[$h]))
+			{
+				break;
+			}
+			foreach ($ts[$h] as $timestamp)
+			{
+				$times[] = $timestamp;
+			}
+		}
+		for ($i = 0; $i < $maxc; $i++)
+		{
+			$h = ($baseh-$i) % 24;
+			if ($h < 0)
+			{
+				$h += 24;
+			}
+			if (!isset($ts[$h]))
+			{
+				break;
+			}
+			foreach ($ts[$h] as $timestamp)
+			{
+				$times[] = $timestamp;
+			}
+		}
+		unset($ts);
+		asort($times);
+
+		// we got 2 resulting timestamps
+		$this->firstts = array_shift($times);
+		$this->lastts = array_pop($times);
+
+		$this->kslist = new KillList();
+		$this->kslist->setOrdered(true);
+		foreach($this->systems as $system) $this->kslist->addSystem($system);
+		$this->kslist->setStartDate($this->firstts);
+		$this->kslist->setEndDate($this->lastts);
+		//involved::load($this->kslist,'kill');
+		foreach($this->invCorp as $ic) $this->kslist->addInvolvedCorp($ic);
+		foreach($this->invAll as $ia) $this->kslist->addInvolvedAlliance($ia);
+
+		$this->lslist = new KillList();
+		$this->lslist->setOrdered(true);
+		foreach($this->systems as $system) $this->lslist->addSystem($system);
+		$this->lslist->setStartDate($this->firstts);
+		$this->lslist->setEndDate($this->lastts);
+		//involved::load($this->lslist,'loss');
+		foreach($this->invCorp as $ic) $this->lslist->addVictimCorp($ic);
+		foreach($this->invAll as $ia) $this->lslist->addVictimAlliance($ia);
+
+		$this->klist = new KillList();
+		$this->klist->setOrdered(true);
+		$this->klist->setCountComments(true);
+		$this->klist->setCountInvolved(true);
+		foreach($this->systems as $system) $this->klist->addSystem($system);
+		$this->klist->setStartDate($this->firstts);
+		$this->klist->setEndDate($this->lastts);
+		//involved::load($this->klist,'kill');
+		foreach($this->invCorp as $ic) $this->klist->addInvolvedCorp($ic);
+		foreach($this->invAll as $ia) $this->klist->addInvolvedAlliance($ia);
+
+		$this->llist = new KillList();
+		$this->llist->setOrdered(true);
+		$this->llist->setCountComments(true);
+		$this->llist->setCountInvolved(true);
+		foreach($this->systems as $system) $this->llist->addSystem($system);
+		$this->llist->setStartDate($this->firstts);
+		$this->llist->setEndDate($this->lastts);
+		//involved::load($this->llist,'loss');
+		foreach($this->invCorp as $ic) $this->llist->addVictimCorp($ic);
+		foreach($this->invAll as $ia) $this->llist->addVictimAlliance($ia);
+
+		if ($scl_id)
+		{
+			$this->klist->addVictimShipClass($scl_id);
+			$this->llist->addVictimShipClass($scl_id);
+		}
+
+		$this->destroyed = $pods = array();
+		$this->pilots = array('a' => array(), 'e' => array());
+		$this->kslist->rewind();
+		$classified = false;
+		while ($this->kill = $this->kslist->getKill())
+		{
+			if (in_array($this->kill->getVictimAllianceID(), $this->invAll)
+					 || in_array($this->kill->getVictimCorpID(), $this->invCorp))
+			{
+				$this->handle_involved($this->kill, 'e');
+				$this->handle_destroyed($this->kill, 'a');
+			}
+			else
+			{
+				$this->handle_involved($this->kill, 'a');
+				$this->handle_destroyed($this->kill, 'e');
+			}
+			if ($this->kill->isClassified())
+			{
+				$classified = true;
+			}
+		}
+		$this->lslist->rewind();
+		while ($this->kill = $this->lslist->getKill())
+		{
+			if (in_array($this->kill->getVictimAllianceID(), $this->victimAll)
+					 || in_array($this->kill->getVictimCorpID(), $this->victimCorp))
+			{
+				$this->handle_involved($this->kill, 'a');
+				$this->handle_destroyed($this->kill, 'e');
+			}
+			else
+			{
+				$this->handle_involved($this->kill, 'e');
+				$this->handle_destroyed($this->kill, 'a');
+			}
+			if ($this->kill->isClassified())
+			{
+				$classified = true;
+			}
+		}
+
+		// sort pilot ships, order pods after ships
+		foreach ($this->pilots as $side => $pilot)
+		{
+			foreach ($pilot as $id => $kll)
+			{
+				usort($this->pilots[$side][$id], array($this,'cmp_ts_func'));
+			}
+		}
+
+		// sort arrays, ships with high points first
+		uasort($this->pilots['a'], array($this,'cmp_func'));
+		uasort($this->pilots['e'], array($this,'cmp_func'));
+
+		// now get the pods out and mark the ships the've flown as podded
+		foreach ($this->pilots as $side => $pilot)
+		{
+			foreach ($pilot as $id => $kll)
+			{
+				$max = count($kll);
+				for ($i = 0; $i < $max; $i++)
+				{
+					if ($kll[$i]['ship'] == 'Capsule')
+					{
+						if (isset($kll[$i-1]['sid']) && isset($kll[$i]['destroyed']))
+						{
+							$this->pilots[$side][$id][$i-1]['podded'] = true;
+							$this->pilots[$side][$id][$i-1]['podid'] = $kll[$i]['kll_id'];
+							unset($this->pilots[$side][$id][$i]);
+						}
+						else
+						{
+							// now sort out all pods from pilots who previously flown a real ship
+							$valid_ship = false;
+							foreach ($kll as $ship)
+							{
+								if ($ship['ship'] != 'Capsule')
+								{
+									$valid_ship = true;
+									break;
+								}
+							}
+							if ($valid_ship)
+							{
+								unset($this->pilots[$side][$id][$i]);
+							}
+						}
+					}
 				}
 			}
 		}
- */
-        $shipimage = IMG_URL.'/ships/32_32/'.$row['shp_externalid'].'.png';
-        $pilots[$side][$row['ind_plt_id']][] = array('name' => $row['plt_name'], 'sid' => $row['ind_shp_id'],
-               'spic' => $shipimage, 'aid' => $row['ind_all_id'], 'ts' => strtotime($kill->getTimeStamp()),
-               'corp' =>$row['crp_name'], 'alliance' => $row['all_name'], 'scl' => $row['scl_points'],
-               'ship' => $row['shp_name'], 'weapon' => $row['itm_name'], 'cid' => $row['ind_crp_id'],
-				'shpclass' => $row['scl_id']);
-    }
+	}
+	public function overview()
+	{
+		global $smarty;
+		$smarty->assignByRef('pilots_a', $this->pilots['a']);
+		$smarty->assignByRef('pilots_e', $this->pilots['e']);
+
+		$pod = new Ship(6);
+		$smarty->assign('podpic', $pod->getImage(32));
+		$smarty->assign('friendlycnt', count($this->pilots['a']));
+		$smarty->assign('hostilecnt', count($this->pilots['e']));
+		if ($classified)
+		{
+			$smarty->assign('system', 'Classified System');
+		}
+		else
+		{
+			$this->kill = new Kill($this->kll_id);
+			if(!isset($_GET['adjacent'])) $smarty->assign('system', $this->kill->getSolarSystemName());
+			else
+			{
+				$sysnames = array();
+				foreach($this->systems as $sys_id)
+				{
+					$system = new SolarSystem($sys_id);
+					$sysnames[] = $system->getName();
+				}
+				$smarty->assign('system', implode(', ', $sysnames));
+			}
+		}
+		$smarty->assign('firstts', $this->firstts);
+		$smarty->assign('lastts', $this->lastts);
+
+		return $smarty->fetch(get_tpl('kill_related_battle_overview'));
+	}
+	public function battleStats()
+	{
+		global $smarty;
+
+		$this->kill_summary = new KillSummaryTable($this->klist, $this->llist);
+		$this->kill_summary->generate();
+		$stats['kills'] = $this->kill_summary->getTotalKills();
+		$stats['losses'] = $this->kill_summary->getTotalLosses();
+		$stats['killISKM'] = round($this->kill_summary->getTotalKillISK()/1000000, 2);
+		$stats['lossISKM'] = round($this->kill_summary->getTotalLossISK()/1000000, 2);
+		$stats['killISKB'] = round($stats['killISKM']/1000, 2);
+		$stats['lossISKB'] = round($stats['lossISKM']/1000, 2);
+		if ($this->kill_summary->getTotalKillISK())
+		{
+			$stats['efficiency'] = round($this->kill_summary->getTotalKillISK() / ($this->kill_summary->getTotalKillISK() + $this->kill_summary->getTotalLossISK()) * 100, 2);
+		}
+		else
+		{
+			$stats['efficiency'] = 0;
+		}
+		$smarty->assignByRef('stats', $stats);
+
+		if ($this->kill_summary->getTotalKillISK())
+		{
+			$efficiency = round($this->kill_summary->getTotalKillISK() / ($this->kill_summary->getTotalKillISK() + $this->kill_summary->getTotalLossISK()) * 100, 2);
+		}
+		else
+		{
+			$efficiency = 0;
+		}
+		return $smarty->fetch(get_tpl('kill_related_battle_stats'));
+	}
+	public function summaryTable()
+	{
+		$this->kslist->rewind();
+		$this->lslist->rewind();
+		$summarytable = new KillSummaryTable($this->kslist, $this->lslist);
+		return $summarytable->generate();
+	}
+	public function killList()
+	{
+		$html = '<div class="kb-kills-header">Related kills</div>';
+
+		$ktable = new KillListTable($this->klist);
+		$html .= $ktable->generate();
+		$html .= '<div class="kb-losses-header">Related losses</div>';
+
+		$ltable = new KillListTable($this->llist);
+		$html .= $ltable->generate();
+
+		return $html;
+	}
+
+	private function cmp_func($a, $b)
+	{
+		// select the biggest fish of that pilot
+		$t_scl = 0;
+		foreach ($a as $i => $ai)
+		{
+			if ($ai['scl'] > $t_scl)
+			{
+				$t_scl = $ai['scl'];
+				$cur_i = $i;
+			}
+		}
+		$a = $a[$cur_i];
+
+		$t_scl = 0;
+		foreach ($b as $i => $bi)
+		{
+			if ($bi['scl'] > $t_scl)
+			{
+				$t_scl = $bi['scl'];
+				$cur_i = $i;
+			}
+		}
+		$b = $b[$cur_i];
+
+		if ($a['scl'] > $b['scl'])
+		{
+			return -1;
+		}
+		// sort after points, shipname, pilotname
+		elseif ($a['scl'] == $b['scl'])
+		{
+			if ($a['ship'] == $b['ship'])
+			{
+				if ($a['name'] > $b['name'])
+				{
+					return 1;
+				}
+				return -1;
+			}
+			elseif ($a['ship'] > $b['ship'])
+			{
+				return 1;
+			}
+			return -1;
+		}
+		return 1;
+	}
+
+	private function is_destroyed($pilot)
+	{
+		if ($result = array_search((string)$pilot, $this->destroyed))
+		{
+			global $smarty;
+
+			$smarty->assign('kll_id', $result);
+			return true;
+		}
+		return false;
+	}
+
+	private function podded($pilot)
+	{
+		global $pods;
+
+		if ($result = array_search((string)$pilot, $pods))
+		{
+			global $smarty;
+
+			$smarty->assign('pod_kll_id', $result);
+			return true;
+		}
+		return false;
+	}
+
+	private function cmp_ts_func($a, $b)
+	{
+		if ($a['ts'] < $b['ts'])
+		{
+			return -1;
+		}
+		return 1;
+	}
+	private function handle_involved($kill, $side)
+	{
+		// we need to get all involved pilots, killlists dont supply them
+		$qry = DBFactory::getDBQuery();
+		$sql = "select ind_plt_id, ind_crp_id, ind_all_id, ind_sec_status, ind_shp_id, ind_wep_id,
+				typeName, plt_name, crp_name, all_name, shp_name, scl_points, scl_id, shp_externalid
+				from kb3_inv_detail
+				left join kb3_invtypes on ind_wep_id=typeID
+				left join kb3_pilots on ind_plt_id=plt_id
+				left join kb3_corps on ind_crp_id=crp_id
+				left join kb3_alliances on ind_all_id=all_id
+				left join kb3_ships on ind_shp_id=shp_id
+				left join kb3_ship_classes on shp_class=scl_id
+				where ind_kll_id = ".$kill->getID()."
+				order by ind_order";
+
+		$qry->execute($sql);
+		while ($row = $qry->getRow())
+		{
+			//$ship = new Ship($row['ind_shp_id']);
+			//$shipc = $ship->getClass();
+
+			// check for npc names (copied from pilot class)
+			$pos = strpos($row['plt_name'], "#");
+			if ($pos !== false)
+			{
+				$name = explode("#", $row['plt_name']);
+				$item = new Item($name[2]);
+				$row['plt_name'] = $item->getName();
+			}
+
+
+			// dont set pods as ships for pilots we already have
+			if (isset($this->pilots[$side][$row['ind_plt_id']]))
+			{
+				if ($row['scl_id'] == 18 || $row['scl_id'] == 2)
+				{
+					continue;
+				}
+			}
+
+			// search for ships with the same id
+			if (isset($this->pilots[$side][$row['ind_plt_id']]))
+			{
+				foreach ($this->pilots[$side][$row['ind_plt_id']] as $id => $_ship)
+				{
+					if ($row['ind_shp_id'] == $_ship['sid'])
+					{
+						// we already got that pilot in this ship, continue
+						continue 2;
+					}
+				}
+			}
+	/*
+			// Replace pods and unknowns
+			if(isset($this->pilots[$side][$row['ind_plt_id']]))
+			{
+				foreach ($this->pilots[$side][$row['ind_plt_id']] as $id => &$_ship)
+				{
+					if ($_ship['shpclass'] == 18 || $_ship['shpclass'] == 2)
+					{
+						$shipimage = IMG_URL.'/ships/32_32/'.$row['shp_externalid'].'.png';
+						$_ship['sid'] = $row['ind_shp_id'];
+						$_ship['spic'] = $shipimage;
+						$_ship['ts'] = strtotime($kill->getTimeStamp());
+						$_ship['scl'] = $row['scl_points'];
+						$_ship['ship'] = $row['shp_name'];
+						$_ship['weapon'] = $row['itm_name'];
+						$_ship['shpclass'] = $row['scl_id'];
+						continue 2;
+					}
+				}
+			}
+	 */
+			$shipimage = IMG_URL.'/ships/32_32/'.$row['shp_externalid'].'.png';
+			$this->pilots[$side][$row['ind_plt_id']][] = array('name' => $row['plt_name'], 'sid' => $row['ind_shp_id'],
+				   'spic' => $shipimage, 'aid' => $row['ind_all_id'], 'ts' => strtotime($kill->getTimeStamp()),
+				   'corp' =>$row['crp_name'], 'alliance' => $row['all_name'], 'scl' => $row['scl_points'],
+				   'ship' => $row['shp_name'], 'weapon' => $row['itm_name'], 'cid' => $row['ind_crp_id'],
+					'shpclass' => $row['scl_id']);
+		}
+	}
+
+	private function handle_destroyed($kill, $side)
+	{
+		$this->destroyed[$kill->getID()] = $kill->getVictimID();
+
+		$ship = new Ship();
+		$ship->lookup($kill->getVictimShipName());
+		$shipc = $ship->getClass();
+
+		$ts = strtotime($kill->getTimeStamp());
+
+		// mark the pilot as podded
+		if ($shipc->getID() == 18 || $shipc->getID() == 2)
+		{
+			// increase the timestamp of a podkill by 1 so its after the shipkill
+			$ts++;
+			global $pods;
+			$pods[$kill->getID()] = $kill->getVictimID();
+
+			// return when we've added him already
+			if (isset($this->pilots[$side][$kill->getVictimId()]))
+			{
+				#return;
+			}
+		}
+
+		// search for ships with the same id
+		if (isset($this->pilots[$side][$kill->getVictimId()]))
+		{
+			foreach ($this->pilots[$side][$kill->getVictimId()] as $id => $_ship)
+			{
+				if ($ship->getID() == $_ship['sid'])
+				{
+					$this->pilots[$side][$kill->getVictimId()][$id]['destroyed'] = true;
+
+					if (!isset($this->pilots[$side][$kill->getVictimId()][$id]['kll_id']))
+					{
+						$this->pilots[$side][$kill->getVictimId()][$id]['kll_id'] = $kill->getID();
+					}
+					return;
+				}
+			}
+		}
+
+		$this->pilots[$side][$kill->getVictimId()][] = array('name' => $kill->getVictimName(), 'kll_id' => $kill->getID(),
+			   'spic' => $ship->getImage(32), 'scl' => $shipc->getPoints(), 'destroyed' => true,
+			   'corp' => $kill->getVictimCorpName(), 'alliance' => $kill->getVictimAllianceName(), 'aid' => $kill->getVictimAllianceID(),
+			   'ship' => $kill->getVictimShipname(), 'sid' => $ship->getID(), 'cid' => $kill->getVictimCorpID(), 'ts' => $ts);
+}
+	public function menuSetup()
+	{
+		$this->addMenuItem("caption", "View");
+		if(!isset($_GET['adjacent'])) $this->addMenuItem("link", "Include adjacent", "?a=kill_related&amp;adjacent&amp;kll_id=".$this->kll_id);
+		else $this->addMenuItem("link", "Remove adjacent", "?a=kill_related&amp;kll_id=".$this->kll_id);
+		$this->addMenuItem("link", "Back to Killmail", "?a=kill_detail&amp;kll_id=".$this->kll_id);
+		$this->addMenuItem("link", "Kills &amp; losses", "?a=kill_related&amp;kll_id=".$this->kll_id);
+	}
+	public function menu()
+	{
+		$menubox=new Box("Menu");
+		$menubox->setIcon("menu-item.gif");
+		foreach($this->menuOptions as $options)
+		{
+			if(isset($options[2]))
+				$menubox->addOption($options[0],$options[1], $options[2]);
+			else
+				$menubox->addOption($options[0],$options[1]);
+		}
+
+		return $menubox->generate();
+	}
+	//! Add an item to the menu in standard box format.
+
+	/*!
+	 *  Only links need all 3 attributes
+	 * \param type Types can be caption, img, link, points.
+	 * \param name The name to display.
+	 * \param url Only needed for URLs.
+	 */
+	function addMenuItem($type, $name, $url = '')
+	{
+		$this->menuOptions[] = array($type, $name, $url);
+	}
+
 }
 
-function handle_destroyed($kill, $side)
-{
-    global $destroyed, $pilots;
+$killRelated = new pKillRelated();
+event::call("killRelated_assembling", $killRelated);
+$html = $killRelated->assemble();
+$killRelated->page->setContent($html);
 
-    $destroyed[$kill->getID()] = $kill->getVictimID();
+$killRelated->context();
+event::call("killRelated_context_assembling", $killRelated);
+$context = $killRelated->assemble();
+$killRelated->page->addContext($context);
 
-    $ship = new Ship();
-    $ship->lookup($kill->getVictimShipName());
-    $shipc = $ship->getClass();
-
-    $ts = strtotime($kill->getTimeStamp());
-
-    // mark the pilot as podded
-    if ($shipc->getID() == 18 || $shipc->getID() == 2)
-    {
-        // increase the timestamp of a podkill by 1 so its after the shipkill
-        $ts++;
-        global $pods;
-        $pods[$kill->getID()] = $kill->getVictimID();
-
-        // return when we've added him already
-        if (isset($pilots[$side][$kill->getVictimId()]))
-        {
-            #return;
-        }
-    }
-
-    // search for ships with the same id
-    if (isset($pilots[$side][$kill->getVictimId()]))
-    {
-        foreach ($pilots[$side][$kill->getVictimId()] as $id => $_ship)
-        {
-            if ($ship->getID() == $_ship['sid'])
-            {
-                $pilots[$side][$kill->getVictimId()][$id]['destroyed'] = true;
-
-                if (!isset($pilots[$side][$kill->getVictimId()][$id]['kll_id']))
-                {
-                    $pilots[$side][$kill->getVictimId()][$id]['kll_id'] = $kill->getID();
-                }
-                return;
-            }
-        }
-    }
-
-    $pilots[$side][$kill->getVictimId()][] = array('name' => $kill->getVictimName(), 'kll_id' => $kill->getID(),
-           'spic' => $ship->getImage(32), 'scl' => $shipc->getPoints(), 'destroyed' => true,
-           'corp' => $kill->getVictimCorpName(), 'alliance' => $kill->getVictimAllianceName(), 'aid' => $kill->getVictimAllianceID(),
-           'ship' => $kill->getVictimShipname(), 'sid' => $ship->getID(), 'cid' => $kill->getVictimCorpID(), 'ts' => $ts);
-}
+$killRelated->page->generate();
