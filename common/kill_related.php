@@ -31,11 +31,16 @@ $invCorp = array();
 // the board has an owner swap sides if necessary so board owner is the killer
 foreach ($kill->involvedparties_ as $inv)
 {
-	if($inv->getAlliance()->getName() != 'None'
-            && $inv->getAllianceID() != $kill->getVictimAllianceID())
-                $invAll[$inv->getAllianceID()] = $inv->getAllianceID();
+	if($inv->getAlliance()->getName() != 'None')
+	{
+		if($inv->getAllianceID() != $kill->getVictimAllianceID())
+		{
+			$invAll[$inv->getAllianceID()] = $inv->getAllianceID();
+		}
+	}
 	elseif($inv->getCorpID() != $kill->getVictimCorpID())
-            $invCorp[$inv->getCorpID()] = $inv->getCorpID();
+		$invCorp[$inv->getCorpID()] = $inv->getCorpID();
+
 }
 if($kill->getVictimAllianceName() != 'None' )
 	$victimAll[$kill->getVictimAllianceID()] = $kill->getVictimAllianceID();
@@ -325,22 +330,40 @@ $kslist->rewind();
 $classified = false;
 while ($kill = $kslist->getKill())
 {
-    handle_involved($kill, 'a');
-    handle_destroyed($kill, 'e');
-    if ($kill->isClassified())
-    {
-        $classified = true;
-    }
+	if (in_array($kill->getVictimAllianceID(), $invAll)
+			 || in_array($kill->getVictimCorpID(), $invCorp))
+	{
+		handle_involved($kill, 'e');
+		handle_destroyed($kill, 'a');
+	}
+	else
+	{
+		handle_involved($kill, 'a');
+		handle_destroyed($kill, 'e');
+	}
+	if ($kill->isClassified())
+	{
+		$classified = true;
+	}
 }
 $lslist->rewind();
 while ($kill = $lslist->getKill())
 {
-    handle_involved($kill, 'e');
-    handle_destroyed($kill, 'a');
-    if ($kill->isClassified())
-    {
-        $classified = true;
-    }
+	if (in_array($kill->getVictimAllianceID(), $victimAll)
+			 || in_array($kill->getVictimCorpID(), $victimCorp))
+	{
+		handle_involved($kill, 'a');
+		handle_destroyed($kill, 'e');
+	}
+	else
+	{
+		handle_involved($kill, 'e');
+		handle_destroyed($kill, 'a');
+	}
+	if ($kill->isClassified())
+	{
+		$classified = true;
+	}
 }
 function cmp_func($a, $b)
 {
@@ -556,4 +579,3 @@ $page->addContext($menubox->generate());
 
 $page->setContent($html);
 $page->generate();
-?>
