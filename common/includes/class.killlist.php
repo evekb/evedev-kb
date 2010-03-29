@@ -4,28 +4,39 @@ require_once('class.pagesplitter.php');
 
 class KillList
 {
+	private $qry_ = null;
+	private $killpointer_ = 0;
+	private $killisk_ = 0;
+	private $exclude_scl_ = array();
+	private $vic_scl_id_ = array();
+	private $regions_ = array();
+	private $systems_ = array();
+	private $groupby_ = array();
+	private $offset_ = 0;
+	private $killcounter_ = 0;
+	private $realkillcounter_ = 0;
+	private $ordered_ = false;
+	private $walked = false;
+	private $apikill_ = false;
+	private $sql_ = '';
+	private $sqlinner_ = '';
+	private $sqltop_ = '';
+	private $sqloutertop_ = '';
+	private $sqlouterbottom_ = '';
+	private $weekno_ = 0;
+	private $monthno_ = 0;
+	private $yearno_ = 0;
+	private $startweekno_ = 0;
+	private $startDate_ = 0;
+	private $endDate_ = 0;
+	private $executed = false;
+
 	function KillList()
 	{
-		$this->qry_ = DBFactory::getDBQuery();;
-		$this->killpointer_ = 0;
-		$this->kills_ = 0;
-		$this->losses_ = 0;
-		$this->killisk_ = 0;
-		$this->lossisk_ = 0;
-		$this->exclude_scl_ = array();
-		$this->vic_scl_id_ = array();
-		$this->regions_ = array();
-		$this->systems_ = array();
-		$this->groupby_ = array();
-		$this->offset_ = 0;
-		$this->killcounter_ = 0;
-		$this->realkillcounter_ = 0;
-		$this->ordered_ = false;
-		$this->walked = false;
-		$this->apikill_ = false;
+		$this->qry_ = DBFactory::getDBQuery();
 	}
 
-	function execQuery()
+	public function execQuery()
 	{
         /* Killlist philosophy
 		 *
@@ -46,7 +57,7 @@ class KillList
 		 * the counts in a single query
          *
          */
-		if (!$this->qry_->executed_)
+		if (!$this->executed)
 		{
 			$datefilter=$this->getDateFilter();
 			$startdate = makeStartDate($this->weekno_, $this->yearno_, $this->monthno_, $this->startweekno_, $this->startDate_);
@@ -74,19 +85,19 @@ class KillList
 				}
 				elseif($this->comb_crp_ )
 				{
-					$this->sqlinner_ .= "INNER JOIN kb3_inv_crp ind ON ind.inc_kll_id = kll.kll_id ";
-					$this->sqlinner_ .= $invop." WHERE ind.inc_crp_id IN (".
+					$this->sqlinner_ .= "INNER JOIN kb3_inv_crp inc ON inc.inc_kll_id = kll.kll_id ";
+					$this->sqlinner_ .= $invop." WHERE inc.inc_crp_id IN (".
 						implode(',', $this->comb_crp_)." ) ";
-					if($startdate) $this->sqlinner_ .=" AND ind.inc_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
-					if($enddate) $this->sqlinner_ .=" AND ind.inc_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+					if($startdate) $this->sqlinner_ .=" AND inc.inc_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+					if($enddate) $this->sqlinner_ .=" AND inc.inc_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
 				}
 				else
 				{
-					$this->sqlinner_ .= "INNER JOIN kb3_inv_all ind ON ind.ina_kll_id = kll.kll_id ";
-					$this->sqlinner_ .= $invop." WHERE ind.ina_all_id IN (".
+					$this->sqlinner_ .= "INNER JOIN kb3_inv_all ina ON ina.ina_kll_id = kll.kll_id ";
+					$this->sqlinner_ .= $invop." WHERE ina.ina_all_id IN (".
 						implode(',', $this->comb_all_)." ) ";
-					if($startdate) $this->sqlinner_ .=" AND ind.ina_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
-					if($enddate) $this->sqlinner_ .=" AND ind.ina_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+					if($startdate) $this->sqlinner_ .=" AND ina.ina_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+					if($enddate) $this->sqlinner_ .=" AND ina.ina_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
 				}
 
 				if($this->apikill_)
@@ -117,8 +128,8 @@ class KillList
 					if (!$this->orderby_)
 					{
 						if($this->comb_plt_ ) $this->sqlinner_ .= " order by ind.ind_timestamp desc";
-						elseif($this->comb_crp_ ) $this->sqlinner_ .= " order by ind.inc_timestamp desc";
-						else $this->sqlinner_ .= " order by ind.ina_timestamp desc";
+						elseif($this->comb_crp_ ) $this->sqlinner_ .= " order by inc.inc_timestamp desc";
+						else $this->sqlinner_ .= " order by ina.ina_timestamp desc";
 					}
 					else $this->sqlinner_ .= " order by ".$this->orderby_;
 				}
@@ -193,14 +204,14 @@ class KillList
 
 			if (!count($this->groupby_) && ($this->comments_ || $this->involved_))
 			{
-				$this->sqloutertop_ .= 'SELECT list.* ';
+				$this->sqloutertop_ = 'SELECT list.* ';
 				if($this->comments_) $this->sqloutertop_ .= ', count(distinct com.id) as comments';
 				if($this->involved_) $this->sqloutertop_ .= ', max(ind.ind_order) + 1 as inv';
 				$this->sqloutertop_ .= ' FROM (';
 			}
 			if (!count($this->groupby_))
 			{
-				$this->sqltop_ .= 'SELECT ';
+				$this->sqltop_ = 'SELECT ';
 				if(count($this->inv_all_) > 1 || count($this->inv_crp_) > 1 || count($this->inv_plt_) > 1)
 					$this->sqltop_ .= ' DISTINCT ';
 				$this->sqltop_ .= ' kll.kll_id, kll.kll_timestamp, kll.kll_external_id,
@@ -212,7 +223,7 @@ class KillList
 							shp.shp_class, shp.shp_name,
 							shp.shp_externalid, shp.shp_id,
 							scl.scl_id, scl.scl_class, scl.scl_value,
-							sys.sys_id, sys.sys_name, sys.sys_sec,
+							sys.sys_name, sys.sys_sec,
 							fbplt.plt_name as fbplt_name,
 							fbplt.plt_id as fbplt_id,
 							fbplt.plt_externalid as fbplt_externalid,
@@ -222,17 +233,15 @@ class KillList
 							fbali.all_id as fball_id';
 				event::call('killlist_select_expr', $this);
 			}
-
-
-			if (count($this->groupby_))
+			else
 			{
-				$this->sqltop_ .= "SELECT COUNT(1) as cnt, ".implode(",", $this->groupby_);
+				$this->sqltop_ = "SELECT COUNT(1) as cnt, ".implode(",", $this->groupby_);
 			}
 
 			$this->sqltop_ .= "    FROM ".$this->sqlinner_." ";
 
 			// LEFT JOIN/STRAIGHT_JOIN is used to force processing after the main tables.
-			$this->sqllong_ .= "STRAIGHT_JOIN kb3_pilots plt
+			$this->sqllong_ = "STRAIGHT_JOIN kb3_pilots plt
 								ON ( plt.plt_id = kll.kll_victim_id )
 							STRAIGHT_JOIN kb3_corps crp
 								ON ( crp.crp_id = kll.kll_crp_id )
@@ -289,25 +298,25 @@ class KillList
 			{
 				if($this->inv_all_ )
 				{
-					$this->sql_ .= " INNER JOIN kb3_inv_all inv ON (inv.ina_kll_id = kll.kll_id)
-						WHERE inv.ina_all_id in (".implode(',', $this->inv_all_)." ) ";
-					if($startdate) $this->sql_ .=" AND inv.ina_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
-					if($enddate) $this->sql_ .=" AND inv.ina_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+					$this->sql_ .= " INNER JOIN kb3_inv_all ina ON (ina.ina_kll_id = kll.kll_id)
+						WHERE ina.ina_all_id in (".implode(',', $this->inv_all_)." ) ";
+					if($startdate) $this->sql_ .=" AND ina.ina_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+					if($enddate) $this->sql_ .=" AND ina.ina_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
 
 				}
 				elseif($this->inv_crp_ )
 				{
-					$this->sql_ .= " INNER JOIN kb3_inv_crp inv ON (inv.inc_kll_id = kll.kll_id)
-						WHERE inv.inc_crp_id in (".implode(',', $this->inv_crp_)." ) ";
-					if($startdate) $this->sql_ .=" AND inv.inc_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
-					if($enddate) $this->sql_ .=" AND inv.inc_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+					$this->sql_ .= " INNER JOIN kb3_inv_crp inc ON (inc.inc_kll_id = kll.kll_id)
+						WHERE inc.inc_crp_id in (".implode(',', $this->inv_crp_)." ) ";
+					if($startdate) $this->sql_ .=" AND inc.inc_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+					if($enddate) $this->sql_ .=" AND inc.inc_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
 				}
 				else
 				{
-					$this->sql_ .= " INNER JOIN kb3_inv_detail inv ON (inv.ind_kll_id = kll.kll_id)
-						WHERE inv.ind_plt_id in (".implode(',', $this->inv_plt_)." ) ";
-					if($startdate) $this->sql_ .=" AND inv.ind_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
-					if($enddate) $this->sql_ .=" AND inv.ind_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+					$this->sql_ .= " INNER JOIN kb3_inv_detail ind ON (ind.ind_kll_id = kll.kll_id)
+						WHERE ind.ind_plt_id in (".implode(',', $this->inv_plt_)." ) ";
+					if($startdate) $this->sql_ .=" AND ind.ind_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+					if($enddate) $this->sql_ .=" AND ind.ind_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
 				}
 
 				// victim filter
@@ -351,10 +360,9 @@ class KillList
 				{
 					if (!$this->orderby_)
 					{
-						$this->sql_ .= " order by inv.in";
-						if($this->inv_all_ ) $this->sql_ .= "a";
-						elseif($this->inv_crp_ ) $this->sql_ .= "c";
-						else $this->sql_ .= "d";
+						if($this->inv_all_ ) $this->sql_ .= " order by ina.ina";
+						elseif($this->inv_crp_ ) $this->sql_ .=" order by inc.inc";
+						else $this->sql_ .= " order by ind.ind";
 						$this->sql_ .= "_timestamp desc";
 					}
 					else $this->sql_ .= " order by ".$this->orderby_;
@@ -469,10 +477,11 @@ class KillList
 			//			die($this->sql_);
 			$this->qry_->execute($this->sql_);
 			if(!$this->plimit_ || $this->limit_) $this->count_ = $this->qry_->recordcount();
+			$this->executed = true;
 		}
 	}
 
-	function getRow()
+	public function getRow()
 	{
 		$this->execQuery();
 		if ($this->plimit_ && $this->killcounter_ >= $this->plimit_)
@@ -496,7 +505,7 @@ class KillList
 		return $row;
 	}
 
-	function getKill()
+	public function getKill()
 	{
 		$this->execQuery();
 		if ($this->plimit_ && $this->killcounter_ >= $this->plimit_)
@@ -541,7 +550,6 @@ class KillList
 
 			$kill = new Kill($row['kll_id']);
 			$kill->setTimeStamp($row['kll_timestamp']);
-			$kill->setSolarSystem(new SolarSystem($row['sys_id']));
 			$kill->setSolarSystemName($row['sys_name']);
 			$kill->setSolarSystemSecurity($row['sys_sec']);
 			$kill->setVictimName($row['plt_name']);
@@ -593,7 +601,7 @@ class KillList
 		}
 	}
 
-	function getAllKills()
+	public function getAllKills()
 	{
 		while ($this->getKill())
 		{
@@ -601,84 +609,84 @@ class KillList
 		$this->rewind();
 	}
 
-	function addInvolvedPilot($pilot)
+	public function addInvolvedPilot($pilot)
 	{
 		if(is_numeric($pilot)) $this->inv_plt_[] = $pilot;
 		else $this->inv_plt_[] = $pilot->getID();
 	}
 
-	function addInvolvedCorp($corp)
+	public function addInvolvedCorp($corp)
 	{
 		if(is_numeric($corp)) $this->inv_crp_[] = $corp;
 		else $this->inv_crp_[] = $corp->getID();
 	}
 
-	function addInvolvedAlliance($alliance)
+	public function addInvolvedAlliance($alliance)
 	{
 		if(is_numeric($alliance)) $this->inv_all_[] = $alliance;
 		else $this->inv_all_[] = $alliance->getID();
 	}
 
-	function addVictimPilot($pilot)
+	public function addVictimPilot($pilot)
 	{
 		if(is_numeric($pilot)) $this->vic_plt_[] = $pilot;
 		else $this->vic_plt_[] = $pilot->getID();
 	}
 
-	function addVictimCorp($corp)
+	public function addVictimCorp($corp)
 	{
 		if(is_numeric($corp)) $this->vic_crp_[] = $corp;
 		else $this->vic_crp_[] = $corp->getID();
 	}
 
-	function addVictimAlliance($alliance)
+	public function addVictimAlliance($alliance)
 	{
 		if(is_numeric($alliance)) $this->vic_all_[] = $alliance;
 		else $this->vic_all_[] = $alliance->getID();
 	}
 
-	function addCombinedPilot($pilot)
+	public function addCombinedPilot($pilot)
 	{
 		if(is_numeric($pilot)) $this->comb_plt_[] = $pilot;
 		else $this->comb_plt_[] = $pilot->getID();
 	}
 
-	function addCombinedCorp($corp)
+	public function addCombinedCorp($corp)
 	{
 		if(is_numeric($corp)) $this->comb_crp_[] = $corp;
 		else $this->comb_crp_[] = $corp->getID();
 	}
 
-	function addCombinedAlliance($alliance)
+	public function addCombinedAlliance($alliance)
 	{
 		if(is_numeric($alliance)) $this->comb_all_[] = $alliance;
 		else $this->comb_all_[] = $alliance->getID();
 	}
 
-	function addVictimShipClass($shipclass)
+	public function addVictimShipClass($shipclass)
 	{
 		if(is_numeric($shipclass)) $this->vic_scl_id_[] = $shipclass;
 		else $this->vic_scl_id_[] = $shipclass->getID();
 	}
 
-	function addRegion($region)
+	public function addRegion($region)
 	{
 		if(is_numeric($region)) $this->regions_[] = $region;
 		else $this->regions_[] = $region->getID();
 	}
 
-	function addSystem($system)
+	public function addSystem($system)
 	{
 		if(is_numeric($system)) $this->systems_[] = $system;
 		else $this->systems_[] = $system->getID();
 	}
 
-	function addGroupBy($groupby)
+	public function addGroupBy($groupby)
 	{
 		array_push($this->groupby_, $groupby);
 	}
 
-	function setPageSplitter($pagesplitter)
+	public function setPageSplitter($pagesplitter)
 	{
 		if (isset($_GET['page'])) $page = $_GET['page'];
 		else $page = 1;
@@ -686,7 +694,7 @@ class KillList
 		$this->poffset_ = ($page * $this->plimit_) - $this->plimit_;
 	}
 
-	function setPageSplit($split)
+	public function setPageSplit($split)
 	{
 		if (isset($_GET['page'])) $page = $_GET['page'];
 		else $page = 1;
@@ -695,7 +703,7 @@ class KillList
 	}
 
 	//! Filter results by week. Requires the year to also be set.
-	function setWeek($weekno)
+	public function setWeek($weekno)
 	{
 		$weekno=intval($weekno);
 		if($weekno <1)  $this->weekno_ = 1;
@@ -704,7 +712,7 @@ class KillList
 	}
 
 	//! Filter results by year.
-	function setYear($yearno)
+	public function setYear($yearno)
 	{
 	// 1970-2038 is the allowable range for the timestamp code used
 	// Needs to be revisited in the next 30 years
@@ -715,7 +723,7 @@ class KillList
 	}
 
 	//! Filter results by starting week. Requires the year to also be set.
-	function setStartWeek($weekno)
+	public function setStartWeek($weekno)
 	{
 		$weekno=intval($weekno);
 		if($weekno <1)  $this->startweekno_ = 1;
@@ -724,14 +732,14 @@ class KillList
 	}
 
 	//! Filter results by starting date/time.
-	function setStartDate($timestamp)
+	public function setStartDate($timestamp)
 	{
 	// Check timestamp is valid before adding
 		if(strtotime($timestamp)) $this->startDate_ = $timestamp;
 	}
 
 	//! Filter results by ending date/time.
-	function setEndDate($timestamp)
+	public function setEndDate($timestamp)
 	{
 	// Check timestamp is valid before adding
 		if(strtotime($timestamp)) $this->endDate_ = $timestamp;
@@ -740,7 +748,7 @@ class KillList
 	//! Convert given date ranges to SQL date range.
 
 	//! \return string containing SQL date filter.
-	function getDateFilter()
+	public function getDateFilter()
 	{
 		$qstartdate = makeStartDate($this->weekno_, $this->yearno_, $this->monthno_, $this->startweekno_, $this->startDate_);
 		$qenddate = makeEndDate($this->weekno_, $this->yearno_, $this->monthno_, $this->endDate_);
@@ -761,61 +769,61 @@ class KillList
 		return $sql;
 	}
 
-	function setLimit($limit)
+	public function setLimit($limit)
 	{
 		$this->limit_ = $limit;
 	}
 	//! Only return kills with an external id set.
-	function setAPIKill($hasid = true)
+	public function setAPIKill($hasid = true)
 	{
 		$this->apikill_ = $hasid;
 	}
 
-	function setOrderBy($orderby)
+	public function setOrderBy($orderby)
 	{
 		$this->orderby_ = $orderby;
 	}
 
-	function setMinKllID($id)
+	public function setMinKllID($id)
 	{
 		$this->minkllid_ = $id;
 	}
 
-	function setMaxKllID($id)
+	public function setMaxKllID($id)
 	{
 		$this->maxkllid_ = $id;
 	}
 
-	function getCount()
+	public function getCount()
 	{
 		$this->execQuery();
 		return $this->count_;
 	}
 
-	function getRealCount()
+	public function getRealCount()
 	{
 		$this->getCount();
 		return $this->realkillcounter_;
 	}
 
-	function getISK()
+	public function getISK()
 	{
 		$this->execQuery();
 		return $this->killisk_;
 	}
 
-	function getPoints()
+	public function getPoints()
 	{
 		return $this->killpoints_;
 	}
 
-	function rewind()
+	public function rewind()
 	{
 		$this->qry_->rewind();
 		$this->killcounter_ = 0;
 	}
-	
-	function setPodsNoobShips($flag)
+
+	public function setPodsNoobShips($flag)
 	{
 		if (!$flag)
 		{
@@ -823,7 +831,7 @@ class KillList
 			array_push($this->exclude_scl_, 3);
 			array_push($this->exclude_scl_, 11);
 		}
-		
+
 		if ($flag)
 		{
 			if (($idx = array_search(2, $this->exclude_scl_)) !== FALSE)
@@ -835,12 +843,12 @@ class KillList
 		}
 	}
 
-	function setOrdered($flag)
+	public function setOrdered($flag)
 	{
 		$this->ordered_ = $flag;
 	}
 
-	function tag($string)
+	public function tag($string)
 	{
 		if ($string == '')
 		{
@@ -853,13 +861,13 @@ class KillList
 	}
 
 	// Add a comment count to the killlist SQL
-	function setCountComments($comments = true)
+	public function setCountComments($comments = true)
 	{
 		$this->comments_ = $comments;
 	}
 
 	// Add an involved party count to the killlist SQL
-	function setCountInvolved($setinv = true)
+	public function setCountInvolved($setinv = true)
 	{
 		$this->involved_ = $setinv;
 	}
@@ -878,7 +886,7 @@ class CombinedKillList extends KillList
 		$this->kills = false;
 	}
 
-	function buildKillArray()
+	public function buildKillArray()
 	{
 		$this->kills = array();
 		foreach ($this->lists as $killlist)
@@ -905,7 +913,7 @@ class CombinedKillList extends KillList
 		krsort($this->kills);
 	}
 
-	function getKill()
+	public function getKill()
 	{
 	// on the first request we load up our kills
 		if ($this->kills === false)
@@ -919,12 +927,12 @@ class CombinedKillList extends KillList
 		return array_shift($this->kills);
 	}
 
-	function rewind()
+	public function rewind()
 	{
 	// intentionally left empty to overload the standard handle
 	}
 
-	function getCount()
+	public function getCount()
 	{
 		$count = 0;
 		foreach ($this->lists as $killlist)
@@ -934,7 +942,7 @@ class CombinedKillList extends KillList
 		return $count;
 	}
 
-	function getRealCount()
+	public function getRealCount()
 	{
 		$count = 0;
 		foreach ($this->lists as $killlist)
@@ -944,7 +952,7 @@ class CombinedKillList extends KillList
 		return $count;
 	}
 
-	function getISK()
+	public function getISK()
 	{
 		$sum = 0;
 		foreach ($this->lists as $killlist)
@@ -954,7 +962,7 @@ class CombinedKillList extends KillList
 		return $sum;
 	}
 
-	function getPoints()
+	public function getPoints()
 	{
 		$sum = 0;
 		foreach ($this->lists as $killlist)
@@ -963,5 +971,4 @@ class CombinedKillList extends KillList
 		}
 		return $sum;
 	}
-
 }
