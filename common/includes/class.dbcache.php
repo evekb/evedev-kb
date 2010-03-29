@@ -6,23 +6,33 @@ require_once('class.dbdebug.php');
 //! mysqli file-cached query class. Manages SQL queries to a MySQL DB using mysqli.
 class DBCachedQuery extends DBBaseQuery
 {
+	// this is the minimum runtime a query has to run to be
+	// eligible for caching in seconds
+	private static $minruntime = 0.1;
+	private static $maxmem = null;
+	// maximum size of a cached result set (512kB)
+	private static $maxcachesize = 524288;
+
+	private $cache = array();
+	private $usedtables = array();
+	private $cached = false;
+	private $nocache = false;
+	private $sql = '';
+	private $hash = '';
+	private $mtime = 0;
+	private $currrow = 0;
+	private $resid = null;
+
 	//! Set up a mysqli cached query object with default values.
 	function DBCachedQuery($nocache = false)
 	{
-		$this->executed_ = false;
-		$this->_cache = array();
-		$this->_cached = false;
-		$this->_nocache = $nocache;
+		$this->nocache = $nocache;
 
-		// this is the minimum runtime a query has to run to be
-		// eligible for caching in seconds
-		$this->_minruntime = 0.1;
-
-		// maximum size of a cached result set (512kB)
-		$this->_maxcachesize = 524288;
-		$this->d = true;
-		$this->maxmem = preg_replace('/M/', '000000', ini_get('memory_limit')) * 0.8;
-		if(!$this->maxmem) $this->maxmem = 128000000;
+		if(is_null(self::$maxmem))
+		{
+			self::$maxmem = preg_replace('/M/', '000000', ini_get('memory_limit')) * 0.8;
+			if(!self::$maxmem) self::$maxmem = 128000000;
+		}
 	}
 	//! Check if this query has been cached and the cache valid.
 
@@ -33,22 +43,22 @@ class DBCachedQuery extends DBBaseQuery
 	{
 		// only cache selects
 		// we don't use select ... into so there is no problem
-		$this->_sql = str_replace(array("\r\n", "\n"), ' ', $this->_sql);
-		if (strtolower(substr($this->_sql, 0, 6)) != 'select' && strtolower(substr($this->_sql, 0, 4)) != 'show')
+		$this->sql = str_replace(array("\r\n", "\n"), ' ', $this->sql);
+		if (strtolower(substr($this->sql, 0, 6)) != 'select' && strtolower(substr($this->sql, 0, 4)) != 'show')
 		{
 			// this is no select, update the table
 			$this->markAffectedTables();
 			return false;
 		}
 
-		if($this->_nocache) return false;
-		if (file_exists(KB_QUERYCACHEDIR.'/qcache_qry_'.$this->_hash))
+		if($this->nocache) return false;
+		if (file_exists(KB_QUERYCACHEDIR.'/qcache_qry_'.$this->hash))
 		{
-			$this->_mtime = filemtime(KB_QUERYCACHEDIR.'/qcache_qry_'.$this->_hash);
-			/// Remove cached queries more than an hour old.
-			if (time() - $this->_mtime > 3600 )
+			$this->mtime = filemtime(KB_QUERYCACHEDIR.'/qcache_qry_'.$this->hash);
+			/// Remove cached queries more than three hours old.
+			if (time() - $this->mtime > 10800 )
 			{
-				unlink(KB_QUERYCACHEDIR.'/qcache_qry_'.$this->_hash);
+				unlink(KB_CACHEDIR.'/'.$cachefile);
 				return false;
 			}
 			if ($this->isCacheValid())
@@ -107,12 +117,12 @@ class DBCachedQuery extends DBBaseQuery
 			// if this query is a join we parse it with regexp to get all tables
 			$parse = 'join '.$parse;
 			preg_match_all('/join\s+([^ ]+)\s/', $parse, $match);
-			$this->_usedtables = $this->_usedtables + $match[1];
+			$this->usedtables = $this->usedtables + $match[1];
 		}
 		else
 		{
 			// no join so it is hopefully a simple table select
-			$this->_usedtables[] = preg_replace('/\s.*/', '', $parse);
+			$this->usedtables[] = preg_replace('/\s.*/', '', $parse);
 		}
 		return substr_replace($sql, '', $from, $to-$from);
 	}
@@ -124,17 +134,17 @@ class DBCachedQuery extends DBBaseQuery
 	private function isCacheValid()
 	{
 		// check if cachefiles are still valid
-		$this->_usedtables = array();
+		$this->usedtables = array();
 		// first, we need to get all involved tables
-		$this->parseSQL($this->_sql);
+		$this->parseSQL($this->sql);
 
-		foreach ($this->_usedtables as $table)
+		foreach ($this->usedtables as $table)
 		{
-			$file = KB_QUERYCACHEDIR.'/qcache_tbl_'.trim($table);
+			$file = 'SQL/qcache_tbl_'.trim($table);
 			if (file_exists($file))
 			{
 				// if one of the tables is outdated, the query is outdated
-				if ($this->_mtime <= filemtime($file))
+				if ($this->mtime <= filemtime($file))
 				{
 					return false;
 				}
@@ -146,7 +156,7 @@ class DBCachedQuery extends DBBaseQuery
 	private function markAffectedTables()
 	{
 		// this function invalidates cache files for touched tables
-		$text = trim(strtolower($this->_sql));
+		$text = trim(strtolower($this->sql));
 		$text = str_replace(array('ignore','`', "\r\n", "\n"), '', $text);
 		$text = str_replace('(', ' (', $text);
 		$ta = preg_split('/\s/', $text, 0, PREG_SPLIT_NO_EMPTY);
@@ -219,7 +229,7 @@ class DBCachedQuery extends DBBaseQuery
 	{
 		// this function fetches all rows and writes the data into a textfile
 		// don't attemp to cache updates!
-		if (strtolower(substr($this->_sql, 0, 6)) != 'select' && strtolower(substr($this->_sql, 0, 4)) != 'show')
+		if (strtolower(substr($this->sql, 0, 6)) != 'select' && strtolower(substr($this->sql, 0, 4)) != 'show')
 		{
 			return false;
 		}
@@ -227,38 +237,38 @@ class DBCachedQuery extends DBBaseQuery
 		$bsize = 0;
 		while ($row = $this->getRow())
 		{
-			$this->_cache[] = $row;
+			$this->cache[] = $row;
 
 			// if the bytesize of the table exceeds the limit we'll abort
 			// the cache generation and leave this query unbuffered
 			// If we're running out of memory then run uncached.
 			$bsize += strlen(join('', $row));
-			if ($bsize > $this->_maxcachesize || $this->maxmem < memory_get_usage())
+			if ($bsize > self::$maxcachesize || self::$maxmem < memory_get_usage())
 			{
-				unset($this->_cache);
-				$this->_cache[] = array();
-				$this->_cached = false;
+				unset($this->cache);
+				$this->cache = array();
+				$this->cached = false;
 				$this->rewind();
 				return false;
 			}
 		}
 
 		// write data into textfile
-		file_put_contents(KB_QUERYCACHEDIR.'/qcache_qry_'.$this->_hash, serialize($this->_cache));
+		file_put_contents(KB_QUERYCACHEDIR.'/qcache_qry_'.$this->hash, serialize($this->cache));
 
-		$this->_cached = true;
-		$this->_currrow = 0;
-		$this->executed_ = true;
+		$this->cached = true;
+		$this->currrow = 0;
+		$this->executed = true;
 	}
 	//! Read a cached query from file.
 	private function loadCache()
 	{
 		// loads the cachefile into the memory
-		$this->_cache = unserialize(file_get_contents(KB_QUERYCACHEDIR.'/qcache_qry_'.$this->_hash));
+		$this->cache = unserialize(file_get_contents(KB_QUERYCACHEDIR.'/qcache_qry_'.$this->hash));
 
-		$this->_cached = true;
-		$this->_currrow = 0;
-		$this->executed_ = true;
+		$this->cached = true;
+		$this->currrow = 0;
+		$this->executed = true;
 	}
 
 	//! Execute an SQL string.
@@ -269,11 +279,11 @@ class DBCachedQuery extends DBBaseQuery
 	*/
 	function execute($sql)
 	{
-		$this->_sql = trim($sql);
-		$this->_hash = md5($this->_sql);
-		unset($this->_cache);
-		$this->_cache = array();
-		$this->_cached = false;
+		$this->sql = trim($sql);
+		$this->hash = md5($this->sql);
+		unset($this->cache);
+		$this->cache = array();
+		$this->cached = false;
 
 		if ($this->checkCache())
 		{
@@ -282,27 +292,26 @@ class DBCachedQuery extends DBBaseQuery
 			return true;
 		}
 
-		// we got no or no valid cache so open the connection and run the query
-		$this->dbconn_ = new DBConnection();
-		//if(isset($this->resid_)) $this->resid_->free();
+		// we have no valid cache so open the connection and run the query
+		if(is_null(self::$dbconn))self::$dbconn = new DBConnection();
 
 		$t1 = strtok(microtime(), ' ') + strtok('');
 
-		$this->resid_ = mysqli_query($this->dbconn_->id(), $sql);
+		$this->resid = mysqli_query(self::$dbconn->id(), $sql);
 
-		if (!$this->resid_ || $this->dbconn_->id()->errno)
+		if (!$this->resid || self::$dbconn->id()->errno)
 		{
 			// Clear the cache to prevent errors spreading.
 			DBDebug::killCache();
 			if(defined('KB_PROFILE'))
 			{
-				DBDebug::recordError("Database error: ".$this->dbconn_->id()->error);
-				DBDebug::recordError("SQL: ".$this->_sql);
+				DBDebug::recordError("Database error: ".self::$dbconn->id()->error);
+				DBDebug::recordError("SQL: ".$this->sql);
 			}
 			if (DB_HALTONERROR === true)
 			{
-				echo "Database error: ".$this->dbconn_->id()->error."<br/>";
-				echo "SQL: ".$this->_sql."<br/>";
+				echo "Database error: ".self::$dbconn->id()->error."<br/>";
+				echo "SQL: ".$this->sql."<br/>";
 				exit;
 			}
 			else
@@ -313,21 +322,14 @@ class DBCachedQuery extends DBBaseQuery
 
 		$this->exectime = strtok(microtime(), ' ') + strtok('') - $t1;
 		self::$totalexectime += $this->exectime;
-		$this->executed_ = true;
+		$this->executed = true;
 
 		if(defined('KB_PROFILE')) DBDebug::profile($sql, $this->exectime);
 
 		// if the query was too slow we'll fetch all rows and run it cached
-		if ($this->exectime > $this->_minruntime)
+		if ($this->exectime > self::$minruntime)
 		{
 			$this->genCache();
-			// We will use the cached version now so free the mysqli resource.
-			// Except now it crashes so we won't.
-			if(false && $this->_cached)
-			{
-				$this->resid_->free();
-				unset($this->resid_);
-			}
 		}
 
 		$this->queryCount(true);
@@ -337,13 +339,13 @@ class DBCachedQuery extends DBBaseQuery
 	//! Return the number of rows returned by the last query.
 	function recordCount()
 	{
-		if ($this->_cached)
+		if ($this->cached)
 		{
-			return count($this->_cache);
+			return count($this->cache);
 		}
-		elseif ($this->resid_)
+		elseif ($this->resid)
 		{
-			return $this->resid_->num_rows;
+			return $this->resid->num_rows;
 		}
 		return false;
 	}
@@ -351,18 +353,18 @@ class DBCachedQuery extends DBBaseQuery
 	//! Return the next row of results from the last query.
 	function getRow()
 	{
-		if ($this->_cached)
+		if ($this->cached)
 		{
-			if (!isset($this->_cache[$this->_currrow]))
+			if (!isset($this->cache[$this->currrow]))
 			{
 				return false;
 			}
 			// return the current row and increase the pointer by one
-			return $this->_cache[$this->_currrow++];
+			return $this->cache[$this->currrow++];
 		}
-		if ($this->resid_)
+		if ($this->resid)
 		{
-			return $this->resid_->fetch_assoc();
+			return $this->resid->fetch_assoc();
 		}
 		return false;
 	}
@@ -370,18 +372,18 @@ class DBCachedQuery extends DBBaseQuery
 	//! Reset list of results to return the first row from the last query.
 	function rewind()
 	{
-		if ($this->_cached)
+		if ($this->cached)
 		{
-			$this->_currrow = 0;
+			$this->currrow = 0;
 		}
-		@mysqli_data_seek($this->resid_, 0);
+		if(!is_null($this->resid)) @mysqli_data_seek($this->resid, 0);
 	}
 
 	//! Return the most recent error message for the DB connection.
 	function getErrorMsg()
 	{
-		$msg = $this->sql_."<br>";
-		$msg .= "Query failed. ".mysqli_error($this->dbconn_->id());
+		$msg = $this->sql."<br>";
+		$msg .= "Query failed. ".mysqli_error(self::$dbconn->id());
 
 		return $msg;
 	}
@@ -402,15 +404,15 @@ class DBCachedQuery extends DBBaseQuery
 			else DBDebug::recordError("Transaction ended.");
 		}
 
-		if(!$this->dbconn_) $this->dbconn_ = new DBConnection();
-		return $this->dbconn_->id()->autocommit($commit);
+		if(!self::$dbconn) self::$dbconn = new DBConnection();
+		return self::$dbconn->id()->autocommit($commit);
 	}
 
 	//! Rollback all queries in the current transaction.
 	function rollback()
 	{
 		// if there's no connection to the db then there's nothing to roll back
-		if(!$this->dbconn_) return true;
-		return $this->dbconn_->id()->rollback();
+		if(!self::$dbconn) return true;
+		return self::$dbconn->id()->rollback();
 	}
 }
