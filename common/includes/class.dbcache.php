@@ -58,7 +58,7 @@ class DBCachedQuery extends DBBaseQuery
 			/// Remove cached queries more than three hours old.
 			if (time() - $this->mtime > 10800 )
 			{
-				unlink(KB_CACHEDIR.'/'.$cachefile);
+				unlink(KB_QUERYCACHEDIR.'/qcache_qry_'.$this->hash);
 				return false;
 			}
 			if ($this->isCacheValid())
