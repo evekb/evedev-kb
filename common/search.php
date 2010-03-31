@@ -24,7 +24,7 @@ class pSearch extends pageAssembly
 	function start()
 	{
 		$this->page->setTitle('Search');
-		$this->searchphrase = slashfix($_POST['searchphrase']);
+		$this->searchphrase = slashfix($_REQUEST['searchphrase']);
 		$this->searchphrase = preg_replace('/\*/', '%', $this->searchphrase);
 		$this->searchphrase = trim($this->searchphrase);
 	}
@@ -34,7 +34,7 @@ class pSearch extends pageAssembly
 		global $smarty;
 		if ($this->searchphrase != "" && strlen($this->searchphrase) >= 3)
 		{
-			switch ($_POST['searchtype'])
+			switch ($_REQUEST['searchtype'])
 			{
 				case "pilot":
 					$sql = "select plt.plt_id, plt.plt_name, crp.crp_name
@@ -90,7 +90,7 @@ class pSearch extends pageAssembly
 				while ($row = $qry->getRow())
 				{
 					$result = array();
-					switch ($_POST['searchtype'])
+					switch ($_REQUEST['searchtype'])
 					{
 						case "pilot":
 							$result['link'] = "?a=pilot_detail&amp;plt_id=".$row['plt_id'];
