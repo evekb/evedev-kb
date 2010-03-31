@@ -144,39 +144,37 @@ class MapView
 
 		if ($this->mode_ == "map")
 		{
-			$sql = 'select sys.sys_x, sys.sys_y, sys.sys_z, sys.sys_sec,
-					sys.sys_eve_id, sjp.sjp_to,
-					reg.reg_id
-				from kb3_systems sys, kb3_system_jumps sjp,
-					kb3_constellations con, kb3_regions reg
-				where con.con_id = sys.sys_con_id
-					and reg.reg_id = con.con_reg_id
-					and sjp.sjp_from = sys.sys_eve_id';
+			$sql = 'SELECT sys.sys_x, sys.sys_y, sys.sys_z, sys.sys_sec, sys.sys_eve_id, sjp.sjp_to, reg.reg_id
+					FROM (kb3_systems sys, kb3_constellations con, kb3_regions reg)
+					LEFT JOIN kb3_system_jumps sjp on sjp.sjp_from = sys.sys_eve_id
+					WHERE con.con_id = sys.sys_con_id
+					AND reg.reg_id = con.con_reg_id';
 
 			$caption = $this->regname_;
 		}
 		elseif ($this->mode_ == "region")
 		{
-			$sql = 'select sys.sys_x, sys.sys_y, sys.sys_z, sys.sys_sec,
-					sys.sys_name, sys.sys_eve_id, sjp.sjp_to
-				from kb3_systems sys, kb3_system_jumps sjp,
-					kb3_constellations con
-				where con.con_id = sys.sys_con_id
-					and sjp.sjp_from = sys.sys_eve_id
-					and con.con_reg_id = '.$this->regionid_;
+			$sql = 'SELECT sys.sys_x, sys.sys_y, sys.sys_z, sys.sys_sec, sys.sys_name, sys.sys_eve_id, sjp.sjp_to
+					FROM (kb3_systems sys, kb3_constellations con)
+					LEFT JOIN kb3_system_jumps sjp ON sjp.sjp_from = sys.sys_eve_id
+					WHERE con.con_id = sys.sys_con_id
+					AND con.con_reg_id = '.$this->regionid_;
 			$caption = $this->conname_;
 		}
 		elseif ($this->mode_ == "cons")
 		{
-			$sql = 'select sys.sys_x, sys.sys_y, sys.sys_z, sys.sys_sec,
-					sys.sys_name, sys.sys_eve_id, sjp.sjp_to, con.con_name
-				from kb3_systems sys, kb3_system_jumps sjp,
-					kb3_constellations con
-				where con.con_id = sys.sys_con_id
-					and sjp.sjp_from = sys.sys_eve_id
-					and con.con_id = '.$this->conid_;
+			$sql = 'SELECT sys.sys_x, sys.sys_y, sys.sys_z, sys.sys_sec, sys.sys_name, sys.sys_eve_id, sjp.sjp_to, con.con_name
+					FROM (kb3_systems sys, kb3_constellations con)
+					LEFT JOIN kb3_system_jumps sjp ON sjp.sjp_from = sys.sys_eve_id
+					WHERE con.con_id = sys.sys_con_id
+					AND con.con_id = '.$this->conid_;
 			$caption = $this->sysname_." (".roundsec($this->syssec_).")";
 		}
+		
+		if ($this->systemid_ >= 31000007)
+            $sql .= " AND sys.sys_eve_id >= 31000007";
+        else
+            $sql .= " AND sys.sys_eve_id < 31000007";
 
 		$qry = DBFactory::getDBQuery();;
 		$qry->execute($sql) or die($qry->getErrorMsg());
