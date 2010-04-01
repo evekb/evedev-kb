@@ -1,8 +1,10 @@
 <?php
 
-// Fetches a information for each item in a list. The list is based on dropped
-// items for given kill ids, dropped items for given kill ids or a list of
-// itemIDs
+//! Fetches a information for each item in a list.
+
+/*! The list is based on dropped items for given kill ids, dropped items for
+ *  given kill ids or a list of itemIDs
+ */
 class ItemList
 {
 	private $itemarray = array();
@@ -14,7 +16,7 @@ class ItemList
 
 	function ItemList($itemarray = null, $price = false)
 	{
-		$this->itemarray = $itemarray;
+		if(isset($itemarray)) $this->itemarray = $itemarray;
 		$this->price = $price;
 		$this->qry = DBFactory::getDBQuery();
 	}
@@ -74,22 +76,20 @@ class ItemList
 		$this->executed = true;
 	}
 
-	// Iterate through the list of items returned, returning one for each call
+	//! Iterate through the list of items returned, returning one for each call
 	function getItem()
 	{
 		if (!$this->executed) $this->execute();
 		if($row = $this->qry->getRow())
 		{
 			// Set up a new Item and return it.
-			$item = new Item($row['itm_externalid']);
-			$item->executed_ = true;
-			$item->row_ = $row;
+			$item = new Item($row['itm_externalid'], $row);
 			return $item;
 		}
 		return null;
 	}
 
-	// Rewind the list of items to the start.
+	//! Rewind the list of items to the start.
 	function rewind()
 	{
 		$this->qry->rewind();
