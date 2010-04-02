@@ -231,10 +231,11 @@ class pCorpDetail extends pageAssembly
 				$list = new KillList();
 				$list->setOrdered(true);
 				$list->setLimit(10);
-				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->addInvolvedCorp($this->crp_id);
 				if ($this->scl_id) $list->addVictimShipClass($this->scl_id);
-				//$list->setStartDate(date('Y-m-d H:i',strtotime('- 30 days')));
+				else $list->setPodsNoobShips(config::get('podnoobs'));
+				if (config::get('comments_count')) $list->setCountComments(true);
+				if (config::get('killlist_involved')) $list->setCountInvolved(true);
 
 				$ktab = new KillListTable($list);
 				$ktab->setLimit(10);
@@ -246,10 +247,11 @@ class pCorpDetail extends pageAssembly
 				$list = new KillList();
 				$list->setOrdered(true);
 				$list->setLimit(10);
-				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->addVictimCorp($this->crp_id);
 				if ($this->scl_id) $list->addVictimShipClass($this->scl_id);
-				//$list->setStartDate(date('Y-m-d H:i',strtotime('- 30 days')));
+				else $list->setPodsNoobShips(config::get('podnoobs'));
+				if (config::get('comments_count')) $list->setCountComments(true);
+				if (config::get('killlist_involved')) $list->setCountInvolved(true);
 
 				$ltab = new KillListTable($list);
 				$ltab->setLimit(10);
@@ -262,9 +264,9 @@ class pCorpDetail extends pageAssembly
 
 				$list = new KillList();
 				$list->setOrdered(true);
-				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->addInvolvedCorp($this->crp_id);
 				if ($this->scl_id) $list->addVictimShipClass($this->scl_id);
+				else $list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setPageSplit(config::get('killcount'));
 				$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 				$table = new KillListTable($list);
@@ -278,9 +280,9 @@ class pCorpDetail extends pageAssembly
 
 				$list = new KillList();
 				$list->setOrdered(true);
-				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->addVictimCorp($this->crp_id);
 				if ($this->scl_id) $list->addVictimShipClass($this->scl_id);
+				else $list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setPageSplit(config::get('killcount'));
 				$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 
