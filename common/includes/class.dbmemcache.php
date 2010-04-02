@@ -22,6 +22,7 @@ class DBMemcachedQuery extends DBBaseQuery
 	function DBMemcachedQuery($nocache = false)
 	{
 		if(is_null(self::$maxmem)) self::$maxmem = preg_replace('/M/', '000000', ini_get('memory_limit')) * 0.8;
+		if(!self::$maxmem) self::$maxmem = 128000000;
 		$this->nocache = $nocache;
 	}
 	
