@@ -275,15 +275,17 @@ class options
 	// Return the value of an option before it was changed
 	public static function getPrevious($key)
 	{
-		$current = &self::$data[urldecode($_POST['field'])][urldecode($_POST['sub'])];
+		if(!isset(self::$data[urldecode($_POST['field'])][urldecode($_POST['sub'])]))
+			return config::get($element[$key]['name']);
+		$current = self::$data[urldecode($_POST['field'])][urldecode($_POST['sub'])];
 		foreach ($current as $element)
 		{
-			if (isset($element[$key]) && $element[$key]['name'] == $key)
+			if (isset($element[$key]['name']) && $element[$key]['name'] == $key)
 			{
 				if(isset($element[$key]['previous'])) return $element[$key]['previous'];
 				else return config::get($element[$key]['name']);
 			}
 		}
-		return '';
+		return config::get($element[$key]['name']);
 	}
 }
