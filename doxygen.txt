@@ -11,6 +11,6 @@
 
  * - Webserver (apache)
  * - PHP 5.0.0+
- * - Mysql 4.1 +
+ * - Mysql 5.0 +
  * - GD 2 or higher
  */

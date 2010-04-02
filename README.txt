@@ -1,8 +1,16 @@
 -------------------------------------------
-Eve Development Network Killboard v3.0.1
+Eve Development Network Killboard v3.0.2
 -------------------------------------------
 
 VERSION HISTORY
+v3.0.2
+Toplist speed fixes
+Memory limits added to db caches
+Backglow returned to kill detail modules
+Kill related is more related.
+Ship values set in the admin panel are set
+Cache clearing cronjob checks directories exist
+-------------------------------------------
 v3.0.1
 Toplist speed fixes.
 Campaign speed fixes.
@@ -142,8 +150,8 @@ of this killboard, sign up for the EVE-Dev forums!
 // REQUIREMENTS
 -------------------------------------------
 - Webserver (apache)
-- PHP 4.0.9+
-- Mysql 4.10.+
+- PHP 5+
+- Mysql 5+
 - GD 2 or higher
 
 
