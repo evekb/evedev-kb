@@ -1,5 +1,7 @@
 <?php
-//error_reporting(E_ERROR);
+
+@error_reporting(E_ALL ^ E_NOTICE);
+@ini_set('display_errors', 1);
 include_once('../common/smarty/Smarty.class.php');
 
 //May be a bit overkill to use smarty here, but this way the html is in the template
@@ -34,4 +36,4 @@ if(!file_exists('install.lock'))
 }
 
 $smarty->display('index_bottom.tpl');
-?>
+
