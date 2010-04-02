@@ -90,7 +90,7 @@ class Page
 		$smarty->assign('banner_y', config::get('style_banner_y'));
 
 		$nav = new Navigation();
-		$nav->setSite($_GET['a']);
+		$nav->setPage($_GET['a']);
 		$menu = $nav->generateMenu();
 		$w = floor(100 / count($menu->get()));
 

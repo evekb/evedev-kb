@@ -2,28 +2,26 @@
 
 class Navigation
 {
+	private $type = 'top';
+	private $page = '';
+	private $site = null;
 
-	function Navigation()
+	function Navigation($site = KB_SITE)
 	{
+		$this->site = $site;
 		// checking if a minimum navigation exists
 		$this->check_navigationtable();
-
-		$this->sql_start = "SELECT * FROM kb3_navigation";
-		$this->sql_end = " AND KBSITE = '" . KB_SITE . "' ORDER BY posnr";
-		$this->type_ = 'top';
 	}
 
-	function execQuery()
+	private function execQuery()
 	{
 		require_once('common/includes/class.killboard.php');
-		$this->qry = DBFactory::getDBQuery();;
-		$query = $this->sql_start;
-		$query .= " WHERE nav_type = '$this->type_'";
+		$this->qry = DBFactory::getDBQuery();
+		$query = "SELECT * FROM kb3_navigation".
+			" WHERE nav_type = '$this->type'";
 
-		if (Killboard::hasContracts() == false)
-		{
-			$query .= " AND url != '?a=contracts'";
-		}
+		$query .= " AND url != '?a=contracts'";
+
 		if (Killboard::hasCampaigns() == false)
 		{
 			$query .= " AND url != '?a=campaigns'";
@@ -40,29 +38,28 @@ class Navigation
 		{
 			$query .= " AND url != '?a=self_detail'";
 		}
-		$query .= " AND (page = '".$this->site_."' OR page = 'ALL_PAGES') AND hidden = 0";
-		$query .= $this->sql_end;
+		$query .= " AND (page = '".$this->page."' OR page = 'ALL_PAGES') AND hidden = 0";
+		$query .= " AND KBSITE = '" . $this->site . "' ORDER BY posnr";
 		$this->qry->execute($query);
 	}
 
-	function getRow()
+	private function getRow()
 	{
 		return $this->qry->getRow();
 	}
 
-	function setNavType($type)
+	public function setNavType($type)
 	{
-		$this->type_ = $type;
+		$this->type = $type;
 	}
 
-	function setSite($site)
+	public function setPage($page)
 	{
-		$this->site_ = $site;
+		$this->page = $page;
 	}
 
-	function generateMenu()
+	public function generateMenu()
 	{
-		$this->site_ = $site;
 		$this->execQuery();
 
 		$menu = new Menu();
@@ -75,29 +72,24 @@ class Navigation
 		return $menu;
 	}
 
-	function generateMenuBox()
+	public function check_navigationtable()
 	{
-		// TODO
-	}
-
-	function check_navigationtable()
-	{
-		$sql = "select count(KBSITE) as cnt from kb3_navigation WHERE KBSITE = '".KB_SITE."'";
+		$sql = "select count(KBSITE) as cnt from kb3_navigation WHERE KBSITE = '".$this->site."'";
 		$qry = DBFactory::getDBQuery(true);;
 		// return false if query fails
 		if(!$qry->execute($sql)) return false;
 		if(!($row = $qry->getRow())) return false;
 		if($row['cnt'] == 0)
 		{
-			$queries = "INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr`,`page` ,`hidden`,`KBSITE`) VALUES ('top',1,'Home','?a=home','_self',1,'ALL_PAGES',0,'".KB_SITE."');
-				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Campaigns','?a=campaigns','_self',2,'ALL_PAGES',0,'".KB_SITE."');
-				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Post Mail','?a=post','_self',4,'ALL_PAGES',0,'".KB_SITE."');
-				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Stats','?a=self_detail','_self',5,'ALL_PAGES',0,'".KB_SITE."');
-				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Awards','?a=awards','_self',6,'ALL_PAGES',0,'".KB_SITE."');
-				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Standings','?a=standings','_self',7,'ALL_PAGES',0,'".KB_SITE."');
-				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Search','?a=search','_self',8,'ALL_PAGES',0,'".KB_SITE."');
-				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Admin','?a=admin','_self',9,'ALL_PAGES',0,'".KB_SITE."');
-				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'About','?a=about','_self',10,'ALL_PAGES',0,'".KB_SITE."');";
+			$queries = "INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr`,`page` ,`hidden`,`KBSITE`) VALUES ('top',1,'Home','?a=home','_self',1,'ALL_PAGES',0,'".$this->site."');
+				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Campaigns','?a=campaigns','_self',2,'ALL_PAGES',0,'".$this->site."');
+				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Post Mail','?a=post','_self',4,'ALL_PAGES',0,'".$this->site."');
+				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Stats','?a=self_detail','_self',5,'ALL_PAGES',0,'".$this->site."');
+				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Awards','?a=awards','_self',6,'ALL_PAGES',0,'".$this->site."');
+				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Standings','?a=standings','_self',7,'ALL_PAGES',0,'".$this->site."');
+				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Search','?a=search','_self',8,'ALL_PAGES',0,'".$this->site."');
+				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Admin','?a=admin','_self',9,'ALL_PAGES',0,'".$this->site."');
+				   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'About','?a=about','_self',10,'ALL_PAGES',0,'".$this->site."');";
 			$query = explode("\n", $queries);
 			$qry = DBFactory::getDBQuery(true);;
 			foreach ($query as $querystring)
