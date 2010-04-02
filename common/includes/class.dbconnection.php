@@ -4,7 +4,12 @@
 //! Establishes the connection to the database.
 class DBConnection
 {
-	static $conn_id = null;
+	private static $conn_id = null;
+
+	function DBConnection()
+	{
+		self::init();
+	}
 
 	//! Set up a mysqli DB connection.
 	private static function init()
