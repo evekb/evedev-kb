@@ -288,6 +288,7 @@ class Parser
             $kill->setExternalID($this->externalID);
             
         $kill->setTimeStamp($timestamp);
+		$kill->setVictim($victim);
         $kill->setVictimID($victim->getID());
         $kill->setVictimCorpID($corp->getID());
         $kill->setVictimAllianceID($alliance->getID());
