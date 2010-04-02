@@ -24,9 +24,9 @@
  {/if}
 {/if}
   <td class="kl-kill" align="center">{$i.kills}</td>
-  <td class="kl-kill" align="center">{$i.killisk/1000000|string_format:"%.2f"}</td>
+  <td class="kl-kill" align="center">{($i.killisk/1000000)|string_format:"%.2f"}</td>
   <td class="kl-loss" align="center">{$i.losses}</td>
-  <td class="kl-loss" align="center">{$i.lossisk/1000000|string_format:"%.2f"}</td>
+  <td class="kl-loss" align="center">{($i.lossisk/1000000)|string_format:"%.2f"}</td>
   <td class="kb-table-cell" align="center" width="40"><b>{$i.efficiency}</b></td>
   <td class="kb-table-cell" align="left" width="75">{$i.bar}</td>
  </tr>
