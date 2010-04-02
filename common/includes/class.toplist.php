@@ -117,7 +117,7 @@ class TopList
 	 *
 	 * If this is set then only ship classes set will be in the output.
 	 *
-	 * @param int $shipclass
+	 * \param $shipclass ID of a ship class.
 	 */
 	function addVictimShipClass($shipclass)
 	{
@@ -132,7 +132,7 @@ class TopList
 	 *
 	 * If this is set then only ship classes not set will be in the output.
 	 *
-	 * @param int $shipclass
+	 * \param $shipclass ID of a ship class
 	 */
 	function excludeVictimShipClass($shipclass)
 	{
@@ -147,7 +147,7 @@ class TopList
 	 *
 	 * If this is set then only ship types set will be in the output.
 	 *
-	 * @param int $ship
+	 * \param $ship ID of a shiptype
 	 */
 	function addVictimShip($ship)
 	{
@@ -161,7 +161,7 @@ class TopList
 	 *
 	 * If this is set then only ship types not set will be in the output.
 	 *
-	 * @param int $ship
+	 * \param $ship ID of a shiptype
 	 */
 	function excludeVictimShip($ship)
 	{
