@@ -8,17 +8,34 @@ require_once('class.dbprepared.php');
 class Pilot
 {
 	private $executed = false;
+	private $id_ = 0;
+	private $externalid_ = 0;
+	private $corpid_ = 0;
+	private $valid_ = false;
+	private $corp;
 
-	//! Create a new Pilot object from the given $id.
+	//! Create a new Pilot object from the given ID.
 
     /*!
      * \param $id The pilot ID.
-	 * \param $externalIDFlag whether the id is external or internal
+	 * \param $externalID The external pilot ID.
+	 * \param $name The pilot name.
+	 * \param $corp The pilot's corporation.
      */
-	function Pilot($id = 0, $externalIDFlag = false)
+	function Pilot($id = 0, $externalID = 0, $name = null, $corp = null)
 	{
-		if($externalIDFlag) $this->externalid_=intval($id);
-		else $this->id_ = intval($id);
+		$this->id_ = intval($id);
+		$this->externalid_ = intval($externalid);
+		if(isset($name)) $this->name_ = $name;
+		if(isset($corp))
+		{
+			if(is_numeric($corp)) $this->corpid_ = $corp;
+			else
+			{
+				$this->corp = $corp;
+				$this->corpid_ = $corp->getID();
+			}
+		}
 	}
 	//! Return the alliance ID.
 	function getID()
@@ -160,7 +177,7 @@ class Pilot
 				$this->valid_ = true;
 				$this->id_ = $row['plt_id'];
 				$this->name_ = $row['plt_name'];
-				$this->corp_ = $row['plt_crp_id'];
+				$this->corpid_ = $row['plt_crp_id'];
 				$this->externalid_ = intval($row['plt_externalid']);
 
 			}
@@ -174,8 +191,10 @@ class Pilot
      */
 	function getCorp()
 	{
-		if(!$this->corp_) $this->execQuery();
-		return new Corporation($this->corp_);
+		if(isset($this->corp)) return $this->corp;
+		$this->execQuery();
+		$this->corp = new Corporation($this->corpid_);
+		return $this->corp;
 	}
 	//! Check if the id given on construction is valid.
 
@@ -234,7 +253,7 @@ class Pilot
 					$this->id_ = $row['plt_id'];
 					$this->name_ = $name;
 					$this->externalid_ = $row['plt_externalid'];
-					$this->corp_ = $row['plt_crp_id'];
+					$this->corpid_ = $row['plt_crp_id'];
 					$this->updated_ = strtotime($row['plt_updated']." UTC");
 
 					// Now check if the corp needs to be updated.
@@ -257,7 +276,7 @@ class Pilot
                                                         plt_updated=date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s')");
 			$this->id_ = $qry->getInsertID();
 			$this->name_ = $name;
-			$this->corp_ = $corp->getID();
+			$this->corpid_ = $corp->getID();
 			$this->updated_ = strtotime(preg_replace("/\./","-",$timestamp)." UTC");
 		}
 		else
@@ -347,7 +366,7 @@ class Pilot
         if ($row['plt_id']) $this->id_ = $row['plt_id'];
 		$this->name_ = $row['plt_name'];
 		$this->externalid_ = intval($row['plt_externalid']);
-		$this->alliance_ = $row['plt_crp_id'];
+		$this->corpid_ = $row['plt_crp_id'];
 		$this->updated_ = strtotime($row['plt_updated']." UTC");
     }
 	

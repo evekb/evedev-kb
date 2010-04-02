@@ -1,6 +1,5 @@
 <?php
 require_once("class.ship.php");
-require_once("class.summary.php");
 
 class KillSummaryTable
 {
@@ -158,6 +157,7 @@ class KillSummaryTable
 		{
 			if( count($this->inv_all_) == 1 && !$this->inv_crp_ && !$this->inv_plt_)
 			{
+				require_once('class.alliancesummary.php');
 				$allsum = new allianceSummary($this->inv_all_[0]);
 				$summary = $allsum->getSummary();
 				foreach($summary as $key => $row)
@@ -175,6 +175,7 @@ class KillSummaryTable
 			}
 			elseif( count($this->inv_crp_) == 1 && !$this->inv_all_ && !$this->inv_plt_)
 			{
+				require_once('class.corpsummary.php');
 				$crpsum = new corpSummary($this->inv_crp_[0]);
 				$summary = $crpsum->getSummary();
 				foreach($summary as $key => $row)
@@ -192,6 +193,7 @@ class KillSummaryTable
 			}
 			elseif( count($this->inv_plt_) == 1 && !$this->inv_all_ && !$this->inv_crp_)
 			{
+				require_once('class.pilotsummary.php');
 				$pltsum = new pilotSummary($this->inv_plt_[0]);
 				$summary = $pltsum->getSummary();
 				foreach($summary as $key => $row)
