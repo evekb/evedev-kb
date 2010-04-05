@@ -41,6 +41,17 @@ abstract class DBBaseQuery
 
         return self::$queryCachedCount;
     }
+	//! Return the number of rows affected by the last query.
+
+	/*
+	 * Returns the number of rows from the last query, including those by
+	 * other objects.
+	 */
+	public static function affectedRows()
+	{
+		if(is_null(self::$dbconn)) return 0;
+		return self::$dbconn->affectedRows();
+	}
 	//! Execute an SQL string.
 
 	/*
