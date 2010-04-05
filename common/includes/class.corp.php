@@ -301,7 +301,7 @@ class Corporation
 				$result = $qry->getRow();
 				$old_id = $result['crp_id'];
 				$qry->autocommit(false);
-				$qry->execute("UPDATE kb3_pilots SET crp_id = ".$old_id." WHERE crp_id = ".$this->id);
+				$qry->execute("UPDATE kb3_pilots SET plt_crp_id = ".$old_id." WHERE plt_crp_id = ".$this->id);
 				$qry->execute("UPDATE kb3_kills SET kll_crp_id = ".$old_id." WHERE kll_crp_id = ".$this->id);
 				$qry->execute("UPDATE kb3_inv_detail SET ind_crp_id = ".$old_id." WHERE ind_crp_id = ".$this->id);
 				$qry->execute("UPDATE kb3_inv_crp SET inc_crp_id = ".$old_id." WHERE inc_crp_id = ".$this->id);
