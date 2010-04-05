@@ -251,8 +251,9 @@ class API_KillLog
                         $this->finalblow_ = $v;
                         break;
                     case "SECURITYSTATUS":
-                        //$this->security_ = $v;
-						$this->security_ = round($v,2); // allows number to pass with strict settings (number is usually much longer than 5 chars as defined in DB)
+						// Player security status on valid killmails always has
+						// one (and only one) digit after decimal place.
+						$this->security_ = number_format($v, 1);
                         break;
                     case "WEAPONTYPEID":
                         $this->weapon_ = gettypeIDname($v);
