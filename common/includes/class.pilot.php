@@ -310,7 +310,7 @@ class Pilot
 			$qry->execute("UPDATE kb3_kills SET kll_victim_id = ".$old_id." WHERE kll_victim_id = ".$this->id_);
 			$qry->execute("UPDATE kb3_kills SET kll_fb_plt_id = ".$old_id." WHERE kll_fb_plt_id = ".$this->id_);
 			$qry->execute("UPDATE kb3_inv_detail SET ind_plt_id = ".$old_id." WHERE ind_plt_id = ".$this->id_);
-			$qry->execute("DELETE FROM kb3_pilots WHERE kll_victim_id = ".$this->id_);
+			$qry->execute("DELETE FROM kb3_pilots WHERE plt_id = ".$this->id_);
 			$qry->execute("DELETE FROM kb3_sum_pilot WHERE psm_plt_id = ".$this->id_);
 			$qry->execute("DELETE FROM kb3_sum_pilot WHERE psm_plt_id = ".$old_id);
 			$this->id_ = $old_id;
