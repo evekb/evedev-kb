@@ -1318,7 +1318,7 @@ class InvolvedParty
 
 	function getSecStatus()
 	{
-		return $this->secstatus_;
+		return number_format($this->secstatus_, 1);
 	}
 
 	function getShip()
