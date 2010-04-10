@@ -95,25 +95,26 @@ class Item
 			$o_s = config::get('kd_otag');
 
 		}
+		if($show_style == "_none") $show_style = "";
+
 		$it_name = $this->getName();
-		if (($this->row_['itm_techlevel'] == 5) && $t_s) // is a T2?
+		if (($this->row_['itm_techlevel'] == 5) && $show_style) // is a T2?
 		{
 			$icon .= IMG_URL.'/items/'.$size.'_'.$size.'/t2'.$show_style.'.png';
 		}
-		elseif (($this->row_['itm_techlevel'] > 5) && ($this->row_['itm_techlevel'] < 10) && $f_s) // is a faction item?
+		elseif (($this->row_['itm_techlevel'] > 5) && ($this->row_['itm_techlevel'] < 10) && $show_style) // is a faction item?
 		{
 			$icon .= IMG_URL.'/items/'.$size.'_'.$size.'/f'.$show_style.'.png';
 		}
-		elseif (($this->row_['itm_techlevel'] > 10) && strstr($it_name,"Modified") && $o_s) // or it's an officer?
+		elseif (($this->row_['itm_techlevel'] > 10) && strstr($it_name,"Modified") && $show_style) // or it's an officer?
 		{
 			$icon .= IMG_URL.'/items/'.$size.'_'.$size.'/o'.$show_style.'.png';
 		}
-		elseif (($this->row_['itm_techlevel'] > 10) && $d_s && (strstr($it_name,"-Type"))) // or it's just a deadspace item.
+		elseif (($this->row_['itm_techlevel'] > 10) && (strstr($it_name,"-Type")) && $show_style) // or it's just a deadspace item.
 		{
 			$icon .= IMG_URL.'/items/'.$size.'_'.$size.'/d'.$show_style.'.png';
 		}
-		elseif ($f_s
-			&& (
+		elseif ((
 			strstr($it_name,"Blood ")
 				|| strstr($it_name,"Sansha")
 				|| strstr($it_name,"Arch")
@@ -123,8 +124,8 @@ class Item
 				|| strstr($it_name,"Guardian")
 				|| strstr($it_name,"Guristas")
 				|| strstr($it_name,"Shadow")
-			)
-			) // finally if it's a faction it should have its prefix
+		) && $show_style
+		) // finally if it's a faction it should have its prefix
 		{
 			$icon = IMG_URL.'/items/'.$size.'_'.$size.'/f'.$show_style.'.png';
 		}

@@ -48,10 +48,10 @@ options::fadd('Show Top Damage Dealer/Final Blow Boxes', 'kd_showbox', 'checkbox
 options::fadd('Show involved parties summary', 'kd_showext', 'checkbox');
 options::fadd('Include dropped value in total loss', 'kd_droptototal', 'checkbox');
 
-options::fadd('Show T2 items tag', 'kd_ttag', 'checkbox');
-options::fadd('Show Faction items tag', 'kd_ftag', 'checkbox');
-options::fadd('Show Deadspace items tag', 'kd_dtag', 'checkbox');
-options::fadd('Show Officer items tag', 'kd_otag', 'checkbox');
+//options::fadd('Show T2 items tag', 'kd_ttag', 'checkbox');
+//options::fadd('Show Faction items tag', 'kd_ftag', 'checkbox');
+//options::fadd('Show Deadspace items tag', 'kd_dtag', 'checkbox');
+//options::fadd('Show Officer items tag', 'kd_otag', 'checkbox');
 options::fadd('Show Fitting Panel', 'fp_show', 'checkbox');
 options::fadd('Show Fitting Exports', 'kd_EFT', 'checkbox');
 options::fadd('Show API verification', 'kd_verify', 'checkbox');
@@ -63,10 +63,10 @@ options::fadd('Panel Style', 'fp_style', 'select', array('admin_appearance', 'cr
 options::fadd('Item Highlight Style', 'fp_highstyle', 'select', array('admin_appearance', 'createHighStyle'));
 options::fadd('Ammo Highlight Style', 'fp_ammostyle', 'select', array('admin_appearance', 'createAmmoStyle'));
 options::fadd('Show Ammo, charges, etc', 'fp_showammo', 'checkbox');
-options::fadd('Highlight Tech II items', 'fp_ttag', 'checkbox');
-options::fadd('Highlight Faction items', 'fp_ftag', 'checkbox');
-options::fadd('Highlight Deadspace items', 'fp_dtag', 'checkbox');
-options::fadd('Highlight Officer items', 'fp_otag', 'checkbox');
+//options::fadd('Highlight Tech II items', 'fp_ttag', 'checkbox');
+//options::fadd('Highlight Faction items', 'fp_ftag', 'checkbox');
+//options::fadd('Highlight Deadspace items', 'fp_dtag', 'checkbox');
+//options::fadd('Highlight Officer items', 'fp_otag', 'checkbox');
 
 class admin_appearance
 {
@@ -137,7 +137,9 @@ class admin_appearance
 	$sfp_highstyles =array("ring" ,
 		"square" ,
 		"round" ,
-		"backglowing" );
+		"backglowing",
+		"tag",
+		"none");
 	$option = array();
 	$selected = config::get('fp_highstyle');
 	foreach ($sfp_highstyles as $style)
@@ -158,7 +160,8 @@ class admin_appearance
     function createAmmoStyle()
     {
 	$sfp_ammostyles =array("solid" ,
-		"transparent" );
+		"transparent",
+		"none");
 	$option = array();
 	$selected = config::get('fp_ammostyle');
 	foreach ($sfp_ammostyles as $style)
@@ -260,10 +263,6 @@ class admin_appearance
         return $options;
     }
 	//! Checks if theme has changed and updates page before display.
-
-	/*! If the style set is no longer valid in the new theme then that
-	 *  is also changed.
-	 */
 	function changeTheme()
 	{
 		global $themename;
@@ -278,28 +277,28 @@ class admin_appearance
 		global $smarty;
 		$smarty->assign('theme_url', config::get('cfg_kbhost').'/themes/'.$themename);
 		$smarty->template_dir = './themes/'.$themename.'/templates';
+		if(!file_exists(KB_CACHEDIR.'/templates_c/'.$themename.'/'))
+			mkdir(KB_CACHEDIR.'/templates_c/'.$themename.'/');
 		$smarty->compile_dir = KB_CACHEDIR.'/templates_c/'.$themename.'/';
-		admin_appearance::removeOld(0, KB_CACHEDIR.'/templates_c/', true);
+		admin_appearance::removeOld(0, KB_CACHEDIR.'/templates_c', true);
 	}
 	//! Updates style before page is displayed.
 	function changeStyle()
 	{
-		global $themename;
+		global $smarty;
 		if(options::getPrevious('theme_name') != $_POST['option_theme_name'])
 		{
 			$themename = preg_replace('/[^a-zA-Z0-9-_]/', '', $_POST['option_theme_name']);
 			if(!is_dir("themes/$themename")) $themename = 'default';
-			
+
 			config::set('style_name', $themename);
 			$_POST['option_style_name'] = $themename;
 
-			global $smarty;
 			$smarty->assign('style', $themename);
 		}
-		else
+		elseif(options::getPrevious('style_name') != $_POST['option_style_name'])
 		{
-			global $smarty;
-			$smarty->assign('style', $_POST['option_style_name']);
+			$smarty->assign('style', preg_replace('/[^a-zA-Z0-9-_]/', '', $_POST['option_style_name']));
 		}
 	}
 	//! Checks if banner has changed, updates page before display and resets banner size.
