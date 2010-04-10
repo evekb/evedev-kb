@@ -11,6 +11,15 @@
 if(function_exists("set_time_limit"))
 	@set_time_limit(0);
 
+if (!substr_compare(PHP_OS, 'win', 0, 3, true))
+{
+	@ini_set('include_path', ini_get('include_path').';.\\common\\includes');
+}
+else
+{
+	@ini_set('include_path', ini_get('include_path').':./common/includes');
+}
+
 $cronStartTime = microtime(true);
 
 if(file_exists(getcwd().'/cron_import.php'))

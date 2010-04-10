@@ -1,5 +1,14 @@
 <?php
 
+if (!substr_compare(PHP_OS, 'win', 0, 3, true))
+{
+	@ini_set('include_path', ini_get('include_path').';.\\common\\includes');
+}
+else
+{
+	@ini_set('include_path', ini_get('include_path').':./common/includes');
+}
+
 if(file_exists(getcwd().'/cron_clearup.php'))
 {
 	// current working directory minus last 5 letters of string ("/cron")
@@ -19,9 +28,9 @@ else die("Set \$KB_HOME to the killboard root in cron/cron_clearup.php.");
 chdir($KB_HOME);
 
 require_once('kbconfig.php');
-require_once('common/includes/globals.php');
-require_once('common/includes/class.config.php');
-require_once('common/includes/db.php');
+require_once('globals.php');
+require_once('class.config.php');
+require_once('db.php');
 
 // disable query caching while the script is running.
 $qcache = config::get('cfg_qcache');

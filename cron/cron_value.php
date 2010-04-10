@@ -15,6 +15,15 @@
 
 @set_time_limit(0);
 
+if (!substr_compare(PHP_OS, 'win', 0, 3, true))
+{
+	@ini_set('include_path', ini_get('include_path').';.\\common\\includes');
+}
+else
+{
+	@ini_set('include_path', ini_get('include_path').':./common/includes');
+}
+
 // Has to be run from the KB main directory for nested includes to work
 if(file_exists(getcwd().'/cron_value.php'))
 {

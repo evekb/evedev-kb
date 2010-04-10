@@ -6,9 +6,17 @@
 // Simple Cronjob script - set it to run this, no more than once an hour as you can only pull info once an hour anyway
 // by Captain Thunk! (ISK donations are all gratefully received)
 //
+if (!substr_compare(PHP_OS, 'win', 0, 3, true))
+{
+	@ini_set('include_path', ini_get('include_path').';.\\common\\includes');
+}
+else
+{
+	@ini_set('include_path', ini_get('include_path').':./common/includes');
+}
 
 if(function_exists("set_time_limit"))
-	set_time_limit(0);
+	@set_time_limit(0);
 
 if(file_exists(getcwd().'/cron_cache.php'))
 {
