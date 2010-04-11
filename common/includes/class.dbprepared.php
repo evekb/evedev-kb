@@ -8,6 +8,7 @@ class DBPreparedQuery
 {
 	static protected $totalexectime = 0;
 	protected $exectime = 0;
+	protected $executed = false;
 	static protected $dbconn = null;
 	static protected $queryCount = 0;
 	static protected $queryCachedCount = 0;
@@ -16,7 +17,6 @@ class DBPreparedQuery
 //! Prepare a connection for a new mysqli query.
 	function DBPreparedQuery()
 	{
-		$this->executed_ = false;
 		self::$dbconn = new DBConnection();
 	}
     //! Return the count of queries performed.
@@ -56,23 +56,46 @@ class DBPreparedQuery
      * If DB_HALTONERROR is set then this will exit on an error.
      * \return false on error or true if successful.
      */
-	function execute()
+	public function execute()
 	{
-		return $this->execute_prepared();
+		$t1 = strtok(microtime(), ' ') + strtok('');
+		if(!$this->stmt->execute())
+		{
+			if(defined('KB_PROFILE'))
+			{
+				DBDebug::recordError("Database error: ".self::$dbconn->id()->error);
+				DBDebug::recordError("SQL: ".$sql);
+			}
+			if (defined('DB_HALTONERROR') && DB_HALTONERROR)
+			{
+				echo "Database error: " . self::$dbconn->id()->error . "<br>";
+				echo "SQL: " . $sql . "<br>";
+				exit;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		$this->stmt->store_result();
+		$this->exectime = strtok(microtime(), ' ') + strtok('') - $t1;
+		self::$totalexectime += $this->exectime;
+		$this->executed = true;
+		return true;
 	}
 	//! Return the number of rows returned by the last query.
-	function recordCount()
+	public function recordCount()
 	{
 		if($this->stmt) return $this->stmt->num_rows;
 		return false;
 	}
 	//! Return the auto-increment ID from the last insert operation.
-	function getInsertID()
+	public function getInsertID()
 	{
 		return $this->stmt->insert_id;
 	}
 	//! Return the most recent error message for the DB connection.
-	function getErrorMsg()
+	public function getErrorMsg()
 	{
 		if($this->stmt)
 		{
@@ -91,12 +114,12 @@ class DBPreparedQuery
      *  \param $commit The new autocommit status.
      *  \return true on success and false on failure.
      */
-	function autocommit($commit = true)
+	public function autocommit($commit = true)
 	{
 		return self::$dbconn->id()->autocommit($commit);
 	}
 	//! Rollback all queries in the current transaction.
-	function rollback()
+	public function rollback()
 	{
 		return mysqli_rollback(self::$dbconn->id());
 	}
@@ -105,7 +128,7 @@ class DBPreparedQuery
 	/* \param $sql String containing a prepared statement.
 	 * \return true on success and false on failure.
 	 */
-	function prepare($sql)
+	public function prepare($sql)
 	{
 		$this->stmt = self::$dbconn->id()->prepare($sql);
 		if(!$this->stmt)
@@ -133,7 +156,7 @@ class DBPreparedQuery
 	/*! bound parameters can not be changed. While this can be changed as per
 	 * bind_results it would break future caching. For now it stays unbound.
 	 */
-	function bind_param()
+	public function bind_param()
 	{
 		$arr[0]=$this->stmt;
 		$args = func_get_args();
@@ -149,7 +172,7 @@ class DBPreparedQuery
 	 * arguments do not reach the prepared statement.
 	 */
 
-	function bind_result(&$arg0=null, &$arg1=null, &$arg2=null, &$arg3=null,
+	public function bind_result(&$arg0=null, &$arg1=null, &$arg2=null, &$arg3=null,
 		&$arg4=null, &$arg5=null, &$arg6=null, &$arg7=null, &$arg8=null,
 		&$arg9=null, &$arg10=null, &$arg11=null, &$arg12=null, &$arg13=null,
 		&$arg14=null, &$arg15=null, &$arg16=null, &$arg17=null, &$arg18=null,
@@ -181,34 +204,21 @@ class DBPreparedQuery
      * If DB_HALTONERROR is set then this will exit on an error.
      * \return false on error or true if successful.
      */
-	function execute_prepared()
+	public function execute_prepared()
 	{
-		$t1 = strtok(microtime(), ' ') + strtok('');
-		if(!$this->stmt->execute())
-		{
-			if(defined('KB_PROFILE'))
-			{
-				DBDebug::recordError("Database error: ".self::$dbconn->id()->error);
-				DBDebug::recordError("SQL: ".$sql);
-			}
-			if (defined('DB_HALTONERROR') && DB_HALTONERROR)
-			{
-				echo "Database error: " . self::$dbconn->id()->error . "<br>";
-				echo "SQL: " . $sql . "<br>";
-				exit;
-			}
-			else
-			{
-				return false;
-			}
-		}
-		$this->stmt->store_result();
-		$this->exectime = strtok(microtime(), ' ') + strtok('') - $t1;
-		self::$totalexectime += $this->exectime;
-		return true;
+		trigger_error("execute_prepared is deprecated. Use execute()", E_USER_DEPRECATED);
+		return $this->execute();
 	}
 	//! Fetch the next results of the prepared statement into bound variables.
-	function fetch_prepared()
+
+	//! Deprecated in favour of fetch().
+	public function fetch_prepared()
+	{
+		trigger_error("fetch_prepared is deprecated. Use fetch()", E_USER_DEPRECATED);
+		return $this->fetch();
+	}
+	//! Fetch the next results of the prepared statement into bound variables.
+	public function fetch()
 	{
 		return $this->stmt->fetch();
 	}

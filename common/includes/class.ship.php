@@ -171,7 +171,7 @@ class Ship
 		$pqry->bind_result($this->id, $this->shipname, $this->shiptechlevel,
 			$this->externalid, $price, $baseprice, $scl_id);
 		if(!$pqry->execute() || !$pqry->recordCount()) return false;
-		else $pqry->fetch_prepared();
+		else $pqry->fetch();
 
 		$this->shipclass = new ShipClass($scl_id);
 		if (!$this->value = $price)

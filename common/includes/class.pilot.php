@@ -70,7 +70,7 @@ class Pilot
 			{
 				if($pqry->recordCount())
 				{
-					$pqry->fetch_prepared();
+					$pqry->fetch();
 					$this->setCharacterID($id);
 					return $this->externalid_;
 				}

@@ -62,7 +62,7 @@ function doAjaxSearch($searchphrase='', $type='pilot')
 	$qry->bind_result($name1, $name2, $id);
 	$result = '';
 
-	if(!$qry->execute_prepared() )
+	if(!$qry->execute() )
 	{
 		$result = $qry->getErrorMsg();
 	}
@@ -91,7 +91,7 @@ function doAjaxSearch($searchphrase='', $type='pilot')
 						$result .= "<td>Item</td><td></td></tr>";
 						break;
 				}
-			while($qry->fetch_prepared())
+			while($qry->fetch())
 			{
 				$result .= "<tr class='kb-table-row-even'><td><a href='".KB_HOST;
 				switch($type)
