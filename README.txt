@@ -1,8 +1,12 @@
 -------------------------------------------
-Eve Development Network Killboard v3.0.2
+Eve Development Network Killboard v3.0.3
 -------------------------------------------
 
 VERSION HISTORY
+v3.0.3
+Callback function passes references (Mod makers rejoice)
+Updates to core mods missing from previous updates added.
+-------------------------------------------
 v3.0.2
 Toplist speed fixes
 Memory limits added to db caches

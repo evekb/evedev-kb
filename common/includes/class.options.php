@@ -279,12 +279,12 @@ class options
 	// Return the value of an option before it was changed
 	function getPrevious($key)
 	{
-        $data = &options::_getData();
+        $data = options::_getData();
 
-        $current = &$data[urldecode($_POST['field'])][urldecode($_POST['sub'])];
-        foreach ($current as &$elements)
+        $current = $data[urldecode($_POST['field'])][urldecode($_POST['sub'])];
+        foreach ($current as $elements)
         {
-            foreach ($elements as &$element)
+            foreach ($elements as $element)
             {
                 if ($element['name'] == $key)
                 {
@@ -296,4 +296,3 @@ class options
 		return '';
 	}
 }
-?>
