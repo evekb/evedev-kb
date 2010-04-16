@@ -169,8 +169,8 @@ class pContractDetail extends pageAssembly
 				$this->contract = new Contract($this->ctr_id);
 				$klist = $this->contract->getKillList();
 				$klist->setOrdered(true);
-				if ($scl_id)
-					$klist->addVictimShipClass($scl_id);
+				if ($this->scl_id)
+					$klist->addVictimShipClass($this->scl_id);
 				else
 					$klist->setPodsNoobShips(config::get('podnoobs'));
 
@@ -181,8 +181,8 @@ class pContractDetail extends pageAssembly
 
 				$llist = $this->contract->getLossList();
 				$llist->setOrdered(true);
-				if ($scl_id)
-					$llist->addVictimShipClass($scl_id);
+				if ($this->scl_id)
+					$llist->addVictimShipClass($this->scl_id);
 				else
 					$llist->setPodsNoobShips(config::get('podnoobs'));
 
@@ -196,8 +196,8 @@ class pContractDetail extends pageAssembly
 				$this->contract = new Contract($this->ctr_id);
 				$list = $this->contract->getKillList();
 				$list->setOrdered(true);
-				if ($scl_id)
-					$list->addVictimShipClass($scl_id);
+				if ($this->scl_id)
+					$list->addVictimShipClass($this->scl_id);
 				else
 					$list->setPodsNoobShips(config::get('podnoobs'));
 
@@ -213,8 +213,8 @@ class pContractDetail extends pageAssembly
 				$this->contract = new Contract($this->ctr_id);
 				$llist = $this->contract->getLossList();
 				$llist->setOrdered(true);
-				if ($scl_id)
-					$llist->addVictimShipClass($scl_id);
+				if ($this->scl_id)
+					$llist->addVictimShipClass($this->scl_id);
 				else
 					$llist->setPodsNoobShips(config::get('podnoobs'));
 
