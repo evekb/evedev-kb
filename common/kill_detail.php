@@ -1127,7 +1127,7 @@ class pKillDetail extends pageAssembly
 						if($ditem->getItem()->getID() == $IID) $this->kill->droppeditems_[$i]->value = $Val;
 					}
 				}
-				$qry->execute("UPDATE kb3_kills SET kll_isk_loss = ".$this->kill->calculateISKLoss()." WHERE kll_id = ".$this->kill->getID());
+				$this->kill->calculateISKLoss(true);
 				$qry->autocommit(true);
 			}
 

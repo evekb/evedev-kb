@@ -90,7 +90,7 @@ class Parser
     {
         if($this->externalID) //if we have this mail already, don't parse
         {
-            $qry = DBFactory::getDBQuery();;
+            $qry = DBFactory::getDBQuery();
             $qry->execute('SELECT kll_id FROM kb3_kills WHERE kll_external_id = '.$this->externalID);
             if($qry->recordCount())
             {
@@ -401,10 +401,10 @@ class Parser
                             else
                             {
                                 $ipname = $matches[1];
-                                preg_match("/(.*) \\(laid the final blow\\)/", $ipname, $matches);
-                                if ($matches[1])
+                                preg_match("/(.*)\s*\\(laid the final blow\\)/", $ipname, $matches);
+                                if (isset($matches[1]))
                                 {
-                                    $ipname = $matches[1];
+                                    $ipname = trim($matches[1]);
                                     $finalblow = 1;
                                 }
                                 else $finalblow = 0;
@@ -486,7 +486,7 @@ class Parser
                     $icorp = $this->fetchCorp($icname, $ialliance, $kill->getTimeStamp());
                 }
 
-                if (strcmp($ipname, 'Unknown') == 0)
+				if (strcmp($ipname, 'Unknown') == 0 || empty($ipname))
                 {
                     if (preg_match("/Mobile/", $iwname) || preg_match("/Control Tower/", $iwname))
                     { //for involved parties parsed that lack a pilot, but are actually POS or mobile warp disruptors
@@ -605,7 +605,7 @@ class Parser
                 // existing kill.
                 if($this->externalID)
                 {
-                    $qry = DBFactory::getDBQuery();;
+                    $qry = DBFactory::getDBQuery();
                     $qry->execute("UPDATE kb3_kills SET kll_external_id = ".
                         $this->externalID." WHERE kll_id = ".$this->dupeid_);
                 }
@@ -665,11 +665,11 @@ class Parser
         $id = $kill->add();
         if ($id == -1)
         {
-            $this->dupeid_ = $kill->dupeid_;
+            $this->dupeid_ = $kill->getDupe(true);
 
             if($this->externalID)
             {
-                $qry = DBFactory::getDBQuery();;
+                $qry = DBFactory::getDBQuery();
                 $qry->execute("UPDATE kb3_kills SET kll_external_id = ".$this->externalID." WHERE kll_id = ".$this->dupeid_);
             }
         }
