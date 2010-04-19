@@ -1029,7 +1029,7 @@ class Kill
 	{
 		// If value isn't already calculated then do so now. Don't update the
 		// stored value since at this point it does not exist.
-		if(!is_numeric($this->iskloss_)) $this->calculateISKLoss(false);
+		if(!$this->iskloss_) $this->calculateISKLoss(false);
 
 		// Start a transaction here to capture the duplicate check.
 		$qry = DBFactory::getDBQuery();
