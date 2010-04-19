@@ -1,8 +1,11 @@
 -------------------------------------------
-Eve Development Network Killboard v3.0.3
+Eve Development Network Killboard v3.0.4
 -------------------------------------------
 
 VERSION HISTORY
+v3.0.4
+Rare error in renaming pilots fixed.
+-------------------------------------------
 v3.0.3
 Callback function passes references (Mod makers rejoice)
 Updates to core mods missing from previous updates added.
