@@ -338,7 +338,7 @@ class Pilot
 			$result = $qry->getRow();
 			$qry->autocommit(false);
 			$old_id = $result['plt_id'];
-			$qry->execute("UPDATE kb3_pilots SET plt_name = '.$this->name_.' where plt_id = ".$old_id);
+			$qry->execute("UPDATE kb3_pilots SET plt_name = '".$this->name_."' where plt_id = ".$old_id);
 			$qry->execute("UPDATE kb3_kills SET kll_victim_id = ".$old_id." WHERE kll_victim_id = ".$this->id_);
 			$qry->execute("UPDATE kb3_kills SET kll_fb_plt_id = ".$old_id." WHERE kll_fb_plt_id = ".$this->id_);
 			$qry->execute("UPDATE kb3_inv_detail SET ind_plt_id = ".$old_id." WHERE ind_plt_id = ".$this->id_);
