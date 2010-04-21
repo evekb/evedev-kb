@@ -68,7 +68,7 @@ class pPilotDetail extends pageAssembly
 			if($this->plt_external_id)
 			{
 				$this->pilot = new Pilot(0, $this->plt_external_id);
-				$this->pltid = $this->pilot->getID();
+				$this->plt_id = $this->pilot->getID();
 			}
 			elseif(PILOT_ID)
 			{

@@ -25,7 +25,7 @@ class Pilot
 	function Pilot($id = 0, $externalID = 0, $name = null, $corp = null)
 	{
 		$this->id_ = intval($id);
-		$this->externalid_ = intval($externalid);
+		$this->externalid_ = intval($externalID);
 		if(isset($name)) $this->name_ = $name;
 		if(isset($corp))
 		{
