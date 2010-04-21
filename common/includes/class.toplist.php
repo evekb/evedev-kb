@@ -936,41 +936,16 @@ class TopShipList extends TopList
 		$this->TopList();
 	}
 
-	function addInvolvedPilot($pilot)
-	{
-		$this->invplt_ = $pilot;
-	}
-
-	function addInvolvedCorp($corp)
-	{
-		$this->invcrp_ = $corp;
-	}
-
-	function addInvolvedAlliance($alliance)
-	{
-		$this->invall_ = $alliance;
-	}
-
 	function generate()
 	{
-		$sqltop = "select count(distinct ind.ind_kll_id) as cnt, ind.ind_shp_id as shp_id
+		$sqltop = "select count( ind.ind_kll_id) as cnt, ind.ind_shp_id as shp_id
               from kb3_inv_detail ind
 			  inner join kb3_kills kll on (kll.kll_id = ind.ind_kll_id)
 	      inner join kb3_ships shp on ( shp_id = ind.ind_shp_id )";
 
 		$this->setSQLTop($sqltop);
 
-		if ($this->invplt_)
-			$sqlbottom .= " and ind.ind_plt_id = ".$this->invplt_->getID();
-
-		if ($this->invcrp_)
-			$sqlbottom .= " and ind.ind_crp_id = ".$this->invcrp_->getID();
-
-		if ($this->invall_)
-			$sqlbottom .= " and ind.ind_all_id = ".$this->invall_->getID();
-
-		$sqlbottom .= " and shp.shp_class not in (2, 17, 18)".
-			" group by ind.ind_shp_id order by 1 desc".
+		$sqlbottom .= " group by ind.ind_shp_id order by 1 desc".
 			" limit 20";
 
 		$this->setSQLBottom($sqlbottom);
@@ -1029,21 +1004,6 @@ class TopWeaponList extends TopList
 		$this->TopList();
 	}
 
-	function addInvolvedPilot($pilot)
-	{
-		$this->invplt_ = $pilot;
-	}
-
-	function addInvolvedCorp($corp)
-	{
-		$this->invcrp_ = $corp;
-	}
-
-	function addInvolvedAlliance($alliance)
-	{
-		$this->invall_ = $alliance;
-	}
-
 	function generate()
 	{
 		// Does not need to be distinct (i.e. weapon was used by two different
@@ -1052,15 +1012,6 @@ class TopWeaponList extends TopList
 				from kb3_inv_detail ind
 				inner join kb3_kills kll on (kll.kll_id = ind.ind_kll_id)
 				inner join kb3_invtypes itm on (typeID = ind.ind_wep_id)";
-
-		if ($this->invplt_)
-			$sqlbottom .= " and ind.ind_plt_id = ".$this->invplt_->getID();
-
-		if ($this->invcrp_)
-			$sqlbottom .= " and ind.ind_crp_id = ".$this->invcrp_->getID();
-
-		if ($this->invall_)
-			$sqlbottom .= " and ind.ind_all_id = ".$this->invall_->getID();
 
 		$this->setSQLTop($sql);
 		// since ccps database doesnt have icons for ships this will also fix the ship as weapon bug

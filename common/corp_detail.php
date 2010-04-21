@@ -472,13 +472,13 @@ class pCorpDetail extends pageAssembly
 
 				$html .= "<table class=\"kb-subtable\"><tr><td valign=\"top\" width=\"400\">";
 				$shiplist = new TopShipList();
-				$shiplist->addVictimCorp($this->crp_id);
+				$shiplist->addInvolvedCorp($this->crp_id);
 				$shiplisttable = new TopShipListTable($shiplist);
 				$html .= $shiplisttable->generate();
 				$html .= "</td><td valign=\"top\" align=\"right\" width=\"400\">";
 
 				$weaponlist = new TopWeaponList();
-				$weaponlist->addVictimCorp($this->crp_id);
+				$weaponlist->addInvolvedCorp($this->crp_id);
 				$weaponlisttable = new TopWeaponListTable($weaponlist);
 				$html .= $weaponlisttable->generate();
 				$html .= "</td></tr></table>";
