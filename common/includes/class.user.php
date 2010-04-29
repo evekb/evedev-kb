@@ -14,7 +14,7 @@ class user
         {
             return true;
         }
-        $db = DBFactory::getDBQuery(true);;
+        $db = DBFactory::getDBQuery(true);
         $db->execute('select * from kb3_user
                       left join kb3_user_extra on kb3_user.usr_id = kb3_user_extra.use_usr_id
                       left join kb3_user_titles on kb3_user.usr_id = kb3_user_titles.ust_usr_id
@@ -48,7 +48,7 @@ class user
 
 		if ($row['ust_ttl_id'])
 		{
-			$db2 = DBFactory::getDBQuery(true);;
+			$db2 = DBFactory::getDBQuery(true);
 			$db2->execute('select distinct rol_name from kb3_titles_roles a,kb3_roles b where a.rol_id=b.rol_id and  a.ttl_id='.$row['ust_ttl_id']);
 			while ($ttle = $db2->getRow())
 			{
@@ -131,7 +131,7 @@ class user
     // login,pass,pilot
     function register($login, $password, $pilot = null, $p_charid = null)
     {
-        $db = DBFactory::getDBQuery(true);;
+        $db = DBFactory::getDBQuery(true);
 
         $values[] = KB_SITE;
         $values[] = $login;
@@ -155,6 +155,22 @@ class user
         $values = "'".join("','", $values)."'";
         $db->execute('insert into kb3_user (usr_site, usr_login, usr_pass, usr_pilot_id, usr_state) VALUES ('.$values.')');
         event::call('user_created', $values);
+    }
+    
+    function delete($login)
+    {
+		$qry = DBFactory::getDBQuery(true);
+		$name = slashfix($login);
+		
+		$qry->execute("SELECT usr_id FROM kb3_user WHERE usr_login = '{$name}'");
+		$row = $qry->getRow();
+		$usr_id = $row['usr_id'];
+		
+		$qry->execute("DELETE FROM kb3_user WHERE usr_id = {$usr_id}");
+		$qry->execute("DELETE FROM kb3_user_extra WHERE use_usr_id = {$usr_id}");
+		$qry->execute("DELETE FROM kb3_user_roles WHERE uro_usr_id = {$usr_id}");
+		$qry->execute("DELETE FROM kb3_user_titles WHERE ust_usr_id = {$usr_id}");
+		event::call("user_deleted", $login);
     }
 }
 ?>
