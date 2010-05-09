@@ -312,7 +312,7 @@ if ($_POST['apilog'])
 			$datasource = "<font color = \"#00FF00\">" . $datasource . "</font>";
 			
     	$html .= "<tr class=" . $class . ">";
-    	$html .= "<td align=center><b>" . $row['log_keyname'] . "</b></td>";
+    	$html .= "<td align=center><b>" . stripslashes($row['log_keyname']) . "</b></td>";
     	$html .= "<td>" . $numposted . "</td>";
     	$html .= "<td>" . $numerrors . "</td>";
     	$html .= "<td>" . $numignored . "</td>";

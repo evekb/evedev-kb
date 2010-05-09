@@ -149,7 +149,7 @@ class API_KillLog
 			$logtype = "Manual";
 
         $qry->execute( "insert into kb3_apilog	values( '" . KB_SITE . "', '"
-														. config::get('API_Name_'.$keyindex) . "',"
+														. addslashes(config::get('API_Name_'.$keyindex)) . "',"
 														. $this->mailcount_ . ","
 														. $this->malformedmails_ . ","
 														. $this->ignoredmails_ . ","
