@@ -165,13 +165,9 @@ class cache
 			$cachefile = cache::genCacheName();
 
 			// Create directories if needed.
-			if (!file_exists(KB_PAGECACHEDIR.'/'.KB_SITE))
-			{
-				mkdir(KB_PAGECACHEDIR.'/'.KB_SITE);
-			}
 			if (!file_exists(KB_PAGECACHEDIR.'/'.KB_SITE.'/'.cache::genCacheName(true)))
 			{
-				mkdir(KB_PAGECACHEDIR.'/'.KB_SITE.'/'.cache::genCacheName(true));
+				mkdir(KB_PAGECACHEDIR.'/'.KB_SITE.'/'.cache::genCacheName(true),0755, true);
 			}
 			// Use the minimum compression. The size difference is minor for our usage.
 			$fp = @gzopen($cachefile, 'wb1');
@@ -205,8 +201,8 @@ class cache
 		$basename = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].IS_IGB.$themename.$stylename;
 		event::call('cacheNaming', $basename);
 		$filename = md5($basename).'.cache';
-		if($subdir) return substr($filename,0,1);
-		self::$cacheName = KB_PAGECACHEDIR.'/'.KB_SITE.'/'.substr($filename,0,1).'/'.$filename;
+		if($subdir) return substr($filename,0,2);
+		self::$cacheName = KB_PAGECACHEDIR.'/'.KB_SITE.'/'.substr($filename,0,2).'/'.$filename;
 		return self::$cacheName;
 	}
 	//! Remove the cache of the current page.
