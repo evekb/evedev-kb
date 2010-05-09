@@ -20,6 +20,9 @@
  *
  */
 
+// Start timing the killboard page.
+$timeStarted = microtime(true);
+
 // many ppl had issues with pear and relative paths
 include_once('kbconfig.php');
 // If there is no config then redirect to the install folder.
@@ -221,16 +224,17 @@ foreach ($mods_active as $mod)
 		$modOverrides = true;
 		$modOverride = $mod;
 	}
-	if(count($modconflicts)>1)
-	{
-		echo "<html><head></head><body>There are multiple active mods ".
-				"for this page. Only one may be active at a time. All others ".
-				"must be deactivated in the admin panel.<br>";
-		foreach($modconflicts as $modname) echo $modname." <br> ";
-		echo "</body>";
-		die();
-	}
 }
+if(count($modconflicts)>1)
+{
+	echo "<html><head></head><body>There are multiple active mods ".
+			"for this page. Only one may be active at a time. All others ".
+			"must be deactivated in the admin panel.<br>";
+	foreach($modconflicts as $modname) echo $modname." <br> ";
+	echo "</body>";
+	die();
+}
+
 $none = '';
 event::call('mods_initialised', $none);
 if (!$settingsPage && !file_exists('common/'.$page.'.php') && !$modOverrides)

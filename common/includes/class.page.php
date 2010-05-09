@@ -5,43 +5,45 @@ require_once('common/includes/class.navigation.php');
 //! Construct an output page.
 class Page
 {
-//! Construct a Page class with the given title.
+	private $title = "";
+	private $headlines = array();
+	private $bodylines = array();
+	private $igb = IS_IGB;
+	private $timestart = 0;
+	private $cachable = true;
+	private $cachetime = 60;
+	private $onload = null;
+	private $contenthtml = "";
+	private $contexthtml = "";
 
-//! Page generation timer is started on Page creation.
+	//! Construct a Page class with the given title.
+
+	//! Page generation timer is started on Page creation.
 	function Page($title = '', $cachable = true)
 	{
+		global $timeStarted;
+		$this->timestart = &$timeStarted;
 		event::call('page_initialisation', $this);
 		if (!config::get('public_stats'))
 		{
 			config::set('public_stats','do nothing');
 		}
 
-		$this->title_ = $title;
-		$this->admin_ = false;
-		$this->headlines = $this->bodylines = array();
-
-		$this->igb_ = IS_IGB;
-
-		$this->timestart_ = strtok(microtime(), ' ') + strtok('');
-
-		$this->cachable_ = $cachable;
-		$this->cachetime_ = 5;
-
-	// if you have probs with missing tables uncomment this and
-	// check_navigationtable();
+		$this->title = $title;
+		$this->cachable = $cachable;
 	}
 	//! Set the content html that is displayed in the main body panel.
-	function setContent($html)
+	public function setContent($html)
 	{
-		$this->contenthtml_ = $html;
+		$this->contenthtml = $html;
 	}
 	//! Set the context html that is displayed in the sidebar.
-	function addContext($html)
+	public function addContext($html)
 	{
-		$this->contexthtml_ .= $html;
+		$this->contexthtml .= $html;
 	}
 	//! Create and display an error message.
-	function error($message)
+	public function error($message)
 	{
 		global $smarty;
 
@@ -50,12 +52,12 @@ class Page
 		$this->generate();
 	}
 	//! Add a line to the header html.
-	function addHeader($line)
+	public function addHeader($line)
 	{
 		$this->headlines[] = $line;
 	}
 	//! Add a line to the body html.
-	function addBody($line)
+	public function addBody($line)
 	{
 		$this->bodylines[] = $line;
 	}
@@ -63,15 +65,15 @@ class Page
 
 	//! Output is constructed from the variables passed in through the
 	//! add methods and the index.tpl.
-	function generate()
+	public function generate()
 	{
 		global $smarty;
 
-		$smarty->assign('kb_title', KB_TITLE.' '.$this->title_);
+		$smarty->assign('kb_title', KB_TITLE.' '.$this->title);
 
-		if ($this->onload_)
+		if ($this->onload)
 		{
-			$smarty->assign('on_load', ' onload="'.$this->onload_.'"');
+			$smarty->assign('on_load', ' onload="'.$this->onload.'"');
 		}
 
 		// header
@@ -81,10 +83,8 @@ class Page
 		event::call('page_assemblebody', $this);
 		$smarty->assign('page_bodylines', join("\n", $this->bodylines));
 
-		if (MAIN_SITE)
-		{
-			$smarty->assign('banner_link', MAIN_SITE);
-		}
+		if (MAIN_SITE) $smarty->assign('banner_link', MAIN_SITE);
+
 		$smarty->assign('banner', config::get('style_banner'));
 		$smarty->assign('banner_x', config::get('style_banner_x'));
 		$smarty->assign('banner_y', config::get('style_banner_y'));
@@ -92,7 +92,8 @@ class Page
 		$nav = new Navigation();
 		$nav->setPage($_GET['a']);
 		$menu = $nav->generateMenu();
-		$w = floor(100 / count($menu->get()));
+		if(!count($menu->get())) $w = 100;
+		else $w = floor(100 / count($menu->get()));
 
 		$smarty->assign('menu_w',$w.'%');
 		$smarty->assign('menu', $menu->get());
@@ -108,43 +109,43 @@ class Page
 			$smarty->assign('bannerswf', 'false');
 		}
 
-		$smarty->assign('page_title', $this->title_);
+		$smarty->assign('page_title', $this->title);
 
-		$this->timeend_ = strtok(microtime(), ' ') + strtok('');
-		$this->processingtime_ = $this->timeend_ - $this->timestart_;
+		$processingtime = number_format((microtime(true) - $this->timestart),4);
 
-		$qry = DBFactory::getDBQuery();;
+		$qry = DBFactory::getDBQuery();
 		$smarty->assign('profile_sql_cached', $qry->queryCachedCount());
 		$smarty->assign('profile_sql', $qry->queryCount());
-		$smarty->assign('profile_time', round($this->processingtime_,4));
-		$smarty->assign('sql_time', round($qry->getTotalTime(),4));
-		if($this->isAdmin() || config::get('cfg_profile') || intval(KB_PROFILE)) $smarty->assign('profile', 1);
-		$smarty->assign('content_html', $this->contenthtml_);
+		$smarty->assign('profile_time', $processingtime);
+		$smarty->assign('sql_time', number_format($qry->getTotalTime(),4));
+		if($this->isAdmin() || config::get('cfg_profile') || intval(KB_PROFILE))
+			$smarty->assign('profile', 1);
+		$smarty->assign('content_html', $this->contenthtml);
 		if (config::get('user_showmenu'))
 		{
-			$this->contexthtml_ = user::menu().$this->contexthtml_;
+			$this->contexthtml = user::menu().$this->contexthtml;
 		}
-		$smarty->assign('context_html', $this->contexthtml_);
+		$smarty->assign('context_html', $this->contexthtml);
 		event::call('smarty_displayindex', $smarty);
 		$smarty->display(get_tpl('index'));
 	}
 	//! Return whether this will display as an igb page.
-	function igb()
+	public function igb()
 	{
-		return $this->igb_;
+		return $this->igb;
 	}
 	//! Set the onload variable for Smarty.
-	function setOnLoad($onload)
+	public function setOnLoad($onload)
 	{
-		$this->onload_ = $onload;
+		$this->onload = $onload;
 	}
 	// Set the page title.
-	function setTitle($title)
+	public function setTitle($title)
 	{
-		$this->title_ = $title;
+		$this->title = $title;
 	}
 	//! If this is not an admin session redirect to the login page.
-	function setAdmin()
+	public function setAdmin()
 	{
 		if (!Session::isAdmin())
 		{
@@ -154,52 +155,50 @@ class Page
 		}
 	}
 	//! Return whether this is an admin session.
-	function isAdmin()
+	public function isAdmin()
 	{
 		return Session::isAdmin();
 	}
 	//! Return whether this is a superadmin session.
-	function isSuperAdmin()
+	public function isSuperAdmin()
 	{
 		return Session::isSuperAdmin();
 	}
 	//! If this is not a superadmin session redirect to the login page.
-	function setSuperAdmin()
+	public function setSuperAdmin()
 	{
 		if (!Session::isSuperAdmin())
 			Header("Location: ?a=login");
 	}
 	//! Set whether this page is cacheable.
-	function setCachable($cachable)
+	public function setCachable($cachable)
 	{
-		$this->cachable_ = $cachable;
+		$this->cachable = $cachable;
 	}
 	//! Set how long to cache this page.
-	function setCacheTime($cachetime)
+	public function setCacheTime($cachetime)
 	{
-		$this->cachetime_ = $cachetime;
+		$this->cachetime = $cachetime;
 	}
-
 }
 //! Construct a menu.
 
 //! A Menu is a wrapper around an array of links and matching text.
 class Menu
 {
-//! Construct a blank side menu.
+	private $menu = array();
+	//! Construct a blank side menu.
 	function Menu()
 	{
-		$this->menu_ = array();
 	}
 	//! Return the array of menu options.
-	function get()
+	public function get()
 	{
-		return $this->menu_;
+		return $this->menu;
 	}
 	//! Add a link and text to the array of menu options.
-	function add($link, $text)
+	public function add($link, $text)
 	{
-		$this->menu_[] = array('link' => $link, 'text' => $text);
+		$this->menu[] = array('link' => $link, 'text' => $text);
 	}
 }
-?>
