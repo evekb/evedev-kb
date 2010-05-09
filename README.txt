@@ -1,8 +1,13 @@
 -------------------------------------------
-Eve Development Network Killboard v3.0.4
+Eve Development Network Killboard v3.0.5
 -------------------------------------------
 
 VERSION HISTORY
+v3.0.5
+Cache clearing script fixed.
+Corp detail page shows top ships used rather than killed.
+New ships can be added to admin ship values again.
+-------------------------------------------
 v3.0.4
 Rare error in renaming pilots fixed.
 -------------------------------------------
