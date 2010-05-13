@@ -99,12 +99,12 @@ class DBPreparedQuery
 		{
 			if(defined('KB_PROFILE'))
 			{
-				DBDebug::recordError("Database error: ".$this->stmt->error);
+				DBDebug::recordError("Database error: ".$this->dbconn_->id()->error);
 				DBDebug::recordError("SQL: ".$sql);
 			}
 			if (defined('DB_HALTONERROR') && DB_HALTONERROR)
 			{
-				echo "Database error: " . $this->stmt->error . "<br>";
+				echo "Database error: " . $this->dbconn_->id()->error . "<br>";
 				echo "SQL: " . $sql . "<br>";
 				exit;
 			}
