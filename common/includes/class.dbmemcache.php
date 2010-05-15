@@ -81,7 +81,7 @@ class DBMemcachedQuery extends DBBaseQuery
 		
 		if(!$this->nocache)
 		{
-			$cached = $mc->get(KB_SITE . '_sql_' . $this->hash);
+			$cached = $mc->get('sql_' . $this->hash);
 			if($cached)
 			{
 				$this->cache = $cached;
