@@ -2280,9 +2280,9 @@ class API_Standings
 	{
 		return $this->AllianceCorporations_;
 	}
-	function getAliianceAlliances()
+	function getAllianceAlliances()
 	{
-		return $this->AliianceAlliances_;
+		return $this->AllianceAlliances_;
 	}
 
 	function fetchXML()
@@ -2342,7 +2342,7 @@ class API_Standings
 		$this->Agents_ = $this->mysortarray($this->Agents_);
 		$this->NPCCorporations_ = $this->mysortarray($this->NPCCorporations_);
 		$this->AllianceCorporations_ = $this->mysortarray($this->AllianceCorporations_);
-		$this->AllianceAlliances_ = $this->mysortarray($this->AliianceAlliances_);
+		$this->AllianceAlliances_ = $this->mysortarray($this->AllianceAlliances_);
 
 		return $this->html;
 	}
