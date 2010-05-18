@@ -149,7 +149,7 @@ class API_KillLog
 			$logtype = "Manual";
 
         $qry->execute( "insert into kb3_apilog	values( '" . KB_SITE . "', '"
-														. config::get('API_Name_'.$keyindex) . "',"
+														. addslashes(config::get('API_Name_'.$keyindex)) . "',"
 														. $this->mailcount_ . ","
 														. $this->malformedmails_ . ","
 														. $this->ignoredmails_ . ","
@@ -2278,9 +2278,9 @@ class API_Standings
 	{
 		return $this->AllianceCorporations_;
 	}
-	function getAliianceAlliances()
+	function getAllianceAlliances()
 	{
-		return $this->AliianceAlliances_;
+		return $this->AllianceAlliances_;
 	}
 
 	function fetchXML()
@@ -2340,7 +2340,7 @@ class API_Standings
 		$this->Agents_ = $this->mysortarray($this->Agents_);
 		$this->NPCCorporations_ = $this->mysortarray($this->NPCCorporations_);
 		$this->AllianceCorporations_ = $this->mysortarray($this->AllianceCorporations_);
-		$this->AllianceAlliances_ = $this->mysortarray($this->AliianceAlliances_);
+		$this->AllianceAlliances_ = $this->mysortarray($this->AllianceAlliances_);
 
 		return $this->html;
 	}
