@@ -30,7 +30,7 @@ while ($row = $qry->getRow())
 	{
 		$icon = 'good';
 	}
-	elseif ($row['sta_value'] > -5)
+	elseif ($row['sta_value'] >= -5)
 	{
 		$icon = 'bad';
 	}
