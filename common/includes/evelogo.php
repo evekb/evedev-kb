@@ -39,7 +39,7 @@ if (!file_exists("img/corps"))
 	}
 }
 
-function CorporationLogo($data, $size = 64, $filename)
+function CorporationLogo($data, $size = 128, $filename)
 {
 	/* Generates corp logo defined by the parameters in data object. The data
 object may be an eveapi logo element from the CorporationSheet, a dict
@@ -59,8 +59,7 @@ a background with the color of your choice if specified, otherwise black.*/
 	$colour2 = $data["colour2"];
 	$colour3 = $data["colour3"];
 
-	//$logo = imagecreatefrompng($resourcePath . "/baselogo.png"); // open image
-	$logo = imagecreatetruecolor(64,64);
+	$logo = imagecreatetruecolor(128, 128);
 	imagealphablending($logo, 1);
 	imagesavealpha($logo, 1);
 
@@ -69,7 +68,7 @@ a background with the color of your choice if specified, otherwise black.*/
 		$layer3 = imagecreatefrompng($resourcePath . "/" . $colour3 . "/" . $shape3 . ".png"); // open image
 		imagealphablending($layer3, 1); // setting alpha blending on
 		imagesavealpha($layer3, 1);
-		imagecopy( $logo, $layer3, 0 , 0 , 0, 0,64 , 64);
+		imagecopy( $logo, $layer3, 0 , 0 , 0, 0, 128, 128);
 	}
 
 	if ($shape2)
@@ -77,19 +76,19 @@ a background with the color of your choice if specified, otherwise black.*/
 		$layer2 = imagecreatefrompng($resourcePath . "/" . $colour2 . "/" . $shape2 . ".png"); // open image
 		imagealphablending($layer2, 1); // setting alpha blending on
 		imagesavealpha($layer2, 1);
-		imagecopy( $logo , $layer2 , 0 , 0 , 0 , 0 , 64 , 64 );
+		imagecopy( $logo , $layer2 , 0 , 0 , 0 , 0 , 128 , 128 );
 	}
 	if ($shape1)
 	{
 		$layer1 = imagecreatefrompng($resourcePath . "/" . $colour1 . "/" . $shape1 . ".png"); // open image
 		imagealphablending($layer1, 1); // setting alpha blending on
 		imagesavealpha($layer1, 1);
-		imagecopy( $logo , $layer1 , 0 , 0 , 0 , 0 , 64 , 64 );
+		imagecopy( $logo , $layer1 , 0 , 0 , 0 , 0 , 128 , 128 );
 	}
 
-	for ($x=0 ; $x <= 64; $x++)
+	for ($x=0 ; $x <= 128; $x++)
 	{
-		for ($y=0 ; $y <= 64; $y++)
+		for ($y=0 ; $y <= 128; $y++)
 		{
 			$rgb = imagecolorat( $logo, $x, $y);
 			list($r, $g, $b, $a) = imagecolorsforindex($logo, $rgb);
@@ -129,18 +128,18 @@ a background with the color of your choice if specified, otherwise black.*/
 
 	if(!file_exists(KB_CACHEDIR.'/img/corps/'.substr($filename,0,2)))
 			mkdir(KB_CACHEDIR.'/img/corps/'.substr($filename,0,2));
-	if ($size != 64)
+	if ($size != 128)
 	{
 		$newsize = imagecreatetruecolor($size, $size);
 		imagealphablending ( $newsize , true );
 		if(function_exists('imageantialias')) imageantialias ( $newsize , true );
-		imagecopyresampled($newsize, $logo, 0, 0, 0, 0, $size, $size, 64, 64);
-		imagejpeg ( $newsize , KB_CACHEDIR.'/img/corps/' . substr($filename,0,2).'/'. $filename . "_".$size.".jpg" );
+		imagecopyresampled($newsize, $logo, 0, 0, 0, 0, $size, $size, 128, 128);
+		imagepng ( $newsize , KB_CACHEDIR.'/img/corps/' . substr($filename,0,2).'/'. $filename . "_".$size.".png" );
 		imagedestroy($newsize);
 
 	} else {
 		// write logo to disk
-		imagejpeg ( $logo , KB_CACHEDIR.'/img/corps/' . substr($filename,0,2).'/'. $filename . "_64.jpg" );
+		imagepng ( $logo , KB_CACHEDIR.'/img/corps/' . substr($filename,0,2).'/'. $filename . "_128.png" );
 	}
 
 	imagedestroy($logo);

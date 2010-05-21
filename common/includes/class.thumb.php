@@ -78,7 +78,7 @@ class thumb
 				$this->thumb = KB_CACHEDIR.'/img/pilots/'.substr($this->id,0,2).'/'.substr($this->id,2,2).'/'.$this->id.'_'.$this->size.'.jpg';
 				break;
 			case 'corp':
-				$this->thumb = KB_CACHEDIR.'/img/corps/'.substr($this->id,0,2).'/'.$this->id.'_'.$this->size.'.jpg';
+				$this->thumb = KB_CACHEDIR.'/img/corps/'.substr($this->id,0,2).'/'.$this->id.'_'.$this->size.'.png';
 				break;
 			case 'alliance':
 				$this->thumb = KB_CACHEDIR.'/img/alliances/'.$this->id.'_'.$this->size.'.png';
@@ -174,18 +174,18 @@ class thumb
 
 	function genCorp()
 	{
-		$source = 'img/corps/'.$this->id.'.jpg';
+		$source = 'img/corps/'.$this->id.'.png';
 		// id is not a number and the matching npc corp image does not exist.
 		if (!file_exists($source) && !is_numeric($this->id))
 		{
 			$this->id = 0;
-			$this->thumb = KB_CACHEDIR.'/img/corps/00/0_'.$this->size.'.jpg';
+			$this->thumb = KB_CACHEDIR.'/img/corps/00/0_'.$this->size.'.png';
 		}
 		// id matches an npc image.
 		elseif(file_exists($source));
 		// no matching image found so let's try the cache.
-		elseif (file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->id,0,2).'/'.$this->id.'_64.jpg'))
-			$source = KB_CACHEDIR.'/img/corps/'.substr($this->id,0,2).'/'.$this->id.'_64.jpg';
+		elseif (file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->id,0,2).'/'.$this->id.'_64.png'))
+			$source = KB_CACHEDIR.'/img/corps/'.substr($this->id,0,2).'/'.$this->id.'_64.png';
 		// no image found in the image folder, or the cache, so let's make it.
 		else
 		{
@@ -200,7 +200,7 @@ class thumb
 
 			if ($result == "Corporation is not part of alliance.")
 			{
-				$this->thumb = KB_CACHEDIR.'/img/corps/0_'.$this->size. '.jpg';
+				$this->thumb = KB_CACHEDIR.'/img/corps/0_'.$this->size. '.png';
 			}
 			elseif ($result == "")
 			{
@@ -213,7 +213,7 @@ class thumb
 			}
 			return;
 		}
-		$img = imagecreatefromjpeg($source);
+		$img = imagecreatefrompng($source);
 		if ($img)
 		{
 			$newimg = imagecreatetruecolor($this->size, $this->size);
@@ -225,7 +225,7 @@ class thumb
 				mkdir(KB_CACHEDIR.'/img/corps/'.substr($this->id,0,2));
 			elseif($this->id == 0 && !file_exists(KB_CACHEDIR.'/img/corps/00'))
 				mkdir(KB_CACHEDIR.'/img/corps/00');
-			imagejpeg($newimg, $this->thumb, 90);
+			imagepng($newimg, $this->thumb, 90);
 		}
 		return;
 	}
@@ -365,12 +365,12 @@ class thumbInt extends thumb
 					$this->id = 0;
 				}
 				$this->id = $corp->getExternalID();
-				$this->encoding = 'jpeg';
+				$this->encoding = 'png';
 
 				if($this->type == 'npc')
 				{
 					$this->type = 'npc';
-					$this->encoding = 'png';
+					//$this->encoding = 'png';
 				}
 
 				$this->validate();

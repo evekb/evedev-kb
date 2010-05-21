@@ -68,8 +68,8 @@ class Corporation
 			else return '?a=thumb&amp;type=npc&amp;id='.$this->getUnique().'&amp;size='.$size;
 		}
 		else {
-			if($this->externalid && file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->externalid,0,2).'/'.$this->externalid.'_'.$size.'.jpg'))
-				return KB_CACHEDIR.'/img/corps/'.substr($this->externalid,0,2).'/'.$this->externalid.'_'.$size.'.jpg';
+			if($this->externalid && file_exists(KB_CACHEDIR.'/img/corps/'.substr($this->externalid,0,2).'/'.$this->externalid.'_'.$size.'.png'))
+				return KB_CACHEDIR.'/img/corps/'.substr($this->externalid,0,2).'/'.$this->externalid.'_'.$size.'.png';
 		}
 		return '?a=thumb&amp;type=corp&amp;id='.$this->externalid.'&amp;size='.$size;
 	}
