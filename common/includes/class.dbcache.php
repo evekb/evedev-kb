@@ -2,6 +2,8 @@
 require_once 'class.dbbasequery.php';
 require_once 'class.dbconnection.php';
 require_once('class.dbdebug.php');
+if(DB_USE_MEMCACHE) require_once('class.cachehandlerhashedmem.php');
+else require_once('class.cachehandlerhashed.php');
 
 //! mysqli file-cached query class. Manages SQL queries to a MySQL DB using mysqli.
 class DBCachedQuery extends DBBaseQuery
@@ -12,25 +14,33 @@ class DBCachedQuery extends DBBaseQuery
 	private static $maxmem = null;
 	// maximum size of a cached result set (512kB)
 	private static $maxcachesize = 524288;
+	private static $location = "SQL";
+	private static $maxage = 10800;
 
 	private $cache = array();
 	private $usedtables = array();
 	private $cached = false;
 	private $nocache = false;
 	private $sql = '';
-	private $hash = '';
 	private $mtime = 0;
 	private $currrow = 0;
 	private $resid = null;
+	private static $cachehandler = null;
+	private static $baseTables = null;
 
 	//! Set up a mysqli cached query object with default values.
 	function DBCachedQuery($nocache = false)
 	{
 		$this->nocache = $nocache;
 
+		if(DB_USE_MEMCACHE) self::$cachehandler = new CacheHandlerHashedMem();
+		else self::$cachehandler = new CacheHandlerHashed();
+
 		if(is_null(self::$maxmem))
 		{
-			self::$maxmem = preg_replace('/M/', '000000', ini_get('memory_limit')) * 0.8;
+			self::$maxmem = @ini_get('memory_limit');
+			self::$maxmem = @preg_replace('/M/', '000000', self::$maxmem) * 0.8;
+			self::$maxmem = @intval(preg_replace('/G/', '000000000', self::$maxmem) * 0.8);
 			if(!self::$maxmem) self::$maxmem = 128000000;
 		}
 	}
@@ -52,21 +62,12 @@ class DBCachedQuery extends DBBaseQuery
 		}
 
 		if($this->nocache) return false;
-		if (file_exists(KB_QUERYCACHEDIR.'/qcache_qry_'.$this->hash))
+		if (self::$cachehandler->exists($this->sql, self::$location))
 		{
-			$this->mtime = filemtime(KB_QUERYCACHEDIR.'/qcache_qry_'.$this->hash);
-			/// Remove cached queries more than three hours old.
-			if (time() - $this->mtime > 10800 )
-			{
-				unlink(KB_QUERYCACHEDIR.'/qcache_qry_'.$this->hash);
-				return false;
-			}
-			if ($this->isCacheValid())
-			{
-				return true;
-			}
+			$this->mtime = self::$cachehandler->age($this->sql, self::$location);
+			if ($this->mtime > self::$maxage ) return false;
+			if ($this->isCacheValid()) return true;
 		}
-
 		return false;
 	}
 
@@ -75,56 +76,136 @@ class DBCachedQuery extends DBBaseQuery
 	//! The resulting list is set internally to this object.
 	private function parseSQL($sql)
 	{
+		// Check list of tables daily.
+		$daily = 86400;
+		if(is_null(self::$baseTables)
+			&& ( self::$cachehandler->age('SHOW TABLES', self::$location) > $daily
+				|| !self::$cachehandler->exists('SHOW TABLES', self::$location)))
+		{
+			// we have no valid cache so open the connection and run the query
+			if(is_null(self::$dbconn))self::$dbconn = new DBConnection();
+
+			$t1 = microtime(true);
+
+			$resid = mysqli_query(self::$dbconn->id(), 'SHOW TABLES');
+
+			if (!$resid || self::$dbconn->id()->errno)
+			{
+				// Clear the cache to prevent errors spreading.
+				DBDebug::killCache();
+				if(defined('KB_PROFILE'))
+				{
+					DBDebug::recordError("Database error: ".self::$dbconn->id()->error);
+					DBDebug::recordError("SQL: ".$this->sql);
+				}
+				if (DB_HALTONERROR === true)
+				{
+					echo "Database error: ".self::$dbconn->id()->error."<br/>";
+					echo "SQL: ".$this->sql."<br/>";
+					exit;
+				}
+				else
+				{
+					return false;
+				}
+			}
+
+			$this->exectime = microtime(true) - $t1;
+			self::$totalexectime += $this->exectime;
+
+			if(defined('KB_PROFILE')) DBDebug::profile($sql, $this->exectime);
+
+			$this->queryCount(true);
+
+			$bsize = 0;
+			while ($row = $resid->fetch_assoc())
+			{
+				$table = strtolower(array_shift($row));
+				self::$baseTables[$table] = $table;
+			}
+			// write data to cache
+			self::$cachehandler->put('SHOW TABLES', self::$baseTables, self::$location, $daily);
+		}
+		else if(is_null(self::$baseTables)) self::$baseTables = self::$cachehandler->get('SHOW TABLES', self::$location);
+
+
 		// gets all involved tables for a select statement
 		$sql = strtolower($sql).' ';
 
-		// we try to get the text from 'from' to 'where' because all involved
-		// tables are declared in that part
-		$from = strpos($sql, 'from')+5;
-		if($from > strlen($sql)) return '';
-		// if there is a subquery then recurse into the string between the next
-		// from and first unclosed ) or where
-		$from2 = strpos($sql, 'from', $from);
-		if($from2) $sql = substr_replace($sql, $this->parseSQL(substr($sql,$from2 - 1)), $from2);
+		$regex = '/'.implode('|', self::$baseTables).'/';
+		$matches = array();
+		if(!preg_match_all($regex, $sql, $matches)) $this->usedtables = array();
+		else $this->usedtables = $matches[0];
 
-		if (!$to = strpos($sql, 'where'))
-		{
-			$to = strlen($sql);
-		}
-		// Find an unmatched ')'.
-		$bracketpos = $from;
-		$countbr = 0;
-		while($bracketpos < $to && $countbr >=0)
-		{
-			$bracketpos++;
-			if($sql[$bracketpos] == '(') $countbr++;
-			elseif($sql[$bracketpos] == ')') $countbr++;
-		}
-		$to = $bracketpos;
-
-		$parse = trim(substr($sql, $from, $to-$from));
-		$parse = str_replace('`', ' ', $parse);
-
-		$tables = array();
-		if (strpos($parse, ',') !== false)
-		{
-			// , is a synonym for join so we'll replace them
-			$parse = str_replace(',', ' join ', $parse);
-		}
-
-		if (strpos($parse, 'join'))
-		{
-			// if this query is a join we parse it with regexp to get all tables
-			$parse = 'join '.$parse;
-			preg_match_all('/join\s+([^ ]+)\s/', $parse, $match);
-			$this->usedtables = $this->usedtables + $match[1];
-		}
-		else
-		{
-			// no join so it is hopefully a simple table select
-			$this->usedtables[] = preg_replace('/\s.*/', '', $parse);
-		}
-		return substr_replace($sql, '', $from, $to-$from);
+		return '';
+//		// check inside brackets first.
+//		$pos = 0;
+//		$from = 0;
+//		$bracketpos1 = -1;
+//		$bracketpos2 = -1;
+//		$countbr = 0;
+//		$count = 1;
+//
+//		while($pos < strlen($sql))
+//		{
+//			if($sql[$pos] == '(') $bracketpos1 = $pos;
+//			elseif($sql[$pos] == ')')
+//			{
+//				if($bracketpos1 == -1) break;
+//				$bracketpos2 = $pos;
+//				$from = strpos($sql, "from", $bracketpos1);
+//				if($from > $bracketpos1 && $from < $bracketpos2)
+//					$sql = substr_replace($sql, $this->parseSQL(substr($sql,$bracketpos1+1, $bracketpos2 - $bracketpos1 - 1)), $bracketpos1, $bracketpos2 - $bracketpos1 + 1);
+//				else $sql = substr_replace($sql, '', $bracketpos1, $bracketpos2 - $bracketpos1 + 1);
+//
+//				$pos = 0;
+//				$from = 0;
+//				$bracketpos1 = -1;
+//				$bracketpos2 = -1;
+//				continue;
+//			}
+//			$pos++;
+//		}
+//
+//		// we try to get the text from 'from' to 'where' because all involved
+//		// tables are declared in that part
+//		$from = strpos($sql, 'from')+5;
+//		if($from > strlen($sql)) return '';
+//		// if there is a subquery then recurse into the string between the next
+//		// from and first unclosed ) or where
+//		$from2 = strpos($sql, 'from', $from);
+//		if($from2) $sql = substr_replace($sql, $this->parseSQL(substr($sql,$from2 - 1)), $from2);
+//
+//		if (!$to = strpos($sql, 'where'))
+//		{
+//			$to = strlen($sql);
+//		}
+//
+//		$parse = substr($sql, $from, $to-$from);
+//		$parse = str_replace('`', ' ', $parse);
+//		$parse = trim($parse);
+//		if(!$parse) return '';
+//
+//		$tables = array();
+//		if (strpos($parse, ',') !== false)
+//		{
+//			// , is a synonym for join so we'll replace them
+//			$parse = str_replace(',', ' join ', $parse);
+//		}
+//
+//		if (strpos($parse, 'join'))
+//		{
+//			// if this query is a join we parse it with regexp to get all tables
+//			$parse = 'join '.$parse;
+//			preg_match_all('/join\s+([^ ]+)\s/', $parse, $match);
+//			$this->usedtables = $this->usedtables + $match[1];
+//		}
+//		else
+//		{
+//			// no join so it is hopefully a simple table select
+//			$this->usedtables[] = preg_replace('/\s.*/', '', $parse);
+//		}
+//		return substr_replace($sql, '', $from, $to-$from);
 	}
 	//! Check if the cached query is valid.
 
@@ -140,14 +221,14 @@ class DBCachedQuery extends DBBaseQuery
 
 		foreach ($this->usedtables as $table)
 		{
-			$file = 'SQL/qcache_tbl_'.trim($table);
-			if (file_exists($file))
+			$file = 'qcache_tbl_'.trim($table);
+
+			if (self::$cachehandler->exists($file, self::$location))
 			{
 				// if one of the tables is outdated, the query is outdated
-				if ($this->mtime <= filemtime($file))
-				{
-					return false;
-				}
+				$age = self::$cachehandler->age($file, self::$location);
+
+				if ($this->mtime >= $age) return false;
 			}
 		}
 		return true;
@@ -216,20 +297,19 @@ class DBCachedQuery extends DBBaseQuery
 
 		foreach ($tables as $table)
 		{
-			$file = KB_QUERYCACHEDIR.'/qcache_tbl_'.$table;
-			@touch($file);
+			self::$cachehandler->put('qcache_tbl_'.$table, time(), self::$location, 0);
 		}
-		// refresh php's filestatcache so we dont get wrong timestamps on changed files
-		clearstatcache();
 	}
 	//! Generate the query cache.
 
 	//! Serialise a query and write to file.
 	private function genCache()
 	{
+
 		// this function fetches all rows and writes the data into a textfile
 		// don't attemp to cache updates!
-		if (strtolower(substr($this->sql, 0, 6)) != 'select' && strtolower(substr($this->sql, 0, 4)) != 'show')
+		if (strtolower(substr($this->sql, 0, 6)) != 'select'
+			&& strtolower(substr($this->sql, 0, 4)) != 'show')
 		{
 			return false;
 		}
@@ -253,8 +333,8 @@ class DBCachedQuery extends DBBaseQuery
 			}
 		}
 
-		// write data into textfile
-		file_put_contents(KB_QUERYCACHEDIR.'/qcache_qry_'.$this->hash, serialize($this->cache));
+		// write data to cache
+		self::$cachehandler->put($this->sql, $this->cache, self::$location, self::$maxage);
 
 		$this->cached = true;
 		$this->currrow = 0;
@@ -264,7 +344,7 @@ class DBCachedQuery extends DBBaseQuery
 	private function loadCache()
 	{
 		// loads the cachefile into the memory
-		$this->cache = unserialize(file_get_contents(KB_QUERYCACHEDIR.'/qcache_qry_'.$this->hash));
+		$this->cache = self::$cachehandler->get($this->sql, self::$location);
 
 		$this->cached = true;
 		$this->currrow = 0;
@@ -279,8 +359,9 @@ class DBCachedQuery extends DBBaseQuery
 	*/
 	function execute($sql)
 	{
+		$t1 = microtime(true);
+
 		$this->sql = trim($sql);
-		$this->hash = md5($this->sql);
 		unset($this->cache);
 		$this->cache = array();
 		$this->cached = false;
@@ -289,13 +370,12 @@ class DBCachedQuery extends DBBaseQuery
 		{
 			$this->loadCache();
 			$this->queryCachedCount(true);
+			$this->exectime = microtime(true) - $t1;
+			self::$totalexectime += $this->exectime;
 			return true;
 		}
-
 		// we have no valid cache so open the connection and run the query
 		if(is_null(self::$dbconn))self::$dbconn = new DBConnection();
-
-		$t1 = strtok(microtime(), ' ') + strtok('');
 
 		$this->resid = mysqli_query(self::$dbconn->id(), $sql);
 
@@ -320,7 +400,7 @@ class DBCachedQuery extends DBBaseQuery
 			}
 		}
 
-		$this->exectime = strtok(microtime(), ' ') + strtok('') - $t1;
+		$this->exectime = microtime(true) - $t1;
 		self::$totalexectime += $this->exectime;
 		$this->executed = true;
 
@@ -329,6 +409,7 @@ class DBCachedQuery extends DBBaseQuery
 		// if the query was too slow we'll fetch all rows and run it cached
 		if ($this->exectime > self::$minruntime)
 		{
+
 			$this->genCache();
 		}
 

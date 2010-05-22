@@ -25,6 +25,7 @@ if(defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE == true)
 			sure the memcached server is running");
 }
 // If DB_USE_QCACHE is defined then it needs no further setup.
+else if(defined('DB_USE_QCACHE')) define('DB_USE_MEMCACHE', false);
 else
 {
 	if(!isset($config)) $config = new Config(KB_SITE);
@@ -32,9 +33,9 @@ else
 	// DB_HALTONERROR may have been defined externally for sensitive operations.
 	if(!defined('DB_HALTONERROR')) define('DB_HALTONERROR', (bool)config::get('cfg_sqlhalt'));
 
-	if(!defined('DB_USE_QCACHE')) define('DB_USE_QCACHE', (bool)config::get('cfg_qcache'));
+	define('DB_USE_QCACHE', (bool)config::get('cfg_qcache'));
 
-	if (((bool)config::get('cfg_memcache')) == true)
+	if (!DB_USE_QCACHE && (bool)config::get('cfg_memcache'))
 	{
 		if(!method_exists(Memcache, 'pconnect'))
 		{
