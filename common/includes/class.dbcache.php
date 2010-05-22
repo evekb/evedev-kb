@@ -2,45 +2,43 @@
 require_once 'class.dbbasequery.php';
 require_once 'class.dbconnection.php';
 require_once('class.dbdebug.php');
-if(DB_USE_MEMCACHE) require_once('class.cachehandlerhashedmem.php');
-else require_once('class.cachehandlerhashed.php');
+require_once('class.cachehandlerhashed.php');
 
 //! mysqli file-cached query class. Manages SQL queries to a MySQL DB using mysqli.
 class DBCachedQuery extends DBBaseQuery
 {
 	// this is the minimum runtime a query has to run to be
 	// eligible for caching in seconds
-	private static $minruntime = 0.1;
-	private static $maxmem = null;
+	protected static $minruntime = 0.1;
+	protected static $maxmem = null;
 	// maximum size of a cached result set (512kB)
-	private static $maxcachesize = 524288;
-	private static $location = "SQL";
-	private static $maxage = 10800;
+	protected static $maxcachesize = 524288;
+	protected static $location = "SQL";
+	protected static $maxage = 10800;
 
-	private $cache = array();
-	private $usedtables = array();
-	private $cached = false;
-	private $nocache = false;
-	private $sql = '';
-	private $mtime = 0;
-	private $currrow = 0;
-	private $resid = null;
-	private static $cachehandler = null;
-	private static $baseTables = null;
+	protected $cache = array();
+	protected $usedtables = array();
+	protected $cached = false;
+	protected $nocache = false;
+	protected $sql = '';
+	protected $mtime = 0;
+	protected $currrow = 0;
+	protected $resid = null;
+	protected static $cachehandler = null;
+	protected static $baseTables = null;
 
 	//! Set up a mysqli cached query object with default values.
 	function DBCachedQuery($nocache = false)
 	{
 		$this->nocache = $nocache;
 
-		if(DB_USE_MEMCACHE) self::$cachehandler = new CacheHandlerHashedMem();
-		else self::$cachehandler = new CacheHandlerHashed();
+		self::$cachehandler = new CacheHandlerHashed();
 
 		if(is_null(self::$maxmem))
 		{
 			self::$maxmem = @ini_get('memory_limit');
-			self::$maxmem = @preg_replace('/M/', '000000', self::$maxmem) * 0.8;
-			self::$maxmem = @intval(preg_replace('/G/', '000000000', self::$maxmem) * 0.8);
+			self::$maxmem = @str_replace('M', '000000', self::$maxmem) * 0.8;
+			self::$maxmem = @intval(str_replace('M', '000000000', self::$maxmem) * 0.8);
 			if(!self::$maxmem) self::$maxmem = 128000000;
 		}
 	}
@@ -49,7 +47,7 @@ class DBCachedQuery extends DBBaseQuery
 	/*
      * \return true if this query has been cached and the cache is valid.
 	*/
-	private function checkCache()
+	protected function checkCache()
 	{
 		// only cache selects
 		// we don't use select ... into so there is no problem
@@ -57,7 +55,7 @@ class DBCachedQuery extends DBBaseQuery
 		if (strtolower(substr($this->sql, 0, 6)) != 'select' && strtolower(substr($this->sql, 0, 4)) != 'show')
 		{
 			// this is no select, update the table
-			$this->markAffectedTables();
+			self::markAffectedTables($this->sql);
 			return false;
 		}
 
@@ -74,7 +72,7 @@ class DBCachedQuery extends DBBaseQuery
 	//! Extract all tables affected by a database modification.
 
 	//! The resulting list is set internally to this object.
-	private function parseSQL($sql)
+	protected function parseSQL($sql)
 	{
 		// Check list of tables daily.
 		$daily = 86400;
@@ -212,7 +210,7 @@ class DBCachedQuery extends DBBaseQuery
 	/*! Determines whether the tables used by a query have been modified
      * since the query was cached
 	*/
-	private function isCacheValid()
+	protected function isCacheValid()
 	{
 		// check if cachefiles are still valid
 		$this->usedtables = array();
@@ -234,10 +232,11 @@ class DBCachedQuery extends DBBaseQuery
 		return true;
 	}
 	//! Marks all tables affected by a database modification
-	private function markAffectedTables()
+	public static function markAffectedTables($sql = null)
 	{
+		if(is_null($sql)) return true;
 		// this function invalidates cache files for touched tables
-		$text = trim(strtolower($this->sql));
+		$text = trim(strtolower($sql));
 		$text = str_replace(array('ignore','`', "\r\n", "\n"), '', $text);
 		$text = str_replace('(', ' (', $text);
 		$ta = preg_split('/\s/', $text, 0, PREG_SPLIT_NO_EMPTY);
@@ -303,7 +302,7 @@ class DBCachedQuery extends DBBaseQuery
 	//! Generate the query cache.
 
 	//! Serialise a query and write to file.
-	private function genCache()
+	protected function genCache()
 	{
 
 		// this function fetches all rows and writes the data into a textfile
@@ -341,7 +340,7 @@ class DBCachedQuery extends DBBaseQuery
 		$this->executed = true;
 	}
 	//! Read a cached query from file.
-	private function loadCache()
+	protected function loadCache()
 	{
 		// loads the cachefile into the memory
 		$this->cache = self::$cachehandler->get($this->sql, self::$location);

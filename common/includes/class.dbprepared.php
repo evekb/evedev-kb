@@ -1,4 +1,6 @@
 <?php
+// TODO Check if caching is enabled and flag tables as dirty even if we don't
+// cache prepared queries.
 require_once('class.dbdebug.php');
 require_once('class.dbconnection.php');
 require_once('class.db.php');
@@ -59,17 +61,27 @@ class DBPreparedQuery
 	public function execute()
 	{
 		$t1 = strtok(microtime(), ' ') + strtok('');
+
+		//TODO redo this with hooks that cached classes can use.
+		if ( (DB_USE_MEMCACHE || DB_USE_QCACHE )
+			&& strtolower(substr($this->sql, 0, 6)) != 'select'
+			&& strtolower(substr($this->sql, 0, 4)) != 'show')
+		{
+			$qc = DBFactory::getDBQuery();
+			$qc::markAffectedTables($this->sql);
+		}
+
 		if(!$this->stmt->execute())
 		{
 			if(defined('KB_PROFILE'))
 			{
 				DBDebug::recordError("Database error: ".$this->stmt->error);
-				DBDebug::recordError("SQL: ".$sql);
+				DBDebug::recordError("SQL: ".$this->sql);
 			}
 			if (defined('DB_HALTONERROR') && DB_HALTONERROR)
 			{
 				echo "Database error: " . $this->stmt->error . "<br>";
-				echo "SQL: " . $sql . "<br>";
+				echo "SQL: " . $this->sql . "<br>";
 				exit;
 			}
 			else
@@ -130,6 +142,7 @@ class DBPreparedQuery
 	 */
 	public function prepare($sql)
 	{
+		$this->sql = $sql;
 		$this->stmt = self::$dbconn->id()->prepare($sql);
 		if(!$this->stmt)
 		{
@@ -165,6 +178,15 @@ class DBPreparedQuery
 		array_unshift($Args,$this->stmt);
 		return call_user_func_array('mysqli_stmt_bind_param',$Args);
 	}
+	//! Bind the prepared query parameters to the variables in the given array.
+
+	/*!
+	 * \param params An array of variables to bind as query parameters.
+	 */
+	public function bind_params(&$params)
+	{
+		return call_user_func_array('mysqli_stmt_bind_param',$params);
+	}
 	//! Bind the prepared query results to the given variables.
 
 	/*! The hideous argument list is there as func_get_args only returns a copy
@@ -197,6 +219,12 @@ class DBPreparedQuery
 			$args[$i] = & $$temparg;
 		}
 		return call_user_func_array(array($this->stmt,'bind_result'),$args);
+	}
+	//! Bind the prepared query results to the variables in the given array.
+
+	public function bind_results(&$results)
+	{
+		return call_user_func_array(array($this->stmt,'bind_result'),$results);
 	}
 	//! Execute the prepared command.
 	
