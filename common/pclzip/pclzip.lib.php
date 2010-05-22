@@ -3751,18 +3751,19 @@
         // ----- Change the file status
         $p_entry['status'] = "write_protected";
 
+		// Changed to always return an error.
         // ----- Look for PCLZIP_OPT_STOP_ON_ERROR
         // For historical reason first PclZip implementation does not stop
         // when this kind of error occurs.
-        if (   (isset($p_options[PCLZIP_OPT_STOP_ON_ERROR]))
-		    && ($p_options[PCLZIP_OPT_STOP_ON_ERROR]===true)) {
-
+//        if (   (isset($p_options[PCLZIP_OPT_STOP_ON_ERROR]))
+//		    && ($p_options[PCLZIP_OPT_STOP_ON_ERROR]===true)) {
+//
             PclZip::privErrorLog(PCLZIP_ERR_WRITE_OPEN_FAIL,
 			                     "Filename '".$p_entry['filename']."' exists "
 								 ."and is write protected");
 
             return PclZip::errorCode();
-		    }
+//		    }
       }
 
       // ----- Look if the extracted file is older
