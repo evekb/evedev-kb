@@ -91,7 +91,7 @@ abstract class DBBaseQuery
 	public static function escape($string)
 	{
 		if(is_null(self::$dbconn)) self::$dbconn = new DBConnection();
-		return self::$dbconn->id()->real_escape_string($string);
+		return addcslashes(self::$dbconn->id()->real_escape_string($string),'%_');
 	}
 	//! Return the most recent error message for the DB connection.
 	abstract public function getErrorMsg();
