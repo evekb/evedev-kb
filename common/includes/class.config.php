@@ -2,8 +2,11 @@
 
 class Config
 {
-	private static $configSite = null;
+	private static $configSite = KB_SITE;
 	private static $configCache = array();
+	private static $configCacheGlobal = array();
+	private static $qry = null;
+	private static $initialised = false;
 	//! Set up the config for the given site.
 	
 	/*!
@@ -15,8 +18,10 @@ class Config
 		self::init();
 	}
 
-	function checkCheckbox($name)
+	public static function checkCheckbox($name)
 	{
+		if (!self::$initialised) self::init();
+
 		if ($_POST[$name] == 'on')
 		{
 			self::set($name, '1');
@@ -28,17 +33,35 @@ class Config
 
 	public static function init()
 	{
-		static $config_init = false;
+		if (self::$initialised) return;
 
-		if ($config_init)
+		self::$qry = DBFactory::getDBQuery();
+
+		// If a super KB is defined then fetch its settings first.
+		if(defined('SUPERKB_SITE'))
 		{
-			return;
+			self::$qry->execute("SELECT * FROM kb3_config WHERE cfg_site='".SUPERKB_SITE."'");
+			while ($row = self::$qry->getRow())
+			{
+				if (substr($row['cfg_value'], 0, 2) == 'a:')
+				{
+					self::$configCacheGlobal[$row['cfg_key']] = unserialize($row['cfg_value']);
+					self::$configCache[$row['cfg_key']] = unserialize($row['cfg_value']);
+				}
+				else
+				{
+					self::$configCacheGlobal[$row['cfg_key']] = stripslashes($row['cfg_value']);
+					self::$configCache[$row['cfg_key']] = stripslashes($row['cfg_value']);
+				}
+			}
 		}
-
-		$db = DBFactory::getDBQuery();;
-		$db->execute("SELECT * FROM kb3_config WHERE cfg_site='".self::$configSite."'");
-		while ($row = $db->getRow())
+		self::$qry->execute("SELECT * FROM kb3_config WHERE cfg_site='".self::$configSite."'");
+		if(!self::$qry->recordCount()) self::setDefaults();
+		while ($row = self::$qry->getRow())
 		{
+			// If this board is set up with a super admin then restrict global changes.
+			if(defined('SUPERKB_SITE') && isset(self::$configCacheGlobal[$row['cfg_key']])) continue;
+
 			if (substr($row['cfg_value'], 0, 2) == 'a:')
 			{
 				self::$configCache[$row['cfg_key']] = unserialize($row['cfg_value']);
@@ -48,44 +71,71 @@ class Config
 				self::$configCache[$row['cfg_key']] = stripslashes($row['cfg_value']);
 			}
 		}
-		$config_init = true;
-		
-		if (self::get('post_password') === null)
-		{
-			// no config supplied, generate standard one
-			self::set('theme_name', 'default');
-			self::set('style_name', 'default');
-			self::set('style_banner', 'default.jpg');
-			self::set('post_password', 'CHANGEME');
-			self::set('comment_password', 'CHANGEME');
-			self::set('cfg_memcache', 0);
-			self::set('cfg_memcache_server', 'memcached server address');
-			self::set('cfg_memcache_port', 'memcached server port');
-			//self::set('cache_dir', KB_QUERYCACHEDIR);
-			//self::set('km_cache_dir', KB_CACHEDIR.'/mails');
-			self::set('DBUpdate',LATEST_DB_UPDATE);
-		}
+		self::$initialised = true;
 	}
+
 
 	public static function put($key, $data)
 	{
+		if (!self::$initialised) self::init();
+
+		if(defined('SUPERKB_SITE') && isset(self::$configCacheGlobal[$key])) 
+			return false;
+
 		self::$configCache[$key] = $data;
 	}
 
-	public static function del($key)
+	public static function del($key, $global = false)
 	{
-		if (isset(self::$configCache[$key]))
-		{
-			unset(self::$configCache[$key]);
-		}
+		if (!self::$initialised) self::init();
 
-		$qry = DBFactory::getDBQuery(true);;
-		$qry->execute("DELETE FROM kb3_config WHERE cfg_key = '{$key}'
+		if( isset(self::$configCacheGlobal[$key]))
+		{
+			if(!$global) return false;
+			else
+			{
+				unset(self::$configCacheGlobal[$key]);
+
+				self::$qry->execute("DELETE FROM kb3_config WHERE cfg_key = '{$key}'
+						   AND cfg_site = '".SUPERKB_SITE."'");
+			}
+		}
+		if (isset(self::$configCache[$key])) unset(self::$configCache[$key]);
+
+		self::$qry->execute("DELETE FROM kb3_config WHERE cfg_key = '{$key}'
                        AND cfg_site = '".self::$configSite."'");
 	}
 
-	public static function set($key, $value)
+	public static function set($key, $value, $global = false)
 	{
+		if (!self::$initialised) self::init();
+
+		if(!$global && isset(self::$configCacheGlobal[$key])) return;
+
+		if($global && defined('SUPERKB_SITE'))
+		{
+			// only update the database when the old value differs
+			if (isset(self::$configCacheGlobal[$key])
+				&& self::$configCacheGlobal[$key] === $value) return;
+
+			if (is_array($value))
+			{
+				self::$configCacheGlobal[$key] = $value;
+				$value = serialize($value);
+			}
+			else
+			{
+				self::$configCacheGlobal[$key] = stripslashes($value);
+			}
+			$value = addslashes($value);
+
+			$sql = "INSERT INTO kb3_config (cfg_site, cfg_key, cfg_value) VALUES ('".
+				SUPERKB_SITE."','{$key}','{$value}') ON DUPLICATE KEY UPDATE cfg_value = '{$value}'";
+			self::$qry->execute($sql);
+
+			return;
+		}
+
 		// only update the database when the old value differs
 		if (isset(self::$configCache[$key]))
 		{
@@ -106,18 +156,29 @@ class Config
 		}
 		$value = addslashes($value);
 
-		$qry = DBFactory::getDBQuery(true);;
-		$sql = "INSERT INTO kb3_config (cfg_site, cfg_key, cfg_value) VALUES ('".self::$configSite."','{$key}','{$value}') ON DUPLICATE KEY UPDATE cfg_value = '{$value}'";
-		$qry->execute($sql);
+		$sql = "INSERT INTO kb3_config (cfg_site, cfg_key, cfg_value) VALUES ('".
+			self::$configSite."','{$key}','{$value}') ON DUPLICATE KEY UPDATE cfg_value = '{$value}'";
+		self::$qry->execute($sql);
+
 	}
 
-	public static function &get($key)
+	public static function get($key)
 	{
+		if (!self::$initialised) self::init();
+
+		if (isset(self::$configCacheGlobal[$key]))
+			return self::$configCacheGlobal[$key];
+
 		if (!isset(self::$configCache[$key]))
-		{
 			return null;
-		}
+
 		return self::$configCache[$key];
+	}
+
+	private static function setDefaults()
+	{
+		$sql = "INSERT INTO kb3_config (cfg_site, cfg_key, cfg_value) SELECT '".self::$configSite."', cfg_key, cfg_value FROM kb3_config where cfg_site = ''";
+		self::$qry->execute($sql);
 	}
 }
 
