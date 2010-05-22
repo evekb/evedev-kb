@@ -11,7 +11,7 @@ require_once('update/CCPDB/db.updater.php');
 
 $page = new Page('Administration - Upgrade');
 $page->setAdmin();
-$page_error;
+$page_error = array();
 
 //torch the update definition file. This forces it to be redownloaded.
 if(isset($_GET['refresh']))
@@ -166,13 +166,15 @@ if(count($page_error) == 0)
 				if($readingZip->getErrors())
 					$page_error[] = $readingZip->getErrors();
 
-				Config::set('upd_CodeVersion', $piece['version']);
-				$qry = DBFactory::getDBQuery(true);
-				$qry->execute("INSERT INTO `kb3_config` (cfg_site, cfg_key, cfg_value) ".
-					"SELECT cfg_site, 'upd_codeVersion', '{$piece['version']}' FROM `kb3_config` ".
-					"GROUP BY cfg_site ON DUPLICATE KEY UPDATE cfg_value = '{$piece['version']}';");
-				$codeversion = $piece['version'];
-
+				else
+				{
+					Config::set('upd_CodeVersion', $piece['version']);
+					$qry = DBFactory::getDBQuery(true);
+					$qry->execute("INSERT INTO `kb3_config` (cfg_site, cfg_key, cfg_value) ".
+						"SELECT cfg_site, 'upd_codeVersion', '{$piece['version']}' FROM `kb3_config` ".
+						"GROUP BY cfg_site ON DUPLICATE KEY UPDATE cfg_value = '{$piece['version']}';");
+					$codeversion = $piece['version'];
+				}
 				//kill the template and page caches
 				admin_acache::removeOld(0, KB_PAGECACHEDIR.'/', true);
 				admin_acache::removeOld(0, KB_CACHEDIR.'/templates_c', true);
