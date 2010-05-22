@@ -68,7 +68,7 @@ class DBPreparedQuery
 			&& strtolower(substr($this->sql, 0, 4)) != 'show')
 		{
 			$qc = DBFactory::getDBQuery();
-			$qc::markAffectedTables($this->sql);
+			$qc->markAffectedTables($this->sql);
 		}
 
 		if(!$this->stmt->execute())
