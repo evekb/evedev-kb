@@ -5,9 +5,6 @@ require_once('common/includes/class.db.php');
 require_once('common/includes/class.dbfactory.php');
 require_once('common/includes/class.config.php');
 
-if(!defined('DB_TYPE')) define('DB_TYPE', 'mysqli');
-require_once('common/includes/class.db.php');
-
 $value = (float) mysqli_get_server_info(DBConnection::id());
 
 if ($value < 5)
@@ -15,37 +12,47 @@ if ($value < 5)
 	die("EDK 3 requires MySQL version 5.0+. Your version is ".$value);
 }
 
-if(!isset($config)) $config = new Config(KB_SITE);
-// DB_HALTONERROR may have been defined externally for sensitive operations.
-if(!defined('DB_HALTONERROR')) define('DB_HALTONERROR', (bool)config::get('cfg_sqlhalt'));
-define('DB_USE_QCACHE', (bool)config::get('cfg_qcache'));
-
-if (((bool)config::get('cfg_memcache')) == true && !strstr($_SERVER['REQUEST_URI'], "admin"))
+// Check if caching has been configured already.
+if(defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE == true)
 {
-	require_once('common/includes/class.dbmemcache.php');
-	if(!method_exists(Memcache, 'pconnect'))
+	if(!defined('DB_MEMCACHE_SERVER') || !defined('DB_MEMCACHE_PORT'))
+		die("DB_MEMCACHE_SERVER and DB_MEMCACHE_PORT not defined. Memcache not started.");
+
+	$mc = new Memcache();
+	if(!@$mc->pconnect(DB_MEMCACHE_SERVER, DB_MEMCACHE_PORT))
+		die("ERROR: Unable to connect to memcached server, disabling
+			memcached. Please check your settings (server, port) and make
+			sure the memcached server is running");
+}
+// If DB_USE_QCACHE is defined then it needs no further setup.
+else
+{
+	if(!isset($config)) $config = new Config(KB_SITE);
+
+	// DB_HALTONERROR may have been defined externally for sensitive operations.
+	if(!defined('DB_HALTONERROR')) define('DB_HALTONERROR', (bool)config::get('cfg_sqlhalt'));
+
+	if(!defined('DB_USE_QCACHE')) define('DB_USE_QCACHE', (bool)config::get('cfg_qcache'));
+
+	if (((bool)config::get('cfg_memcache')) == true)
 	{
-		$boardMessage = "ERROR: Unable to connect to memcached server, disabling memcached. Please check your settings (server, port) and make sure the memcached server is running";
-		define("DB_USE_MEMCACHE", false);
-	}
-	else
-	{
-		$mc = new Memcache();
-		if(!@$mc->pconnect(config::get('cfg_memcache_server'), config::get('cfg_memcache_port')))
+		if(!method_exists(Memcache, 'pconnect'))
 		{
-			$boardMessage = "ERROR: Unable to connect to memcached server, disabling memcached. Please check your settings (server, port) and make sure the memcached server is running";
+			$boardMessage = "ERROR: Memcache extension not installed. memcaching disabled.";
 			define("DB_USE_MEMCACHE", false);
 		}
-		else define("DB_USE_MEMCACHE", true);
+		else
+		{
+			$mc = new Memcache();
+			if(!@$mc->pconnect(config::get('cfg_memcache_server'), config::get('cfg_memcache_port')))
+			{
+				$boardMessage = "ERROR: Unable to connect to memcached server, disabling memcached. Please check your settings (server, port) and make sure the memcached server is running";
+				define("DB_USE_MEMCACHE", false);
+			}
+			else define("DB_USE_MEMCACHE", true);
+		}
+	} else
+	{
+		define("DB_USE_MEMCACHE", false);
 	}
-} else
-{
-	define("DB_USE_MEMCACHE", false);
 }
-
-if (DB_USE_QCACHE)
-{
-// the object overloading system will switch to cached queries now
-	require_once('common/includes/class.dbcache.php');
-}
-
