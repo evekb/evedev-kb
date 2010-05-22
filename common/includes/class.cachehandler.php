@@ -21,7 +21,7 @@ class CacheHandler
 	public static function put($filename, $data, $location = null)
 	{
 		$path = self::getPath($filename, $location, true);
-
+		
 		return file_put_contents(self::$internalroot."/".$path, $data);
 	}
 	//! Get a file from the cache.
@@ -37,30 +37,6 @@ class CacheHandler
 		$path = self::getPath($filename, $location, false);
 
 		return @file_get_contents(self::$internalroot."/".$path);
-	}
-	//! Store an object in the cache.
-
-	/*!
-	 * \param $key The key used to store and retrieve the object.
-	 * \param $location set a specific subdirectory of the cache to use.
-	 *
-	 * \return Boolean the object or false if an error occurred.
-	 */
-	public static function serialize($key, $data, $location = null)
-	{
-		return self::put(self::hashName($key), serialize($data), $location);
-	}
-	//! Get an object from the cache.
-
-	/*!
-	 * \param $key The key used to store and retrieve the object.
-	 * \param $location set a specific subdirectory of the cache to use.
-	 *
-	 * \return Boolean true if successful, false if an error occurred.
-	 */
-	public static function unserialize($key, $location = null)
-	{
-		return unserialize(self::get(self::hashName($key), $location));
 	}
 	//! Check a given cache directory exists and create all directory nodes needed.
 
@@ -262,7 +238,7 @@ class CacheHandler
 		return ($a[2] > $b[2]) ? -1 : 1;
 	}
 	//! Add subdirectories to the given depth and return the full cachefile path.
-	private static function getPath($filename, $location = null, $create = false)
+	protected static function getPath($filename, $location = null, $create = false)
 	{
 		if(is_null($location)) $location = self::$defaultLocation;
 		if(isset(self::$paths[$location.$filename])) return self::$paths[$location.$filename];
@@ -273,38 +249,42 @@ class CacheHandler
 			trigger_error("Invalid cache filename. Name given was: ".htmlentities($newfilename), E_USER_ERROR);
 			die;
 		}
-		$filename = $newfilename;
-
-		if($location != $default)
+		$newlocation = $location;
+		
+		if($newlocation != self::$defaultLocation)
 		{
-			if(strpos($location, "..") !== false
-				|| substr($location, 0, 1) == '/'
-				|| substr($location, 0, 1) == '\\')
+			if(strpos($newlocation, "..") !== false
+				|| substr($newlocation, 0, 1) == '/'
+				|| substr($newlocation, 0, 1) == '\\')
 			{
-				trigger_error("Invalid cache path. Path given was: ".htmlentities($location), E_USER_ERROR);
+				trigger_error("Invalid cache path. Path given was: ".htmlentities($newlocation), E_USER_ERROR);
 				die;
 			}
 			else
 			{
-				$location = str_replace("\\", "/", $location);
-				$location = str_replace(array("?","[","]","=","+","<",">","|",":",";","'","*", ","), "", $location);
-				if($location == "") $location = self::$defaultLocation;
+				$newlocation = str_replace("\\", "/", $newlocation);
+				$newlocation = str_replace(array("?","[","]","=","+","<",">","|",":",";","'","*", ","), "", $newlocation);
+				if($newlocation == "") $newlocation = self::$defaultLocation;
 			}
 		}
 
-		if(substr($location, -1) != '/') $location .= '/';
-		str_pad($filename, 2 * $depth + 2, "0", STR_PAD_LEFT);
-		$nameslice = $filename;
 		$depth = 3;
+		if(substr($newlocation, -1) != '/') $newlocation .= '/';
+		str_pad($newfilename, 2 * $depth + 2, "0", STR_PAD_LEFT);
+		$nameslice = $newfilename;
 		while($depth > 0)
 		{
-			$location .= substr($nameslice, 0, 2).'/';
+			$newlocation .= substr($nameslice, 0, 2).'/';
 			$nameslice = substr($nameslice,2);
 			$depth--;
 		}
-		if($create) self::createPath($location);
+		if($create)
+		{
+			self::createPath($newlocation);
+			self::$paths[$location.$filename] = $newlocation.$newfilename;
+		}
 
-		return $location.$filename;
+		return $newlocation.$newfilename;
 	}
 	//! Return true if the file is in the cache.
 
@@ -346,10 +326,5 @@ class CacheHandler
 			|| !is_writeable($dir)) return false;
 
 		self::$internalroot = $dir;
-	}
-	//! Return a hashed version of a name suitable for use in the cache.
-	public static function hashName($filename)
-	{
-		return md5($filename);
 	}
 }
