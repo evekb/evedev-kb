@@ -64,7 +64,7 @@ class CacheHandlerHashedMem extends CacheHandler
 	{
 		global $mc;
 
-		$hash = self::hash($key.$location);
+		$hash = self::hash($key,$location);
 		return $mc->get($hash) !== false;
 	}
 	//! Get the externally accessible address of the cached file.
