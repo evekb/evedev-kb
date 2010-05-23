@@ -50,8 +50,6 @@ class Smarty_Internal_TemplateCompilerBase {
         // flag for nochache sections
         $this->nocache = false;
         $this->tag_nocache = false; 
-        // assume successfull compiling
-        $this->compile_error = false; 
         // save template object in compiler class
         $this->template = $template;
         $this->smarty->_current_file = $this->template->getTemplateFilepath(); 
@@ -69,7 +67,7 @@ class Smarty_Internal_TemplateCompilerBase {
             $_content = $template->getTemplateSource(); 
             // run prefilter if required
             if (isset($this->smarty->autoload_filters['pre']) || isset($this->smarty->registered_filters['pre'])) {
-                $_content = Smarty_Internal_Filter_Handler::runFilter('pre', $_content, $this->smarty);
+                $_content = Smarty_Internal_Filter_Handler::runFilter('pre', $_content, $this->smarty, $template);
             } 
             // on empty template just return header
             if ($_content == '') {
@@ -82,22 +80,16 @@ class Smarty_Internal_TemplateCompilerBase {
             } 
             // call compiler
             $_compiled_code = $this->doCompile($_content);
-        } while ($this->abort_and_recompile);
-        if (!$this->compile_error) {
-            // return compiled code to template object
-            if ($template->suppressFileDependency) {
-                $template->compiled_template = $_compiled_code;
-            } else {
-                $template->compiled_template = $template_header . $template->createPropertyHeader() . $_compiled_code;
-            } 
-            // run postfilter if required
-            if (isset($this->smarty->autoload_filters['post']) || isset($this->smarty->registered_filters['post'])) {
-                $template->compiled_template = Smarty_Internal_Filter_Handler::runFilter('post', $template->compiled_template, $this->smarty);
-            } 
-            return true;
+        } while ($this->abort_and_recompile); 
+        // return compiled code to template object
+        if ($template->suppressFileDependency) {
+            $template->compiled_template = $_compiled_code;
         } else {
-            // compilation error
-            return false;
+            $template->compiled_template = $template_header . $template->createPropertyHeader() . $_compiled_code;
+        } 
+        // run postfilter if required
+        if (isset($this->smarty->autoload_filters['post']) || isset($this->smarty->registered_filters['post'])) {
+            $template->compiled_template = Smarty_Internal_Filter_Handler::runFilter('post', $template->compiled_template, $this->smarty, $template);
         } 
     } 
 
@@ -290,7 +282,7 @@ class Smarty_Internal_TemplateCompilerBase {
         } 
         if (isset($function)) {
             if ($type == 'modifier') {
-                $this->template->saved_modifer[$plugin_name] = true;
+                $this->template->saved_modifier[$plugin_name] = true;
             } 
             return $function;
         } 
@@ -306,7 +298,7 @@ class Smarty_Internal_TemplateCompilerBase {
          * } 
          * } 
          * if ($type == 'modifier') {
-         * $this->template->saved_modifer[$plugin_name] = true;
+         * $this->template->saved_modifier[$plugin_name] = true;
          * } 
          * return $this->template->required_plugins_call[$plugin_name][$type];
          * }
@@ -342,7 +334,7 @@ class Smarty_Internal_TemplateCompilerBase {
              * }
              */
             if ($type == 'modifier') {
-                $this->template->saved_modifer[$plugin_name] = true;
+                $this->template->saved_modifier[$plugin_name] = true;
             } 
             return $function;
         } 
@@ -376,13 +368,13 @@ class Smarty_Internal_TemplateCompilerBase {
                 $_output = str_replace("'", "\'", $content);
                 $_output = "<?php echo '/*%%SmartyNocache:{$this->nocache_hash}%%*/" . $_output . "/*/%%SmartyNocache:{$this->nocache_hash}%%*/';?>"; 
                 // make sure we include modifer plugins for nocache code
-                if (isset($this->template->saved_modifer)) {
-                    foreach ($this->template->saved_modifer as $plugin_name => $dummy) {
+                if (isset($this->template->saved_modifier)) {
+                    foreach ($this->template->saved_modifier as $plugin_name => $dummy) {
                         if (isset($this->template->required_plugins['compiled'][$plugin_name]['modifier'])) {
                             $this->template->required_plugins['nocache'][$plugin_name]['modifier'] = $this->template->required_plugins['compiled'][$plugin_name]['modifier'];
                         } 
                     } 
-                    unset($this->template->saved_modifer);
+                    $this->template->saved_modifier = null;
                 } 
             } else {
                 $_output = $content;
@@ -429,9 +421,7 @@ class Smarty_Internal_TemplateCompilerBase {
             // output parser error message
             $error_text .= ' - Unexpected "' . $this->lex->value . '", expected one of: ' . implode(' , ', $expect);
         } 
-        throw new Exception($error_text); 
-        // set error flag
-        $this->compile_error = true;
+        throw new Exception($error_text);
     } 
 } 
 
