@@ -72,7 +72,7 @@ else
         }
         elseif ($killid == -1)
         {
-            $html .= "That killmail has already been posted <a href=\"?a=kill_detail&kll_id=" . $parser->dupeid_ . "\">here</a>.<br>";
+            $html .= "That killmail has already been posted <a href=\"?a=kill_detail&kll_id=" . $parser->getDupeID() . "\">here</a>.<br>";
         }
         elseif ($killid == -2)
         {

@@ -34,7 +34,7 @@ if (isset($_POST['killmail']))
             $killid = $parser->parse(true, null, false);
         }
 
-        if ($killid == 0 || $killid == -1 || $killid == -2 || $killid == -3)
+        if ($killid <= 0)
         {
             if ($killid == 0)
             {
@@ -54,7 +54,7 @@ if (isset($_POST['killmail']))
             }
             elseif ($killid == -1)
             {
-                $html = "That killmail has already been posted <a href=\"?a=kill_detail&kll_id=".$parser->dupeid_."\">here</a>.";
+                $html = "That killmail has already been posted <a href=\"?a=kill_detail&kll_id=".$parser->getDupeID()."\">here</a>.";
             }
             elseif ($killid == -2)
             {
@@ -65,6 +65,10 @@ if (isset($_POST['killmail']))
                 $filterdate = kbdate("j F Y", config::get("filter_date"));
                 $html = "You are not allowed to post killmails older than $filterdate.";
             }
+			elseif ($killid == -4)
+			{
+				$html = "That mail has been deleted. Kill id was ".$parser->getDupeID();
+			}
         }
         else
         {

@@ -844,7 +844,7 @@ class API_KillLog
                     } else {
                         // $this->Output_ .= "Killmail already exists <a href=\"?a=kill_detail&amp;kll_id=".$parser->dupeid_."\">here</a>.<br>";
 						// write API KillID to kb3_kills killID column row $parser->dupeid_
-						$this->VerifyKill($this->killid_, $parser->dupeid_);
+						$this->VerifyKill($this->killid_, $parser->getDupeID());
 						$this->verified_++;
                     }
                 }
