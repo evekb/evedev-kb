@@ -94,8 +94,9 @@ class Alliance
      */
     function add($name, $externalid = false)
     {
-        $qry = DBFactory::getDBQuery();;
-        $qry->execute("select * from kb3_alliances where all_name = '".slashfix($name)."'");
+        $qry = DBFactory::getDBQuery();
+		$name = $qry->escape($name);
+        $qry->execute("select * from kb3_alliances where all_name = '".$name."'");
 
         if ($qry->recordCount() == 0)
         {
@@ -119,27 +120,27 @@ class Alliance
 				if ($qry->recordCount() > 0)
 				{
 					$row = $qry->getRow();
-					$qry->execute("UPDATE kb3_alliances SET all_name = '".slashfix($name)."' WHERE all_external_id = ".$externalid);
+					$qry->execute("UPDATE kb3_alliances SET all_name = '".$name."' WHERE all_external_id = ".$externalid);
 
 					$this->id = $row['all_id'];
-					$this->name = slashfix($name);
+					$this->name = $name;
 					$this->externalid = $row['all_external_id'];
 					return $this->id;
 				}
 				$qry->execute("insert into kb3_alliances ".
 					"(all_id, all_name, all_external_id) values ".
-					"(null, '".slashfix($name)."', ".$externalid.")");
+					"(null, '".$name."', ".$externalid.")");
 			}
             else $qry->execute("insert into kb3_alliances ".
 				"(all_id, all_name) values ".
-				"(null, '".slashfix($name)."')");
+				"(null, '".$name."')");
             $this->id = $qry->getInsertID();
         }
         else
         {
             $row = $qry->getRow();
             $this->id = $row['all_id'];
-			$this->name = slashfix($name);
+			$this->name = $name;
 			$this->externalid = intval($row['all_external_id']);
         }
     }
@@ -204,7 +205,6 @@ class Alliance
 		$myID->fetchXML();
 		$myNames = $myID->getIDData();
 
-		$this->add(slashfix($myNames[0]['name']),
-			intval($myNames[0]['characterID']));
+		$this->add($myNames[0]['name'], intval($myNames[0]['characterID']));
 	}
 }

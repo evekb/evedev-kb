@@ -154,7 +154,7 @@ class Pilot
 				$this->valid_ = false;
 				return;
 			}
-			$qry = DBFactory::getDBQuery();;
+			$qry = DBFactory::getDBQuery();
 			$this->sql_ = 'select * from kb3_pilots plt, kb3_corps crp, kb3_alliances ali
             	  	       where crp.crp_id = plt.plt_crp_id
             		       and ali.all_id = crp.crp_all_id ';
@@ -192,7 +192,8 @@ class Pilot
 	function getCorp()
 	{
 		if(isset($this->corp)) return $this->corp;
-		$this->execQuery();
+		if(!isset($this->corpid_)) $this->execQuery();
+
 		$this->corp = new Corporation($this->corpid_);
 		return $this->corp;
 	}
@@ -216,11 +217,11 @@ class Pilot
      */
 	function add($name, $corp, $timestamp, $externalID = 0, $loadExternals = true)
 	{
-		$name = slashfix($name);
 	// Check if pilot exists with a non-cached query.
-		$qry = DBFactory::getDBQuery(true);;
+		$qry = DBFactory::getDBQuery(true);
+		$name = $qry->escape($name);
 		// Insert or update a pilot with a cached query to update cache.
-		$qryI = DBFactory::getDBQuery(true);;
+		$qryI = DBFactory::getDBQuery(true);
 		$qry->execute("select *
                         from kb3_pilots
                        where plt_name = '".$name."'");
@@ -292,6 +293,9 @@ class Pilot
                                  plt_updated = date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s') where plt_id = ".$this->id_);
 			}
 			if (!$row['plt_externalid'] && $externalID) $this->setCharacterID($externalID);
+			$this->corp = $corp;
+			$this->name_ = $name;
+			$this->corpid_ = $corp->getID();
 		}
 
 		return $this->id_;
@@ -308,7 +312,7 @@ class Pilot
 		if(isset($this->updated_))
 			if(is_null($this->updated_) || strtotime($timestamp." UTC") > $this->updated_) return true;
 			else return false;
-		$qry = DBFactory::getDBQuery();;
+		$qry = DBFactory::getDBQuery();
 		$qry->execute("select plt_id
                         from kb3_pilots
                        where plt_id = ".$this->id_."
@@ -331,7 +335,7 @@ class Pilot
 			return false;
 		}
 		$this->externalid_ = intval($externalID);
-		$qry = DBFactory::getDBQuery(true);;
+		$qry = DBFactory::getDBQuery(true);
 		$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_externalid = ".$this->externalid_." AND plt_id <> ".$this->id_);
 		if($qry->recordCount())
 		{
@@ -359,9 +363,9 @@ class Pilot
      */
     function lookup($name)
     {
-        $qry = DBFactory::getDBQuery();;
+        $qry = DBFactory::getDBQuery();
         $qry->execute("select * from kb3_pilots
-                       where plt_name = '".slashfix($name)."'");
+                       where plt_name = '".$qry->escape($name)."'");
         $row = $qry->getRow();
         if ($row['plt_id']) $this->id_ = $row['plt_id'];
 		$this->name_ = $row['plt_name'];
@@ -391,7 +395,7 @@ class Pilot
 		$corp = new Corporation();
 		$corp->add("Unknown", $alliance, '2000-01-01 00:00:00');
 
-		$this->add(slashfix($myNames[0]['name']), $corp,
+		$this->add($myNames[0]['name'], $corp,
 			$myID->getCurrentTime(), intval($myNames[0]['characterID']));
 	}
 }

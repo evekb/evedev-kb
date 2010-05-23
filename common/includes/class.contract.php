@@ -237,18 +237,18 @@ class Contract
 
 		if (!$this->ctr_id_)
 		{
-			$sql = "insert into kb3_contracts values ( null, '".slashfix($name)."',
+			$sql = "insert into kb3_contracts values ( null, '".$qry->escape($name)."',
                                                    '".KB_SITE."', ".$campaign.",
-						   '".$startdate." 00:00:00',
-						   ".$enddate." )";
+						   '".$qry->escape($startdate)." 00:00:00',
+						   ".$qry->escape($enddate)." )";
 			$qry->execute($sql) or die($qry->getErrorMsg());
 			$this->ctr_id_ = $qry->getInsertID();
 		}
 		else
 		{
-			$sql = "update kb3_contracts set ctr_name = '".slashfix($name)."',
-			                 ctr_started = '".$startdate." 00:00:00',
-					 ctr_ended = ".$enddate."
+			$sql = "update kb3_contracts set ctr_name = '".$qry->escape($name)."',
+			                 ctr_started = '".$qry->escape($startdate)." 00:00:00',
+					 ctr_ended = ".$qry->escape($enddate)."
 				     where ctr_id = ".$this->ctr_id_;
 			$qry->execute($sql) or die($qry->getErrorMsg());
 			$this->ctr_id_ = $qry->getInsertID();

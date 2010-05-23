@@ -49,8 +49,8 @@ class Comments
     { 
         $comment = $this->bbencode($text); 
 
-        $name = slashfix(strip_tags($name)); 
-        $qry = DBFactory::getDBQuery(true);;
+        $qry = DBFactory::getDBQuery(true);
+        $name = $qry->escape(strip_tags($name));
         $qry->execute("INSERT INTO kb3_comments (`kll_id`,`site`, `comment`,`name`,`posttime`, `ip`)
                        VALUES ('".$this->id_."','".KB_SITE."','".$comment."','".$name."','".kbdate('Y-m-d H:i:s')."', '".logger::getip()."')");
         $id = $qry->getInsertID(); 

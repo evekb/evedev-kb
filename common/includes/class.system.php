@@ -83,10 +83,10 @@ class SolarSystem
 
     function lookup($name)
     {
-        $qry = DBFactory::getDBQuery();;
+        $qry = DBFactory::getDBQuery();
         $qry->execute("select *
                        from kb3_systems
-                       where sys_name = '".slashfix($name)."'");
+                       where sys_name = '".$qry->escape($name)."'");
 
         $row = $qry->getRow();
         if (!$row['sys_id'])

@@ -127,7 +127,7 @@ class Config
 			{
 				self::$configCacheGlobal[$key] = stripslashes($value);
 			}
-			$value = addslashes($value);
+			$value = self::$qry->escape($value);
 
 			$sql = "INSERT INTO kb3_config (cfg_site, cfg_key, cfg_value) VALUES ('".
 				SUPERKB_SITE."','{$key}','{$value}') ON DUPLICATE KEY UPDATE cfg_value = '{$value}'";
@@ -154,7 +154,7 @@ class Config
 		{
 			self::$configCache[$key] = stripslashes($value);
 		}
-		$value = addslashes($value);
+		$value = self::$qry->escape($value);
 
 		$sql = "INSERT INTO kb3_config (cfg_site, cfg_key, cfg_value) VALUES ('".
 			self::$configSite."','{$key}','{$value}') ON DUPLICATE KEY UPDATE cfg_value = '{$value}'";

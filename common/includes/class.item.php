@@ -202,7 +202,7 @@ class Item
 		$name = trim($name);
 		$qry = DBFactory::getDBQuery();
 		$query = "select typeID as itm_id from kb3_invtypes itm
-                  where typeName = '".slashfix($name)."'";
+                  where typeName = '".$qry->escape($name)."'";
 		$qry->execute($query);
 		$row = $qry->getRow();
 		if (!isset($row['itm_id']))
@@ -221,7 +221,7 @@ class Item
 		$qry = DBFactory::getDBQuery();
 		$query = "select typeID as itm_id
                   from kb3_invtypes
-                  where typeName = '".slashfix($name)."'";
+                  where typeName = '".$qry->escape($name)."'";
 		$qry->execute($query);
 
 		$row = $qry->getRow();
@@ -236,7 +236,7 @@ class Item
 		$query = "SELECT value
                      FROM kb3_dgmtypeattributes d
                      INNER JOIN kb3_invtypes i ON i.typeID = d.typeID
-                     WHERE i.typeName = '".slashfix($name)."' AND d.attributeID IN (137,602);";
+                     WHERE i.typeName = '".$qry->escape($name)."' AND d.attributeID IN (137,602);";
 		$qry->execute($query);
 		$row = $qry->getRow();
 		return $row['value'];
@@ -256,7 +256,7 @@ class Item
 			$query = "SELECT value
              FROM kb3_dgmtypeattributes d
              INNER JOIN kb3_invtypes i ON i.typeID = d.typeID
-                     WHERE i.typeName = '".slashfix($name)."' AND d.attributeID IN (128);";
+                     WHERE i.typeName = '".$qry->escape($name)."' AND d.attributeID IN (128);";
 		$qry->execute($query);
 		$row = $qry->getRow();
 		return $row['value'];
@@ -304,7 +304,7 @@ class Item
 		else
 			$query = "select groupID
                         from kb3_invtypes
-                       where typeName = '".slashfix($name)."'";
+                       where typeName = '".$qry->escape($name)."'";
 		$qry->execute($query);
 
 		$row = $qry->getRow();
