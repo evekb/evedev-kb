@@ -1,6 +1,5 @@
 <?php
-require_once('update/CCPDB/xml.parser.php');
-require_once('common/includes/class.config.php');
+require_once('class.config.php');
 
 options::cat('Advanced', 'Configuration', 'Available updates');
 options::fadd('Code updates', 'none', 'custom', array('update', 'codeCheck'));
@@ -27,58 +26,58 @@ options::fadd('ALLIANCE_ID', 'cfg_allianceid', 'custom', array('admin_config', '
 
 class admin_config
 {
-	function checkHost()
+	public static function checkHost()
 	{
 		if(!isset($_POST['option_cfg_kbhost'])) return;
 		$newhost = preg_replace('/\/+$/','',$_POST['option_cfg_kbhost']);
 		config::set('cfg_kbhost', $newhost);
 		$_POST['option_cfg_kbhost'] = $newhost;
 	}
-	function checkImg()
+	public static function checkImg()
 	{
 		if(!isset($_POST['option_cfg_img'])) return;
 		$newimg = preg_replace('/\/+$/','',$_POST['option_cfg_img']);
 		config::set('cfg_img', $newimg);
 		$_POST['option_cfg_img'] = $newimg;
 	}
-	function createSelectStats()
-    {
-    	$options = array();
-    	if (config::get('public_stats') == 'none')
-	    {
-            $state = 1;
-        }
-        else
-        {
-            $state = 0;
-        }
-    	$options[] = array('value' => 'do nothing', 'descr' => 'do nothing', 'state' => $state);
-
-    	if (config::get('public_stats') == 'remove')
-	    {
-            $state = 1;
-        }
-        else
-        {
-            $state = 0;
-        }
-    	$options[] = array('value' => 'remove', 'descr' => 'remove', 'state' => $state);
-
-    	if (config::get('public_stats') == 'replace')
-	    {
-            $state = 1;
-        }
-        else
-        {
-            $state = 0;
-        }
-    	$options[] = array('value' => 'replace', 'descr' => 'replace (not rdy yet)', 'state' => $state);
-
-        return $options;
-    }
-	function createPilot()
+	public static function createSelectStats()
 	{
-		$qry = DBFactory::getDBQuery();;
+		$options = array();
+		if (config::get('public_stats') == 'none')
+		{
+			$state = 1;
+		}
+		else
+		{
+			$state = 0;
+		}
+		$options[] = array('value' => 'do nothing', 'descr' => 'do nothing', 'state' => $state);
+
+		if (config::get('public_stats') == 'remove')
+		{
+			$state = 1;
+		}
+		else
+		{
+			$state = 0;
+		}
+		$options[] = array('value' => 'remove', 'descr' => 'remove', 'state' => $state);
+
+		if (config::get('public_stats') == 'replace')
+		{
+			$state = 1;
+		}
+		else
+		{
+			$state = 0;
+		}
+		$options[] = array('value' => 'replace', 'descr' => 'replace (not rdy yet)', 'state' => $state);
+
+		return $options;
+	}
+	public static function createPilot()
+	{
+		$qry = DBFactory::getDBQuery();
 		if(isset($_POST['option_cfg_pilotid'])) $plt_id=intval($_POST['option_cfg_pilotid']);
 		else $plt_id = PILOT_ID;
 		$qry->execute("SELECT plt_name FROM kb3_pilots WHERE plt_id = ".$plt_id);
@@ -87,9 +86,9 @@ class admin_config
 		$res = $qry->getRow();
 		return $html . ' &nbsp;('.$res['plt_name'].')';
 	}
-	function createCorp()
+	public static function createCorp()
 	{
-		$qry = DBFactory::getDBQuery();;
+		$qry = DBFactory::getDBQuery();
 		if(isset($_POST['option_cfg_pilotid'])) $plt_id = intval($_POST['option_cfg_pilotid']);
 		else $plt_id = PILOT_ID;
 
@@ -102,15 +101,15 @@ class admin_config
 		$res = $qry->getRow();
 		return $html . ' &nbsp;('.$res['crp_name'].')';
 	}
-	function createAlliance()
+	public static function createAlliance()
 	{
-		$qry = DBFactory::getDBQuery();;
+		$qry = DBFactory::getDBQuery();
 		if(isset($_POST['option_cfg_pilotid']))
 		{
 			$plt_id = intval($_POST['option_cfg_pilotid']);
 		}
 		else $plt_id = PILOT_ID;
-		if(isset($_POST['option_cfg_corpid'])) 
+		if(isset($_POST['option_cfg_corpid']))
 		{
 			$crp_id = intval($_POST['option_cfg_corpid']);
 		}
@@ -127,7 +126,7 @@ class admin_config
 		$res = $qry->getRow();
 		return $html . ' &nbsp;('.$res['all_name'].')';
 	}
-	function reload()
+	public static function reload()
 	{
 		header("Location: http://".$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'?'.$_SERVER['QUERY_STRING']);
 	}
@@ -141,8 +140,8 @@ class update
 
 	/*
 	 * Display a link to update or show that no update is needed.
-	 */
-	function codeCheck()
+	*/
+	public static function codeCheck()
 	{
 		if(!class_exists('DOMDocument')) return "The required DOMDocument libraries in PHP are not installed.";
 		update::checkStatus();
@@ -156,8 +155,8 @@ class update
 
 	/*
 	 * Display a link to update or show that no update is needed.
-	 */
-	function dbCheck()
+	*/
+	public static function dbCheck()
 	{
 		if(!class_exists('DOMDocument')) return "The required DOMDocument libraries in PHP are not installed.";
 		update::checkStatus();
@@ -168,16 +167,17 @@ class update
 		return "<div>No updates available</div>";
 	}
 	//! Updates status xml if necessary.
-	function checkStatus()
+	public static function checkStatus()
 	{
-		$xml = new UpdateXMLParser();		
+		require_once('update/CCPDB/xml.parser.php');
+		$xml = new UpdateXMLParser();
 		if($xml->getXML() < 3)
 		{
-		    $xml->retrieveData();
-		    {
-			update::$codeVersion = $xml->getLatestCodeVersion();
-			update::$dbVersion = $xml->getLatestDBVersion();
-		    }
+			$xml->retrieveData();
+			{
+				update::$codeVersion = $xml->getLatestCodeVersion();
+				update::$dbVersion = $xml->getLatestDBVersion();
+			}
 		}
 		return;
 	}
