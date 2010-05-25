@@ -101,9 +101,11 @@ class Parser
 
 	function parse($checkauth = true)
 	{
-        if($this->externalID) //if we have this mail already, don't parse
-        {
-			$qry = DBFactory::getDBQuery();
+		$qry = DBFactory::getDBQuery();
+
+		// Check external IDs
+		if($this->externalID)
+		{
 			$qry->execute('SELECT kll_id FROM kb3_kills WHERE kll_external_id = '.$this->externalID);
 			if($qry->recordCount())
 			{
@@ -112,6 +114,32 @@ class Parser
 				return -1;
 			}
 		}
+//		$timestamp = substr($this->killmail_, 0, 16);
+//		$timestamp = str_replace('.', '-', $timestamp);
+//
+//		// Check hashes.
+//		$this->hash = self::hashMail($this->killmail_);
+//		$quality = 0;
+//		$kill_id = 0;
+//		$qryP = new DBPreparedQuery();
+//		$qryP->prepare('SELECT kll_id, kll_quality FROM kb3_mails WHERE kll_timestamp = ? AND kll_hash = ?');
+//		$arr = array(&$kill_id, &$quality);
+//		$qryP->bind_results($arr);
+//		$qryP->bind_param('ss', $timestamp, $this->hash);
+//		$qryP->execute();
+//		if($qryP->recordCount())
+//		{
+//			$qryP->fetch();
+//			$this->dupeid_ = $kill_id;
+//			// We still want to update the external ID if we were given one.
+//			if($this->externalID)
+//			{
+//				$qry->execute("UPDATE kb3_kills SET kll_external_id = ".
+//					$this->externalID." WHERE kll_id = ".$this->dupeid_);
+//			}
+//			if($quality < 0) return -4;
+//			return -1;
+//		}
 
 		//trim out any multiple spaces that may exist -
 		//$this->killmail_ = preg_replace('/ +/', ' ', $this->killmail_);
@@ -663,6 +691,7 @@ class Parser
 		{
 			return $kill;
 		}
+//		$kill->setHash($this->hash);
 		$id = $kill->add();
 		if ($id == -1)
 		{
@@ -670,7 +699,6 @@ class Parser
 
 			if($this->externalID)
 			{
-                $qry = DBFactory::getDBQuery();
 				$qry->execute("UPDATE kb3_kills SET kll_external_id = ".$this->externalID." WHERE kll_id = ".$this->dupeid_);
 			}
 		}
@@ -891,6 +919,76 @@ class Parser
 			self::$items[$itemname] = $item;
 		}
 		return $item;
+	}
+	public static function hashMail($mail = null)
+	{
+		if(is_null($mail)) return false;
+
+		$mail = trim($mail);
+		$mail = str_replace("\r\n", "\n", $mail);
+
+		$involvedStart = strpos($mail, "Involved parties:");
+		if($involvedStart === false) return false;
+		$involvedStart = strpos($mail, "Name:", $involvedStart);
+
+		$itemspos = strpos($mail, "\nDestroyed items:");
+		if ($itemspos === false) $itemspos = strpos($mail, "\nDropped items:");
+
+		if ($itemspos === false) $involved = substr($mail, $involvedStart);
+		else $involved = substr($mail, $involvedStart, $itemspos - $involvedStart);
+		$invList = explode("Name: ", $involved);
+		$invListDamage = array();
+		$invlistName = array();
+		foreach($invList as $party)
+		{
+			if(!empty($party))
+			{
+				$pos = strrpos($party, ": ");
+				$damage = @intval(substr($party, $pos+2));
+				$invListDamage[] = $damage;
+				$pos = strpos($party, "\n");
+				$name = trim(substr($party,0,$pos));
+				$invListName[] = $name;
+			}
+		}
+		// Sort the involved list by damage done then alphabetically.
+		array_multisort($invListDamage, SORT_DESC, SORT_NUMERIC, $invListName, SORT_ASC, SORT_STRING);
+
+		$hashIn = substr($mail, 0, 16);
+		$hashIn = str_replace('.', '-', $hashIn);
+
+		$pos = strpos($mail, "Victim: ") + 8;
+		$posEnd = strpos($mail, "\n", $pos);
+		if($pos === false || $posEnd === false) return false;
+		$hashIn .= substr($mail, $pos, $posEnd - $pos);
+
+		$pos = strpos($mail, "Destroyed: ") + 11;
+		$posEnd = strpos($mail, "\n", $pos);
+		if($pos === false || $posEnd === false) return false;
+		$hashIn .= substr($mail, $pos, $posEnd - $pos);
+
+		$pos = strpos($mail, "System: ") + 8;
+		$posEnd = strpos($mail, "\n", $pos);
+		if($pos === false || $posEnd === false) return false;
+		$hashIn .= substr($mail, $pos, $posEnd - $pos);
+
+		$pos = strpos($mail, "Damage Taken: ") + 14;
+		$posEnd = strpos($mail, "\n", $pos);
+		if($pos === false || $posEnd === false) return false;
+		$hashIn .= substr($mail, $pos, $posEnd - $pos);
+
+		$hashIn .= implode(',', $invListName);
+		$hashIn .= implode(',', $invListDamage);
+
+		return md5($hashIn, true);
+	}
+	public function getDupeID()
+	{
+		return $this->dupeid_;
+	}
+	public static function setTrust($trust)
+	{
+		self::$trust = intval($trust);
 	}
 }
 //Currently maintained by FriedRoadKill
