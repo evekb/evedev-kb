@@ -91,18 +91,22 @@ class KillListTable
 			$kll['timestamp'] = $kill->getTimeStamp();
 			if (config::get('killlist_alogo'))
 			{
-				$kll['victimallianceicon'] = preg_replace('/[^a-zA-Z0-9]/', '', $kll['victimalliancename']);
-				if(file_exists(KB_CACHEDIR.'/img/alliances/'.$kll['victimallianceicon'].'_32.png'))
-				{
-					$kll['allianceexists'] = true;
-					$kll['victimallianceicon'] = KB_HOST.'/'.KB_CACHEDIR.'/img/alliances/'.$kll['victimallianceicon'].'_32.png';
-				}
-				elseif(file_exists('img/alliances/'.$kll['victimallianceicon'].'.png'))
-				{
-					$kll['allianceexists'] = true;
-					$kll['victimallianceicon'] = '?a=thumb&amp;type=alliance&amp;id='.$kll['victimallianceicon'];
-				}
-				else $kll['allianceexists'] = false;
+				// Need to return yet another value from killlists.
+				$all = new Alliance($kill->getVictimAllianceID());
+				$kll['allianceexists'] = true;
+				$kll['victimallianceicon'] = $all->getPortraitURL(32);
+//				$kll['victimallianceicon'] = preg_replace('/[^a-zA-Z0-9]/', '', $kll['victimalliancename']);
+//				if(CacheHandler::exists($kll['victimallianceicon']."_32.png", 'img'))
+//				{
+//					$kll['allianceexists'] = true;
+//					$kll['victimallianceicon'] = CacheHandler::getExternal($kll['victimallianceicon']."_32.png", 'img');
+//				}
+//				elseif(file_exists('img/alliances/'.$kll['victimallianceicon'].'.png'))
+//				{
+//					$kll['allianceexists'] = true;
+//					$kll['victimallianceicon'] = '?a=thumb&amp;type=alliance&amp;id='.$kll['victimallianceicon'];
+//				}
+//				else $kll['allianceexists'] = false;
 			}
 
 			if (isset($kill->_tag))

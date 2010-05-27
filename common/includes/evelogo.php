@@ -29,22 +29,12 @@
 
 define ("EVELOGOVERSION", "V1.2");
 
-// Checks for configuration of files and folders
-if (!file_exists("img/corps"))
-{
-    if (!mkdir("img/corps", 0777))
-	{
-		// creating folder failed - spam something about that
-		echo "Failed to create folder 'img/corps' you should create the folder yourself and set chmod 777";
-	}
-}
-
 function CorporationLogo($data, $size = 128, $filename)
 {
 	/* Generates corp logo defined by the parameters in data object. The data
 object may be an eveapi logo element from the CorporationSheet, a dict
 containing the shapes and colors, or a sequence containing a shapes- and colors
-sequence. Optionally, size other than the default 64px may be specified, and
+sequence. Optionally, size other than the default 128px may be specified, and
 transparency can be turned off, in which case it will render the logo on
 a background with the color of your choice if specified, otherwise black.*/
 
@@ -124,22 +114,22 @@ a background with the color of your choice if specified, otherwise black.*/
 				imagesetpixel($logo, $x, $y, $newpix);
 			}
 		}
-	}//*/
+	}
 
-	if(!file_exists(KB_CACHEDIR.'/img/corps/'.substr($filename,0,2)))
-			mkdir(KB_CACHEDIR.'/img/corps/'.substr($filename,0,2));
+	$path = CacheHandler::getInternal($filename . "_".$size.".png", 'img');
+
 	if ($size != 128)
 	{
 		$newsize = imagecreatetruecolor($size, $size);
 		imagealphablending ( $newsize , true );
 		if(function_exists('imageantialias')) imageantialias ( $newsize , true );
 		imagecopyresampled($newsize, $logo, 0, 0, 0, 0, $size, $size, 128, 128);
-		imagepng ( $newsize , KB_CACHEDIR.'/img/corps/' . substr($filename,0,2).'/'. $filename . "_".$size.".png" );
+		imagepng ( $newsize , $path );
 		imagedestroy($newsize);
 
 	} else {
 		// write logo to disk
-		imagepng ( $logo , KB_CACHEDIR.'/img/corps/' . substr($filename,0,2).'/'. $filename . "_128.png" );
+		imagepng ( $logo , $path );
 	}
 
 	imagedestroy($logo);
@@ -150,4 +140,3 @@ a background with the color of your choice if specified, otherwise black.*/
 	if ($shape3)
 		imagedestroy($layer3);
 }
-?>

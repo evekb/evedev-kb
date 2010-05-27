@@ -186,9 +186,11 @@ class Alliance
 		}
 		else
 		{
-			if( file_exists(KB_CACHEDIR.'/img/alliances/'.$this->getUnique().'_'.$size.'.png'))
-				return KB_CACHEDIR.'/img/alliances/'.$this->getUnique().'_'.$size.'.png';
-			else return '?a=thumb&amp;type=alliance&amp;id='.$this->getUnique().'&amp;size='.$size;
+			if(CacheHandler::exists($this->getUnique()."_$size.png", 'img/alliances'))
+				return CacheHandler::getExternal($this->getUnique()."_$size.png", 'img/alliances');
+			else if($this->getExternalID())
+				return '?a=thumb&amp;type=alliance&amp;id='.$this->getExternalID().'&amp;size='.$size;
+			return '?a=thumb&amp;type=alliance&amp;id='.$this->getUnique().'&amp;size='.$size;
 		}
 	}
 

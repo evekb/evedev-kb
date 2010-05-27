@@ -119,8 +119,8 @@ class Pilot
 		}
 		else
 		{
-			if( file_exists($this->getPortraitPath($size)))
-				return $this->getPortraitPath($size);
+			if(CacheHandler::exists($this->externalid_."_$size.jpg", 'img'))
+				return CacheHandler::getExternal($this->externalid_."_$size.jpg", 'img');
 			else return '?a=thumb&amp;id='.$this->externalid_.'&amp;size='.$size;
 		}
 	}
