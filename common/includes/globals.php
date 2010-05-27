@@ -5,7 +5,7 @@ $svnrevision = trim(substr($svnrevision, 10, strlen($svnrevision)-11));
 
 define('SVN_REV', "Dev ".$svnrevision);
 
-if(!defined('LATEST_DB_UPDATE')) define('LATEST_DB_UPDATE',"013");
+if(!defined('LATEST_DB_UPDATE')) define('LATEST_DB_UPDATE',"014");
 
 define('KB_CACHEDIR', 'cache');
 define('KB_PAGECACHEDIR', KB_CACHEDIR.'/page');
@@ -15,8 +15,8 @@ define('KB_UPDATE_URL', 'http://evedev-kb.googlecode.com/files');
 
 // current version: major.minor.sub
 // unpair numbers for minor = development version
-define('KB_VERSION', '3.1 Alpha');
-define('KB_RELEASE', '(Dominion)');
+define('KB_VERSION', '3.1 Beta');
+define('KB_RELEASE', '(Tyrannis)');
 
 // add new corporations here once you've added the logo to img/corps/
 $corp_npc = array('Guristas', 'Serpentis Corporation', 'Sansha\'s Nation', 'CONCORD',

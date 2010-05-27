@@ -48,6 +48,7 @@ require_once('common/includes/globals.php');
 require_once('common/includes/class.config.php');
 require_once('common/includes/db.php');
 require_once('common/includes/class.valuefetcher.php');
+//require_once('class.cachehandler.php');
 
 $url = config::get('fetchurl');
 if ($url == null || $url == "")

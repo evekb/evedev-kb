@@ -114,32 +114,34 @@ class Parser
 				return -1;
 			}
 		}
-//		$timestamp = substr($this->killmail_, 0, 16);
-//		$timestamp = str_replace('.', '-', $timestamp);
-//
-//		// Check hashes.
-//		$this->hash = self::hashMail($this->killmail_);
-//		$quality = 0;
-//		$kill_id = 0;
-//		$qryP = new DBPreparedQuery();
-//		$qryP->prepare('SELECT kll_id, kll_quality FROM kb3_mails WHERE kll_timestamp = ? AND kll_hash = ?');
-//		$arr = array(&$kill_id, &$quality);
-//		$qryP->bind_results($arr);
-//		$qryP->bind_param('ss', $timestamp, $this->hash);
-//		$qryP->execute();
-//		if($qryP->recordCount())
-//		{
-//			$qryP->fetch();
-//			$this->dupeid_ = $kill_id;
-//			// We still want to update the external ID if we were given one.
-//			if($this->externalID)
-//			{
-//				$qry->execute("UPDATE kb3_kills SET kll_external_id = ".
-//					$this->externalID." WHERE kll_id = ".$this->dupeid_);
-//			}
-//			if($quality < 0) return -4;
-//			return -1;
-//		}
+		$timestamp = substr($this->killmail_, 0, 16);
+		$timestamp = str_replace('.', '-', $timestamp);
+
+		// Check hashes.
+		$this->hash = self::hashMail($this->killmail_);
+		$quality = 0;
+		$kill_id = 0;
+		$qryP = new DBPreparedQuery();
+		$qryP->prepare('SELECT kll_id, kll_trust FROM kb3_mails WHERE kll_timestamp = ? AND kll_hash = ?');
+		$arr = array(&$kill_id, &$quality);
+		$qryP->bind_results($arr);
+		$qryP->bind_param('ss', $timestamp, $this->hash);
+		$qryP->execute();
+
+		if($qryP->recordCount())
+		{
+			$qryP->fetch();
+			$this->dupeid_ = $kill_id;
+			// We still want to update the external ID if we were given one.
+			if($this->externalID)
+			{
+				$qry->execute("UPDATE kb3_kills SET kll_external_id = ".
+					$this->externalID." WHERE kll_id = ".$this->dupeid_);
+			}
+
+			if($quality < 0) return -4;
+			return -1;
+		}
 
 		//trim out any multiple spaces that may exist -
 		//$this->killmail_ = preg_replace('/ +/', ' ', $this->killmail_);
@@ -184,8 +186,8 @@ class Parser
 			}
 			elseif (preg_match("/Alliance: (.*)/", $victim[$counter], $matches))
 			{
-				if($matches[1])
-					$alliancename = $matches[1];
+				if($matches[1]) $alliancename = $matches[1];
+				if($alliancename == "Unknown") $alliancename = "None";
 			}
 			elseif (preg_match("/Faction: (.*)/", $victim[$counter], $matches))
 			{
@@ -419,10 +421,14 @@ class Parser
 								}
 								//alliance lookup for warp disruptors - normal NPCs aren't to be bundled in
 								$crp = $this->fetchCorp($corporation);
-								if($crp->getID() > 0 && ( stristr($name, ' warp ') || stristr($name, ' control ')))
+								if($crp->getExternalID(true) > 0)
 								{
-									$al = $crp->getAlliance();
-									$ianame = $al->getName();
+									if(strtotime($timestamp) > time() - 24*60*60 && $crp->fetchCorp())
+									{
+										$al = $crp->getAlliance();
+										$ianame = $al->getName();
+									}
+									// else check db for kills with that corp at the same time?
 								}
 
 								$ipname = $name;
@@ -443,8 +449,8 @@ class Parser
 					}
 					else if(preg_match("/Alliance: (.*)/", $involved[$counter], $matches))
 					{
-						if($matches[1])
-							$ianame = $matches[1];
+                        if($matches[1]) $ianame = $matches[1];
+						if($ianame == "Unknown") $ianame = "None";
 					}
 					else if(preg_match("/Faction: (.*)/", $involved[$counter], $matches))
 					{
@@ -691,7 +697,7 @@ class Parser
 		{
 			return $kill;
 		}
-//		$kill->setHash($this->hash);
+		$kill->setHash($this->hash);
 		$id = $kill->add();
 		if ($id == -1)
 		{

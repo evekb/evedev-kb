@@ -21,6 +21,9 @@ class Kill
 	private $iskloss_ = 0;
 	private $victimship_ = null;
 	private $dupeid_ = 0;
+	private $hash = false;
+	private $mail = null;
+	private $trust = 0;
 
 	function Kill($id = 0, $external = false)
 	{
@@ -126,39 +129,47 @@ class Kill
 	function getVictimCorpID()
 	{
 		$this->execQuery();
-		if(isset($this->victim_)) return $this->victim_->getCorp()->getID();
+// Removing this until the victim set is the victim status at the time of the kill
+//		if(isset($this->victim_)) return $this->victim_->getCorp()->getID();
 		return $this->victimcorpid_;
 	}
 
 	function getVictimCorpName()
 	{
 		$this->execQuery();
-		if(isset($this->victim_)) return $this->victim_->getCorp()->getName();
+// Removing this until the victim set is the victim status at the time of the kill
+//		if(isset($this->victim_)) return $this->victim_->getCorp()->getName();
 		return $this->victimcorpname_;
 	}
 
 	function getVictimAllianceName()
 	{
 		$this->execQuery();
-		if(isset($this->victim_)) return $this->victim_->getCorp()->getAlliance()->getName();
+// Removing this until the victim set is the victim status at the time of the kill
+//		if(isset($this->victim_)) return $this->victim_->getCorp()->getAlliance()->getName();
 		return $this->victimalliancename_;
 	}
 
 	function getVictimFactionName()
 	{
 		$this->execQuery();
-		if(isset($this->victim_))
-		{
-			if($this->victim_->getCorp()->getAlliance()->isFaction())
-				return $this->victim_->getCorp()->getAlliance()->getName();
-			else return "None";
-		}
+//		if(isset($this->victim_))
+//		{
+//			if($this->victim_->getCorp()->getAlliance()->isFaction())
+//				return $this->victim_->getCorp()->getAlliance()->getName();
+//			else return "None";
+//		}
+		$alliance = new Alliance($this->victimallianceid_);
+		if($alliance->isFaction())
+			return $alliance->getName();
+		else return "None";
 	}
 
 	function getVictimAllianceID()
 	{
 		$this->execQuery();
-		if(isset($this->victim_)) return $this->victim_->getCorp()->getAlliance()->getID();
+// Removing this until the victim set is the victim status at the time of the kill
+//		if(isset($this->victim_)) return $this->victim_->getCorp()->getAlliance()->getID();
 		return $this->victimallianceid_;
 	}
 
@@ -304,9 +315,12 @@ class Kill
 
 	function getRawMail()
 	{
+		if(!is_null($this->mail)) return $this->mail;
+
 		if (config::get('km_cache_enabled') && file_exists(KB_PAGECACHEDIR."/".$this->getID().".txt"))
 		{
-			return file_get_contents(KB_PAGECACHEDIR."/".$this->getID().".txt");
+			$this->mail = file_get_contents(KB_PAGECACHEDIR."/".$this->getID().".txt");
+			return $this->mail;
 		}
 
 		$this->execQuery();
@@ -437,6 +451,8 @@ class Kill
 		}
 
 		if (config::get('km_cache_enabled')) file_put_contents(KB_MAILCACHEDIR."/".$this->getID().".txt", $mail);
+
+		$this->mail = $mail;
 
 		return $mail;
 	}
@@ -1233,6 +1249,21 @@ class Kill
 			$qry->autocommit(true);
 			return false;
 		}
+		if(!is_null($this->hash))
+		{
+			$sql = "INSERT INTO kb3_mails (  `kll_id`, `kll_timestamp`, `kll_external_id`, `kll_hash`, `kll_trust`)".
+				"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ";
+			if($this->externalid_) $sql .= $this->externalid_.", ";
+			else $sql .= "NULL, ";
+			$sql .= "'".$this->getHash()."', 0)";
+			if(!$qry->execute($sql))
+			{
+			$qry->rollback();
+			$qry->autocommit(true);
+			return false;
+			}
+		}
+
 		//Update cache tables.
 		require_once('class.summarycache.php');
 		require_once('class.cache.php');
@@ -1265,6 +1296,7 @@ class Kill
 		if ($delcomments)
 		{
 			$qry->execute("delete from kb3_comments where kll_id = ".$this->id_);
+			$qry->execute("UPDATE kb3_mails SET kll_trust = -1 WHERE kll_id = ".$this->id_);
 		}
 		$qry->autocommit(true);
 	}
@@ -1293,6 +1325,63 @@ class Kill
 	{
 		$this->execQuery();
 		return $this->involvedparties_;
+	}
+	function setHash($hash)
+	{
+		$this->hash = $hash;
+	}
+	function getHash()
+	{
+		if($this->hash !== false) return $this->hash;
+		$qry = DBFactory::getDBQuery();
+		// Get the mail and trust as well since we're fetching the row anyway.
+		$qry->execute("SELECT kll_hash, kll_trust FROM kb3_mails WHERE kll_id = ".$this->id_);
+		if($qry->recordCount())
+		{
+			$row = $qry->getRow();
+			$this->hash = $row['kll_hash'];
+			$this->trust = $row['kll_trust'];
+		}
+		else
+		{
+			require_once("class.parser.php");
+			$this->hash = Parser::hashMail($this->getRawMail());
+			if($this->hash === false) return false;
+
+			if($this->externalid_)
+			{
+				$sql = "INSERT INTO kb3_mails (  `kll_id`, `kll_timestamp`, ".
+					"`kll_external_id`, `kll_hash`, `kll_trust`)".
+					"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ";
+					$this->externalid_.", '".$qry->escape($hash)."', ".
+					$this->trust.")";
+			}
+			else
+			{
+				$sql = "INSERT INTO kb3_mails (  `kll_id`, `kll_timestamp`, ".
+					"`kll_hash`, `kll_trust`)".
+					"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ".
+					"'".$qry->escape($hash)."', ".
+					$this->trust.")";
+			}
+			$qry->execute($sql);
+
+		}
+	}
+	function setRawMail($mail)
+	{
+		$this->mail = $mail;
+	}
+	public function setTrust($trust)
+	{
+		$this->trust = intval($trust);
+	}
+	public function getTrust()
+	{
+		if(!is_null($this->trust)) return $this->trust;
+		if(!$this->getHash()) return $this->trust;
+		$this->trust = 0;
+		return $this->trust;
 	}
 }
 

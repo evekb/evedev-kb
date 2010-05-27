@@ -9,12 +9,12 @@
 @ini_set('memory_limit',999999999);
 $feedversion = "v1.8";
 
-require_once( "common/includes/class.kill.php" );
-require_once( "common/includes/class.parser.php" );
-require_once( "common/includes/class.comments.php" );
-require_once( "common/includes/class.corp.php" );
-require_once( "common/includes/class.pilot.php" );
-require_once('common/includes/class.logger.php');
+require_once("class.kill.php");
+require_once("class.parser.php");
+require_once("class.comments.php");
+require_once("class.corp.php");
+require_once("class.pilot.php");
+require_once("class.logger.php");
 
 //! EDK Feed Syndication fetcher class.
 
@@ -40,6 +40,9 @@ class Fetcher
 		$this->link = "";
 		$this->killsAdded=0;
 		$this->killsSkipped=0;
+		$this->hash = "";
+		$this->time = "";
+		$this->trust = "";
 	}
 	//! Fetch a new feed.
 
@@ -262,15 +265,12 @@ class Fetcher
 				}
 				else
 				{
-				//Check age of mail
-					if(config::get('filter_apply'))
+					//Check age of mail
+					if(config::get('filter_apply')
+						&& $killstamp < config::get('filter_date'))
 					{
-						$filterdate = config::get('filter_date');
-						if ($killstamp < $filterdate) $killid = -4;
+						$killid = -4;
 					}
-					if(config::get('filter_apply') && $killid == -4);
-					// If the kill has an external id then check if it is already
-					// on this board.
 					elseif($this->apiID = intval($this->apiID))
 					{
 						$qry = DBFactory::getDBQuery();;
@@ -280,10 +280,34 @@ class Fetcher
 							$parser = new Parser( $this->description );
 							// Add external id when known.
 							// Make an admin option for the feed?
-							//$parser = new Parser( $this->description, $this->apiID );
+							// if($this->trust < 3) $this->trust++
+							//$parser = new Parser( $this->description, $this->apiID, $this->trust );
 							$killid = $parser->parse( true );
 						}
 						else $killid = -3;
+					}
+					elseif($this->hash != '')
+					{
+						$qry = DBFactory::getDBQuery();
+						$qry->execute("SELECT kll_trust FROM kb3_mails WHERE kll_timestamp = '".
+							$qry->escape($this->time)."' AND kll_hash = '".
+							$qry->escape($this->hash)."'");
+						if(!$qry->recordCount())
+						{
+							$parser = new Parser( $this->description );
+							// Add external id when known.
+							// Make an admin option for the feed?
+							//
+							// if($this->trust < 3) $this->trust++
+							//$parser = new Parser( $this->description, $this->apiID, $this->trust );
+							$killid = $parser->parse( true );
+						}
+						else
+						{
+							$row = $qry->getRow();
+							if($row['kll_trust'] < 0) $killid = -1;
+							else $killid = -5;
+						}
 					}
 					elseif(!$this->apikills)
 					{
@@ -295,23 +319,23 @@ class Fetcher
 						if ( $killid == 0 && config::get('fetch_verbose') )
 							$this->html .= "Killmail ".intval($this->title)." is malformed. ".$this->uurl." Kill ID = ".$this->title." <br>\n";
 						if ( $killid == -1 && config::get('fetch_verbose') )
-							$this->html .= "Killmail ".intval($this->title)." already posted <a href=\"?a=kill_detail&amp;kll_id=".$parser->dupeid_."\">here</a>.<br>\n";
+							$this->html .= "Killmail ".intval($this->title)." already posted <a href=\"?a=kill_detail&amp;kll_id=".$parser->getDupeID()."\">here</a>.<br>\n";
 						if ( $killid == -2 && config::get('fetch_verbose') )
 							$this->html .= "Killmail ".intval($this->title)." is not related to ".KB_TITLE.".<br>\n";
 						if ( $killid == -3 && config::get('fetch_verbose') )
 							$this->html .= "Killmail ".intval($this->title)." already posted <a href=\"?a=kill_detail&amp;kll_external_id=".$this->apiID."\">here</a>.<br>\n";
 						if ( $killid == -4 && config::get('fetch_verbose') )
 							$this->html .= "Killmail ".intval($this->title)." too old to post with current settings.<br>\n";
+						if ( $killid == -5 && config::get('fetch_verbose') )
+							$this->html .= "Killmail ".intval($this->title)." has already been deleted.<br>\n";
 						$this->killsSkipped++;
 					}
 					else
 					{
-					//						$qry = DBFactory::getDBQuery();;
 						if(strpos($this->uurl, '?')) $logurl = substr($this->uurl,0,strpos($this->uurl, '?')).'?a=kill_detail&kll_id='.intval($this->title);
 						else $logurl = uurl.'?a=kill_detail&kll_id='.intval($this->title);
 						logger::logKill($killid, $logurl);
-						//						$qry->execute( "insert into kb3_log (log_kll_id, log_site, log_ip_address, log_timestamp) values( ".
-						//							$killid.", '".KB_SITE."','".$logurl."',now() )" );
+
 						$this->html .= "Killmail ".intval($this->title)." successfully posted <a href=\"?a=kill_detail&kll_id=".$killid."\">here</a>.<br>";
 
 						if (config::get('fetch_comment'))
@@ -338,7 +362,10 @@ class Fetcher
 			$this->description = "";
 			$this->link = "";
 			$this->insideitem = false;
-			$this->apiID = false;
+			$this->apiID = "";
+			$this->hash = "";
+			$this->time = "";
+			$this->trust = "";
 		}
 	}
 	//! XML character data parser.
@@ -359,6 +386,12 @@ class Fetcher
 					break;
 				case "APIID":
 					$this->apiID .= $data;
+				case "TIME":
+					$this->time .= $data;
+				case "HASH":
+					$this->hash .= $data;
+				case "TRUST":
+					$this->trust .= $data;
 			}
 		}
 		elseif($this->tag=="FINALKILL")

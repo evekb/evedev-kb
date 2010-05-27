@@ -47,6 +47,7 @@ require_once( "common/includes/class.apicache.php" );
 require_once( "common/includes/class.event.php" );
 require_once( "common/includes/class.eveapi.php" );
 require_once( "common/includes/db.php" );
+require_once('class.cachehandler.php');
 
 $config = new Config(KB_SITE);
 $ApiCache = new ApiCache(KB_SITE);

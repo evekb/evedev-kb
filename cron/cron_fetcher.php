@@ -50,6 +50,7 @@ require_once('common/includes/class.alliance.php');
 require_once('common/includes/class.event.php');
 require_once('common/admin/feed_fetcher.php');
 require_once('common/includes/db.php');
+require_once('class.cachehandler.php');
 
 $config = new Config(KB_SITE);
 

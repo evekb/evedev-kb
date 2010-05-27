@@ -11,8 +11,11 @@ if(function_exists("set_time_limit"))
 @error_reporting(E_ALL ^ E_NOTICE);
 ini_set('display_errors', 1);
 
-define('LATEST_DB_UPDATE', "013");
+define('LATEST_DB_UPDATE', "014");
 define('DB_HALTONERROR', true);
+define('DB_QCACHE', false);
+define('DB_MEMCACHE',false);
+
 chdir("..");
 require_once('kbconfig.php');
 require_once('common/includes/db.php');
