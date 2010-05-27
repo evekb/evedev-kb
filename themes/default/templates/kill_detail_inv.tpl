@@ -20,7 +20,7 @@
 		<td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;">{if $i.weaponID}<a href="?a=invtype&amp;id={$i.weaponID}">{$i.weaponName}</a>{else}{$i.weaponName}{/if}</td>
 	</tr>
 	<tr class="{cycle name="ccl"}">
-		<td colspan="2" class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;">Damage done:</td><td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;">{$i.damageDone|number_format} {if $victimDamageTaken > 0}({$i.damageDone/$victimDamageTaken*100|number_format}%){/if}</td>
+		<td colspan="2" class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;">Damage done:</td><td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;">{$i.damageDone} {if $victimDamageTaken > 0}({$i.damageDone/$victimDamageTaken*100|string_format:"%.2f"}%){/if}</td>
 	</tr>
 {/foreach}
 {if $limited}<tr class="{cycle name="ccl"}">
