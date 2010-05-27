@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_mails</name>
+  <rows>0</rows>
+  <structure>CREATE TABLE `kb3_mails` (
+  `kll_id` int(11) NOT NULL auto_increment,
+  `kll_timestamp` datetime NOT NULL default "0000-00-00 00:00:00",
+  `kll_external_id` int(8) default NULL,
+  `kll_hash` BINARY(16) NOT NULL,
+  `kll_trust` TINYINT NOT NULL DEFAULT 0,
+  PRIMARY KEY  (`kll_id`),
+  UNIQUE KEY `external_id` (`kll_external_id`),
+  UNIQUE KEY `time_hash` (`kll_timestamp`,`kll_hash`)
+) Type=MyISAM;</structure>
+</kb3>
