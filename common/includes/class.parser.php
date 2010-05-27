@@ -154,8 +154,8 @@ class Parser
             }
             elseif (preg_match("/Alliance: (.*)/", $victim[$counter], $matches))
             {
-                if($matches[1])
-                    $alliancename = $matches[1];
+				if($matches[1]) $alliancename = $matches[1];
+				if($alliancename == "Unknown") $alliancename = "None";
             }
             elseif (preg_match("/Faction: (.*)/", $victim[$counter], $matches))
             {
@@ -412,8 +412,8 @@ class Parser
                     }
                     else if(preg_match("/Alliance: (.*)/", $involved[$counter], $matches))
                     {
-                        if($matches[1])
-                            $ianame = $matches[1];
+                        if($matches[1]) $ianame = $matches[1];
+						if($ianame == "Unknown") $ianame = "None";
                     }
                     else if(preg_match("/Faction: (.*)/", $involved[$counter], $matches))
                     {
