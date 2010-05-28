@@ -1,8 +1,13 @@
 -------------------------------------------
-Eve Development Network Killboard v3.0.5
+Eve Development Network Killboard v3.0.6
 -------------------------------------------
 
 VERSION HISTORY
+v3.0.6
+Tyrannis rather bizarrely sets pilots known to have no alliance as 'Unknown'
+instead of 'None'. EDK will convert this back to 'None' until sense is restored.
+Admin upgrade will report errors if upgrade could not be performed.
+-------------------------------------------
 v3.0.5
 Cache clearing script fixed.
 Corp detail page shows top ships used rather than killed.
