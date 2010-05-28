@@ -1,6 +1,6 @@
 <?php
 /*
- * $Id $
+ * $Id$
  */
 
 
@@ -18,4 +18,3 @@ class Clock
         return $smarty->fetch(get_tpl('clock'));
     }
 }
-?>
