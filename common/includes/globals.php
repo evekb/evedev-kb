@@ -16,7 +16,7 @@ define('KB_UPDATE_URL', 'http://evedev-kb.googlecode.com/files');
 // current version: major.minor.sub
 // unpair numbers for minor = development version
 define('KB_VERSION', '3.0.6');
-define('KB_RELEASE', '(Dominion)');
+define('KB_RELEASE', '(Tyrannis)');
 
 // add new corporations here once you've added the logo to img/corps/
 $corp_npc = array('Guristas', 'Serpentis Corporation', 'Sansha\'s Nation', 'CONCORD',
