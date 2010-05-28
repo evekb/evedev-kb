@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 require_once("class.alliance.php");
 require_once("class.corp.php");
 require_once("class.pilot.php");
@@ -191,7 +195,7 @@ class Parser
 			}
 			elseif (preg_match("/Faction: (.*)/", $victim[$counter], $matches))
 			{
-				if(strlen($matches[1]) > 5) //catches faction mails from -A-
+				if(strlen($matches[1]) > 5 && $matches[1] != "Unknown") //catches faction mails from -A-
 					$factionname = $matches[1];
 				else $factionname = "None";
 			}
@@ -454,7 +458,7 @@ class Parser
 					}
 					else if(preg_match("/Faction: (.*)/", $involved[$counter], $matches))
 					{
-						if(strlen($matches[1]) > 5) //catches faction mails from -A-
+						if(strlen($matches[1]) > 5 && $matches[1] != "Unknown") //catches faction mails from -A-
 							$ifname = $matches[1];
 						else $ifname = "NONE";
 					}
