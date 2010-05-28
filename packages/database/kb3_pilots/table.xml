@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kb3>
   <name>kb3_pilots</name>
-  <rows>39009</rows>
+  <rows>0</rows>
   <structure>CREATE TABLE `kb3_pilots` (
   `plt_id` int(11) NOT NULL auto_increment,
   `plt_name` char(64) NOT NULL,
