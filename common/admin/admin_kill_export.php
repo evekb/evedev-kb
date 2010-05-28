@@ -1,6 +1,6 @@
 <?php
 /*
- * $Id $
+ * $Id$
  */
 
 @set_time_limit(0);

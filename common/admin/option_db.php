@@ -1,6 +1,6 @@
 <?php
 /*
- * $Id $
+ * $Id$
  */
 
 options::cat('Maintenance', 'Database', 'Table Checks');

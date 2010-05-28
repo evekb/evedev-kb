@@ -1,6 +1,6 @@
 <?php
 /*
- * $Id $
+ * $Id$
  */
 
 if(PILOT_ID)

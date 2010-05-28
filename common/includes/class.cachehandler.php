@@ -1,6 +1,6 @@
 <?php
 /*
- * $Id $
+ * $Id$
  */
 
 //! Cache handling methods.

@@ -1,6 +1,6 @@
 <?php
 /*
- * $Id $
+ * $Id$
  */
 
 // Create a box to display the top pilots at something. Subclasses of TopList

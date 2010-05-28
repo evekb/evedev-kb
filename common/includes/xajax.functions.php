@@ -1,6 +1,6 @@
 <?php
 /*
- * $Id $
+ * $Id$
  */
 
 /*! Core ajax functions are included in this page. Registered functions are

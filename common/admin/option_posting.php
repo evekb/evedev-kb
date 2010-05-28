@@ -1,6 +1,6 @@
 <?php
 /*
- * $Id $
+ * $Id$
  */
 
 options::cat('Advanced', 'Posting Options', 'Posting Options');

@@ -1,6 +1,6 @@
 <?php
 /*
- * $Id $
+ * $Id$
  */
 
 // An ajax search function for this page is in common/includes/xajax.functions.php

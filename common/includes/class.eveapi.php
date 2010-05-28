@@ -1,6 +1,6 @@
 <?php
 /*
- * $Id $
+ * $Id$
  */
 
 // Report all PHP errors (bitwise 63 may be used in PHP 3)
