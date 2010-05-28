@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 require_once 'class.dbcache.php';
 require_once('class.cachehandlerhashedmem.php');
 

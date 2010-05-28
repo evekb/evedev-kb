@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 class Translate
 {
     function uchr($codes) { //converts characterset code-pages to ascii-compatible types

@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 @error_reporting(E_ALL ^ E_NOTICE);
 //
 // Eve-Dev API Killmail parser by Captain Thunk! (ISK donations are all gratefully received)

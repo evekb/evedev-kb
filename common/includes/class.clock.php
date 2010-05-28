@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 
 //! A simple clock implementation
 class Clock

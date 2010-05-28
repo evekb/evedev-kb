@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 options::cat('Advanced', 'Posting Options', 'Posting Options');
 options::fadd('Enable Comments', 'comments', 'checkbox');
 options::fadd('Require password for Comments', 'comments_pw', 'checkbox');

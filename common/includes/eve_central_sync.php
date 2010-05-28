@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 /**
 *	Verify that the EVE central tracking table exists.
 */

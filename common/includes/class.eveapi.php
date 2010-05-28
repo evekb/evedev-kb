@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 // Report all PHP errors (bitwise 63 may be used in PHP 3)
 @error_reporting(E_ALL ^ E_NOTICE);
 define ("APIVERSION", "V3.3");

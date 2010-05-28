@@ -1,5 +1,9 @@
 <?php
 /*
+ * $Id $
+ */
+
+/*
  * Create a syndication feed of kills stored on this board.
  *
  * Flags

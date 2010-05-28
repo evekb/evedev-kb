@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 require_once('common/includes/class.comments.php');
 
 $comments = new Comments($kll_id);

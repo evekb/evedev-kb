@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 /**
  * Import kills from a csv formatted text
  * Used together with export tool!

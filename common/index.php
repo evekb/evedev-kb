@@ -4,6 +4,8 @@
  * The EVE-Development Network Killboard
  * based on eve-killboard.net created by rig0r
  *
+ * $Id $
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -49,7 +51,8 @@ require_once('common/includes/class.user.php');
 require_once('common/includes/class.session.php');
 require_once('common/includes/class.cache.php');
 require_once('common/includes/class.involvedloader.php');
-require_once('common/includes/xajax.functions.php');
+if(!empty($_POST)) require_once('common/includes/xajax.functions.php');
+require_once('class.cachehandler.php');
 
 // smarty doesnt like it
 @set_magic_quotes_runtime(0);

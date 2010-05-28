@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 //! Cache handling methods.
 
 //! Contains methods to handle the killboard's cache directory.

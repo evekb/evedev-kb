@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 
 //! Factory class to create
 class DBFactory

@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 require_once('class.alliance.php');
 require_once('class.pilot.php');
 require_once('class.dbprepared.php');

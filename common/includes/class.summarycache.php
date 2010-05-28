@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 require_once('class.alliancesummary.php');
 require_once('class.corpsummary.php');
 require_once('class.pilotsummary.php');

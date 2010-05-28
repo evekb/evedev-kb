@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 require_once('common/includes/class.kill.php');
 
 $page = new Page('Administration - Deletion of Kill ID "'.$_GET['kll_id'].'"');

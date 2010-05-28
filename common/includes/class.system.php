@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 require_once("db.php");
 
 class SolarSystem

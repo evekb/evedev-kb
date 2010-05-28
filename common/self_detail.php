@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 if(PILOT_ID)
 {
 	$_GET['plt_id'] = PILOT_ID;

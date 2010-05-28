@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 /*! Core ajax functions are included in this page. Registered functions are
  * called once all mods are initialised.
  */

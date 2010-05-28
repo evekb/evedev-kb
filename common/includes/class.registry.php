@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 class registry
 {
 	private static $registryCache = array();

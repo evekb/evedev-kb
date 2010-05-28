@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 require_once('common/includes/class.kill.php');
 
 $kll_id = intval($_GET['kll_id']);

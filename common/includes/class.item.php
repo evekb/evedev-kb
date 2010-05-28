@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 define('DGM_TECHLEVEL', 422);
 
 class Item

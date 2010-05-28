@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 require_once 'class.dbbasequery.php';
 require_once 'class.dbconnection.php';
 require_once('class.dbdebug.php');

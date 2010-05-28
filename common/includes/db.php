@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 // cached query class will be loaded additionally once we received the config
 // see common/index.php for details
 require_once('common/includes/class.db.php');

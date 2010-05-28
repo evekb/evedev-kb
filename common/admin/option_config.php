@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 require_once('class.config.php');
 
 options::cat('Advanced', 'Configuration', 'Available updates');

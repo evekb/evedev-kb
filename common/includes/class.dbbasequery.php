@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 require_once('class.dbconnection.php');
 
 //! Base DB query class.

@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 // Create a box to display the top pilots at something. Subclasses of TopList
 // define the something.
 require_once("class.killlist.php");

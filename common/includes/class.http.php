@@ -1,5 +1,9 @@
 <?php
 /*
+ * $Id $
+ */
+
+/*
  * http_request class
  *
  * useful to avoid allow_url_fopen_wrapper issues

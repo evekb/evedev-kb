@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 class PageSplitter
 {
     function PageSplitter($max, $split)

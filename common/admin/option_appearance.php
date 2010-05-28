@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 
 options::cat('Appearance', 'Global Options', 'Global Look');
 options::fadd('Banner', 'style_banner', 'select', array('admin_appearance', 'createSelectBanner'), array('admin_appearance', 'changeBanner'));

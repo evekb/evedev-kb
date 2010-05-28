@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 require_once('common/includes/class.killsummarytable.public.php');
 require_once('common/includes/class.killlist.php');
 require_once('common/includes/class.killlisttable.php');

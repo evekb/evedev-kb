@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 if (!$id = intval($_GET['id']))
 {
     $page = new Page('Error');

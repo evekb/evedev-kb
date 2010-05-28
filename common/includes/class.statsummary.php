@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 
 //! Base class for storing summary statistics.
 abstract class statSummary

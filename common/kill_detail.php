@@ -1,5 +1,9 @@
 <?php
 /*
+ * $Id $
+ */
+
+/*
  * Based on work by unknown, Sapyx, Rostik, Tribalize, Ben Thomas, KE and Kovell
  */
 require_once('common/includes/class.pageAssembly.php');

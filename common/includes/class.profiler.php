@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 class Profiler
 {
     function Profiler()

@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 $page = new Page('Login');
 
 if (trim($_POST['usrpass']))

@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 
 //! Contains the attributes of a Ship Class.
 class ShipClass

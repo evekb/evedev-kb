@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 require_once( "common/admin/admin_menu.php" );
 // Set version
 $version = "22/9 2009 - 1";

@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 // admin menu now loads all admin pages with options
 require_once('common/admin/admin_menu.php');
 

@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 class MapView
 {
 	private $cachefile;
@@ -406,8 +410,7 @@ class MapView
 
 		if(!is_dir(KB_CACHEDIR.'/img/map/'.KB_SITE))
 		{
-			if(!is_dir(KB_CACHEDIR.'/img/map')) mkdir(KB_CACHEDIR.'/img/map');
-			mkdir(KB_CACHEDIR.'/img/map/'.KB_SITE);
+			mkdir(KB_CACHEDIR.'/img/map/'.KB_SITE, 0777, true);
 		}
 		return $cache;
 	}

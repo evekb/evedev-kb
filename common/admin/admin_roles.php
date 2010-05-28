@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 $page = new Page();
 $page->setAdmin();
 $page->setTitle('Administration - Role Management');

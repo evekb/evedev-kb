@@ -1,5 +1,9 @@
 <?php
 /*
+ * $Id $
+ */
+
+/*
  * EDK Feed Syndication v1.7
  * based on liq's feed syndication mod v1.5
  *

@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 class ApiCache
 {
 	private static $cache = array();

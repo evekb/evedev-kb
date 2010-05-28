@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 $page = new Page('User - Registration');
 
 if (config::get('user_regdisabled'))

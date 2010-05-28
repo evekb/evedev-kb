@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 /* 
  * Modified by Anne Sapyx [I.NET] 17-07-2008 
  */

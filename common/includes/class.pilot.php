@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 require_once('class.corp.php');
 require_once('class.item.php');
 require_once('class.thumb.php');

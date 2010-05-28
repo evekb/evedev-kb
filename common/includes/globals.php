@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 // current subversion revision
 $svnrevision = '$Revision$';
 $svnrevision = trim(substr($svnrevision, 10, strlen($svnrevision)-11));

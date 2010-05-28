@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 require_once('class.dbprepared.php');
 require_once('class.shipclass.php');
 

@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 
 /*
 * This is the class which should make it easier to add new options to the admin menu

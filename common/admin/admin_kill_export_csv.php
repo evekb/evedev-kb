@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 /**
  * Made by Agustino and HyperBeanie
  * If you use and like these tools, please donate some isk!

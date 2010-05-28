@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 class KillListTable
 {
 	function KillListTable($kill_list)

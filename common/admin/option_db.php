@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 options::cat('Maintenance', 'Database', 'Table Checks');
 //options::fadd('This checks automatically your database', 'none', 'custom', array('admin_db', 'checkDatabase'), array('admin_db', 'none'));
 options::fadd('Current SQL cache size', 'none', 'custom', array('admin_db', 'checkCache'), array('admin_db', 'killCache'));

@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 
 require_once('class.http.php');
 require_once('common/admin/admin_menu.php');

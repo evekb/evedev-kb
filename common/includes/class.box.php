@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 require_once("class.graph.php");
 //! Create a box to display information in.
 

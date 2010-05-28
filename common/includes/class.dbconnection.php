@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 
 //! mysqli connection class.
 //! Establishes the connection to the database.

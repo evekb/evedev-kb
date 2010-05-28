@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 // Original by TEKAI
 // Ammo addition and little modifications by Wes Lave
 require_once('common/includes/class.kill.php');

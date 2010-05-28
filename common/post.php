@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 require_once('common/includes/class.parser.php');
 require_once('common/includes/class.phpmailer.php');
 require_once('common/includes/class.kill.php');

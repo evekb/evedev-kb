@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 require_once('common/includes/class.kill.php');
 require_once('common/includes/class.pilot.php');
 require_once('common/includes/class.corp.php');

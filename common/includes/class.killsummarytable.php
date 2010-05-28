@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 require_once("class.ship.php");
 
 class KillSummaryTable

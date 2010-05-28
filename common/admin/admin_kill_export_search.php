@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 
 /*
 * Export killmails, uses the searchroutine to find them.

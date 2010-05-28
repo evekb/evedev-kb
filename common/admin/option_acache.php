@@ -1,5 +1,9 @@
 <?php
 /*
+ * $Id $
+ */
+
+/*
 * This file contains the generic admin options in the new format
 * look here for some examples.
 */

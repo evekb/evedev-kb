@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 //! Page caching class
 
 //! Contains methods to create and retrieve a complete cache of the current page.

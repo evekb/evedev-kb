@@ -1,4 +1,8 @@
 <?php
+/*
+ * $Id $
+ */
+
 
 /*
 * This class handles the roles.

@@ -1,7 +1,13 @@
 <?php
+/*
+ * $Id $
+ */
+
 
 class session
 {
+	private static $vars;
+
 	public static function init()
 	{
 		session_name("EDK_".preg_replace('/[^a-zA-Z0-9_-]/', '',KB_SITE));
@@ -9,23 +15,23 @@ class session
 		{
 			session_cache_limiter("");
 			session_start();
-			if (isset($_SESSION['user']))
-			{
-				user::loggedin(true);
-			}
+			self::$vars = $_SESSION;
+			//session_commit();
+			
+			if (isset(self::$vars['user'])) user::loggedin(true);
 		}
 	}
 	
 	public static function isAdmin()
 	{
-		if(!isset($_SESSION['admin']) || !isset($_SESSION['rsite']) || !isset($_SESSION['site']) ) return false;
-		return (bool)($_SESSION['admin'] && $_SESSION['rsite'] == $_SERVER["HTTP_HOST"] && md5(KB_SITE) == $_SESSION['site']);
+		if(!isset(self::$vars['admin']) || !isset(self::$vars['rsite']) || !isset(self::$vars['site']) ) return false;
+		return (bool)(self::$vars['admin'] && self::$vars['rsite'] == $_SERVER["HTTP_HOST"] && md5(KB_SITE) == self::$vars['site']);
 	}
 
 	public static function isSuperAdmin()
 	{
-		if(!isset($_SESSION['admin']) || !isset($_SESSION['rsite']) || !isset($_SESSION['site']) ) return false;
-		return (bool)($_SESSION['admin_super'] && $_SESSION['rsite'] == $_SERVER["HTTP_HOST"] && md5(KB_SITE) == $_SESSION['site']);
+		if(!isset(self::$vars['admin']) || !isset(self::$vars['rsite']) || !isset(self::$vars['site']) ) return false;
+		return (bool)(self::$vars['admin_super'] && self::$vars['rsite'] == $_SERVER["HTTP_HOST"] && md5(KB_SITE) == self::$vars['site']);
 	}
 
 	public static function create($admin = false)
@@ -40,6 +46,14 @@ class session
 
 	public static function destroy()
 	{
+		session_name("EDK_".preg_replace('/[^a-zA-Z0-9_-]/', '',KB_SITE));
+		session_start();
 		session_destroy();
+	}
+
+	public static function get($key)
+	{
+		if(!isset(self::$vars[$key])) return null;
+		else return self::$vars[$key];
 	}
 }
