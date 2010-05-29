@@ -33,7 +33,6 @@ class DBConnection
 		{
 			if(defined('KB_PROFILE'))
 			{
-				require_once('class.dbdebug.php');
 				DBDEBUG::recordError('Connect Error('.mysqli_connect_errno().') '.mysqli_connect_error());
 			}
 			die(mysqli_connect_error()."<br />\nUnable to connect to mysql database.");

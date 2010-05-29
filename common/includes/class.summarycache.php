@@ -5,9 +5,6 @@
  * $HeadURL$
  */
 
-require_once('class.alliancesummary.php');
-require_once('class.corpsummary.php');
-require_once('class.pilotsummary.php');
 
 //! Convenience class to call summary caches for alliance, corp and pilots.
 class summaryCache

@@ -5,13 +5,6 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.item.php');
-require_once('common/includes/class.corp.php');
-require_once('common/includes/class.alliance.php');
-require_once('common/includes/class.ship.php');
-require_once('common/includes/class.system.php');
-require_once('common/includes/class.pilot.php');
-require_once('common/includes/class.itemlist.php');
 
 class Kill
 {
@@ -1016,7 +1009,6 @@ class Kill
 				kll_id = '".$this->id_."'");
 			if($this->iskloss_)
 			{
-				require_once('class.summarycache.php');
 				summaryCache::update($this, $value - $this->iskloss_);
 			}
 		}
@@ -1271,8 +1263,6 @@ class Kill
 		}
 
 		//Update cache tables.
-		require_once('class.summarycache.php');
-		require_once('class.cache.php');
 		summaryCache::addKill($this);
 		$qry->autocommit(true);
 		// call the event that we added this mail
@@ -1287,7 +1277,6 @@ class Kill
 			return;
 		$qry = DBFactory::getDBQuery();
 		$qry->autocommit(false);
-		require_once('class.summarycache.php');
 		summaryCache::delKill($this);
 
 		event::call('killmail_delete', $this);
@@ -1350,7 +1339,6 @@ class Kill
 		}
 		else
 		{
-			require_once("class.parser.php");
 			$this->hash = Parser::hashMail($this->getRawMail());
 			if($this->hash === false) return false;
 

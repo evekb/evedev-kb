@@ -12,7 +12,9 @@ class edkloader
 
     public static function load($name)
     {
+//		echo $name."<br />";
 		$name = strtolower($name);
+		$name = str_replace("_", "", $name);
 
 		if(isset(self::$classes[$name]))
 		{
@@ -34,7 +36,7 @@ class edkloader
 	{
 		if(!is_file($file))
 		{
-			trigger_error("Class '".addslashes($name)."' file '".$addslashes($file)."' not found", E_USER_WARNING);
+			trigger_error("Class '".addslashes($name)."' file '".addslashes($file)."' not found", E_USER_WARNING);
 			return false;
 		}
 		elseif(isset(self::$classes[$name]))

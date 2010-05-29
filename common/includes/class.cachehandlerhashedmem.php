@@ -5,7 +5,6 @@
  * $HeadURL$
  */
 
-require_once('class.cachehandler.php');
 
 //! Hashed object caching class backed by memcache
 

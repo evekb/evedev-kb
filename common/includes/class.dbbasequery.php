@@ -5,7 +5,6 @@
  * $HeadURL$
  */
 
-require_once('class.dbconnection.php');
 
 //! Base DB query class.
 abstract class DBBaseQuery

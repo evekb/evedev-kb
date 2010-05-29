@@ -5,7 +5,6 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.logger.php');
 
 //! Store and retrieve comments for each killmail.
 

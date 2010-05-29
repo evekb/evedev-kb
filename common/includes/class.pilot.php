@@ -5,10 +5,6 @@
  * $HeadURL$
  */
 
-require_once('class.corp.php');
-require_once('class.item.php');
-require_once('class.thumb.php');
-require_once('class.dbprepared.php');
 
 //! Creates a new Pilot or fetches an existing one from the database.
 class Pilot
@@ -82,7 +78,6 @@ class Pilot
 				}
 			}
 			$pilotname = str_replace(" ", "%20", $this->getName() );
-			require_once("common/includes/class.eveapi.php");
 			$myID = new API_NametoID();
 			$myID->setNames($pilotname);
 			$myID->fetchXML();
@@ -239,7 +234,6 @@ class Pilot
 			if(!$externalID && $loadExternals)
 			{
 				$pilotname = str_replace(" ", "%20", $name );
-				require_once("common/includes/class.eveapi.php");
 				$myID = new API_NametoID();
 				$myID->setNames($pilotname);
 				$myID->fetchXML();
@@ -389,7 +383,6 @@ class Pilot
 	{
 		if(is_null($this->externalid_)) return false;
 
-		require_once("common/includes/class.eveapi.php");
 		$myID = new API_IDtoName();
 		$myID->setIDs($this->externalid_);
 		$myID->fetchXML();

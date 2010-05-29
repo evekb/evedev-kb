@@ -106,8 +106,6 @@ class user
 		{
 			if (user::get('usr_pilot_id'))
 			{
-				require_once('class.pilot.php');
-
 				$plt = new pilot(user::get('usr_pilot_id'));
 				$box->addOption('link', $plt->getName(), '?a=pilot_detail&plt_id='.$plt->getID());
 			}

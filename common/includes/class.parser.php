@@ -5,11 +5,6 @@
  * $HeadURL$
  */
 
-require_once("class.alliance.php");
-require_once("class.corp.php");
-require_once("class.pilot.php");
-require_once("class.kill.php");
-require_once("class.item.php");
 require_once("class.parser.translate.php");
 
 class Parser

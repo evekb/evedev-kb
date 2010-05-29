@@ -6,6 +6,7 @@
  */
 
 require_once('common/includes/class.toplist.php');
+require_once('class.box.php');
 
 $page = new Page('Awards');
 $page->addHeader('<meta name="robots" content="index, nofollow" />');

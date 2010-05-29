@@ -13,13 +13,7 @@ define ("APIVERSION", "V3.3");
 // Eve-Dev API Killmail parser by Captain Thunk! (ISK donations are all gratefully received)
 //
 
-require_once( "common/includes/class.kill.php" );
-require_once( "common/includes/class.parser.php" );
-require_once('common/includes/class.pilot.php');
-require_once('common/includes/class.corp.php');
-require_once('common/includes/class.alliance.php');
 require_once( "common/includes/db.php" );
-require_once('common/includes/class.apicache.php');
 
 // Checks for configuration of files and folders
 if (!file_exists(KB_CACHEDIR."/api"))
@@ -869,7 +863,6 @@ class API_KillLog
 				//$this->Output_ .= str_replace("\r\n", "<br>", $this->killmail_);
 
 				if ( file_exists("common/includes/class.comments.php") )
-				  	require_once( "common/includes/class.comments.php" );
                 if (class_exists('Comments') && config::get('API_Comment')) { // for the Eve-Dev Comment Class
                     $comments = new Comments($killid);
                     $comments->addComment("Captain Thunks API " . APIVERSION, config::get('API_Comment'));
@@ -2748,7 +2741,6 @@ class API_CharacterSheet
 		// is a player feed - take details from logged in user
 		if (user::get('usr_pilot_id'))
     	{
-			require_once('class.pilot.php');
 			$plt = new pilot(user::get('usr_pilot_id'));
 			$usersname = $plt->getName();
 
@@ -3078,7 +3070,6 @@ class API_SkillInTraining
 		// is a player feed - take details from logged in user
 		if (user::get('usr_pilot_id'))
     	{
-			require_once('class.pilot.php');
 			$plt = new pilot(user::get('usr_pilot_id'));
 			$usersname = $plt->getName();
 
@@ -3322,7 +3313,6 @@ class API_StarbaseList
 		// is a player feed - take details from logged in user
 		if (user::get('usr_pilot_id'))
     	{
-			require_once('class.pilot.php');
 			$plt = new pilot(user::get('usr_pilot_id'));
 			$usersname = $plt->getName();
 
@@ -3638,7 +3628,6 @@ class API_StarbaseDetail
 		// is a player feed - take details from logged in user
 		if (user::get('usr_pilot_id'))
     	{
-			require_once('class.pilot.php');
 			$plt = new pilot(user::get('usr_pilot_id'));
 			$usersname = $plt->getName();
 
@@ -4036,7 +4025,6 @@ class API_CorporationSheet
 			$data = $this->loaddata($myKeyString);
 
 		} elseif (user::get('usr_pilot_id')) {
-			require_once('class.pilot.php');
 			$plt = new pilot(user::get('usr_pilot_id'));
 			$usersname = $plt->getName();
 

@@ -5,10 +5,7 @@
  * $HeadURL$
  */
 
-require_once("db.php");
-require_once("class.killlist.php");
 require_once("class.graph.php");
-require_once("class.pagesplitter.php");
 
 class Contract
 {

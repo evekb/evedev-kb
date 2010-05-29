@@ -5,9 +5,6 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.kill.php');
-require_once('common/includes/class.ship.php');
-require_once('class.statsummary.php');
 
 //! Store summary statistics for Pilots.
 class pilotSummary extends statSummary

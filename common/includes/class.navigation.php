@@ -20,7 +20,6 @@ class Navigation
 
 	private function execQuery()
 	{
-		require_once('common/includes/class.killboard.php');
 		$this->qry = DBFactory::getDBQuery();
 		$query = "SELECT * FROM kb3_navigation".
 			" WHERE nav_type = '$this->type'";

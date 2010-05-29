@@ -7,11 +7,6 @@
 
 // Create a box to display the top pilots at something. Subclasses of TopList
 // define the something.
-require_once("class.killlist.php");
-require_once("class.corp.php");
-require_once("class.alliance.php");
-require_once("class.system.php");
-require_once("class.ship.php");
 
 class TopList
 {

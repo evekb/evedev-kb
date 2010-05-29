@@ -5,7 +5,6 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.navigation.php');
 
 
 //! Construct an output page.

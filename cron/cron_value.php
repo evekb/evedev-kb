@@ -44,11 +44,9 @@ else die("Set \$KB_HOME to the killboard root in cron/cron_value.php.");
 chdir($KB_HOME);
 
 require_once('kbconfig.php');
+require_once('common/includes/class.edkloader.php');
 require_once('common/includes/globals.php');
-require_once('common/includes/class.config.php');
 require_once('common/includes/db.php');
-require_once('common/includes/class.valuefetcher.php');
-//require_once('class.cachehandler.php');
 
 $url = config::get('fetchurl');
 if ($url == null || $url == "")

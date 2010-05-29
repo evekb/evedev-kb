@@ -28,9 +28,9 @@ else die("Set \$KB_HOME to the killboard root in cron/cron_clearup.php.");
 chdir($KB_HOME);
 
 require_once('kbconfig.php');
-require_once('globals.php');
-require_once('class.config.php');
-require_once('db.php');
+require_once('common/includes/class.edkloader.php');
+require_once('common/includes/globals.php');
+require_once('common/includes/db.php');
 
 // disable query caching while the script is running.
 $qcache = config::get('cfg_qcache');

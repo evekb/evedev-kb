@@ -5,7 +5,6 @@
  * $HeadURL$
  */
 
-require_once("class.killsummarytable.php");
 
 class KillSummaryTablePublic extends KillSummaryTable
 {

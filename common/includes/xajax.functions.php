@@ -18,7 +18,6 @@ edk_xajax::xajax();
 //! Search function for the search.php page.
 function doAjaxSearch($searchphrase='', $type='pilot')
 {
-	require_once('class.dbprepared.php');
 	$qry = new DBPreparedQuery();
 	switch($type)
 	{

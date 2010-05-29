@@ -5,8 +5,6 @@
  * $HeadURL$
  */
 
-require_once('class.kill.php');
-require_once('class.pagesplitter.php');
 
 class KillList
 {

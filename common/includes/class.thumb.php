@@ -5,7 +5,6 @@
  * $HeadURL$
  */
 
-require_once('class.cachehandler.php');
 
 class thumb
 {
@@ -386,7 +385,6 @@ class thumbInt extends thumb
 		{
 			case 'pilot':
 			case '':
-				require_once('common/includes/class.pilot.php');
 				$pilot = new Pilot($int_id);
 				$this->id = $pilot->getExternalID();
 
@@ -398,7 +396,6 @@ class thumbInt extends thumb
 			case 'corp':
 			case 'npc':
 				$this->type = 'corp';
-				require_once('common/includes/class.corp.php');
 				$corp = new Corporation($int_id);
 				if(!$corp->getExternalID())
 				{

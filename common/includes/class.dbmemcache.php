@@ -5,25 +5,6 @@
  * $HeadURL$
  */
 
-require_once 'class.dbcache.php';
-require_once('class.cachehandlerhashedmem.php');
+trigger_error("Directly including class.dbmemcache.php is deprecated. If you need a direct include, use class.dbmemcachedquery.php", E_USER_DEPRECATED);
 
-//! mysqli memcached query class. Manages SQL queries to a MySQL DB using mysqli.
-class DBMemcachedQuery extends DBCachedQuery
-{
-	//! Set up a mysqli cached query object with default values.
-	function DBMemcachedQuery($nocache = false)
-	{
-		$this->nocache = $nocache;
-
-		self::$cachehandler = new CacheHandlerHashedMem();
-
-		if(is_null(self::$maxmem))
-		{
-			self::$maxmem = @ini_get('memory_limit');
-			self::$maxmem = @str_replace('M', '000000', self::$maxmem) * 0.8;
-			self::$maxmem = @intval(str_replace('M', '000000000', self::$maxmem) * 0.8);
-			if(!self::$maxmem) self::$maxmem = 128000000;
-		}
-	}
-}
+require_once('class.dbmemcachedquery.php');

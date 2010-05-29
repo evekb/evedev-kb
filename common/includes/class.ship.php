@@ -5,8 +5,6 @@
  * $HeadURL$
  */
 
-require_once('class.dbprepared.php');
-require_once('class.shipclass.php');
 
 //! Contains the attributes of a Ship and standard methods to manipulate Ships.
 class Ship

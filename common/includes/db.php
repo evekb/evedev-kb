@@ -7,9 +7,6 @@
 
 // cached query class will be loaded additionally once we received the config
 // see common/index.php for details
-require_once('common/includes/class.db.php');
-require_once('common/includes/class.dbfactory.php');
-require_once('common/includes/class.config.php');
 
 $value = (float) mysqli_get_server_info(DBConnection::id());
 

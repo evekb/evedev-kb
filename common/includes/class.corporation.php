@@ -5,9 +5,6 @@
  * $HeadURL$
  */
 
-require_once('class.alliance.php');
-require_once('class.pilot.php');
-require_once('class.dbprepared.php');
 
 //! Creates a new Corporation or fetches an existing one from the database.
 class Corporation
