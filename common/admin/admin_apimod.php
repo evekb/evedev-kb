@@ -269,6 +269,13 @@ foreach((array)$files as $file){
 	}
 }
 
+if ($_POST['clearlog'])
+{
+	$qry = DBFactory::getDBQuery();
+	$qry->execute("DELETE FROM kb3_apilog
+				   WHERE log_site = '" . KB_SITE . "'");
+}
+
 if ($_POST['apilog'])
 {
 	$html .= "<div class=block-header2>API Log</div>";
@@ -279,7 +286,7 @@ if ($_POST['apilog'])
 			WHERE log_site = "' .KB_SITE . '" 
 			ORDER BY log_timestamp DESC limit 250';
 
-	$qry = DBFactory::getDBQuery();;
+	$qry = DBFactory::getDBQuery();
 	$qry->execute($sql) or die($qry->getErrorMsg());
 
 	$html .= '<table class="kb-table">';
@@ -332,7 +339,7 @@ if ($_POST['apilog'])
 	$html .= "</table>";
 
 	$html .= "<br>";
-	$html .= "<table><tr><td width=60><input type=\"submit\" name=\"back\" value=\"Back\" width=60></td></tr></table>";
+	$html .= "<table><tr><td width=60><input type=\"submit\" name=\"back\" value=\"Back\" width=60></td><td><input type='submit' name='clearlog' value='Clear Log' /></td></tr></table>";
 	$html .= "</form>";
 	
 } else {
