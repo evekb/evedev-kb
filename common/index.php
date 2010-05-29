@@ -4,7 +4,9 @@
  * The EVE-Development Network Killboard
  * based on eve-killboard.net created by rig0r
  *
- * $Id$
+ * $Date$
+ * $Revision$
+ * $HeadURL$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,19 +42,11 @@ if(!defined('KB_SITE'))
 	$html .= "</body></html>";
 	die($html);
 }
+require_once('common/includes/class.edkloader.php');
 require_once('common/includes/globals.php');
 require_once('common/includes/db.php');
-require_once('common/includes/class.config.php');
-require_once('common/includes/class.apicache.php');
-require_once('common/includes/class.event.php');
-require_once('common/includes/class.roles.php');
-//require_once('common/includes/class.titles.php');
-require_once('common/includes/class.user.php');
-require_once('common/includes/class.session.php');
-require_once('common/includes/class.cache.php');
-require_once('common/includes/class.involvedloader.php');
 if(!empty($_POST)) require_once('common/includes/xajax.functions.php');
-require_once('class.cachehandler.php');
+edkloader::register('Smarty', 'common/smarty/Smarty.class.php');
 
 // smarty doesnt like it
 @set_magic_quotes_runtime(0);
@@ -248,7 +242,6 @@ if (!$settingsPage && !file_exists('common/'.$page.'.php') && !$modOverrides)
 if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK Feedfetcher') !== false) $page = 'feed';
 
 // setting up smarty and feed it with some config
-require_once('common/smarty/Smarty.class.php');
 $smarty = new Smarty();
 if(is_dir('./themes/'.$themename.'/templates'))
 	$smarty->template_dir = './themes/'.$themename.'/templates';
@@ -269,19 +262,16 @@ $smarty->assign('is_IGB', IS_IGB);
 // Set the name of the board owner.
 if (config::get('cfg_pilotid'))
 {
-	require_once('common/includes/class.pilot.php');
 	$pilot=new Pilot(PILOT_ID);
 	$smarty->assign('kb_owner', htmlentities($pilot->getName() ));
 }
 elseif (config::get('cfg_corpid'))
 {
-	require_once('common/includes/class.corp.php');
 	$corp=new Corporation(CORP_ID);
 	$smarty->assign('kb_owner', htmlentities($corp->getName() ));
 }
 elseif(config::get('cfg_allianceid'))
 {
-	require_once('common/includes/class.alliance.php');
 	$alliance=new Alliance(ALLIANCE_ID);
 	$smarty->assign('kb_owner', htmlentities($alliance->getName() ));
 }
@@ -289,7 +279,6 @@ else
 {
 	$smarty->assign('kb_owner', false);
 }
-require_once('common/includes/class.page.php');
 
 cache::check($page);
 // Show a system message on all pages if the init stage has generated any.
