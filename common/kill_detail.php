@@ -8,9 +8,6 @@
 /*
  * Based on work by unknown, Sapyx, Rostik, Tribalize, Ben Thomas, KE and Kovell
  */
-require_once('common/includes/class.pageAssembly.php');
-require_once('common/includes/class.kill.php');
-
 
 class pKillDetail extends pageAssembly
 {
@@ -143,11 +140,6 @@ class pKillDetail extends pageAssembly
 			$this->updatePrices();
 			$this->fixSlots();
 		}
-
-		require_once('common/includes/class.killsummarytable.php');
-		require_once('common/includes/class.pilot.php');
-		require_once('common/includes/class.corp.php');
-		require_once('common/includes/class.alliance.php');
 
 		global $smarty;
 		if(!file_exists('img/panel/'.config::get('fp_theme').'.png')) config::set('fp_theme','apoc');
@@ -593,7 +585,6 @@ class pKillDetail extends pageAssembly
 		if (config::get('comments'))
 		{
 			global $smarty;
-			require_once('common/includes/class.comments.php');
 
 			$comments = new Comments($this->kll_id);
 
