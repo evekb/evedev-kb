@@ -1,6 +1,8 @@
 <?php
 /*
- * $Id$
+ * $Date$
+ * $Revision$
+ * $HeadURL$
  */
 
 require_once( "common/admin/admin_menu.php" );

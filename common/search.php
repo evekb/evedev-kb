@@ -1,6 +1,8 @@
 <?php
 /*
- * $Id$
+ * $Date$
+ * $Revision$
+ * $HeadURL$
  */
 
 // An ajax search function for this page is in common/includes/xajax.functions.php

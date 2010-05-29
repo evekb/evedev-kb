@@ -1,6 +1,8 @@
 <?php
 /*
- * $Id$
+ * $Date$
+ * $Revision$
+ * $HeadURL$
  */
 
 // admin menu now loads all admin pages with options

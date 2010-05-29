@@ -1,6 +1,8 @@
 <?php
 /*
- * $Id$
+ * $Date$
+ * $Revision$
+ * $HeadURL$
  */
 
 if (!$id = intval($_GET['id']))

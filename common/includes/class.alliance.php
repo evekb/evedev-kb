@@ -1,6 +1,8 @@
 <?php
 /*
- * $Id$
+ * $Date$
+ * $Revision$
+ * $HeadURL$
  */
 
 //! Creates a new Alliance or fetches an existing one from the database.

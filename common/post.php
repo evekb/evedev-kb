@@ -1,6 +1,8 @@
 <?php
 /*
- * $Id$
+ * $Date$
+ * $Revision$
+ * $HeadURL$
  */
 
 require_once('common/includes/class.parser.php');
@@ -50,7 +52,7 @@ if (isset($_POST['killmail']))
                         $html .= 'Error: '.$error[0];
                         if ($error[1])
                         {
-                            $html .= ' The text lead to this error was: "'.$error[1].'"';
+                            $html .= ' The text leading to this error was: "'.$error[1].'"';
                         }
                         $html .= '<br/>';
                     }
