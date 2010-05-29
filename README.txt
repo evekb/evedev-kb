@@ -1,12 +1,16 @@
 -------------------------------------------
-Eve Development Network Killboard v3.0.6
+Eve Development Network Killboard v3.0.7
 -------------------------------------------
 
 VERSION HISTORY
+v3.0.7
+Auto db-updater works again
+-------------------------------------------
 v3.0.6
 Tyrannis rather bizarrely sets pilots known to have no alliance as 'Unknown'
 instead of 'None'. EDK will convert this back to 'None' until sense is restored.
 Admin upgrade will report errors if upgrade could not be performed.
+Prepared queries return better error messages.
 -------------------------------------------
 v3.0.5
 Cache clearing script fixed.
