@@ -5,15 +5,7 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.pilot.php');
-require_once('common/includes/class.corp.php');
-require_once('common/includes/class.alliance.php');
-require_once('common/includes/class.kill.php');
-require_once('common/includes/class.killlist.php');
-require_once('common/includes/class.killlisttable.php');
-require_once('common/includes/class.killsummarytable.php');
 require_once('common/includes/class.toplist.php');
-require_once('common/includes/class.pageAssembly.php');
 
 class pPilotDetail extends pageAssembly
 {

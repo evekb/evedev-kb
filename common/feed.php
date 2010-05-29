@@ -23,16 +23,9 @@
  *
  */
 @set_time_limit(120);
-require_once('kbconfig.php');
-require_once('common/includes/class.corp.php');
-require_once('common/includes/class.alliance.php');
-require_once('common/includes/class.killlist.php');
-require_once('common/includes/class.kill.php');
-require_once('common/includes/class.config.php');
 // include feed_fetcher to get version number
 require_once('common/admin/feed_fetcher.php');
 
-$config = new Config(KB_SITE);
 // maximum amount of kills to return.
 $maxreturned = 200;
 $html = '<?xml version="1.0" encoding="UTF-8" ?>

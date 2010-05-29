@@ -5,12 +5,8 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.killlist.php');
-require_once('common/includes/class.killlisttable.php');
-require_once('common/includes/class.killsummarytable.php');
 require_once('common/includes/class.contract.php');
 require_once('common/includes/class.toplist.php');
-require_once('common/includes/class.pageAssembly.php');
 
 class pContractDetail extends pageAssembly
 {

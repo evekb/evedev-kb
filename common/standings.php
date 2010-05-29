@@ -5,9 +5,6 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.corp.php');
-require_once('common/includes/class.alliance.php');
-
 $page = new Page();
 $page->setTitle('Standings');
 

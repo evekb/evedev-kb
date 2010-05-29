@@ -5,13 +5,9 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.contract.php');
-
 $page = new Page('Campaigns');
 
 
-
-require_once('common/includes/class.pageAssembly.php');
 
 class pCampaignList extends pageAssembly
 {

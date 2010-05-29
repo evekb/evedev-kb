@@ -5,9 +5,6 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.ship.php');
-require_once('common/includes/class.pageAssembly.php');
-
 class pAbout extends pageAssembly
 {
 	function __construct()

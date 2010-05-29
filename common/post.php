@@ -5,10 +5,7 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.parser.php');
 require_once('common/includes/class.phpmailer.php');
-require_once('common/includes/class.kill.php');
-require_once('common/includes/class.logger.php');
 
 $page = new Page('Post killmail');
 global $smarty;

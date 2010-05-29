@@ -5,12 +5,6 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.system.php');
-require_once('common/includes/class.killlist.php');
-require_once('common/includes/class.killlisttable.php');
-require_once('common/includes/class.killsummarytable.php');
-require_once('common/includes/class.pageAssembly.php');
-
 class pSystemDetail extends pageAssembly
 {
 	

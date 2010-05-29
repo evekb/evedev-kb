@@ -6,12 +6,8 @@
  */
 
 require_once('common/includes/class.killsummarytable.public.php');
-require_once('common/includes/class.killlist.php');
-require_once('common/includes/class.killlisttable.php');
 require_once('common/includes/class.contract.php');
 require_once('common/includes/class.toplist.php');
-require_once('common/includes/class.pageAssembly.php');
-if(config::get('show_clock')) require_once('common/includes/class.clock.php');
 
 class pHome extends pageAssembly
 {
@@ -60,7 +56,6 @@ class pHome extends pageAssembly
 	// Display the summary table.
 		if (config::get('summarytable'))
 		{
-			require_once('common/includes/class.killsummarytable.php');
 			if (config::get('public_summarytable'))
 			{
 				require_once('common/includes/class.killsummarytable.public.php');
@@ -83,7 +78,6 @@ class pHome extends pageAssembly
 	function campaigns()
 	{
 	// Display campaigns, if any.
-		require_once('common/includes/class.killboard.php');
 		if (Killboard::hasCampaigns(true) &&
 			$this->isCurrentPeriod())
 		{
@@ -100,7 +94,6 @@ class pHome extends pageAssembly
 	function contracts()
 	{
 	// Display contracts, if any.
-		require_once('common/includes/class.killboard.php');
 		if (Killboard::hasContracts(true) &&
 			$this->isCurrentPeriod())
 		{

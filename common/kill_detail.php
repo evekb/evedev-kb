@@ -98,7 +98,6 @@ class pKillDetail extends pageAssembly
 		// If a comment is being posted then we won't exit this block.
 		if(isset($_POST['comment']) && config::get('comments'))
 		{
-			require_once('common/includes/class.comments.php');
 
 			$comments = new Comments($this->kll_id);
 			$pw = false;
@@ -553,7 +552,6 @@ class pKillDetail extends pageAssembly
 	}
 	function victim()
 	{
-		require_once("common/includes/class.dogma.php");
 		global $smarty;
 		$smarty->assign('killID', $this->kill->getID());
 		$plt = new Pilot($this->kill->getVictimID());

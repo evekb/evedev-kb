@@ -5,8 +5,6 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.map.php');
-
 function checkColors($context)
 {
 	global $view;

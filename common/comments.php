@@ -5,8 +5,6 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.comments.php');
-
 $comments = new Comments($kll_id);
 if (isset($_POST['comment']))
 {

@@ -5,8 +5,6 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.kill.php');
-
 $kll_id = intval($_GET['kll_id']);
 $kill = new Kill($kll_id);
 ?>
