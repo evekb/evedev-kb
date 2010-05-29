@@ -5,7 +5,6 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.contract.php');
 require_once('common/includes/class.toplist.php');
 
 class pContractDetail extends pageAssembly
@@ -28,6 +27,7 @@ class pContractDetail extends pageAssembly
 
 		$this->queue("start");
 		$this->queue("stats");
+		$this->queue("comment");
 		$this->queue("summaryTable");
 		$this->queue("killList");
 
@@ -116,6 +116,22 @@ class pContractDetail extends pageAssembly
 		$smarty->assign('contract_efficiency', $this->contract->getEfficiency());
 
 		return $smarty->fetch(get_tpl('cc_detail_stats'));
+	}
+	
+	//! Show the comment for this campaign, if there is one.
+	function comment()
+	{
+		global $smarty;
+		
+		$html = "";
+		
+		if ($this->contract->getComment())
+		{
+			$smarty->assign("contract_comment", $this->contract->getComment());
+			$html = $smarty->fetch(get_tpl("cc_detail_comment"));
+		}
+		
+		return $html;
 	}
 	//! Build the killlists that are needed for the options selected.
 	function killList()

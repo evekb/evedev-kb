@@ -23,6 +23,7 @@ class Contract
 	private $ctr_started_ = '';
 	private $ctr_ended_ = '';
 	private $campaign_ = 0;
+	private $ctr_comment_ = '';
 
 	function Contract($ctr_id = 0)
 	{
@@ -53,6 +54,7 @@ class Contract
 		$this->ctr_started_ = $row['ctr_started'];
 		$this->ctr_ended_ = $row['ctr_ended'];
 		$this->campaign_ = ($row['ctr_campaign'] == "1");
+		$this->ctr_comment_ = $row['ctr_comment'];
 
 		// get corps & alliances for contract
 		$sql = "select ctd.ctd_crp_id, ctd.ctd_all_id, ctd.ctd_reg_id, ctd.ctd_sys_id
@@ -145,6 +147,12 @@ class Contract
 		$this->execQuery();
 		return $this->campaign_;
 	}
+	
+	function getComment()
+	{
+		$this->execQuery();
+		return $this->ctr_comment_;
+	}
 
 	function getCorps()
 	{
@@ -230,7 +238,7 @@ class Contract
 		return $target;
 	}
 
-	function add($name, $type, $startdate, $enddate = "")
+	function add($name, $type, $startdate, $enddate = "", $comment = "")
 	{
 		$qry = DBFactory::getDBQuery();;
 		if ($type == "campaign") $campaign = 1;
@@ -243,7 +251,8 @@ class Contract
 			$sql = "insert into kb3_contracts values ( null, '".$qry->escape($name)."',
                                                    '".KB_SITE."', ".$campaign.",
 						   '".$qry->escape($startdate)." 00:00:00',
-						   ".$qry->escape($enddate)." )";
+						   ".$qry->escape($enddate).",
+						   '".$qry->escape($comment)."' )";
 			$qry->execute($sql) or die($qry->getErrorMsg());
 			$this->ctr_id_ = $qry->getInsertID();
 		}
@@ -251,7 +260,8 @@ class Contract
 		{
 			$sql = "update kb3_contracts set ctr_name = '".$qry->escape($name)."',
 			                 ctr_started = '".$qry->escape($startdate)." 00:00:00',
-					 ctr_ended = ".$qry->escape($enddate)."
+					 ctr_ended = ".$qry->escape($enddate).",
+					 ctr_comment = '" . $qry->escape($comment) . "'
 				     where ctr_id = ".$this->ctr_id_;
 			$qry->execute($sql) or die($qry->getErrorMsg());
 			$this->ctr_id_ = $qry->getInsertID();
@@ -277,6 +287,14 @@ class Contract
                        where ctr_id = ".$this->ctr_id_."
 		         and ctr_site = '".KB_SITE."'");
 		return ($qry->recordCount() > 0);
+	}
+	
+	function setComment($comment)
+	{
+		$qry = DBFactory::getDBQuery();
+		$qry->execute("UPDATE kb3_contracts
+					   SET ctr_comment = '" . $qry->escape($comment) . "'
+					   WHERE ctr_id = {$this->ctr_id_}");
 	}
 }
 

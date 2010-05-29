@@ -73,7 +73,7 @@ if ($_GET['op'] == "edit")
 	if ($_POST['detail_submit'])
 	{
 		$contract->add($_POST['ctr_name'], $_GET['type'],
-			$_POST['ctr_started'], $_POST['ctr_ended']);
+			$_POST['ctr_started'], $_POST['ctr_ended'], $_POST['ctr_comment']);
 
 		header("Location: ?a=admin_cc&op=view&type=".$_GET['type']);
 	}
@@ -205,6 +205,7 @@ if ($_GET['op'] == "edit")
 		$html .= "<tr><td width=80><b>Name:</b></td><td><input type=text name=ctr_name id=ctr_name size=38 maxlength=38 value=\"".$contract->getName()."\"></td></tr>";
 		$html .= "<tr><td width=80><b>Start date:</b></td><td><input type=text name=ctr_started id=ctr_started size=10 maxlength=10 value=\"".substr($contract->getStartDate(), 0, 10)."\"> (yyyy-mm-dd)</td></tr>";
 		$html .= "<tr><td width-80><b>End date:</b></td><td><input type=text name=ctr_ended id=ctr_ended size=10 maxlength=10 value=\"".substr($contract->getEndDate(), 0, 10)."\"> (yyyy-mm-dd or blank)</td></tr>";
+		$html .= "<tr><td><b>Comment:</b></td><td><input type='text' name='ctr_comment' value='".htmlentities($contract->getComment(), ENT_QUOTES)."' size='100'/></td></tr>";
 		$html .= "<tr><td></td></tr>";
 		$html .= "<tr><td></td><td><input type=submit name=detail_submit value=\"Save\"></td></tr>";
 
@@ -275,7 +276,7 @@ if ($_GET['op'] == "add")
 	if ($_POST['detail_submit'])
 	{
 		$contract = new Contract();
-		$contract->add($_POST['ctr_name'], $_GET['type'], $_POST['ctr_started'], $_POST['ctr_ended']);
+		$contract->add($_POST['ctr_name'], $_GET['type'], $_POST['ctr_started'], $_POST['ctr_ended'], $_POST['ctr_comment']);
 
 		header("Location: ?a=admin_cc&ctr_id=".$contract->getID()."&op=edit&type=".$_GET['type']);
 	}
@@ -290,6 +291,7 @@ if ($_GET['op'] == "add")
 	$html .= "<tr><td width=80><b>Name:</b></td><td><input type=text name=ctr_name id=ctr_name size=40 maxlength=40></td></tr>";
 	$html .= "<tr><td width=80><b>Start date:</b></td><td><input type=text name=ctr_started id=ctr_started size=10 maxlength=10 value=\"".kbdate("Y-m-d")."\"> (yyyy-mm-dd)</td></tr>";
 	$html .= "<tr><td width-80><b>End date:</b></td><td><input type=text name=ctr_ended id=ctr_ended size=10 maxlength=10> (yyyy-mm-dd or blank)</td></tr>";
+	$html .= "<tr><td><b>Comment:</b></td><td><input type='text' name='ctr_comment' size='100'/></td></tr>";
 	$html .= "<tr><td></td></tr>";
 	$html .= "<tr><td></td><td><input type=submit name=detail_submit value=\"Save\"></td></tr>";
 
