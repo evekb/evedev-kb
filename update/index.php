@@ -18,6 +18,7 @@ define('DB_MEMCACHE',false);
 
 chdir("..");
 require_once('kbconfig.php');
+require_once('common/includes/class.edkloader.php');
 require_once('common/includes/db.php');
 require_once('common/includes/class.config.php');
 require_once('common/includes/class.session.php');
