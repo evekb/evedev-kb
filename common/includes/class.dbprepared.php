@@ -5,6 +5,6 @@
  * $HeadURL$
  */
 
-trigger_error("Directly including class.dbprepared.php is deprecated. If you need a direct include, use class.dbpreparedquery.php", E_USER_DEPRECATED);
+trigger_error("Directly including class.dbprepared.php is deprecated. If you need a direct include, use class.dbpreparedquery.php", E_USER_NOTICE);
 
 require_once("class.dbpreparedquery.php");

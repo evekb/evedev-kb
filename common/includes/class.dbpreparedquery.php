@@ -237,7 +237,7 @@ class DBPreparedQuery
      */
 	public function execute_prepared()
 	{
-		trigger_error("execute_prepared is deprecated. Use execute()", E_USER_DEPRECATED);
+		trigger_error("execute_prepared is deprecated. Use execute()", E_USER_NOTICE);
 		return $this->execute();
 	}
 	//! Fetch the next results of the prepared statement into bound variables.
@@ -245,7 +245,7 @@ class DBPreparedQuery
 	//! Deprecated in favour of fetch().
 	public function fetch_prepared()
 	{
-		trigger_error("fetch_prepared is deprecated. Use fetch()", E_USER_DEPRECATED);
+		trigger_error("fetch_prepared is deprecated. Use fetch()", E_USER_NOTICE);
 		return $this->fetch();
 	}
 	//! Fetch the next results of the prepared statement into bound variables.

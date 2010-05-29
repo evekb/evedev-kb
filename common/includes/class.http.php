@@ -13,6 +13,6 @@
  *
  */
 
-trigger_error("Directly including class.http.php is deprecated. If you need a direct include, use class.httprequest.php", E_USER_DEPRECATED);
+trigger_error("Directly including class.http.php is deprecated. If you need a direct include, use class.httprequest.php", E_USER_NOTICE);
 
 require_once("class.httprequest.php");
