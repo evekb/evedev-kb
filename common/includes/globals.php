@@ -77,6 +77,7 @@ edkloader::register('TopShipList', 'common/includes/class.toplist.php');
 edkloader::register('TopShipListTable', 'common/includes/class.toplist.php');
 edkloader::register('TopWeaponList', 'common/includes/class.toplist.php');
 edkloader::register('TopWeaponListTable', 'common/includes/class.toplist.php');
+edkloader::register('Region', 'common/includes/class.solarsystem.php');
 
 /* ---------------------------------------------------------------- */
 /* Utility functions */
