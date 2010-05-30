@@ -5,7 +5,6 @@
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/includes/class.eveapi.php $
  */
 
-require_once('class.eveapi.php'); 
 // **********************************************************************************************************************************************
 // ****************                                 API Character Sheet - char/CharacterSheet.xml.aspx                           ****************
 // **********************************************************************************************************************************************
@@ -162,10 +161,10 @@ class API_CharacterSheet
                     {
 						case "TYPEID":
 							$tempdata['typeID'] = $v;
-							$tempdata['SkillName'] = gettypeIDname($v);
-							$tempdata['GroupID'] = getgroupID($v);
-							$tempdata['GroupName'] = getgroupIDname($tempdata['GroupID']);
-							$tempdata['Rank'] = gettypeIDrank($v);
+							$tempdata['SkillName'] = API_Helpers::gettypeIDname($v);
+							$tempdata['GroupID'] = API_Helpers::getgroupID($v);
+							$tempdata['GroupName'] = API_Helpers::getgroupIDname($tempdata['GroupID']);
+							$tempdata['Rank'] = API_Helpers::gettypeIDrank($v);
                             break;
 						case "SKILLPOINTS":
 							$tempdata['SkillPoints'] = $v;

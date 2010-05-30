@@ -10,7 +10,6 @@
 // Eve-Dev API Killmail parser by Captain Thunk! (ISK donations are all gratefully received)
 //
 
-require_once('common/includes/class.eveapi.php');
 require_once("common/admin/admin_menu.php");
 
 $page = new Page("Settings - API Mod " . APIVERSION);

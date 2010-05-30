@@ -7,12 +7,17 @@
 
 require_once('common/includes/class.toplist.php');
 require_once("common/includes/evelogo.php");
-require_once("common/includes/class.eveapi.php");
 
 class pCorpDetail extends pageAssembly
 {
 		private $viewList = array();
 		private $menuOptions = array();
+		public $corp = null;
+		public $crp_id = 0;
+		public $crp_external_id = 0;
+		public $scl_id = 0;
+		public $alliance = 0;
+		public $kill_summary = null;
 
 	//! Construct the Pilot Details object.
 

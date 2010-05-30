@@ -462,7 +462,6 @@ class pKillDetail extends pageAssembly
 		//prod CCP for the entire list of names
 		if(count($fetchExternalIDs) > 0)
 		{
-			require_once('common/includes/class.eveapi.php');
 			$names = new API_NametoID();
 			$names->setNames(implode(',', $fetchExternalIDs));
 			$names->fetchXML();

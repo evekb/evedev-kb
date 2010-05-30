@@ -5,7 +5,6 @@
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/includes/class.eveapi.php $
  */
 
-require_once('class.eveapi.php'); 
 // **********************************************************************************************************************************************
 // ****************                           API Faction War Systems - /map/FacWarSystems.xml.aspx                              ****************
 // **********************************************************************************************************************************************
@@ -29,7 +28,7 @@ class API_FacWarSystems
 
     function fetchXML()
     {
-        $data = LoadGlobalData('/map/FacWarSystems.xml.aspx');
+        $data = API_Helpers::LoadGlobalData('/map/FacWarSystems.xml.aspx');
 
         $xml_parser = xml_parser_create();
         xml_set_object ( $xml_parser, $this );

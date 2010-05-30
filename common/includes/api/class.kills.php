@@ -5,7 +5,6 @@
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/includes/class.eveapi.php $
  */
 
-require_once('class.eveapi.php'); 
 // **********************************************************************************************************************************************
 // ****************                                   API Kills list - /map/Kills.xml.aspx                                   ****************
 // **********************************************************************************************************************************************
@@ -34,7 +33,7 @@ class API_Kills
 
     function fetchXML()
     {
-        $data = LoadGlobalData('/map/Kills.xml.aspx');
+        $data = API_Helpers::LoadGlobalData('/map/Kills.xml.aspx');
 
         $xml_parser = xml_parser_create();
         xml_set_object ( $xml_parser, $this );

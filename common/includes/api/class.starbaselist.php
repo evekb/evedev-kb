@@ -5,7 +5,6 @@
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/includes/class.eveapi.php $
  */
 
-require_once('class.eveapi.php'); 
 // **********************************************************************************************************************************************
 // ****************                                       API StarbaseList - /corp/StarbaseList.xml.aspx                         ****************
 // **********************************************************************************************************************************************
@@ -116,7 +115,7 @@ class API_StarbaseList
                             break;
 						case "TYPEID":
 							$tempdata['typeID'] = $v;
-							$tempdata['typeName'] = gettypeIDname($v);
+							$tempdata['typeName'] = API_Helpers::gettypeIDname($v);
                             break;
 						case "LOCATIONID":
 							$tempdata['locationID'] = $v;
@@ -135,7 +134,7 @@ class API_StarbaseList
                             break;
 						case "MOONID":
 							$tempdata['moonID'] = $v;
-							$tempmoon = getMoonName($v);
+							$tempmoon = API_Helpers::getMoonName($v);
 
 							if ($tempmoon == "")
 							{

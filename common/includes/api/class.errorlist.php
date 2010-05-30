@@ -5,7 +5,6 @@
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/includes/class.eveapi.php $
  */
 
-require_once('class.eveapi.php'); 
 // **********************************************************************************************************************************************
 // ****************                                   API Error list - /eve/ErrorList.xml.aspx                                   ****************
 // **********************************************************************************************************************************************
@@ -29,7 +28,7 @@ class API_ErrorList
 
     function fetchXML()
     {
-        $data = LoadGlobalData('/eve/ErrorList.xml.aspx');
+        $data = API_Helpers::LoadGlobalData('/eve/ErrorList.xml.aspx');
 
         $xml_parser = xml_parser_create();
         xml_set_object ( $xml_parser, $this );

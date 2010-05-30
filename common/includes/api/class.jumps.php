@@ -5,7 +5,6 @@
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/includes/class.eveapi.php $
  */
 
-require_once('class.eveapi.php'); 
 // **********************************************************************************************************************************************
 // ****************                                   API Jumps list - /map/Jumps.xml.aspx                                   ****************
 // **********************************************************************************************************************************************
@@ -34,7 +33,7 @@ class API_Jumps
 
     function fetchXML()
     {
-        $data = LoadGlobalData('/map/Jumps.xml.aspx');
+        $data = API_Helpers::LoadGlobalData('/map/Jumps.xml.aspx');
 
         $xml_parser = xml_parser_create();
         xml_set_object ( $xml_parser, $this );

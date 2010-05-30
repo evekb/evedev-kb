@@ -415,7 +415,6 @@ class Fetcher
 			if(!$qry->recordCount()) $checklist[] = $pilot;
 		}
 		if(!count($checklist)) return;
-		require_once("common/includes/class.eveapi.php");
 		$position = 0;
 		$myNames = array();
 		$myID = new API_NametoID();
@@ -459,7 +458,6 @@ class Fetcher
 			if(!$qry->recordCount()) $checklist[] = $corp;
 		}
 		if(!count($checklist)) return;
-		require_once("common/includes/class.eveapi.php");
 		$position = 0;
 		$myNames = array();
 		while($position < count($checklist))

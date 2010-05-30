@@ -5,7 +5,6 @@
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/includes/class.eveapi.php $
  */
 
-require_once('class.eveapi.php'); 
 // **********************************************************************************************************************************************
 // ****************                               API Reference Types - /eve/RefTypes.xml.aspx                                   ****************
 // **********************************************************************************************************************************************
@@ -28,7 +27,7 @@ class API_RefTypes
 
     function fetchXML()
     {
-        $data = LoadGlobalData('/eve/RefTypes.xml.aspx');
+        $data = API_Helpers::LoadGlobalData('/eve/RefTypes.xml.aspx');
 
         $xml_parser = xml_parser_create();
         xml_set_object ( $xml_parser, $this );

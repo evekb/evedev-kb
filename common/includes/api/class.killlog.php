@@ -5,7 +5,6 @@
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/includes/class.eveapi.php $
  */
 
-require_once('class.eveapi.php');
 // **********************************************************************************************************************************************
 // ****************                                    API KillLog - /corp/Killlog.xml.aspx                                      ****************
 // **********************************************************************************************************************************************
@@ -225,7 +224,7 @@ class API_KillLog
 						{
                             $this->shipname_ = "Unknown";
 						} else {
-                            $this->shipname_ = gettypeIDname($v);
+                            $this->shipname_ = API_Helpers::gettypeIDname($v);
                         }
                         break;
                     case "FINALBLOW":
@@ -237,11 +236,11 @@ class API_KillLog
 						$this->security_ = number_format($v, 1);
                         break;
                     case "WEAPONTYPEID":
-                        $this->weapon_ = gettypeIDname($v);
+                        $this->weapon_ = API_Helpers::gettypeIDname($v);
                         break;
                     // for items
                     case "TYPEID":
-                        $this->typeid_ = gettypeIDname($v);
+                        $this->typeid_ = API_Helpers::gettypeIDname($v);
 
 						// Missing Item correction
 						if ($this->typeid_ == "")
@@ -300,7 +299,7 @@ class API_KillLog
                     case "MOONID": // only given with POS related stuff - unanchored mods however, do not have a moonid.
 						$this->moonid_ = $v;
 
-						$this->moonname_ = getMoonName($v);
+						$this->moonname_ = API_Helpers::getMoonName($v);
 						// Missing Moon DB correction
 						if (($this->moonname_ == "") && ($this->moonid_ != 0))
 						{
@@ -393,10 +392,10 @@ class API_KillLog
                 }
 
 				// update crp_external_id
-				Update_CorpID($this->corporation_, $this->corporationID_);
+				API_Helpers::Update_CorpID($this->corporation_, $this->corporationID_);
 				// update all_external_id
 				if ($this->allianceID_ != 0)
-					Update_AllianceID($this->alliance_, $this->allianceID_);
+					API_Helpers::Update_AllianceID($this->alliance_, $this->allianceID_);
 
                 // set victim corp and alliance for FF check
                 $this->valliance_ = $this->alliance_;
@@ -488,10 +487,10 @@ class API_KillLog
                     }
 
 					// update crp_external_id
-					Update_CorpID($this->corporation_, $this->corporationID_);
+					API_Helpers::Update_CorpID($this->corporation_, $this->corporationID_);
 					// update all_external_id
 					if ($this->allianceID_ != 0)
-						Update_AllianceID($this->alliance_, $this->allianceID_);
+						API_Helpers::Update_AllianceID($this->alliance_, $this->allianceID_);
 
                     $this->pname_ = "";
                     $this->finalblow_ = 0;

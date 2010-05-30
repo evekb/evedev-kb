@@ -33,7 +33,6 @@ class Alliance
 		if($this->externalid) return $this->externalid;
 
 		$allname = str_replace(" ", "%20", $this->getName() );
-		require_once("common/includes/class.eveapi.php");
 		$myID = new API_NametoID();
 		$myID->setNames($allname);
 		$myID->fetchXML();
@@ -110,7 +109,6 @@ class Alliance
 			if(!$externalid)
 			{
 				$allname = str_replace(" ", "%20", $name );
-				require_once("common/includes/class.eveapi.php");
 				$myID = new API_NametoID();
 				$myID->setNames($allname);
 				$myID->fetchXML();
@@ -207,7 +205,6 @@ class Alliance
 	{
 		if(is_null($this->externalid)) return false;
 
-		require_once("common/includes/class.eveapi.php");
 		$myID = new API_IDtoName();
 		$myID->setIDs($this->externalid);
 		$myID->fetchXML();

@@ -86,7 +86,6 @@ class Corporation
 			if($this->externalid) return $this->externalid;
 
 			$corpname = str_replace(" ", "%20", $this->getName() );
-			require_once("common/includes/class.eveapi.php");
 			$myID = new API_NametoID();
 			$myID->setNames($corpname);
 			$myID->fetchXML();
@@ -184,7 +183,6 @@ class Corporation
 			if(!$externalid && $loadExternals)
 			{
 				$corpname = str_replace(" ", "%20", $name );
-				require_once("common/includes/class.eveapi.php");
 				$myID = new API_NametoID();
 				$myID->setNames($corpname);
 				$myID->fetchXML();
@@ -347,7 +345,6 @@ class Corporation
 		if(is_null($this->externalid)) $this->execQuery();
 		if(is_null($this->externalid)) return false;
 		
-		require_once("common/includes/class.eveapi.php");
 		$myID = new API_IDtoName();
 		$myID->setIDs($this->externalid);
 		$myID->fetchXML();

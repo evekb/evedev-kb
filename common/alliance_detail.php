@@ -6,7 +6,6 @@
  */
 
 require_once('common/includes/class.toplist.php');
-require_once("common/includes/class.eveapi.php");
 
 class pAllianceDetail extends pageAssembly
 {

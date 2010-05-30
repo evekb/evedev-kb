@@ -5,7 +5,6 @@
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/includes/class.eveapi.php $
  */
 
-require_once('class.eveapi.php'); 
 // **********************************************************************************************************************************************
 // ****************                                       API StarbaseDetail - /corp/StarbaseDetail.xml.aspx                          ****************
 // **********************************************************************************************************************************************
@@ -166,7 +165,7 @@ class API_StarbaseDetail
                     {
 						case "TYPEID":
 							$fueldata['typeID'] = $v;
-							$fueldata['typeName'] = gettypeIDname($v);
+							$fueldata['typeName'] = API_Helpers::gettypeIDname($v);
                             break;
 						case "QUANTITY":
 							$fueldata['quantity'] = $v;

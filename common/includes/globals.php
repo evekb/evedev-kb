@@ -18,6 +18,7 @@ define('KB_PAGECACHEDIR', KB_CACHEDIR.'/page');
 define('KB_MAILCACHEDIR', KB_CACHEDIR.'/mails');
 define('KB_QUERYCACHEDIR', KB_CACHEDIR.'/SQL');
 define('KB_UPDATE_URL', 'http://evedev-kb.googlecode.com/files');
+define ("APIVERSION", "V3.3");
 
 // current version: major.minor.sub
 // unpair numbers for minor = development version
@@ -33,8 +34,8 @@ require_once('common/includes/class.edkloader.php');
 require_once('common/includes/db.php');
 
 // Ugly hacks to make things work until other changes are made with the file structure
-edkloader::register('APIChar', 'common/includes/class.eveapi.php');
-edkloader::register('AllianceAPI', 'common/includes/class.eveapi.php');
+edkloader::register('APIChar', 'common/includes/api/class.char.php');
+edkloader::register('AllianceAPI', 'common/includes/api/class.alliance.php');
 edkloader::register('ContractTarget', 'common/includes/class.contract.php');
 edkloader::register('ContractList', 'common/includes/class.contract.php');
 edkloader::register('ContractListTable', 'common/includes/class.contract.php');
@@ -61,6 +62,7 @@ edkloader::register('TopShipListTable', 'common/includes/class.toplist.php');
 edkloader::register('TopWeaponList', 'common/includes/class.toplist.php');
 edkloader::register('TopWeaponListTable', 'common/includes/class.toplist.php');
 edkloader::register('Region', 'common/includes/class.solarsystem.php');
+edkloader::register('thumbInt', 'common/includes/class.thumb.php');
 
 /* ---------------------------------------------------------------- */
 /* Utility functions */

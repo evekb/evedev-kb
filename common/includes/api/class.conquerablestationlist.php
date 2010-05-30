@@ -5,7 +5,6 @@
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/includes/class.eveapi.php $
  */
 
-require_once('class.eveapi.php'); 
 // **********************************************************************************************************************************************
 // ****************                 API Conquerable Station/Outpost list - /eve/ConquerableStationList.xml.aspx                  ****************
 // **********************************************************************************************************************************************
@@ -28,7 +27,7 @@ class API_ConquerableStationList
 
     function fetchXML()
     {
-        $data = LoadGlobalData('/eve/ConquerableStationList.xml.aspx');
+        $data = API_Helpers::LoadGlobalData('/eve/ConquerableStationList.xml.aspx');
 
         $xml_parser = xml_parser_create();
         xml_set_object ( $xml_parser, $this );

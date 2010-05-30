@@ -220,7 +220,6 @@ class thumb
 			if($this->size == 128) return true;
 		}
 //		{
-//			require_once("common/includes/class.eveapi.php");
 //
 //			$myAPI = new API_CorporationSheet();
 //			$myAPI->setCorpID($this->id);
