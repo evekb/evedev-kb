@@ -1253,12 +1253,12 @@ class Kill
 				"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ";
 			if($this->externalid_) $sql .= $this->externalid_.", ";
 			else $sql .= "NULL, ";
-			$sql .= "'".$this->getHash()."', 0)";
+			$sql .= "'".$qry->escape($this->getHash())."', 0)";
 			if(!$qry->execute($sql))
 			{
-			$qry->rollback();
-			$qry->autocommit(true);
-			return false;
+				$qry->rollback();
+				$qry->autocommit(true);
+				return false;
 			}
 		}
 
