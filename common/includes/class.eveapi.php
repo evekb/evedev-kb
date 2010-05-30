@@ -795,7 +795,7 @@ class API_KillLog
             	$killid = $parser->parse(true);
         	}
 
-            if ( $killid >= 0)
+            if ( $killid <= 0)
             {
                 if ( $killid == 0 )
                 {
