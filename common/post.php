@@ -5,12 +5,32 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.phpmailer.php');
-
 $page = new Page('Post killmail');
-global $smarty;
-if (isset($_POST['killmail']))
+
+if(isset($_POST['undelete']) && isset($_POST['kll_id']) && $page->isAdmin())
 {
+	$kll_id = intval($_POST['kll_id']);
+	$qry = DBFactory::getDBQuery();
+	$qry->execute("DELETE FROM kb3_mails WHERE kll_id = ".$kll_id);
+	if (isset($_POST['killmail'])) $html = post();
+	else $html = "Mail lock has been removed.";
+
+}
+else if (isset($_POST['killmail']))
+{
+	$html = post();
+}
+if($html) $smarty->assign('error', $html);
+$smarty->assign('isadmin', $page->isAdmin());
+$smarty->assign('post_forbid', config::get('post_forbid'));
+$smarty->assign('post_oog_forbid', config::get('post_oog_forbid'));
+
+$page->setContent($smarty->fetch(get_tpl(post)));
+$page->generate();
+
+function post()
+{
+	global $page;
     if (config::get("post_password") == '' || crypt($_POST['password'],config::get("post_password")) == config::get("post_password") || $page->isAdmin())
     {
         $parser = new Parser($_POST['killmail']);
@@ -71,6 +91,13 @@ if (isset($_POST['killmail']))
 			elseif ($killid == -4)
 			{
 				$html = "That mail has been deleted. Kill id was ".$parser->getDupeID();
+				if($page->isAdmin()) $html .= '<br />
+<form id="postform" name="postform" class="f_killmail" method="post" action="?a=post">
+	<input type="hidden" name="killmail" id="killmail" value = "'.htmlentities($_POST['killmail']).'"/>
+	<input type="hidden" name="kll_id" id="kill_id" value = "'.$parser->getDupeID().'"/>
+	<input type="hidden" name="undelete" id="undelete" value = "1"/>
+<input id="submit" name="submit" type="submit" value="Undelete" />
+</form>';
 			}
         }
         else
@@ -111,11 +138,5 @@ if (isset($_POST['killmail']))
     {
         $html = "Invalid password.";
     }
+	return $html;
 }
-if($html) $smarty->assign('error', $html);
-$smarty->assign('isadmin', $page->isAdmin());
-$smarty->assign('post_forbid', config::get('post_forbid'));
-$smarty->assign('post_oog_forbid', config::get('post_oog_forbid'));
-
-$page->setContent($smarty->fetch(get_tpl(post)));
-$page->generate();
