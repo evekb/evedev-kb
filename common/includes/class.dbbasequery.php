@@ -98,10 +98,10 @@ abstract class DBBaseQuery
 	 * \param $string The string to escape.
 	 * \param $all Set true to also escape _ and % for LIKE queries.
 	 */
-	public static function escape($string, $$escapeall = false;)
+	public static function escape($string, $escapeall = false)
 	{
 		if(is_null(self::$dbconn)) self::$dbconn = new DBConnection();
-		if($$escapeall) return addcslashes(self::$dbconn->id()->real_escape_string($string),'%_');
+		if($escapeall) return addcslashes(self::$dbconn->id()->real_escape_string($string),'%_');
 		else return self::$dbconn->id()->real_escape_string($string);
 	}
 	//! Return the most recent error message for the DB connection.
