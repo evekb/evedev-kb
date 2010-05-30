@@ -5,7 +5,6 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.http.php');
 require_once('common/admin/admin_menu.php');
 
 $page = new Page();
@@ -140,7 +139,6 @@ if ($string != 'all')
 		{
 			if ($typ == 'a')
 			{
-				require_once('class.alliance.php');
 				$alliance = new Alliance($id);
 				$text = $alliance->getName();
 				$link = '?a=admin_postperm&amp;del='.$typ.$id;
@@ -148,7 +146,6 @@ if ($string != 'all')
 			}
 			if ($typ == 'p')
 			{
-				require_once('class.pilot.php');
 				$pilot = new Pilot($id);
 				$text = $pilot->getName();
 				$link = '?a=admin_postperm&amp;del='.$typ.$id;
@@ -156,7 +153,6 @@ if ($string != 'all')
 			}
 			if ($typ == 'c')
 			{
-				require_once('class.corp.php');
 				$corp = new Corporation($id);
 				$text = $corp->getName();
 				$link = '?a=admin_postperm&amp;del='.$typ.$id;

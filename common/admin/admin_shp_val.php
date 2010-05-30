@@ -5,10 +5,7 @@
  * $HeadURL$
  */
 
-
-require_once('class.http.php');
 require_once('common/admin/admin_menu.php');
-require_once('class.ship.php');
 
 $page = new Page();
 $page->setAdmin();

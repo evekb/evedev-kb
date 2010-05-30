@@ -5,8 +5,6 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.corp.php');
-require_once('common/includes/class.alliance.php');
 require_once('common/admin/admin_menu.php');
 
 $page = new Page();

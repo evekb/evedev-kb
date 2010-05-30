@@ -6,8 +6,6 @@
  */
 
 @set_time_limit(0);
-require_once('common/includes/class.parser.php');
-require_once('common/includes/class.kill.php');
 
 $page = new Page();
 $page->setAdmin();

@@ -96,8 +96,6 @@ if (ini_get('allow_url_fopen'))
 }
 
 {
-    include('common/includes/class.http.php');
-
     $http = new http_request($url);
     if ($http->get_content())
     {

@@ -16,10 +16,8 @@
 define('MASTER', 0);
 
 @set_time_limit(0);
-require_once('feed_fetcher.php');
+require_once('common/admin/feed_fetcher.php');
 require_once('common/admin/admin_menu.php');
-require_once('common/includes/class.corp.php');
-require_once('common/includes/class.alliance.php');
 
 $page = new Page("Administration - Feed Syndication " . $feedversion);
 $page->setCachable(false);

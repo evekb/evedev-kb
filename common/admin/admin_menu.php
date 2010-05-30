@@ -5,8 +5,6 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.options.php');
-
 // include all admin modules
 // this doesnt need to check for itself because its already loaded
 $dir = 'common/admin/';

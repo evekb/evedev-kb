@@ -5,10 +5,6 @@
  * $HeadURL$
  */
 
-require_once('common/includes/db.php');
-require_once('common/includes/class.config.php');
-require_once('common/includes/class.zip.php');
-
 require_once('common/admin/option_acache.php');
 
 require_once('update/CCPDB/xml.parser.php');

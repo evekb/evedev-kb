@@ -5,8 +5,6 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.kill.php');
-
 $page = new Page("Administration - Deletion of Comment ID \"".$_GET['c_id']."\"");
 $page->setAdmin();
 

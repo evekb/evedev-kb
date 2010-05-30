@@ -15,13 +15,6 @@
 @ini_set('memory_limit',999999999);
 $feedversion = "v1.8";
 
-require_once("class.kill.php");
-require_once("class.parser.php");
-require_once("class.comments.php");
-require_once("class.corp.php");
-require_once("class.pilot.php");
-require_once("class.logger.php");
-
 //! EDK Feed Syndication fetcher class.
 
 /*! This class is used to fetch the feed from another EDK board. It adds all

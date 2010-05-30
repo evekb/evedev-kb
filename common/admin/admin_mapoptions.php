@@ -5,9 +5,6 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.http.php');
-require_once('common/admin/admin_menu.php');
-
 $page = new Page();
 $page->setAdmin();
 $page->setTitle('Administration - Mapoptions');

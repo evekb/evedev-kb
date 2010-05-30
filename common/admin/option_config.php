@@ -5,8 +5,6 @@
  * $HeadURL$
  */
 
-require_once('class.config.php');
-
 options::cat('Advanced', 'Configuration', 'Available updates');
 options::fadd('Code updates', 'none', 'custom', array('update', 'codeCheck'));
 options::fadd('Database updates', 'none', 'custom', array('update', 'dbCheck'));

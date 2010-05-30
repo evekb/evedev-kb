@@ -9,11 +9,6 @@
  * Made by Agustino and HyperBeanie
  * If you use and like these tools, please donate some isk!
  */
-require_once('common/includes/class.kill.php');
-require_once('common/includes/class.pilot.php');
-require_once('common/includes/class.corp.php');
-require_once('common/includes/class.alliance.php');
-require_once('common/includes/class.killlist.php');
 
 $plt_id = $_GET['plt_id'];
 

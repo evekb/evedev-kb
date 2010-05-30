@@ -5,12 +5,8 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.kill.php');
-require_once('common/includes/class.pilot.php');
-require_once('common/includes/class.corp.php');
-
 $dbconn = new DBConnection();
-$pilot = new Pilot($_GET['plt_id']);
+$pilot = new Pilot(intval($_GET['plt_id']));
 
 $page = new Page('Administration - Change Pilots Corp ('.$pilot->getName().')');
 $page->setAdmin();

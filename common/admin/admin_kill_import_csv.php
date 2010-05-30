@@ -10,9 +10,6 @@
  * Used together with export tool!
  */
 
-require_once('common/includes/class.parser.php');
-require_once('common/includes/class.killlist.php');
-
 $page = new Page('Administration - Killmail import');
 $page->setAdmin();
 
