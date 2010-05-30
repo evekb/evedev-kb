@@ -1271,7 +1271,7 @@ class Kill
 		return $this->id_;
 	}
 
-	function remove($delcomments = true)
+	function remove($delcomments = true, $permanent = true)
 	{
 		if (!$this->id_)
 			return;
@@ -1291,7 +1291,10 @@ class Kill
 		if ($delcomments)
 		{
 			$qry->execute("delete from kb3_comments where kll_id = ".$this->id_);
-			$qry->execute("UPDATE kb3_mails SET kll_trust = -1 WHERE kll_id = ".$this->id_);
+			if ($permanent)
+				$qry->execute("UPDATE kb3_mails SET kll_trust = -1 WHERE kll_id = ".$this->id_);
+			else
+				$qry->execute("DELETE FROM kb3_mails WHERE kll_id = ".$this->id_);
 		}
 		$qry->autocommit(true);
 	}
