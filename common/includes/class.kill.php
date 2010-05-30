@@ -548,17 +548,17 @@ class Kill
 			$this->setTimeStamp($row['kll_timestamp']);
 			$this->setSolarSystem(new SolarSystem($row['kll_system_id']));
 			$this->setVictim(new Pilot($row['kll_victim_id'], $row['plt_externalid'], $row['plt_name'], $row['kll_crp_id']));
-			//$this->setVictimID($row['kll_victim_id']);
-			//$this->setVictimName($row['plt_name']);
-			//$this->setVictimCorpID($row['kll_crp_id']);
+			$this->setVictimID($row['kll_victim_id']);
+			$this->setVictimName($row['plt_name']);
+			$this->setVictimCorpID($row['kll_crp_id']);
 			$this->setVictimCorpName($row['crp_name']);
 			$this->setVictimAllianceID($row['all_id']);
 			$this->setVictimAllianceName($row['all_name']);
 			$this->setVictimShip(new Ship($row['kll_ship_id']));
 			$this->setFBPilot(new Pilot($row['fbplt_id'], $row['fbplt_externalid'], $row['fbplt_name'], $row['fbcrp_id']));
-			//$this->setFBPilotID($row['fbplt_id']);
-			//$this->setFBPilotName($row['fbplt_name']);
-			//$this->setFBCorpID($row['fbcrp_id']);
+			$this->setFBPilotID($row['fbplt_id']);
+			$this->setFBPilotName($row['fbplt_name']);
+			$this->setFBCorpID($row['fbcrp_id']);
 			$this->setFBCorpName($row['fbcrp_name']);
 			$this->setFBAllianceID($row['fbali_id']);
 			$this->setFBAllianceName($row['fbali_name']);
@@ -566,7 +566,7 @@ class Kill
 			$this->setExternalID($row['kll_external_id']);
 			$this->setISKLoss($row['kll_isk_loss']);
 			//$this->plt_ext_ = $row['plt_externalid'];
-			//$this->fbplt_ext_ = $row['fbplt_externalid'];
+			$this->fbplt_ext_ = $row['fbplt_externalid'];
 			$this->VictimDamageTaken = $row['kll_dmgtaken'];
 
 			// involved
