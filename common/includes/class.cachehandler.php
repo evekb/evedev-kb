@@ -274,9 +274,13 @@ class CacheHandler
 			}
 		}
 
+		// Create subdirectories and left pad with 0s if length is too short.
 		$depth = 3;
 		if(substr($newlocation, -1) != '/') $newlocation .= '/';
-		str_pad($newfilename, 2 * $depth + 2, "0", STR_PAD_LEFT);
+		if(strrpos($filename, ".") === false) $length = 2 * $depth + 2;
+		else $length = 2 * $depth + 2 + strlen($filename) - strrpos($filename, ".");
+		$newfilename = str_pad($newfilename, $length, "0", STR_PAD_LEFT);
+
 		$nameslice = $newfilename;
 		while($depth > 0)
 		{
