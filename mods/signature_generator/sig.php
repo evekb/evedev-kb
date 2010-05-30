@@ -22,10 +22,6 @@ if (!$plt_id = intval($_GET['i']))
 {
 	errorPic('No pilot id specified.');
 }
-require_once("common/includes/class.pilot.php");
-require_once("common/includes/class.corp.php");
-require_once("common/includes/class.alliance.php");
-require_once("common/includes/class.killlist.php");
 
 $pilot = new Pilot($plt_id);
 if (!$pilot->exists())
