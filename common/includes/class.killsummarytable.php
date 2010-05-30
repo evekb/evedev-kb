@@ -26,8 +26,8 @@ class KillSummaryTable
 	protected $tlcount = 0;
 	protected $tkisk = 0;
 	protected $tlisk = 0;
-	protected $system = 0;
 	protected $view = "";
+	protected $system = array();
 
 	function KillSummaryTable($klist = null, $llist = null)
 	{
