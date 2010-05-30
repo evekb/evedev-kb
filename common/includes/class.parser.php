@@ -20,7 +20,7 @@ class Parser
 	private $needs_final_blow_ = true;
 	private $dupeid_ = 0;
 	private $hash = null;
-	private static $trust = 0;
+	private $trust = 0;
 
 	function uchr ($codes)
 	{ //converts characterset code-pages to ascii-compatible types
@@ -104,17 +104,6 @@ class Parser
 	{
 		$qry = DBFactory::getDBQuery();
 
-		// Check external IDs
-		if($this->externalID)
-		{
-			$qry->execute('SELECT kll_id FROM kb3_kills WHERE kll_external_id = '.$this->externalID);
-			if($qry->recordCount())
-			{
-				$row = $qry->getRow();
-				$this->dupeid_ = $row['kll_id'];
-				return -1;
-			}
-		}
 		$timestamp = substr($this->killmail_, 0, 16);
 		$timestamp = str_replace('.', '-', $timestamp);
 
@@ -138,10 +127,27 @@ class Parser
 			{
 				$qry->execute("UPDATE kb3_kills SET kll_external_id = ".
 					$this->externalID." WHERE kll_id = ".$this->dupeid_);
+				$qry->execute("UPDATE kb3_mails SET kll_external_id = ".
+					$this->externalID." WHERE kll_id = ".$this->dupeid_);
+
+				if($quality >= 0 && $this->trust && $quality > $this->trust)
+					$qry->execute("UPDATE kb3_mails SET kll_trust = ".$this->trust);
 			}
 
 			if($quality < 0) return -4;
 			return -1;
+		}
+		// Check external IDs
+		else if($this->externalID)
+		{
+			$qry->execute('SELECT kll_id FROM kb3_kills WHERE kll_external_id = '.$this->externalID);
+			if($qry->recordCount())
+			{
+				$row = $qry->getRow();
+				$this->dupeid_ = $row['kll_id'];
+				//TODO if trust == 1 add to kb3_mails.
+				return -1;
+			}
 		}
 
 		//trim out any multiple spaces that may exist -
@@ -699,6 +705,7 @@ class Parser
 			return $kill;
 		}
 		$kill->setHash($this->hash);
+		$kill->setTrust($this->trust);
 		$id = $kill->add();
 		if ($id == -1)
 		{
@@ -993,9 +1000,9 @@ class Parser
 	{
 		return $this->dupeid_;
 	}
-	public static function setTrust($trust)
+	public function setTrust($trust)
 	{
-		self::$trust = intval($trust);
+		$this->trust = intval($trust);
 	}
 }
 //Currently maintained by FriedRoadKill
