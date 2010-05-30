@@ -355,6 +355,7 @@ class Pilot
 		}
 		$qry->execute("update kb3_pilots set plt_externalid = ".$this->externalid_."
                        where plt_id = ".$this->id_);
+		return true;
 	}
     //! Lookup a pilot name and set this object to use the details found.
 
