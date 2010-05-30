@@ -93,10 +93,16 @@ abstract class DBBaseQuery
 		return $this->executed;
 	}
 	//! Return an escaped string for use in a query.
-	public static function escape($string)
+
+	/*!
+	 * \param $string The string to escape.
+	 * \param $all Set true to also escape _ and % for LIKE queries.
+	 */
+	public static function escape($string, $$escapeall = false;)
 	{
 		if(is_null(self::$dbconn)) self::$dbconn = new DBConnection();
-		return addcslashes(self::$dbconn->id()->real_escape_string($string),'%_');
+		if($$escapeall) return addcslashes(self::$dbconn->id()->real_escape_string($string),'%_');
+		else return self::$dbconn->id()->real_escape_string($string);
 	}
 	//! Return the most recent error message for the DB connection.
 	abstract public function getErrorMsg();
