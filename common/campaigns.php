@@ -7,7 +7,7 @@
 
 $page = new Page('Campaigns');
 
-
+require_once('class.contract.php');
 
 class pCampaignList extends pageAssembly
 {
