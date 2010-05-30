@@ -14,11 +14,22 @@ class edkloader
     {
 //		echo $name."<br />";
 		$name = strtolower($name);
+		$splitpos = strpos($name, "_");
+		if($splitpos > 0)
+		{
+			$subdirname = substr($name, 0, $splitpos);
+			$subfilename = substr($name, $splitpos + 1);
+		}
 		$name = str_replace("_", "", $name);
 
 		if(isset(self::$classes[$name]))
 		{
 			require_once(self::$classes[$name]);
+			return true;
+		}
+		else if($splitpos && is_file(self::$dir."common/includes/".$subdirname."/class.".$subfilename.".php"))
+		{
+			require_once(self::$dir."common/includes/".$subdirname."/class.".$subfilename.".php");
 			return true;
 		}
 		else if(is_file(self::$dir."common/includes/class.".$name.".php"))
@@ -28,7 +39,6 @@ class edkloader
 		}
 		else
 		{
-			//trigger_error("Class '".addslashes($name)."' not found", E_USER_ERROR);
 			return false;
 		}
     }
