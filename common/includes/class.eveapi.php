@@ -795,7 +795,7 @@ class API_KillLog
             	$killid = $parser->parse(true);
         	}
 
-            if ( $killid == 0 || $killid == -1 || $killid == -2 || $killid == -3 )
+            if ( $killid >= 0)
             {
                 if ( $killid == 0 )
                 {
@@ -822,6 +822,12 @@ class API_KillLog
 						$this->Output_ .= '<br/>';
                     }
                 }
+				if ($killid == -4)
+            	{
+					$this->Output_ .= "Killmail ID:".$this->killid_. " has already been deleted so will not be reposted.<br>";
+					$this->ignoredmails_++;
+            	}
+
 				if ($killid == -3)
             	{
                 	$filterdate = kbdate("j F Y", config::get("filter_date"));
