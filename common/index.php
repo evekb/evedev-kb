@@ -50,32 +50,6 @@ edkloader::register('Smarty', 'common/smarty/Smarty.class.php');
 
 //edkloader::setRoot(getcwd());
 
-// Ugly hacks to make things work until other changes are made with the file structure
-//edkloader::register('API_KillLog', 'common/includes/class.eveapi.php');
-//edkloader::register('APIChar', 'common/includes/class.eveapi.php');
-//edkloader::register('AllianceAPI', 'common/includes/class.eveapi.php');
-//edkloader::register('API_ConquerableStationList', 'common/includes/class.eveapi.php');
-//edkloader::register('API_ErrorList', 'common/includes/class.eveapi.php');
-//edkloader::register('API_Jumps', 'common/includes/class.eveapi.php');
-//edkloader::register('API_Kills', 'common/includes/class.eveapi.php');
-//edkloader::register('API_Sovereignty', 'common/includes/class.eveapi.php');
-//edkloader::register('API_RefTypes', 'common/includes/class.eveapi.php');
-//edkloader::register('API_FacWarSystems', 'common/includes/class.eveapi.php');
-//edkloader::register('API_Standings', 'common/includes/class.eveapi.php');
-//edkloader::register('API_CharacterSheet', 'common/includes/class.eveapi.php');
-//edkloader::register('API_SkillInTraining', 'common/includes/class.eveapi.php');
-//edkloader::register('API_StarbaseList', 'common/includes/class.eveapi.php');
-//edkloader::register('API_StarbaseDetail', 'common/includes/class.eveapi.php');
-//edkloader::register('API_CorporationSheet', 'common/includes/class.eveapi.php');
-//edkloader::register('API_NametoID', 'common/includes/class.eveapi.php');
-//edkloader::register('API_IDtoName', 'common/includes/class.eveapi.php');
-//edkloader::register('API_ServerStatus', 'common/includes/class.eveapi.php');
-//edkloader::register('ContractTarget', 'common/includes/class.contract.php');
-//edkloader::register('ContractList', 'common/includes/class.contract.php');
-//edkloader::register('ContractListTable', 'common/includes/class.contract.php');
-//edkloader::register('BarGraph', 'common/includes/class.graph.php');
-//edkloader::register('AwardBox', 'common/includes/class.box.php');
-
 // smarty doesnt like it
 if(get_magic_quotes_runtime()) @set_magic_quotes_runtime(0);
 

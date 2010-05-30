@@ -28,6 +28,59 @@ define('KB_RELEASE', '(Tyrannis)');
 $corp_npc = array('Guristas', 'Serpentis Corporation', 'Sansha\'s Nation', 'CONCORD',
 	'Mordus Legion', 'Blood Raider', 'Archangels', 'Guardian Angels', 'True Power');
 
+// Make sure the core functions are loaded.
+require_once('common/includes/class.edkloader.php');
+require_once('common/includes/db.php');
+
+// Ugly hacks to make things work until other changes are made with the file structure
+edkloader::register('API_KillLog', 'common/includes/class.eveapi.php');
+edkloader::register('APIChar', 'common/includes/class.eveapi.php');
+edkloader::register('AllianceAPI', 'common/includes/class.eveapi.php');
+edkloader::register('API_ConquerableStationList', 'common/includes/class.eveapi.php');
+edkloader::register('API_ErrorList', 'common/includes/class.eveapi.php');
+edkloader::register('API_Jumps', 'common/includes/class.eveapi.php');
+edkloader::register('API_Kills', 'common/includes/class.eveapi.php');
+edkloader::register('API_Sovereignty', 'common/includes/class.eveapi.php');
+edkloader::register('API_RefTypes', 'common/includes/class.eveapi.php');
+edkloader::register('API_FacWarSystems', 'common/includes/class.eveapi.php');
+edkloader::register('API_Standings', 'common/includes/class.eveapi.php');
+edkloader::register('API_CharacterSheet', 'common/includes/class.eveapi.php');
+edkloader::register('API_SkillInTraining', 'common/includes/class.eveapi.php');
+edkloader::register('API_StarbaseList', 'common/includes/class.eveapi.php');
+edkloader::register('API_StarbaseDetail', 'common/includes/class.eveapi.php');
+edkloader::register('API_CorporationSheet', 'common/includes/class.eveapi.php');
+edkloader::register('API_NametoID', 'common/includes/class.eveapi.php');
+edkloader::register('API_IDtoName', 'common/includes/class.eveapi.php');
+edkloader::register('API_ServerStatus', 'common/includes/class.eveapi.php');
+edkloader::register('ContractTarget', 'common/includes/class.contract.php');
+edkloader::register('ContractList', 'common/includes/class.contract.php');
+edkloader::register('ContractListTable', 'common/includes/class.contract.php');
+edkloader::register('BarGraph', 'common/includes/class.graph.php');
+edkloader::register('AwardBox', 'common/includes/class.box.php');
+edkloader::register('TopList', 'common/includes/class.toplist.php');
+edkloader::register('TopKillsList', 'common/includes/class.toplist.php');
+edkloader::register('TopCorpKillsList', 'common/includes/class.toplist.php');
+edkloader::register('TopScoreList', 'common/includes/class.toplist.php');
+edkloader::register('TopLossesList', 'common/includes/class.toplist.php');
+edkloader::register('TopCorpLossesList', 'common/includes/class.toplist.php');
+edkloader::register('TopFinalBlowList', 'common/includes/class.toplist.php');
+edkloader::register('TopDamageDealerList', 'common/includes/class.toplist.php');
+edkloader::register('TopSoloKillerList', 'common/includes/class.toplist.php');
+edkloader::register('TopPodKillerList', 'common/includes/class.toplist.php');
+edkloader::register('TopGrieferList', 'common/includes/class.toplist.php');
+edkloader::register('TopCapitalShipKillerList', 'common/includes/class.toplist.php');
+edkloader::register('TopContractKillsList', 'common/includes/class.toplist.php');
+edkloader::register('TopContractScoreList', 'common/includes/class.toplist.php');
+edkloader::register('TopPilotTable', 'common/includes/class.toplist.php');
+edkloader::register('TopCorpTable', 'common/includes/class.toplist.php');
+edkloader::register('TopShipList', 'common/includes/class.toplist.php');
+edkloader::register('TopShipListTable', 'common/includes/class.toplist.php');
+edkloader::register('TopWeaponList', 'common/includes/class.toplist.php');
+edkloader::register('TopWeaponListTable', 'common/includes/class.toplist.php');
+
+/* ---------------------------------------------------------------- */
+/* Utility functions */
+
 function shorten($shorten, $by = 22)
 {
 	if (strlen($shorten) > $by)
