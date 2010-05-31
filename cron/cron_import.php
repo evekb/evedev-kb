@@ -44,7 +44,6 @@ require_once('kbconfig.php');
 require_once('common/includes/class.edkloader.php');
 require_once('common/includes/globals.php');
 require_once('common/includes/db.php');
-require_once( "common/includes/class.eveapi.php" );
 
 $config = new Config(KB_SITE);
 $ApiCache = new ApiCache(KB_SITE);

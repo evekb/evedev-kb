@@ -40,7 +40,6 @@ require_once('kbconfig.php');
 require_once('common/includes/class.edkloader.php');
 require_once('common/includes/globals.php');
 require_once('common/includes/db.php');
-require_once('common/includes/class.eveapi.php');
 
 $config = new Config(KB_SITE);
 $ApiCache = new ApiCache(KB_SITE);
@@ -51,22 +50,22 @@ $out = '';
 // Sovereignty
 $mySovAPI = new API_Sovereignty();
 $Sovtemp = $mySovAPI->fetchXML();
-$out .= "Caching Sovereignty XML - cached until:" . ConvertTimestamp($mySovAPI->CachedUntil_) . "\n";
+$out .= "Caching Sovereignty XML - cached until:" . API_Helpers::ConvertTimestamp($mySovAPI->CachedUntil_) . "\n";
 
 // Alliance
 $myAlliAPI = new AllianceAPI();
 $Allitemp .= $myAlliAPI->initXML();
-$out .= "Caching Alliance XML - cached until:" . ConvertTimestamp($myAlliAPI->CachedUntil_) . "\n";
+$out .= "Caching Alliance XML - cached until:" . API_Helpers::ConvertTimestamp($myAlliAPI->CachedUntil_) . "\n";
 
 // Conquerable Station and Outposts list
 $myConqAPI = new API_ConquerableStationList();
 $Conqtemp .= $myConqAPI->fetchXML();
-$out .= "Caching Conquerable Station XML - cached until:" . ConvertTimestamp($myConqAPI->CachedUntil_) . "\n";
+$out .= "Caching Conquerable Station XML - cached until:" . API_Helpers::ConvertTimestamp($myConqAPI->CachedUntil_) . "\n";
 
 // Factional Warfare Systems
 $myFacAPI = new API_FacWarSystems();
 $Factemp .= $myFacAPI->fetchXML();
-$out .= "Caching Factional Warfare Systems XML - cached until:" . ConvertTimestamp($myFacAPI->CachedUntil_) . "\n";
+$out .= "Caching Factional Warfare Systems XML - cached until:" . API_Helpers::ConvertTimestamp($myFacAPI->CachedUntil_) . "\n";
 
 if ($out)
 {
@@ -77,4 +76,3 @@ if ($out)
     //print $outhead . strip_tags($out, '<a>');
     print $outhead . strip_tags($out);
 }
-?>
