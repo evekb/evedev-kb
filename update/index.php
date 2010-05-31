@@ -13,8 +13,8 @@ ini_set('display_errors', 1);
 
 define('LATEST_DB_UPDATE', "015");
 define('DB_HALTONERROR', true);
-define('DB_QCACHE', false);
-define('DB_MEMCACHE',false);
+define('DB_USE_QCACHE', false);
+define('DB_USE_MEMCACHE',false);
 define('KB_CACHEDIR', "cache");
 
 chdir("..");
