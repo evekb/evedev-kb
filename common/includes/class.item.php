@@ -208,7 +208,7 @@ class Item
 		$name = trim($name);
 		$qry = DBFactory::getDBQuery();
 		$query = "select typeID as itm_id from kb3_invtypes itm
-                  where typeName = '".$qry->escape($name)."'";
+                  where typeName = '".$qry->escape(stripslashes($name))."'";
 		$qry->execute($query);
 		$row = $qry->getRow();
 		if (!isset($row['itm_id']))

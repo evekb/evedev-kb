@@ -100,7 +100,7 @@ class Alliance
     function add($name, $externalid = false)
     {
         $qry = DBFactory::getDBQuery();
-		$name = $qry->escape($name);
+		$name = $qry->escape(stripslashes($name));
         $qry->execute("select * from kb3_alliances where all_name = '".$name."'");
 
         if ($qry->recordCount() == 0)

@@ -220,7 +220,7 @@ class Pilot
 	{
 	// Check if pilot exists with a non-cached query.
 		$qry = DBFactory::getDBQuery(true);
-		$name = $qry->escape($name);
+		$name = $qry->escape(stripslashes($name));
 		// Insert or update a pilot with a cached query to update cache.
 		$qryI = DBFactory::getDBQuery(true);
 		$qry->execute("select *
@@ -366,7 +366,7 @@ class Pilot
     {
         $qry = DBFactory::getDBQuery();
         $qry->execute("select * from kb3_pilots
-                       where plt_name = '".$qry->escape($name)."'");
+                       where plt_name = '".$qry->escape(stripslashes($name))."'");
         $row = $qry->getRow();
         if ($row['plt_id']) $this->id_ = $row['plt_id'];
 		$this->name_ = $row['plt_name'];
