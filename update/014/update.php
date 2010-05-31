@@ -12,7 +12,7 @@ function update014()
 		if(config::get('014updatestatus') <1)
 		{
 		// Add killmail summary. time, hash, trust.
-			$sql = 'CREATE TABLE `kb3_mails` (
+			$sql = 'CREATE TABLE IF NOT EXISTS `kb3_mails` (
   `kll_id` int(11) NOT NULL auto_increment,
   `kll_timestamp` datetime NOT NULL default "0000-00-00 00:00:00",
   `kll_external_id` int(8) default NULL,
