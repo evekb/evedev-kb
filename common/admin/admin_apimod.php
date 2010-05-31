@@ -190,10 +190,10 @@ if ($_POST['submit'] || $_POST['import']  )
     //else
         //config::set('API_ForceDST', '1');
 		
-	if ($_POST['API_API_Helper::ConvertTimestamp'])
-        config::set('API_API_Helper::ConvertTimestamp', '0');
+	if ($_POST['API_ConvertTimestamp'])
+        config::set('API_ConvertTimestamp', '0');
     else
-        config::set('API_API_Helper::ConvertTimestamp', '1');
+        config::set('API_ConvertTimestamp', '1');
 		
     $html .= "Settings Saved.<br>";
 }
@@ -376,7 +376,7 @@ if ($_POST['apilog'])
         	$html .= "checked";
     	}
    	 	$html .= "></td></tr>";
-		$cachetime = API_Helper::ConvertTimestamp($apicachetime[$i]);
+		$cachetime = API_Helpers::ConvertTimestamp($apicachetime[$i]);
     	//$cachetime = date("Y-m-d H:i:s",  strtotime($apicachetime[$i]) + $gmoffset);
     	if ($cachetime == "")
     	{
@@ -411,8 +411,8 @@ if ($_POST['apilog'])
 	$html .= "></tr>";
 
 	$html .= "<tr><td height=30px width=150px>Convert Cache Times to local time?</i></td>";
-	$html .= "<td><input type=checkbox name=API_API_Helper::ConvertTimestamp id=API_API_Helper::ConvertTimestamp";
-	if (!config::get('API_API_Helper::ConvertTimestamp'))
+	$html .= "<td><input type=checkbox name=API_ConvertTimestamp id=API_ConvertTimestamp";
+	if (!config::get('API_ConvertTimestamp'))
     	$html .= " checked=\"checked\"";
 	$html .= "></tr>";
 
@@ -428,7 +428,7 @@ if ($_POST['apilog'])
     	$html .= " checked=\"checked\"";
 	$html .= ">";
 	//$tempcachetime = date("Y-m-d H:i:s",  strtotime(ApiCache::get('API_map_Sovereignty')) + $gmoffset);
-	$tempcachetime = API_Helper::ConvertTimestamp(ApiCache::get('API_map_Sovereignty'));
+	$tempcachetime = API_Helpers::ConvertTimestamp(ApiCache::get('API_map_Sovereignty'));
 	if ($tempcachetime == "")
 	{
 		$html .= "</tr>";
@@ -449,7 +449,7 @@ if ($_POST['apilog'])
     	$html .= " checked=\"checked\"";
 	$html .= ">";
 	//$tempcachetime =  date("Y-m-d H:i:s",  strtotime(ApiCache::get('API_eve_AllianceList')) + $gmoffset);
-	$tempcachetime = API_Helper::ConvertTimestamp(ApiCache::get('API_eve_AllianceList'));
+	$tempcachetime = API_Helpers::ConvertTimestamp(ApiCache::get('API_eve_AllianceList'));
 	if ($tempcachetime == "")
 	{
 		$html .= "</tr>";
@@ -470,7 +470,7 @@ if ($_POST['apilog'])
     	$html .= " checked=\"checked\"";
 	$html .= ">";
 	//$tempcachetime =  date("Y-m-d H:i:s",  strtotime(ApiCache::get('API_eve_ConquerableStationList')) + $gmoffset);
-	$tempcachetime = API_Helper::ConvertTimestamp(ApiCache::get('API_eve_ConquerableStationList'));
+	$tempcachetime = API_Helpers::ConvertTimestamp(ApiCache::get('API_eve_ConquerableStationList'));
 	if ($tempcachetime == "")
 	{
 		$html .= "</tr>";
@@ -491,7 +491,7 @@ if ($_POST['apilog'])
     	$html .= " checked=\"checked\"";
 	$html .= ">";
 	//$tempcachetime =  date("Y-m-d H:i:s",  strtotime(ApiCache::get('API_map_FacWarSystems')) + $gmoffset);
-	$tempcachetime = API_Helper::ConvertTimestamp(ApiCache::get('API_map_FacWarSystems'));
+	$tempcachetime = API_Helpers::ConvertTimestamp(ApiCache::get('API_map_FacWarSystems'));
 	if ($tempcachetime == "")
 	{
 		$html .= "</tr>";
@@ -575,7 +575,7 @@ if ($_POST['apilog'])
 	$html .= "</form>";
 }
 $html .= "<div class=block-header2></div>";
-$html .= "<div>Written by " . FindThunk() . " (<a href=\"http://eve-id.net/forum/viewtopic.php?f=505&t=8827\" >Support</a>)</div>";
+$html .= "<div>Written by " . API_Helpers::FindThunk() . " (<a href=\"http://eve-id.net/forum/viewtopic.php?f=505&t=8827\" >Support</a>)</div>";
 	
 $page->setContent($html);
 $page->addContext($menubox->generate());
