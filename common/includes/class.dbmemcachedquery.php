@@ -5,8 +5,6 @@
  * $HeadURL$
  */
 
-require_once 'class.dbcache.php';
-
 //! mysqli memcached query class. Manages SQL queries to a MySQL DB using mysqli.
 class DBMemcachedQuery extends DBCachedQuery
 {
@@ -19,9 +17,9 @@ class DBMemcachedQuery extends DBCachedQuery
 
 		if(is_null(self::$maxmem))
 		{
-			self::$maxmem = @ini_get('memory_limit');
-			self::$maxmem = @str_replace('M', '000000', self::$maxmem) * 0.8;
-			self::$maxmem = @intval(str_replace('M', '000000000', self::$maxmem) * 0.8);
+			$tmp = @ini_get('memory_limit');
+			$tmp = @str_replace('M', '000000', $tmp) * 0.8;
+			self::$maxmem = @intval(str_replace('G', '000000000', $tmp) * 0.8);
 			if(!self::$maxmem) self::$maxmem = 128000000;
 		}
 	}

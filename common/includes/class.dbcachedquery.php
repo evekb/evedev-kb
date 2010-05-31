@@ -5,11 +5,6 @@
  * $HeadURL$
  */
 
-require_once 'class.dbbasequery.php';
-require_once 'class.dbconnection.php';
-require_once('class.dbdebug.php');
-require_once('class.cachehandlerhashed.php');
-
 //! mysqli file-cached query class. Manages SQL queries to a MySQL DB using mysqli.
 class DBCachedQuery extends DBBaseQuery
 {
@@ -42,9 +37,9 @@ class DBCachedQuery extends DBBaseQuery
 
 		if(is_null(self::$maxmem))
 		{
-			self::$maxmem = @ini_get('memory_limit');
-			self::$maxmem = @str_replace('M', '000000', self::$maxmem) * 0.8;
-			self::$maxmem = @intval(str_replace('M', '000000000', self::$maxmem) * 0.8);
+			$tmp = @ini_get('memory_limit');
+			$tmp = @str_replace('M', '000000', $tmp) * 0.8;
+			self::$maxmem = @intval(str_replace('G', '000000000', $tmp) * 0.8);
 			if(!self::$maxmem) self::$maxmem = 128000000;
 		}
 	}
