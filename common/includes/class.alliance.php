@@ -185,17 +185,14 @@ class Alliance
 	function getPortraitURL($size = 128)
 	{
 		if ($size == 128 && file_exists("img/alliances/".$this->getUnique().".png"))
-		{
 			return "img/alliances/".$this->getUnique().".png";
-		}
-		else
-		{
-			if(CacheHandler::exists($this->getUnique()."_$size.png", 'img/alliances'))
-				return CacheHandler::getExternal($this->getUnique()."_$size.png", 'img/alliances');
-			else if($this->getExternalID())
-				return '?a=thumb&amp;type=alliance&amp;id='.$this->getExternalID().'&amp;size='.$size;
-			return '?a=thumb&amp;type=alliance&amp;id='.$this->getUnique().'&amp;size='.$size;
-		}
+		else if(CacheHandler::exists($this->getUnique()."_$size.png", 'img'))
+			return CacheHandler::getExternal($this->getUnique()."_$size.png", 'img');
+		else if(CacheHandler::exists($this->getExternalID()."_$size.png", 'img'))
+			return CacheHandler::getExternal($this->getExternalID()."_$size.png", 'img');
+		else if($this->getExternalID())
+			return '?a=thumb&amp;type=alliance&amp;id='.$this->getExternalID().'&amp;size='.$size;
+		return '?a=thumb&amp;type=alliance&amp;id='.$this->getUnique().'&amp;size='.$size;
 	}
 
 	/*!
