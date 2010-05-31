@@ -15,15 +15,13 @@ define('LATEST_DB_UPDATE', "015");
 define('DB_HALTONERROR', true);
 define('DB_QCACHE', false);
 define('DB_MEMCACHE',false);
+define('KB_CACHEDIR', "cache");
 
 chdir("..");
 require_once('kbconfig.php');
 require_once('common/includes/class.edkloader.php');
 require_once('common/includes/db.php');
-require_once('common/includes/class.config.php');
-require_once('common/includes/class.session.php');
 require_once('common/includes/globals.php');
-require_once('common/smarty/Smarty.class.php');
 
 $config = new Config(KB_SITE);
 session::init();
