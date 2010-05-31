@@ -75,7 +75,7 @@ class Alliance
     {
         if (!$this->executed)
         {
-			$qry = DBFactory::getDBQuery();;
+			$qry = DBFactory::getDBQuery();
 			$sql = "select * from kb3_alliances where ";
 			if($this->externalid) $sql .= "all_external_id = ".$this->externalid;
 			else $sql .= "all_id = ".$this->id;
@@ -149,17 +149,40 @@ class Alliance
         }
     }
 	//! Set the CCP external ID for this alliance.
-	function setExternalID($externalid)
+	function setExternalID($externalid, $update = true)
 	{
 		$externalid = intval($externalid);
 		if($externalid && $this->id)
 		{
 			$this->execQuery();
-			$qry = DBFactory::getDBQuery();;
-			if($qry->execute("UPDATE kb3_alliances SET all_external_id = ".$externalid." WHERE all_id = ".$this->id))
+			$qry = DBFactory::getDBQuery();
+			// Check if an alliance already exists with this external id and merge the two if so
+			// i.e. the name has changed.
+			$qry->execute("SELECT * FROM kb3_alliances WHERE all_external_id = ".$externalid);
+			if ($qry->recordCount() > 0)
+			{
+				if(!$update) return false;
+
+				$row = $qry->getRow();
+				// The already existing alliance is this one.
+				if($row['all_id'] == $this->id) return $this->id;
+
+				$newid = $row['all_id'];
+				$qry->execute("UPDATE kb3_corps SET crp_all_id = $newid WHERE crp_all_id = ".$this->id);
+				$qry->execute("UPDATE kb3_inv_detail SET ind_all_id = $newid WHERE ind_all_id = ".$this->id);
+				$qry->execute("UPDATE kb3_inv_all SET ina_all_id = $newid WHERE ina_all_id = ".$this->id);
+				$qry->execute("UPDATE kb3_kills SET kll_all_id = $newid WHERE kll_all_id = ".$this->id);
+				$qry->execute("DELETE FROM kb3_alliances WHERE all_id = ".$this->id);
+				$qry->execute("UPDATE kb3_alliances SET all_name = '".$this->name."' WHERE all_external_id = ".$externalid);
+
+				$this->id = $newid;
+				$this->externalid = $externalid;
+				return $this->id;
+			}
+			else if($qry->execute("UPDATE kb3_alliances SET all_external_id = ".$externalid." WHERE all_id = ".$this->id))
 			{
 				$this->externalid = $externalid;
-				return true;
+				return $this->id;
 			}
 		}
 		return false;
