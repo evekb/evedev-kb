@@ -26,7 +26,9 @@ class CacheHandlerHashed extends CacheHandler
 	{
 		$path = self::getPathHashed($key, $location, true);
 
-		return file_put_contents(self::$internalroot."/".$path, serialize($object));
+		$zp = gzopen(self::$internalroot."/".$path, "wb1");
+		gzwrite($zp, serialize($object));
+		return gzclose($zp);
 	}
 	//! Get a file from the cache
 
@@ -39,7 +41,13 @@ class CacheHandlerHashed extends CacheHandler
 	public static function get($key, $location = null)
 	{
 		$path = self::getPathHashed($key, $location, false);
-		$result = @file_get_contents(self::$internalroot."/".$path);
+
+		$zp = gzopen(self::$internalroot."/".$path, 'rb');
+		$result = '';
+		$tmp = '';
+		while($tmp = @gzread($zp, 8192)) $result .= $tmp;
+		gzclose($zp);
+
 		if(!$result) return $result;
 		return unserialize($result);
 	}
