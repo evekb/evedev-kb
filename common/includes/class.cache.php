@@ -77,8 +77,11 @@ class cache
 		$usegz = config::get('cfg_compress')
 			&& !ini_get('zlib.output_compression');
 		$cachefile = cache::genCacheName();
+		if(DB_MEMCACHE) $cachehandler = new CacheHandlerHashedMem();
+		$cachehandler = new CacheHandlerHashed();
+
 		// If the cache doesn't exist then we don't need to check times.
-		if (cache::shouldCache($page) && file_exists(cache::genCacheName()))
+		if (cache::shouldCache($page) && $cachehandler->exists(cache::genCacheName()))
 		{
 			$times = explode(',', config::get('cache_times'));
 			foreach ($times as $string)
@@ -106,19 +109,18 @@ class cache
 				// cache is extended in reinforced mode
 				$cachetime = $cachetime * 20;
 			}
-			if(file_exists($cachefile)) $timestamp = @filemtime($cachefile);
-			else $timestamp = 0;
-
+			$timestamp = time() - $cachehandler->age($cachefile);
+			
 			if(config::get('cache_update') == '*'
-				&& file_exists(KB_PAGECACHEDIR.'/killadded.mk')
-				&& $timestamp < @filemtime(KB_PAGECACHEDIR.'/killadded.mk'))
+				&& file_exists(KB_CACHEDIR.'/killadded.mk')
+				&& $timestamp < @filemtime(KB_CACHEDIR.'/killadded.mk'))
 					$timestamp = 0;
 			else
 			{
 				$cacheupdate = explode(',', config::get('cache_update'));
 				if (($page != '' && in_array($page, $cacheupdate))
-					&& file_exists(KB_PAGECACHEDIR.'/killadded.mk')
-					&& $timestamp < @filemtime(KB_PAGECACHEDIR.'/killadded.mk'))
+					&& file_exists(KB_CACHEDIR.'/killadded.mk')
+					&& $timestamp < @filemtime(KB_CACHEDIR.'/killadded.mk'))
 						$timestamp = 0;
 			}
 			if (time() - $cachetime < $timestamp)
@@ -145,7 +147,7 @@ class cache
 
 				if($usegz) ob_start("ob_gzhandler");
 				else ob_start();
-				@readgzfile($cachefile);
+				echo $cachehandler->get($cachefile);
 				ob_end_flush();
 				exit();
 			}
@@ -170,18 +172,22 @@ class cache
 				&& !ini_get('zlib.output_compression');
 			$cachefile = cache::genCacheName();
 
-			// Create directories if needed.
-			if (!file_exists(KB_PAGECACHEDIR.'/'.KB_SITE.'/'.cache::genCacheName(true)))
-			{
-				mkdir(KB_PAGECACHEDIR.'/'.KB_SITE.'/'.cache::genCacheName(true),0755, true);
-			}
-			// Use the minimum compression. The size difference is minor for our usage.
-			$fp = @gzopen($cachefile, 'wb1');
-
-			@gzwrite($fp, preg_replace('/profile -->.*<!-- \/profile/','profile -->Cached '.gmdate("d M Y H:i:s").'<!-- /profile',ob_get_contents()));
-			@gzclose($fp);
-			// Set the headers to match the new cache file.
-			$timestamp = @filemtime($cachefile);
+			if(DB_MEMCACHE) $cachehandler = new CacheHandlerHashedMem();
+			$cachehandler = new CacheHandlerHashed();
+			$cachehandler->put($cachefile, preg_replace('/profile -->.*<!-- \/profile/','profile -->Cached '.gmdate("d M Y H:i:s").'<!-- /profile',ob_get_contents()));
+//			// Create directories if needed.
+//			if (!file_exists(KB_PAGECACHEDIR.'/'.KB_SITE.'/'.cache::genCacheName(true)))
+//			{
+//				mkdir(KB_PAGECACHEDIR.'/'.KB_SITE.'/'.cache::genCacheName(true),0755, true);
+//			}
+//			// Use the minimum compression. The size difference is minor for our usage.
+//			$fp = @gzopen($cachefile, 'wb1');
+//
+//			@gzwrite($fp, preg_replace('/profile -->.*<!-- \/profile/','profile -->Cached '.gmdate("d M Y H:i:s").'<!-- /profile',ob_get_contents()));
+//			@gzclose($fp);
+//			// Set the headers to match the new cache file.
+//			$timestamp = @filemtime($cachefile);
+			$timestamp = time() - $cachehandler->age($cachefile);
 			$etag = md5($cachefile.$timestamp );
 			if($usegz && strpos($_SERVER['HTTP_ACCEPT_ENCODING'],"gzip") !== false)
 				$etag .= 'gz';
@@ -199,16 +205,17 @@ class cache
 	 *
 	 *  \return string of path and filename for the current page's cachefile.
 	*/
-	private static function genCacheName($subdir = false)
+	private static function genCacheName()
 	{
-		if(isset(self::$cacheName) && !$subdir) return self::$cacheName;
+		if(isset(self::$cacheName)) return self::$cacheName;
 
 		global $themename, $stylename;
 		$basename = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].IS_IGB.$themename.$stylename;
 		event::call('cacheNaming', $basename);
-		$filename = md5($basename).'.cache';
-		if($subdir) return substr($filename,0,2);
-		self::$cacheName = KB_PAGECACHEDIR.'/'.KB_SITE.'/'.substr($filename,0,2).'/'.$filename;
+//		$filename = md5($basename).'.cache';
+//		if($subdir) return substr($filename,0,2);
+//		self::$cacheName = substr($filename,0,2).'/'.$filename;
+		self::$cacheName = KB_SITE.$basename;
 		return self::$cacheName;
 	}
 	//! Remove the cache of the current page.
@@ -231,6 +238,6 @@ class cache
 		if(! config::get('cache_enabled') ) return;
 		if (!file_exists(KB_PAGECACHEDIR))
 			mkdir(KB_PAGECACHEDIR);
-		touch(KB_PAGECACHEDIR.'/killadded.mk');
+		touch(KB_CACHEDIR.'/killadded.mk');
 	}
 }
