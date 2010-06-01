@@ -27,7 +27,6 @@
 // Start timing the killboard page.
 $timeStarted = microtime(true);
 
-// many ppl had issues with pear and relative paths
 include_once('kbconfig.php');
 // If there is no config then redirect to the install folder.
 if(!defined('KB_SITE'))
@@ -42,10 +41,8 @@ if(!defined('KB_SITE'))
 	$html .= "</body></html>";
 	die($html);
 }
-require_once('common/includes/class.edkloader.php');
 require_once('common/includes/globals.php');
-require_once('common/includes/db.php');
-if(!empty($_POST)) require_once('common/includes/xajax.functions.php');
+if(isset($_GET['xajax'])) require_once('common/includes/xajax.functions.php');
 
 //edkloader::setRoot(getcwd());
 

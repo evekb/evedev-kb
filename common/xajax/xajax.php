@@ -10,6 +10,10 @@ event::register('page_assembleheader', 'edk_xajax::insertHTML');
 //event::register('page_assembleheader', 'edk_xajax::lateProcess');
 event::register('mods_initialised', 'edk_xajax::lateProcess');
 //event::register('page_initialisation', 'edk_xajax::lateProcess');
+$uri= $xajax->getRequestURI();
+if(strpos($uri, "?") === false) $uri .= "?xajax=1";
+else $uri .= "&xajax=1";
+$xajax->setRequestURI($uri);
 
 class edk_xajax
 {
