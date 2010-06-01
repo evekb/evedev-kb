@@ -34,6 +34,16 @@ class KillList
 	private $startDate_ = 0;
 	private $endDate_ = 0;
 	private $executed = false;
+	private $plimit_ = 0;
+	private $poffset_ = 0;
+	private $comb_plt_ = array();
+	private $comb_crp_ = array();
+	private $comb_all_ = array();
+	private $inv_plt_ = array();
+	private $inv_crp_ = array();
+	private $inv_all_ = array();
+	private $minkllid_ = 0;
+	private $maxkllid_ = 0;
 
 	function KillList()
 	{
@@ -90,7 +100,7 @@ class KillList
 				elseif($this->comb_crp_ )
 				{
 					$this->sqlinner_ .= "INNER JOIN kb3_inv_crp inc ON inc.inc_kll_id = kll.kll_id ";
-					$this->sqlinner_ .= $invop." WHERE inc.inc_crp_id IN (".
+					$this->sqlinner_ .= " WHERE inc.inc_crp_id IN (".
 						implode(',', $this->comb_crp_)." ) ";
 					if($startdate) $this->sqlinner_ .=" AND inc.inc_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
 					if($enddate) $this->sqlinner_ .=" AND inc.inc_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
@@ -98,7 +108,7 @@ class KillList
 				else
 				{
 					$this->sqlinner_ .= "INNER JOIN kb3_inv_all ina ON ina.ina_kll_id = kll.kll_id ";
-					$this->sqlinner_ .= $invop." WHERE ina.ina_all_id IN (".
+					$this->sqlinner_ .= " WHERE ina.ina_all_id IN (".
 						implode(',', $this->comb_all_)." ) ";
 					if($startdate) $this->sqlinner_ .=" AND ina.ina_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
 					if($enddate) $this->sqlinner_ .=" AND ina.ina_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
@@ -584,7 +594,7 @@ class KillList
 			if($this->involved_) $kill->setInvolvedPartyCount($row['inv']);
 			//Set the comment count if it is known
 			if($this->comments_) $kill->setCommentCount($row['comments']);
-			if ($this->_tag)
+			if (isset($this->_tag))
 			{
 				$kill->_tag = $this->_tag;
 			}
@@ -755,6 +765,7 @@ class KillList
 	//! \return string containing SQL date filter.
 	public function getDateFilter()
 	{
+		$sql = '';
 		$qstartdate = makeStartDate($this->weekno_, $this->yearno_, $this->monthno_, $this->startweekno_, $this->startDate_);
 		$qenddate = makeEndDate($this->weekno_, $this->yearno_, $this->monthno_, $this->endDate_);
 		if($this->inv_all_ || $this->inv_crp_ || $this->inv_plt_)

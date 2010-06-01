@@ -45,6 +45,7 @@ class KillListTable
 			$smarty->assign('comment_white', '_white');
 		}
 
+		$c = 0;
 		while ($kill = $this->kill_list_->getKill())
 		{
 			if ($this->limit_ && $c >= $this->limit_)
@@ -145,6 +146,8 @@ class KillListTable
 				if(ALLIANCE_ID && $kill->getVictimAllianceID() == ALLIANCE_ID) $kll['loss'] = true;
 				elseif(CORP_ID && $kill->getVictimCorpID() == CORP_ID) $kll['loss'] = true;
 				elseif(PILOT_ID && $kill->getVictimID() == PILOT_ID) $kll['loss'] = true;
+				else $kll['loss'] = false;
+				if($kll['loss']) $kll['kill'] = false;
 				else $kll['kill'] = true;
 			}
 			event::call('killlist_table_kill', $kll);
