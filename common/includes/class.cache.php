@@ -77,7 +77,7 @@ class cache
 		$usegz = config::get('cfg_compress')
 			&& !ini_get('zlib.output_compression');
 		$cachefile = cache::genCacheName();
-		if(DB_MEMCACHE) $cachehandler = new CacheHandlerHashedMem();
+		if(defined('DB_USE_MEMCACHE')) $cachehandler = new CacheHandlerHashedMem();
 		$cachehandler = new CacheHandlerHashed();
 
 		// If the cache doesn't exist then we don't need to check times.
@@ -172,7 +172,7 @@ class cache
 				&& !ini_get('zlib.output_compression');
 			$cachefile = cache::genCacheName();
 
-			if(DB_MEMCACHE) $cachehandler = new CacheHandlerHashedMem();
+			if(DB_USE_MEMCACHE) $cachehandler = new CacheHandlerHashedMem();
 			$cachehandler = new CacheHandlerHashed();
 			$cachehandler->put($cachefile, preg_replace('/profile -->.*<!-- \/profile/','profile -->Cached '.gmdate("d M Y H:i:s").'<!-- /profile',ob_get_contents()));
 //			// Create directories if needed.
