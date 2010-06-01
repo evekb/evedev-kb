@@ -46,7 +46,6 @@ require_once('common/includes/class.edkloader.php');
 require_once('common/includes/globals.php');
 require_once('common/includes/db.php');
 if(!empty($_POST)) require_once('common/includes/xajax.functions.php');
-edkloader::register('Smarty', 'common/smarty/Smarty.class.php');
 
 //edkloader::setRoot(getcwd());
 
