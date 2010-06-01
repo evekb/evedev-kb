@@ -27,7 +27,7 @@ class options
 	// field = generic, subfield = look and feel, name = banner, type = select
 	public static function add($field, $subfield, $set, $description, $name, $type, $buildcallback = '', $onchange = '', $hint = '')
 	{
-		self::$data[$field][$subfield][$set][$name] = array('descr' => $description, 'name' => $name, 'type' => $type,
+		self::$data[$field][$subfield][$set][] = array('descr' => $description, 'name' => $name, 'type' => $type,
 			'callback' => $buildcallback,
 			'onchange' => $onchange, 'hint' => $hint);
 	}
@@ -37,7 +37,7 @@ class options
 	{
 		global $options_faddcat;
 
-		self::$data[$options_faddcat[0]][$options_faddcat[1]][$options_faddcat[2]][$name] = array('descr' => $description, 'name' => $name, 'type' => $type,
+		self::$data[$options_faddcat[0]][$options_faddcat[1]][$options_faddcat[2]][] = array('descr' => $description, 'name' => $name, 'type' => $type,
 			'callback' => $buildcallback,
 			'onchange' => $onchange, 'hint' => $hint);
 	}
@@ -187,11 +187,11 @@ class options
 		{
 			$smarty->assignByRef('opt', $element);
 
-			if (!$options['size'])
+			if (!(isset($options['size']) && $options['size']))
 			{
 				$options['size'] = 20;
 			}
-			if (!$options['maxlength'])
+			if (!(isset($options['maxlength']) && $options['maxlength']))
 			{
 				$options['maxlength'] = 80;
 			}
@@ -203,11 +203,11 @@ class options
 		{
 			$smarty->assignByRef('opt', $element);
 
-			if (!$options['size'])
+			if (!(isset($options['size']) && $options['size']))
 			{
 				$options['size'] = 20;
 			}
-			if (!$options['maxlength'])
+			if (!(isset($options['maxlength']) && $options['maxlength']))
 			{
 				$options['maxlength'] = 80;
 			}
@@ -219,11 +219,11 @@ class options
 		{
 			$smarty->assignByRef('opt', $element);
 
-			if (!$options['cols'])
+			if (!(isset($options['cols']) && !$options['cols']))
 			{
 				$options['cols'] = 70;
 			}
-			if (!$options['rows'])
+			if (!(isset($options['rows']) && $options['rows']))
 			{
 				$options['rows'] = 24;
 			}
