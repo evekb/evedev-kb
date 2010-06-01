@@ -7,6 +7,11 @@
 
 // cached query class will be loaded additionally once we received the config
 // see common/index.php for details
+if(!defined('DB_HOST'))
+{
+	trigger_error("Database has not been configured.", E_USER_ERROR);
+	die("Database has not been configured. Exiting.");
+}
 
 $value = (float) mysqli_get_server_info(DBConnection::id());
 
@@ -26,6 +31,7 @@ if(defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE == true)
 		die("ERROR: Unable to connect to memcached server, disabling
 			memcached. Please check your settings (server, port) and make
 			sure the memcached server is running");
+	else if(method_exists(Memcache, 'setCompressThreshold')) $mc->setCompressThreshold(10000, 0.2);
 }
 // If DB_USE_QCACHE is defined then it needs no further setup.
 else if(defined('DB_USE_QCACHE')) define('DB_USE_MEMCACHE', false);
@@ -54,6 +60,7 @@ else
 				define("DB_USE_MEMCACHE", false);
 			}
 			else define("DB_USE_MEMCACHE", true);
+			if(method_exists(Memcache, 'setCompressThreshold')) $mc->setCompressThreshold(20000, 0.2);
 		}
 	} else
 	{
