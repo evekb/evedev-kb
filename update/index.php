@@ -58,9 +58,9 @@ if (!session::isAdmin())
 	}
 }
 
-if(phpversion() < 5)
+if(phpversion() < "5.1.2")
 {
-	$smarty->assign('content', "PHP version 5.0 or higher is required. You have version ".phpversion());
+	$smarty->assign('content', "PHP version 5.1.2 or higher is required. You have version ".phpversion());
 	$smarty->display('update.tpl');
 	die;
 }
