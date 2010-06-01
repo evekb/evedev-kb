@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kb3>
   <name>kb3_corps</name>
-  <rows>8258</rows>
+  <rows>0</rows>
   <structure>CREATE TABLE `kb3_corps` (
   `crp_id` int(11) NOT NULL auto_increment,
   `crp_name` char(64) NOT NULL default &#039;&#039;,

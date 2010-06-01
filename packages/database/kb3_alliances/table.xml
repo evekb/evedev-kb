@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kb3>
   <name>kb3_alliances</name>
-  <rows>377</rows>
+  <rows>0</rows>
   <structure>CREATE TABLE `kb3_alliances` (
   `all_id` int(11) NOT NULL auto_increment,
   `all_name` char(64) NOT NULL default &#039;&#039;,

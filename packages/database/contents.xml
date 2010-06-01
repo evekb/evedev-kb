@@ -101,6 +101,10 @@
     <version>1.1</version>
   </table>
   <table>
+    <name>kb3_mails</name>
+    <version>1.1</version>
+  </table>
+  <table>
     <name>kb3_navigation</name>
     <version>1.1</version>
   </table>

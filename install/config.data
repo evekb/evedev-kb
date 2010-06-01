@@ -60,3 +60,5 @@ cfg_qcache	0
 DBUpdate	013
 cache_update	*
 cache_time	10
+upd_codeVersion	3.0.8
+upd_dbVersion	1.0.3

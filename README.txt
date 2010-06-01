@@ -1,8 +1,11 @@
 -------------------------------------------
-Eve Development Network Killboard v3.0.7
+Eve Development Network Killboard v3.0.8
 -------------------------------------------
 
 VERSION HISTORY
+v3.0.8
+Final Tyrnanis content added to installer.
+-------------------------------------------
 v3.0.7
 Auto db-updater works again
 -------------------------------------------
