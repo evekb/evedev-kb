@@ -1,0 +1,3 @@
+Options -Indexes
+deny from all
+ErrorDocument 403 "Go away"
