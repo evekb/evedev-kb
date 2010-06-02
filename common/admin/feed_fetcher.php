@@ -58,6 +58,7 @@ class Fetcher
 	{
 		global $feedversion;
 		//                $this->trackurl_ = $trackurl;
+		$this->html = '';
 		$this->trackfriend_ = $trackfriend;
 		$this->trackkey_ = $trackkey;
 		$this->killsAdded = 0;
