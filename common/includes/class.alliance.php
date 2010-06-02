@@ -155,7 +155,7 @@ class Alliance
 	function getFactionID()
 	{
 		if(!$this->isFaction()) return 0;
-		return getExternalID();
+		return $this->getExternalID();
 	}
 	//! Return the URL for the alliance's portrait.
 
