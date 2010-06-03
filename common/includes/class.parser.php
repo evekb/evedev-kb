@@ -104,23 +104,33 @@ class Parser
 	{
 		$qry = DBFactory::getDBQuery();
 
+		// Check hashes with a prepared query.
+		// Make it static so we can reuse the same query for feed fetches.
+		static $timestamp;
+		static $checkHash;
+		static $hash;
+		static $trust;
+		static $kill_id;
 		$timestamp = substr($this->killmail_, 0, 16);
 		$timestamp = str_replace('.', '-', $timestamp);
 
 		// Check hashes.
-		$this->hash = self::hashMail($this->killmail_);
-		$quality = 0;
-		$kill_id = 0;
-		$qryP = new DBPreparedQuery();
-		$qryP->prepare('SELECT kll_id, kll_trust FROM kb3_mails WHERE kll_timestamp = ? AND kll_hash = ?');
-		$arr = array(&$kill_id, &$quality);
-		$qryP->bind_results($arr);
-		$qryP->bind_param('ss', $timestamp, $this->hash);
-		$qryP->execute();
-
-		if($qryP->recordCount())
+		$hash = self::hashMail($this->killmail_);
+		if(!isset($checkHash))
 		{
-			$qryP->fetch();
+			$checkHash = new DBPreparedQuery();
+			$checkHash->prepare('SELECT kll_id, kll_trust FROM kb3_mails WHERE kll_timestamp = ? AND kll_hash = ?');
+			$arr = array(&$kill_id, &$trust);
+			$checkHash->bind_results($arr);
+			$types = 'ss';
+			$arr2 = array(&$types, &$timestamp, &$hash);
+			$checkHash->bind_params($arr2);
+		}
+		$checkHash->execute();
+
+		if($checkHash->recordCount())
+		{
+			$checkHash->fetch();
 			$this->dupeid_ = $kill_id;
 			// We still want to update the external ID if we were given one.
 			if($this->externalID)
@@ -130,11 +140,11 @@ class Parser
 				$qry->execute("UPDATE kb3_mails SET kll_external_id = ".
 					$this->externalID." WHERE kll_id = ".$this->dupeid_);
 
-				if($quality >= 0 && $this->trust && $quality > $this->trust)
+				if($trust >= 0 && $this->trust && $trust > $this->trust)
 					$qry->execute("UPDATE kb3_mails SET kll_trust = ".$this->trust);
 			}
 
-			if($quality < 0) return -4;
+			if($trust < 0) return -4;
 			return -1;
 		}
 		// Check external IDs
@@ -149,6 +159,7 @@ class Parser
 				return -1;
 			}
 		}
+		$this->hash = $hash;
 
 		//trim out any multiple spaces that may exist -
 		//$this->killmail_ = preg_replace('/ +/', ' ', $this->killmail_);
