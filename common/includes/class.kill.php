@@ -13,6 +13,7 @@ class Kill
 	public $involvedparties_ = array();
 	public $destroyeditems_ = array();
 	public $droppeditems_ = array();
+	public $VictimDamageTaken = 0;
 	private $fullinvolved_ = false;
 	private $timestamp_ = false;
 	private $victim_ = null;
@@ -94,6 +95,12 @@ class Kill
 	{
 		$this->execQuery();
 		return $this->victim_;
+	}
+	//! Return the amount of damage taken by the victim.
+	function getDamageTaken()
+	{
+		$this->execQuery();
+		return $this->VictimDamageTaken;
 	}
 
 	function getVictimName()
@@ -618,8 +625,8 @@ class Kill
 						$corp,
 						$alliance,
 						$ship,
-						$weapon);
-					$involved->dmgdone_ = $row['ind_dmgdone'];
+						$weapon,
+						$row['ind_dmgdone']);
 					array_push($this->involvedparties_, $involved);
 				}
 			}
@@ -639,8 +646,8 @@ class Kill
 						$row['ind_all_id'],
 						$row['ind_sec_status'],
 						new Ship($row['ind_shp_id']),
-						new Item($row['ind_wep_id']));
-					$involved->dmgdone_ = $row['ind_dmgdone'];
+						new Item($row['ind_wep_id']),
+						$row['ind_dmgdone']);
 					array_push($this->involvedparties_, $involved);
 				}
 			}
@@ -1328,9 +1335,13 @@ class Kill
 	{
 		$this->hash = $hash;
 	}
-	function getHash()
+	function getHash($hex = false)
 	{
-		if($this->hash !== false) return $this->hash;
+		if($this->hash !== false)
+		{
+			if($hex) return bin2hex($this->hash);
+			else return $this->hash;
+		}
 		$qry = DBFactory::getDBQuery();
 		// Get the mail and trust as well since we're fetching the row anyway.
 		$qry->execute("SELECT kll_hash, kll_trust FROM kb3_mails WHERE kll_id = ".$this->id_);
@@ -1349,8 +1360,8 @@ class Kill
 			{
 				$sql = "INSERT INTO kb3_mails (  `kll_id`, `kll_timestamp`, ".
 					"`kll_external_id`, `kll_hash`, `kll_trust`)".
-					"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ";
-					$this->externalid_.", '".$qry->escape($hash)."', ".
+					"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ".
+					$this->externalid_.", '".$qry->escape($this->hash)."', ".
 					$this->trust.")";
 			}
 			else
@@ -1358,12 +1369,13 @@ class Kill
 				$sql = "INSERT INTO kb3_mails (  `kll_id`, `kll_timestamp`, ".
 					"`kll_hash`, `kll_trust`)".
 					"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ".
-					"'".$qry->escape($hash)."', ".
+					"'".$qry->escape($this->hash)."', ".
 					$this->trust.")";
 			}
 			$qry->execute($sql);
-
 		}
+		if($hex) return bin2hex($this->hash);
+		else return $this->hash;
 	}
 	function setRawMail($mail)
 	{
@@ -1384,7 +1396,15 @@ class Kill
 
 class InvolvedParty
 {
-	function InvolvedParty($pilotid, $corpid, $allianceid, $secstatus, $ship, $weapon)
+	protected $pilotid_;
+	protected $corpid_;
+	protected $allianceid_;
+	protected $secstatus_;
+	protected $ship_;
+	protected $weapon_;
+	public $dmgdone_;
+
+	function InvolvedParty($pilotid, $corpid, $allianceid, $secstatus, $ship, $weapon, $dmgdone)
 	{
 		$this->pilotid_ = $pilotid;
 		$this->corpid_ = $corpid;
@@ -1392,6 +1412,7 @@ class InvolvedParty
 		$this->secstatus_ = $secstatus;
 		$this->ship_ = $ship;
 		$this->weapon_ = $weapon;
+		$this->dmgdone_ = $dmgdone;
 	}
 
 	function getPilotID()
@@ -1422,6 +1443,11 @@ class InvolvedParty
 	function getWeapon()
 	{
 		return $this->weapon_;
+	}
+
+	function getDamageDone()
+	{
+		return $this->dmgdone_;
 	}
 }
 
@@ -1568,7 +1594,11 @@ class DroppedItem extends DestroyedItem
 
 class DetailedInv extends InvolvedParty
 {
-	function DetailedInv($pilot, $secstatus, $corp, $alliance, $ship, $weapon)
+	private $pilot_;
+	private $corp_;
+	private $alliance_;
+	
+	function DetailedInv($pilot, $secstatus, $corp, $alliance, $ship, $weapon, $dmgdone)
 	{
 		$this->pilot_ = $pilot;
 		$this->secstatus_ = $secstatus;
@@ -1576,6 +1606,7 @@ class DetailedInv extends InvolvedParty
 		$this->alliance_ = $alliance;
 		$this->ship_ = $ship;
 		$this->weapon_ = $weapon;
+		$this->dmgdone_ = $dmgdone;
 	}
 
 	function getPilot()
