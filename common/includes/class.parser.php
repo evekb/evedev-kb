@@ -21,6 +21,7 @@ class Parser
 	private $dupeid_ = 0;
 	private $hash = null;
 	private $trust = 0;
+	private static $loadExternals = true;
 
 	function uchr ($codes)
 	{ //converts characterset code-pages to ascii-compatible types
@@ -32,11 +33,14 @@ class Parser
 
 	function Parser($killmail, $externalID = null, $loadExternals = true)
 	{
+		self::$loadExternals = $loadExternals;
 		if( phpversion() >= '5.0.0' )
 		{ //lousy but necessary
 			$canUnicode = true; //if this is unset, Russian will not parse, but English will atleast.
 		}
 		$this->killmail_ = trim(str_replace("\r", '', $killmail));
+
+		// Check the supplied external id is valid.
 		if(!is_null($externalID))$this->externalID = intval($externalID);
 		else $this->externalID = 0;
 
@@ -718,6 +722,10 @@ class Parser
 		$kill->setHash($this->hash);
 		$kill->setTrust($this->trust);
 		$id = $kill->add();
+		//unset hash and trust to be sure they aren't reused.
+		$this->hash = '';
+		$this->trust = 0;
+
 		if ($id == -1)
 		{
 			$this->dupeid_ = $kill->getDupe(true);
@@ -878,7 +886,7 @@ class Parser
 		if(isset(self::$corps[$corpname]))
 		{
 			if(!is_null($timestamp) && self::$corps[$corpname]->isUpdatable($timestamp))
-				self::$corps[$corpname]->add($corpname, $alliance, $timestamp, 0, $loadExternals);
+				self::$corps[$corpname]->add($corpname, $alliance, $timestamp, 0, self::$loadExternals);
 			$corp = self::$corps[$corpname];
 		}
 		else
@@ -887,7 +895,7 @@ class Parser
 			if($alliance == null) $corp->lookup($corpname);
 			else
 			{
-				$corp->add($corpname, $alliance, $timestamp, 0, $loadExternals);
+				$corp->add($corpname, $alliance, $timestamp, 0, self::$loadExternals);
 				self::$corps[$corpname] = $corp;
 			}
 		}
@@ -902,13 +910,13 @@ class Parser
 		if(isset(self::$pilots[$pilotname]))
 		{
 			if(self::$pilots[$pilotname]->isUpdatable($timestamp))
-				self::$pilots[$pilotname]->add($pilotname, $corp, $timestamp, 0, $loadExternals);
+				self::$pilots[$pilotname]->add($pilotname, $corp, $timestamp, 0, self::$loadExternals);
 			$pilot = self::$pilots[$pilotname];
 		}
 		else
 		{
 			$pilot = new Pilot();
-			$pilot->add($pilotname, $corp, $timestamp, 0, $loadExternals);
+			$pilot->add($pilotname, $corp, $timestamp, 0, self::$loadExternals);
 			self::$pilots[$pilotname] = $pilot;
 		}
 		return $pilot;
