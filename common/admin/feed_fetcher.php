@@ -6,14 +6,14 @@
 */
 
 /*
- * EDK Feed Syndication v1.8
+ * EDK Feed Syndication v1.9
  * based on liq's feed syndication mod v1.5
  *
 */
 
 @set_time_limit(0);
 @ini_set('memory_limit',999999999);
-$feedversion = "v1.8";
+$feedversion = "v1.9";
 
 //! EDK Feed Syndication fetcher class.
 
@@ -248,6 +248,8 @@ class Fetcher
 			if ( $this->description !="")
 			{
 				$this->description = trim(str_replace("\r", '', $this->description));
+				$this->hash = trim($this->hash);
+				$this->time = trim($this->time);
 				$year = substr($this->description, 0, 4);
 				$month = substr($this->description, 5, 2);
 				$day = substr($this->description, 8, 2);
@@ -295,9 +297,10 @@ class Fetcher
 					elseif($this->hash != '' && !$this->apikills)
 					{
 						$qry = DBFactory::getDBQuery();
-						$qry->execute("SELECT kll_trust FROM kb3_mails WHERE kll_timestamp = '".
+						$sql = "SELECT kll_trust FROM kb3_mails WHERE kll_timestamp = '".
 							$qry->escape($this->time)."' AND kll_hash = 0x".
-							$qry->escape($this->hash)."");
+							$qry->escape($this->hash);
+						$qry->execute($sql);
 						if(!$qry->recordCount())
 						{
 							$parser = new Parser( $this->description );
@@ -387,12 +390,16 @@ class Fetcher
 					break;
 				case "APIID":
 					$this->apiID .= $data;
+					break;
 				case "TIME":
 					$this->time .= $data;
+					break;
 				case "HASH":
 					$this->hash .= $data;
+					break;
 				case "TRUST":
 					$this->trust .= $data;
+					break;
 			}
 		}
 		elseif($this->tag=="FINALKILL")

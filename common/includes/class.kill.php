@@ -1404,7 +1404,7 @@ class InvolvedParty
 	protected $weapon_;
 	public $dmgdone_;
 
-	function InvolvedParty($pilotid, $corpid, $allianceid, $secstatus, $ship, $weapon, $dmgdone)
+	function InvolvedParty($pilotid, $corpid, $allianceid, $secstatus, $ship, $weapon, $dmgdone = 0)
 	{
 		$this->pilotid_ = $pilotid;
 		$this->corpid_ = $corpid;
@@ -1598,7 +1598,7 @@ class DetailedInv extends InvolvedParty
 	private $corp_;
 	private $alliance_;
 	
-	function DetailedInv($pilot, $secstatus, $corp, $alliance, $ship, $weapon, $dmgdone)
+	function DetailedInv($pilot, $secstatus, $corp, $alliance, $ship, $weapon, $dmgdone = 0)
 	{
 		$this->pilot_ = $pilot;
 		$this->secstatus_ = $secstatus;

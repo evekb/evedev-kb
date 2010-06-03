@@ -24,7 +24,7 @@ $page->setCachable(false);
 $page->setAdmin();
 $validurl = "/^(http|https):\/\/([A-Za-z0-9_]+(:[A-Za-z0-9_]+)?@)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*((:[0-9]{1,5})?\/.*)?$/i";
 $html .= "<script language=\"JavaScript\">function checkAll(checkname, exby) {for (i = 0; i < checkname.length; i++)checkname[i].checked = exby.checked? true:false}</script>";
-$html .= "<table class=kb-subtable>";
+$html .= "<table class='kb-subtable'>";
 
 if (config::get('fetch_feed_count'))
     $feedcount = config::get('fetch_feed_count');
@@ -42,37 +42,32 @@ if ($_POST['submit'] || $_POST['fetch'])
         }
         config::set('fetch_feed_count', $feedcount);
     }
-    if ($_POST['fetch_verbose'])
-        config::set('fetch_verbose', '1');
-    else
-        config::set('fetch_verbose', '0');
-
-    if ($_POST['fetch_compress'])
-        config::set('fetch_compress', '0');
-    else
-        config::set('fetch_compress', '1');
+        config::del('fetch_verbose');
+        config::del('fetch_compress');
 
     if ($_POST['fetch_comment'])
         config::set('fetch_comment', $_POST['fetch_comment']);
     else
         config::set('fetch_comment', '');
-
+	
     for ($i = 1; $i <= $feedcount; $i++)
     {
         $url = "fetch_url_" . $i;
         if (preg_match($validurl , $_POST[$url]))
         {
-            if ($_POST['friend'] && in_array ($i, $_POST['friend']))
-                $friends = "on";
-            else $friends = "";
+            if ($_POST['trusted'] && in_array ($i, $_POST['trusted']))
+			$trusted = "on";
+            else $trusted = "";
             if ($_POST['apikills'] && in_array ($i, $_POST['apikills']))
                 $apikills = "on";
             else $apikills = "";
             $fstr = config::get('fetch_url_' . $i);
             $ftmp = explode(':::', $fstr);
-            // reset the feed lastkill details if the URL, friends or api status has changed
-            if($_POST[$url] != $ftmp[0] || $friends != $ftmp[2] || $apikills != $ftmp[3] )
-                config::set($url, $_POST[$url] . ':::' . 0 . ':::' . $friends . ':::' . $apikills);
+            // reset the feed lastkill details if the URL or api status has changed
+            if($_POST[$url] != $ftmp[0] )
+                config::set($url, $_POST[$url] . ':::' . 0 . ':::' . 0 . ':::' . $apikills . ':::' . $trusted);
+            elseif($trusted != $ftmp[4] || $apikills != $ftmp[3] )
+                config::set($url, $_POST[$url] . ':::' . $ftmp[1] . ':::' . $ftmp[1] . ':::' . $apikills . ':::' . $trusted);
         }
         else
             config::set($url, '');
@@ -81,6 +76,8 @@ if ($_POST['submit'] || $_POST['fetch'])
 }
 $feed = array();
 $feedlast = array();
+$trusted = array();
+$apikills = array();
 for ($i = 1; $i <= $feedcount; $i++)
 {
     $str = config::get('fetch_url_' . $i);
@@ -91,6 +88,9 @@ for ($i = 1; $i <= $feedcount; $i++)
         $friend[$i] = $tmp[2];
 	if ($tmp[3] == "on")
         $apikills[$i] = $tmp[3];
+	if ($tmp[4] == "on")
+        $trusted[$i] = 1;
+	else $trusted[$i] = false;
 }
 // building the request query and fetching of the feeds
 if ($_POST['fetch'])
@@ -122,12 +122,8 @@ if ($_POST['fetch'])
              if ($feedlast[$i])
              $str .= '&lastkllid='.$feedlast[$i];
  */
-            if ($friend[$i])
-                $str .= '&friend=1';
             if ($apikills[$i])
                 $str .= '&apikills=1';
-            if ($_POST['fetch_losses'])
-                $str .= "&losses=1";
             if ($_POST['range1'] && $_POST['range2'])
             {
                 if ($_POST['range1'] > $_POST['range2'])
@@ -142,12 +138,23 @@ if ($_POST['fetch'])
                 }
                 for ($l = $range1; $l <= $range2; $l++)
                 {
-                    $html .= "<b>Week: " . $l . "</b><br>";
-                    $html .= $feedfetch->grab($feed[$i] . "&year=" . $_POST['year'] . "&week=" . $l, $myid . $str, $friend[$i], $cfg);
+                    $html .= "<b>Week: " . $l . " losses</b><br>";
+                // Fetch for current and previous weeks, both kills and losses
+                    $html .= $feedfetch->grab($feed[$i] . "&year=" . $_POST['year'] . "&week=" . $l, $myid . $str, $trusted[$i], $cfg). "\n";
+                    if(intval($feedfetch->lastkllid_)) $feedlast[$i] = intval($feedfetch->lastkllid_);
+                    $html .= "<b>Week: " . $l . " kills</b><br>";
+                    $html .= $feedfetch->grab($feed[$i] . "&year=" . $_POST['year'] . "&week=" . $l, $myid . $str . "&losses=1", $trusted[$i], $cfg) . "\n";
+                    if(intval($feedfetch->lastkllid_ )) $feedlast[$i] = intval($feedfetch->lastkllid_);
+                // Store most recent kill id fetched
+                if($feedlast[$i]) config::set("fetch_url_" . $i, $feed[$i] . ':::' . $feedlast[$i] . ':::' . $friend[$i]);
                 }
             }
             else
+			{
+
                 $html .= $feedfetch->grab($feed[$i], $myid . $str);
+                $html .= $feedfetch->grab($feed[$i], $myid . $str .  "&losses=1");
+			}
         }
         // If kills are fetched then change the last kill id for the feed
         if(intval($feedfetch->lastkllid_))
@@ -161,45 +168,38 @@ if ($_POST['fetch'])
 $html .= '<form id="options" name="options" method="post" action="?a=admin_feedsyndication">';
 $html .= "</table>";
 
-$html .= "<div class=block-header2>Feeds</div><table>";
+$html .= "<div class='block-header2'>Feeds</div><table>";
 for ($i = 1; $i <= $feedcount; $i++)
 {
-    $html .= "<tr><td width=85px><b>Feed url #" . $i . "</b></td><td><input type=text name=fetch_url_" . $i . " size=50 class=password value=\"";
+    $html .= "<tr><td width='85px'><b>Feed url #" . $i . "</b></td><td><input type='text' name=fetch_url_" . $i . " size=50 class=password value=\"";
     if ($feed[$i])
         $html .= $feed[$i];
     $html .= "\"></td>";
 
-    $html .= "<td><input type=checkbox name=friend[] id=friend value=" . $i;
-    if ($friend[$i])
+    $html .= "<td><input type='checkbox' name=trusted[] id=trusted value=" . $i;
+    if ($trusted[$i])
         $html .= " checked=\"checked\"";
-    $html .= "><b>Friend?</b></td>";
-/* Make automatic for admin feeds
-    $html .= "<td><input type=checkbox name=newkills[] id=newkills value=" . $i;
-    if ($feed[$i])
-        $html .= " checked=\"checked\"";
-    $html .= "><b>New kills only?</b><br>";
-*/
-    $html .= "<td><input type=checkbox name=apikills[] id=apikills value=" . $i;
+    $html .= "><b>Trusted?</b></td>";
+    $html .= "<td><input type='checkbox' name=apikills[] id=apikills value=" . $i;
     if ($apikills[$i])
         $html .= " checked=\"checked\"";
     $html .= "><b>API verified only?</b><br>";
 
-    $html .= "<td><input type=checkbox name=fetch_feed[] id=fetch value=" . $i;
+    $html .= "<td><input type='checkbox' name=fetch_feed[] id=fetch value=" . $i;
     if ($feed[$i])
         $html .= " checked=\"checked\"";
     $html .= "><b>Fetch?</b><br>";
 
-    $html .= "<input type=hidden name=fetch_time_" . $i . " value=\"";
+    $html .= "<input type='hidden' name=fetch_time_" . $i . " value=\"";
     if($feedlast[$i]) $html .= $feedlast[$i];
     $html .= "\"></td>";
     $html .= "</td></tr>";
 }
-$html .= '<tr><td colspan=2><i>Example: http://killboard.eve-d2.com/?a=feed</i></td><td>';
-$html .= '<input type="checkbox" name="all" onclick="checkAll(this.form.friend,this)"><i>all/none</i></td><td>';
-$html .= '<input type="checkbox" name="all" onclick="checkAll(this.form.fetch,this)"><i>all/none</i>';
+$html .= "<tr><td colspan='2'><i>Example: http://killboard.eve-d2.com/?a=feed</i></td><td>";
+$html .= "</td><td></td><td><input type='checkbox' name='all' onclick='checkAll(this.form.fetch,this)'><i>all/none</i>";
 $html .= "</td></tr><br></table><br><br><br>";
 
-$html .= "<table><tr><td height=20px width=150px><b>First week:</b></td>";
+$html .= "<table><tr><td height='20px' width='150px'><b>First week:</b></td>";
 $html .= '<td><select name="range1">';
 $now = gmdate("W");
 for ($i = 1; $i <= 53; $i++)
@@ -211,7 +211,7 @@ for ($i = 1; $i <= 53; $i++)
 }
 $html .= '</select>';
 $html .= "<i></i></td></tr>";
-$html .= "<tr><td height=20px width=150px><b>Last week:</b></td>";
+$html .= "<tr><td height='20px' width='150px'><b>Last week:</b></td>";
 $html .= '<td><select name="range2">';
 for ($i = 1; $i <= 53; $i++)
 {
@@ -223,7 +223,7 @@ for ($i = 1; $i <= 53; $i++)
 $html .= '</select>';
 $html .= "<i></i></td></tr>";
 
-$html .= "<tr><td height=20px width=150px><b>Year:</b></td>";
+$html .= "<tr><td height='20px' width='150px'><b>Year:</b></td>";
 $html .= '<td><select name="year">';
 for($dateit = 2005; $dateit <= gmdate('Y'); $dateit++)
 {
@@ -233,27 +233,19 @@ for($dateit = 2005; $dateit <= gmdate('Y'); $dateit++)
 }
 $html .= '</select>';
 $html .= "</td></tr>";
-$html .= "<tr><td height=40px width=150px><b>Get kills instead of losses?</b></td>";
-$html .= "<td><input type=checkbox name=fetch_losses id=fetch_losses>";
-$html .= "<i> (by default only their kills, your losses, get fetched, when ticked this is inversed)</i></td></tr>";
 $html .= "</table><br><br>";
-$html .= "<input type=submit id=submit name=fetch value=\"Fetch!\"><br><br>";
+$html .= "<input type='submit' id='submit' name='fetch' value=\"Fetch!\"><br><br>";
 
-$html .= "<div class=block-header2>Options</div><table>";
-$html .= "<tr><td height=30px width=150px><b>Number of feeds:</b></td>";
-$html .= "<td><input type=text name=fetch_feed_count size=2 maxlength=2 class=password value=\"" . $feedcount . "\"></td></tr>";
-$html .= "<tr><td height=50px width=150px><b>Comment for automatically parsed killmails?</b></td>";
-$html .= "<td><input type=text size=50 class=password name=fetch_comment id=fetch_comment value=\"";
+$html .= "<div class='block-header2'>Options</div><table>";
+$html .= "<tr><td height='30px' width='150px'><b>Number of feeds:</b></td>";
+$html .= "<td><input type='text' name='fetch_feed_count' size='2' maxlength='2' class='password' value='" . $feedcount . "'></td></tr>";
+$html .= "<tr><td height='50px' width='150px'><b>Comment for automatically parsed killmails?</b></td>";
+$html .= "<td><input type='text' size='50' class='password' name='fetch_comment' id='fetch_comment' value=\"";
 if (config::get('fetch_comment'))
     $html .= config::get('fetch_comment');
 $html .= "\"><br><i> (leave blank for none)</i><br></td></tr>";
-$html .= "<tr><td height=30px width=150px><b>Verbose mode?</b></td>";
-$html .= "<td><input type=checkbox name=fetch_verbose id=fetch_verbose";
-if (config::get('fetch_verbose'))
-    $html .= " checked=\"checked\"";
-$html .= "><i> (displays advanced feed request information and errormessages when the imported mail is rejected for being malformed, already exists or is not related to your corp or alliance)</i></td>";
-$html .= "</tr></table><br><br>";
-$html .= "<input type=submit id=submit name=submit value=\"Save\">";
+$html .= "</table><br><br>";
+$html .= "<input type='submit' id='submit' name='submit' value=\"Save\">";
 $html .= "</form>";
 
 $page->addContext($menubox->generate());
