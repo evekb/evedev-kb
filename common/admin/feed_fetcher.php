@@ -3,13 +3,13 @@
  * $Date$
  * $Revision$
  * $HeadURL$
- */
+*/
 
 /*
- * EDK Feed Syndication v1.7
+ * EDK Feed Syndication v1.8
  * based on liq's feed syndication mod v1.5
  *
- */
+*/
 
 @set_time_limit(0);
 @ini_set('memory_limit',999999999);
@@ -19,31 +19,31 @@ $feedversion = "v1.8";
 
 /*! This class is used to fetch the feed from another EDK board. It adds all
  * fetched kills to the board and returns the id of the highest kill fetched.
- */
+*/
 class Fetcher
 {
+	public $lastkllid_ = 0;
+	public $finalkllid_ = 0;
+	//private $trackurl_ = '';
+	private $accepttrust = '';
+	private $trackkey_ = '';
+	private $tracklast_ = 0;
+	public $combined_ = false;
+	private $insideitem = false;
+	private $tag = "";
+	private $title = "";
+	private $description = "";
+	private $link = "";
+	private $killsAdded=0;
+	private $killsSkipped=0;
+	private $hash = "";
+	private $time = "";
+	private $trust = "";
 //! Construct the Fetcher class and initialise variables.
 	function Fetcher()
 	{
-		$this->lastkllid_ = 0;
-		$this->finalkllid_ = 0;
-		//                $this->trackurl_ = '';
-		$this->trackfriend_ = '';
-		$this->trackkey_ = '';
-		$this->tracklast_ = 0;
-		$this->combined_ = false;
-		$this->insideitem = false;
-		$this->tag = "";
-		$this->title = "";
-		$this->description = "";
-		$this->link = "";
-		$this->killsAdded=0;
-		$this->killsSkipped=0;
-		$this->hash = "";
-		$this->time = "";
-		$this->trust = "";
 	}
-	//! Fetch a new feed.
+//! Fetch a new feed.
 
 	/*! Use the input parameters to fetch a feed, parse it and add new kills
 	 * to the db.
@@ -54,13 +54,14 @@ class Fetcher
 	 * \param $trackkey The configuration key to use when storing feed in
 	 * the db.
 	 * \return HTML output summarising the results of the fetch.
-	 */
+	*/
 
-	function grab($url, $str, $trackfriend = '', $trackkey = '')
+	function grab($url, $str, $accepttrust = '', $trackkey = '')
 	{
 		global $feedversion;
-		//                $this->trackurl_ = $trackurl;
-		$this->trackfriend_ = $trackfriend;
+//                $this->trackurl_ = $trackurl;
+		$this->html = '';
+		$this->accepttrust = $accepttrust;
 		$this->trackkey_ = $trackkey;
 		$this->killsAdded = 0;
 		$this->killsSkipped = 0;
@@ -70,7 +71,7 @@ class Fetcher
 		if(!strpos($fetchurl,'?')) $fetchurl =
 				substr_replace($fetchurl,'?', strpos($fetchurl,'&'),0);
 		$this->uurl = $url;
-		// only lists fetched with lastkllid are ordered by id.
+// only lists fetched with lastkllid are ordered by id.
 		if(strpos($fetchurl, 'lastkllid')) $this->idordered = true;
 		else $this->idordered = false;
 		$this->feedfilename = KB_CACHEDIR.'/data/feed'.md5($this->uurl).'.xml';
@@ -81,7 +82,7 @@ class Fetcher
 
 		if(file_exists($this->feedfilename))
 		{
-		// Give up trying to parse the cached file after a day.
+// Give up trying to parse the cached file after a day.
 			if (time() - filemtime($this->feedfilename) > 24 * 60 * 60 )
 			{
 				unlink($this->feedfilename);
@@ -91,8 +92,6 @@ class Fetcher
 		}
 		if(!file_exists($this->feedfilename))
 		{
-			include_once('common/includes/class.http.php');
-
 			$http = new http_request($fetchurl);
 			$http->set_useragent("EDK Feedfetcher ".$feedversion);
 			$http->set_timeout(60);
@@ -106,8 +105,8 @@ class Fetcher
 			$data = trim($data); // helps with broken sites that add extra white space.
 			file_put_contents($this->feedfilename, $data);
 
-			// Process all new pilots and corps
-			// First check any are present.
+// Process all new pilots and corps
+// First check any are present.
 			if(strpos($data,"Corp: "))
 			{
 				$pos = 0;
@@ -115,7 +114,7 @@ class Fetcher
 				$newcorp = new Corporation();
 				$newall = new Alliance();
 				$newall->add("None");
-				// Corps
+// Corps
 				while($pos = strpos($data, 'Corp: ', $pos + 1))
 				{
 					$endpos = strpos($data, "\n", $pos);
@@ -129,9 +128,9 @@ class Fetcher
 
 				$pos = 0;
 				$namelist = array();
-				// Corps will repeat a lot so store the ones we find for reuse.
+// Corps will repeat a lot so store the ones we find for reuse.
 				$corps = array();
-				// Victims
+// Victims
 				while($pos = strpos($data, 'Victim: ', $pos))
 				{
 					$endpos = strpos($data, "\n", $pos);
@@ -152,7 +151,7 @@ class Fetcher
 					}
 					$namelist[slashfix($name)] = $corps[$cname];
 				}
-				// Involved parties
+// Involved parties
 				$pos = 0;
 				while($pos = strpos($data, 'Name: ', $pos))
 				{
@@ -163,7 +162,7 @@ class Fetcher
 
 					$pos = strpos($data, "Corp: ",$pos);
 					if(!$pos) break;
-					// Skip NPC names with a '/' in them.
+// Skip NPC names with a '/' in them.
 					if(strpos($name, "/")) continue;
 					$endpos = strpos($data, "\n", $pos);
 					$cname = substr($data, $pos + 6, $endpos - ($pos + 6));
@@ -215,21 +214,21 @@ class Fetcher
 
 		if (config::get('fetch_verbose') )
 		{
-				$this->html .= "<div class=block-header2>".$this->killsAdded." kills added and ".$this->killsSkipped." kills skipped from feed: ".$url."<br>".$str." <br></div>\n";
+			$this->html .= "<div class=block-header2>".$this->killsAdded." kills added and ".$this->killsSkipped." kills skipped from feed: ".$url."<br>".$str." <br></div>\n";
 		}
 		else
 		{
-				$this->html .= "<div class=block-header2>".$this->killsAdded." kills added and ".$this->killsSkipped." kills skipped from feed: ".$url." <br><br></div>\n";
+			$this->html .= "<div class=block-header2>".$this->killsAdded." kills added and ".$this->killsSkipped." kills skipped from feed: ".$url." <br><br></div>\n";
 		}
 
 		return $this->html;
 	}
-	//! XML start of element parser.
+//! XML start of element parser.
 	function startElement($parser, $name, $attrs)
 	{
-	//	if ($this->insideitem)
+//	if ($this->insideitem)
 		$this->tag = $name;
-		//else
+//else
 		if ($name == "ITEM")
 		{
 			$this->insideitem = true;
@@ -239,10 +238,10 @@ class Fetcher
 		}
 	}
 
-	//! XML end of element parser.
+//! XML end of element parser.
 	function endElement($parser, $name)
 	{
-	//global $this->html;
+//global $this->html;
 
 		if ($name == "ITEM")
 		{
@@ -253,7 +252,7 @@ class Fetcher
 				$month = substr($this->description, 5, 2);
 				$day = substr($this->description, 8, 2);
 				$killstamp = mktime(0, 0, 0, $month, $day, $year);
-				// Not working as intended so removing for now.
+// Not working as intended so removing for now.
 				if ( 0 && $this->idordered && $this->tracklast_ > intval($this->title))
 				{
 					$this->html .= "Killmail ID ".intval($this->title)." already processed <br>";
@@ -264,48 +263,51 @@ class Fetcher
 				}
 				else
 				{
-					//Check age of mail
+//Check age of mail
 					if(config::get('filter_apply')
 						&& $killstamp < config::get('filter_date'))
 					{
 						$killid = -4;
 					}
-					elseif($this->apiID = intval($this->apiID))
+					elseif($this->trust <= $this->accepttrust && $this->apiID = intval($this->apiID))
 					{
-						$qry = DBFactory::getDBQuery();;
+						$qry = DBFactory::getDBQuery();
 						$qry->execute("SELECT 1 FROM kb3_kills WHERE kll_external_id = ".$this->apiID);
 						if(!$qry->recordCount())
 						{
-							$parser = new Parser( $this->description );
-							// Add external id when known.
-							// Make an admin option for the feed?
-							// if($this->trust < 3) $this->trust++
-							//$parser = new Parser( $this->description, $this->apiID, $this->trust );
+							// Add external id when known and trusted.
+							// For compatibility with old boards accept 0 trust API validated kills
+							// but don't store the ID
+							if($this->trust > 0)
+							{
+								$this->trust ++;
+								$parser = new Parser( $this->description, $this->apiID);
+								$parser->setTrust($this->trust);
+							}
+							else
+							{
+								$parser = new Parser( $this->description);
+							}
 							$killid = $parser->parse( true );
 						}
 						else $killid = -3;
 					}
-					elseif($this->hash != '')
+					elseif($this->hash != '' && !$this->apikills)
 					{
 						$qry = DBFactory::getDBQuery();
 						$qry->execute("SELECT kll_trust FROM kb3_mails WHERE kll_timestamp = '".
-							$qry->escape($this->time)."' AND kll_hash = '".
-							$qry->escape($this->hash)."'");
+							$qry->escape($this->time)."' AND kll_hash = 0x".
+							$qry->escape($this->hash)."");
 						if(!$qry->recordCount())
 						{
 							$parser = new Parser( $this->description );
-							// Add external id when known.
-							// Make an admin option for the feed?
-							//
-							// if($this->trust < 3) $this->trust++
-							//$parser = new Parser( $this->description, $this->apiID, $this->trust );
 							$killid = $parser->parse( true );
 						}
 						else
 						{
 							$row = $qry->getRow();
-							if($row['kll_trust'] < 0) $killid = -1;
-							else $killid = -5;
+							if($row['kll_trust'] < 0) $killid = -5;
+							else $killid = -1;
 						}
 					}
 					elseif(!$this->apikills)
@@ -367,7 +369,7 @@ class Fetcher
 			$this->trust = "";
 		}
 	}
-	//! XML character data parser.
+//! XML character data parser.
 	function characterData($parser, $data)
 	{
 		if ($this->insideitem)
@@ -402,12 +404,12 @@ class Fetcher
 			$this->combined_ = true;
 		}
 	}
-	//! Add an array of pilots to be checked.
+//! Add an array of pilots to be checked.
 
-	//! \param $names array of corp names indexed by pilot name.
+//! \param $names array of corp names indexed by pilot name.
 	function addPilotNames($names)
 	{
-		$qry = DBFactory::getDBQuery(true);;
+		$qry = DBFactory::getDBQuery(true);
 		$checklist = array();
 		foreach($names as $pilot =>$corp)
 		{
@@ -431,26 +433,26 @@ class Fetcher
 			$myNames = array_merge($myNames, $tempNames);
 		}
 		$newpilot = new Pilot();
-		//$sql = '';
+//$sql = '';
 		if(!is_array($myNames)) die("Name fetch error : ".$myNames);
 		foreach($myNames as $name)
 		{
 			if(isset($names[slashfix($name['name'])]))
 			{
 				$newpilot->add(slashfix($name['name']), $names[slashfix($name['name'])], '0000-00-00', $name['characterID']);
-			// Adding all at once is faster but skips checks for name/id clashes.
-			//if($sql == '') $sql = "INSERT INTO kb3_pilots (plt_name, plt_crp_id, plt_externalid, plt_updated) values ('".slashfix($name['name'])."', ".$names[slashfix($name['name'])]->getID().', '.$name['characterID'].", '0000-00-00')";
-			//else $sql .= ", ('".slashfix($name['name'])."', ".$names[slashfix($name['name'])]->getID().', '.$name['characterID'].", '0000-00-00')";
+// Adding all at once is faster but skips checks for name/id clashes.
+//if($sql == '') $sql = "INSERT INTO kb3_pilots (plt_name, plt_crp_id, plt_externalid, plt_updated) values ('".slashfix($name['name'])."', ".$names[slashfix($name['name'])]->getID().', '.$name['characterID'].", '0000-00-00')";
+//else $sql .= ", ('".slashfix($name['name'])."', ".$names[slashfix($name['name'])]->getID().', '.$name['characterID'].", '0000-00-00')";
 			}
 		}
 		if($sql) $qry->execute($sql);
 	}
-	//! Add an array of pilots to be checked.
+//! Add an array of pilots to be checked.
 
-	//! \param $names array of corp names indexed by pilot name.
+//! \param $names array of corp names indexed by pilot name.
 	function addCorpNames($names)
 	{
-		$qry = DBFactory::getDBQuery(true);;
+		$qry = DBFactory::getDBQuery(true);
 		$checklist = array();
 		foreach($names as $corp =>$all)
 		{
@@ -473,15 +475,15 @@ class Fetcher
 			$myNames = array_merge($myNames, $tempNames);
 		}
 		$newcorp = new Corporation();
-		//$sql = '';
+//$sql = '';
 		foreach($myNames as $name)
 		{
 			if(isset($names[slashfix($name['name'])]) && $name['characterID'])
 			{
 				$newcorp->add(slashfix($name['name']), $names[slashfix($name['name'])], '0000-00-00', $name['characterID']);
-			// Adding all at once is faster but skips checks for name/id clashes.
-			//if($sql == '') $sql = "INSERT INTO kb3_corps (crp_name, crp_all_id, crp_updated, crp_external_id) VALUES ('".slashfix($name['name'])."', ".$names[slashfix($name['name'])]->getID().", '0000-00-00', ".$name['characterID'].")";
-			//else $sql .= ",\n ('".slashfix($name['name'])."', ".$names[slashfix($name['name'])]->getID().", '0000-00-00', ".$name['characterID'].")";
+// Adding all at once is faster but skips checks for name/id clashes.
+//if($sql == '') $sql = "INSERT INTO kb3_corps (crp_name, crp_all_id, crp_updated, crp_external_id) VALUES ('".slashfix($name['name'])."', ".$names[slashfix($name['name'])]->getID().", '0000-00-00', ".$name['characterID'].")";
+//else $sql .= ",\n ('".slashfix($name['name'])."', ".$names[slashfix($name['name'])]->getID().", '0000-00-00', ".$name['characterID'].")";
 			}
 		}
 		if($sql) $qry->execute($sql);
