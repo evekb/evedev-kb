@@ -11,6 +11,6 @@
   `ctr_ended` datetime default &#039;0000-00-00 00:00:00&#039;,
   `ctr_comment` VARCHAR(255) NULL DEFAULT NULL,
   PRIMARY KEY  (`ctr_id`),
-  KEY `ctr_id` (`ctr_site`,`ctr_ended`),
+  KEY `ctr_id` (`ctr_site`,`ctr_ended`)
 ) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>
