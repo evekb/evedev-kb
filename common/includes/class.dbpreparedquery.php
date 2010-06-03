@@ -78,13 +78,14 @@ class DBPreparedQuery
 		{
 			if(defined('KB_PROFILE'))
 			{
-				DBDebug::recordError("Database error: ".$this->stmt->error);
+				DBDebug::recordError("SQL execution error: ".$this->stmt->error);
 				DBDebug::recordError("SQL: ".$this->sql);
 			}
 			if (defined('DB_HALTONERROR') && DB_HALTONERROR)
 			{
-				echo "Database error: " . $this->stmt->error . "<br>";
+				echo "SQL execution error: " . $this->stmt->error . "<br>";
 				echo "SQL: " . $this->sql . "<br>";
+				trigger_error("SQL execution error.", E_USER_ERROR);
 				exit;
 			}
 			else
@@ -151,13 +152,14 @@ class DBPreparedQuery
 		{
 			if(defined('KB_PROFILE'))
 			{
-				DBDebug::recordError("Database error: ".self::$dbconn->id()->error);
+				DBDebug::recordError("Prepare Statement error: ". self::$dbconn->id()->error);
 				DBDebug::recordError("SQL: ".$sql);
 			}
 			if (defined('DB_HALTONERROR') && DB_HALTONERROR)
 			{
-				echo "Database error: " . self::$dbconn->id()->error . "<br>";
+				echo "Prepare Statement error: " . self::$dbconn->id()->error . "<br>";
 				echo "SQL: " . $sql . "<br>";
+				trigger_error("Prepare Statement error.", E_USER_ERROR);
 				exit;
 			}
 			else
@@ -188,7 +190,7 @@ class DBPreparedQuery
 	 */
 	public function bind_params(&$params)
 	{
-		return call_user_func_array('mysqli_stmt_bind_param',$params);
+		return call_user_func_array(array($this->stmt,'bind_param'),$params);
 	}
 	//! Bind the prepared query results to the given variables.
 
