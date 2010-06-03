@@ -392,10 +392,10 @@ class API_KillLog
                 }
 
 				// update crp_external_id
-				API_Helpers::Update_CorpID($this->corporation_, $this->corporationID_);
+				//API_Helpers::Update_CorpID($this->corporation_, $this->corporationID_);
 				// update all_external_id
-				if ($this->allianceID_ != 0)
-					API_Helpers::Update_AllianceID($this->alliance_, $this->allianceID_);
+				//if ($this->allianceID_ != 0)
+				//	API_Helpers::Update_AllianceID($this->alliance_, $this->allianceID_);
 
                 // set victim corp and alliance for FF check
                 $this->valliance_ = $this->alliance_;
