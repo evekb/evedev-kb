@@ -202,8 +202,8 @@ while($kill1 = $list->getKill())
 		{
 			$invrow->addAttribute('allianceID', 0);
 			$invrow->addAttribute('allianceName', '');
-			$invrow->addAttribute('factionID', $invAlliance->getName());
-			$invrow->addAttribute('factionName', $invAlliance->getFactionID());
+			$invrow->addAttribute('factionID', $invAlliance->getFactionID());
+			$invrow->addAttribute('factionName', $invAlliance->getName());
 		}
 		else
 		{
