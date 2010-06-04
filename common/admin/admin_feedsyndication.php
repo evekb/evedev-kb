@@ -56,8 +56,8 @@ if ($_POST['submit'] || $_POST['fetch'])
         if (preg_match($validurl , $_POST[$url]))
         {
             if ($_POST['trusted'] && in_array ($i, $_POST['trusted']))
-			$trusted = "on";
-            else $trusted = "";
+			$trusted = "1";
+            else $trusted = "0";
             if ($_POST['apikills'] && in_array ($i, $_POST['apikills']))
                 $apikills = "on";
             else $apikills = "";
@@ -67,7 +67,7 @@ if ($_POST['submit'] || $_POST['fetch'])
             if($_POST[$url] != $ftmp[0] )
                 config::set($url, $_POST[$url] . ':::' . 0 . ':::' . 0 . ':::' . $apikills . ':::' . $trusted);
             elseif($trusted != $ftmp[4] || $apikills != $ftmp[3] )
-                config::set($url, $_POST[$url] . ':::' . $ftmp[1] . ':::' . $ftmp[1] . ':::' . $apikills . ':::' . $trusted);
+                config::set($url, $_POST[$url] . ':::' . $ftmp[1] . ':::' . 0 . ':::' . $apikills . ':::' . $trusted);
         }
         else
             config::set($url, '');
@@ -88,9 +88,9 @@ for ($i = 1; $i <= $feedcount; $i++)
         $friend[$i] = $tmp[2];
 	if ($tmp[3] == "on")
         $apikills[$i] = $tmp[3];
-	if ($tmp[4] == "on")
+	if (isset($tmp[4])&& $tmp[4])
         $trusted[$i] = 1;
-	else $trusted[$i] = false;
+	else $trusted[$i] = 0;
 }
 // building the request query and fetching of the feeds
 if ($_POST['fetch'])
@@ -146,21 +146,23 @@ if ($_POST['fetch'])
                     $html .= $feedfetch->grab($feed[$i] . "&year=" . $_POST['year'] . "&week=" . $l, $myid . $str . "&losses=1", $trusted[$i], $cfg) . "\n";
                     if(intval($feedfetch->lastkllid_ )) $feedlast[$i] = intval($feedfetch->lastkllid_);
                 // Store most recent kill id fetched
-                if($feedlast[$i]) config::set("fetch_url_" . $i, $feed[$i] . ':::' . $feedlast[$i] . ':::' . $friend[$i]);
+                if($feedlast[$i]) config::set("fetch_url_" . $i, $feed[$i] . ':::' . $feedlast[$i] . ':::' . 0 . ':::' . $apikills[$i] . ':::' . $trusted[$i]);
                 }
             }
             else
 			{
 
                 $html .= $feedfetch->grab($feed[$i], $myid . $str);
+				if(intval($feedfetch->lastkllid_) > $feedlast[$i])$feedlast[$i] = intval($feedfetch->lastkllid);
+
                 $html .= $feedfetch->grab($feed[$i], $myid . $str .  "&losses=1");
+
+				// If kills are fetched then change the last kill id for the feed
+				if($feedlast[$i])
+				{
+						config::set($cfg, $feed[$i] . ':::' . $feedlast[$i] . ':::' . 0 . ':::' . $apikills[$i] . ':::' . $trusted[$i]);
+				}
 			}
-        }
-        // If kills are fetched then change the last kill id for the feed
-        if(intval($feedfetch->lastkllid_))
-        {
-                config::set($cfg, $feed[$i] . ':::' . intval($feedfetch->lastkllid_) . ':::' . $friend[$i]);
-                $feedlast[$i] = intval($feedfetch->lastkllid);
         }
     }
 }

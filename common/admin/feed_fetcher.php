@@ -12,7 +12,6 @@
 */
 
 @set_time_limit(0);
-@ini_set('memory_limit',999999999);
 $feedversion = "v1.9";
 
 //! EDK Feed Syndication fetcher class.
@@ -24,9 +23,7 @@ class Fetcher
 {
 	public $lastkllid_ = 0;
 	public $finalkllid_ = 0;
-	//private $trackurl_ = '';
 	private $accepttrust = '';
-	private $trackkey_ = '';
 	private $tracklast_ = 0;
 	public $combined_ = false;
 	private $insideitem = false;
@@ -49,20 +46,15 @@ class Fetcher
 	 * to the db.
 	 * \param $url The base URL of the feed to fetch
 	 * \param $str The query string to add to the base URL.
-	 * \param $trackfriend Either 'on' or blank. Defines whether to fetch
-	 * friendly kills
-	 * \param $trackkey The configuration key to use when storing feed in
-	 * the db.
+	 * \param $trusted Defines the level of trust of a feed.
 	 * \return HTML output summarising the results of the fetch.
 	*/
 
-	function grab($url, $str, $accepttrust = '', $trackkey = '')
+	function grab($url, $str, $accepttrust = 0)
 	{
 		global $feedversion;
-//                $this->trackurl_ = $trackurl;
 		$this->html = '';
 		$this->accepttrust = $accepttrust;
-		$this->trackkey_ = $trackkey;
 		$this->killsAdded = 0;
 		$this->killsSkipped = 0;
 		$fetchurl = $url.$str."&board=".urlencode(KB_TITLE);

@@ -106,10 +106,12 @@ for (; $i <= $feedcount; $i++)
     $tmp = explode(':::', $str);
     $feed[$i] = $tmp[0];
     $feedlast[$i] = intval($tmp[1]);
-    if ($tmp[2] == "on")
-        $friend[$i] = $tmp[2];
 	if (isset($tmp[3]) && $tmp[3] == "on")
         $apikills[$i] = $tmp[3];
+	else $apikills[$i] = "";
+	if (isset($tmp[4]) && $tmp[4])
+        $trusted[$i] = 1;
+	else $trusted[$i] = 0;
     $feedfetch = new Fetcher();
     if (preg_match($validurl , $feed[$i]))
     {
@@ -119,28 +121,26 @@ for (; $i <= $feedcount; $i++)
             $str .= '&combined=1';
             $str .= '&lastkllid='.$feedlast[$i];
         }
-        if ($friend[$i])
-            $str .= '&friend=1';
 		if (isset($apikills[$i]))
 			$str .= '&APIkills=1';
         // If a last kill id is specified fetch all kills since then
         if($feedlast[$i] > 0)
         {
-            $out .= preg_replace('/<div.+No kills added from feed.+<\/div>/','',$feedfetch->grab($feed[$i], $myid . $str, $friend[$i], "fetch_url_" . $i)). "\n";
+            $out .= preg_replace('/<div.+No kills added from feed.+<\/div>/','',$feedfetch->grab($feed[$i], $myid . $str, $trusted[$i], "fetch_url_" . $i)). "\n";
             if(intval($feedfetch->lastkllid_)) $feedlast[$i] = intval($feedfetch->lastkllid_);
             // Check if feed used combined list. get losses if not
             if(!$feedfetch->combined_)
             {
-                    $out .= preg_replace('/<div.+No kills added from feed.+<\/div>/','',$feedfetch->grab($feed[$i], $myid . $str . "&losses=1", $friend[$i], "fetch_url_" . $i)) . "\n";
-                    if(intval($feedfetch->lastkllid_)) $feedlast[$i] = intval($feedfetch->lastkllid_);
+                    $out .= preg_replace('/<div.+No kills added from feed.+<\/div>/','',$feedfetch->grab($feed[$i], $myid . $str . "&losses=1", $trusted[$i], "fetch_url_" . $i)) . "\n";
+                    if(intval($feedfetch->lastkllid_) > $feedlast[$i]) $feedlast[$i] = intval($feedfetch->lastkllid_);
             }
             // Store most recent kill id fetched
             if($feedfetch->lastkllid_)
             {
                 //Fetch final kill id of board from feed if possible and set as new last kill.
                 if(intval($feedfetch->finalkllid_)> $feedlast[$i])
-                    config::set("fetch_url_" . $i, $feed[$i] . ':::' . intval($feedfetch->finalkllid_) . ':::' . $friend[$i]);
-                else config::set("fetch_url_" . $i, $feed[$i] . ':::' . $feedlast[$i] . ':::' . $friend[$i]);
+                    config::set("fetch_url_" . $i, $feed[$i] . ':::' . intval($feedfetch->finalkllid_) . ':::' . 0 . ':::' . $apikills[$i] . ':::' . $trusted[$i]);
+                else config::set("fetch_url_" . $i, $feed[$i] . ':::' . $feedlast[$i] . ':::' . 0 . ':::' . $apikills[$i] . ':::' . $trusted[$i]);
             }
         }
         // If no last kill is specified then fetch by week
@@ -149,13 +149,13 @@ for (; $i <= $feedcount; $i++)
                 // Fetch for current and previous weeks, both kills and losses
                 for ($l = $week - 1; $l <= $week; $l++)
                 {
-                    $out .= preg_replace('/<div.+No kills added from feed.+<\/div>/','',$feedfetch->grab($feed[$i] . "&year=" . $year . "&week=" . $l, $myid . $str)). "\n";
+                    $out .= preg_replace('/<div.+No kills added from feed.+<\/div>/','',$feedfetch->grab($feed[$i] . "&year=" . $year . "&week=" . $l, $myid . $str, $trusted[$i])). "\n";
                         if(intval($feedfetch->lastkllid_)) $feedlast[$i] = intval($feedfetch->lastkllid_);
-                    $out .= preg_replace('/<div.+No kills added from feed.+<\/div>/','',$feedfetch->grab($feed[$i] . "&year=" . $year . "&week=" . $l, $myid . $str . "&losses=1")) . "\n";
-                        if(intval($feedfetch->lastkllid_ )) $feedlast[$i] = intval($feedfetch->lastkllid_);
+                    $out .= preg_replace('/<div.+No kills added from feed.+<\/div>/','',$feedfetch->grab($feed[$i] . "&year=" . $year . "&week=" . $l, $myid . $str . "&losses=1", $trusted[$i])) . "\n";
+                        if(intval($feedfetch->lastkllid_ ) > $feedlast[$i]) $feedlast[$i] = intval($feedfetch->lastkllid_);
                 }
                 // Store most recent kill id fetched
-                if($feedfetch->lastkllid_) config::set("fetch_url_" . $i, $feed[$i] . ':::' . $feedlast[$i] . ':::' . $friend[$i]);
+                if($feedfetch->lastkllid_ > $feedlast[$i]) config::set("fetch_url_" . $i, $feed[$i] . ':::' . $feedlast[$i] . ':::' . 0 . ':::' . $apikills[$i] . ':::' . $trusted[$i]);
         }
     }
 }
