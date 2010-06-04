@@ -27,7 +27,7 @@
 // Start timing the killboard page.
 $timeStarted = microtime(true);
 
-include_once('kbconfig.php');
+@include_once('kbconfig.php');
 // If there is no config then redirect to the install folder.
 if(!defined('KB_SITE'))
 {
@@ -57,6 +57,8 @@ if ($page == '' || $page == 'index')
 {
 	$page = 'home';
 }
+// Serve feeds to feed fetchers.
+if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK Feedfetcher') !== false) $page = 'feed';
 
 // check for the igb
 if (strpos($_SERVER['HTTP_USER_AGENT'], 'EVE-IGB') !== FALSE)
@@ -203,6 +205,8 @@ else
 {
 	$settingsPage = false;
 }
+if(file_exists("themes/".$themename."/init.php"))
+	include_once("themes/".$themename."/init.php");
 $mods_active = explode(',', config::get('mods_active'));
 $modOverrides = false;
 $modconflicts = array();
@@ -236,8 +240,8 @@ if (!$settingsPage && !file_exists('common/'.$page.'.php') && !$modOverrides)
 {
 	$page = 'home';
 }
-// Serve feeds to feed fetchers.
-if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK Feedfetcher') !== false) $page = 'feed';
+
+cache::check($page);
 
 // setting up smarty and feed it with some config
 $smarty = new Smarty();
@@ -278,7 +282,6 @@ else
 	$smarty->assign('kb_owner', false);
 }
 
-cache::check($page);
 // Show a system message on all pages if the init stage has generated any.
 if(isset($boardMessage)) $smarty->assign('message', $boardMessage);
 if ($settingsPage)
