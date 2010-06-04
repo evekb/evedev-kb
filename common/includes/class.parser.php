@@ -485,7 +485,7 @@ class Parser
                     $icorp = $this->fetchCorp($icname, $ialliance, $kill->getTimeStamp());
                 }
 
-                if (strcmp($ipname, 'Unknown') == 0)
+                if (strcmp($ipname, 'Unknown') == 0 || empty($ipname))
                 {
                     if (preg_match("/Mobile/", $iwname) || preg_match("/Control Tower/", $iwname))
                     { //for involved parties parsed that lack a pilot, but are actually POS or mobile warp disruptors
