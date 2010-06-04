@@ -22,7 +22,7 @@ define ("APIVERSION", "V3.3");
 
 // current version: major.minor.sub
 // unpair numbers for minor = development version
-define('KB_VERSION', '3.1 Beta');
+define('KB_VERSION', '3.1.0 Beta');
 define('KB_RELEASE', '(Tyrannis)');
 
 // add new corporations here once you've added the logo to img/corps/
@@ -31,17 +31,12 @@ $corp_npc = array('Guristas', 'Serpentis Corporation', 'Sansha\'s Nation', 'CONC
 
 // Make sure the core functions are loaded.
 require_once('common/includes/class.edkloader.php');
-require_once('common/includes/db.php');
-
 // Set up the external class files with the autoloader.
 edkloader::register('Smarty', 'common/smarty/Smarty.class.php');
 
 // Ugly hacks to make things work until other changes are made with the file structure
 edkloader::register('APIChar', 'common/includes/api/class.char.php');
 edkloader::register('AllianceAPI', 'common/includes/api/class.alliance.php');
-edkloader::register('ContractTarget', 'common/includes/class.contract.php');
-edkloader::register('ContractList', 'common/includes/class.contract.php');
-edkloader::register('ContractListTable', 'common/includes/class.contract.php');
 edkloader::register('BarGraph', 'common/includes/class.graph.php');
 edkloader::register('AwardBox', 'common/includes/class.box.php');
 edkloader::register('TopList', 'common/includes/class.toplist.php');
@@ -64,8 +59,9 @@ edkloader::register('TopShipList', 'common/includes/class.toplist.php');
 edkloader::register('TopShipListTable', 'common/includes/class.toplist.php');
 edkloader::register('TopWeaponList', 'common/includes/class.toplist.php');
 edkloader::register('TopWeaponListTable', 'common/includes/class.toplist.php');
-edkloader::register('Region', 'common/includes/class.solarsystem.php');
 edkloader::register('thumbInt', 'common/includes/class.thumb.php');
+
+require_once('common/includes/db.php');
 
 /* ---------------------------------------------------------------- */
 /* Utility functions */

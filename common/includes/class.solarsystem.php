@@ -5,14 +5,12 @@
  * $HeadURL$
  */
 
-require_once("db.php");
-
 class SolarSystem
 {
     function SolarSystem($id = 0)
     {
         $this->id_ = $id;
-        $this->qry_ = DBFactory::getDBQuery();;
+        $this->qry_ = DBFactory::getDBQuery();
     }
 
     function getID()
@@ -103,34 +101,3 @@ class SolarSystem
         $this->executed_ = false;
     }
 }
-
-class Region
-{
-    function Region($id = 0)
-    {
-        $this->id_ = $id;
-    }
-
-    function getID()
-    {
-        return $this->id_;
-    }
-
-    function getName()
-    {
-        $this->execQuery();
-        return $this->row_['reg_name'];
-    }
-
-    function execQuery()
-    {
-        if (!$this->qry_)
-        {
-            $this->qry_ = DBFactory::getDBQuery();;
-            $this->qry_->execute("select * from kb3_regions
-	                        where reg_id = ".$this->id_);
-            $this->row_ = $this->qry_->getRow();
-        }
-    }
-}
-?>
