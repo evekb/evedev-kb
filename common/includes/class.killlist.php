@@ -129,6 +129,14 @@ class KillList
 				if ($this->maxkllid_)
 					$this->sqlinner_ .= ' AND kll.kll_id <= '.$this->maxkllid_.' ';
 
+				// Get all kills after given kill id (used for feed syndication)
+				if ($this->minextkllid_)
+					$this->sqlinner_ .= ' AND kll.kll_external_id >= '.$this->minextkllid_.' ';
+
+				// Get all kills before given kill id (used for feed syndication)
+				if ($this->maxextkllid_)
+					$this->sqlinner_ .= ' AND kll.kll_external_id <= '.$this->maxextkllid_.' ';
+
 				// excluded ship filter
 				if (count($this->exclude_scl_))
 					$this->sqlinner_ .= " AND shp.shp_class not in ( ".implode(",", $this->exclude_scl_)." )";
@@ -187,6 +195,14 @@ class KillList
 				// Get all kills before given kill id (used for feed syndication)
 				if ($this->maxkllid_)
 					$this->sqlinner_ .= ' AND kll.kll_id <= '.$this->maxkllid_.' ';
+
+				// Get all kills after given kill id (used for feed syndication)
+				if ($this->minextkllid_)
+					$this->sqlinner_ .= ' AND kll.kll_external_id >= '.$this->minextkllid_.' ';
+
+				// Get all kills before given kill id (used for feed syndication)
+				if ($this->maxextkllid_)
+					$this->sqlinner_ .= ' AND kll.kll_external_id <= '.$this->maxextkllid_.' ';
 
 				// excluded ship filter
 				if (count($this->exclude_scl_))
@@ -362,6 +378,14 @@ class KillList
 				if ($this->maxkllid_)
 					$this->sql_ .= ' AND kll.kll_id <= '.$this->maxkllid_.' ';
 
+				// Get all kills after given kill id (used for feed syndication)
+				if ($this->minextkllid_)
+					$this->sqlinner_ .= ' AND kll.kll_external_id >= '.$this->minextkllid_.' ';
+
+				// Get all kills before given kill id (used for feed syndication)
+				if ($this->maxextkllid_)
+					$this->sqlinner_ .= ' AND kll.kll_external_id <= '.$this->maxextkllid_.' ';
+
 				// excluded ship filter
 				if (count($this->exclude_scl_))
 					$this->sql_ .= " AND shp.shp_class not in ( ".implode(",", $this->exclude_scl_)." )";
@@ -437,6 +461,20 @@ class KillList
 				if ($this->maxkllid_)
 				{
 					$this->sql_ .= $sqlwhereop.' kll.kll_id <= '.$this->maxkllid_.' ';
+					$sqlwhereop = ' AND ';
+				}
+
+				// Get all kills after given kill id (used for feed syndication)
+				if ($this->minextkllid_)
+				{
+					$this->sql_ .= $sqlwhereop.' kll.kll_id >= '.$this->minextkllid_.' ';
+					$sqlwhereop = ' AND ';
+				}
+
+				// Get all kills before given kill id (used for feed syndication)
+				if ($this->maxextkllid_)
+				{
+					$this->sql_ .= $sqlwhereop.' kll.kll_id <= '.$this->maxextkllid_.' ';
 					$sqlwhereop = ' AND ';
 				}
 
@@ -808,6 +846,16 @@ class KillList
 	public function setMaxKllID($id)
 	{
 		$this->maxkllid_ = $id;
+	}
+
+	public function setMinExtID($id)
+	{
+		$this->minextkllid_ = $id;
+	}
+
+	public function setMaxExtID($id)
+	{
+		$this->maxextkllid_ = $id;
 	}
 
 	public function getCount()
