@@ -34,7 +34,8 @@ $list = new KillList();
 if(!isset($_GET['allkills'])) $list->setAPIKill();
 $list->setLimit($maxkillsreturned);
 $list->setOrdered(true);
-$list->setOrderBy(' kll.kll_external_id ASC ');
+if(!isset($_GET['allkills'])) $list->setOrderBy(' kll.kll_external_id ASC ');
+else $list->setOrderBy(' kll.kll_id ASC ');
 $qry = DBFactory::getDBQuery();
 if(isset($_GET['alliance']))
 {
@@ -130,8 +131,8 @@ if(isset($_GET['lastID']))
 	$list->setMinExtID(intval($_GET['lastID']));
 	if(isset($_GET['range'])) $list->setMaxExtID(intval($_GET['lastID'] + $_GET['range']));
 }
-if(isset($_GET['startdate'])) $list->setStartDate(intval($_GET['startdate']));
-if(isset($_GET['enddate'])) $list->setEndDate(intval($_GET['enddate']));
+if(isset($_GET['startdate'])) $list->setStartDate(gmdate('Y-m-d H:i:s',intval($_GET['startdate'])));
+if(isset($_GET['enddate'])) $list->setEndDate(gmdate('Y-m-d H:i:s',intval($_GET['startdate'])));
 $date = gmdate('Y-m-d H:i:s');
 
 // Let's start making the xml.
@@ -220,6 +221,50 @@ while($kill1 = $list->getKill())
 		$invrow->addAttribute('weaponTypeID', $inv->getWeapon()->getID());
 		$invrow->addAttribute('shipTypeID', $inv->getShip()->getExternalID());
 	}
+	$droppedItems = $kill->getDroppedItems();
+	$destroyedItems = $kill->getDestroyedItems();
+	if(count($destroyedItems) || count($droppedItems))
+	{
+		$items = $row->addChild('rowset');
+		$items->addAttribute('name', 'items');
+		$items->addAttribute('columns', 'typeID,flag,qtyDropped,qtyDestroyed');
+
+		foreach($destroyedItems as $destroyed)
+		{
+			$item = $destroyed->getItem();
+			$itemRow = $items->addChild('row');
+			$itemRow->addAttribute('typeID', $item->getID());
+			if ($destroyed->getLocationID() == 4) // cargo
+				$itemRow->addAttribute('flag', 5);
+			else if ($destroyed->getLocationID() == 6) // drone
+				$itemRow->addAttribute('flag', 87);
+			else
+				$itemRow->addAttribute('flag', 0);
+			$itemRow->addAttribute('qtyDropped', 0);
+			$itemRow->addAttribute('qtyDestroyed', $destroyed->getQuantity());
+			if ($destroyed->getQuantity() > 1)
+				$mail .= ", Qty: ".$destroyed->getQuantity();
+		}
+
+
+		foreach($droppedItems as $dropped)
+		{
+			$item = $dropped->getItem();
+			$itemRow = $items->addChild('row');
+			$itemRow->addAttribute('typeID', $item->getID());
+			if ($dropped->getLocationID() == 4) // cargo
+				$itemRow->addAttribute('flag', 5);
+			else if ($dropped->getLocationID() == 6) // drone
+				$itemRow->addAttribute('flag', 87);
+			else
+				$itemRow->addAttribute('flag', 0);
+			$itemRow->addAttribute('qtyDropped', $dropped->getQuantity());
+			$itemRow->addAttribute('qtyDestroyed', 0);
+			if ($dropped->getQuantity() > 1)
+				$mail .= ", Qty: ".$dropped->getQuantity();
+		}
+	}
+
 }
 $sxe->addChild('cachedUntil', $date);
 echo $sxe->asXML();
