@@ -97,6 +97,8 @@ class DBCachedQuery extends DBBaseQuery
 					DBDebug::recordError("Database error: ".self::$dbconn->id()->error);
 					DBDebug::recordError("SQL: ".$this->sql);
 				}
+				trigger_error("SQL error (".self::$dbconn->id()->error, E_USER_WARNING);
+
 				if (DB_HALTONERROR === true)
 				{
 					echo "Database error: ".self::$dbconn->id()->error."<br/>";
@@ -377,7 +379,7 @@ class DBCachedQuery extends DBBaseQuery
 		// we have no valid cache so open the connection and run the query
 		if(is_null(self::$dbconn))self::$dbconn = new DBConnection();
 
-		$this->resid = mysqli_query(self::$dbconn->id(), $sql);
+		$this->resid = mysqli_query(self::$dbconn->id(), $this->sql);
 
 		if (!$this->resid || self::$dbconn->id()->errno)
 		{
@@ -388,14 +390,16 @@ class DBCachedQuery extends DBBaseQuery
 				DBDebug::recordError("Database error: ".self::$dbconn->id()->error);
 				DBDebug::recordError("SQL: ".$this->sql);
 			}
-			if (DB_HALTONERROR === true)
+			if (defined('DB_HALTONERROR') && DB_HALTONERROR)
 			{
-				echo "Database error: ".self::$dbconn->id()->error."<br/>";
-				echo "SQL: ".$this->sql."<br/>";
+				echo "Database error: ".self::$dbconn->id()->error."<br />";
+				echo "SQL: " . $this->sql . "<br />";
+				trigger_error("SQL error (".self::$dbconn->id()->error, E_USER_ERROR);
 				exit;
 			}
 			else
 			{
+				trigger_error("SQL error (".self::$dbconn->id()->error, E_USER_WARNING);
 				return false;
 			}
 		}

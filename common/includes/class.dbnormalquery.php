@@ -34,16 +34,16 @@ class DBNormalQuery extends DBBaseQuery
 				DBDebug::recordError("Database error: ".self::$dbconn->id()->error);
 				DBDebug::recordError("SQL: ".$sql);
 			}
-			trigger_error("SQL error (".self::$dbconn->id()->error, E_USER_WARNING);
-			
 			if (defined('DB_HALTONERROR') && DB_HALTONERROR)
 			{
-				echo "Database error: " . self::$dbconn->id()->error . "<br>";
-				echo "SQL: " . $sql . "<br>";
+				echo "Database error: " . self::$dbconn->id()->error . "<br />";
+				echo "SQL: " . $sql . "<br />";
+				trigger_error("SQL error (".self::$dbconn->id()->error, E_USER_ERROR);
 				exit;
 			}
 			else
 			{
+				trigger_error("SQL error (".self::$dbconn->id()->error, E_USER_WARNING);
 				return false;
 			}
 		}
