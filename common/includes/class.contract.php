@@ -250,7 +250,7 @@ class Contract
 			$sql = "insert into kb3_contracts values ( null, '".$qry->escape($name)."',
                                                    '".KB_SITE."', ".$campaign.",
 						   '".$qry->escape($startdate)." 00:00:00',
-						   ".$qry->escape($enddate).",
+						   ".$enddate.",
 						   '".$qry->escape($comment)."' )";
 			$qry->execute($sql) or die($qry->getErrorMsg());
 			$this->ctr_id_ = $qry->getInsertID();
@@ -259,7 +259,7 @@ class Contract
 		{
 			$sql = "update kb3_contracts set ctr_name = '".$qry->escape($name)."',
 			                 ctr_started = '".$qry->escape($startdate)." 00:00:00',
-					 ctr_ended = ".$qry->escape($enddate).",
+					 ctr_ended = ".$enddate.",
 					 ctr_comment = '" . $qry->escape($comment) . "'
 				     where ctr_id = ".$this->ctr_id_;
 			$qry->execute($sql) or die($qry->getErrorMsg());
