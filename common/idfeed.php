@@ -11,7 +11,8 @@
  * Flags
  * startdate = unix timestamp for start date
  * enddate = unix timestamp for end date
- * lastID = return all kills from lastID on (ordered by kll_id)
+ * lastID = return all kills from lastID on (ordered by kll_external_id)
+ * lastintID = return all kills from lastintID internal id on (ordered by kll_id)
  * range = return all kills between lastID and lastID + range
  *     (limited by $maxkillsreturned)
  * allkills = also return results without an external id set
@@ -131,6 +132,11 @@ if(isset($_GET['lastID']))
 	$list->setMinExtID(intval($_GET['lastID']));
 	if(isset($_GET['range'])) $list->setMaxExtID(intval($_GET['lastID'] + $_GET['range']));
 }
+else if(isset($_GET['lastintID']) && isset($_GET['allkills']) && $_GET['allkills'])
+{
+	$list->setMinKllID(intval($_GET['lastintID']));
+	if(isset($_GET['range'])) $list->setMaxKllID(intval($_GET['lastintID'] + $_GET['range']));
+}
 if(isset($_GET['startdate'])) $list->setStartDate(gmdate('Y-m-d H:i:s',intval($_GET['startdate'])));
 if(isset($_GET['enddate'])) $list->setEndDate(gmdate('Y-m-d H:i:s',intval($_GET['startdate'])));
 $date = gmdate('Y-m-d H:i:s');
@@ -215,7 +221,7 @@ while($kill1 = $list->getKill())
 		}
 		$invrow->addAttribute('securityStatus', $inv->getSecStatus());
 		$invrow->addAttribute('damageDone', $inv->getDamageDone());
-		if($invPilot == $kill->getFBPilotID()) $final = 1;
+		if($invPilot->getID() == $kill->getFBPilotID()) $final = 1;
 		else $final = 0;
 		$invrow->addAttribute('finalBlow', $final);
 		$invrow->addAttribute('weaponTypeID', $inv->getWeapon()->getID());
