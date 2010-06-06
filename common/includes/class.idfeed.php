@@ -262,9 +262,11 @@ class IDFeed
 		if(isset($row->rowset[1]->row[0])) foreach($row->rowset[1]->row as $item) $this->processItem($item, $kill);
 		$id = $kill->add();
 		if($id > 0) $this->posted[] = $id;
-		else $this->skipped[$row['killInternalID']] = $kill->getDupe();
+		else if(isset($row['killInternalID']) && $row['killInternalID']) $this->skipped[$row['killInternalID']] = $kill->getDupe();
+		else $this->skipped[$row['killID']] = $kill->getDupe();
+		
 		if($this->lastReturned < $row['killID']) $this->lastReturned = $row['killID'];
-		if($this->lastInternalReturned < $row['killInternalID']) $this->lastInternalReturned = $row['killInternalID'];
+		if(isset($row['killInternalID']) && $this->lastInternalReturned < $row['killInternalID']) $this->lastInternalReturned = $row['killInternalID'];
 		
 		return $kill;
 	}

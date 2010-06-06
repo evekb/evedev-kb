@@ -11,8 +11,8 @@
  * Flags
  * startdate = unix timestamp for start date
  * enddate = unix timestamp for end date
- * lastID = return all kills from lastID on (ordered by kll_external_id)
- * lastintID = return all kills from lastintID internal id on (ordered by kll_id)
+ * lastID = return all kills from lastID on (ordered by external id)
+ * lastintID = return all kills from lastintID internal id on (ordered by internal id)
  * range = return all kills between lastID and lastID + range
  *     (limited by $maxkillsreturned)
  * allkills = also return results without an external id set
@@ -35,8 +35,8 @@ $list = new KillList();
 if(!isset($_GET['allkills'])) $list->setAPIKill();
 $list->setLimit($maxkillsreturned);
 $list->setOrdered(true);
-if(!isset($_GET['allkills'])) $list->setOrderBy(' kll.kll_external_id ASC ');
-else $list->setOrderBy(' kll.kll_id ASC ');
+if(!isset($_GET['allkills'])) $list->setOrderBy(' kll.kll_external_id DESC ');
+else $list->setOrderBy(' kll.kll_id DESC ');
 $qry = DBFactory::getDBQuery();
 if(isset($_GET['alliance']))
 {
@@ -180,8 +180,8 @@ while($kill1 = $list->getKill())
 	{
 		$victimrow->addAttribute('allianceID', 0);
 		$victimrow->addAttribute('allianceName', '');
-		$victimrow->addAttribute('factionID', $victimAlliance->getName());
-		$victimrow->addAttribute('factionName', $victimAlliance->getFactionID());
+		$victimrow->addAttribute('factionID', $victimAlliance->getFactionID());
+		$victimrow->addAttribute('factionName', $victimAlliance->getName());
 	}
 	else
 	{

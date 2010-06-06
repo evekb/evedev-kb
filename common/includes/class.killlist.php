@@ -467,14 +467,14 @@ class KillList
 				// Get all kills after given kill id (used for feed syndication)
 				if ($this->minextkllid_)
 				{
-					$this->sql_ .= $sqlwhereop.' kll.kll_id >= '.$this->minextkllid_.' ';
+					$this->sql_ .= $sqlwhereop.' kll.kll_external_id >= '.$this->minextkllid_.' ';
 					$sqlwhereop = ' AND ';
 				}
 
 				// Get all kills before given kill id (used for feed syndication)
 				if ($this->maxextkllid_)
 				{
-					$this->sql_ .= $sqlwhereop.' kll.kll_id <= '.$this->maxextkllid_.' ';
+					$this->sql_ .= $sqlwhereop.' kll.kll_external_id <= '.$this->maxextkllid_.' ';
 					$sqlwhereop = ' AND ';
 				}
 
