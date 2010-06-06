@@ -177,11 +177,20 @@ class IDFeed
 		}
 		return false;
 	}
-	function setStartKill($id = 0)
+	//! Set the lowest kill ID you want returned.
+
+	/*!
+	 * \param $id The minimum kill ID
+	 * \param $internal Set true to use internal kill IDs instead of CCP IDs.
+	 *
+	 * \return False on error, True on success.
+	 */
+	function setStartKill($id = 0, $internal = false)
 	{
 		$id = intval($id);
 		if(!$id) return false;
-		$this->options['lastID'] = $id;
+		if($internal) $this->options['lastintID'] = $id;
+		else $this->options['lastID'] = $id;
 		return true;
 	}
 	function setRange($range = 0)
@@ -191,31 +200,47 @@ class IDFeed
 		$this->options['range'] = $range;
 		return true;
 	}
+	//! Set a starting date in unix timestamp format.
 	function setStartDate($date = 0)
 	{
 		if(!$date = intval($date)) return false;
 		$this->options['startdate'] = $date;
 		return true;
 	}
+	//! Set an ending date in unix timestamp format.
 	function setEndDate($date = 0)
 	{
 		if(!$date = intval($date)) return false;
 		$this->options['enddate'] = $date;
 		return true;
 	}
+	//! Set the system to filter by.
+
+	/*!
+	 * \param $systemID Eve system ID.
+	 *
+	 * \return False on error, True on success.
+	 */
 	function setSystem($systemID = 0)
 	{
 		if(!$systemID = intval($systemID)) return false;
 		$this->options['system'] = $systemID;
 		return true;
 	}
+	//! Set the region to filter by.
+
+	/*!
+	 * \param $regionID Eve region ID.
+	 *
+	 * \return False on error, True on success.
+	 */
 	function setRegion($regionID = 0)
 	{
 		if(!$regionID = intval($regionID)) return false;
 		$this->options['region'] = $regionID;
 		return true;
 	}
-	//! Set true to retrieve kills with no external ID;
+	//! Set true to include kills with no external ID;
 	function setAllKills($allkills = false)
 	{
 		if($allkills) $this->options['allkills'] = 1;
