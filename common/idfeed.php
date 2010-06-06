@@ -28,8 +28,13 @@
  */
 
 header("Content-Type: text/xml");
+$idfeedversion = 0.90;
 
 $maxkillsreturned = 200;
+
+$xml = "<?xml version='1.0' encoding='UTF-8'?>
+<eveapi version='2' edkapi='".$idfeedversion."'>
+</eveapi>";
 
 $list = new KillList();
 if(!isset($_GET['allkills'])) $list->setAPIKill();
@@ -37,70 +42,48 @@ $list->setLimit($maxkillsreturned);
 $list->setOrdered(true);
 if(!isset($_GET['allkills'])) $list->setOrderBy(' kll.kll_external_id DESC ');
 else $list->setOrderBy(' kll.kll_id DESC ');
+
 $qry = DBFactory::getDBQuery();
+
 if(isset($_GET['alliance']))
 {
 	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_external_id = ".intval($_GET['alliance']));
-	if(!$qry->recordCount())
-	{
-		$xml = "<?xml version='1.0' encoding='UTF-8'?><eveapi version='2'></eveapi>";
-		die($xml);
-	}
+	if(!$qry->recordCount()) die($xml);
 	$row = $qry->getRow();
 	$list->addCombinedAlliance($row['all_id']);
 }
 else if(isset($_GET['corp']))
 {
 	$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_external_id = ".intval($_GET['corp']));
-	if(!$qry->recordCount())
-	{
-		$xml = "<?xml version='1.0' encoding='UTF-8'?><eveapi version='2'></eveapi>";
-		die($xml);
-	}
+	if(!$qry->recordCount()) die($xml);
 	$row = $qry->getRow();
 	$list->addCombinedCorp($row['crp_id']);
 }
 else if(isset($_GET['pilot']))
 {
 	$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_externalid = ".intval($_GET['pilot'])." LIMIT 1");
-	if(!$qry->recordCount())
-	{
-		$xml = "<?xml version='1.0' encoding='UTF-8'?><eveapi version='2'></eveapi>";
-		die($xml);
-	}
+	if(!$qry->recordCount()) die($xml);
 	$row = $qry->getRow();
 	$list->addCombinedPilot($row['plt_id']);
 }
 else if(isset($_GET['alliancename']))
 {
 	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_name = '".$qry->escape($_GET['alliancename'])."' LIMIT 1");
-	if(!$qry->recordCount())
-	{
-		$xml = "<?xml version='1.0' encoding='UTF-8'?><eveapi version='2'></eveapi>";
-		die($xml);
-	}
+	if(!$qry->recordCount()) die($xml);
 	$row = $qry->getRow();
 	$list->addCombinedAlliance($row['all_id']);
 }
 else if(isset($_GET['corpname']))
 {
 	$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_name = '".$qry->escape($_GET['corpname'])."' LIMIT 1");
-	if(!$qry->recordCount())
-	{
-		$xml = "<?xml version='1.0' encoding='UTF-8'?><eveapi version='2'></eveapi>";
-		die($xml);
-	}
+	if(!$qry->recordCount()) die($xml);
 	$row = $qry->getRow();
 	$list->addCombinedCorp($row['crp_id']);
 }
 else if(isset($_GET['pilotname']))
 {
 	$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_name = '".$qry->escape($_GET['pilotname'])."' LIMIT 1");
-	if(!$qry->recordCount())
-	{
-		$xml = "<?xml version='1.0' encoding='UTF-8'?><eveapi version='2'></eveapi>";
-		die($xml);
-	}
+	if(!$qry->recordCount()) die($xml);
 	$row = $qry->getRow();
 	$list->addCombinedPilot($row['plt_id']);
 }
@@ -108,25 +91,18 @@ else if(isset($_GET['pilotname']))
 if(isset($_GET['system']))
 {
 	$qry->execute("SELECT sys_id FROM kb3_systems WHERE sys_eve_id = ".intval($_GET['system'])." LIMIT 1");
-	if(!$qry->recordCount())
-	{
-		$xml = "<?xml version='1.0' encoding='UTF-8'?><eveapi version='2'></eveapi>";
-		die($xml);
-	}
+	if(!$qry->recordCount()) die($xml);
 	$row = $qry->getRow();
 	$list->addSystem($row['sys_id']);
 }
 else if(isset($_GET['region']))
 {
 	$qry->execute("SELECT reg_id FROM kb3_regions WHERE reg_id = ".intval($_GET['region'])." LIMIT 1");
-	if(!$qry->recordCount())
-	{
-		$xml = "<?xml version='1.0' encoding='UTF-8'?><eveapi version='2'></eveapi>";
-		die($xml);
-	}
+	if(!$qry->recordCount()) die($xml);
 	$row = $qry->getRow();
 	$list->addRegion($row['reg_id']);
 }
+
 if(isset($_GET['lastID']))
 {
 	$list->setMinExtID(intval($_GET['lastID']));
@@ -142,9 +118,6 @@ if(isset($_GET['enddate'])) $list->setEndDate(gmdate('Y-m-d H:i:s',intval($_GET[
 $date = gmdate('Y-m-d H:i:s');
 
 // Let's start making the xml.
-$xml = "<?xml version='1.0' encoding='UTF-8'?>
-<eveapi version='2'>
-</eveapi>";
 $sxe = new SimpleXMLElement($xml);
 $sxe->addChild('currentTime', $date);
 $result = $sxe->addChild('result');
@@ -152,10 +125,10 @@ $kills = $result->addChild('rowset');
 $kills->addAttribute('name', 'kills');
 $kills->addAttribute('key', 'killID');
 $kills->addAttribute('columns', 'killID,solarSystemID,killTime,moonID,hash,trust');
-//$list->getAllKills();
+
 $count = 0;
 while($kill1 = $list->getKill())
-{//$kill = new Kill();
+{
 	$count++;
 	if($kill1->isClassified()) continue;
 	$kill = new Kill($kill1->getID());

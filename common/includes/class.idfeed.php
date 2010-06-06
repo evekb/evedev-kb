@@ -5,9 +5,6 @@
  * $HeadURL$
  */
 
-$idfeedversion = "v0.90";
-
-
 //! EDK IDFeed Syndication reader class.
 
 /*! This class is used to fetch and read the feed from another EDK board. It
@@ -26,6 +23,7 @@ class IDFeed
 	private $skipped = array();
 	private $time = '';
 	private $cachedTime = '';
+	public static final $version = "0.90";
 
 	//! Construct the Fetcher class and initialise variables.
 
@@ -61,7 +59,7 @@ class IDFeed
 		global $idfeedversion;
 
 		$http = new http_request($this->url.$options);
-		$http->set_useragent("EDK IDFeedfetcher ".$idfeedversion);
+		$http->set_useragent("EDK IDFeedfetcher ".self::$version);
 		$http->set_timeout(12);
 		$this->xml = $http->get_content();
 		unset($http);
