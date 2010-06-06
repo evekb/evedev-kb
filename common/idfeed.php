@@ -5,7 +5,8 @@
  * Flags
  * startdate = unix timestamp for start date
  * enddate = unix timestamp for end date
- * lastID = return all kills from lastID on (ordered by kll_id)
+ * lastID = return all kills from lastID on (ordered by external id)
+ * lastintID = return all kills from lastintID internal id on (ordered by internal id)
  * range = return all kills between lastID and lastID + range
  *     (limited by $maxkillsreturned)
  * allkills = also return results without an external id set
@@ -18,7 +19,7 @@
  * system = restrict kills to a specific system
  * region = restrict kills to a specific region
  *
- */
+*/
 
 header("Content-Type: text/xml");
 
@@ -29,7 +30,8 @@ $list = new KillList();
 if(!isset($_GET['allkills'])) $list->setAPIKill();
 $list->setLimit($maxkillsreturned);
 $list->setOrdered(true);
-$list->setOrderBy(' kll.kll_external_id ASC ');
+if(!isset($_GET['allkills'])) $list->setOrderBy(' kll.kll_external_id DESC ');
+else $list->setOrderBy(' kll.kll_id DESC ');
 $qry = new DBQuery();
 if(isset($_GET['alliance']))
 {
@@ -125,8 +127,13 @@ if(isset($_GET['lastID']))
 	$list->setMinExtID(intval($_GET['lastID']));
 	if(isset($_GET['range'])) $list->setMaxExtID(intval($_GET['lastID'] + $_GET['range']));
 }
-if(isset($_GET['startdate'])) $list->setStartDate(intval($_GET['startdate']));
-if(isset($_GET['enddate'])) $list->setEndDate(intval($_GET['enddate']));
+else if(isset($_GET['lastintID']) && isset($_GET['allkills']) && $_GET['allkills'])
+{
+	$list->setMinKllID(intval($_GET['lastintID']));
+	if(isset($_GET['range'])) $list->setMaxKllID(intval($_GET['lastintID'] + $_GET['range']));
+}
+if(isset($_GET['startdate'])) $list->setStartDate(gmdate('Y-m-d H:i:s',intval($_GET['startdate'])));
+if(isset($_GET['enddate'])) $list->setEndDate(gmdate('Y-m-d H:i:s',intval($_GET['startdate'])));
 $date = gmdate('Y-m-d H:i:s');
 
 // Let's start making the xml.
@@ -195,8 +202,8 @@ while($kill1 = $list->getKill())
 		{
 			$invrow->addAttribute('allianceID', 0);
 			$invrow->addAttribute('allianceName', '');
-			$invrow->addAttribute('factionID', $invAlliance->getName());
-			$invrow->addAttribute('factionName', $invAlliance->getFactionID());
+			$invrow->addAttribute('factionID', $invAlliance->getFactionID());
+			$invrow->addAttribute('factionName', $invAlliance->getName());
 		}
 		else
 		{
@@ -207,12 +214,58 @@ while($kill1 = $list->getKill())
 		}
 		$invrow->addAttribute('securityStatus', $inv->getSecStatus());
 		$invrow->addAttribute('damageDone', $inv->dmgdone_);
-		if($invPilot == $kill->getFBPilotID()) $final = 1;
+		if($invPilot->getID() == $kill->getFBPilotID()) $final = 1;
 		else $final = 0;
 		$invrow->addAttribute('finalBlow', $final);
 		$invrow->addAttribute('weaponTypeID', $inv->getWeapon()->getID());
 		$invrow->addAttribute('shipTypeID', $inv->getShip()->getExternalID());
 	}
+	$inv->destroyeditems_ = array();
+	$inv->droppeditems_ = array();
+	$droppedItems = $kill->droppeditems_;
+	$destroyedItems = $kill->destroyeditems_;
+	if(count($destroyedItems) || count($droppedItems))
+	{
+		$items = $row->addChild('rowset');
+		$items->addAttribute('name', 'items');
+		$items->addAttribute('columns', 'typeID,flag,qtyDropped,qtyDestroyed');
+
+		foreach($destroyedItems as $destroyed)
+		{
+			$item = $destroyed->getItem();
+			$itemRow = $items->addChild('row');
+			$itemRow->addAttribute('typeID', $item->getID());
+			if ($destroyed->getLocationID() == 4) // cargo
+				$itemRow->addAttribute('flag', 5);
+			else if ($destroyed->getLocationID() == 6) // drone
+				$itemRow->addAttribute('flag', 87);
+			else
+				$itemRow->addAttribute('flag', 0);
+			$itemRow->addAttribute('qtyDropped', 0);
+			$itemRow->addAttribute('qtyDestroyed', $destroyed->getQuantity());
+			if ($destroyed->getQuantity() > 1)
+				$mail .= ", Qty: ".$destroyed->getQuantity();
+		}
+
+
+		foreach($droppedItems as $dropped)
+		{
+			$item = $dropped->getItem();
+			$itemRow = $items->addChild('row');
+			$itemRow->addAttribute('typeID', $item->getID());
+			if ($dropped->getLocationID() == 4) // cargo
+				$itemRow->addAttribute('flag', 5);
+			else if ($dropped->getLocationID() == 6) // drone
+				$itemRow->addAttribute('flag', 87);
+			else
+				$itemRow->addAttribute('flag', 0);
+			$itemRow->addAttribute('qtyDropped', $dropped->getQuantity());
+			$itemRow->addAttribute('qtyDestroyed', 0);
+			if ($dropped->getQuantity() > 1)
+				$mail .= ", Qty: ".$dropped->getQuantity();
+		}
+	}
+
 }
 $sxe->addChild('cachedUntil', $date);
 echo $sxe->asXML();
