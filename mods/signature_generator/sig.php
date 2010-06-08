@@ -65,14 +65,10 @@ if (file_exists(KB_CACHEDIR.'/data/sig_'.$id.'_'.$plt_id))
 }
 
 $pid = $pilot->getExternalID();
-$cachePath = KB_CACHEDIR.'/img/pilots/'.substr($pid,0,2).'/'.substr($pid,2,2).'/'.$pid.'_256.jpg';
+$cachePath = $pilot->getPortraitPath(256);
 
 if (!file_exists($cachePath))
 {
-	if(!is_dir(KB_CACHEDIR.'/img/pilots/'.substr($pid,0,2).'/'))
-			mkdir(KB_CACHEDIR.'/img/pilots/'.substr($pid,0,2).'/');
-	if(!is_dir(KB_CACHEDIR.'/img/pilots/'.substr($pid,0,2).'/'.substr($pid,2,2).'/'))
-			mkdir(KB_CACHEDIR.'/img/pilots/'.substr($pid,0,2).'/'.substr($pid,2,2).'/');
 	// in case of a dead eve server we only want to wait 5 seconds
 	@ini_set('default_socket_timeout', 5);
 	$file = @file_get_contents('http://img.eve.is/serv.asp?s=256&c='.$pid);

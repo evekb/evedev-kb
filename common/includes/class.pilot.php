@@ -140,10 +140,7 @@ class Pilot
 		$size = intval($size);
 		$id = intval($id);
 		if(!$id) $id = $this->getExternalID();
-		if(!$id || strlen($id) < 4) return KB_CACHEDIR.'/img/pilots/0/0_'.$size.'.jpg';
-		return KB_CACHEDIR.'/img/pilots/'.substr($id,0,2).'/'.
-			substr($id,2,2).'/'.$id.'_'.$size.'.jpg';
-
+		return CacheHandler::getInternal($id."_".$size.".jpg", "img");
 	}
 	//! Fetch the pilot details from the database using the id given on construction.
 	function execQuery()
