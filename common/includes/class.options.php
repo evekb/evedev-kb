@@ -282,16 +282,19 @@ class options
 	public static function getPrevious($key)
 	{
 		if(!isset(self::$data[urldecode($_POST['field'])][urldecode($_POST['sub'])]))
-			return config::get($element[$key]['name']);
+			return config::get($key);
 		$current = self::$data[urldecode($_POST['field'])][urldecode($_POST['sub'])];
 		foreach ($current as $element)
 		{
-			if (isset($element[$key]['name']) && $element[$key]['name'] == $key)
+			foreach ($element as $subelement)
 			{
-				if(isset($element[$key]['previous'])) return $element[$key]['previous'];
-				else return config::get($element[$key]['name']);
+				if (isset($subelement['name']) && $subelement['name'] == $key)
+				{
+					if(isset($subelement['previous'])) return $subelement['previous'];
+					else return config::get($subelement['name']);
+				}
 			}
 		}
-		return config::get($element[$key]['name']);
+		return config::get($key);
 	}
 }
