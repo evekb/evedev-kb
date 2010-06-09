@@ -38,12 +38,15 @@ if (isset($_SESSION['sett']['adminpw']) && strlen($_SESSION['sett']['adminpw']) 
 {
 	$stoppage = false;
 }
-if (isset($_SESSION['sett']['site']) && strlen($_SESSION['sett']['site']) > 12 && strlen($_SESSION['sett']['site']) < 1)
+if (isset($_SESSION['sett']['site']))
 {
-	$smarty->assign('length', true);
-	$stoppage = true;
+	$_SESSION['sett']['site'] = preg_replace("/[^\w\d_-]*", "", $_SESSION['sett']['site']);
+	if(strlen($_SESSION['sett']['site']) > 12 || strlen($_SESSION['sett']['site']) < 1)
+	{
+		$smarty->assign('length', true);
+		$stoppage = true;
+	}
 }
-
 $settings = array();
 $settings[] = array('descr' => 'Adminpassword', 'name' => 'adminpw', 'value' => $_SESSION['sett']['adminpw']);
 $settings[] = array('descr' => 'Title', 'name' => 'title', 'value' => $_SESSION['sett']['title']);
@@ -55,4 +58,3 @@ $smarty->assign('settings', $settings);
 $smarty->assign('stoppage', $stoppage);
 $smarty->assign('nextstep', $_SESSION['state']+1);
 $smarty->display('install_step6.tpl');
-?>
