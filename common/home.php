@@ -132,7 +132,7 @@ class pHome extends pageAssembly
 
 		// If no week is set then show the most recent kills. Otherwise
 		// show all kills for the week using the page splitter.
-		if(empty($_GET['w']) && empty($_GET['y']))
+		if(empty($_GET['w']) && empty($_GET['y']) && config::get("cfg_fillhome"))
 		{
 			$klist->setLimit($this->killcount);
 			$table = new KillListTable($klist);
