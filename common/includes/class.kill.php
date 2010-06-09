@@ -1356,7 +1356,7 @@ class Kill
 			$this->hash = Parser::hashMail($this->getRawMail());
 			if($this->hash === false) return false;
 
-			if($this->externalid_)
+			if($this->id_ && $this->externalid_)
 			{
 				$sql = "INSERT INTO kb3_mails (  `kll_id`, `kll_timestamp`, ".
 					"`kll_external_id`, `kll_hash`, `kll_trust`)".
@@ -1364,7 +1364,7 @@ class Kill
 					$this->externalid_.", '".$qry->escape($this->hash)."', ".
 					$this->trust.")";
 			}
-			else
+			else if($this->id_)
 			{
 				$sql = "INSERT INTO kb3_mails (  `kll_id`, `kll_timestamp`, ".
 					"`kll_hash`, `kll_trust`)".
