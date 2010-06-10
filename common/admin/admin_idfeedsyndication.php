@@ -17,8 +17,7 @@ require_once('common/admin/admin_menu.php');
 $page = new Page("Administration - IDFeed Syndication " . IDFeed::version);
 $page->setCachable(false);
 $page->setAdmin();
-$html .= "<script language=\"JavaScript\">function checkAll(checkname, exby) {for (i = 0; i < checkname.length; i++)checkname[i].checked = exby.checked? true:false}</script>";
-$html .= "<table class='kb-subtable'>";
+$html .= "<script language=\"JavaScript\" type='text/javascript'>function checkAll(checkname, exby) {for (i = 0; i < checkname.length; i++)checkname[i].checked = exby.checked? true:false}</script>";
 
 $feeds = config::get("fetch_idfeeds");
 if(is_null($feeds))
@@ -48,13 +47,13 @@ if ($_POST['submit'] || $_POST['fetch'])
             else $val['trusted'] = 0;
             if ($_POST['apikills'] && in_array ($url, $_POST['apikills']))
 			{
+				if(!$val['apikills']) $val['lastkill'] = 0;
 				$val['apikills'] = 1;
-				$val['lastkill'] = 0;
 			}
             else
 			{
+				if($val['apikills']) $val['lastkill'] = 0;
 				$val['apikills'] = 0;
-				$val['lastkill'] = 0;
 			}
             // reset the feed lastkill details if the URL or api status has changed
             if($_POST[$url] != $val['url'] )
@@ -103,37 +102,40 @@ if ($_POST['fetch'])
 }
 // generating the html
 $html .= '<form id="options" name="options" method="post" action="?a=admin_idfeedsyndication">';
-$html .= "</table>";
 
 $html .= "<div class='block-header2'>Feeds</div><table>";
+$html .= "<tr style='text-align: left;'><th>Feed URL</th><th>Last Kill</th><th>Trusted</th><th>API only</th><th>Fetch</th><th>Delete</th></tr>\n";
 foreach($feeds as $key => &$val)
 {
 	$key = md5($val['url']);
-    $html .= "<tr><td width='85px'><b>Feed url </b></td><td><input type='text' name=" . $key . " size=50 class=password value=\"";
+    $html .= "<tr><td><input type='text' name='" . $key . "' size='50' class='password' value=\"";
     $html .= $val['url'];
-    $html .= "\"></td>";
+    $html .= "\" /></td>";
 
-    $html .= "<td><input type='checkbox' name=trusted[] id=trusted value=" . $key;
+    $html .= "<td><input type='text' name='lastkill[]' class='lastkill' size='10' value='" . $val['lastkill'];
+//    $html .= "' readonly='readonly' /></td>";
+    $html .= "' /></td>";
+
+    $html .= "<td><input type='checkbox' name='trusted[]' class='trusted' value='" . $key."'";
     if ($val['trusted'])
         $html .= " checked=\"checked\"";
-    $html .= "><b>Trusted?</b></td>";
+    $html .= " /></td>";
 
-	$html .= "<td><input type='checkbox' name=apikills[] id=apikills value=" . $key;
+	$html .= "<td><input type='checkbox' name='apikills[]' class='apikills' value='" . $key."'";
     if ($val['apikills']) $html .= " checked=\"checked\"";
-    $html .= "><b>API verified only?</b><br>";
+    $html .= " /></td>";
 
-    $html .= "<td><input type='checkbox' name=fetch_feed[] id=fetch value=" . $key;
+    $html .= "<td><input type='checkbox' name='fetch_feed[]' class='fetch' value='" . $key."'";
     if (!isset($_POST['fetch_feed'][$key]) || $_POST['fetch_feed'][$key]) $html .= " checked=\"checked\"";
-    $html .= "><b>Fetch?</b><br>";
+    $html .= " /></td>";
 
-    $html .= "<td><input type='checkbox' name=delete[] id=delete value=" . $key;
-    $html .= "><b>Delete?</b><br>";
-
+    $html .= "<td><input type='checkbox' name='delete[]' class='delete' value='" . $key."'";
+    $html .= " />";
     $html .= "</td></tr>";
 }
 $html .= "<tr><td colspan='2'><i>Example: http://killboard.domain.com/?a=idfeed</i></td><td>";
-$html .= "</td><td></td><td><input type='checkbox' name='all' onclick='checkAll(this.form.fetch,this)'><i>all/none</i>";
-$html .= "</td></tr><br></table><br><br><br>";
+$html .= "</td><td></td><td><input type='checkbox' name='all' onclick='checkAll(this.form.fetch,this)' /><i>all</i>";
+$html .= "</td><td></td></tr></table><br /><br /><br />";
 
 //$html .= "<table><tr><td height='20px' width='150px'><b>First week:</b></td>";
 //$html .= '<td><select name="range1">';
@@ -169,19 +171,19 @@ $html .= "</td></tr><br></table><br><br><br>";
 //}
 //$html .= '</select>';
 //$html .= "</td></tr>";
-//$html .= "</table><br><br>";
-$html .= "<input type='submit' id='submit' name='fetch' value=\"Fetch!\"><br><br>";
+//$html .= "</table><br /><br />";
+$html .= "<input type='submit' id='submitFetch' name='fetch' value=\"Fetch!\" /><br /><br />";
 
 $html .= "<div class='block-header2'>Options</div><table>";
 //$html .= "<tr><td height='30px' width='150px'><b>Number of feeds:</b></td>";
 //$html .= "<td><input type='text' name='fetch_feed_count' size='2' maxlength='2' class='password' value='" . $feedcount . "'></td></tr>";
-$html .= "<tr><td height='50px' width='150px'><b>Comment for automatically parsed killmails?</b></td>";
+$html .= "<tr><td height='50' width='150'><b>Comment for automatically parsed killmails?</b></td>";
 $html .= "<td><input type='text' size='50' class='password' name='fetch_comment' id='fetch_comment' value=\"";
 if (config::get('fetch_comment'))
     $html .= config::get('fetch_comment');
-$html .= "\"><br><i> (leave blank for none)</i><br></td></tr>";
-$html .= "</table><br><br>";
-$html .= "<input type='submit' id='submit' name='submit' value=\"Save\">";
+$html .= "\" /><br /><i> (leave blank for none)</i><br /></td></tr>";
+$html .= "</table><br /><br />";
+$html .= "<input type='submit' id='submitOptions' name='submit' value=\"Save\" />";
 $html .= "</form>";
 
 $page->addContext($menubox->generate());
