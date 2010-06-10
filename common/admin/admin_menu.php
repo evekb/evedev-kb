@@ -60,7 +60,8 @@ options::oldMenu('Advanced', "Value Fetch", "?a=admin_value_fetch");
 options::oldMenu('Features', "Modules", "?a=admin_mods");
 
 options::oldMenu('Features', "Feed Syndication", "?a=admin_feedsyndication");
-options::oldMenu('Features', "API Mod", "?a=admin_apimod");
+options::oldMenu('Features', "IDFeed Syndication", "?a=admin_idfeedsyndication");
+options::oldMenu('Features', "CCP API Feed", "?a=admin_apimod");
 
 options::oldMenu('Maintenance', "Auditing", "?a=admin_audit");
 options::oldMenu('Maintenance', "Troubleshooting", "?a=admin_troubleshooting");

@@ -23,7 +23,7 @@ class IDFeed
 	private $skipped = array();
 	private $time = '';
 	private $cachedTime = '';
-	public static final $version = "0.90";
+	const version = "0.90";
 
 	//! Construct the Fetcher class and initialise variables.
 
@@ -59,7 +59,7 @@ class IDFeed
 		global $idfeedversion;
 
 		$http = new http_request($this->url.$options);
-		$http->set_useragent("EDK IDFeedfetcher ".self::$version);
+		$http->set_useragent("EDK IDFeedfetcher ".self::version);
 		$http->set_timeout(12);
 		$this->xml = $http->get_content();
 		unset($http);
@@ -88,6 +88,7 @@ class IDFeed
 			die($error);
 			return $error;
 		}
+		if(!$sxe['edkapi'] || $sxe['edkapi'] < 0.90) return false;
 		$this->time = $sxe->currentTime;
 		$this->cachedTime = $sxe->cachedUntil;
 		foreach($sxe->result->rowset->row as $row) $this->processKill($row);
@@ -264,34 +265,46 @@ class IDFeed
 	}
 	private function processKill($row)
 	{
-		$qry = DBFactory::getDBQuery();
+		if(!$id = $this->killExists($row))
+		{
+			$qry = DBFactory::getDBQuery();
 
-		$kill = new Kill();
-		if($row['trust'] >= $this->trust && $row['killID']) $kill->setExternalID($row['killID']);
-		if($row['hash']) $kill->setHash(decbin(hexdec($row['hash'])));
-		if($row['trust']) $kill->setTrust($row['trust']);
+			$kill = new Kill();
+			if($row['trust'] >= $this->trust && $row['killID']) $kill->setExternalID($row['killID']);
+			if($row['hash']) $kill->setHash(decbin(hexdec($row['hash'])));
+			if($row['trust']) $kill->setTrust($row['trust']);
 
-		$kill->setTimeStamp($row['killTime']);
+			$kill->setTimeStamp($row['killTime']);
 
-		$qry->execute("SELECT sys_id FROM kb3_systems WHERE sys_eve_id = '".intval($row['solarSystemID'])."'");
-		if(!$qry->recordCount()) return false;
-		$qrow = $qry->getRow();
-		$sys = new SolarSystem($qrow['sys_id']);
-		$kill->setSolarSystem($sys);
+			$qry->execute("SELECT sys_id FROM kb3_systems WHERE sys_eve_id = '".intval($row['solarSystemID'])."'");
+			if(!$qry->recordCount()) return false;
+			$qrow = $qry->getRow();
+			$sys = new SolarSystem($qrow['sys_id']);
+			$kill->setSolarSystem($sys);
 
-		$this->processVictim($row->victim, $kill, $row['killTime']);
+			$this->processVictim($row->victim, $kill, $row['killTime']);
 
-		foreach($row->rowset[0]->row as $inv) $this->processInvolved($inv, $kill, $row->killTime);
-		if(isset($row->rowset[1]->row[0])) foreach($row->rowset[1]->row as $item) $this->processItem($item, $kill);
-		$id = $kill->add();
-		if($id > 0) $this->posted[] = $id;
-		else if(isset($row['killInternalID']) && $row['killInternalID']) $this->skipped[$row['killInternalID']] = $kill->getDupe();
-		else $this->skipped[$row['killID']] = $kill->getDupe();
+			foreach($row->rowset[0]->row as $inv) $this->processInvolved($inv, $kill, $row['killTime']);
+			if(isset($row->rowset[1]->row[0])) foreach($row->rowset[1]->row as $item) $this->processItem($item, $kill);
+			$id = $kill->add();
+
+			$internalID = intval($row['killInternalID']);
+			if($id > 0) $this->posted[] = $id;
+			//TODO should these be reversed?
+			else if($internalID) $this->skipped[intval($internalID)] = $kill->getDupe();
+			else $this->skipped[$row['killID']] = $kill->getDupe();
+		}
+		else
+		{
+			$internalID = intval($row['killInternalID']);
+			//TODO should these be reversed?
+			if($internalID) $this->skipped[$internalID] = $id;
+			else $this->skipped[intval($row['killID'])] = $id;
+		}
 		
 		if($this->lastReturned < $row['killID']) $this->lastReturned = $row['killID'];
-		if(isset($row['killInternalID']) && $this->lastInternalReturned < $row['killInternalID']) $this->lastInternalReturned = $row['killInternalID'];
+		if($this->lastInternalReturned < $internalID) $this->lastInternalReturned = $internalID;
 		
-		return $kill;
 	}
 	private function processVictim($victim, &$kill, $time)
 	{
@@ -323,7 +336,7 @@ class IDFeed
 		$kill->setVictimShip($ship);
 		$kill->set('dmgtaken', $victim['damageTaken']);
 	}
-	private function processInvolved($inv, &$kill)
+	private function processInvolved($inv, &$kill, $time)
 	{
 		$alliance = new Alliance();
 		$corp = new Corporation();
@@ -358,8 +371,8 @@ class IDFeed
 		else if($item['flag'] == 87) $location = 6;
 		else
 		{
-			$item = new Item($item['typeID']);
-			$location = $item->getSlot();
+			$litem = new Item($item['typeID']);
+			$location = $litem->getSlot();
 		}
 
 		if($item['qtyDropped'])
@@ -388,5 +401,39 @@ class IDFeed
 	function getCachedTime()
 	{
 		return $this->cachedTime;
+	}
+	//! Returns the id of a matching existing kill if found.
+	
+	/*! This does not guarantee non-existence as it only checks external id and
+	 * hash
+	 * 
+	 * \param $row A SimpleXML object containing the kill.
+	 *
+	 * \return 0 if no match found, the kll_id if found.
+	 */
+	private function killExists(&$row)
+	{
+		$qry = DBFactory::getDBQuery(true);
+		if($row['killID'] > 0)
+		{
+			$qry->execute("SELECT kll_id FROM kb3_kills WHERE kll_external_id = ".intval($row['killID']));
+			if($qry->recordCount())
+			{
+				$qrow = $qry->getRow();
+				$id = $qrow['kll_id'];
+				return $id;
+			}
+		}
+		if(strlen($row['hash']) > 1)
+		{
+			$qry->execute("SELECT kll_id FROM kb3_mails WHERE kll_hash = 0x".$qry->escape($row['hash']));
+			if($qry->recordCount())
+			{
+				$qrow = $qry->getRow();
+				$id = $qrow['kll_id'];
+				return $id;
+			}
+		}
+		return 0;
 	}
 }
