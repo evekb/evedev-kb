@@ -41,7 +41,7 @@ for ( $i = 1; $i <= $keycount; $i++ )
 {
     if (isset($_POST['select'.$i]))
     {
-        $html .= "Click the character you'd like to set:<br><br>";
+        $html .= "Click the character you'd like to set:<br /><br />";
         $selectid = $i;
 
         $apistring = 'userID=' . config::get('API_UserID_' . $selectid) . '&apiKey=' . config::get('API_Key_' . $selectid);
@@ -53,7 +53,7 @@ for ( $i = 1; $i <= $keycount; $i++ )
             $isupdated = true;
             for ( $x = 0; $x < $charcount; $x++ )
             {
-                $html .= '<a href="?a=admin_apimod&CharID=' . $CharList[$x]['charID'] . '&SetNum=' . $selectid . '">'. $CharList[$x]['Name'] . '</a><br>';
+                $html .= '<a href="?a=admin_apimod&CharID=' . $CharList[$x]['charID'] . '&SetNum=' . $selectid . '">'. $CharList[$x]['Name'] . '</a><br />';
             }
         } else {
             $html .= "No characters found, check your details are correct and the Eve API is online";
@@ -83,7 +83,7 @@ if ($_POST['clearapicache'])
 	// drop table
 	$db = DBFactory::getDBQuery(true);;
 	$db->execute("TRUNCATE TABLE `kb3_apicache`");
-	$html .= "Cache cleared.<br>";
+	$html .= "Cache cleared.<br />";
 	$html .= "<script type=\"text/javascript\">window.location = \"?a=admin_apimod\"</script>"; //*/
 }
 
@@ -195,7 +195,7 @@ if ($_POST['submit'] || $_POST['import']  )
     else
         config::set('API_ConvertTimestamp', '1');
 		
-    $html .= "Settings Saved.<br>";
+    $html .= "Settings Saved.<br />";
 }
 
 if ($_POST['import'] || isset($_GET['Process']))
@@ -216,7 +216,7 @@ if ($_POST['import'] || isset($_GET['Process']))
 		if (config::get("API_MultipleMode") == 0 )
 		{ // save output to file and load when complete
             $i = $processindex;
-            $myEveAPI->Output_ .= "Importing Mails for " . config::get("API_Name_" . $i) . "<br>";
+            $myEveAPI->Output_ .= "Importing Mails for " . config::get("API_Name_" . $i) . "<br />";
             $keystring = 'userID=' . config::get('API_UserID_' . $i) . '&apiKey=' . config::get('API_Key_' . $i) . '&characterID=' . config::get('API_CharID_' . $i);
             $typestring = config::get("API_Type_" . $i);
             $outputdata .= $myEveAPI->Import($keystring, $typestring, $i);
@@ -242,7 +242,7 @@ if ($_POST['import'] || isset($_GET['Process']))
 		} else {
 			for ( $i = 1; $i <= $keycount; $i++ )
 			{
-			    $myEveAPI->Output_ .= "Importing Mails for " . config::get("API_Name_" . $i) . "<br>";
+			    $myEveAPI->Output_ .= "Importing Mails for " . config::get("API_Name_" . $i) . "<br />";
                 $keystring = 'userID=' . config::get('API_UserID_' . $i) . '&apiKey=' . config::get('API_Key_' . $i) . '&characterID=' . config::get('API_CharID_' . $i);
                 $typestring = config::get("API_Type_" . $i);
 				//$myEveAPI->cachetext_ = "";
@@ -277,8 +277,8 @@ if ($_POST['clearlog'])
 
 if ($_POST['apilog'])
 {
-	$html .= "<div class=block-header2>API Log</div>";
-	$html .= "<form id=options name=options method=post action=?a=admin_apimod>";
+	$html .= "<div class='block-header2'>API Log</div>";
+	$html .= "<form id='options' name='options' method='post' action='?a=admin_apimod'>";
 
 	$sql = 'SELECT * 
 			FROM kb3_apilog
@@ -289,7 +289,7 @@ if ($_POST['apilog'])
 	$qry->execute($sql) or die($qry->getErrorMsg());
 
 	$html .= '<table class="kb-table">';
-	$html .= "<tr class=kb-table-header><td align=center width=150>Key Name</td><td width=60>Posted</td><td width=60>Malformed</td><td width=60>Ignored</td><td width=60>Verified</td><td width=80>Total Mails</td><td width=60>Source</td><td width=60>Type</td><td width=150>Time Stamp</td></tr>";
+	$html .= "<tr class='kb-table-header'><td align='center' width='150'>Key Name</td><td width='60'>Posted</td><td width='60'>Malformed</td><td width='60'>Ignored</td><td width='60'>Verified</td><td width='80'>Total Mails</td><td width='60'>Source</td><td width='60'>Type</td><td width='150'>Time Stamp</td></tr>";
 	$odd = false;
 	while ($row = $qry->getRow())
 	{
@@ -337,45 +337,71 @@ if ($_POST['apilog'])
 	}
 	$html .= "</table>";
 
-	$html .= "<br>";
-	$html .= "<table><tr><td width=60><input type=\"submit\" name=\"back\" value=\"Back\" width=60></td><td><input type='submit' name='clearlog' value='Clear Log' /></td></tr></table>";
+	$html .= "<br />";
+	$html .= "<table><tr><td width='60'><input type=\"submit\" name=\"back\" value=\"Back\" width='60' /></td><td><input type='submit' name='clearlog' value='Clear Log' /></td></tr></table>";
 	$html .= "</form>";
 	
 } else {
 	// API Settings 
-	$html .= "<div class=block-header2>API Key Details (must be CEO/Director to retrieve corp mails)</div>";
-	$html .= "<form id=options name=options method=post action=?a=admin_apimod>";
+	$html .= "<div class='block-header2'>API Key Details (must be CEO/Director to retrieve corp mails)</div>";
+	$html .= "<form id='options' name='options' method='post' action='?a=admin_apimod'>";
 	
 	// show current server time
-	$html .= "Servers current time: <font color = \"#00FF00\">" . date("M d Y H:i") . "</font><br><br>";
+	$html .= "Servers current time: <font color = \"#00FF00\">" . date("M d Y H:i") . "</font><br /><br />";
+
+function cmp($a, $b) {
+    if ($a == $b) {
+        return 0;
+    }
+    return ($a < $b) ? -1 : 1;
+}
+
+$order = array();
+for ($i = 1; $i <= $keycount; $i++ )
+{
+        $corpName = config::get("API_Name_$i");
+        $order[$i] = $corpName;
+}
+uasort($order, "cmp");
+
+// Remove blank entries from the beginning
+foreach($order as $key => $value ) {
+	if ($order[$key] == "" ) unset ($order[$key]);
+}
+// Add blank entries to back end of list
+while (sizeof($order) < $keycount) $order[] = sizeof($order) + 1;
 
 	// Key Details
-	for ( $i = 1; $i <= $keycount; $i++ )
-	{
-   	 	$characteridentitifier = config::get("API_CharID_" . $i);
-    	$html .= "<table class=kb-subtable>";
-    	$html .= "<tr><td>Key Name #" . $i .":</td><td><input type=\"text\" name=\"API_Name_" . $i . "\" value=\"".config::get("API_Name_" . $i) . "\"> (This is just to remind yourself which key is being used)</td></tr>";
-    	$html .= "<tr><td>Full API Key #" . $i . ":</td><td><input type=\"password\" size=26 name=\"API_Key_" . $i . "\" value=\"".config::get("API_Key_" . $i) . "\"></td></tr>";
-    	$html .= "<tr><td>API CharID #" . $i . ":</td><td><input type=\"text\"  name=\"API_CharID_" . $i . "\" value=\"" . $characteridentitifier . "\">";
+        $ni = 0;
+        foreach($order as $key => $value)
+        {
+                $i = $key;
+                $ni++;
+
+   	$characteridentitifier = config::get("API_CharID_" . $i);
+    	$html .= "<table class='kb-subtable'>";
+    	$html .= "<tr><td>Key Name #" . $ni .":</td><td><input type=\"text\" name=\"API_Name_" . $ni . "\" value=\"".config::get("API_Name_" . $i) . "\" /> (This is just to remind yourself which key is being used)</td></tr>";
+    	$html .= "<tr><td>Full API Key #" . $ni . ":</td><td><input type=\"password\" size='26' name=\"API_Key_" . $ni . "\" value=\"".config::get("API_Key_" . $i) . "\" /></td></tr>";
+    	$html .= "<tr><td>API CharID #" . $ni . ":</td><td><input type=\"text\"  name=\"API_CharID_" . $ni . "\" value=\"" . $characteridentitifier . "\" />";
     	if ($characteridentitifier != "") {
         	$html .= getPlayerDetails($characteridentitifier);
     	}
     	if (config::get("API_Key_" . $i) != "" && config::get("API_UserID_" . $i) != "") {
-        	$html .= "</td></td><td colspan=\"2\"><input type=submit id=\"w00t\"" . " name=select" . $i . " value=\"Select Character\">";
+        	$html .= "</td><td colspan=\"2\"><input type='submit' class='w00t'" . " name='select" . $ni . "' value=\"Select Character\" />";
     	}
-    	$html .= "<td></tr>";
-    	$html .= "<tr><td>API UserID #" . $i . ":</td><td><input type=\"text\" name=\"API_UserID_" . $i . "\" value=\"".config::get("API_UserID_" . $i) . "\"></td></tr>";
-    	$html .= "<tr><td>Key Type #" . $i .":</td>";
-    	$html .= "<td>Corp <input type=\"radio\" name=\"API_Type_" . $i . "\" value=\"corp\" ";
+    	$html .= "</td></tr>";
+    	$html .= "<tr><td>API UserID #" . $ni . ":</td><td><input type=\"text\" name=\"API_UserID_" . $ni . "\" value=\"".config::get("API_UserID_" . $i) . "\" /></td></tr>";
+    	$html .= "<tr><td>Key Type #" . $ni .":</td>";
+    	$html .= "<td>Corp <input type=\"radio\" name=\"API_Type_" . $ni . "\" value=\"corp\" ";
     	if (config::get("API_Type_" . $i) != "char") {
-        	$html .= "checked";
+        	$html .= "checked='checked'";
     	}
-    	$html .= ">";
-    	$html .= "       Player <input type=\"radio\" name=\"API_Type_" . $i . "\" value=\"char\" ";
+    	$html .= " />";
+    	$html .= "       Player <input type=\"radio\" name=\"API_Type_" . $ni . "\" value=\"char\" ";
     	if (config::get("API_Type_" . $i) == "char") {
-        	$html .= "checked";
+        	$html .= "checked='checked'";
     	}
-   	 	$html .= "></td></tr>";
+   	 	$html .= " /></td></tr>";
 		$cachetime = API_Helpers::ConvertTimestamp($apicachetime[$i]);
     	//$cachetime = date("Y-m-d H:i:s",  strtotime($apicachetime[$i]) + $gmoffset);
     	if ($cachetime == "")
@@ -392,46 +418,46 @@ if ($_POST['apilog'])
         	}
     	}
     	$html .= "<tr><td>Data is cached until:</td><td>" . $txtcolour . $cachetime . "</font></td></tr>";
-    	$html .= "</table><br>";
+    	$html .= "</table><br />";
 	}
-	$html .= "<table class=api-keys>";
-	$html .= "<tr><td height=30px width=150px>Number of API Keys:</td>";
-	$html .= "<td><input type=text name=API_Key_count size=2 maxlength=2 class=password value=\"" . $keycount . "\"></td></tr>";
-	$html .= "</table><br>";
-	$html .= "<i> Your UserID and API FULL Key can be obtained <a href=\"http://myeve.eve-online.com/api/default.asp\">here</a></i><br>";
-	$html .= "<i> Once your UserID and API Key have been entered and the settings saved you can then select the available character IDs if you don't know them by clicking the \"select character\" button that appears and then clicking the character name</i><br><br>";
+	$html .= "<table class='api-keys'>";
+	$html .= "<tr><td height='30' width='150'>Number of API Keys:</td>";
+	$html .= "<td><input type='text' name='API_Key_count' size='2' maxlength='2' class='password' value=\"" . $keycount . "\" /></td></tr>";
+	$html .= "</table><br />";
+	$html .= "<i> Your UserID and API FULL Key can be obtained <a href=\"http://myeve.eve-online.com/api/default.asp\">here</a></i><br />";
+	$html .= "<i> Once your UserID and API Key have been entered and the settings saved you can then select the available character IDs if you don't know them by clicking the \"select character\" button that appears and then clicking the character name</i><br /><br />";
 
 	// API Caching Options
-	$html .= "<div class=block-header2>API XML Caching Options</div><table>";
+	$html .= "<div class='block-header2'>API XML Caching Options</div><table>";
 
-	$html .= "<tr><td height=30px width=150px>Enable API XML Caching?</td>";
-	$html .= "<td><input type=checkbox name=API_UseCache id=API_UseCache";
+	$html .= "<tr><td height='30' width='150'>Enable API XML Caching?</td>";
+	$html .= "<td><input type='checkbox' name='API_UseCache' id='API_UseCache'";
 	if (!config::get('API_UseCache'))
     	$html .= " checked=\"checked\"";
-	$html .= "></tr>";
+	$html .= " /></td></tr>";
 
-	$html .= "<tr><td height=30px width=150px>Convert Cache Times to local time?</i></td>";
-	$html .= "<td><input type=checkbox name=API_ConvertTimestamp id=API_ConvertTimestamp";
+	$html .= "<tr><td height='30' width='150'>Convert Cache Times to local time?</td>";
+	$html .= "<td><input type='checkbox' name='API_ConvertTimestamp' id='API_ConvertTimestamp'";
 	if (!config::get('API_ConvertTimestamp'))
     	$html .= " checked=\"checked\"";
-	$html .= "></tr>";
+	$html .= " /></td></tr>";
 
-	//$html .= "<tr><td height=30px width=150px>Force Daylight Saving Time on displayed cache times?</i></td>";
-	//$html .= "<td><input type=checkbox name=API_ForceDST id=API_ForceDST";
+	//$html .= "<tr><td height='30' width='150'>Force Daylight Saving Time on displayed cache times?</i></td>";
+	//$html .= "<td><input type='checkbox' name='API_ForceDST' id='API_ForceDST'";
 	//if (!config::get('API_ForceDST'))
     	//$html .= " checked=\"checked\"";
 	//$html .= "></tr>";
 
-	$html .= "<tr><td height=30px width=150px>Use Extended 24hr cache timer for Sovereignty.xml?</td>";
-	$html .= "<td><input type=checkbox name=API_extendedtimer_sovereignty id=API_extendedtimer_sovereignty";
+	$html .= "<tr><td height='30' width='150'>Use Extended 24hr cache timer for Sovereignty.xml?</td>";
+	$html .= "<td><input type='checkbox' name='API_extendedtimer_sovereignty' id='API_extendedtimer_sovereignty'";
 	if (!config::get('API_extendedtimer_sovereignty'))
     	$html .= " checked=\"checked\"";
-	$html .= ">";
+	$html .= " />";
 	//$tempcachetime = date("Y-m-d H:i:s",  strtotime(ApiCache::get('API_map_Sovereignty')) + $gmoffset);
 	$tempcachetime = API_Helpers::ConvertTimestamp(ApiCache::get('API_map_Sovereignty'));
 	if ($tempcachetime == "")
 	{
-		$html .= "</tr>";
+		$html .= "</td></tr>";
 	} else {
 		if (strtotime(gmdate("M d Y H:i:s")) - strtotime(ApiCache::get('API_map_Sovereignty')) > 0)
 		{
@@ -440,19 +466,19 @@ if ($_POST['apilog'])
     	} else {
     		$txtcolour = "<font color = \"#FF0000\">";
     	}
-		$html .= "<td>Data is cached until:</td><td>" . $txtcolour . $tempcachetime . "</font></td></tr>";
+		$html .= "Data is cached until:</td><td>" . $txtcolour . $tempcachetime . "</font></td></tr>";
 	}
 
-	$html .= "<tr><td height=30px width=150px>Use Extended 24hr cache timer for AllianceList.xml?</td>";
-	$html .= "<td><input type=checkbox name=API_extendedtimer_alliancelist id=API_extendedtimer_alliancelist";
+	$html .= "<tr><td height='30' width='150'>Use Extended 24hr cache timer for AllianceList.xml?</td>";
+	$html .= "<td><input type='checkbox' name='API_extendedtimer_alliancelist' id='API_extendedtimer_alliancelist'";
 	if (!config::get('API_extendedtimer_alliancelist'))
     	$html .= " checked=\"checked\"";
-	$html .= ">";
+	$html .= " />";
 	//$tempcachetime =  date("Y-m-d H:i:s",  strtotime(ApiCache::get('API_eve_AllianceList')) + $gmoffset);
 	$tempcachetime = API_Helpers::ConvertTimestamp(ApiCache::get('API_eve_AllianceList'));
 	if ($tempcachetime == "")
 	{
-		$html .= "</tr>";
+		$html .= "</td></tr>";
 	} else {
 		if (strtotime(gmdate("M d Y H:i:s")) - strtotime(ApiCache::get('API_eve_AllianceList')) > 0)
 		{
@@ -461,19 +487,19 @@ if ($_POST['apilog'])
     	} else {
     		$txtcolour = "<font color = \"#FF0000\">";
     	}
-		$html .= "<td>Data is cached until:</td><td>" . $txtcolour . $tempcachetime . "</font></td></tr>";
+		$html .= "Data is cached until:</td><td>" . $txtcolour . $tempcachetime . "</font></td></tr>";
 	}
 
-	$html .= "<tr><td height=30px width=150px>Use Extended 24hr cache timer for ConquerableStationList.xml?</td>";
-	$html .= "<td><input type=checkbox name=API_extendedtimer_conq id=API_extendedtimer_conq";
+	$html .= "<tr><td height='30' width='150'>Use Extended 24hr cache timer for ConquerableStationList.xml?</td>";
+	$html .= "<td><input type='checkbox' name='API_extendedtimer_conq' id='API_extendedtimer_conq'";
 	if (!config::get('API_extendedtimer_conq'))
     	$html .= " checked=\"checked\"";
-	$html .= ">";
+	$html .= " />";
 	//$tempcachetime =  date("Y-m-d H:i:s",  strtotime(ApiCache::get('API_eve_ConquerableStationList')) + $gmoffset);
 	$tempcachetime = API_Helpers::ConvertTimestamp(ApiCache::get('API_eve_ConquerableStationList'));
 	if ($tempcachetime == "")
 	{
-		$html .= "</tr>";
+		$html .= "</td></tr>";
 	} else {
 		if (strtotime(gmdate("M d Y H:i:s")) - strtotime(ApiCache::get('API_eve_ConquerableStationList')) > 0)
 		{
@@ -482,19 +508,19 @@ if ($_POST['apilog'])
     	} else {
     		$txtcolour = "<font color = \"#FF0000\">";
     	}
-		$html .= "<td>Data is cached until:</td><td>" . $txtcolour . $tempcachetime . "</font></td></tr>";
+		$html .= "Data is cached until:</td><td>" . $txtcolour . $tempcachetime . "</font></td></tr>";
 	}
 
-	$html .= "<tr><td height=30px width=150px>Use Extended 24hr cache timer for FacWarSystems.xml?</td>";
-	$html .= "<td><input type=checkbox name=API_extendedtimer_facwarsystems id=API_extendedtimer_facwarsystems";
+	$html .= "<tr><td height='30' width='150'>Use Extended 24hr cache timer for FacWarSystems.xml?</td>";
+	$html .= "<td><input type='checkbox' name='API_extendedtimer_facwarsystems' id='API_extendedtimer_facwarsystems'";
 	if (!config::get('API_extendedtimer_facwarsystems'))
     	$html .= " checked=\"checked\"";
-	$html .= ">";
+	$html .= " />";
 	//$tempcachetime =  date("Y-m-d H:i:s",  strtotime(ApiCache::get('API_map_FacWarSystems')) + $gmoffset);
 	$tempcachetime = API_Helpers::ConvertTimestamp(ApiCache::get('API_map_FacWarSystems'));
 	if ($tempcachetime == "")
 	{
-		$html .= "</tr>";
+		$html .= "</td></tr>";
 	} else {
 		if (strtotime(gmdate("M d Y H:i:s")) - strtotime(ApiCache::get('API_map_FacWarSystems')) > 0)
 		{
@@ -503,79 +529,79 @@ if ($_POST['apilog'])
     	} else {
     		$txtcolour = "<font color = \"#FF0000\">";
     	}
-		$html .= "<td>Data is cached until:</td><td>" . $txtcolour . $tempcachetime . "</font></td></tr>";
+		$html .= "Data is cached until:</td><td>" . $txtcolour . $tempcachetime . "</font></td></tr>";
 	}
 
 	$html .= "<tr><td height=\"10\"></td></tr>"; // spacer
 	$html .= "<tr><td>(" . $deld . " files with a total size of " . number_format($dsize,"0",".",",") . " bytes)</td></tr>";
 
 	$html .= "<tr><td height=\"10\"></td></tr>"; // spacer
-	$html .= "<tr><td colspan=\"2\"><input type=submit id=submit name=clearapicache value=\"Clear Cache\"><td></tr>";
+	$html .= "<tr><td colspan=\"2\"><input type='submit' id='submitCache' name='clearapicache' value=\"Clear Cache\" /></td></tr>";
 
 	$html .= "</table>";
 
 	// Killmail Parser Options
-	$html .= "<div class=block-header2>Killmail API Parsing Options</div><table>";
-	$html .= "<tr><td height=50px width=150px>Comment for automatically parsed killmails?</td>";
-	$html .= "<td><input type=text size=50 class=password name=API_Comment id=API_Comment value=\"";
+	$html .= "<div class='block-header2'>Killmail API Parsing Options</div><table>";
+	$html .= "<tr><td height='50' width='150'>Comment for automatically parsed killmails?</td>";
+	$html .= "<td><input type='text' size='50' class='password' name='API_Comment' id='API_Comment' value=\"";
 	if (config::get('API_Comment'))
     	$html .= config::get('API_Comment');
-	$html .= "\"><br><i> (leave blank for none)</i><br></td></tr>";
+	$html .= "\" /><br /><i> (leave blank for none)</i><br /></td></tr>";
 
-	$html .= "<tr><td height=30px width=150px>Update Portraits?</td>";
-	$html .= "<td><input type=checkbox name=API_Update id=API_Update";
+	$html .= "<tr><td height='30' width='150'>Update Portraits?</td>";
+	$html .= "<td><input type='checkbox' name='API_Update' id='API_Update'";
 	if (!config::get('API_Update'))
     	$html .= " checked=\"checked\"";
-	$html .= "></td></tr>";
+	$html .= " /></td></tr>";
 
-	$html .= "<tr><td height=30px width=150px>Ignore NPC only deaths? <i>(This includes kills by POSs)</i></td>";
-	$html .= "<td><input type=checkbox name=API_IgnoreNPC id=API_IgnoreNPC";
+	$html .= "<tr><td height='30' width='150'>Ignore NPC only deaths? <i>(This includes kills by POSs)</i></td>";
+	$html .= "<td><input type='checkbox' name='API_IgnoreNPC' id='API_IgnoreNPC'";
 	if (!config::get('API_IgnoreNPC'))
     	$html .= " checked=\"checked\"";
-	$html .= "></td></tr>";
+	$html .= " /></td></tr>";
 
-	$html .= "<tr><td height=30px width=150px>Ignore Friendly Fire? </td>";
-	$html .= "<td><input type=checkbox name=API_IgnoreCorpFF id=API_IgnoreCorpFF";
+	$html .= "<tr><td height='30' width='150'>Ignore Friendly Fire? </td>";
+	$html .= "<td><input type='checkbox' name='API_IgnoreCorpFF' id='API_IgnoreCorpFF'";
 	if (!config::get('API_IgnoreCorpFF'))
     	$html .= " checked=\"checked\"";
-	$html .= "<td> Corps <input type=checkbox name=API_IgnoreAllianceFF id=API_IgnoreAllianceFF";
+	$html .= " /> Corps <input type='checkbox' name='API_IgnoreAllianceFF' id='API_IgnoreAllianceFF'";
 	if (!config::get('API_IgnoreAllianceFF'))
-    	$html .= " checked=\"checked\"";	
-	$html .= "> Alliance</td></tr>";
+    	$html .= " checked=\"checked\"";
+	$html .= " /> Alliance</td></tr>";
 
-	$html .= "<tr><td height=30px width=150px>Ignore POS Structures? </td>";
-	$html .= "<td><input type=checkbox name=API_IgnoreFriendPos id=API_IgnoreFriendPos";
+	$html .= "<tr><td height='30' width='150'>Ignore POS Structures? </td>";
+	$html .= "<td><input type='checkbox' name='API_IgnoreFriendPos' id='API_IgnoreFriendPos'";
 	if (!config::get('API_IgnoreFriendPos'))
     	$html .= " checked=\"checked\"";
-	$html .= "<td> Friend <input type=checkbox name=API_IgnoreEnemyPos id=API_IgnoreEnemyPos";
+	$html .= " /> Friend <input type='checkbox' name='API_IgnoreEnemyPos' id='API_IgnoreEnemyPos'";
 	if (!config::get('API_IgnoreEnemyPos'))
-    	$html .= " checked=\"checked\"";	
-	$html .= "> Enemy</td></tr>";
+    	$html .= " checked=\"checked\"";
+	$html .= " /> Enemy</td></tr>";
 
-	$html .= "<tr><td height=30px width=150px>Concise cronjob e-mail? </td>";
-	$html .= "<td><input type=checkbox name=API_NoSpam id=API_NoSpam";
+	$html .= "<tr><td height='30' width='150'>Concise cronjob e-mail? </td>";
+	$html .= "<td><input type='checkbox' name='API_NoSpam' id='API_NoSpam'";
 	if (!config::get('API_NoSpam'))
    	 	$html .= " checked=\"checked\"";
-	$html .= "></td></tr>";
+	$html .= " /></td></tr>";
 
-	$html .= "<tr><td height=30px width=150px>Import multiple keys one at a time? </td>";
-	$html .= "<td><input type=checkbox name=API_MultipleMode id=API_MultipleMode";
+	$html .= "<tr><td height='30' width='150'>Import multiple keys one at a time? </td>";
+	$html .= "<td><input type='checkbox' name='API_MultipleMode' id='API_MultipleMode'";
 	if (!config::get('API_MultipleMode'))
     	$html .= " checked=\"checked\"";
-	$html .= "></td></tr>";
+	$html .= " /></td></tr>";
 
 	// Import
 	$html .= "<tr><td height=\"10\"></td></tr>"; // spacer
-	$html .= "<tr><td colspan=\"2\"><input type=submit id=submit name=import value=\"Import Mails\"></td></tr>";
+	$html .= "<tr><td colspan=\"2\"><input type='submit' id='submitMails' name='import' value=\"Import Mails\" /></td></tr>";
 	$html .= "</table>";
 	// Save
-	$html .= "<div class=block-header2></div>";
-	$html .= "<table><tr><td colspan=\"2\"><input type=\"submit\" name=\"submit\" value=\"Save Settings\"></td><td>&nbsp;</td><td colspan=\"2\"><input type=\"submit\" name=\"apilog\" value=\"View Log\"></td></tr>";
+	$html .= "<div class='block-header2'></div>";
+	$html .= "<table><tr><td colspan=\"2\"><input type=\"submit\" name=\"submit\" value=\"Save Settings\" /></td><td>&nbsp;</td><td colspan=\"2\"><input type=\"submit\" name=\"apilog\" value=\"View Log\" /></td></tr>";
 	$html .= "</table>";
 	$html .= "</form>";
 }
-$html .= "<div class=block-header2></div>";
-$html .= "<div>Written by " . API_Helpers::FindThunk() . " (<a href=\"http://eve-id.net/forum/viewtopic.php?f=505&t=8827\" >Support</a>)</div>";
+$html .= "<div class='block-header2'></div>";
+$html .= "<div>Written by " . API_Helpers::FindThunk() . " (<a href=\"http://eve-id.net/forum/viewtopic.php?f=505&amp;t=8827\" >Support</a>)</div>";
 	
 $page->setContent($html);
 $page->addContext($menubox->generate());
@@ -593,7 +619,7 @@ function getPlayerDetails( $characteridentitifier )
     $pilot_name = $row['plt_name'];
 
     if ($pilot_name != "")	{
-        return ' (<a href="?a=pilot_detail&plt_id=' . $pilot_id . '">'. $pilot_name . '</a>)';
+        return ' (<a href="?a=pilot_detail&amp;plt_id=' . $pilot_id . '">'. $pilot_name . '</a>)';
     } else {
         return "";
     }
