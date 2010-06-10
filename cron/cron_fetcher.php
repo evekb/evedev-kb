@@ -46,7 +46,6 @@ require_once('kbconfig.php');
 require_once('common/includes/class.edkloader.php');
 require_once('common/includes/globals.php');
 require_once('common/includes/db.php');
-require_once('common/admin/feed_fetcher.php');
 
 $config = new Config(KB_SITE);
 
