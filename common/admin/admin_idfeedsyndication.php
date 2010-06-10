@@ -55,6 +55,7 @@ if ($_POST['submit'] || $_POST['fetch'])
 				if($val['apikills']) $val['lastkill'] = 0;
 				$val['apikills'] = 0;
 			}
+			if($_POST['lastkill'.$url] != $val['lastkill']) $val['lastkill'] = intval($_POST['lastkill'.$url]);
             // reset the feed lastkill details if the URL or api status has changed
             if($_POST[$url] != $val['url'] )
 			{
@@ -90,6 +91,7 @@ if ($_POST['fetch'])
 		else $feedfetch->setStartKill($val['lastkill'], true);
 
 		$feedfetch->read($val['url']);
+
 		if($val['apikills'] && intval($feedfetch->getLastReturned()) > $val['lastkill'])
 			$val['lastkill'] = intval($feedfetch->getLastReturned());
 		else if(!$val['apikills'] && intval($feedfetch->getLastInternalReturned()) > $val['lastkill'])
@@ -112,7 +114,7 @@ foreach($feeds as $key => &$val)
     $html .= $val['url'];
     $html .= "\" /></td>";
 
-    $html .= "<td><input type='text' name='lastkill[]' class='lastkill' size='10' value='" . $val['lastkill'];
+    $html .= "<td><input type='text' name='lastkill$key' class='lastkill' size='10' value='" . $val['lastkill'];
 //    $html .= "' readonly='readonly' /></td>";
     $html .= "' /></td>";
 

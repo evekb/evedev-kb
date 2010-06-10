@@ -257,7 +257,7 @@ class IDFeed
 	}
 	function getLastInternalReturned()
 	{
-		return $this->lastReturned;
+		return $this->lastInternalReturned;
 	}
 	function getXML()
 	{
