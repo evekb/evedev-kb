@@ -35,6 +35,7 @@ class thumb
 
 	function display()
 	{
+		ob_start();
 		if (!$this->isCached())
 		{
 			if (!$this->genCache())
@@ -43,9 +44,9 @@ class thumb
 			}
 		}
 
-		if (headers_sent())
+		if (headers_sent() || ob_get_contents())
 		{
-			echo 'Error occured.<br/>';
+			echo 'An error occured.<br/>';
 			return false;
 		}
 		if ($this->encoding == 'jpeg')
@@ -58,6 +59,8 @@ class thumb
 			header("Content-Type: image/png");
 			readfile($this->thumb);
 		}
+		ob_end_flush();
+		return true;
 	}
 
 	function validate()

@@ -1,4 +1,5 @@
 <?php
+ob_start();
 if (!$sig_name = $_GET['s'])
 {
 	$sig_name = 'default';
@@ -74,9 +75,7 @@ if (!file_exists($cachePath))
 	$file = @file_get_contents('http://img.eve.is/serv.asp?s=256&c='.$pid);
 	if ($img = @imagecreatefromstring($file))
 	{
-		$fp = fopen($cachePath, 'w');
-		fwrite($fp, $file);
-		fclose($fp);
+		CacheHandler::put($pid."_256.jpg", $file, "img");
 	}
 	else
 	{
@@ -90,8 +89,7 @@ if (!file_exists($cachePath))
 
 		if ($img = @imagecreatefromstring($file))
 		{
-			$fp = fopen($cachePath, 'w');
-			fwrite($fp, $file);
+			CacheHandler::put($pid."_256.jpg", $file, "img");
 		}
 	}
 }
@@ -106,14 +104,24 @@ if (!is_dir('mods/signature_generator/signatures/'.$sig_name))
 // let the template do the work, we just output $im
 require('mods/signature_generator/signatures/'.$sig_name.'/'.$sig_name.'.php');
 
-if (file_exists('mods/signature_generator/signatures/'.$sig_name.'/typ.png'))
+if (headers_sent())
+{
+	trigger_error('An error occured. Headers have already been sent.<br/>', E_USER_ERROR);
+}
+if (ob_get_contents())
+{
+	trigger_error('An error occured. Content has already been sent.<br/>', E_USER_ERROR);
+}
+else if (file_exists('mods/signature_generator/signatures/'.$sig_name.'/typ.png'))
 {
 	header('Content-Type: image/png');
 	imagepng($im, 'cache/data/sig_'.$id.'_'.$plt_id);
-}
+	readfile(KB_CACHEDIR.'/data/sig_'.$id.'_'.$plt_id);}
 else
 {
 	header('Content-Type: image/jpeg');
 	imagejpeg($im, 'cache/data/sig_'.$id.'_'.$plt_id, 90);
+	readfile(KB_CACHEDIR.'/data/sig_'.$id.'_'.$plt_id);
 }
-readfile(KB_CACHEDIR.'/data/sig_'.$id.'_'.$plt_id);
+
+ob_end_flush();
