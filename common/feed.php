@@ -24,7 +24,7 @@
  */
 @set_time_limit(120);
 // include feed_fetcher to get version number
-require_once('common/admin/feed_fetcher.php');
+require_once('class.fetcher.php');
 
 // maximum amount of kills to return.
 $maxreturned = 200;
