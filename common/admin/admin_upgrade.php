@@ -147,7 +147,14 @@ if(count($page_error) == 0)
 				{
 					foreach($fileList as $file)
 					{
-						$fileName[] = $file['filename'];
+						if(is_dir($file['filename']))
+						{
+							// Add empty directories to the backup list.
+							$dirlist = scandir($file['filename']);
+							if(count($dirList) == 2) $fileName[] = $file['filename'];
+							unset($dirlist);
+						}
+						else $fileName[] = $file['filename'];
 					}
 				}
 				if($readingZip->getErrors())
