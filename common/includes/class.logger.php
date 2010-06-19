@@ -6,12 +6,17 @@
  */
 
 /*!
- * 
- *
+ * Class containing utility functions to log a kill as added and find the IP
+ * to log a kill as added from.
  */
 class logger
 {
-	function getip()
+	//! Attempt to find the IP a connection to the board is from.
+
+	/*!
+	 * \return The best guess as to the IP a connection to the board is from.
+	 */
+	public static function getip()
 	{
 		if (logger::validip($_SERVER["HTTP_CLIENT_IP"]))
 		{
@@ -46,7 +51,13 @@ class logger
 			return $_SERVER["REMOTE_ADDR"];
 		}
 	}
-	function validip($ip)
+	//! Check if a given IP is a valid external ID.
+
+	/*!
+	 * \param $ip an IP address to check
+	 * \return True if the IP is a valid external ID, false otherwise.
+	 */
+	public static function validip($ip)
 	{
 		if (!empty($ip) && ip2long($ip)!=-1)
 		{
@@ -76,7 +87,7 @@ class logger
 	}
 
 	//! Log a new kill.
-	function logKill($killid, $note = null)
+	public static function logKill($killid, $note = null)
 	{
 		if(is_null($note)) $note = logger::getip();
 
