@@ -65,6 +65,7 @@ options::oldMenu('Features', "CCP API Feed", "?a=admin_apimod");
 
 options::oldMenu('Maintenance', "Auditing", "?a=admin_audit");
 options::oldMenu('Maintenance', "Troubleshooting", "?a=admin_troubleshooting");
+options::oldMenu('Maintenance', "File Verification", "?a=admin_verify");
 options::oldMenu('Maintenance', "Upgrade", "?a=admin_upgrade");
 options::oldMenu('Maintenance', "Settings Report", "?a=admin_status");
 options::oldMenu('Kill Import/Export', "Kill Import - files", "?a=admin_kill_import");
