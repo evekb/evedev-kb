@@ -544,24 +544,22 @@ class Parser
 					$icorp = $this->fetchCorp($icname, $ialliance, $kill->getTimeStamp());
 				}
 
-				if (strcmp($ipname, 'Unknown') == 0 || empty($ipname))
-				{
-					if (preg_match("/Mobile/", $iwname) || preg_match("/Control Tower/", $iwname))
-					{ //for involved parties parsed that lack a pilot, but are actually POS or mobile warp disruptors
-						$ipname = $iwname;
-						$ipilot = $this->fetchPilot($ipname, $icorp, $timestamp);
-					}
-					else
-					{
-						$ipilot = new Pilot();
-						$this->error('Involved party has no name. (Party No. '.$ipilot_count.')');
-					}
-				}
-				else
-				{
-					//don't add pilot if the pilot's unknown or dud
+				if ((preg_match("/Mobile/", $iwname) && preg_match("/Warp/", $iwname)) || preg_match("/Control Tower/", $iwname))
+				{ //for involved parties parsed that lack a pilot, but are actually POS or mobile warp disruptors
+					$ipname = $icname. ' - '. $iwname;
 					$ipilot = $this->fetchPilot($ipname, $icorp, $timestamp);
 				}
+		
+				elseif (strcmp($ipname, 'Unknown') == 0 || empty($ipname))
+				{
+					$ipilot = new Pilot();
+					$this->error('Involved party has no name. (Party No. '.$ipilot_count.')');
+				}
+				else
+				{ //don't add pilot if the pilot's unknown or dud
+					$ipilot = $this->fetchPilot($ipname, $icorp, $timestamp);
+				}
+				
 				$iship = $this->fetchShip($isname);
 				if (!$iship->getID())
 				{

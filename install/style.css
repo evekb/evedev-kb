@@ -321,7 +321,7 @@ td.kb-table-cell
 
 .kb-campaigns-header
 {
-  background-image: url("../../img/campaign.gif");
+  background-image: url("../../img/campaign.png");
   background-repeat: no-repeat;
   background-position: 0px -3px;
 
@@ -340,7 +340,7 @@ td.kb-table-cell
 
 .kb-kills-header
 {
-  background-image: url("../../img/kills.gif");
+  background-image: url("../../img/kills.png");
   background-repeat: no-repeat;
   background-position: 0px -3px;
 
@@ -358,7 +358,7 @@ td.kb-table-cell
 
 .kb-losses-header
 {
-  background-image: url("../../img/losses.gif");
+  background-image: url("../../img/losses.png");
   background-repeat: no-repeat;
   background-position: 0px -3px;
 

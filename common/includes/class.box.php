@@ -87,7 +87,7 @@ class AwardBox
         $pilot = new Pilot($rows[0]['plt_id']);
         $smarty->assign('title', $this->title_);
         $smarty->assign('pilot_portrait', $pilot->getPortraitURL(64));
-        $smarty->assign('award_img', IMG_URL."/awards/".$this->award_.".gif");
+        $smarty->assign('award_img', IMG_URL."/awards/".$this->award_.".png");
         $smarty->assign('url', "?a=pilot_detail&amp;plt_id=".$rows[0]['plt_id'] );
         $smarty->assign('name', $pilot->getName() );
 

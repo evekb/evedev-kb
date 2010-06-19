@@ -402,7 +402,18 @@ class pKillDetail extends pageAssembly
 
 			$this->involved[$i]['shipClass'] =$shipclass->getName();
 
-			if ($pilot->getName() == $weapon->getName())
+			//detects NPC type things and runs a few conversions (Rats, Towers, Bubbles)
+			$tpilot = $pilot->getName();
+			if(preg_match("/-/", $tpilot))
+			{ // a tower or bubble. But! Since we have placed the corp name in front of the
+			  // item's name, we need to quickly check which base item it was again.
+
+				$namestart = strripos($tpilot, '-') +2; //we're interested in the last dash
+				$tpilot = substr($tpilot, $namestart);
+			}
+
+
+			if ($tpilot == $weapon->getName())
 			{
 				$this->involved[$i]['portrait'] = $corp->getPortraitURL(64);
 				$this->involved[$i]['externalID'] = $corp->getExternalID(true);

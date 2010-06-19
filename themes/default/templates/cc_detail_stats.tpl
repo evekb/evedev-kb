@@ -1,7 +1,7 @@
 <table align="center" class="kb-table" width="100%" border="0" cellspacing="1">
 	<tr class="kb-table-row-even">
 		<td rowspan="5" align="center" width="80" height="80">
-			<img src="{$img_url}/campaign-big.gif" align="middle" alt="" />
+			<img src="{$img_url}/campaign-big.png" align="middle" alt="" />
 		</td>
 		<td class="kb-table-cell"><b>Start date:</b></td>
 		<td class="kb-table-cell" width="120"><b>{$contract_startdate}</b></td>
