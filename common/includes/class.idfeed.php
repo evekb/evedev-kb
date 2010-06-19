@@ -23,6 +23,7 @@ class IDFeed
 	private $skipped = array();
 	private $time = '';
 	private $cachedTime = '';
+	private $errormsg = '';
 	const version = "0.90";
 
 	//! Construct the Fetcher class and initialise variables.
@@ -60,7 +61,7 @@ class IDFeed
 
 		$http = new http_request($this->url.$options);
 		$http->set_useragent("EDK IDFeedfetcher ".self::version);
-		$http->set_timeout(12);
+		$http->set_timeout(300);
 		$this->xml = $http->get_content();
 		unset($http);
 		if($this->xml) return true;
@@ -74,19 +75,22 @@ class IDFeed
 	public function read($url = '')
 	{
 		$this->url = $url;
-		$this->fetch();
+		if(!$this->fetch())
+		{
+			trigger_error("Error reading feed.", E_USER_NOTICE);
+			return false;
+		}
 
 		libxml_use_internal_errors(true);
 		$sxe = simplexml_load_string($this->xml);
 		if(!$sxe)
 		{
-			$error = "XML error:\n";
+			$this->errormsg = "XML error:\n";
 			foreach(libxml_get_errors() as $error)
 			{
-				$error .= "\t".$error->message."\n";
+				$this->errormsg .= "\t".$error->message."\n";
 			}
-			die($error);
-			return $error;
+			return false;
 		}
 		if(!$sxe['edkapi'] || $sxe['edkapi'] < 0.90) return false;
 		$this->time = $sxe->currentTime;
@@ -435,5 +439,9 @@ class IDFeed
 			}
 		}
 		return 0;
+	}
+	public function errormsg()
+	{
+		return $this->errormsg;
 	}
 }
