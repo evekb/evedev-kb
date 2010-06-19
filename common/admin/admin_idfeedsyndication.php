@@ -85,7 +85,7 @@ if ($_POST['fetch'])
 		$feedfetch->setID();
 		if($val['apikills']) $feedfetch->setAllKills(0);
 		else $feedfetch->setAllKills(1);
-		$feedfetch->setTrust($val['trust']);
+		$feedfetch->setTrust($val['trusted']);
 		if(!$val['lastkill']) $feedfetch->setStartDate(time() - 60*60*24*7);
 		else if($val['apikills']) $feedfetch->setStartKill($val['lastkill']);
 		else $feedfetch->setStartKill($val['lastkill'], true);
