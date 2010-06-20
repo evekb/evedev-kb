@@ -201,7 +201,7 @@ class Corporation
 					$qry->execute("UPDATE kb3_corps SET crp_name = '".$name."' WHERE crp_external_id = ".$externalid);
 
 					$this->id = $row['crp_id'];
-					$this->name = $name;
+					$this->name = stripslashes($name);
 					$this->externalid = $row['crp_external_id'];
 					$this->alliance = $row['crp_all_id'];
 					$this->updated = strtotime($row['crp_updated']." UTC");
@@ -248,13 +248,15 @@ class Corporation
 			{
 				$sql = 'update kb3_corps
 	                           set crp_all_id = '.$alliance->getID().', ';
-				if(intval($externalid))
-					$sql .= 'crp_external_id = '.intval($externalid).', ';
 				$sql .= "crp_updated = date_format( '".
 					$timestamp."','%Y.%m.%d %H:%i:%s') ".
 					"where crp_id = ".$this->id;
 				$qry->execute($sql);
 				$this->alliance = $alliance;
+			}
+			if(!$this->externalid && intval($externalid) > 0)
+			{
+				$this->setExternalID(intval($externalid));
 			}
 		}
 
@@ -301,10 +303,10 @@ class Corporation
 				$qry->execute("UPDATE kb3_kills SET kll_crp_id = ".$old_id." WHERE kll_crp_id = ".$this->id);
 				$qry->execute("UPDATE kb3_inv_detail SET ind_crp_id = ".$old_id." WHERE ind_crp_id = ".$this->id);
 				$qry->execute("UPDATE kb3_inv_crp SET inc_crp_id = ".$old_id." WHERE inc_crp_id = ".$this->id);
-				$qry->execute("UPDATE kb3_corps SET crp_name = '".$this->name."' where crp_id = ".$old_id);
-				$qry->execute("DELETE FROM kb3_corps WHERE crp_id = ".$this->id);
 				$qry->execute("DELETE FROM kb3_sum_corp WHERE csm_crp_id = ".$this->id);
 				$qry->execute("DELETE FROM kb3_sum_corp WHERE csm_crp_id = ".$old_id);
+				$qry->execute("DELETE FROM kb3_corps WHERE crp_id = ".$this->id);
+				$qry->execute("UPDATE kb3_corps SET crp_name = '".$qry->escape($this->name)."' where crp_id = ".$old_id);
 				$qry->autocommit(true);
 				$this->id = $old_id;
 				return true;
