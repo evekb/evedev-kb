@@ -11,7 +11,7 @@ if(function_exists("set_time_limit"))
 @error_reporting(E_ALL ^ E_NOTICE);
 ini_set('display_errors', 1);
 
-define('LATEST_DB_UPDATE', "015");
+define('LATEST_DB_UPDATE', "016");
 define('DB_HALTONERROR', true);
 define('DB_USE_QCACHE', false);
 define('DB_USE_MEMCACHE',false);
@@ -19,8 +19,6 @@ define('KB_CACHEDIR', "cache");
 
 chdir("..");
 require_once('kbconfig.php');
-require_once('common/includes/class.edkloader.php');
-require_once('common/includes/db.php');
 require_once('common/includes/globals.php');
 
 $config = new Config(KB_SITE);

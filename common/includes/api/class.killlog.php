@@ -136,7 +136,7 @@ class API_KillLog
 														. $this->verified_ . ","
 														. $this->totalmails_ . ",'"
 														. $logsource . "','"
-														. $logtype . "',now() )" );
+														. $logtype . "',UTC_TIMESTAMP() )" );
 
         return $this->Output_;
 
@@ -837,7 +837,7 @@ class API_KillLog
                 }
             } else {
                 $qry = DBFactory::getDBQuery();;
-                $qry->execute( "insert into kb3_log	values( ".$killid.", '".KB_SITE."','API ".APIVERSION."',now() )" );
+                $qry->execute( "insert into kb3_log	values( ".$killid.", '".KB_SITE."','API ".APIVERSION."',UTC_TIMESTAMP() )" );
                 $this->Output_ .= "API Killmail ID:".$this->killid_. " successfully imported <a href=\"?a=kill_detail&amp;kll_id=".$killid."\">here</a> as KB ID:". $killid ."<br>";
 
 				// Now place killID (API) into killboard row $killid

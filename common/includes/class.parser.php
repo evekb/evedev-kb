@@ -142,7 +142,8 @@ class Parser
 				$qry->execute("UPDATE kb3_kills SET kll_external_id = ".
 					$this->externalID." WHERE kll_id = ".$this->dupeid_);
 				$qry->execute("UPDATE kb3_mails SET kll_external_id = ".
-					$this->externalID." WHERE kll_id = ".$this->dupeid_);
+					$this->externalID.", kll_modified_time = UTC_TIMESTAMP() WHERE kll_id = ".$this->dupeid_.
+					" AND kll_external_id IS NULL");
 
 				if($trust >= 0 && $this->trust && $trust > $this->trust)
 					$qry->execute("UPDATE kb3_mails SET kll_trust = ".$this->trust);
@@ -549,7 +550,7 @@ class Parser
 					$ipname = $icname. ' - '. $iwname;
 					$ipilot = $this->fetchPilot($ipname, $icorp, $timestamp);
 				}
-		
+
 				elseif (strcmp($ipname, 'Unknown') == 0 || empty($ipname))
 				{
 					$ipilot = new Pilot();
@@ -559,7 +560,7 @@ class Parser
 				{ //don't add pilot if the pilot's unknown or dud
 					$ipilot = $this->fetchPilot($ipname, $icorp, $timestamp);
 				}
-				
+
 				$iship = $this->fetchShip($isname);
 				if (!$iship->getID())
 				{
@@ -663,6 +664,9 @@ class Parser
 			{
 				$qry->execute("UPDATE kb3_kills SET kll_external_id = ".
 					$this->externalID." WHERE kll_id = ".$this->dupeid_);
+				$qry->execute("UPDATE kb3_mails SET kll_external_id = ".
+					$this->externalID.", kll_modified_time = UTC_TIMESTAMP() ".
+					"WHERE kll_id = ".$this->dupeid_." AND kll_external_id IS NULL");
 			}
 			return -1;
 		}
@@ -730,7 +734,11 @@ class Parser
 
 			if($this->externalID)
 			{
-				$qry->execute("UPDATE kb3_kills SET kll_external_id = ".$this->externalID." WHERE kll_id = ".$this->dupeid_);
+				$qry->execute("UPDATE kb3_kills SET kll_external_id = ".
+					$this->externalID." WHERE kll_id = ".$this->dupeid_);
+				$qry->execute("UPDATE kb3_mails SET kll_external_id = ".
+					$this->externalID.", kll_modified_time = UTC_TIMESTAMP() WHERE kll_id = ".$this->dupeid_.
+					" AND kll_external_id IS NULL");
 			}
 		}
         elseif ($id == -2) {

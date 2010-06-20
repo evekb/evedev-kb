@@ -10,32 +10,38 @@
 // **********************************************************************************************************************************************
 class API_IDtoName
 {
-	function getCachedUntil()
+	private $CachedUntil_ = '';
+	private $CurrentTime_ = '';
+	private $API_IDs_ = '';
+	private $NameData_ = array();
+	private $html = '';
+
+	public function getCachedUntil()
 	{
 		return $this->CachedUntil_;
 	}
 
-	function getCurrentTime()
+	public function getCurrentTime()
 	{
 		return $this->CurrentTime_;
 	}
 
-	function setIDs($IDs)
+	public function setIDs($IDs)
 	{
 		$this->API_IDs_ = $IDs;
 	}
-	function getIDData()
+	public function getIDData()
 	{
 		return $this->NameData_;
 	}
 
-	function clear()
+	public function clear()
 	{
 		$this->NameData_ = array();
 		unset($this->NameData_);
 	}
 
-	function fetchXML()
+	public function fetchXML()
 	{
 		if ($this->API_IDs_ != "")
 		{
@@ -58,7 +64,7 @@ class API_IDtoName
 		return $this->html; // should be empty, but keeping just incase - errors are returned by Text so worth looking anyway.
 	}
 
-	function startElement($parser, $name, $attribs)
+	public function startElement($parser, $name, $attribs)
     {
 		global $NameData;
 
@@ -82,7 +88,7 @@ class API_IDtoName
         }
     }
 
-    function endElement($parser, $name)
+    public function endElement($parser, $name)
     {
 		global $NameData;
 
@@ -107,12 +113,12 @@ class API_IDtoName
 		}
     }
 
-    function characterData($parser, $data)
+    public function characterData($parser, $data)
     {
 		$this->characterDataValue = $data;
     }
 
-	function loaddata($keystring)
+	public function loaddata($keystring)
     {
         $url = "http://api.eve-online.com/eve/CharacterName.xml.aspx" . $keystring;
 

@@ -1256,11 +1256,11 @@ class Kill
 		}
 		if(!is_null($this->hash))
 		{
-			$sql = "INSERT INTO kb3_mails (  `kll_id`, `kll_timestamp`, `kll_external_id`, `kll_hash`, `kll_trust`)".
+			$sql = "INSERT INTO kb3_mails (  `kll_id`, `kll_timestamp`, `kll_external_id`, `kll_hash`, `kll_trust`, `kll_modified_time`)".
 				"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ";
 			if($this->externalid_) $sql .= $this->externalid_.", ";
 			else $sql .= "NULL, ";
-			$sql .= "'".$qry->escape($this->getHash())."', 0)";
+			$sql .= "'".$qry->escape($this->getHash())."', 0, UTC_TIMESTAMP())";
 			if(!$qry->execute($sql))
 			{
 				$qry->rollback();
@@ -1299,7 +1299,7 @@ class Kill
 		{
 			$qry->execute("delete from kb3_comments where kll_id = ".$this->id_);
 			if ($permanent)
-				$qry->execute("UPDATE kb3_mails SET kll_trust = -1 WHERE kll_id = ".$this->id_);
+				$qry->execute("UPDATE kb3_mails SET kll_trust = -1, kll_modified_time = UTC_TIMESTAMP() WHERE kll_id = ".$this->id_);
 			else
 				$qry->execute("DELETE FROM kb3_mails WHERE kll_id = ".$this->id_);
 		}
