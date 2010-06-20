@@ -83,8 +83,9 @@ if ($_POST['fetch'])
 			|| empty($val['url'])) continue;
         $feedfetch = new IDFeed();
 		$feedfetch->setID();
-		if($val['apikills']) $feedfetch->setAllKills(0);
-		else $feedfetch->setAllKills(1);
+//		if($val['apikills']) $feedfetch->setAllKills(0);
+//		else $feedfetch->setAllKills(1);
+		$feedfetch->setAllKills(1);
 		$feedfetch->setTrust($val['trusted']);
 		if(!$val['lastkill']) $feedfetch->setStartDate(time() - 60*60*24*7);
 		else if($val['apikills']) $feedfetch->setStartKill($val['lastkill']);
@@ -97,8 +98,10 @@ if ($_POST['fetch'])
 		else if(!$val['apikills'] && intval($feedfetch->getLastInternalReturned()) > $val['lastkill'])
 			$val['lastkill'] = intval($feedfetch->getLastInternalReturned());
 		$html .= "Feed: ".$val['url']."<br />\n";
-		$html .= count($feedfetch->getPosted())." kills were posted and ".
-			count($feedfetch->getSkipped())." were skipped.<br />\n";
+		if(count($feedfetch->getPosted()) == 1) $html .= count($feedfetch->getPosted())." kills was posted and ";
+		else $html .= count($feedfetch->getPosted())." kills were posted and ";
+		if(count($feedfetch->getSkipped()) == 1) $html .= count($feedfetch->getSkipped())." was skipped.<br />\n";
+		else $html .= count($feedfetch->getSkipped())." were skipped.<br />\n";
 		config::set("fetch_idfeeds", $feeds);
 	}
 }
@@ -106,7 +109,8 @@ if ($_POST['fetch'])
 $html .= '<form id="options" name="options" method="post" action="?a=admin_idfeedsyndication">';
 
 $html .= "<div class='block-header2'>Feeds</div><table>";
-$html .= "<tr style='text-align: left;'><th>Feed URL</th><th>Last Kill</th><th>Trusted</th><th>API only</th><th>Fetch</th><th>Delete</th></tr>\n";
+//$html .= "<tr style='text-align: left;'><th>Feed URL</th><th>Last Kill</th><th>Trusted</th><th>API only</th><th>Fetch</th><th>Delete</th></tr>\n";
+$html .= "<tr style='text-align: left;'><th>Feed URL</th><th>Last Kill</th><th>Trusted</th><th>Fetch</th><th>Delete</th></tr>\n";
 foreach($feeds as $key => &$val)
 {
 	$key = md5($val['url']);
@@ -123,9 +127,9 @@ foreach($feeds as $key => &$val)
         $html .= " checked=\"checked\"";
     $html .= " /></td>";
 
-	$html .= "<td><input type='checkbox' name='apikills[]' class='apikills' value='" . $key."'";
-    if ($val['apikills']) $html .= " checked=\"checked\"";
-    $html .= " /></td>";
+//	$html .= "<td><input type='checkbox' name='apikills[]' class='apikills' value='" . $key."'";
+//    if ($val['apikills']) $html .= " checked=\"checked\"";
+//    $html .= " /></td>";
 
     $html .= "<td><input type='checkbox' name='fetch_feed[]' class='fetch' value='" . $key."'";
     if (!isset($_POST['fetch_feed'][$key]) || $_POST['fetch_feed'][$key]) $html .= " checked=\"checked\"";
@@ -136,7 +140,8 @@ foreach($feeds as $key => &$val)
     $html .= "</td></tr>";
 }
 $html .= "<tr><td colspan='2'><i>Example: http://killboard.domain.com/?a=idfeed</i></td><td>";
-$html .= "</td><td></td><td><input type='checkbox' name='all' onclick='checkAll(this.form.fetch,this)' /><i>all</i>";
+$html .= "</td><td><input type='checkbox' name='all' onclick='checkAll(this.form.fetch,this)' /><i>all</i>";
+//$html .= "</td><td></td><td><input type='checkbox' name='all' onclick='checkAll(this.form.fetch,this)' /><i>all</i>";
 $html .= "</td><td></td></tr></table><br /><br /><br />";
 
 //$html .= "<table><tr><td height='20px' width='150px'><b>First week:</b></td>";
