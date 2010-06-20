@@ -248,8 +248,8 @@ class Corporation
 			{
 				$sql = 'update kb3_corps
 	                           set crp_all_id = '.$alliance->getID().', ';
-				if(intval(externalid))
-					$sql .= 'crp_external_id = '.intval(externalid).', ';
+				if(intval($externalid))
+					$sql .= 'crp_external_id = '.intval($externalid).', ';
 				$sql .= "crp_updated = date_format( '".
 					$timestamp."','%Y.%m.%d %H:%i:%s') ".
 					"where crp_id = ".$this->id;
