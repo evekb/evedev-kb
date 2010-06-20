@@ -27,7 +27,7 @@
  *
  */
 
-header("Content-Type: text/xml");
+$starttime = microtime(true);
 $idfeedversion = 0.90;
 
 $maxkillsreturned = 200;
@@ -40,8 +40,8 @@ $list = new KillList();
 if(!isset($_GET['allkills'])) $list->setAPIKill();
 $list->setLimit($maxkillsreturned);
 $list->setOrdered(true);
-if(!isset($_GET['allkills'])) $list->setOrderBy(' kll.kll_external_id DESC ');
-else $list->setOrderBy(' kll.kll_id DESC ');
+if(!isset($_GET['allkills'])) $list->setOrderBy(' kll.kll_external_id ASC ');
+else $list->setOrderBy(' kll.kll_id ASC ');
 
 $qry = DBFactory::getDBQuery();
 
@@ -127,12 +127,18 @@ $kills->addAttribute('key', 'killID');
 $kills->addAttribute('columns', 'killID,solarSystemID,killTime,moonID,hash,trust');
 
 $count = 0;
-while($kill1 = $list->getKill())
+$timing = '';
+while($kill = $list->getKill())
 {
+	if(config::get('km_cache_enabled') && CacheHandler::exists($kill->getID().".xml", 'mails'))
+	{
+		$cachedRow = new SimpleXMLElement(CacheHandler::get($kill->getID().".xml", 'mails'));
+		AddXMLElement($kills, $cachedRow);
+		continue;
+	}
+
 	$count++;
-	if($kill1->isClassified()) continue;
-	$kill = new Kill($kill1->getID());
-	$kill->setDetailedInvolved();
+	if($kill->isClassified()) continue;
 	$row = $kills->addChild('row');
 	$row->addAttribute('killID', intval($kill->getExternalID()));
 	if(isset($_GET['allkills'])) $row->addAttribute('killInternalID', intval($kill->getID()));
@@ -141,9 +147,9 @@ while($kill1 = $list->getKill())
 	$row->addAttribute('moonID', '0');
 	$row->addAttribute('hash', bin2hex($kill->getHash()));
 	$row->addAttribute('trust', $kill->getTrust());
-	$victim = new Pilot($kill->getVictimID());
-	$victimCorp = new Corporation($kill->getVictimCorpID());
-	$victimAlliance = new Alliance($kill->getVictimAllianceID());
+	$victim = objectCache::fetchPilot($kill->getVictimID());
+	$victimCorp = objectCache::fetchCorp($kill->getVictimCorpID());
+	$victimAlliance = objectCache::fetchAlliance($kill->getVictimAllianceID());
 	$victimrow = $row->addChild('victim');
 	$victimrow->addAttribute('characterID', $victim->getExternalID());
 	$victimrow->addAttribute('characterName', $victim->getName());
@@ -164,20 +170,29 @@ while($kill1 = $list->getKill())
 		$victimrow->addAttribute('factionName', '');
 	}
 	$victimrow->addAttribute('damageTaken', $kill->getDamageTaken());
-	$victimrow->addAttribute('shipTypeID', $kill->getVictimShip()->getExternalID());
+	$victimrow->addAttribute('shipTypeID', $kill->getVictimShipExternalID());
 	$involved = $row->addChild('rowset');
 	$involved->addAttribute('name', 'attackers');
 	$involved->addAttribute('columns', 'characterID,characterName,corporationID,corporationName,allianceID,allianceName,factionID,factionName,securityStatus,damageDone,finalBlow,weaponTypeID,shipTypeID');
-	foreach ($kill->getInvolved() as $inv)
+
+	$sql = "SELECT ind_sec_status, ind_all_id, ind_crp_id,
+		ind_shp_id, ind_wep_id, ind_order, ind_dmgdone, plt_id, plt_name,
+		plt_externalid, crp_name, crp_external_id,
+		shp_externalid FROM kb3_inv_detail
+		JOIN kb3_pilots ON (plt_id = ind_plt_id) 
+		JOIN kb3_corps ON (crp_id = ind_crp_id) 
+		JOIN kb3_ships ON (shp_id = ind_shp_id)
+		WHERE ind_kll_id = ".$kill->getID();
+	$qry->execute($sql);
+
+	while ($inv = $qry->getRow())
 	{
 		$invrow = $involved->addChild('row');
-		$invPilot = $inv->getPilot();
-		$invCorp = $inv->getCorp();
-		$invAlliance = $inv->getAlliance();
-		$invrow->addAttribute('characterID', $invPilot->getExternalID());
-		$invrow->addAttribute('characterName', $invPilot->getName());
-		$invrow->addAttribute('corporationID', $invCorp->getExternalID());
-		$invrow->addAttribute('corporationName', $invCorp->getName());
+		$invrow->addAttribute('characterID', $inv['plt_externalid']);
+		$invrow->addAttribute('characterName', $inv['plt_name']);
+		$invrow->addAttribute('corporationID', $inv['crp_external_id']);
+		$invrow->addAttribute('corporationName', $inv['crp_name']);
+		$invAlliance = objectCache::fetchAlliance($inv['ind_all_id']);
 		if($invAlliance->isFaction())
 		{
 			$invrow->addAttribute('allianceID', 0);
@@ -192,58 +207,168 @@ while($kill1 = $list->getKill())
 			$invrow->addAttribute('factionID', 0);
 			$invrow->addAttribute('factionName', '');
 		}
-		$invrow->addAttribute('securityStatus', $inv->getSecStatus());
-		$invrow->addAttribute('damageDone', $inv->getDamageDone());
-		if($invPilot->getID() == $kill->getFBPilotID()) $final = 1;
+		$invrow->addAttribute('securityStatus', number_format($inv['ind_sec_status'],1));
+		$invrow->addAttribute('damageDone', $inv['ind_dmgdone']);
+		if($inv['plt_id'] == $kill->getFBPilotID()) $final = 1;
 		else $final = 0;
 		$invrow->addAttribute('finalBlow', $final);
-		$invrow->addAttribute('weaponTypeID', $inv->getWeapon()->getID());
-		$invrow->addAttribute('shipTypeID', $inv->getShip()->getExternalID());
+		$invrow->addAttribute('weaponTypeID', $inv['ind_wep_id']);
+		$invrow->addAttribute('shipTypeID', $inv['shp_externalid']);
 	}
+	$sql = "SELECT * FROM kb3_items_destroyed WHERE itd_kll_id = ".$kill->getID();
+	$qry->execute($sql);
+	$qry2 = DBFactory::getDBQuery();
+	$sql = "SELECT * FROM kb3_items_dropped WHERE itd_kll_id = ".$kill->getID();
+	$qry2->execute($sql);
+
+
 	$droppedItems = $kill->getDroppedItems();
 	$destroyedItems = $kill->getDestroyedItems();
-	if(count($destroyedItems) || count($droppedItems))
+	if($qry->recordCount()||$qry2->recordCount() )
 	{
 		$items = $row->addChild('rowset');
 		$items->addAttribute('name', 'items');
 		$items->addAttribute('columns', 'typeID,flag,qtyDropped,qtyDestroyed');
 
-		foreach($destroyedItems as $destroyed)
+		while($iRow = $qry->getRow())
 		{
-			$item = $destroyed->getItem();
 			$itemRow = $items->addChild('row');
-			$itemRow->addAttribute('typeID', $item->getID());
-			if ($destroyed->getLocationID() == 4) // cargo
+			$itemRow->addAttribute('typeID', $iRow['itd_itm_id']);
+			if ($iRow['itd_itl_id'] == 4) // cargo
 				$itemRow->addAttribute('flag', 5);
-			else if ($destroyed->getLocationID() == 6) // drone
+			else if ($iRow['itd_itl_id'] == 6) // drone
 				$itemRow->addAttribute('flag', 87);
 			else
 				$itemRow->addAttribute('flag', 0);
 			$itemRow->addAttribute('qtyDropped', 0);
-			$itemRow->addAttribute('qtyDestroyed', $destroyed->getQuantity());
-			if ($destroyed->getQuantity() > 1)
-				$mail .= ", Qty: ".$destroyed->getQuantity();
+			$itemRow->addAttribute('qtyDestroyed', $iRow['itd_quantity']);
 		}
 
 
-		foreach($droppedItems as $dropped)
+		while($iRow = $qry2->getRow())
 		{
-			$item = $dropped->getItem();
 			$itemRow = $items->addChild('row');
-			$itemRow->addAttribute('typeID', $item->getID());
-			if ($dropped->getLocationID() == 4) // cargo
+			$itemRow->addAttribute('typeID', $iRow['itd_itm_id']);
+			if ($iRow['itd_itl_id'] == 4) // cargo
 				$itemRow->addAttribute('flag', 5);
-			else if ($dropped->getLocationID() == 6) // drone
+			else if ($iRow['itd_itl_id'] == 6) // drone
 				$itemRow->addAttribute('flag', 87);
 			else
 				$itemRow->addAttribute('flag', 0);
-			$itemRow->addAttribute('qtyDropped', $dropped->getQuantity());
+			$itemRow->addAttribute('qtyDropped', $iRow['itd_quantity']);
 			$itemRow->addAttribute('qtyDestroyed', 0);
-			if ($dropped->getQuantity() > 1)
-				$mail .= ", Qty: ".$dropped->getQuantity();
 		}
+	}
+	if(config::get('km_cache_enabled')) CacheHandler::put($kill->getID().".xml", $row->asXML(), 'mails');
+	$timing .= $kill->getID().": ".(microtime(true)-$starttime)."<br />";
+}
+$sxe->addChild('cachedUntil', $date);
+
+header("Content-Type: text/xml");
+echo $sxe->asXML();
+//echo "<!-- ".$timing."\n -->";
+//echo "<!-- Finished: ".(microtime(true)-$starttime)." -->";
+
+class objectCache
+{
+	private static $pilots = array();
+	private static $corps = array();
+	private static $alliances = array();
+	private static $ships = array();
+	private static $items = array();
+	//! Return Alliance from cached list or look up a new id.
+
+	//! \param $id Alliance ID to look up.
+	//! \return Alliance object matching input id.
+	public static function fetchAlliance($id)
+	{
+		if(isset(self::$alliances[$id]))
+			$alliance = &self::$alliances[$id];
+		else
+		{
+			$alliance = new Alliance($id);
+			self::$alliances[$id] = &$alliance;
+		}
+		return $alliance;
+	}
+	//! Return Corporation from cached list or look up a new id.
+
+	//! \param $id Corporation ID.
+	//! \return Corporation object matching input id.
+	public static function fetchCorp($id)
+	{
+		if(isset(self::$corps[$id]))
+		{
+			$corp = self::$corps[$id];
+		}
+		else
+		{
+			$corp = new Corporation($id);
+			self::$corps[$id] = $corp;
+		}
+		return $corp;
+	}
+	//! Return Pilot from cached list or look up a new id.
+
+	//! \param $id Pilot ID to look up.
+	//! \return Pilot object matching input id.
+	public static function fetchPilot($id)
+	{
+		if(isset(self::$pilots[$id]))
+		{
+			$pilot = self::$pilots[$id];
+		}
+		else
+		{
+			$pilot = new Pilot($id);
+			self::$pilots[$id] = $pilot;
+		}
+		return $pilot;
+	}
+	//! Return ship from cached list or look up a new id.
+
+	//! \param $id Ship id to look up.
+	//! \return Ship object matching input id.
+	public static function fetchShip($id)
+	{
+		if(isset(self::$ships[$id]))
+			$ship = self::$ships[$id];
+		else
+		{
+			$ship = new Ship($id);
+			self::$ships[$id] = $ship;
+		}
+		return $ship;
+	}
+	//! Return item from cached list or look up a new name.
+
+	//! \param $itemname Item name to look up.
+	//! \return Item object matching input name.
+	public static function fetchItem($id)
+	{
+		if(isset(self::$items[$id]))
+			$item = self::$items[$id];
+		else
+		{
+			$item = new Item($id);
+			self::$items[$id] = $item;
+		}
+		return $item;
 	}
 
 }
-$sxe->addChild('cachedUntil', $date);
-echo $sxe->asXML();
+
+function AddXMLElement($dest, $source)
+{
+	$new_dest = $dest->addChild($source->getName(), $source[0]);
+
+	foreach ($source->attributes() as $name => $value)
+	{
+		$new_dest->addAttribute($name, $value);
+	}
+
+	foreach ($source->children() as $child)
+	{
+		AddXMLElement($new_dest, $child);
+	}
+}

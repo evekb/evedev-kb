@@ -155,7 +155,7 @@ class IDFeed
 			elseif(CORP_ID)
 			{
 				$crp = new Corporation(CORP_ID);
-				if(!$all->getExternalID()) return false;
+				if(!$crp->getExternalID()) return false;
 				$this->options['corp'] = $crp->getExternalID();
 				return true;
 			}
@@ -315,20 +315,13 @@ class IDFeed
 		$alliance = new Alliance();
 		$corp = new Corporation();
 		if($victim['allianceID'])
-		{
 			$alliance->add($victim['allianceName'], $victim['allianceID']);
-			$corp->add($victim['corporationName'], $alliance, $time, $victim['corporationID']);
-		}
 		else if($victim['factionID'])
-		{
 			$alliance->add($victim['factionName'], $victim['factionID']);
-			$corp->add($victim['corporationName'], $alliance, $time, $victim['corporationID']);
-		}
 		else
-		{
 			$alliance->add("None");
-			$corp->add($victim['corporationName'], $alliance, $time, $victim['corporationID']);
-		}
+		$corp->add($victim['corporationName'], $alliance, $time, $victim['corporationID']);
+
 		$pilot = new Pilot();
 		$pilot->add($victim['characterName'], $corp, $time, $victim['characterID']);
 		$ship = new Ship(0, $victim['shipTypeID']);
@@ -345,20 +338,12 @@ class IDFeed
 		$alliance = new Alliance();
 		$corp = new Corporation();
 		if($inv['allianceID'])
-		{
 			$alliance->add($inv['allianceName'], $inv['allianceID']);
-			$corp->add($inv['corporationID'], $alliance, $time, $inv['corporationID']);
-		}
 		else if($inv['factionID'])
-		{
 			$alliance->add($inv['factionName'], $inv['factionID']);
-			$corp->add($inv['corporationID'], $alliance, $time, $inv['corporationID']);
-		}
 		else
-		{
 			$alliance->add("None");
-			$corp->add($inv['corporationID'], $alliance, $time, $inv['corporationID']);
-		}
+		$corp->add($inv['corporationName'], $alliance, $time, $inv['corporationID']);
 		$pilot = new Pilot();
 		$pilot->add($inv['characterName'], $corp, $time, $inv['characterID']);
 		$ship = new Ship(0, $inv['shipTypeID']);
@@ -368,6 +353,7 @@ class IDFeed
 			$alliance->getID(), $inv['securityStatus'], $ship, $weapon, $inv['damageDone']);
 
 		$kill->addInvolvedParty($iparty);
+		if($inv['finalBlow']) $kill->setFBPilotID($pilot->getID());
 	}
 	private function processItem($item, &$kill)
 	{
