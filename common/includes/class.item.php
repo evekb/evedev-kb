@@ -55,8 +55,8 @@ class Item
 		{
 			$img = IMG_URL.'/drones/'.$size.'_'.$size.'/'.$this->row_['itm_externalid'].'.png';
 		}
-		// cat 6 are ships (destroyed in cargo)
-		elseif ($this->row_['itt_cat'] == 6 || $this->row_['itt_cat'] == 23)
+		// cat 6 are ships, 23 pos mods, 41 PI stuff (destroyed in cargo)
+		elseif ($this->row_['itt_cat'] == 6 || $this->row_['itt_cat'] == 23 || $this->row_['itt_cat'] == 41)
 		{
 			$img = IMG_URL.'/ships/'.$size.'_'.$size.'/'.$this->row_['itm_externalid'].'.png';
 		}

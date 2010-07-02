@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kb3>
   <name>kb3_dgmtypeattributes</name>
-  <rows>143956</rows>
+  <rows>170068</rows>
   <structure>CREATE TABLE `kb3_dgmtypeattributes` (
   `typeID` smallint(5) NOT NULL default &#039;0&#039;,
   `attributeID` smallint(5) NOT NULL default &#039;0&#039;,
