@@ -10,6 +10,10 @@
 /*! This class is used to fetch and read the feed from another EDK board. It
  *  adds all fetched kills to the board and returns the id of the highest kill
  *  fetched.
+ *
+ * 0.90 almost final - kills are returned in descending order which confuses
+ * 'last kill returned' responses.
+ * 0.91 final release version for 3.0 boards.
  */
 class IDFeed
 {
@@ -24,7 +28,7 @@ class IDFeed
 	private $time = '';
 	private $cachedTime = '';
 	private $errormsg = '';
-	const version = "0.90";
+	const version = "0.91";
 
 	//! Construct the Fetcher class and initialise variables.
 
@@ -92,7 +96,7 @@ class IDFeed
 			}
 			return false;
 		}
-		if(!$sxe['edkapi'] || $sxe['edkapi'] < 0.90) return false;
+		if(!$sxe['edkapi'] || $sxe['edkapi'] < 0.91) return false;
 		$this->time = $sxe->currentTime;
 		$this->cachedTime = $sxe->cachedUntil;
 		foreach($sxe->result->rowset->row as $row) $this->processKill($row);

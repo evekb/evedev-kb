@@ -28,7 +28,7 @@
  */
 
 $starttime = microtime(true);
-$idfeedversion = 0.90;
+$idfeedversion = 0.91;
 
 $maxkillsreturned = 200;
 
@@ -68,21 +68,21 @@ else if(isset($_GET['pilot']))
 }
 else if(isset($_GET['alliancename']))
 {
-	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_name = '".$qry->escape($_GET['alliancename'])."' LIMIT 1");
+	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_name = '".$qry->escape(urldecode($_GET['alliancename']))."' LIMIT 1");
 	if(!$qry->recordCount()) die($xml);
 	$row = $qry->getRow();
 	$list->addCombinedAlliance($row['all_id']);
 }
 else if(isset($_GET['corpname']))
 {
-	$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_name = '".$qry->escape($_GET['corpname'])."' LIMIT 1");
+	$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_name = '".$qry->escape(urldecode($_GET['corpname']))."' LIMIT 1");
 	if(!$qry->recordCount()) die($xml);
 	$row = $qry->getRow();
 	$list->addCombinedCorp($row['crp_id']);
 }
 else if(isset($_GET['pilotname']))
 {
-	$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_name = '".$qry->escape($_GET['pilotname'])."' LIMIT 1");
+	$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_name = '".$qry->escape(urldecode($_GET['pilotname']))."' LIMIT 1");
 	if(!$qry->recordCount()) die($xml);
 	$row = $qry->getRow();
 	$list->addCombinedPilot($row['plt_id']);
