@@ -97,7 +97,7 @@ class Fetcher
 			$http->set_timeout(60);
 			$http->set_header("Accept-Encoding: gzip");
 			$data = $http->get_content();
-			if($data == '') return "<i>Error getting XML data from ".$fetchurl."</i><br>".$http->getError()."<br>";
+			if($data == '') return "<i>Error getting XML data from ".$fetchurl."</i><br />".$http->getError()."<br />";
 
 			if(strpos($http->get_header(),"Content-Encoding: gzip")
 				&& gzinflate(substr($data,10)))
@@ -204,7 +204,8 @@ class Fetcher
 			unlink($this->feedfilename);
 			@unlink($this->feedfilename.'.stat');
 			@unlink($this->feedfilename.'.tstat');
-			return "<i>Error getting XML data from ".$fetchurl."</i><br><br>\n";
+			return "<i>Error parsing XML data from ".$fetchurl."</i><br />".
+				xml_error_string(xml_get_error_code($xml_parser))."<br />\n";
 		}
 
 		xml_parser_free($xml_parser);
