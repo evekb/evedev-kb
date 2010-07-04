@@ -23,9 +23,10 @@ class pSearch extends pageAssembly
 	function start()
 	{
 		$this->page->setTitle('Search');
-		$this->searchphrase = slashfix($_POST['searchphrase']);
+		$this->searchphrase = is_null($_POST['searchphrase']) ? slashfix($_GET['searchphrase']) : slashfix($_POST['searchphrase']);
 		$this->searchphrase = preg_replace('/\*/', '%', $this->searchphrase);
 		$this->searchphrase = trim($this->searchphrase);
+		$this->searchtype = is_null($_POST['searchtype']) ? $_GET['searchtype'] : $_POST['searchtype'];
 	}
 
 	function checkSearch()
@@ -33,39 +34,39 @@ class pSearch extends pageAssembly
 		global $smarty;
 		if ($this->searchphrase != "" && strlen($this->searchphrase) >= 3)
 		{
-			switch ($_POST['searchtype'])
+			switch ($this->searchtype)
 			{
 				case "pilot":
 					$sql = "select plt.plt_id, plt.plt_name, crp.crp_name
-						  from kb3_pilots plt, kb3_corps crp
-						 where plt.plt_name  like '%".$this->searchphrase."%'
-						   and plt.plt_crp_id = crp.crp_id
-						 order by plt.plt_name";
+                          from kb3_pilots plt, kb3_corps crp
+                         where plt.plt_name  like '%".$this->searchphrase."%'
+                           and plt.plt_crp_id = crp.crp_id
+                         order by plt.plt_name";
 					$smarty->assign('result_header', 'Pilot');
 					$smarty->assign('result_header_group', 'Corporation');
 					break;
 				case "corp":
 					$sql = "select crp.crp_id, crp.crp_name, ali.all_name
-						  from kb3_corps crp, kb3_alliances ali
-						 where lower( crp.crp_name ) like lower( '%".$this->searchphrase."%' )
-						   and crp.crp_all_id = ali.all_id
-						 order by crp.crp_name";
+                          from kb3_corps crp, kb3_alliances ali
+                         where lower( crp.crp_name ) like lower( '%".$this->searchphrase."%' )
+                           and crp.crp_all_id = ali.all_id
+                         order by crp.crp_name";
 					$smarty->assign('result_header', 'Corporation');
 					$smarty->assign('result_header_group', 'Alliance');
 					break;
 				case "alliance":
 					$sql = "select ali.all_id, ali.all_name
-						  from kb3_alliances ali
-						 where lower( ali.all_name ) like lower( '%".$this->searchphrase."%' )
-						 order by ali.all_name";
+                          from kb3_alliances ali
+                         where lower( ali.all_name ) like lower( '%".$this->searchphrase."%' )
+                         order by ali.all_name";
 					$smarty->assign('result_header', 'Alliance');
 					$smarty->assign('result_header_group', '');
 					break;
 				case "system":
 					$sql = "select sys.sys_id, sys.sys_name
-						  from kb3_systems sys
-						 where lower( sys.sys_name ) like lower( '%".$this->searchphrase."%' )
-						 order by sys.sys_name";
+                          from kb3_systems sys
+                         where lower( sys.sys_name ) like lower( '%".$this->searchphrase."%' )
+                         order by sys.sys_name";
 					$smarty->assign('result_header', 'System');
 					$smarty->assign('result_header_group', '');
 					break;
@@ -89,7 +90,7 @@ class pSearch extends pageAssembly
 				while ($row = $qry->getRow())
 				{
 					$result = array();
-					switch ($_POST['searchtype'])
+					switch ($this->searchtype)
 					{
 						case "pilot":
 							$result['link'] = "?a=pilot_detail&amp;plt_id=".$row['plt_id'];
