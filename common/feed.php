@@ -251,8 +251,7 @@ foreach ($kills as $id => $timestamp)
 	if($kill->getHash() !== false) $html .= '<hash>'.bin2hex($kill->getHash()).'</hash>';
 	$html .= '<trust>'.$kill->getTrust().'</trust>';
 	$html .= '			<description><![CDATA[ '.$kill->getRawMail().' ]]></description>
-				<guid>?a=kill_detail&amp;kll_id='.$id.'</guid>
-				<pubDate>'.strftime("%a, %d %b %Y %H:%M:%S %Z", strtotime($timestamp))."</pubDate>\n";
+				<guid>?a=kill_detail&amp;kll_id='.$id."</guid>\n";
 	if($kill->getExternalID()) $html .= "<apiID>".$kill->getExternalID()."</apiID>\n";
 	$html .= "</item>\n";
 }
