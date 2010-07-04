@@ -89,7 +89,7 @@ class Fetcher
 			$http->set_timeout(60);
 			$http->set_header("Accept-Encoding: gzip");
 			$data = $http->get_content();
-			if($data == '') return "<i>Error getting XML data from ".$fetchurl."</i><br>".$http->getError()."<br>";
+			if($data == '') return "<i>Error getting XML data from ".$fetchurl."</i><br />".$http->getError()."<br />";
 
 			if(strpos($http->get_header(),"Content-Encoding: gzip")
 				&& gzinflate(substr($data,10)))
@@ -196,7 +196,8 @@ class Fetcher
 			unlink($this->feedfilename);
 			@unlink($this->feedfilename.'.stat');
 			@unlink($this->feedfilename.'.tstat');
-			return "<i>Error getting XML data from ".$fetchurl."</i><br><br>\n";
+			return "<i>Error parsing XML data from ".$fetchurl."</i><br />".
+				xml_error_string(xml_get_error_code($xml_parser))."<br />\n";
 		}
 
 		xml_parser_free($xml_parser);
@@ -206,11 +207,11 @@ class Fetcher
 
 		if (config::get('fetch_verbose') )
 		{
-			$this->html .= "<div class=block-header2>".$this->killsAdded." kills added and ".$this->killsSkipped." kills skipped from feed: ".$url."<br>".$str." <br></div>\n";
+			$this->html .= "<div class=block-header2>".$this->killsAdded." kills added and ".$this->killsSkipped." kills skipped from feed: ".$url."<br />".$str." <br /></div>\n";
 		}
 		else
 		{
-			$this->html .= "<div class=block-header2>".$this->killsAdded." kills added and ".$this->killsSkipped." kills skipped from feed: ".$url." <br><br></div>\n";
+			$this->html .= "<div class=block-header2>".$this->killsAdded." kills added and ".$this->killsSkipped." kills skipped from feed: ".$url." <br /><br /></div>\n";
 		}
 
 		return $this->html;
@@ -249,11 +250,11 @@ class Fetcher
 // Not working as intended so removing for now.
 				if ( 0 && $this->idordered && $this->tracklast_ > intval($this->title))
 				{
-					$this->html .= "Killmail ID ".intval($this->title)." already processed <br>";
+					$this->html .= "Killmail ID ".intval($this->title)." already processed <br />";
 				}
 				elseif (0 && !$this->idordered && $this->tracktime_ > $killstamp)
 				{
-					$this->html .= "Killmail date ".intval($this->title)." already processed. <br>";
+					$this->html .= "Killmail date ".intval($this->title)." already processed. <br />";
 				}
 				else
 				{
@@ -313,17 +314,17 @@ class Fetcher
 					if ( $killid <= 0 )
 					{
 						if ( $killid == 0 && config::get('fetch_verbose') )
-							$this->html .= "Killmail ".intval($this->title)." is malformed. ".$this->uurl." Kill ID = ".$this->title." <br>\n";
+							$this->html .= "Killmail ".intval($this->title)." is malformed. ".$this->uurl." Kill ID = ".$this->title." <br />\n";
 						if ( $killid == -1 && config::get('fetch_verbose') )
-							$this->html .= "Killmail ".intval($this->title)." already posted <a href=\"?a=kill_detail&amp;kll_id=".$parser->getDupeID()."\">here</a>.<br>\n";
+							$this->html .= "Killmail ".intval($this->title)." already posted <a href=\"?a=kill_detail&amp;kll_id=".$parser->getDupeID()."\">here</a>.<br />\n";
 						if ( $killid == -2 && config::get('fetch_verbose') )
-							$this->html .= "Killmail ".intval($this->title)." is not related to ".KB_TITLE.".<br>\n";
+							$this->html .= "Killmail ".intval($this->title)." is not related to ".KB_TITLE.".<br />\n";
 						if ( $killid == -3 && config::get('fetch_verbose') )
-							$this->html .= "Killmail ".intval($this->title)." already posted <a href=\"?a=kill_detail&amp;kll_external_id=".$this->apiID."\">here</a>.<br>\n";
+							$this->html .= "Killmail ".intval($this->title)." already posted <a href=\"?a=kill_detail&amp;kll_external_id=".$this->apiID."\">here</a>.<br />\n";
 						if ( $killid == -4 && config::get('fetch_verbose') )
-							$this->html .= "Killmail ".intval($this->title)." too old to post with current settings.<br>\n";
+							$this->html .= "Killmail ".intval($this->title)." too old to post with current settings.<br />\n";
 						if ( $killid == -5 && config::get('fetch_verbose') )
-							$this->html .= "Killmail ".intval($this->title)." has already been deleted.<br>\n";
+							$this->html .= "Killmail ".intval($this->title)." has already been deleted.<br />\n";
 						$this->killsSkipped++;
 					}
 					else
@@ -332,7 +333,7 @@ class Fetcher
 						else $logurl = uurl.'?a=kill_detail&kll_id='.intval($this->title);
 						logger::logKill($killid, $logurl);
 
-						$this->html .= "Killmail ".intval($this->title)." successfully posted <a href=\"?a=kill_detail&kll_id=".$killid."\">here</a>.<br>";
+						$this->html .= "Killmail ".intval($this->title)." successfully posted <a href=\"?a=kill_detail&kll_id=".$killid."\">here</a>.<br />";
 
 						if (config::get('fetch_comment'))
 						{
