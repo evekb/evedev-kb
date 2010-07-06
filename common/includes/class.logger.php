@@ -76,6 +76,6 @@ class logger
 
 		$qry = new DBQuery(true);
 		$qry->execute("INSERT INTO kb3_log (log_kll_id, log_site, log_ip_address, log_timestamp) values(".
-				$killid.",'".KB_SITE."','".$note."', now())");
+				$killid.",'".KB_SITE."','".slashfix($note)."', now())");
 	}
 }
