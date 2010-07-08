@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kb3>
   <name>kb3_ship_classes</name>
-  <rows>41</rows>
+  <rows>43</rows>
   <structure>CREATE TABLE `kb3_ship_classes` (
   `scl_id` int(11) NOT NULL auto_increment,
   `scl_class` char(32) NOT NULL,

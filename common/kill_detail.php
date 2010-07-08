@@ -141,7 +141,7 @@ class pKillDetail extends pageAssembly
 		}
 
 		global $smarty;
-		if(!file_exists('img/panel/'.config::get('fp_theme').'.png')) config::set('fp_theme','apoc');
+		if(!file_exists('img/panel/'.config::get('fp_theme').'.png')) config::set('fp_theme','tyrannis');
 		$smarty->assign('panel_colour', config::get('fp_theme'));
 		$smarty->assign('showiskd', config::get('kd_showiskd'));
 
@@ -962,15 +962,63 @@ class pKillDetail extends pageAssembly
 		}
 		$smarty->assign('showverify', config::get('kd_verify'));
 
-		/*
-		$hicount =count($this->fitting_array[1]);
-		$medcount=count($this->fitting_array[2]);
-		$lowcount=count($this->fitting_array[3]);
+		//$hicount =count($this->fitting_array[1]);
+		//$medcount=count($this->fitting_array[2]);
+		//$lowcount=count($this->fitting_array[3]);
+		//$rigcount=count($this->fitting_array[5]);
+
+		$hicount = 0; //zero the values;
+		$medcount = 0;
+		$lowcount = 0;
+		$rigcount = 0;
+
+
+		//get the actual slot count for each vessel - for the fitting panel
+		$ship = $this->kill->getVictimShip();
+		$sql = 'SELECT `attributeID`, `value` FROM `kb3_dgmtypeattributes` WHERE '.
+			    '`attributeID` IN ( 12, 13, 14, 1137) AND `typeID` = '. $ship->getExternalID(). ';';
+		$qry = DBFactory::getDBQuery();
+		$qry->execute($sql);
+		while($row = $qry->getRow())
+		{
+		    switch($row["attributeID"])
+		    {
+			case '12': { $lowcount = $row["value"]; break; }
+			case '13': { $medcount = $row["value"]; break; }
+			case '14': { $hicount = $row["value"]; break; }
+			case '1137': { $rigcount = $row["value"]; break; }
+		    }
+		}
+
+		$subcount = count($this->fitting_array[7]);
+
+		//This code counts the slots granted by subsystem modules for the fitting panel
+		if($subcount > 0)
+		{
+		    foreach ($this->fitting_array[7] as $subfit)
+		    {
+			$lookupRef = $subfit["itemID"];
+			$sql = 'SELECT `attributeID`, `value` FROM `kb3_dgmtypeattributes` WHERE '.
+			    '`attributeID` IN (1374, 1375, 1376) AND `typeID` = '. $lookupRef. ';';
+			$qry = DBFactory::getDBQuery();
+			$qry->execute($sql);
+			while($row = $qry->getRow())
+			{
+			    switch($row["attributeID"])
+			    {
+				case '1374': { $hicount += $row["value"]; break; }
+				case '1375': { $medcount += $row["value"]; break; }
+				case '1376': { $lowcount += $row["value"]; break; }
+			    }
+			}
+		    }
+		}
 
 		$smarty->assign('hic', $hicount);
 		$smarty->assign('medc', $medcount);
 		$smarty->assign('lowc', $lowcount);
-		*/
+		$smarty->assign('rigc', $rigcount);
+		$smarty->assign('subc', $subcount);
 
 		return $smarty->fetch(get_tpl('kill_detail_fitting'));
 	}

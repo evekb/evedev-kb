@@ -98,7 +98,7 @@ class admin_appearance
 		"Yellow" ,
 		"Vidar" ,
 		"Demonic" );*/
-		$sfp_themes=array("apoc", "apoc_ammo","apoc_notext");
+		$sfp_themes=array("tyrannis", "tyrannis_blue", "tyrannis_darkred", "tyrannis_default", "tyrannis_revelations");
 	$option = array();
 	$selected = config::get('fp_theme');
 	foreach ($sfp_themes as $theme)
