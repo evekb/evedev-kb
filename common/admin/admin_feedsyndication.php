@@ -122,7 +122,7 @@ if ($_POST['fetch'])
              $str .= '&lastkllid='.$feedlast[$i];
  */
             if ($apikills[$i])
-                $str .= '&apikills=1';
+                $str .= '&APIkills=1';
             if ($_POST['range1'] && $_POST['range2'])
             {
                 if ($_POST['range1'] > $_POST['range2'])
