@@ -324,7 +324,7 @@ class pKillRelated extends pageAssembly
 		$smarty->assignByRef('pilots_a', $this->pilots['a']);
 		$smarty->assignByRef('pilots_e', $this->pilots['e']);
 
-		$pod = new Ship(6);
+		$pod = new Ship(6, 670);
 		$smarty->assign('podpic', $pod->getImage(32));
 		$smarty->assign('friendlycnt', count($this->pilots['a']));
 		$smarty->assign('hostilecnt', count($this->pilots['e']));

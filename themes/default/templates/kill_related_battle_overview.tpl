@@ -28,9 +28,10 @@
         <b><a href="?a=pilot_detail&amp;plt_id={$pilot}">{$i.name}</a>&nbsp;<a href="?a=kill_detail&amp;kll_id={$i.podid}">[Pod]</a></b><br/>{$i.ship}
       </td>
     {else}
-      <td class="kb-table-cell" style="background-image: url({$podpic}); background-repeat: no-repeat; background-position: right;">
-        <b><a href="?a=pilot_detail&amp;plt_id={$pilot}">{$i.name}</a></b><br/>{$i.ship}
-      </td>
+      <td class="kb-table-cell"><div style="position: relative;"><b><a href="?a=pilot_detail&amp;plt_id={$pilot}">{$i.name}</a></b><br/>{$i.ship}
+	<div style="position: absolute; right:0px; top:-6px; width:32px; height:32px; z-index:1;"><a href="?a=kill_detail&amp;kll_id={$i.podid}"><img src="{$podpic}"></a></div>
+        </div>
+    </td>
     {/if}
 {else}
       <td class="kb-table-cell"><b><a href="?a=pilot_detail&amp;plt_id={$pilot}">{$i.name}</a></b><br/>{$i.ship}</td>
@@ -68,9 +69,10 @@
         <b><a href="?a=pilot_detail&amp;plt_id={$pilot}">{$i.name}</a>&nbsp;<a href="?a=kill_detail&amp;kll_id={$i.podid}">[Pod]</a></b><br/>{$i.ship}
       </td>
     {else}
-      <td class="kb-table-cell" style="background-image: url({$podpic}); background-repeat: no-repeat; background-position: right;">
-        <b><a href="?a=pilot_detail&amp;plt_id={$pilot}">{$i.name}</a></b><br/>{$i.ship}
-      </td>
+    <td class="kb-table-cell"><div style="position: relative;"><b><a href="?a=pilot_detail&amp;plt_id={$pilot}">{$i.name}</a></b><br/>{$i.ship}
+	    <div style="position: absolute; right:0px; top:-6px; width:32px; height:32px; z-index:1;"><a href="?a=kill_detail&amp;kll_id={$i.podid}"><img src="{$podpic}"></a></div>
+        </div>
+    </td>
     {/if}
 {else}
       <td class="kb-table-cell"><b><a href="?a=pilot_detail&amp;plt_id={$pilot}">{$i.name}</a></b><br/>{$i.ship}</td>
@@ -80,7 +82,6 @@
 {/foreach}
 {/foreach}
 </table>
-
 </td>
 </tr>
 </table>
