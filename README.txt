@@ -1,8 +1,69 @@
 -------------------------------------------
-Eve Development Network Killboard v3.0.0 
+Eve Development Network Killboard v3.1.0
 -------------------------------------------
 
 VERSION HISTORY
+v3.1.0
+IDFeeder reader implemented similar to CCP API feed.
+Classes can be overridden by mods.
+Code has been rewritten to fit a more OO design.
+Code has been rewritten to be more maintainable.
+Error handling has been added to improve error messages.
+Error messages can be logged to file.
+Memcache is used more widely, if enabled.
+Standard cache manager has been added enabling simpler cache handling.
+CCP's new image server is used.
+Newer, faster version of the Smarty templating system is used.
+Front page cam be toggled to display current week/month only.
+Feed syndication uses 'trust'. API ids from trusted boards are used to verify kills.
+Hashes of killmails are used to speed up the processing of duplicate kills.
+Image cache now organised by ID and shared between pilot/corp/alliance.
+More theming-friendly changes
+Default character encoding added to db setup
+New ships added.
+API admin more friendly
+More display options.
+Numerous minor bugfixes and improvements.
+-------------------------------------------
+v3.0.8
+Final Tyrannis content added to installer.
+-------------------------------------------
+v3.0.7
+Auto db-updater works again
+-------------------------------------------
+v3.0.6
+Tyrannis rather bizarrely sets pilots known to have no alliance as 'Unknown'
+instead of 'None'. EDK will convert this back to 'None' until sense is restored.
+Admin upgrade will report errors if upgrade could not be performed.
+Prepared queries return better error messages.
+-------------------------------------------
+v3.0.5
+Cache clearing script fixed.
+Corp detail page shows top ships used rather than killed.
+New ships can be added to admin ship values again.
+-------------------------------------------
+v3.0.4
+Rare error in renaming pilots fixed.
+-------------------------------------------
+v3.0.3
+Callback function passes references (Mod makers rejoice)
+Updates to core mods missing from previous updates added.
+-------------------------------------------
+v3.0.2
+Toplist speed fixes
+Memory limits added to db caches
+Backglow returned to kill detail modules
+Kill related is more related.
+Ship values set in the admin panel are set
+Cache clearing cronjob checks directories exist
+-------------------------------------------
+v3.0.1
+Toplist speed fixes.
+Campaign speed fixes.
+Pages no longer allow incorrect caching.
+Signatures display correctly.
+Kill detail themes work again.
+-------------------------------------------
 v3.0.0
 PHP5 support only. PHP 4 may work in some cases but is not supported.
 External ID for kills, corps and alliances added
@@ -135,8 +196,8 @@ of this killboard, sign up for the EVE-Dev forums!
 // REQUIREMENTS
 -------------------------------------------
 - Webserver (apache)
-- PHP 4.0.9+
-- Mysql 4.10.+
+- PHP 5+
+- Mysql 5+
 - GD 2 or higher
 
 
