@@ -155,14 +155,12 @@ class pPilotDetail extends pageAssembly
 	//! Build the killlists that are needed for the options selected.
 	function killList()
 	{
-
+		global $smarty;
 		if(isset($this->viewList[$this->view])) return call_user_func_array($this->viewList[$this->view], array(&$this));
 
 		switch ($this->view)
 		{
 			case "kills":
-				$html .= "<div class='kb-kills-header'>All kills</div>";
-
 				$list = new KillList();
 				$list->setOrdered(true);
 				$list->addInvolvedPilot($this->pilot);
@@ -171,13 +169,13 @@ class pPilotDetail extends pageAssembly
 				$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 				$table = new KillListTable($list);
 				$table->setDayBreak(false);
-				$pagesplit = $pagesplitter->generate();
-				$html .= $pagesplit."<br /><br />".$table->generate().$pagesplit;
+
+				$smarty->assign('splitter',$pagesplitter->generate());
+				$smarty->assign('kills', $table->generate());
+				return $smarty->fetch(get_tpl('detail_kl_kills'));
 
 				break;
 			case "losses":
-				$html .= "<div class='kb-losses-header'>All losses</div>";
-
 				$list = new KillList();
 				$list->setOrdered(true);
 				$list->setPodsNoobships(config::get('podnoobs'));
@@ -188,28 +186,27 @@ class pPilotDetail extends pageAssembly
 
 				$table = new KillListTable($list);
 				$table->setDayBreak(false);
-				$pagesplit = $pagesplitter->generate();
-				$html .= $pagesplit."<br /><br />".$table->generate().$pagesplit;
+				
+				$smarty->assign('splitter',$pagesplitter->generate());
+				$smarty->assign('losses', $table->generate());
+				return $smarty->fetch(get_tpl('detail_kl_losses'));
+				
 				break;
 			case "ships_weapons":
-				$html .= "<div class='block-header2'>Ships & weapons used</div>";
-
-				$html .= "<table class='kb-subtable'><tr><td valign=top width=400>";
 				$shiplist = new TopShipList();
 				$shiplist->addInvolvedPilot($this->pilot);
 				$shiplisttable = new TopShipListTable($shiplist);
-				$html .= $shiplisttable->generate();
-				$html .= "</td><td valign=top align=right width=400>";
+				$smarty->assign('ships', $shiplisttable->generate());
 
 				$weaponlist = new TopWeaponList();
 				$weaponlist->addInvolvedPilot($this->pilot);
 				$weaponlisttable = new TopWeaponListTable($weaponlist);
-				$html .= $weaponlisttable->generate();
-				$html .= "</td></tr></table>";
+
+				$smarty->assign('weapons', $weaponlisttable->generate());
+				return $smarty->fetch(get_tpl('detail_kl_ships_weapons'));
 
 				break;
 			default:
-				$html .= "<div class='kb-kills-header'>10 Most recent kills</div>";
 				$list = new KillList();
 				$list->setOrdered(true);
 				if (config::get('comments_count')) $list->setCountComments(true);
@@ -221,9 +218,8 @@ class pPilotDetail extends pageAssembly
 
 				$table = new KillListTable($list);
 				$table->setDayBreak(false);
-				$html .= $table->generate();
+				$smarty->assign('kills', $table->generate());
 
-				$html .= "<div class='kb-losses-header'>10 Most recent losses</div>";
 				$list = new KillList();
 				$list->setOrdered(true);
 				if (config::get('comments_count')) $list->setCountComments(true);
@@ -236,7 +232,9 @@ class pPilotDetail extends pageAssembly
 				$table = new KillListTable($list);
 				$table->setDayBreak(false);
 				$table->setDayBreak(false);
-				$html .= $table->generate();
+				$smarty->assign('losses', $table->generate());
+				return $smarty->fetch(get_tpl('detail_kl_default'));
+				
 				break;
 		}
 		return $html;
