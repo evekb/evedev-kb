@@ -1,9 +1,10 @@
- <!-- killlistable.tpl -->
+<!-- killlistable.tpl -->
+<div class="kltable">
 {section name=day loop=$killlist}
     {if $daybreak}
 <div class="kb-date-header">{"l, F jS"|date:$killlist[day].date}</div><br />
     {/if}
-<div style="text-align: center;"><table class="kb-table" style="width: 100%; margin-left: auto; margin-right: auto; text-align: left;" cellspacing="1">
+<table class="kb-table kb-kl-table" style="width: 100%; margin-left: auto; margin-right: auto; text-align: left;" cellspacing="1">
     <tr class="kb-table-header">
         <td class="kb-table-header" colspan="2" align="center">Ship type</td>
         <td class="kb-table-header"{if $config->get('killlist_alogo')} colspan="2"{/if}>Victim</td>
@@ -17,9 +18,9 @@
         <td class="kb-table-header" align="center"><img src="{$img_url}/comment{$comment_white}.gif" alt="comments" /></td>
     {/if}
     </tr>
-    {cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
-    {section name=kill loop=$killlist[day].kills}
-        {assign var="k" value=$killlist[day].kills[kill]}
+{cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
+{section name=kill loop=$killlist[day].kills}
+{assign var="k" value=$killlist[day].kills[kill]}
 {if $k.loss}
 <tr class="{cycle name=ccl}-loss" onclick="window.location.href='?a=kill_detail&amp;kll_id={$k.id}';">
 {elseif $k.kill}
@@ -40,34 +41,32 @@ onmouseover="this.className='kb-table-row-hover';" onclick="window.location.href
             {/if}
         {/if}
 {if $k.loss}
-	<td style="width: 235px" class="kb-table-cell"><b>{$k.victim}</b><br />{if $config->get('corpalliance-name')}<b>Corp:</b> {$k.victimcorp|truncate:27}{else}{$k.victimcorp|truncate:31}{/if}</td>
+	<td style="width: 235px" class="kb-table-cell"><a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$k.victimid}"><b>{$k.victim}</b></a><br /><a href="{$kb_host}/?a=corp_detail&amp;crp_id={$k.victimcorpid}">{$k.victimcorp|truncate:35}</a></td>
 {else}
-        {if $config->get('corpalliance-name')}
-			{if $k.victimalliancename != "None"}
-			<td style="width: 235px" class="kb-table-cell"><b>{$k.victim}</b><br /><b>Alliance:</b> {$k.victimalliancename|truncate:27}</td>
-			{else}
-			<td style="width: 235px" class="kb-table-cell"><b>{$k.victim}</b><br /><b>Corp:</b> {$k.victimcorp|truncate:30}</td>
-			{/if}
+		{if $k.victimalliancename != "None"}
+		<td style="width: 235px" class="kb-table-cell"><a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$k.victimid}"><b>{$k.victim}</b></a><br /><a href="{$kb_host}/?a=alliance_detail&amp;all_id={$k.victimallianceid}">{$k.victimalliancename|truncate:35}</a></td>
 		{else}
-			<td style="width: 235px" class="kb-table-cell"><b>{$k.victim}</b><br />{$k.victimcorp|truncate:35}</td>
+		<td style="width: 235px" class="kb-table-cell"><a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$k.victimid}"><b>{$k.victim}</b></a><br /><a href="{$kb_host}/?a=corp_detail&amp;crp_id={$k.victimcorpid}">{$k.victimcorp|truncate:35}</a></td>
 		{/if}
 {/if}
-        <td style="width: 190px" class="kb-table-cell"><b>{$k.fb}</b><br />{$k.fbcorp|truncate:27}</td>
-        <td style="width: 100px" class="kb-table-cell" align="center"><b>{$k.system|truncate:10}</b>{if $config->get('killlist_regionnames')} {else}<br />{/if} ({$k.systemsecurity|max:0|string_format:"%01.1f"}){if $config->get('killlist_regionnames')}<br />{$k.region|truncate:14}{/if}</td>
+        <td style="width: 190px" class="kb-table-cell"><a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$k.fbid}"><b>{$k.fb}</b></a><br /><a href="{$kb_host}/?a=corp_detail&amp;crp_id={$k.fbcorpid}">{$k.fbcorp|truncate:35}</a></td>
+        <td style="width: 100px" class="kb-table-cell" align="center"><b>{$k.system|truncate:10}</b><br />({$k.systemsecurity|max:0|string_format:"%01.1f"})</td>
         {if $config->get('killlist_involved')}
 			<td style="width: 30px" align="center" class="kb-table-cell"><b>{$k.inv}</b></td>
 		{/if}
         {if $daybreak}
-        <td class="kb-table-cell" align="center"><b>{$k.timestamp|date_format:"%H:%M"}</b></td>
+        <td class="kb-table-cell" align="center"><a href="{$kb_host}/?a=kill_related&amp;kll_id={$k.id}"><b>{$k.timestamp|date_format:"%H:%M"}</b></a></td>
         {else}
-        <td class="kb-table-cell" align="center" width="80"><b>{$k.timestamp|date_format:"%Y-%m-%d"}<br />{$k.timestamp|date_format:"%H:%M"}</b></td>
+        <td class="kb-table-cell" align="center" width="110"><a href="{$kb_host}/?a=kill_related&amp;kll_id={$k.id}"><b>{$k.timestamp|date_format:"%Y-%m-%d"}<br />{$k.timestamp|date_format:"%H:%M"}</b></a></td>
         {/if}
         {if $comments_count}
         <td style="width: 10px" class="kb-table-cell" align="center"><b>{$k.commentcount}</b></td>
         {/if}
     </tr>
     {/section}
-</table></div>
+</table>
 {sectionelse}
 <p>No data.</p>
-{/section} <!-- /killlistable.tpl -->
+{/section}
+</div>
+<!-- /killlistable.tpl -->
