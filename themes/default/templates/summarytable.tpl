@@ -1,8 +1,9 @@
-{if $losses}{if $verbose}{assign var=columns value=2}{assign var=class_width value=140}{assign var=width value=50}
+<!-- summarytable.tpl -->{if $losses}{if $verbose}{assign var=columns value=2}{assign var=class_width value=140}{assign var=width value=50}
 {else}{assign var=columns value=4}{assign var=class_width value=130}{assign var=width value=25}{/if}
 {else}{if $verbose}{assign var=columns value=3}{assign var=class_width value=133}{assign var=width value=33}
 {else}{assign var=columns value=4}{assign var=class_width value=130}{assign var=width value=25}{/if}{/if}
-<!-- summarytable.tpl --><table class="kb-subtable" width="760" border="0" cellspacing="0">
+<div class="summarytable">
+<table class="kb-subtable" width="760" border="0" cellspacing="0">
 	<tr>
 		<td valign="top" width="{$width}%">
 			<table class="kb-table" cellspacing="1" width="100%">
@@ -69,4 +70,5 @@
 	{/if}
 {/if}
 {if $clearfilter}<table align="center"><tr><td align="center" valign="top" class="weeknav">[<a href="{$clearfilter}">clear filter</a>]</td></tr></table>{/if}
+</div>
 <!-- /summarytable.tpl -->

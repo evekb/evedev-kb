@@ -728,3 +728,66 @@ a.kb-contract:link {
 a.kb-contract:visited {
   font-size: 12px;
 }
+#content
+{
+  float: left;
+}
+
+#context
+{
+  float: right;
+}
+
+#main
+{
+  width: 950px;
+
+  background: #111111;
+  border-left: 1px solid #555555;
+  border-right: 1px solid #555555;
+  border-top: 0px solid #555555;
+  border-bottom: 0px solid #555555;
+  padding: 0px;
+  border-collapse: separate;
+  border-spacing: 0px;
+  margin: auto;
+}
+
+.stats
+{
+	margin-bottom: 5px;
+}
+.summarytable
+{
+	margin-bottom: 5px;
+	margin-top: 5px;
+}
+.klsplitter
+{
+	margin-bottom: 5px;
+	margin-top: 5px;
+}
+.kltable
+{
+	text-align: center;
+}
+#profile
+{
+	clear: both;
+	padding: 0;
+	margin: 0;
+	font-size: 10px;
+	color: #e0e0e0;
+	float: right;
+
+}
+.kb-kl-table a:link, .kb-kl-table a:visited
+{
+	color: #e0e0e0;
+	font-size: inherit;
+	font-weight: inherit;
+}
+.counter
+{
+	clear: both;
+}
