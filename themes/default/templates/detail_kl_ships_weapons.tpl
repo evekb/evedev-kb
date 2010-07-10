@@ -1,4 +1,4 @@
-<!-- corp_detail_kl_ships_weapons -->
+<!-- detail_kl_ships_weapons -->
 <div class="corpbody killlist">
 	<div class="block-header2">Ships and Weapons Used</div>
 	<div style="float: left; width: 310px; margin-left:10px">
@@ -8,4 +8,4 @@
 		{$weapons}
 	</div>
 </div>
-<!-- /corp_detail_kl_ships_weapons -->
+<!-- /detail_kl_ships_weapons -->

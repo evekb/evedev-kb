@@ -105,7 +105,6 @@ class pAbout extends pageAssembly
 			$class['valind'] = $shipclass->getValueIndicator();
 			$shipcl[] = $class;
 		}
-		number_format($shipclass->getPoints(),0,',','.')."</td><td align='center'><img class='ship' alt='' src=\"" . $shipclass->getValueIndicator() . "\" border=\"0\" /></td></tr>";
 		$this->smarty->assign('shipclass', $shipcl);
 	}
 	

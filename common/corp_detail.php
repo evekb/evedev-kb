@@ -227,7 +227,7 @@ class pCorpDetail extends pageAssembly
 				$ltab->setLimit(10);
 				$ltab->setDayBreak(false);
 				$smarty->assign('losses', $ltab->generate());
-				return $smarty->fetch(get_tpl('corp_detail_kl_default'));
+				return $smarty->fetch(get_tpl('detail_kl_default'));
 
 				break;
 			case "kills":
@@ -242,7 +242,7 @@ class pCorpDetail extends pageAssembly
 				$table->setDayBreak(false);
 				$smarty->assign('splitter',$pagesplitter->generate());
 				$smarty->assign('kills', $table->generate());
-				return $smarty->fetch(get_tpl('corp_detail_kl_kills'));
+				return $smarty->fetch(get_tpl('detail_kl_kills'));
 
 				break;
 			case "losses":
@@ -258,7 +258,7 @@ class pCorpDetail extends pageAssembly
 				$table->setDayBreak(false);
 				$smarty->assign('splitter',$pagesplitter->generate());
 				$smarty->assign('losses', $table->generate());
-				return $smarty->fetch(get_tpl('corp_detail_kl_losses'));
+				return $smarty->fetch(get_tpl('detail_kl_losses'));
 
 				break;
 			case "pilot_kills":
@@ -287,7 +287,7 @@ class pCorpDetail extends pageAssembly
 				$table = new TopPilotTable($list, "Kills");
 				$smarty->assign('total_stats', $table->generate());
 
-				return $smarty->fetch(get_tpl('corp_detail_kl_monthly'));
+				return $smarty->fetch(get_tpl('detail_kl_monthly'));
 
 				break;
 			case "pilot_scores":
@@ -316,7 +316,7 @@ class pCorpDetail extends pageAssembly
 				$table = new TopPilotTable($list, "Points");
 				$smarty->assign('total_stats', $table->generate());
 
-				return $smarty->fetch(get_tpl('corp_detail_kl_monthly'));
+				return $smarty->fetch(get_tpl('detail_kl_monthly'));
 
 				break;
 			case "pilot_solo":
@@ -345,7 +345,7 @@ class pCorpDetail extends pageAssembly
 				$table = new TopPilotTable($list, "Solokills");
 				$smarty->assign('total_stats', $table->generate());
 
-				return $smarty->fetch(get_tpl('corp_detail_kl_monthly'));
+				return $smarty->fetch(get_tpl('detail_kl_monthly'));
 
 				break;
 
@@ -375,7 +375,7 @@ class pCorpDetail extends pageAssembly
 				$table = new TopPilotTable($list, "Kills");
 				$smarty->assign('total_stats', $table->generate());
 
-				return $smarty->fetch(get_tpl('corp_detail_kl_monthly'));
+				return $smarty->fetch(get_tpl('detail_kl_monthly'));
 
 				break;
 
@@ -403,7 +403,7 @@ class pCorpDetail extends pageAssembly
 				$table = new TopPilotTable($list, "Kills");
 				$smarty->assign('total_stats', $table->generate());
 
-				return $smarty->fetch(get_tpl('corp_detail_kl_monthly'));
+				return $smarty->fetch(get_tpl('detail_kl_monthly'));
 
 				break;
 
@@ -433,7 +433,7 @@ class pCorpDetail extends pageAssembly
 				$table = new TopPilotTable($list, "Losses");
 				$smarty->assign('total_stats', $table->generate());
 
-				return $smarty->fetch(get_tpl('corp_detail_kl_monthly'));
+				return $smarty->fetch(get_tpl('detail_kl_monthly'));
 
 				break;
 			case "ships_weapons":
@@ -446,7 +446,7 @@ class pCorpDetail extends pageAssembly
 				$weaponlist->addInvolvedCorp($this->crp_id);
 				$weaponlisttable = new TopWeaponListTable($weaponlist);
 				$smarty->assign('weapons', $weaponlisttable->generate());
-				return $smarty->fetch(get_tpl('corp_detail_kl_ships_weapons'));
+				return $smarty->fetch(get_tpl('detail_kl_ships_weapons'));
 
 				break;
 			case 'violent_systems':
@@ -546,7 +546,7 @@ class pCorpDetail extends pageAssembly
 				}
 				$smarty->assignByRef('syslist', $syslist);
 				$smarty->assign('total_stats', $smarty->fetch(get_tpl(violent_systems)));
-				return $smarty->fetch(get_tpl('corp_detail_kl_monthly'));
+				return $smarty->fetch(get_tpl('detail_kl_monthly'));
 				break;
 		}
 		return $html;

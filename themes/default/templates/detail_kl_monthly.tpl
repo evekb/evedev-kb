@@ -1,5 +1,5 @@
-<!-- corp_detail_kl_monthly -->
-<div class="corpbody killlist">
+<!-- detail_kl_monthly -->
+<div class="killlist">
 	<div class="block-header2">{$title}</div>
 	<div style="float: left; width: 310px; margin-left:10px">
 		<div class="block-header">{$month} {$year}</div>
@@ -16,4 +16,4 @@
 		{$total_stats}
 	</div>
 </div>
-<!-- /corp_detail_kl_monthly -->
+<!-- /detail_kl_monthly -->

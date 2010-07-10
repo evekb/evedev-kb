@@ -24,7 +24,6 @@ class pAllianceDetail extends pageAssembly
 		else $this->all_external_id = 0;
 		$this->view = $_GET['view'];
 		$this->viewList = array();
-		$this->crp_id = intval($_GET['crp_id']);
 
 		$this->menuOptions = array();
 
@@ -59,7 +58,7 @@ class pAllianceDetail extends pageAssembly
 
 		if(!$this->all_id && $this->all_external_id)
 		{
-			$qry = DBFactory::getDBQuery();;
+			$qry = DBFactory::getDBQuery();
 			$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_external_id = ".$this->all_external_id);
 			if($qry->recordCount())
 			{
@@ -129,6 +128,7 @@ class pAllianceDetail extends pageAssembly
 	//! Show the overall statistics for this alliance.
 	function stats()
 	{
+		global $smarty;
 		$tempMyCorp = new Corporation();
 
 		$myAlliAPI = new AllianceAPI();
@@ -152,6 +152,7 @@ class pAllianceDetail extends pageAssembly
 
 				if ($tempcorp["corporationID"] == $myAlliance["executorCorpID"])
 				{
+					$myAlliance["executorCorpName"] = $myCorpAPI->getCorporationName();
 					$ExecutorCorp = $myCorpAPI->getCorporationName();
 					$ExecutorCorpID = $myCorpAPI->getCorporationID();
 				}
@@ -178,31 +179,15 @@ class pAllianceDetail extends pageAssembly
 				unset($membercorp);
 			}
 
-			$html .= "<table class='kb-table' width=\"100%\" border=\"0\" cellspacing='1'><tr class='kb-table-row-even'><td rowspan='8' width='128' align='center' bgcolor='black'>";
-
-			if (file_exists("img/alliances/".$this->alliance->getUnique().".png"))
-			{
-				$html .= "<img src=\"".IMG_URL."/alliances/".$this->alliance->getUnique().".png\" border=\"0\" /></td>";
-			}
-			else
-			{
-				$html .= "<img src=\"".IMG_URL."/alliances/default.gif\" border=\"0\" /></td>";
-			}
 			if(!isset($this->kill_summary))
 			{
 				$this->kill_summary = new KillSummaryTable();
 				$this->kill_summary->addInvolvedAlliance($this->alliance);
 				$this->kill_summary->generate();
 			}
-
-			$html .= "<td class='kb-table-cell' width='150'><b>Kills:</b></td><td class='kl-kill'>".$this->kill_summary->getTotalKills()."</td>";
-			$html .= "<td class='kb-table-cell' width='65'><b>Executor:</b></td><td class='kb-table-cell'><a href=\"?a=corp_detail&amp;crp_ext_id=" . $ExecutorCorpID . "\">" . $ExecutorCorp . "</a></td></tr>";
-			$html .= "<tr class='kb-table-row-even'><td class='kb-table-cell'><b>Losses:</b></td><td class='kl-loss'>".$this->kill_summary->getTotalLosses()."</td>";
-			$html .= "<td class='kb-table-cell'><b>Members:</b></td><td class='kb-table-cell'>" . $myAlliance["memberCount"] . "</td></tr>";
-			$html .= "<tr class='kb-table-row-even'><td class='kb-table-cell'><b>Damage done (ISK):</b></td><td class='kl-kill'>".round($this->kill_summary->getTotalKillISK()/1000000000, 2)."B</td>";
-			$html .= "<td class='kb-table-cell'><b>Start Date:</b></td><td class='kb-table-cell'>" . $myAlliance["startDate"] . "</td></tr>";
-			$html .= "<tr class='kb-table-row-even'><td class='kb-table-cell'><b>Damage received (ISK):</b></td><td class='kl-loss'>".round($this->kill_summary->getTotalLossISK()/1000000000, 2)."B</td>";
-			$html .= "<td class='kb-table-cell'><b>Number of Corps:</b></td><td class='kb-table-cell'>" . count($myAlliance["memberCorps"]) . "</td></tr>";
+			$smarty->assign('myAlliance', $myAlliance);
+			$smarty->assign('memberCorpCount', count($myAlliance["memberCorps"]));
+			
 			if ($this->kill_summary->getTotalKillISK())
 			{
 				 $efficiency = round($this->kill_summary->getTotalKillISK() / ($this->kill_summary->getTotalKillISK() + $this->kill_summary->getTotalLossISK()) * 100, 2);
@@ -212,51 +197,35 @@ class pAllianceDetail extends pageAssembly
 				$efficiency = 0;
 			}
 
-			$html .= "<tr class='kb-table-row-even'><td class='kb-table-cell'><b>Efficiency:</b></td><td class='kb-table-cell'><b>" . $efficiency . "%</b></td>";
-			$html .= "<td class='kb-table-cell'></td><td class='kb-table-cell'></td></tr>";
-
-			$html .= "</table><br />";
-			return $html;
 		}
+		// The summary table is also used by the stats. Whichever is called
+		// first generates the table.
+		if (file_exists("img/alliances/".$this->alliance->getUnique().".png"))
+			$smarty->assign('all_img', $this->alliance->getUnique());
 		else
-		{
-			global $smarty;
-			// The summary table is also used by the stats. Whichever is called
-			// first generates the table.
-			if (file_exists("img/alliances/".$this->alliance->getUnique().".png"))
-				$smarty->assign('all_img', $this->alliance->getUnique());
-			else
-				$smarty->assign('all_img', 'default');
-			$smarty->assign('totalkills', $this->kill_summary->getTotalKills());
-			$smarty->assign('totallosses', $this->kill_summary->getTotalLosses());
-			$smarty->assign('totalkisk', round($this->kill_summary->getTotalKillISK()/1000000000, 2));
-			$smarty->assign('totallisk', round($this->kill_summary->getTotalLossISK()/1000000000, 2));
-			if ($this->kill_summary->getTotalKillISK())
-				$smarty->assign('efficiency', round($this->kill_summary->getTotalKillISK() / ($this->kill_summary->getTotalKillISK() + $this->kill_summary->getTotalLossISK()) * 100, 2));
-			else
-				$smarty->assign('efficiency', '0');
-			return $smarty->fetch(get_tpl('alliance_detail_stats'));
-		}
+			$smarty->assign('all_img', 'default');
+		$smarty->assign('totalkills', $this->kill_summary->getTotalKills());
+		$smarty->assign('totallosses', $this->kill_summary->getTotalLosses());
+		$smarty->assign('totalkisk', round($this->kill_summary->getTotalKillISK()/1000000000, 2));
+		$smarty->assign('totallisk', round($this->kill_summary->getTotalLossISK()/1000000000, 2));
+		if ($this->kill_summary->getTotalKillISK())
+			$smarty->assign('efficiency', round($this->kill_summary->getTotalKillISK() / ($this->kill_summary->getTotalKillISK() + $this->kill_summary->getTotalLossISK()) * 100, 2));
+		else
+			$smarty->assign('efficiency', '0');
+		return $smarty->fetch(get_tpl('alliance_detail_stats'));
 	}
 
 	function corpList()
 	{
-		$html = "<br /><table class='kb-table' width=\"100%\" border=\"0\" cellspacing='1'><tr class='kb-table-header'>";
-		$html .= "<td class='kb-table-cell'><b>Corporation Name</b></td><td class='kb-table-cell' align='center'><b>Ticker</b></td><td class='kb-table-cell' align='center'><b>Members</b></td><td class='kb-table-cell' align='center'><b>Join Date</b></td><td class='kb-table-cell' align='center'><b>Tax Rate</b></td><td class='kb-table-cell'><b>Website</b></td></tr>";
-		foreach ( (array)$this->allianceCorps as $tempcorp )
+		global $smarty;
+		foreach ( $this->allianceCorps as &$tempcorp )
 		{
-			$html .= "<tr class='kb-table-row-even'>";
-			$html .= "<td class='kb-table-cell'><a href=\"?a=corp_detail&amp;crp_ext_id=" . $tempcorp["corpExternalID"] . "\">" . $tempcorp["corpName"] . "</a></td>";
-			$html .= "<td class='kb-table-cell' align='center'>" . $tempcorp["ticker"] . "</td>";
-			$html .= "<td class='kb-table-cell' align='center'>" . $tempcorp["members"] . "</td>";
-			$html .= "<td class='kb-table-cell' align='center'>" . $tempcorp["joinDate"] . "</td>";
-			$html .= "<td class='kb-table-cell' align='center'>" . $tempcorp["taxRate"] . "</td>";
-			if($tempcorp["url"]) $html .= "<td class='kb-table-cell'><a href=\"" . $tempcorp["url"] . "\">" . $tempcorp["url"] . "</a></td>";
-			else $html .= "<td class='kb-table-cell'></td>";
-			$html .= "</tr>";
+			$tempcorp['url'] = htmlspecialchars(html_entity_decode(urldecode($tempcorp['url'])));
+			if($tempcorp['url'] == 'http://') $tempcorp['url'] = '';
+			$tempcorp['corpName'] = preg_replace('/(\w{30})\w+/', '$1...', $tempcorp['corpName']);
 		}
-		$html .= "</table><br />";
-		return $html;
+		$smarty->assignByRef('corps', $this->allianceCorps);
+		return $smarty->fetch(get_tpl('alliance_detail_corps'));
 	}
 
 	//! Display the summary table showing all kills and losses for this alliance.
@@ -296,7 +265,7 @@ class pAllianceDetail extends pageAssembly
 				$ktab = new KillListTable($list);
 				$ktab->setLimit(10);
 				$ktab->setDayBreak(false);
-				$smarty->assign('killtable', $ktab->generate());
+				$smarty->assign('kills', $ktab->generate());
 
 				$list = new KillList();
 				$list->setOrdered(true);
@@ -312,7 +281,9 @@ class pAllianceDetail extends pageAssembly
 				$ltab = new KillListTable($list);
 				$ltab->setLimit(10);
 				$ltab->setDayBreak(false);
-				$smarty->assign('losstable', $ltab->generate());
+				$smarty->assign('losses', $ltab->generate());
+
+				return $smarty->fetch(get_tpl('detail_kl_default'));
 
 				break;
 			case "kills":
@@ -325,8 +296,10 @@ class pAllianceDetail extends pageAssembly
 				$this->pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 				$table = new KillListTable($list);
 				$table->setDayBreak(false);
-				$smarty->assign('killtable', $table->generate());
+				$smarty->assign('kills', $table->generate());
 				$smarty->assign('splitter', $this->pagesplitter->generate());
+
+				return $smarty->fetch(get_tpl('detail_kl_kills'));
 
 				break;
 			case "losses":
@@ -341,198 +314,190 @@ class pAllianceDetail extends pageAssembly
 
 				$table = new KillListTable($list);
 				$table->setDayBreak(false);
-				$smarty->assign('losstable', $table->generate());
+				$smarty->assign('losses', $table->generate());
 				$smarty->assign('splitter', $this->pagesplitter->generate());
+
+				return $smarty->fetch(get_tpl('detail_kl_losses'));
 
 				break;
 			case "corp_kills":
+				$smarty->assign('title', 'Top Killers');
+				$smarty->assign('month', $this->monthname);
+				$smarty->assign('year', $this->year);
+				$smarty->assign('pmonth', $this->pmonth);
+				$smarty->assign('pyear', $this->pyear);
+				$smarty->assign('nmonth', $this->nmonth);
+				$smarty->assign('nyear', $this->nyear);
+				$smarty->assign('all_id', $this->all_id);
+				$smarty->assign('url_previous', "?a=alliance_detail&amp;view=corp_kills&amp;all_id=$this->all_id&amp;m=$this->pmonth&amp;y=$this->pyear");
+				$smarty->assign('url_next', "?a=alliance_detail&amp;view=corp_kills&amp;all_id=$this->all_id&amp;m=$this->nmonth&amp;y=$this->nyear");
+
 				$list = new TopCorpKillsList();
 				$list->addInvolvedAlliance($this->alliance);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
 				$table = new TopCorpTable($list, "Kills");
-				$smarty->assign('killtable', $table->generate());
+				$smarty->assign('monthly_stats', $table->generate());
 
 				$list = new TopCorpKillsList();
 				$list->addInvolvedAlliance($this->alliance);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$table = new TopCorpTable($list, "Kills");
-				$smarty->assign('allkilltable', $table->generate());
+				$smarty->assign('total_stats', $table->generate());
+
+				return $smarty->fetch(get_tpl('detail_kl_monthly'));
+
 				break;
 			case "corp_kills_class":
-				$html .= "<div class=block-header2>Destroyed ships</div>";
+				$smarty->assign('title', 'Destroyed Ships');
 
 				// Get all ShipClasses
 				$sql = "select scl_id, scl_class from kb3_ship_classes
 					where scl_class not in ('Drone','Unknown') order by scl_class";
 
-				$qry = DBFactory::getDBQuery();;
+				$qry = DBFactory::getDBQuery();
 				$qry->execute($sql);
 				while ($row = $qry->getRow())
 				{
 					$shipclass[] = new Shipclass($row['scl_id']);
 				}
-				$html .= "<table class='kb-subtable'>";
-				$html .= "<tr>";
 				$newrow = true;
+				$ships = array();
 
-				foreach ($shipclass as $shp){
-					if ($newrow){
-					$html .= '</tr><tr>';
-					}
+				foreach ($shipclass as $shp)
+				{
 					$list = new TopCorpKillsList();
 					$list->addInvolvedAlliance($this->alliance);
 					$list->addVictimShipClass($shp);
 					$table = new TopCorpTable($list, "Kills");
 					$content = $table->generate();
-					if ($content != '<table class="kb-table" cellspacing=1><tr class="kb-table-header"><td class="kb-table-cell" align=center>#</td><td class="kb-table-cell" align=center>Corporation</td><td class="kb-table-cell" align=center width=60>Kills</td></tr></table>'){
-					$html .= "<td valign=top width=440>";
-					$html .= "<div class=block-header>".$shp->getName()."</div>";
-					$html .= $content;
-					$html .= "</td>";
-					$newrow = !$newrow;
-					}
-
+					$ships[] = array('name'=>$shp->getName(), 'table'=>$content);
 				}
-				$html .= "</tr></table>";
-				$smarty->assign('html', $html);
+
+				$smarty->assignByRef('ships', $ships);
+				return $smarty->fetch(get_tpl('detail_kl_ships'));
+				
 				break;
 			case "kills_class":
-				$html .= "<div class=block-header2>Destroyed ships</div>";
+				$smarty->assign('title', 'Destroyed Ships');
 
 				// Get all ShipClasses
 				$sql = "select scl_id, scl_class from kb3_ship_classes
 					where scl_class not in ('Drone','Unknown') order by scl_class";
 
-				$qry = DBFactory::getDBQuery();;
+				$qry = DBFactory::getDBQuery();
 				$qry->execute($sql);
 				while ($row = $qry->getRow())
 				{
 					$shipclass[] = new Shipclass($row['scl_id']);
 				}
-				$html .= "<table class='kb-subtable'>";
-				$html .= "<tr>";
-				$newrow = true;
-
-				foreach ($shipclass as $shp){
-					if ($newrow){
-					$html .= '</tr><tr>';
-					}
+				foreach ($shipclass as $shp)
+				{
 					$list = new TopKillsList();
 					$list->addInvolvedAlliance($this->alliance);
 					$list->addVictimShipClass($shp);
 					$table = new TopPilotTable($list, "Kills");
 					$content = $table->generate();
-					if ($content != '<table class="kb-table" cellspacing=1><tr class="kb-table-header"><td class="kb-table-cell" align=center colspan=2>Pilot</td><td class="kb-table-cell" align=center width=60>Kills</td></tr></table>'){
-					$html .= "<td valign=top width=440>";
-					$html .= "<div class=block-header>".$shp->getName()."</div>";
-					$html .= $content;
-					$html .= "</td>";
-					$newrow = !$newrow;
-					}
-
+					$ships[] = array('name'=>$shp->getName(), 'table'=>$content);
 				}
-				$html .= "</tr></table>";
-				$smarty->assign('html', $html);
+				$smarty->assignByRef('ships', $ships);
+				return $smarty->fetch(get_tpl('detail_kl_ships'));
 
 				break;
 			case "corp_losses_class":
-				$html .= "<div class=block-header2>Lost ships</div>";
+				$smarty->assign('title', 'Lost Ships');
 
-					// Get all ShipClasses
+				// Get all ShipClasses
 				$sql = "select scl_id, scl_class from kb3_ship_classes
 					where scl_class not in ('Drone','Unknown') order by scl_class";
 
-				$qry = DBFactory::getDBQuery();;
+				$qry = DBFactory::getDBQuery();
 				$qry->execute($sql);
 				while ($row = $qry->getRow())
 				{
 					$shipclass[] = new Shipclass($row['scl_id']);
 				}
-				$html .= "<table class='kb-subtable'>";
-				$html .= "<tr>";
-				$newrow = true;
-
-				foreach ($shipclass as $shp){
-					if ($newrow){
-					$html .= '</tr><tr>';
-					}
+				foreach ($shipclass as $shp)
+				{
 					$list = new TopCorpLossesList();
 						$list->addVictimAlliance($this->alliance);
 					$list->addVictimShipClass($shp);
 					$table = new TopCorpTable($list, "Losses");
 					$content = $table->generate();
-					if ($content != '<table class="kb-table" cellspacing=1><tr class="kb-table-header"><td class="kb-table-cell" align=center>#</td><td class="kb-table-cell" align=center>Corporation</td><td class="kb-table-cell" align=center width=60>Losses</td></tr></table>'){
-					$html .= "<td valign=top width=440>";
-						$html .= "<div class=block-header>".$shp->getName()."</div>";
-						$html .= $content;
-					$html .= "</td>";
-					$newrow = !$newrow;
-					}
+					$ships[] = array('name'=>$shp->getName(), 'table'=>$content);
 				}
-				$html .= "</tr></table>";
-				$smarty->assign('html', $html);
+				$smarty->assignByRef('ships', $ships);
+				return $smarty->fetch(get_tpl('detail_kl_ships'));
 
 				break;
 			case "losses_class":
-				$html .= "<div class=block-header2>Lost ships</div>";
+				$smarty->assign('title', 'Lost Ships');
+
 
 					// Get all ShipClasses
 				$sql = "select scl_id, scl_class from kb3_ship_classes
 					where scl_class not in ('Drone','Unknown') order by scl_class";
 
-				$qry = DBFactory::getDBQuery();;
+				$qry = DBFactory::getDBQuery();
 				$qry->execute($sql);
 				while ($row = $qry->getRow())
 				{
 					$shipclass[] = new Shipclass($row['scl_id']);
 				}
-				$html .= "<table class='kb-subtable'>";
-				$html .= "<tr>";
-				$newrow = true;
-
-				foreach ($shipclass as $shp){
-					if ($newrow){
-					$html .= '</tr><tr>';
-					}
+				foreach ($shipclass as $shp)
+				{
 					$list = new TopLossesList();
-						$list->addVictimAlliance($this->alliance);
+					$list->addVictimAlliance($this->alliance);
 					$list->addVictimShipClass($shp);
 					$table = new TopPilotTable($list, "Losses");
 					$content = $table->generate();
-					if ($content != '<table class="kb-table" cellspacing=1><tr class="kb-table-header"><td class="kb-table-cell" align=center colspan=2>Pilot</td><td class="kb-table-cell" align=center width=60>Losses</td></tr></table>'){
-					$html .= "<td valign=top width=440>";
-						$html .= "<div class=block-header>".$shp->getName()."</div>";
-						$html .= $content;
-					$html .= "</td>";
-					$newrow = !$newrow;
-					}
+					$ships[] = array('name'=>$shp->getName(), 'table'=>$content);
 				}
-				$html .= "</tr></table>";
-				$smarty->assign('html', $html);
+				$smarty->assignByRef('ships', $ships);
+				return $smarty->fetch(get_tpl('detail_kl_ships'));
 
 				break;
 			case "corp_losses":
+				$smarty->assign('title', 'Top Losers');
+				$smarty->assign('month', $this->monthname);
+				$smarty->assign('year', $this->year);
+				$smarty->assign('pmonth', $this->pmonth);
+				$smarty->assign('pyear', $this->pyear);
+				$smarty->assign('nmonth', $this->nmonth);
+				$smarty->assign('nyear', $this->nyear);
+				$smarty->assign('all_id', $this->all_id);
+				$smarty->assign('url_previous', "?a=alliance_detail&amp;view=corp_kills&amp;all_id=$this->all_id&amp;m=$this->pmonth&amp;y=$this->pyear");
+				$smarty->assign('url_next', "?a=alliance_detail&amp;view=corp_kills&amp;all_id=$this->all_id&amp;m=$this->nmonth&amp;y=$this->nyear");
+
 				$list = new TopCorpLossesList();
 				$list->addVictimAlliance($this->alliance);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
 				$table = new TopCorpTable($list, "Losses");
-				$smarty->assign('losstable', $table->generate());
+				$smarty->assign('monthly_stats', $table->generate());
 
 				$list = new TopCorpLossesList();
 				$list->addVictimAlliance($this->alliance);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$table = new TopCorpTable($list, "Losses");
-				$smarty->assign('alllosstable', $table->generate());
+				$smarty->assign('total_stats', $table->generate());
+
+				return $smarty->fetch(get_tpl('detail_kl_monthly'));
+
 				break;
 			case "pilot_kills":
-				$html .= "<div class=block-header2>Top killers</div>";
-
-				$html .= "<table class='kb-subtable'><tr><td valign=top width=440>";
-				$html .= "<div class=block-header>$this->monthname $this->year</div>";
+				$smarty->assign('title', 'Top Killers');
+				$smarty->assign('month', $this->monthname);
+				$smarty->assign('year', $this->year);
+				$smarty->assign('pmonth', $this->pmonth);
+				$smarty->assign('pyear', $this->pyear);
+				$smarty->assign('nmonth', $this->nmonth);
+				$smarty->assign('nyear', $this->nyear);
+				$smarty->assign('all_id', $this->all_id);
+				$smarty->assign('url_previous', "?a=alliance_detail&amp;view=pilot_kills&amp;all_id=$this->all_id&amp;m=$this->pmonth&amp;y=$this->pyear");
+				$smarty->assign('url_next', "?a=alliance_detail&amp;view=pilot_kills&amp;all_id=$this->all_id&amp;m=$this->nmonth&amp;y=$this->nyear");
 
 				$list = new TopKillsList();
 				$list->addInvolvedAlliance($this->alliance);
@@ -540,29 +505,28 @@ class pAllianceDetail extends pageAssembly
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
 				$table = new TopPilotTable($list, "Kills");
-				$html .= $table->generate();
-
-				$html .= "<table width=300 cellspacing=1><tr><td><a href='?a=alliance_detail&amp;view=pilot_kills&amp;m=$this->pmonth&amp;all_id=$this->all_id&amp;y=$this->pyear'>previous</a></td>";
-				$html .= "<td align='right'><a href='?a=alliance_detail&amp;view=pilot_kills&amp;all_id=$this->all_id&amp;m=$this->nmonth&amp;y=$this->nyear'>next</a></td></tr></table>";
-
-				$html .= "</td><td valign=top width=400>";
-				$html .= "<div class=block-header>All time</div>";
+				$smarty->assign('monthly_stats', $table->generate());
 
 				$list = new TopKillsList();
 				$list->addInvolvedAlliance($this->alliance);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$table = new TopPilotTable($list, "Kills");
-				$html .= $table->generate();
+				$smarty->assign('total_stats', $table->generate());
 
-				$html .= "</td></tr></table>";
-				$smarty->assign('html', $html);
+				return $smarty->fetch(get_tpl('detail_kl_monthly'));
 
 				break;
 			case "pilot_scores":
-				$html .= "<div class=block-header2>Top scorers</div>";
-
-				$html .= "<table class='kb-subtable'><tr><td valign=top width=440>";
-				$html .= "<div class=block-header>$this->monthname $this->year</div>";
+				$smarty->assign('title', 'Top Scorers');
+				$smarty->assign('month', $this->monthname);
+				$smarty->assign('year', $this->year);
+				$smarty->assign('pmonth', $this->pmonth);
+				$smarty->assign('pyear', $this->pyear);
+				$smarty->assign('nmonth', $this->nmonth);
+				$smarty->assign('nyear', $this->nyear);
+				$smarty->assign('all_id', $this->all_id);
+				$smarty->assign('url_previous', "?a=alliance_detail&amp;view=pilot_scores&amp;all_id=$this->all_id&amp;m=$this->pmonth&amp;y=$this->pyear");
+				$smarty->assign('url_next', "?a=alliance_detail&amp;view=pilot_scores&amp;all_id=$this->all_id&amp;m=$this->nmonth&amp;y=$this->nyear");
 
 				$list = new TopScoreList();
 				$list->addInvolvedAlliance($this->alliance);
@@ -570,38 +534,44 @@ class pAllianceDetail extends pageAssembly
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
 				$table = new TopPilotTable($list, "Points");
-				$html .= $table->generate();
-
-				$html .= "<table width=300 cellspacing=1><tr><td><a href='?a=alliance_detail&amp;view=pilot_scores&amp;m=$this->pmonth&amp;all_id=$this->all_id&amp;y=$this->pyear'>previous</a></td>";
-				$html .= "<td align='right'><a href='?a=alliance_detail&amp;view=pilot_scores&amp;all_id=$this->all_id&amp;m=$this->nmonth&amp;y=$this->nyear'>next</a></td></tr></table>";
-
-				$html .= "</td><td valign=top width=400>";
-				$html .= "<div class=block-header>All time</div>";
+				$smarty->assign('monthly_stats', $table->generate());
 
 				$list = new TopScoreList();
 				$list->addInvolvedAlliance($this->alliance);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$table = new TopPilotTable($list, "Points");
-				$html .= $table->generate();
+				$smarty->assign('total_stats', $table->generate());
 
-				$html .= "</td></tr></table>";
-				$smarty->assign('html', $html);
+				return $smarty->fetch(get_tpl('detail_kl_monthly'));
 
 				break;
 			case "pilot_losses":
+				$smarty->assign('title', 'Top Losers');
+				$smarty->assign('month', $this->monthname);
+				$smarty->assign('year', $this->year);
+				$smarty->assign('pmonth', $this->pmonth);
+				$smarty->assign('pyear', $this->pyear);
+				$smarty->assign('nmonth', $this->nmonth);
+				$smarty->assign('nyear', $this->nyear);
+				$smarty->assign('all_id', $this->all_id);
+				$smarty->assign('url_previous', "?a=alliance_detail&amp;view=pilot_losses&amp;all_id=$this->all_id&amp;m=$this->pmonth&amp;y=$this->pyear");
+				$smarty->assign('url_next', "?a=alliance_detail&amp;view=pilot_losses&amp;all_id=$this->all_id&amp;m=$this->nmonth&amp;y=$this->nyear");
+
 				$list = new TopLossesList();
 				$list->addVictimAlliance($this->alliance);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
 				$table = new TopPilotTable($list, "Losses");
-				$smarty->assign('losstable', $table->generate());
+				$smarty->assign('monthly_stats', $table->generate());
 
 				$list = new TopLossesList();
 				$list->addVictimAlliance($this->alliance);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$table = new TopPilotTable($list, "Losses");
-				$smarty->assign('totallosstable', $table->generate());
+				$smarty->assign('total_stats', $table->generate());
+
+				return $smarty->fetch(get_tpl('detail_kl_monthly'));
 
 				break;
 			case "ships_weapons":
@@ -609,41 +579,49 @@ class pAllianceDetail extends pageAssembly
 				$shiplist = new TopShipList();
 				$shiplist->addInvolvedAlliance($this->alliance);
 				$shiplisttable = new TopShipListTable($shiplist);
-				$smarty->assign('shiplisttable', $shiplisttable->generate());
+				$smarty->assign('ships', $shiplisttable->generate());
 
 				$weaponlist = new TopWeaponList();
 				$weaponlist->addInvolvedAlliance($this->alliance);
 				$weaponlisttable = new TopWeaponListTable($weaponlist);
-				$smarty->assign('weaponlisttable', $weaponlisttable->generate());
+				$smarty->assign('weapons', $weaponlisttable->generate());
+				return $smarty->fetch(get_tpl('detail_kl_ships_weapons'));
 
 				break;
 			case 'violent_systems':
-				$html .= "<div class=block-header2>Most violent systems</div>";
-				$html .= "<table width=\"99%\"><tr><td align=center valign=top>";
+				$smarty->assign('title', 'Most violent systems');
+				$smarty->assign('month', $this->monthname);
+				$smarty->assign('year', $this->year);
+				$smarty->assign('pmonth', $this->pmonth);
+				$smarty->assign('pyear', $this->pyear);
+				$smarty->assign('nmonth', $this->nmonth);
+				$smarty->assign('nyear', $this->nyear);
+				$smarty->assign('all_id', $this->all_id);
+				$smarty->assign('url_previous', "?a=alliance_detail&amp;view=violent_systems&amp;all_id=$this->all_id&amp;m=$this->pmonth&amp;y=$this->pyear");
+				$smarty->assign('url_next', "?a=alliance_detail&amp;view=violent_systems&amp;all_id=$this->all_id&amp;m=$this->nmonth&amp;y=$this->nyear");
 
-				$html .= "<div class=block-header>$this->monthname, $this->year</div>";
-				$html .= "<table class='kb-table'>";
-				$html .= "<tr class='kb-table-header'><td>#</td><td width=180>System</td><td width=40 align=center >Kills</td></tr>";
-
-				$sql = "select sys.sys_name, sys.sys_sec, sys.sys_id, count(ina.ina_kll_id) as kills
+				$startdate = gmdate('Y-m-d H:i', makeStartDate(0, $this->year, $this->month));
+				$enddate = gmdate('Y-m-d H:i', makeEndDate(0, $this->year, $this->month));
+				$sql = "select sys.sys_name, sys.sys_sec, sys.sys_id, count(kll.kll_id) as kills
 							from kb3_systems sys, kb3_kills kll, kb3_inv_all ina
 							where kll.kll_system_id = sys.sys_id
-							and ina.ina_all_id = $this->all_id
-							and ina.ina_kll_id = kll.kll_id";
+							and ina.ina_kll_id = kll.kll_id
+							and ina.ina_all_id = ".$this->all_id;
 
-				$sql .= " and ina.ina_timestamp > '".
-					gmdate('Y-m-d H:i', makeStartDate(0, $this->year, $this->month))."'";
-				$sql .= " and ina.ina_timestamp < '".
-					gmdate('Y-m-d H:i', makeEndDate(0, $this->year, $this->month))."'";
-
-				$sql .= "   group by sys.sys_name
-							order by kills desc
+				$sql .= "   and kll.kll_timestamp > '$startdate'
+							and kll.kll_timestamp < '$enddate'
+							and ina.ina_timestamp > '$startdate'
+							and ina.ina_timestamp < '$enddate'
+							group by sys.sys_id
+							order by kills desc, sys.sys_name asc
 							limit 25";
 
-				$qry = DBFactory::getDBQuery();;
+				$qry = DBFactory::getDBQuery();
 				$qry->execute($sql);
 				$odd = false;
 				$counter = 1;
+				$syslist = array();
+
 				while ($row = $qry->getRow())
 				{
 					if (!$odd)
@@ -657,32 +635,33 @@ class pAllianceDetail extends pageAssembly
 						$rowclass = 'kb-table-row-even';
 					}
 
-					$html .= "<tr class=".$rowclass."><td><b>".$counter.".</b></td><td class='kb-table-cell' width=180><b><a href=\"?a=system_detail&amp;sys_id=".$row['sys_id']."\">".$row['sys_name']."</a></b> (".roundsec($row['sys_sec']).")</td><td align=center>".$row['kills']."</td></tr>";
+					$syslist[] = array(
+						"counter"=>$counter,
+						"url"=>"?a=system_detail&amp;sys_id=".$row['sys_id'],
+						"name"=>$row['sys_name'],
+						"sec"=>roundsec($row['sys_sec']),
+						"kills"=>$row['kills']);
 					$counter++;
 				}
-
-				$html .= "</table>";
-
-				$html .= "<table width=250 cellspacing=1><tr><td><a href='?a=alliance_detail&amp;view=violent_systems&amp;m=$this->pmonth&amp;all_id=$this->all_id&amp;y=$this->pyear'>previous</a></td>";
-				$html .= "<td align='right'><a href='?a=alliance_detail&amp;view=violent_systems&amp;all_id=$this->all_id&amp;m=$this->nmonth&amp;y=$this->nyear'>next</a></td></tr></table>";
-				$html .= "</td><td align=center valign=top>";
-				$html .= "<div class=block-header>All-Time</div>";
-				$html .= "<table class='kb-table'>";
-				$html .= "<tr class='kb-table-header'><td>#</td><td width=180>System</td><td width=40 align=center>Kills</td></tr>";
+				$smarty->assignByRef('syslist', $syslist);
+				$smarty->assign('monthly_stats', $smarty->fetch(get_tpl(violent_systems)));
 
 				$sql = "select sys.sys_name, sys.sys_id, sys.sys_sec, count(kll.kll_id) as kills
 							from kb3_systems sys, kb3_kills kll, kb3_inv_all ina
 							where kll.kll_system_id = sys.sys_id
-							and ina.ina_all_id = $this->all_id
 							and ina.ina_kll_id = kll.kll_id
-							group by sys.sys_name
-							order by kills desc
+							and ina.ina_all_id = ".$this->all_id;
+				
+				$sql .= " group by sys.sys_id
+							order by kills desc, sys.sys_name asc
 							limit 25";
 
-				$qry = DBFactory::getDBQuery();;
+				$qry = DBFactory::getDBQuery();
 				$qry->execute($sql);
 				$odd = false;
 				$counter = 1;
+				$syslist = array();
+
 				while ($row = $qry->getRow())
 				{
 					if (!$odd)
@@ -696,12 +675,18 @@ class pAllianceDetail extends pageAssembly
 						$rowclass = 'kb-table-row-even';
 					}
 
-					$html .= "<tr class=".$rowclass."><td><b>".$counter.".</b></td><td class='kb-table-cell'><b><a href=\"?a=system_detail&amp;sys_id=".$row['sys_id']."\">".$row['sys_name']."</a></b> (".roundsec($row['sys_sec']).")</td><td align=center>".$row['kills']."</td></tr>";
+					$syslist[] = array(
+						"counter"=>$counter,
+						"url"=>"?a=system_detail&amp;sys_id=".$row['sys_id'],
+						"name"=>$row['sys_name'],
+						"sec"=>roundsec($row['sys_sec']),
+						"kills"=>$row['kills']);
 					$counter++;
 				}
-				$html .= "</table>";
-				$html .= "</td></tr></table>";
-				$smarty->assign('html', $html);
+				$smarty->assignByRef('syslist', $syslist);
+				$smarty->assign('total_stats', $smarty->fetch(get_tpl(violent_systems)));
+				return $smarty->fetch(get_tpl('detail_kl_monthly'));
+				
 				break;
 			case 'corp_list':
 				return $this->corpList();
