@@ -867,7 +867,7 @@ class TopPilotTable
 				$odd = true;
 			}
 			$html .= "<tr class='".$class."'>";
-			$html .= "<td><img src=\"".$pilot->getPortraitURL(32)."\" /></td>";
+			$html .= "<td><img src=\"".$pilot->getPortraitURL(32)."\" alt=\"".$pilot->getName()."\" /></td>";
 			$html .= "<td class='kb-table-cell' width='200'><b>".$i.".</b>&nbsp;<a class='kb-shipclass' href=\"?a=pilot_detail&amp;plt_id=".$row['plt_id']."\">".$pilot->getName()."</a></td>";
 			$html .= "<td class='kb-table-cell' align='center'><b>".$row['cnt']."</b></td>";
 
