@@ -53,7 +53,7 @@ class EDKError
 			error_log(sprintf("PHP %s:  %s in %s on line %d", $errors, $errstr, $errfile, $errline));
 		if(config::get('cfg_log'))
 		{
-			error_log(sprintf("PHP %s:  %s in %s on line %d\n", $errors, $errstr, $errfile, $errline), 3, $logfile);
+			error_log(sprintf("PHP %s %s:  %s in %s on line %d\n", gmdate("Y-m-d H:i:s"), $errors, $errstr, $errfile, $errline), 3, $logfile);
 			if(filesize($logfile) > 1024*1024*10)
 			{
 				@unlink($logfile.".old");
