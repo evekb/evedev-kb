@@ -62,3 +62,4 @@ cache_time	10
 DBUpdate	016
 upd_dbVersion	1.0.3
 upd_codeVersion	3.1.0
+cfg_log	1
