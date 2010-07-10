@@ -110,6 +110,7 @@ if (!empty($_REQUEST['sub']) && $_REQUEST['sub'] == 'data')
 	$errors = false;
 	if (!isset($_SESSION['doopt']))
 	{
+		@mysql_query("ALTER DATABASE ".$_SESSION['sql']['db']." CHARACTER SET utf8 COLLATE utf8_general_ci");
 		foreach ($data as $table => $files)
 		{
 			foreach ($files as $file)
@@ -355,7 +356,7 @@ elseif ($structadd)
 	echo 'Table structures have to be added. Please <a href="?step=4&amp;sub=struct">create them</a>.<br/>';
 }
 
-if (isset($_REQUEST['sub']) && $_REQUEST['sub'] == 'datasel')
+if (isset($_REQUEST['sub']) && $_REQUEST['sub'] == 'datasel' && count($opt))
 {
 ?>
 <p>Please select optional SQL data to be inserted into the database:<br/></p>
