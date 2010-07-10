@@ -60,6 +60,9 @@ if ($page == '' || $page == 'index')
 // Serve feeds to feed fetchers.
 if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK Feedfetcher') !== false) $page = 'feed';
 
+// Serve idfeeds to idfeed fetchers.
+if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK IDFeedfetcher') !== false) $page = 'idfeed';
+
 // check for the igb
 if (strpos($_SERVER['HTTP_USER_AGENT'], 'EVE-IGB') !== FALSE)
 {
