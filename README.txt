@@ -1,10 +1,15 @@
 -------------------------------------------
-Eve Development Network Killboard v3.0.8
+Eve Development Network Killboard v3.0.9
 -------------------------------------------
 
 VERSION HISTORY
+v3.0.9
+Auto-updater updated.
+IDfeed improved.
+Several minor fixes.
+-------------------------------------------
 v3.0.8
-Final Tyrnanis content added to installer.
+Final Tyrannis content added to installer.
 -------------------------------------------
 v3.0.7
 Auto db-updater works again

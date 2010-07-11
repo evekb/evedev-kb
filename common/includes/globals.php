@@ -15,7 +15,7 @@ define('KB_UPDATE_URL', 'http://evedev-kb.googlecode.com/files');
 
 // current version: major.minor.sub
 // unpair numbers for minor = development version
-define('KB_VERSION', '3.0.8');
+define('KB_VERSION', '3.0.9');
 define('KB_RELEASE', '(Tyrannis)');
 
 // add new corporations here once you've added the logo to img/corps/
