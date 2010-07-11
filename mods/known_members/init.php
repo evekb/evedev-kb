@@ -4,16 +4,16 @@ event::register('corpDetail_context_assembling', 'known_members::addMenu');
 
 class known_members
 {
-	function addView($home)
+	public static function addView($home)
 	{
 		$home->addView('known_members', "known_members::view");
 	}
-	function addMenu($home)
+	public static function addMenu($home)
 	{
 		$home->addMenuItem("link","Known Members", "?a=corp_detail&amp;crp_id=" .
 			$home->corp->getID() . "&amp;view=known_members");
 	}
-	function view($home)
+	public static function view($home)
 	{
 		if(config::get('mod_knownmembers_own'))
 		{

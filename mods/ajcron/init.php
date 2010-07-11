@@ -6,7 +6,7 @@ event::register('mod_xajax_initialised', 'ajcron::run');
 
 class ajcron
 {
-    function run()
+    public static function run()
     {
         global $xajax;
         if (isset($xajax))
@@ -28,7 +28,7 @@ class ajcron
         }
     }
 
-    function insertHTML($page)
+    public static function insertHTML($page)
     {
         $page->addBody('<script type="text/javascript" charset="UTF-8">
             var myLocalCallback = xajax.callback.create(400, 1000);
@@ -36,7 +36,7 @@ class ajcron
             xajax.call(\'xajax_req\', {callback: myLocalCallback});</script>');
     }
 
-    function getNextRunDisplay()
+    public static function getNextRunDisplay()
     {
         $nextrun = config::get('ajcron_nextrun');
         if ($nextrun == 0)
@@ -49,7 +49,7 @@ class ajcron
         }
     }
 
-    function resetNextRunCheckbox()
+    public static function resetNextRunCheckbox()
     {
         if (config::get('ajcron_resetNextRun'))
         {
@@ -63,7 +63,7 @@ class ajcron
         }
     }
 
-    function getNextRun($intervall)
+    public static function getNextRun($intervall)
     {
         $time = time();
 
@@ -91,7 +91,7 @@ class ajcron
         return $nextrun;
     }
 
-    function parseJobs()
+    public static function parseJobs()
     {
         $jobs = array();
         $arr = explode("\n", config::get('ajcron_jobs'));
@@ -110,7 +110,7 @@ class ajcron
         return $jobs;
     }
 
-    function getRuntable()
+    public static function getRuntable()
     {
         $output = '';
         // load up our crontasks
@@ -143,7 +143,7 @@ class ajcron
         return $output;
     }
 
-    function getNextRuntime()
+    public static function getNextRuntime()
     {
         // calculate and set new runtime
         $jobs = ajcron::parseJobs();
@@ -157,7 +157,7 @@ class ajcron
         config::set('ajcron_nextrun', $sorttable[key($sorttable)]);
     }
 
-    function xajax_req()
+    public static function xajax_req()
     {
         // if the xajax call gets aborted, ignore that
         @ignore_user_abort(true);

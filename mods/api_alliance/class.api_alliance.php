@@ -9,17 +9,17 @@ require_once("common/includes/class.eveapi.php");
 
 class APIAllianceMod
 {
-	function addCorpList($home)
+	public static function addCorpList($home)
 	{
 		$home->addBefore("summaryTable", "APIAllianceMod::corpList");
 	}
 
-	function replaceStats($home)
+	public static function replaceStats($home)
 	{
 		$home->replace("stats", "APIAllianceMod::stats");
 	}
 
-	function stats($home)
+	public static function stats($home)
 	{
 		$tempMyCorp = new Corporation();
 
@@ -116,7 +116,7 @@ class APIAllianceMod
 		}
 	}
 
-	function corpList($home)
+	public static function corpList($home)
 	{
 		if($home->view != '' && $home->view != 'recent_activity'
 			&& $home->view != 'kills' && $home->view != 'losses') return '';
