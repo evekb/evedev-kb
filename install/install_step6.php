@@ -40,7 +40,7 @@ if (isset($_SESSION['sett']['adminpw']) && strlen($_SESSION['sett']['adminpw']) 
 }
 if (isset($_SESSION['sett']['site']))
 {
-	$_SESSION['sett']['site'] = preg_replace("/[^\w\d_-]*", "", $_SESSION['sett']['site']);
+	$_SESSION['sett']['site'] = preg_replace("/[^\w\d_-]*/", "", $_SESSION['sett']['site']);
 	if(strlen($_SESSION['sett']['site']) > 12 || strlen($_SESSION['sett']['site']) < 1)
 	{
 		$smarty->assign('length', true);
