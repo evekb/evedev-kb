@@ -4,7 +4,7 @@ event::register('killmail_imported', 'import_forward::importhandler');
 
 class post_forward
 {
-    function handler($object)
+    public static function handler($object)
     {
         if (config::get('forward_active') == false)
         {
@@ -23,7 +23,7 @@ class post_forward
 
 class import_forward
 {
-    function importhandler($object)
+    public static function importhandler($object)
     {
    		if (config::get('forward_active') == false)
         {

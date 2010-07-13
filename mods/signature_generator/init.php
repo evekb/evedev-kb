@@ -4,11 +4,11 @@ event::register("pilotDetail_context_assembling", "signature::addSig");
 
 class signature
 {
-	function addSig($home)
+	public static function addSig($home)
 	{
 		$home->addBefore("menu", "signature::menuOptions");
 	}
-	function menuOptions($home)
+	public static function menuOptions($home)
 	{
 		$home->addMenuItem("caption","Signature");
 		$home->addMenuItem("link","Link", "?a=sig_list&amp;i=".$home->pilot->getID());
