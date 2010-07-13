@@ -9,7 +9,7 @@
 	</colgroup>
 	<tr class="kb-table-row-even">
 		<td rowspan="5" align="center" bgcolor="black">
-			<img src="{$img_url}/alliances/{if $all_img == 'default'}default.gif{else}{$all_img}.png{/if}" alt="{$all_name}" width="128" height="128" border="0" />
+			<img src="{$all_img}" alt="{$all_name}" width="128" height="128" border="0" />
 		</td>
 		<td class="kb-table-cell" ><b>Kills:</b></td>
 		<td class="kl-kill" >{$totalkills}</td>

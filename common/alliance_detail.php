@@ -200,10 +200,7 @@ class pAllianceDetail extends pageAssembly
 		}
 		// The summary table is also used by the stats. Whichever is called
 		// first generates the table.
-		if (file_exists("img/alliances/".$this->alliance->getUnique().".png"))
-			$smarty->assign('all_img', $this->alliance->getUnique());
-		else
-			$smarty->assign('all_img', 'default');
+		$smarty->assign('all_img', $this->alliance->getPortraitURL());
 		$smarty->assign('totalkills', $this->kill_summary->getTotalKills());
 		$smarty->assign('totallosses', $this->kill_summary->getTotalLosses());
 		$smarty->assign('totalkisk', round($this->kill_summary->getTotalKillISK()/1000000000, 2));
