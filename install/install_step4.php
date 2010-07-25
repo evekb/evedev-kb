@@ -356,7 +356,7 @@ elseif ($structadd)
 	echo 'Table structures have to be added. Please <a href="?step=4&amp;sub=struct">create them</a>.<br/>';
 }
 
-if (isset($_REQUEST['sub']) && $_REQUEST['sub'] == 'datasel' && count($opt))
+if (isset($_REQUEST['sub']) && $_REQUEST['sub'] == 'datasel')
 {
 ?>
 <p>Please select optional SQL data to be inserted into the database:<br/></p>
@@ -372,17 +372,6 @@ if (isset($_REQUEST['sub']) && $_REQUEST['sub'] == 'datasel' && count($opt))
 <?php
     }
     ?>
-<tr><td width="120"></td><td><input type=submit name=submit value="Ok"></td></tr>
-</table></form>
-<?php
-}
-else
-{
-?>
-<form id="options" name="options" method="post" action="?step=4">
-<input type="hidden" name="step" value="4">
-<input type="hidden" name="sub" value="data">
-<table class="kb-subtable">
 <tr><td width="120"></td><td><input type=submit name=submit value="Ok"></td></tr>
 </table></form>
 <?php
