@@ -376,6 +376,17 @@ if (isset($_REQUEST['sub']) && $_REQUEST['sub'] == 'datasel' && count($opt))
 </table></form>
 <?php
 }
+else
+{
+?>
+<form id="options" name="options" method="post" action="?step=4">
+<input type="hidden" name="step" value="4">
+<input type="hidden" name="sub" value="data">
+<table class="kb-subtable">
+<tr><td width="120"></td><td><input type=submit name=submit value="Ok"></td></tr>
+</table></form>
+<?php
+}
 ?>
 <?php if ($stoppage)
 {
