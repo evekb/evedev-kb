@@ -120,7 +120,7 @@ class IDFeed
 			elseif(CORP_ID)
 			{
 				$crp = new Corporation(CORP_ID);
-				if(!$all->getExternalID()) return false;
+				if(!$crp->getExternalID()) return false;
 				$this->options['corp'] = $crp->getExternalID();
 				return true;
 			}
