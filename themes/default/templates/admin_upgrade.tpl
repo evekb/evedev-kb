@@ -113,5 +113,8 @@
     {/if}
 <br/>
 The update description file will be retrieved again at: <b>{$update_time} GMT</b><br/>
-You can force the update description file to retrieved now by clicking on the <a href="?a=admin_upgrade&amp;refresh">link</a><br/><br/>
-Alternatively, you can refresh the page by clicking on the <a href="?a=admin_upgrade">link</a><br/>
+You can force the update description file to retrieved now by clicking on the <a href="?a=admin_upgrade&amp;refresh">link</a><br/>
+Alternatively, you can refresh the page by clicking on the <a href="?a=admin_upgrade">link</a><br/><br />
+
+<a href="?a=admin_upgrade&amp;reset_code">Reset the reported code update level to the level in globals.php.</a><br />
+<a href="?a=admin_upgrade&amp;reset_db">Reset the reported db update level to the most recent.</a><br />
