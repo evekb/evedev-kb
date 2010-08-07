@@ -77,7 +77,7 @@ class Navigation
 		while ($row = $this->getRow())
 		{
 			// i know thats a bad hack
-			$url = $row['url'] .'" target="'.$row['target'];
+			$url = $row['url'];// .'" target="'.$row['target'];
 			$menu->add($url , $row['descr']);
 		}
 		return $menu;

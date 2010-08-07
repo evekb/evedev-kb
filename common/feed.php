@@ -25,7 +25,7 @@
 @set_time_limit(120);
 // include feed_fetcher to get version number
 require_once('class.fetcher.php');
-
+header("Content-Type: text/xml");
 // maximum amount of kills to return.
 $maxreturned = 200;
 $html = '<?xml version="1.0" encoding="UTF-8" ?>

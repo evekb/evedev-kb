@@ -5,7 +5,7 @@ This is the EVE Development Network Killboard running version {$version}, create
 EVE-Dev</a> group.<br />
 All EVE graphics and data used are property of <a href="http://www.ccpgames.com/">CCP</a>.<br />
 <br />
-<a href="http://www.eve-id.net/" target="_blank"><img src="http://www.eve-id.net/logo.png" border="0" alt="eve-dev logo" /></a>
+<a href="http://www.eve-id.net/"><img src="http://www.eve-id.net/logo.png" border="0" alt="eve-dev logo" /></a>
 <br />
 <br />
 <b>Current developers:</b>

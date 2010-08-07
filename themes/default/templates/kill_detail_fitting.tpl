@@ -1,10 +1,10 @@
 {cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
-<div id="Fitting Panel" style="position:relative; height:398px; width:398px;" title="fitting">
+<div id="Fitting_Panel" style="position:relative; height:398px; width:398px;" title="fitting">
 	<div id="mask" style="position:absolute; left:0px; top:0px; width:398px; height:398px; z-index:0;">
 	<img border="0" style="position:absolute; height:398px; width:398px;" src='{$img_url}/panel/{$panel_colour}.png' alt='' /></div>
-	
+
 	<div id="highx" style="position:absolute; left: 0px; top: 0px; width: 398px; height: 398px; z-index:0;">
-	    <img src="{$img_url}/panel/{$hic}h.png" border="0"></div>
+	    <img src="{$img_url}/panel/{$hic}h.png" alt="" style="border:0px;" /></div>
 	<div id="high1" style="position:absolute; left:73px; top:60px; width:32px; height:32px; z-index:1;">{$fitting_high.0.Icon}</div>
 	<div id="high2" style="position:absolute; left:102px; top:42px; width:32px; height:32px; z-index:1;">{$fitting_high.1.Icon}</div>
 	<div id="high3" style="position:absolute; left:134px; top:27px; width:32px; height:32px; z-index:1;">{$fitting_high.2.Icon}</div>
@@ -15,7 +15,7 @@
 	<div id="high8" style="position:absolute; left:295px; top:64px; width:32px; height:32px; z-index:1;">{$fitting_high.7.Icon}</div>
 
 	<div id="midx" style="position:absolute; left: 0px; top: 0px; width: 398px; height: 398px; z-index:0;">
-	    <img src="{$img_url}/panel/{$medc}m.png" border="0"></div>
+	    <img src="{$img_url}/panel/{$medc}m.png" alt="" style="border:0px;" /></div>
 	<div id="mid1" style="position:absolute; left:26px; top:140px; width:32px; height:32px; z-index:1;">{$fitting_med.0.Icon}</div>
 	<div id="mid2" style="position:absolute; left:24px; top:176px; width:32px; height:32px; z-index:1;">{$fitting_med.1.Icon}</div>
 	<div id="mid3" style="position:absolute; left:23px; top:212px; width:32px; height:32px; z-index:1;">{$fitting_med.2.Icon}</div>
@@ -26,7 +26,7 @@
 	<div id="mid8" style="position:absolute; left:133px; top:342px; width:32px; height:32px; z-index:1;">{$fitting_med.7.Icon}</div>
 
 	<div id="lowx" style="position:absolute; left: 0px; top: 0px; width: 398px; height: 398px; z-index:0;">
-	    <img src="{$img_url}/panel/{$lowc}l.png" border="0"></div>
+	    <img src="{$img_url}/panel/{$lowc}l.png" alt="" style="border:0px;" /></div>
 	<div id="low1" style="position:absolute; left:344px; top:143px; width:32px; height:32px; z-index:1;">{$fitting_low.0.Icon}</div>
 	<div id="low2" style="position:absolute; left:350px; top:178px; width:32px; height:32px; z-index:1;">{$fitting_low.1.Icon}</div>
 	<div id="low3" style="position:absolute; left:349px; top:213px; width:32px; height:32px; z-index:1;">{$fitting_low.2.Icon}</div>
@@ -37,13 +37,13 @@
 	<div id="low8" style="position:absolute; left:234px; top:338px; width:32px; height:32px; z-index:1;">{$fitting_low.7.Icon}</div>
 
 	<div id="rigxx" style="position:absolute; left: 0px; top: 0px; width: 398px; height: 398px; z-index:0;">
-	    <img src="{$img_url}/panel/{$rigc}r.png" border="0"></div>
+	    <img src="{$img_url}/panel/{$rigc}r.png" alt="" style="border:0px;" /></div>
 	<div id="rig1" style="position:absolute; left:148px; top:259px; width:32px; height:32px; z-index:1;">{$fitting_rig.0.Icon}</div>
 	<div id="rig2" style="position:absolute; left:185px; top:267px; width:32px; height:32px; z-index:1;">{$fitting_rig.1.Icon}</div>
 	<div id="rig3" style="position:absolute; left:221px; top:259px; width:32px; height:32px; z-index:1;">{$fitting_rig.2.Icon}</div>
 
 	<div id="subx" style="position:absolute; left: 0px; top: 0px; width: 398px; height: 398px; z-index:0;">
-	    <img src="{$img_url}/panel/{$subc}s.png" border="0"></div>
+	    <img src="{$img_url}/panel/{$subc}s.png" alt="" style="border:0px;" /></div>
 	<div id="sub1" style="position:absolute; left:117px; top:131px; width:32px; height:32px; z-index:1;">{$fitting_sub.0.Icon}</div>
 	<div id="sub2" style="position:absolute; left:147px; top:108px; width:32px; height:32px; z-index:1;">{$fitting_sub.1.Icon}</div>
 	<div id="sub3" style="position:absolute; left:184px; top:98px; width:32px; height:32px; z-index:1;">{$fitting_sub.2.Icon}</div>

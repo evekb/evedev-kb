@@ -35,8 +35,13 @@ class Comments
         $qry->execute("SELECT *,id FROM kb3_comments WHERE `kll_id` = '".
             $this->id_."' AND (site = '".KB_SITE."' OR site IS NULL) order by posttime asc");
         while ($row = $qry->getRow()) 
-        { 
-            $this->comments_[] = array('time' => $row['posttime'], 'name' => $row['name'],
+        {
+			//Update some formatting from old boards.
+			$row['comment'] = str_replace("&amp;", "&", $row['comment']);
+			$row['comment'] = str_replace("&", "&amp;", $row['comment']);
+			$row['comment'] = preg_replace('/<font color="([^\"]*)">(.*)<\/font>/', '<span style="color:\1">\2</span>', $row['comment']);
+			
+			$this->comments_[] = array('time' => $row['posttime'], 'name' => trim($row['name']),
               'comment' => stripslashes($row['comment']), 'id' => $row['id'], 'ip' => $row['ip']);
         } 
         $smarty->assignByRef('comments', $this->comments_);
@@ -87,13 +92,13 @@ class Comments
     { 
         if (!$this->raw_) 
         { 
-            $string = strip_tags(stripslashes($string)); 
+            $string = htmlspecialchars(strip_tags(stripslashes($string)));
         } 
         $string = str_replace(array('[b]','[/b]','[i]','[/i]','[u]','[/u]'), 
                               array('<b>','</b>','<i>','</i>','<u>','</u>'), $string); 
-        $string = preg_replace('^\[color=(.*?)](.*?)\[/color]^', '<font color="\1">\2</font>', $string); 
-        $string = preg_replace('^\[kill=(.*?)](.*?)\[/kill]^', '<a href="\?a=kill_detail&kll_id=\1">\2</a>', $string); 
-        $string = preg_replace('^\[pilot=(.*?)](.*?)\[/pilot]^', '<a href="\?a=pilot_detail&plt_id=\1">\2</a>', $string); 
+        $string = preg_replace('^\[color=(.*?)](.*?)\[/color]^', '<span style="color:\1">\2</span>', $string);
+        $string = preg_replace('^\[kill=(.*?)](.*?)\[/kill]^', '<a href="\?a=kill_detail&amp;kll_id=\1">\2</a>', $string);
+        $string = preg_replace('^\[pilot=(.*?)](.*?)\[/pilot]^', '<a href="\?a=pilot_detail&amp;plt_id=\1">\2</a>', $string);
         return nl2br(addslashes($string)); 
     } 
 } 
