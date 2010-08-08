@@ -104,7 +104,7 @@ if (ini_get('allow_url_fopen'))
 }
 else
 {
-	include('../common/includes/class.http.php');
+	include('../common/includes/class.httprequest.php');
 	$http = new http_request($url);
 	$smarty->assign('conn_http_success', $http->get_content());
 	if (!$http->get_content())

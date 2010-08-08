@@ -1,6 +1,6 @@
 <?php
 
-@error_reporting(E_ALL ^ E_NOTICE);
+@error_reporting(E_ALL & ~(E_NOTICE | E_USER_NOTICE | E_STRICT));
 @ini_set('display_errors', 1);
 include_once('../common/smarty/Smarty.class.php');
 
