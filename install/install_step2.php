@@ -56,14 +56,13 @@ $smarty->assign('dir_writable', is_writeable('../cache'));
 if(is_writeable('../cache'))
 {
 	$text = checkdir('../cache/SQL');
-	$text = checkdir('../cache/page');
+	$text .= checkdir('../cache/page');
 	$text .= checkdir('../cache/api');
 	$text .= checkdir('../cache/data');
 	$text .= checkdir('../cache/mails');
-	$text .= checkdir('../cache/img/pilots');
-	$text .= checkdir('../cache/img/alliances');
-	$text .= checkdir('../cache/img/corps');
+	$text .= checkdir('../cache/img');
 	$text .= checkdir('../cache/img/map');
+	$text .= checkdir('../store');
 	$text .= checkdir('../cache/templates_c');
 
 	$smarty->assign('dir_text', $text);
@@ -122,7 +121,7 @@ if (function_exists('curl_init')) {
 	curl_close($ch);
 
 	if($content) {
-	    $smarty->assign('conn_curl_success', true);
+		$smarty->assign('conn_curl_success', true);
 	}
 }
 
@@ -134,24 +133,24 @@ $smarty->display('install_step2.tpl');
 function checkdir($dir)
 {
 	$text = '';
-    if (!file_exists($dir))
-    {
-        $text = '<b>Creating '.$dir.' for you...</b><br/>';
-        mkdir($dir);
-        chmod($dir, 0777);
-    }
-    if (is_writeable($dir))
-    {
-        $text .= 'Directory '.$dir.' exists and is writeable. Excellent!<br/>';
-    }
-    else
-    {
-        $text .= 'I can\'t write into '.$dir.'. You need to fix that for me before you can continue.<br/>';
-        $text .= 'Please issue a "chmod 777 '.$dir.'" on the commandline inside of this directory.<br/>';
-        global $stoppage;
-        $stoppage = true;
-    }
-    return $text;
+	if (!file_exists($dir))
+	{
+		$text = '<b>Creating '.$dir.' for you...</b><br/>';
+		mkdir($dir);
+		chmod($dir, 0777);
+	}
+	if (is_writeable($dir))
+	{
+		$text .= 'Directory '.$dir.' exists and is writeable. Excellent!<br/>';
+	}
+	else
+	{
+		$text .= 'I can\'t write into '.$dir.'. You need to fix that for me before you can continue.<br/>';
+		$text .= 'Please issue a "chmod 777 '.$dir.'" on the commandline inside of this directory.<br/>';
+		global $stoppage;
+		$stoppage = true;
+	}
+	return $text;
 }
-?>
+
 
