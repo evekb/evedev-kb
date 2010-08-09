@@ -77,7 +77,7 @@ options::fadd('Show Ammo, charges, etc', 'fp_showammo', 'checkbox');
 
 class admin_appearance
 {
-    function createPanelTheme()
+    public static function createPanelTheme()
     {
 /*	$sfp_themes =array("ArmyGreen" ,
 		"CoolGray" ,
@@ -116,7 +116,7 @@ class admin_appearance
 	return $options;
     }
 
-    function createPanelStyle()
+    public static function createPanelStyle()
     {
 	$sfp_styles =array("Windowed" ,
 		"OldWindow" ,
@@ -139,7 +139,7 @@ class admin_appearance
 	return $options;
     }
 
-    function createHighStyle()
+    public static function createHighStyle()
     {
 	$sfp_highstyles =array("ring" ,
 		"square" ,
@@ -164,7 +164,7 @@ class admin_appearance
 	return $options;
     }
 
-    function createAmmoStyle()
+    public static function createAmmoStyle()
     {
 	$sfp_ammostyles =array("solid" ,
 		"transparent",
@@ -189,7 +189,7 @@ class admin_appearance
 	//! Create the selection options for available banners
 
 	//! \return HTML for the banner selection dropdown list.
-    function createSelectBanner()
+    public static function createSelectBanner()
     {
         $options = array();
         $dir = "banner/";
@@ -216,7 +216,7 @@ class admin_appearance
 	//! Create the selection options for available styles in the current theme.
 
 	//! \return HTML for the style selection dropdown list.
-    function createSelectStyle()
+    public static function createSelectStyle()
     {
 		$options = array();
         $dir = "themes/".config::get('theme_name')."/";
@@ -244,7 +244,7 @@ class admin_appearance
 	//! Create the selection options for available themes.
 
 	//! \return HTML for the theme selection dropdown list.
-	function createSelectTheme()
+	public static function createSelectTheme()
     {
 		$options = array();
         $dir = "themes/";
@@ -270,7 +270,7 @@ class admin_appearance
         return $options;
     }
 	//! Checks if theme has changed and updates page before display.
-	function changeTheme()
+	public static function changeTheme()
 	{
 		global $themename;
 		if(options::getPrevious('theme_name') == $_POST['option_theme_name']) return;
@@ -290,18 +290,20 @@ class admin_appearance
 		admin_appearance::removeOld(0, KB_CACHEDIR.'/templates_c', true);
 	}
 	//! Updates style before page is displayed.
-	function changeStyle()
+	public static function changeStyle()
 	{
 		global $smarty;
 		if(options::getPrevious('theme_name') != $_POST['option_theme_name'])
 		{
 			$themename = preg_replace('/[^a-zA-Z0-9-_]/', '', $_POST['option_theme_name']);
 			if(!is_dir("themes/$themename")) $themename = 'default';
+			$styles = admin_appearance::createSelectStyle();
+			$style = array_shift($styles);
 
-			config::set('style_name', $themename);
-			$_POST['option_style_name'] = $themename;
+			config::set('style_name', $style['value']);
+			$_POST['option_style_name'] = $style['value'];
 
-			$smarty->assign('style', $themename);
+			$smarty->assign('style', $style['value']);
 		}
 		elseif(options::getPrevious('style_name') != $_POST['option_style_name'])
 		{
@@ -313,7 +315,7 @@ class admin_appearance
 	/*! If the banner is changed the stored size is updated and used to display
 	 *  the banner image. Smarty variables are updated so display is immediate.
 	 */
-	function changeBanner()
+	public static function changeBanner()
 	{
 		global $smarty;
 		if(options::getPrevious('style_banner') == $_POST['option_style_banner']) return;
@@ -334,7 +336,7 @@ class admin_appearance
 	 *  \param $recurse If true then recurse into subdirectories.
 	 *  \return The number of files deleted.
 	 */
-	function removeOld($hours, $dir, $recurse = false)
+	public static function removeOld($hours, $dir, $recurse = false)
 	{
 		$del = 0;
 		if(!session::isAdmin()) return false;
