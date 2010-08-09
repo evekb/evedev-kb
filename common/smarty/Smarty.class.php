@@ -3,7 +3,7 @@
 /**
  * Project:     Smarty: the PHP compiling template engine
  * File:        Smarty.class.php
- * SVN:         $Id: Smarty.class.php 3557 2010-04-28 20:30:27Z Uwe.Tews $
+ * SVN:         $Id: Smarty.class.php 3624 2010-07-07 22:08:10Z Uwe.Tews $
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -108,7 +108,7 @@ if (SMARTY_SPL_AUTOLOAD && set_include_path(get_include_path() . PATH_SEPARATOR 
  */
 class Smarty extends Smarty_Internal_Data {
     // smarty version
-    const SMARTY_VERSION = '3.0rc1'; // SVN Rev: 3286
+    const SMARTY_VERSION = 'Smarty3-RC3'; 
     // auto literal on delimiters with whitspace
     public $auto_literal = true; 
     // display error on not assigned variables
@@ -159,6 +159,7 @@ class Smarty extends Smarty_Internal_Data {
     public $security_policy = null;
     public $security_handler = null;
     public $direct_access_security = true; 
+    public $trusted_dir = array();
     // debug mode
     public $debugging = false;
     public $debugging_ctrl = 'NONE';
@@ -204,6 +205,8 @@ class Smarty extends Smarty_Internal_Data {
     public $plugin_search_order = array('function', 'block', 'compiler', 'class'); 
     // registered objects
     public $registered_objects = array(); 
+    // registered classes
+    public $registered_classes = array(); 
     // registered filters
     public $registered_filters = array(); 
     // autoload filter
@@ -243,7 +246,7 @@ class Smarty extends Smarty_Internal_Data {
         if (is_callable('mb_internal_encoding')) {
             mb_internal_encoding(SMARTY_RESOURCE_CHAR_SET);
         } 
-        $this->start_time = $this->_get_time(); 
+        $this->start_time = microtime(true); 
         // set exception handler
         if (!empty($this->exception_handler))
             set_exception_handler($this->exception_handler); 
