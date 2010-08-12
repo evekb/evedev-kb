@@ -160,7 +160,7 @@ class MapView
 		}
 		elseif ($this->mode_ == "region")
 		{
-			$sql = 'SELECT sys.sys_x, sys.sys_y, sys.sys_z, sys.sys_sec, sys.sys_name, sys.sys_eve_id, sjp.sjp_to
+			$sql = 'SELECT sys.sys_x, sys.sys_y, sys.sys_z, sys.sys_sec, sys.sys_name, sys.sys_eve_id, sjp.sjp_to, con_id
 					FROM (kb3_systems sys, kb3_constellations con)
 					LEFT JOIN kb3_system_jumps sjp ON sjp.sjp_from = sys.sys_eve_id
 					WHERE con.con_id = sys.sys_con_id
@@ -176,7 +176,7 @@ class MapView
 					AND con.con_id = '.$this->conid_;
 			$caption = $this->sysname_." (".roundsec($this->syssec_).")";
 		}
-		
+
 		if ($this->systemid_ >= 31000007)
             $sql .= " AND sys.sys_eve_id >= 31000007";
         else
@@ -426,7 +426,7 @@ class MapView
 			header("Etag: \"".$etag."\"");
 			if ((isset($_SERVER['HTTP_IF_NONE_MATCH'])
 					&& strpos($_SERVER['HTTP_IF_NONE_MATCH'], $etag) !== false)
-				|| (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) 
+				|| (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])
 					&& strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) <= $timestamp))
 			{
 				header($_SERVER["SERVER_PROTOCOL"]." 304 Not Modified");
