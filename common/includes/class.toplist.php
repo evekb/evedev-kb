@@ -67,50 +67,32 @@ class TopList
 
 	function addInvolvedPilot($pilot)
 	{
-		if(is_numeric($pilot)) $this->inv_plt[] = $pilot;
-		else $this->inv_plt[] = $pilot->getID();
-		if ($this->inv_crp || $this->inv_all)
-			$this->mixedinvolved = true;
+		involved::add($this->inv_plt,$pilot);
 	}
 
 	function addInvolvedCorp($corp)
 	{
-		if(is_numeric($corp)) $this->inv_crp[] = $corp;
-		else $this->inv_crp[] = $corp->getID();
-		if ($this->inv_plt || $this->inv_all)
-			$this->mixedinvolved = true;
+		involved::add($this->inv_crp,$corp);
 	}
 
 	function addInvolvedAlliance($alliance)
 	{
-		if(is_numeric($alliance)) $this->inv_all[] = $alliance;
-		else $this->inv_all[] = $alliance->getID();
-		if ($this->inv_plt || $this->inv_crp)
-			$this->mixedinvolved = true;
+		involved::add($this->inv_all,$alliance);
 	}
 
 	function addVictimPilot($pilot)
 	{
-		if(is_numeric($pilot)) $this->vic_plt[] = $pilot;
-		else $this->vic_plt[] = $pilot->getID();
-		if ($this->vic_crp || $this->vic_all)
-			$this->mixedvictims = true;
+		involved::add($this->vic_plt,$pilot);
 	}
 
 	function addVictimCorp($corp)
 	{
-		if(is_numeric($corp)) $this->vic_crp[] = $corp;
-		else $this->vic_crp[] = $corp->getID();
-		if ($this->vic_plt || $this->vic_all)
-			$this->mixedvictims = true;
+		involved::add($this->vic_crp,$corp);
 	}
 
 	function addVictimAlliance($alliance)
 	{
-		if(is_numeric($alliance)) $this->vic_all[] = $alliance;
-		else $this->vic_all[] = $alliance->getID();
-		if ($this->vic_plt || $this->vic_crp)
-			$this->mixedvictims = true;
+		involved::add($this->vic_all,$alliance);
 	}
 
 	/*!
@@ -263,6 +245,10 @@ class TopList
 
 	function execQuery()
 	{
+		if ($this->inv_plt && $this->inv_crp || $this->inv_plt && $this->inv_all
+			|| $this->inv_crp && $this->inv_all) $this->mixedinvolved = true;
+		if ($this->vic_plt && $this->vic_crp || $this->vic_plt && $this->vic_all
+			|| $this->vic_crp && $this->vic_all) $this->mixedvictims = true;
 		$this->sql_ .= $this->sqltop_;
 		// involved
 /*		if ($this->inv_plt)
@@ -471,7 +457,7 @@ class TopKillsList extends TopList
 		$this->setSQLTop($sql);
 
 		$this->setSQLBottom("group by ind.ind_plt_id order by 1 desc
-                            limit 30");
+                            limit 10");
 		if (count($this->vic_scl_id))
 		{
 			$this->setPodsNoobShips(true);
@@ -500,7 +486,7 @@ class TopCorpKillsList extends TopList
 		$this->setSQLTop($sql);
 
 		$this->setSQLBottom("group by ind.ind_crp_id order by 1 desc
-                            limit 30");
+                            limit 10");
 		if (count($this->vic_scl_id))
 		{
 			$this->setPodsNoobShips(true);
@@ -532,7 +518,6 @@ class TopScoreList extends TopList
 
 		$this->setSQLBottom("group by ind.ind_plt_id order by 1 desc
                             limit 30");
-	 $this->setPodsNoobShips(config::get('podnoobs'));
 	}
 }
 
@@ -548,7 +533,7 @@ class TopLossesList extends TopList
 		$this->setSQLTop("select count(*) as cnt, kll.kll_victim_id as plt_id
                            from kb3_kills kll");
 		$this->setSQLBottom("group by kll.kll_victim_id order by 1 desc
-                            limit 30");
+                            limit 10");
 		if (!count($this->inc_vic_scl))
 		{
 			$this->setPodsNoobShips(config::get('podnoobs'));
@@ -568,7 +553,7 @@ class TopCorpLossesList extends TopList
 		$this->setSQLTop("select count(*) as cnt, kll.kll_crp_id as crp_id
                            from kb3_kills kll");
 		$this->setSQLBottom("group by kll.kll_crp_id order by 1 desc
-                            limit 30");
+                            limit 10");
 		if (count($this->vic_scl_id))
 		{
 			$this->setPodsNoobShips(true);
@@ -600,7 +585,7 @@ class TopFinalBlowList extends TopList
 		$this->setSQLTop($sql);
 
 		$this->setSQLBottom("AND ind.ind_plt_id = kll.kll_fb_plt_id group by ind.ind_plt_id order by cnt desc
-                            limit 30 /* TopFinalBlowList */");
+                            limit 10 /* TopFinalBlowList */");
 		$this->setPodsNoobShips(config::get('podnoobs'));
 	}
 }
@@ -628,7 +613,7 @@ class TopDamageDealerList extends TopList
 		$this->setSQLTop($sql);
 
 		$this->setSQLBottom("group by ind.ind_plt_id order by 1 desc
-                            limit 30");
+                            limit 10");
 		$this->setPodsNoobShips(config::get('podnoobs'));
 	}
 }
@@ -657,7 +642,7 @@ class TopSoloKillerList extends TopList
 			"ind2.ind_order = 1 ) ".
 			"GROUP BY ind.ind_plt_id ".
 			"ORDER BY cnt DESC ".
-			"LIMIT 30");
+			"limit 10");
 		$this->setPodsNoobShips(config::get('podnoobs'));
 	}
 }
@@ -685,7 +670,7 @@ class TopPodKillerList extends TopList
 		$this->setSQLTop($sql);
 
 		$this->setSQLBottom("group by ind.ind_plt_id order by 1 desc
-                            limit 30");
+                            limit 10");
 		$this->addVictimShipClass(2); // capsule
 	}
 }
@@ -713,7 +698,7 @@ class TopGrieferList extends TopList
 		$this->setSQLTop($sql);
 
 		$this->setSQLBottom("group by ind.ind_plt_id order by 1 desc
-                            limit 30");
+                            limit 10");
 		$this->addVictimShipClass(20); // freighter
 		$this->addVictimShipClass(22); // exhumer
 		$this->addVictimShipClass(7); // industrial
@@ -745,7 +730,7 @@ class TopCapitalShipKillerList extends TopList
 		$this->setSQLTop($sql);
 
 		$this->setSQLBottom("group by ind.ind_plt_id order by 1 desc
-                            limit 30");
+                            limit 10");
 		$this->addVictimShipClass(20); // freighter
 		$this->addVictimShipClass(19); // dread
 		$this->addVictimShipClass(27); // carrier
