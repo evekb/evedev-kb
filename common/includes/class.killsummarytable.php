@@ -112,6 +112,11 @@ class KillSummaryTable
 		return $this->tkcount;
 	}
 
+	function getTotalRealKills()
+	{
+		return $this->trkcount;
+	}
+
 	function getTotalLosses()
 	{
 		return $this->tlcount;
@@ -145,18 +150,21 @@ class KillSummaryTable
 	function addInvolvedPilot($pilot)
 	{
 		if(is_numeric($pilot)) $this->inv_plt[] = $pilot;
+		else if(is_array($pilot)) array_merge($this->inv_plt, $pilot);
 		else $this->inv_plt[] = $pilot->getID();
 	}
 
 	function addInvolvedCorp($corp)
 	{
 		if(is_numeric($corp)) $this->inv_crp[] = $corp;
+		else if(is_array($corp)) array_merge($this->inv_crp, $corp);
 		else $this->inv_crp[] = $corp->getID();
 	}
 
 	function addInvolvedAlliance($alliance)
 	{
 		if(is_numeric($alliance)) $this->inv_all[] = $alliance;
+		else if(is_array($alliance)) array_merge($this->inv_all, $alliance);
 		else $this->inv_all[] = $alliance->getID();
 	}
 
@@ -185,6 +193,7 @@ class KillSummaryTable
 					$this->tkisk += $row['killisk'];
 					$this->tlcount += $row['losscount'];
 					$this->tlisk += $row['lossisk'];
+					if(!in_array($key, array(2,3,11) )) $this->trkcount += $row['killcount'];
 				}
 				return;
 			}
@@ -202,6 +211,7 @@ class KillSummaryTable
 					$this->tkisk += $row['killisk'];
 					$this->tlcount += $row['losscount'];
 					$this->tlisk += $row['lossisk'];
+					if(!in_array($key, array(2,3,11) )) $this->trkcount += $row['killcount'];
 				}
 				return;
 			}
@@ -219,6 +229,8 @@ class KillSummaryTable
 					$this->tkisk += $row['killisk'];
 					$this->tlcount += $row['losscount'];
 					$this->tlisk += $row['lossisk'];
+					
+					if(!in_array($key, array(-1,2,3,11) )) $this->trkcount += $row['killcount'];
 				}
 				return;
 			}
@@ -343,7 +355,6 @@ class KillSummaryTable
 		$sql .= 'GROUP BY scl_class order by scl_class';
 
 		$qry = DBFactory::getDBQuery();
-		;
 		$qry->execute($sql);
 		while ($row = $qry->getRow())
 		{

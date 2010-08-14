@@ -24,7 +24,7 @@ class pilotSummary extends statSummary
 			return false;
 		}
 
-		$qry = DBFactory::getDBQuery();;
+		$qry = DBFactory::getDBQuery();
 		$qry->execute("SELECT 1 FROM kb3_sum_pilot WHERE psm_plt_id = ".$this->plt_id_);
 		if(!$qry->recordCount())
 			$this->buildSummary($this->plt_id_);
@@ -50,7 +50,7 @@ class pilotSummary extends statSummary
 	{
 		$plt_id = intval($plt_id);
 		if(!$plt_id) return false;
-		$qry = DBFactory::getDBQuery();;
+		$qry = DBFactory::getDBQuery();
 		$qry->autocommit(false);
 		$sql = "CREATE TEMPORARY TABLE `tmp_sum_pilot` (
 		  `psm_plt_id` int(11) NOT NULL DEFAULT '0',
@@ -69,30 +69,43 @@ class pilotSummary extends statSummary
 			FROM kb3_kills kll
 				INNER JOIN kb3_ships shp
 					ON ( shp.shp_id = kll.kll_ship_id )
-				INNER JOIN kb3_inv_plt inc
-					ON (inp.inp_kll_id = kll.kll_id)
-			WHERE inp.inp_plt_id ='.$plt_id.' AND kll.kll_plt_id <> '.$plt_id.'
+				INNER JOIN kb3_inv_detail ind
+					ON (ind.ind_kll_id = kll.kll_id)
+			WHERE ind.ind_plt_id ='.$plt_id.'
 			GROUP BY shp_class';
 		$qry->execute($sql);
 		$sql = 'INSERT INTO tmp_sum_pilot (psm_plt_id, psm_shp_id, psm_loss_count, psm_loss_isk)
 			SELECT '.$plt_id.', shp_class, count(kll_id) AS lnb, sum(kll_isk_loss) AS lisk
 			FROM kb3_kills kll
 				INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )
-				INNER JOIN kb3_inv_plt inc ON ( kll.kll_id = inp.inp_kll_id)
-			WHERE  kll.kll_plt_id = '.$plt_id.' AND inp.inp_plt_id <> '.$plt_id.'
+			WHERE  kll.kll_victim_id = '.$plt_id.'
 			GROUP BY shp_class
 			ON DUPLICATE KEY UPDATE psm_loss_count = values(psm_loss_count),
 				psm_loss_isk = values(psm_loss_isk)';
 		$qry->execute($sql);
 		$qry->execute("INSERT INTO kb3_sum_pilot SELECT * FROM tmp_sum_pilot");
 		$qry->execute("DROP TEMPORARY TABLE tmp_sum_pilot");
+
+		$klist = new KillList();
+		$klist->addInvolvedPilot($plt_id);
+		$klist->getAllKills();
+		$kpoints = $klist->getPoints();
+		unset($klist);
+		$llist = new KillList();
+		$llist->addVictimPilot($plt_id);
+		$llist->getAllKills();
+		$lpoints = $llist->getPoints();
+		unset($llist);
+		$qry->execute("UPDATE kb3_pilots SET plt_kpoints = $kpoints,
+			 plt_lpoints = $lpoints WHERE plt_id = $plt_id");
+		
 		$qry->autocommit(true);
 	}
 	//! Add a Kill and its value to the summary.
 	function addKill($kill)
 	{
 		$alls = array();
-		$qry = DBFactory::getDBQuery();;
+		$qry = DBFactory::getDBQuery();
 		$qry->execute("SELECT 1 FROM kb3_sum_pilot WHERE psm_plt_id = ".$kill->getVictimID());
 		if($qry->recordCount())
 		{
@@ -104,6 +117,10 @@ class pilotSummary extends statSummary
 				$kill->getISKLoss().") ON DUPLICATE KEY UPDATE ".
 				"psm_loss_count = psm_loss_count + 1, ".
 				"psm_loss_isk = psm_loss_isk + ".$kill->getISKLoss();
+			$qry->execute($sql);
+
+			$sql = "UPDATE kb3_pilots SET plt_lpoints = plt_lpoints + ".$kill->getKillPoints().
+				" WHERE plt_id = ".$kill->getVictimID();
 			$qry->execute($sql);
 		}
 		foreach($kill->involvedparties_ as $inv)
@@ -122,13 +139,16 @@ class pilotSummary extends statSummary
 				"psm_kill_count = psm_kill_count + 1, ".
 				"psm_kill_isk = psm_kill_isk + ".$kill->getISKLoss();
 			$qry->execute($sql);
+			$sql = "UPDATE kb3_pilots SET plt_kpoints = plt_kpoints + ".$kill->calculateKillPoints().
+				" WHERE plt_id = ".$kill->getVictimID();
+			$qry->execute($sql);
 		}
 	}
 	//! Add a Kill and its value to the summary.
 	function delKill($kill)
 	{
 		$alls = array();
-		$qry = DBFactory::getDBQuery();;
+		$qry = DBFactory::getDBQuery();
 		$qry->execute("SELECT 1 FROM kb3_sum_pilot WHERE psm_plt_id = ".$kill->getVictimID());
 		// No summary table to remove kill from so skip.
 		if($qry->recordCount())
@@ -140,6 +160,10 @@ class pilotSummary extends statSummary
 				" psm_loss_isk = psm_loss_isk - ".$kill->getISKLoss().
 				" WHERE psm_plt_id = ".$kill->getVictimID().
 					" AND psm_shp_id = ".$class->getID();
+			$qry->execute($sql);
+
+			$sql = "UPDATE kb3_pilots SET plt_lpoints = plt_lpoints - ".$kill->getKillPoints().
+				" WHERE plt_id = ".$kill->getVictimID();
 			$qry->execute($sql);
 		}
 		foreach($kill->involvedparties_ as $inv)
@@ -156,13 +180,17 @@ class pilotSummary extends statSummary
 				" WHERE psm_plt_id = ".$inv->getPilotID().
 					" AND psm_shp_id = ".$class->getID();
 			$qry->execute($sql);
+
+			$sql = "UPDATE kb3_pilots SET plt_kpoints = plt_kpoints - ".$kill->getKillPoints().
+				" WHERE plt_id = ".$kill->getVictimID();
+			$qry->execute($sql);
 		}
 	}
 	//! Update the summary table when a kill value changes.
 	function update($kill, $difference)
 	{
 		$alls = array();
-		$qry = DBFactory::getDBQuery();;
+		$qry = DBFactory::getDBQuery();
 		$qry->execute("SELECT 1 FROM kb3_sum_pilot WHERE psm_plt_id = ".$kill->getVictimID());
 		// No summary table to remove kill from so skip.
 		if($qry->recordCount())

@@ -22,7 +22,7 @@ function update016()
 		if(!$indexexists) $qry->execute($sql);
 		
 		config::set("DBUpdate", "016");
-		$qry->execute("INSERT INTO kb3_config (cfg_site, cfg_key, cfg_value) SELECT cfg_site, 'DBUpdate', '015' FROM kb3_config GROUP BY cfg_site ON DUPLICATE KEY UPDATE cfg_value = '016'");
+		$qry->execute("INSERT INTO kb3_config (cfg_site, cfg_key, cfg_value) SELECT cfg_site, 'DBUpdate', '016' FROM kb3_config GROUP BY cfg_site ON DUPLICATE KEY UPDATE cfg_value = '016'");
 		$smarty->assign('refresh',1);
 		$smarty->assign('content', "Update 016 completed.");
 		$smarty->display('update.tpl');

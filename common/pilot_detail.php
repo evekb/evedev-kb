@@ -96,17 +96,10 @@ class pPilotDetail extends pageAssembly
 	//! Set up the stats used by stats and summaryTable functions.
 	function statSetup()
 	{
-			$this->klist = new KillList();
-			$this->llist = new KillList();
-			$this->klist->addInvolvedPilot($this->pilot);
-			$this->llist->addVictimPilot($this->pilot);
-			$this->klist->getAllKills();
-			$this->llist->getAllKills();
-			$this->points = $this->klist->getPoints();
-			$this->lpoints = $this->llist->getPoints();
 			if(!isset($this->kill_summary))
 			{
-				$this->summary = new KillSummaryTable($this->klist, $this->llist);
+				$this->summary = new KillSummaryTable();
+				$this->summary->addInvolvedPilot($this->plt_id);
 				if ($this->view == "ships_weapons") $this->summary->setFilter(false);
 			}
 	}
@@ -119,30 +112,31 @@ class pPilotDetail extends pageAssembly
 	//! Show the overall statistics for this alliance.
 	function stats()
 	{
+		$this->summary->generate();
+
 		global $smarty;
 		$smarty->assign('portrait_URL',$this->pilot->getPortraitURL(128));
 		$smarty->assign('corp_id',$this->corp->getID());
 		$smarty->assign('corp_name',$this->corp->getName());
 		$smarty->assign('all_name',$this->alliance->getName());
 		$smarty->assign('all_id',$this->alliance->getID());
-		$smarty->assign('klist_count',$this->klist->getCount());
-		$smarty->assign('klist_real_count',$this->klist->getRealCount());
-		$smarty->assign('llist_count',$this->llist->getCount());
-		$smarty->assign('klist_isk_B',round($this->klist->getISK()/1000000000,2));
-		$smarty->assign('llist_isk_B',round($this->llist->getISK()/1000000000,2));
+		$smarty->assign('klist_count',$this->summary->getTotalKills());
+		$smarty->assign('klist_real_count',$this->summary->getTotalRealKills());//$this->klist->getRealCount());
+		$smarty->assign('llist_count',$this->summary->getTotalLosses());
+		$smarty->assign('klist_isk_B',round($this->summary->getTotalKillISK()/1000000000,2));
+		$smarty->assign('llist_isk_B',round($this->summary->getTotalLossISK()/1000000000,2));
 
 		//Pilot Efficiency Mod Begin (K Austin)
-
-		if ($this->klist->getRealCount() == 0)
+		if ($this->summary->getTotalKills() == 0)
 		{
 			$pilot_survival = 100;
 			$pilot_efficiency = 0;
 		}
 		else
 		{
-			if($this->klist->getRealCount() + $this->llist->getCount()) $pilot_survival = round($this->llist->getCount() / ($this->klist->getRealCount() + $this->llist->getCount()) * 100,2);
+			if($this->summary->getTotalKills() + $this->summary->getTotalLosses()) $pilot_survival = round($this->summary->getTotalLosses() / ($this->summary->getTotalKills() + $this->summary->getTotalLosses()) * 100,2);
 			else $pilot_survival = 0;
-			if($this->klist->getISK() + $this->llist->getISK()) $pilot_efficiency = round(($this->klist->getISK() / ($this->klist->getISK() + $this->llist->getISK())) * 100,2);
+			if($this->summary->getTotalKillISK() + $this->summary->getTotalLossISK()) $pilot_efficiency = round(($this->summary->getTotalKillISK() / ($this->summary->getTotalKillISK() + $this->summary->getTotalLossISK())) * 100,2);
 			else $pilot_efficiency = 0;
 		}
 
