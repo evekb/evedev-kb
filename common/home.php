@@ -38,7 +38,7 @@ class pHome extends pageAssembly
 		if(!$this->hourlimit) $this->hourlimit = 1;
 		$this->klreturnmax = 3;
 		$this->showcombined = config::get('show_comb_home')
-			&& (ALLIANCE_ID || CORP_ID || PILOT_ID);
+			&& (count(config::get('cfg_allianceid')) || count(config::get('cfg_corpid')) || count(config::get('cfg_pilotid')));
 
 		$week = $month = $year = 0;
 		if(isset($_GET['w'])) $week = intval($_GET['w']);

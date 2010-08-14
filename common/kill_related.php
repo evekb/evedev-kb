@@ -94,7 +94,8 @@ class pKillRelated extends pageAssembly
 		// Check which side board owner is on and make that the kill side. The other
 		// side is the loss side. If board owner is on neither then victim is the loss
 		// side.
-		if(CORP_ID == $this->kill->getVictimCorpID() || ALLIANCE_ID == $this->kill->getVictimAllianceID())
+		if(in_array($this->kill->getVictimAllianceID(), config::get('cfg_allianceid'))
+			|| in_array($this->kill->getVictimCorpID(), config::get('cfg_corpid')))
 		{
 			$tmp = $this->victimAll;
 			$this->victimAll = $this->invAll;

@@ -42,8 +42,12 @@ class KillList
 	private $inv_plt_ = array();
 	private $inv_crp_ = array();
 	private $inv_all_ = array();
+	private $vic_plt_ = array();
+	private $vic_crp_ = array();
+	private $vic_all_ = array();
 	private $minkllid_ = 0;
 	private $maxkllid_ = 0;
+	private $killpoints_ = 0;
 
 	function KillList()
 	{
@@ -662,58 +666,79 @@ class KillList
 		$this->rewind();
 	}
 
+	public function addInvolved($obj)
+	{
+		if(is_array($obj)) $test = reset($obj);
+		else $test = &$obj;
+		if($test instanceof Pilot) involved::add($this->inv_plt_, $obj);
+		elseif($test instanceof Corporation) involved::add($this->inv_crp_, $obj);
+		elseif($test instanceof Alliance) involved::add($this->inv_all_, $obj);
+		else trigger_error ("Parameter passed was not a valid object.", E_USER_WARNING);
+	}
+
 	public function addInvolvedPilot($pilot)
 	{
-		if(is_numeric($pilot)) $this->inv_plt_[] = $pilot;
-		else $this->inv_plt_[] = $pilot->getID();
+		involved::add($this->inv_plt_, $pilot);
 	}
 
 	public function addInvolvedCorp($corp)
 	{
-		if(is_numeric($corp)) $this->inv_crp_[] = $corp;
-		else $this->inv_crp_[] = $corp->getID();
+		involved::add($this->inv_crp_, $corp);
 	}
 
 	public function addInvolvedAlliance($alliance)
 	{
-		if(is_numeric($alliance)) $this->inv_all_[] = $alliance;
-		else $this->inv_all_[] = $alliance->getID();
+		involved::add($this->inv_all_, $alliance);
+	}
+
+	public function addVictim($obj)
+	{
+		if(is_array($obj)) $test = reset($obj);
+		else $test = &$obj;
+		if($test instanceof Pilot) involved::add($this->vic_plt_, $obj);
+		elseif($test instanceof Corporation) involved::add($this->vic_crp_, $obj);
+		elseif($test instanceof Alliance) involved::add($this->vic_all_, $obj);
+		else trigger_error ("Parameter passed was not a valid object.", E_USER_WARNING);
 	}
 
 	public function addVictimPilot($pilot)
 	{
-		if(is_numeric($pilot)) $this->vic_plt_[] = $pilot;
-		else $this->vic_plt_[] = $pilot->getID();
+		involved::add($this->vic_plt_, $pilot);
 	}
 
 	public function addVictimCorp($corp)
 	{
-		if(is_numeric($corp)) $this->vic_crp_[] = $corp;
-		else $this->vic_crp_[] = $corp->getID();
+		involved::add($this->vic_crp_, $corp);
 	}
 
 	public function addVictimAlliance($alliance)
 	{
-		if(is_numeric($alliance)) $this->vic_all_[] = $alliance;
-		else $this->vic_all_[] = $alliance->getID();
+		involved::add($this->vic_all_, $alliance);
+	}
+
+	public function addCombined($obj)
+	{
+		if(is_array($obj)) $test = reset($obj);
+		else $test = &$obj;
+		if($test instanceof Pilot) involved::add($this->comb_plt_, $obj);
+		elseif($test instanceof Corporation) involved::add($this->comb_crp_, $obj);
+		elseif($test instanceof Alliance) involved::add($this->comb_all_, $obj);
+		else trigger_error ("Parameter passed was not a valid object.", E_USER_WARNING);
 	}
 
 	public function addCombinedPilot($pilot)
 	{
-		if(is_numeric($pilot)) $this->comb_plt_[] = $pilot;
-		else $this->comb_plt_[] = $pilot->getID();
+		involved::add($this->comb_plt_, $pilot);
 	}
 
 	public function addCombinedCorp($corp)
 	{
-		if(is_numeric($corp)) $this->comb_crp_[] = $corp;
-		else $this->comb_crp_[] = $corp->getID();
+		involved::add($this->comb_crp_, $corp);
 	}
 
 	public function addCombinedAlliance($alliance)
 	{
-		if(is_numeric($alliance)) $this->comb_all_[] = $alliance;
-		else $this->comb_all_[] = $alliance->getID();
+		involved::add($this->comb_all_, $alliance);
 	}
 
 	public function addVictimShipClass($shipclass)
@@ -878,7 +903,7 @@ class KillList
 
 	public function getPoints()
 	{
-		return $this->killpoints_;
+		return intval($this->killpoints_);
 	}
 
 	public function rewind()

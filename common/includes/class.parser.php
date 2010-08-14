@@ -355,19 +355,17 @@ class Parser
 			$kill->set('dmgtaken', $dmgtaken);
 		}
 
-		if (ALLIANCE_ID != 0 && $alliance->getID() == ALLIANCE_ID)
+		if (config::get('cfg_allianceid') && in_array($alliance->getID(), config::get('cfg_allianceid')))
 		{
 			$authorized = true;
 		}
-		elseif (CORP_ID != 0)
+		elseif (config::get('cfg_corpid') && in_array($corp->getID(), config::get('cfg_corpid')))
 		{
-			$corps = explode(",", CORP_ID);
-
-			foreach($corps as $checkcorp)
-			{
-				if ($corp->getID() == $checkcorp)
-					$authorized = true;
-			}
+			$authorized = true;
+		}
+		elseif (config::get('cfg_pilotid') && in_array($pilot->getID(), config::get('cfg_pilotid')))
+		{
+			$authorized = true;
 		}
 
 		// involved parties section
@@ -576,13 +574,13 @@ class Parser
 					$this->error('Weapon not found.', $iwname);
 				}
 
-				if (ALLIANCE_ID != 0 && $ialliance->getID() == ALLIANCE_ID)
+				if (config::get('cfg_allianceid') != 0 && $ialliance->getID() == config::get('cfg_allianceid'))
 				{
 					$authorized = true;
 				}
-				elseif (CORP_ID != 0)
+				elseif (config::get('cfg_corpid') != 0)
 				{
-					$corps = explode(",", CORP_ID);
+					$corps = explode(",", config::get('cfg_corpid'));
 					foreach($corps as $corp)
 					{
 						if ($icorp->getID() == $corp)

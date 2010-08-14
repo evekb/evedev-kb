@@ -143,12 +143,11 @@ class KillListTable
 			}
 			if ($this->combined_)
 			{
-				if(ALLIANCE_ID && $kill->getVictimAllianceID() == ALLIANCE_ID) $kll['loss'] = true;
-				elseif(CORP_ID && $kill->getVictimCorpID() == CORP_ID) $kll['loss'] = true;
-				elseif(PILOT_ID && $kill->getVictimID() == PILOT_ID) $kll['loss'] = true;
+				if(config::get('cfg_allianceid') && in_array($kill->getVictimAllianceID(), config::get('cfg_allianceid'))) $kll['loss'] = true;
+				elseif (config::get('cfg_corpid') && in_array($kill->getVictimCorpID(), config::get('cfg_corpid'))) $kll['loss'] = true;
+				elseif (config::get('cfg_pilotid') && in_array($pilot->getID(), config::get('cfg_pilotid'))) $kll['loss'] = true;
 				else $kll['loss'] = false;
-				if($kll['loss']) $kll['kill'] = false;
-				else $kll['kill'] = true;
+				$kll['kill'] = !$kll['loss'];
 			}
 			event::call('killlist_table_kill', $kll);
 			$kills[] = $kll;

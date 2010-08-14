@@ -112,23 +112,39 @@ else
 }
 define('THEME_URL', config::get('cfg_kbhost').'/themes/'.$themename);
 
+if(!is_array(config::get('cfg_pilotid')))
+	if(config::get('cfg_pilotid')) config::set('cfg_pilotid',array(config::get('cfg_pilotid')));
+	else config::set('cfg_pilotid',array());
+if(!is_array(config::get('cfg_corpid'))) 
+	if(config::get('cfg_corpid')) config::set('cfg_corpid',array(config::get('cfg_corpid')));
+	else config::set('cfg_corpid',array());
+if(!is_array(config::get('cfg_allianceid'))) 
+	if(config::get('cfg_allianceid')) config::set('cfg_allianceid', array(config::get('cfg_allianceid')));
+	else config::set('cfg_allianceid',array());
+
 if (config::get('cfg_pilotid'))
 {
-	define('PILOT_ID', intval(config::get('cfg_pilotid')) );
+	$plt = config::get('cfg_pilotid');
+	define('PILOT_ID', $plt[0] );
+	unset($plt);
 	define('CORP_ID', 0);
 	define('ALLIANCE_ID', 0);
 }
 elseif (config::get('cfg_corpid'))
 {
 	define('PILOT_ID', 0);
-	define('CORP_ID', intval(config::get('cfg_corpid')));
+	$crp = config::get('cfg_corpid');
+	define('CORP_ID', $crp[0] );
+	unset($crp);
 	define('ALLIANCE_ID', 0);
 }
 elseif(config::get('cfg_allianceid'))
 {
 	define('PILOT_ID', 0);
 	define('CORP_ID', 0);
-	define('ALLIANCE_ID', intval(config::get('cfg_allianceid')));
+	$all = config::get('cfg_allianceid');
+	define('ALLIANCE_ID', $all[0] );
+	unset($all);
 }
 else
 {
@@ -267,17 +283,17 @@ $smarty->assign('is_IGB', IS_IGB);
 // Set the name of the board owner.
 if (config::get('cfg_pilotid'))
 {
-	$pilot=new Pilot(PILOT_ID);
+	$pilot=new Pilot(config::get('cfg_pilotid'));
 	$smarty->assign('kb_owner', htmlentities($pilot->getName() ));
 }
 elseif (config::get('cfg_corpid'))
 {
-	$corp=new Corporation(CORP_ID);
+	$corp=new Corporation(config::get('cfg_corpid'));
 	$smarty->assign('kb_owner', htmlentities($corp->getName() ));
 }
 elseif(config::get('cfg_allianceid'))
 {
-	$alliance=new Alliance(ALLIANCE_ID);
+	$alliance=new Alliance(config::get('cfg_allianceid'));
 	$smarty->assign('kb_owner', htmlentities($alliance->getName() ));
 }
 else

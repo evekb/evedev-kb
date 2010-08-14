@@ -46,6 +46,9 @@ require_once('kbconfig.php');
 require_once('common/includes/class.edkloader.php');
 require_once('common/includes/globals.php');
 require_once('common/includes/db.php');
+require_once ('common/includes/class.edkerror.php');
+
+set_error_handler(array('EDKError', 'handler'), E_ALL & ~(E_NOTICE) );
 
 $config = new Config(KB_SITE);
 
@@ -172,13 +175,24 @@ function getID()
 	// Set pilot OR corporation OR alliance id
 	if (config::get('cfg_pilotid'))
 	{
-		define('PILOT_ID', intval(config::get('cfg_pilotid')) );
+		if(!is_array(config::get('cfg_pilotid'))) config::set('cfg_pilotid',array(config::get('cfg_pilotid')));
+		foreach(config::get('cfg_pilotid') as $val)
+		{
+			define('PILOT_ID', $val );
+			break;
+		}
 		define('CORP_ID', 0);
 		define('ALLIANCE_ID', 0);
 	}
 	elseif (config::get('cfg_corpid'))
 	{
 		define('PILOT_ID', 0);
+		if(!is_array(config::get('cfg_corpid'))) config::set('cfg_corpid',array(config::get('cfg_corpid')));
+		foreach(config::get('cfg_corpid') as $val)
+		{
+			define('CORP_ID', $val );
+			break;
+		}
 		define('CORP_ID', intval(config::get('cfg_corpid')));
 		define('ALLIANCE_ID', 0);
 	}
@@ -186,7 +200,12 @@ function getID()
 	{
 		define('PILOT_ID', 0);
 		define('CORP_ID', 0);
-		define('ALLIANCE_ID', intval(config::get('cfg_allianceid')));
+		if(!is_array(config::get('cfg_allianceid'))) config::set('cfg_allianceid',array(config::get('cfg_allianceid')));
+		foreach(config::get('cfg_allianceid') as $val)
+		{
+			define('ALLIANCE_ID', $val );
+			break;
+		}
 	}
 	else
 	{

@@ -366,8 +366,9 @@ class pKillDetail extends pageAssembly
 			$this->InvAllies[$alliance->getName()]["quantity"]+=1;
 			$this->InvAllies[$alliance->getName()]["corps"][$corp->getName()]+=1;
 			$this->InvShips[$ship->getName()] += 1;
-			if(ALLIANCE_ID >0 && $alliance->getID()==ALLIANCE_ID) $this->ownKill=true;
-			elseif(CORP_ID >0 && $corp->getID()==CORP_ID) $this->ownKill=true;
+			if(config::get('cfg_allianceid') && in_array($alliance->getID(), config::get('cfg_allianceid'))) $this->ownKill = true;
+			elseif(config::get('cfg_corpid') && in_array($corp->getID(), config::get('cfg_corpid'))) $this->ownKill = true;
+			elseif(config::get('cfg_pilotid') && in_array($pilot->getID(), config::get('cfg_pilotid'))) $this->ownKill = true;
 
 
 			if(!$this->nolimit && $i > $invlimit)
@@ -1061,7 +1062,8 @@ class pKillDetail extends pageAssembly
 		}
 
 		if ($this->kill->relatedKillCount() > 1 || $this->kill->relatedLossCount() > 1 ||
-			((ALLIANCE_ID || CORP_ID || PILOT_ID) && $this->kill->relatedKillCount() + $this->kill->relatedLossCount() > 1))
+			((config::get('cfg_allianceid') || config::get('cfg_corpid') || config::get('cfg_pilotid'))
+				&& $this->kill->relatedKillCount() + $this->kill->relatedLossCount() > 1))
 		{
 			$this->addMenuItem("link", "Related kills (" . $this->kill->relatedKillCount() . "/" . $this->kill->relatedLossCount() . ")",
 				"?a=kill_related&amp;kll_id=" . $this->kill->getID());

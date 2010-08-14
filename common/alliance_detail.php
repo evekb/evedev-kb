@@ -527,7 +527,6 @@ class pAllianceDetail extends pageAssembly
 
 				$list = new TopScoreList();
 				$list->addInvolvedAlliance($this->alliance);
-				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
 				$table = new TopPilotTable($list, "Points");
@@ -535,7 +534,6 @@ class pAllianceDetail extends pageAssembly
 
 				$list = new TopScoreList();
 				$list->addInvolvedAlliance($this->alliance);
-				$list->setPodsNoobShips(config::get('podnoobs'));
 				$table = new TopPilotTable($list, "Points");
 				$smarty->assign('total_stats', $table->generate());
 

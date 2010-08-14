@@ -61,16 +61,16 @@ class ContractListTable
 				}
 				else
 				{
-					if(PILOT_ID) $sql .= ' inner join kb3_inv_detail ind on ( kll.kll_id = ind.ind_kll_id ) ';
-					else if(CORP_ID) $sql .= ' inner join kb3_inv_crp inc on ( kll.kll_id = inc.inc_kll_id ) ';
-					else if(ALLIANCE_ID) $sql .=' inner join kb3_inv_all ina on ( kll.kll_id = ina.ina_kll_id ) ';
+					if(count(config::get('cfg_pilotid'))) $sql .= ' inner join kb3_inv_detail ind on ( kll.kll_id = ind.ind_kll_id ) ';
+					else if(count(config::get('cfg_corpid'))) $sql .= ' inner join kb3_inv_crp inc on ( kll.kll_id = inc.inc_kll_id ) ';
+					else if(count(config::get('cfg_allianceid'))) $sql .=' inner join kb3_inv_all ina on ( kll.kll_id = ina.ina_kll_id ) ';
 				}
 				if($contract->getStartDate())
 				{
 					$sql .= " WHERE kll.kll_timestamp >= '".$contract->getStartDate()."' ";
-					if ((!$i && $contract->getCorps()) || ($i && CORP_ID))
+					if ((!$i && $contract->getCorps()) || ($i && count(config::get('cfg_corpid'))))
 						$sql .= " AND inc.inc_timestamp >= '".$contract->getStartDate()."' ";
-					if ((!$i && $contract->getAlliances()) && ($i && ALLIANCE_ID))
+					if ((!$i && $contract->getAlliances()) && ($i && count(config::get('cfg_allianceid'))))
 						$sql .= " AND ina.ina_timestamp >= '".$contract->getStartDate()."' ";
 					$sqlwhereop = ' AND ';
 				}
@@ -95,9 +95,9 @@ class ContractListTable
 						$sqlwhereop = ' AND ';
 					}
 					$tmp = array();
-					if(PILOT_ID) $sql .= 'AND kll.kll_victim_id = '.PILOT_ID." ";
-					else if(CORP_ID) $sql .= 'AND kll.kll_crp_id = '.CORP_ID." ";
-					else if(ALLIANCE_ID) $sql .= ' AND kll.kll_all_id = '.ALLIANCE_ID." ";
+					if(count(config::get('cfg_pilotid'))) $sql .= 'AND kll.kll_victim_id IN ('.implode(",", config::get('cfg_pilotid')).") ";
+					else if(count(config::get('cfg_corpid'))) $sql .= 'AND kll.kll_crp_id IN ('.implode(",", config::get('cfg_corpid')).") ";
+					else if(count(config::get('cfg_allianceid'))) $sql .= ' AND kll.kll_all_id IN ('.implode(",", config::get('cfg_allianceid')).") ";
 				}
 				else
 				{
@@ -116,9 +116,9 @@ class ContractListTable
 						$sql .= ')';
 						$sqlwhereop = ' AND ';
 					}
-					if(PILOT_ID) $sql .= ' AND ind.ind_plt_id = '.PILOT_ID." ";
-					else if(CORP_ID) $sql .= ' AND inc.inc_crp_id = '.CORP_ID." ";
-					else if(ALLIANCE_ID) $sql .= '  AND ina.ina_all_id = '.ALLIANCE_ID." ";
+					if(count(config::get('cfg_pilotid'))) $sql .= ' AND ind.ind_plt_id IN ('.implode(",", config::get('cfg_pilotid')).") ";
+					else if(count(config::get('cfg_corpid'))) $sql .= ' AND inc.inc_crp_id IN ('.implode(",", config::get('cfg_corpid')).") ";
+					else if(count(config::get('cfg_allianceid'))) $sql .= '  AND ina.ina_all_id IN ('.implode(",", config::get('cfg_allianceid')).") ";
 				}
 				if ($contract->getSystems())
 				{
