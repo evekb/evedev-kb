@@ -149,23 +149,17 @@ class KillSummaryTable
 
 	function addInvolvedPilot($pilot)
 	{
-		if(is_numeric($pilot)) $this->inv_plt[] = $pilot;
-		else if(is_array($pilot)) array_merge($this->inv_plt, $pilot);
-		else $this->inv_plt[] = $pilot->getID();
+		involved::add($this->inv_plt, $pilot);
 	}
 
 	function addInvolvedCorp($corp)
 	{
-		if(is_numeric($corp)) $this->inv_crp[] = $corp;
-		else if(is_array($corp)) array_merge($this->inv_crp, $corp);
-		else $this->inv_crp[] = $corp->getID();
+		involved::add($this->inv_crp, $corp);
 	}
 
 	function addInvolvedAlliance($alliance)
 	{
-		if(is_numeric($alliance)) $this->inv_all[] = $alliance;
-		else if(is_array($alliance)) array_merge($this->inv_all, $alliance);
-		else $this->inv_all[] = $alliance->getID();
+		involved::add($this->inv_all, $alliance);
 	}
 
 	function setSystem($system)
