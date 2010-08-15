@@ -20,27 +20,27 @@ class involved
 		{
 			if (config::get('cfg_pilotid'))
 				$killlist->addInvolvedPilot(config::get('cfg_pilotid'));
-			elseif (config::get('cfg_corpid'))
+			if (config::get('cfg_corpid'))
 				$killlist->addInvolvedCorp(config::get('cfg_corpid'));
-			elseif (config::get('cfg_allianceid'))
+			if (config::get('cfg_allianceid'))
 				$killlist->addInvolvedAlliance(config::get('cfg_allianceid'));
 		}
 		elseif ($type == 'loss')
 		{
 			if (config::get('cfg_pilotid'))
 				$killlist->addVictimPilot(config::get('cfg_pilotid'));
-			elseif (config::get('cfg_corpid'))
+			if (config::get('cfg_corpid'))
 				$killlist->addVictimCorp(config::get('cfg_corpid'));
-			elseif (config::get('cfg_allianceid'))
+			if (config::get('cfg_allianceid'))
 				$killlist->addVictimAlliance(config::get('cfg_allianceid'));
 		}
 		elseif ($type == 'combined')
 		{
 			if (config::get('cfg_pilotid'))
 				$killlist->addCombinedPilot(config::get('cfg_pilotid'));
-			elseif (config::get('cfg_corpid'))
+			if (config::get('cfg_corpid'))
 				$killlist->addCombinedCorp(config::get('cfg_corpid'));
-			elseif (config::get('cfg_allianceid'))
+			if (config::get('cfg_allianceid'))
 				$killlist->addCombinedAlliance(config::get('cfg_allianceid'));
 		}
 	}
