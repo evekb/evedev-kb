@@ -19,7 +19,7 @@ class Page
 	private $cachetime = 60;
 	private $onload = null;
 	private $contenthtml = "";
-	private $contexthtml = "";
+	private $contexthtml = array();
 
 	//! Construct a Page class with the given title.
 
@@ -45,7 +45,7 @@ class Page
 	//! Set the context html that is displayed in the sidebar.
 	public function addContext($html)
 	{
-		$this->contexthtml .= $html;
+		$this->contexthtml[] = $html;
 	}
 	//! Create and display an error message.
 	public function error($message)
@@ -101,6 +101,7 @@ class Page
 		else $w = floor(100 / count($menu->get()));
 
 		$smarty->assign('menu_w',$w.'%');
+		$smarty->assign('menu_count', count($menu->get()));
 		$smarty->assign('menu', $menu->get());
 
 		//check if banner is a swf
@@ -128,9 +129,10 @@ class Page
 		$smarty->assign('content_html', $this->contenthtml);
 		if (config::get('user_showmenu'))
 		{
-			$this->contexthtml = user::menu().$this->contexthtml;
+			$this->contexthtml = array_merge(array(user::menu()), $this->contexthtml);
 		}
-		$smarty->assign('context_html', $this->contexthtml);
+		$smarty->assign('context_html', implode($this->contexthtml));
+		$smarty->assignByRef('context_divs', $this->contexthtml);
 		event::call('smarty_displayindex', $smarty);
 		$smarty->display(get_tpl('index'));
 	}
