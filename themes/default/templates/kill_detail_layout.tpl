@@ -1,11 +1,7 @@
 {if $kd_col == 'start'}
-<table cellpadding="0" cellspacing="1" border="0">
-    <tr>
-        <td width="360" align="left" valign="top">
+<div id="kl-detail-left" style="width:340px; text-align:left; vertical-align:top; float:left; ">
 {elseif $kd_col == 'middle'}
-        </td>
-        <td width="50">&nbsp;</td>
-        <td align="left" valign="top" width="398">
-{else}        </td>
-    </tr>
-</table>{/if}
+</div>
+<div id="kl-detail-right" style="width:398px; text-align:left; vertical-align:top; float:right">
+{else}
+</div>{/if}

@@ -1,49 +1,36 @@
-            <div class="block-header">Involved parties: {$involvedPartyCount}</div>
+<div id="kl-detail-invsum">
+	<div class="block-header">Involved parties: {$involvedPartyCount}</div>
 
             {if $showext && $involvedPartyCount > 4}
-            <table class="kb_table_involved" width="360" border="0" cellspacing="1">
-                <tr class="kb-table-header">
-                    {if $alliesCount > 1 || !$kill}<th>Alliances</th> {/if}<th>Corporations</th> <th>Ships</th>
-                </tr>
-
+	<table class="kb-table" width="100%" border="0" cellspacing="1">
                 {assign var="first" value="true"}
 
                 {foreach from=$invAllies key="key" item="l"}
-                    <tr class="kb-table-row-even">
-                        {if $alliesCount > 1 || !$kill}
-                        <td class="kb-table-cell">
-                            ({$l.quantity}) {$key|truncate:30:"...":true} <br/>
-                        </td>
+		<tr class="kb-table-row-even" >
+                        {if 1 || $alliesCount > 0}
+			<th class="kb-table-header">
+				({$l.quantity}) {$key|truncate:30:"...":true}
+			</th>
                         {/if}
-                        <td class="kb-table-cell">
-                            {if $alliesCount > 1 || !$kill}
-                                {foreach from=$l.corps key="key1" item="l1"}
-                                    ({$l1}) {$key1|truncate:21:"...":true} <br/>
-                                {/foreach}
-                            {else}
-                                {foreach from=$l.corps key="key1" item="l1"}
-                                    ({$l1}) {$key1|truncate:35:"...":true} <br/>
-                                {/foreach}
-                            {/if}
-                        </td>
                         {if $first == "true"}
-                            <td rowspan="{$alliesCount}" class="kb-table-cell" style="white-space: nowrap">
-                            {if $alliesCount > 1 || !$kill}
-                                {foreach from=$invShips key="key" item="l"}
-                                    ({$l}) {$key|truncate:16:"...":true} <br/>
+			<td rowspan="{$alliesCount * 2}" class="kb-table-cell" style="white-space: nowrap">
+                                {foreach from=$invShips key="key2" item="l2"}
+				({$l2}) {$key2|truncate:22:"...":true} <br/>
                                 {/foreach}
-                            {else}
-                                {foreach from=$invShips key="key" item="l"}
-                                    ({$l}) {$key|truncate:22:"...":true} <br/>
-                                {/foreach}
-                            {/if}
-                           </td>
-
+			</td>
                             {assign var="first" value="false"}
                         {/if}
-                    </tr>
+		</tr>
+		<tr class="kb-table-row-even">
+			<td class="kb-table-cell">
+			{foreach from=$l.corps key="key1" item="l1"}
+				({$l1}) {$key1|truncate:35:"...":true} <br/>
+			{/foreach}
+			</td>
+		</tr>
                 {/foreach}
 
-            </table>
-            <br/>
+	</table>
+	<br/>
             {/if}
+</div>

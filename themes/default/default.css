@@ -17,7 +17,7 @@ html, body
 
 font,th,td,p,a,div
 {
-  font-family: Verdana, Bitstream Vera Sans, Arial, Helvetica;
+  font-family: Verdana, "Bitstream Vera Sans", Arial, Helvetica;
 }
 
 td
@@ -63,7 +63,7 @@ input, button, select
   font-size: 11px;
 }
 
-#context
+#context, .context_element
 {
   margin-top: 10px;
   padding: 10px;
@@ -144,7 +144,7 @@ div.bar-red
   font-size: 16px;
   font-weight: bold;
 }
-
+/* caption over boxes - Involved parties */
 .block-header
 {
   margin-top: 10px;
@@ -155,7 +155,7 @@ div.bar-red
   font-size: 12px;
   font-weight: bold;
 }
-
+/* for exampe Awards for April 2007 */
 .block-header2
 {
   margin-top: 10px;
@@ -202,7 +202,7 @@ textarea.killmail
 {
   height: 10px;
 }
-
+/* Ship type */
 .kb-table-header
 {
   height: 15px;
@@ -236,7 +236,7 @@ textarea.killmail
 { 
   background: green; 
 }
-
+/* over Kill in hom */
 .kb-table-row-hover
 {
   color: #222222;
@@ -279,7 +279,7 @@ td.avatar-name
 
 td.killmail
 {
-  font-family: Courier New, Courier;
+  font-family: "Courier New", Courier;
   font-size: 11px;
   color: #dddddd;
 }
@@ -553,7 +553,7 @@ a:hover {
 }
 #comments-wrap {
 	border-top:#333333 thin solid;
-	width:350px;
+	width:250px;
 	margin-top:15px;
 	float:left;
 	clear:left;
@@ -706,7 +706,7 @@ a.kb-contract:visited {
   float: left;
 }
 
-#context
+#context, .context_element
 {
   float: right;
 }
@@ -733,7 +733,6 @@ a.kb-contract:visited {
 .summarytable
 {
 	margin-bottom: 5px;
-	margin-top: 5px;
 }
 .klsplitter
 {
@@ -763,4 +762,34 @@ a.kb-contract:visited {
 .counter
 {
 	clear: both;
+}
+#kl-detail-victim, #kl-detail-invsum, #kl-detail-inv, #kl-detail-comments,
+  #kl-detail-vicship, #kl-detail-shipdetails, #kl-detail-fitting
+{
+	margin-bottom: 10px;
+}
+#kl-detail-left, #kl-detail-right
+{
+	text-align:left;
+	vertical-align:top;
+	margin-bottom: 10px;
+}
+#kl-detail-left
+{
+	width:340px;
+	float:left;
+}
+#kl-detail-right
+{
+	width:398px;
+	float:right;
+}
+#popup
+{
+	display:none;
+	position:absolute;
+	top:217px; width:99%;
+	z-index:3;
+	padding: 5px;
+	text-align:center;
 }
