@@ -20,7 +20,7 @@ options::fadd('Display profiling information', 'cfg_profile', 'checkbox');
 options::fadd('Log errors', 'cfg_log', 'checkbox');
 
 options::cat('Advanced', 'Configuration', 'Public-Mode');
-options::fadd('Only Kills in SummaryTables', 'public_summarytable', 'checkbox', '', '', 'CORP_ID and ALLIANCE_ID in config has to be 0 to work "public"');
+options::fadd('Only Kills in SummaryTables', 'public_summarytable', 'checkbox', '', '', 'No board owners should be set to work in public mode');
 options::fadd('Remove Losses Page', 'public_losses', 'checkbox');
 options::fadd('Stats Page', 'public_stats', 'select', array('admin_config', 'createSelectStats'));
 
@@ -157,13 +157,13 @@ class admin_config
 	{
 		$qry = DBFactory::getDBQuery();
 		$numeric = false;
-		$crp_id = CORP_ID;
+		$crp_id = 0;
 
-		if(isset($_POST['option_add_pilotid']))
-				$plt_id = intval($_POST['option_add_pilotid']);
-		else $plt_id = PILOT_ID;
-
-		if($plt_id) $crp_id = 0;
+//		if(isset($_POST['option_add_pilotid']))
+//				$plt_id = intval($_POST['option_add_pilotid']);
+//		else $plt_id = PILOT_ID;
+//
+//		if($plt_id) $crp_id = 0;
 
 		if(isset($_POST['option_add_corpid']) && $_POST['option_add_corpid'])
 		{
@@ -240,21 +240,21 @@ class admin_config
 	{
 		$qry = DBFactory::getDBQuery();
 		$numeric = false;
-		$all_id = ALLIANCE_ID;
+		$all_id = 0;
 
-		if(isset($_POST['option_add_pilotid']))
-		{
-			$plt_id = intval($_POST['option_add_pilotid']);
-		}
-		else $plt_id = PILOT_ID;
-
-		if(isset($_POST['option_add_corpid']))
-		{
-			$crp_id = intval($_POST['option_add_corpid']);
-		}
-		else $crp_id = CORP_ID;
-
-		if($plt_id || $crp_id) $all_id = 0;
+//		if(isset($_POST['option_add_pilotid']))
+//		{
+//			$plt_id = intval($_POST['option_add_pilotid']);
+//		}
+//		else $plt_id = PILOT_ID;
+//
+//		if(isset($_POST['option_add_corpid']))
+//		{
+//			$crp_id = intval($_POST['option_add_corpid']);
+//		}
+//		else $crp_id = CORP_ID;
+//
+//		if($plt_id || $crp_id) $all_id = 0;
 
 		if(isset($_POST['option_add_allianceid']) && $_POST['option_add_allianceid'])
 		{
@@ -276,7 +276,7 @@ class admin_config
 		if(strlen(trim($all_id == '')) > 0) $all_id = 0;
 
 		if($numeric || $all_id > 0)
-		{ //second condition is for when nothing was posted and it uses the old ALLIANCE_ID
+		{
 			if($all_id > 100000000)
 			{ //external IDs are over 100 million
 				$qry->execute("SELECT `all_name`, `all_id` FROM `kb3_alliances` WHERE `all_external_id` = " . $all_id);

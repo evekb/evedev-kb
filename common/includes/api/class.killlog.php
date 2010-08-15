@@ -678,20 +678,35 @@ class API_KillLog
             }
         }
 
+		$poswasfriendly = false;
         // If ignoring friendly POS Structures
-        if ($this->isposkill_) {
-        // is board an alliance board?
-        	if ( ALLIANCE_ID == 0)
+        if ($this->isposkill_)
+		{
+			// This board has corp owners
+        	if ( config::get('cfg_corpid'))
             {
-				// no it's set as a corp
-                $thiscorp = new Corporation(CORP_ID);
-                if ( $this->vcorp_ == $thiscorp->getName() )
-                	$poswasfriendly = true;
-            } else {
-				// yes it's an Alliance board
-            	$thisalliance = new Alliance(ALLIANCE_ID);
-                if ( $this->valliance_ == $thisalliance->getName() )
-                    $poswasfriendly = true;
+				foreach(config::get('cfg_corpid') as $corp)
+				{
+					$thiscorp = new Corporation($corp);
+					if ( $this->vcorp_ == $thiscorp->getName() )
+					{
+						$poswasfriendly = true;
+						break;
+					}
+				}
+            }
+			// This board has alliance owners
+			if(config::get('cfg_allianceid') && !$poswasfriendly)
+			{
+				foreach(config::get('cfg_allianceid') as $all)
+				{
+					$thisalliance = new Alliance($all);
+					if ( $this->valliance_ == $thisalliance->getName() )
+					{
+						$poswasfriendly = true;
+						break;
+					}
+				}
             }
         }
 

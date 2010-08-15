@@ -145,7 +145,7 @@ class KillListTable
 			{
 				if(config::get('cfg_allianceid') && in_array($kill->getVictimAllianceID(), config::get('cfg_allianceid'))) $kll['loss'] = true;
 				elseif (config::get('cfg_corpid') && in_array($kill->getVictimCorpID(), config::get('cfg_corpid'))) $kll['loss'] = true;
-				elseif (config::get('cfg_pilotid') && in_array($pilot->getID(), config::get('cfg_pilotid'))) $kll['loss'] = true;
+				elseif (config::get('cfg_pilotid') && in_array($kill->getVictimID(), config::get('cfg_pilotid'))) $kll['loss'] = true;
 				else $kll['loss'] = false;
 				$kll['kill'] = !$kll['loss'];
 			}

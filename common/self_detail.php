@@ -5,20 +5,26 @@
  * $HeadURL$
  */
 
-if(PILOT_ID)
+if(config::get('cfg_allianceid'))
 {
-	$_GET['plt_id'] = PILOT_ID;
-	include('pilot_detail.php');
+	$alls = config::get('cfg_allianceid');
+	$_GET['all_id'] = $alls[0];
+	unset($alls);
+	include('alliance_detail.php');
 }
-elseif(CORP_ID)
+elseif(config::get('cfg_corpid'))
 {
-	$_GET['crp_id'] = CORP_ID;
+	$corps = config::get('cfg_corpid');
+	$_GET['crp_id'] = $corps[0];
+	unset($corps);
 	include('corp_detail.php');
 }
-elseif(ALLIANCE_ID)
+elseif(PILOT_ID)
 {
-	$_GET['all_id'] = ALLIANCE_ID;
-	include('alliance_detail.php');
+	$pilots = config::get('cfg_pilotid');
+	$_GET['plt_id'] = $pilots[0];
+	unset($pilots);
+	include('pilot_detail.php');
 }
 else
 {

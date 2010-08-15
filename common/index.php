@@ -80,6 +80,8 @@ define('KB_HOST', config::get('cfg_kbhost'));
 define('MAIN_SITE', config::get('cfg_mainsite'));
 define('IMG_URL', config::get('cfg_img'));
 define('KB_TITLE', config::get('cfg_kbtitle'));
+
+// set up themes.
 if(isset($_GET['theme']))
 {
 	$themename = preg_replace('/[^0-9a-zA-Z-_]/','',$_GET['theme']);
@@ -112,6 +114,8 @@ else
 }
 define('THEME_URL', config::get('cfg_kbhost').'/themes/'.$themename);
 
+// Ensure board owner is stored appropriately in the config.
+// Should move to an update before release.
 if(!is_array(config::get('cfg_pilotid')))
 	if(config::get('cfg_pilotid')) config::set('cfg_pilotid',array(config::get('cfg_pilotid')));
 	else config::set('cfg_pilotid',array());
@@ -122,29 +126,30 @@ if(!is_array(config::get('cfg_allianceid')))
 	if(config::get('cfg_allianceid')) config::set('cfg_allianceid', array(config::get('cfg_allianceid')));
 	else config::set('cfg_allianceid',array());
 
-if (config::get('cfg_pilotid'))
+//Configure legacy defines.
+if(config::get('cfg_allianceid'))
 {
-	$plt = config::get('cfg_pilotid');
-	define('PILOT_ID', $plt[0] );
-	unset($plt);
+	$all = config::get('cfg_allianceid');
+	define('PILOT_ID', 0);
 	define('CORP_ID', 0);
-	define('ALLIANCE_ID', 0);
+	define('ALLIANCE_ID', $all[0] );
+	unset($all);
 }
 elseif (config::get('cfg_corpid'))
 {
-	define('PILOT_ID', 0);
 	$crp = config::get('cfg_corpid');
-	define('CORP_ID', $crp[0] );
-	unset($crp);
-	define('ALLIANCE_ID', 0);
-}
-elseif(config::get('cfg_allianceid'))
-{
 	define('PILOT_ID', 0);
+	define('CORP_ID', $crp[0] );
+	define('ALLIANCE_ID', 0);
+	unset($crp);
+}
+elseif (config::get('cfg_pilotid'))
+{
+	$plt = config::get('cfg_pilotid');
+	define('PILOT_ID', $plt[0] );
 	define('CORP_ID', 0);
-	$all = config::get('cfg_allianceid');
-	define('ALLIANCE_ID', $all[0] );
-	unset($all);
+	define('ALLIANCE_ID', 0);
+	unset($plt);
 }
 else
 {
@@ -183,6 +188,7 @@ if (config::get('auto_reinforced'))
 	}
 }
 
+// Check if the database structure needs updating
 if(config::get('DBUpdate') < LATEST_DB_UPDATE)
 {
 	// Check db is installed.
@@ -281,25 +287,33 @@ $smarty->assignByRef('config', $config);
 $smarty->assign('is_IGB', IS_IGB);
 
 // Set the name of the board owner.
+$owners = array();
+if(config::get('cfg_allianceid'))
+{
+	foreach(config::get('cfg_allianceid') as $owner)
+	{
+		$alliance=new Alliance($owner);
+		$owners[] = htmlentities($alliance->getName());
+	}
+}
+if (config::get('cfg_corpid'))
+{
+	foreach(config::get('cfg_corpid') as $owner)
+	{
+		$corp = new Corporation($owner);
+		$owners[] = htmlentities($corp->getName());
+	}
+}
 if (config::get('cfg_pilotid'))
 {
-	$pilot=new Pilot(config::get('cfg_pilotid'));
-	$smarty->assign('kb_owner', htmlentities($pilot->getName() ));
+	foreach(config::get('cfg_corpid') as $owner)
+	{
+		$pilot = new Pilot($owner);
+		$owners[] = htmlentities($pilot->getName());
+	}
 }
-elseif (config::get('cfg_corpid'))
-{
-	$corp=new Corporation(config::get('cfg_corpid'));
-	$smarty->assign('kb_owner', htmlentities($corp->getName() ));
-}
-elseif(config::get('cfg_allianceid'))
-{
-	$alliance=new Alliance(config::get('cfg_allianceid'));
-	$smarty->assign('kb_owner', htmlentities($alliance->getName() ));
-}
-else
-{
-	$smarty->assign('kb_owner', false);
-}
+if(!$owners) $smarty->assign('kb_owner', false);
+else $smarty->assign('kb_owner', implode(',', $owners));
 
 // Show a system message on all pages if the init stage has generated any.
 if(isset($boardMessage)) $smarty->assign('message', $boardMessage);

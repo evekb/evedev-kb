@@ -68,18 +68,13 @@ class pCorpDetail extends pageAssembly
 				$this->corp = new Corporation($this->crp_external_id, true);
 				$this->crp_id = $this->corp->getID();
 			}
-			elseif(CORP_ID)
-			{
-				$this->crp_id = CORP_ID;
-				$this->corp = new Corporation($this->crp_id);
-			}
 			else
 			{
 				$html = 'That corporation does not exist.';
-				$this->page->generate($html);
+				$this->page->setContent($html);
+				$this->page->generate();
 				exit;
 			}
-
 		}
 		else $this->corp = new Corporation($this->crp_id);
 		if(isset($_GET['all_id'])) $this->all_id = intval($_GET['all_id']);
@@ -179,7 +174,7 @@ class pCorpDetail extends pageAssembly
 
 		if ($result != "Corporation is not part of alliance.")
 		{
-			$smarty->assign('ceo_url', $myAPI->getCeoID());
+			$smarty->assign('ceo_url', "?a=pilot_detail&amp;plt_ext_id=".$myAPI->getCeoID());
 			$smarty->assign('ceo_name', $myAPI->getCeoName());
 			$smarty->assign('HQ_location', $myAPI->getStationName());
 			$smarty->assign('member_count', $myAPI->getMemberCount());

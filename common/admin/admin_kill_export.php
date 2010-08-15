@@ -84,14 +84,26 @@ if ($_POST)
 	}
 	if (!isset($_SESSION['admin_kill_export']['to_export']))
 	{
-		if (ALLIANCE_ID)
+		$comma = false;
+		$str = '';
+		if(config::get('cfg_allianceid'))
 		{
-			$_SESSION['admin_kill_export']['to_export'] = 'a'.ALLIANCE_ID;
+			$str = 'a'.implode(',a', config::get('cfg_allianceid'));
+			$comma = true;
 		}
-		else
+		if (config::get('cfg_corpid'))
 		{
-			$_SESSION['admin_kill_export']['to_export'] = 'c'.CORP_ID;
+			if($comma) $str .= ',';
+			else $comma = true;
+			$str .= 'c'.implode(',c', config::get('cfg_corpid'));
 		}
+		if (config::get('cfg_pilotid'))
+		{
+			if($comma) $str .= ',';
+			$str .= 'p'.implode(',p', config::get('cfg_pilotid'));
+		}
+		$_SESSION['admin_kill_export']['to_export'] = $str;
+
 	}
 }
 elseif (!isset($_SESSION['admin_kill_export']['do']) || !isset($_SESSION['admin_kill_export']['select']))

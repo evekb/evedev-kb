@@ -45,15 +45,10 @@ class pAllianceDetail extends pageAssembly
 		$this->page->addHeader('<meta name="robots" content="index, nofollow" />');
 		if (!$this->all_id && !$this->all_external_id)
 		{
-			if (ALLIANCE_ID)
-			{
-				$this->all_id = ALLIANCE_ID;
-			}
-			else
-			{
-				echo 'no valid alliance id specified<br/>';
-				exit;
-			}
+			$html = 'No valid alliance id specified.';
+			$this->page->setContent($html);
+			$this->page->generate();
+			exit;
 		}
 
 		if(!$this->all_id && $this->all_external_id)
@@ -67,7 +62,7 @@ class pAllianceDetail extends pageAssembly
 			}
 			else
 			{
-				echo 'no valid alliance id specified<br/>';
+				echo 'No valid alliance id specified.';
 				exit;
 			}
 		}
