@@ -179,7 +179,7 @@ class pCorpDetail extends pageAssembly
 
 		if ($result != "Corporation is not part of alliance.")
 		{
-			$smarty->assign('ceo_url', $myAPI->getCeoID());
+			$smarty->assign('ceo_url', "?a=pilot_detail&amp;plt_ext_id=".$myAPI->getCeoID());
 			$smarty->assign('ceo_name', $myAPI->getCeoName());
 			$smarty->assign('HQ_location', $myAPI->getStationName());
 			$smarty->assign('member_count', $myAPI->getMemberCount());
