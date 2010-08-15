@@ -28,7 +28,7 @@
  */
 
 $starttime = microtime(true);
-$idfeedversion = 0.91;
+$idfeedversion = "1.00";
 
 $maxkillsreturned = 200;
 
@@ -47,45 +47,42 @@ $qry = DBFactory::getDBQuery();
 
 if(isset($_GET['alliance']))
 {
-	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_external_id = ".intval($_GET['alliance']));
+	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_external_id IN (".$qry->escape($_GET['alliance']).")");
 	if(!$qry->recordCount()) die($xml);
-	$row = $qry->getRow();
-	$list->addCombinedAlliance($row['all_id']);
+	while($row = $qry->getRow()) $list->addCombinedAlliance($row['all_id']);
 }
-else if(isset($_GET['corp']))
+if(isset($_GET['corp']))
 {
-	$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_external_id = ".intval($_GET['corp']));
+	$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_external_id IN (".$qry->escape($_GET['corp']).")");
 	if(!$qry->recordCount()) die($xml);
-	$row = $qry->getRow();
-	$list->addCombinedCorp($row['crp_id']);
+	while($row = $qry->getRow()) $list->addCombinedCorp($row['crp_id']);
 }
-else if(isset($_GET['pilot']))
+if(isset($_GET['pilot']))
 {
-	$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_externalid = ".intval($_GET['pilot'])." LIMIT 1");
+	$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_externalid IN (".$qry->escape($_GET['pilot']).")");
 	if(!$qry->recordCount()) die($xml);
-	$row = $qry->getRow();
-	$list->addCombinedPilot($row['plt_id']);
+	while($row = $qry->getRow()) $list->addCombinedPilot($row['plt_id']);
 }
-else if(isset($_GET['alliancename']))
+if(isset($_GET['alliancename']))
 {
-	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_name = '".$qry->escape(urldecode($_GET['alliancename']))."' LIMIT 1");
+	$_GET['alliancename'] = '"'.str_replace(',', '","', $_GET['alliancename']).'"';
+	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_name IN (".$qry->escape(urldecode($_GET['alliancename'])).")");
 	if(!$qry->recordCount()) die($xml);
-	$row = $qry->getRow();
-	$list->addCombinedAlliance($row['all_id']);
+	while($row = $qry->getRow()) $list->addCombinedAlliance($row['all_id']);
 }
-else if(isset($_GET['corpname']))
+if(isset($_GET['corpname']))
 {
-	$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_name = '".$qry->escape(urldecode($_GET['corpname']))."' LIMIT 1");
+	$_GET['corpname'] = '"'.str_replace(',', '","', $_GET['corpname']).'"';
+	$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_name IN (".$qry->escape(urldecode($_GET['corpname'])).")");
 	if(!$qry->recordCount()) die($xml);
-	$row = $qry->getRow();
-	$list->addCombinedCorp($row['crp_id']);
+	while($row = $qry->getRow()) $list->addCombinedCorp($row['crp_id']);
 }
-else if(isset($_GET['pilotname']))
+if(isset($_GET['pilotname']))
 {
-	$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_name = '".$qry->escape(urldecode($_GET['pilotname']))."' LIMIT 1");
+	$_GET['corpname'] = '"'.str_replace(',', '","', $_GET['corpname']).'"';
+	$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_name IN (".$qry->escape(urldecode($_GET['pilotname'])).")");
 	if(!$qry->recordCount()) die($xml);
-	$row = $qry->getRow();
-	$list->addCombinedPilot($row['plt_id']);
+	while($row = $qry->getRow()) $list->addCombinedPilot($row['plt_id']);
 }
 
 if(isset($_GET['system']))

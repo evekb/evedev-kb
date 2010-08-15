@@ -28,7 +28,7 @@ class IDFeed
 	private $time = '';
 	private $cachedTime = '';
 	private $errormsg = '';
-	const version = "0.91";
+	const version = "1.00";
 
 	//! Construct the Fetcher class and initialise variables.
 
@@ -110,25 +110,40 @@ class IDFeed
 		//Set to board owner.
 		if($type == '')
 		{
-			if(ALLIANCE_ID)
+			if(config::get('cfg_allianceid'))
 			{
-				$all = new Alliance(ALLIANCE_ID);
-				if(!$all->getExternalID()) return false;
-				$this->options['alliance'] = $all->getExternalID();
+				$alls = array();
+				foreach(config::get('cfg_allianceid') as $val)
+				{
+					$all = new Alliance($val);
+					if(!$all->getExternalID()) return false;
+					$alls[] = $all->getExternalID();
+				}
+				$this->options['alliance'] = implode(',', $alls);
 				return true;
 			}
-			elseif(CORP_ID)
+			if(config::get('cfg_corpid'))
 			{
-				$crp = new Corporation(CORP_ID);
-				if(!$all->getExternalID()) return false;
-				$this->options['corp'] = $crp->getExternalID();
+				$crps = array();
+				foreach(config::get('cfg_corpid') as $val)
+				{
+					$crp = new Corporation($val);
+					if(!$crp->getExternalID()) return false;
+					$crps[] = $crp->getExternalID();
+				}
+				$this->options['corp'] = implode(',', $crps);
 				return true;
 			}
-			elseif(PILOT_ID)
+			if(config::get('cfg_pilotid'))
 			{
-				$plt = new Pilot(PILOT_ID);
-				if(!$plt->getExternalID()) return false;
-				$this->options['pilot'] = $plt->getExternalID();
+				$pilots = array();
+				foreach(config::get('cfg_pilotid') as $val)
+				{
+					$pilot = new Pilot($val);
+					if(!$pilot->getExternalID()) return false;
+					$pilots[] = $pilot->getExternalID();
+				}
+				$this->options['pilot'] = implode(',', $pilots);
 				return true;
 			}
 			return true;
@@ -149,28 +164,7 @@ class IDFeed
 		//Set to board owner.
 		if($type == '')
 		{
-			if(ALLIANCE_ID)
-			{
-				$all = new Alliance(ALLIANCE_ID);
-				if(!$all->getExternalID()) return false;
-				$this->options['alliance'] = $all->getExternalID();
-				return true;
-			}
-			elseif(CORP_ID)
-			{
-				$crp = new Corporation(CORP_ID);
-				if(!$crp->getExternalID()) return false;
-				$this->options['corp'] = $crp->getExternalID();
-				return true;
-			}
-			elseif(PILOT_ID)
-			{
-				$plt = new Pilot(PILOT_ID);
-				if(!$plt->getExternalID()) return false;
-				$this->options['pilot'] = $plt->getExternalID();
-				return true;
-			}
-			return true;
+			return $this->setID();
 		}
 		else
 		{

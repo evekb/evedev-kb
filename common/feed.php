@@ -120,17 +120,17 @@ if ($_GET['master'] == 1 && config::get('feed_allowmaster') == 1)
 
 if (!$master && $_GET['losses'])
 {
-	if (PILOT_ID  && !$pilot && !corp && !$alli) // local
+	if (config::get('cfg_pilotid')  && !$pilot && !corp && !$alli) // local
 	{
-		$klist->addVictimPilot(new Pilot(PILOT_ID));
+		$klist->addVictimPilot(config::get('cfg_pilotid'));
 	}
-	if (CORP_ID  && !pilot && !$corp && !$alli) // local
+	if (config::get('cfg_corpid')  && !$pilot && !$corp && !$alli) // local
 	{
-		$klist->addVictimCorp(new Corporation(CORP_ID));
+		$klist->addVictimCorp(config::get('cfg_corpid'));
 	}
-	if (ALLIANCE_ID  && !pilot && !$corp && !$alli) // local
+	if (config::get('cfg_allianceid')  && !$pilot && !$corp && !$alli) // local
 	{
-		$klist->addVictimAlliance(new Alliance(ALLIANCE_ID));
+		$klist->addVictimAlliance(config::get('cfg_allianceid'));
 	}
 	if ($pilot && $_GET['friend']) // remote friend
 	{
@@ -158,50 +158,50 @@ if (!$master && $_GET['losses'])
 	}
 }
 else if(!$master && $_GET['combined'])
+{
+	if($pilot) $klist->addCombinedPilot($pilot);
+	if($corp) $klist->addCombinedCorp($corp);
+	if($alli) $klist->addCombinedAlliance($alli);
+}
+else if (!$master)
+{
+	if (config::get('cfg_pilotid')  && !$pilot && !corp && !$alli) // local
 	{
-		if($pilot) $klist->addCombinedPilot($pilot);
-		if($corp) $klist->addCombinedCorp($corp);
-		if($alli) $klist->addCombinedAlliance($alli);
+		$klist->addInvolvedPilot(config::get('cfg_pilotid'));
 	}
-	else if (!$master)
-		{
-			if (PILOT_ID  && !$pilot && !corp && !$alli) // local
-			{
-				$klist->addInvolvedPilot(new Pilot(PILOT_ID));
-			}
-			if (CORP_ID && !$pilot && !$corp && !$alli) // local
-			{
-				$klist->addInvolvedCorp(new Corporation(CORP_ID));
-			}
-			if (ALLIANCE_ID && !$pilot && !$corp && !$alli) // local
-			{
-				$klist->addInvolvedAlliance(new Alliance(ALLIANCE_ID));
-			}
-			if ($pilot && $_GET['friend']) // remote friend
-			{
-				$klist->addInvolvedPilot($pilot);
-			}
-			if ($corp && $_GET['friend']) // remote friend
-			{
-				$klist->addInvolvedCorp($corp);
-			}
-			if ($alli && $_GET['friend']) // remote friend
-			{
-				$klist->addInvolvedAlliance($alli);
-			}
-			if ($pilot && !$_GET['friend']) // remote
-			{
-				$klist->addVictimPilot($pilot);
-			}
-			if ($corp && !$_GET['friend']) // remote
-			{
-				$klist->addVictimCorp($corp);
-			}
-			if ($alli && !$_GET['friend']) // remote
-			{
-				$klist->addVictimAlliance($alli);
-			}
-		}
+	if (config::get('cfg_corpid')  && !$pilot && !$corp && !$alli) // local
+	{
+		$klist->addInvolvedCorp(config::get('cfg_corpid'));
+	}
+	if (config::get('cfg_allianceid')  && !$pilot && !$corp && !$alli) // local
+	{
+		$klist->addInvolvedAlliance(config::get('cfg_allianceid'));
+	}
+	if ($pilot && $_GET['friend']) // remote friend
+	{
+		$klist->addInvolvedPilot($pilot);
+	}
+	if ($corp && $_GET['friend']) // remote friend
+	{
+		$klist->addInvolvedCorp($corp);
+	}
+	if ($alli && $_GET['friend']) // remote friend
+	{
+		$klist->addInvolvedAlliance($alli);
+	}
+	if ($pilot && !$_GET['friend']) // remote
+	{
+		$klist->addVictimPilot($pilot);
+	}
+	if ($corp && !$_GET['friend']) // remote
+	{
+		$klist->addVictimCorp($corp);
+	}
+	if ($alli && !$_GET['friend']) // remote
+	{
+		$klist->addVictimAlliance($alli);
+	}
+}
 
 $kills = array();
 $finalkill = 0;
@@ -218,13 +218,13 @@ if (!$kid)
 {
 	asort($kills);
 }
-$qry = DBFactory::getDBQuery();;
+$qry = DBFactory::getDBQuery();
 // If kills returned = $maxreturned assume that it was limited and set
 // last kill as the lower of highest kill id returned or highest non-classified
 // kill
 if($klist->getCount() != $maxreturned)
 {
-	$qry = DBFactory::getDBQuery();;
+	$qry = DBFactory::getDBQuery();
 	if(config::get('kill_classified'))
 	{
 		$qry->execute('SELECT max(kll_id) as finalkill FROM kb3_kills WHERE kll_timestamp < "'.(date('Y-m-d H:i:s',time()-config::get('kill_classified')*60*60)).'"');
