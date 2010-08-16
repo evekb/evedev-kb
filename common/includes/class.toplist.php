@@ -338,7 +338,7 @@ class TopList
 
 		if($this->mixedinvolved)
 		{
-			$this->sql_ .= " ( ";
+			$this->sql_ .= $op." ( ";
 			$op = '';
 		}
 		if ($this->inv_plt)
