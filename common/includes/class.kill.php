@@ -756,7 +756,26 @@ class Kill
 		// No details for classified kills.
 		if($this->isClassified()) return 0;
 		if($this->relatedkillcount_) return $this->relatedkillcount_;
-		if(config::get('cfg_allianceid'))
+
+		if(config::get('cfg_pilotid') && config::get('cfg_allianceid')
+			|| config::get('cfg_pilotid') && config::get('cfg_corpid')
+			|| config::get('cfg_corpid') && config::get('cfg_allianceid'))
+		{
+			$sql ="SELECT COUNT(ind_kll_id) AS kills FROM kb3_inv_detail INNER JOIN
+				kb3_kills ON (kll_id = ind_kll_id) WHERE
+				ind_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
+				AND ind_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
+				AND kll_system_id = ".$this->solarsystem_->getID();
+			$sqlinv = array();
+			if(config::get('cfg_allianceid'))
+				$sqlinv[] = "ind_all_id in (".implode(",", config::get('cfg_allianceid')).")";
+			if(config::get('cfg_corpid'))
+				$sqlinv[] = "ind_crp_id in (".implode(",", config::get('cfg_corpid')).")";
+			if(config::get('cfg_pilotid'))
+				$sqlinv[] = "ind_plt_id in (".implode(",", config::get('cfg_pilotid')).")";
+			$sql .= " AND (".implode(" OR ", $sqlinv).") GROUP BY ind_kll_id";
+		}
+		else if(config::get('cfg_allianceid'))
 		{
 			$sql ="SELECT COUNT(ina_kll_id) AS kills FROM kb3_inv_all INNER JOIN
 				kb3_kills ON (kll_id = ina_kll_id) WHERE 
@@ -810,17 +829,34 @@ class Kill
 			(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60)).
 			"' AND kll.kll_timestamp >= '".
 			(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'";
+		$sqlInv = array();
+		$sqlVic = array();
+		$inv = false;
 		if(config::get('cfg_allianceid'))
 		{
-			$sql .=" AND EXISTS (SELECT * FROM kb3_inv_all WHERE ina_kll_id = kll.kll_id".
-				" AND ina_all_id NOT IN (".implode(",", config::get('cfg_allianceid')).") LIMIT 1) AND kll.kll_all_id in (".implode(",", config::get('cfg_allianceid')).")";
+			$sqlInv[] = "EXISTS (SELECT * FROM kb3_inv_detail WHERE ind_kll_id = kll.kll_id".
+				" AND ind_all_id NOT IN (".implode(",", config::get('cfg_allianceid')).") LIMIT 1)";
+			$sqlVic[] = "kll.kll_all_id IN (".implode(",", config::get('cfg_allianceid')).")";
+			$inv = true;
 		}
-		else if(config::get('cfg_corpid'))
+		if(config::get('cfg_corpid'))
 		{
-			$sql .=" AND  EXISTS (SELECT * FROM kb3_inv_crp WHERE inc_kll_id = kll.kll_id".
-				" AND inc_crp_id NOT IN (".implode(",", config::get('cfg_corpid')).") LIMIT 1)  AND kll.kll_crp_id = ".implode(",", config::get('cfg_corpid')).")";
+			$sqlInv[] = "EXISTS (SELECT * FROM kb3_inv_detail WHERE ind_kll_id = kll.kll_id".
+				" AND ind_crp_id NOT IN (".implode(",", config::get('cfg_corpid')).") LIMIT 1)";
+			$sqlVic[] .= "kll.kll_crp_id IN (".implode(",", config::get('cfg_corpid')).")";
+			$inv = true;
 		}
-
+		if(config::get('cfg_pilotid'))
+		{
+			$sqlInv[] = "EXISTS (SELECT * FROM kb3_inv_detail WHERE ind_kll_id = kll.kll_id".
+				" AND ind_plt_id NOT IN (".implode(",", config::get('cfg_pilotid')).") LIMIT 1)";
+			$sqlVic[] .= "kll.kll_victim_id IN (".implode(",", config::get('cfg_pilotid')).")";
+			$inv = true;
+		}
+		if($inv)
+		{
+			$sql .= " AND (".implode(' OR ', $sqlInv).") AND (".implode(' OR ', $sqlVic).") ";
+		}
 		$sql .= "/* related loss count */";
 		$qry = DBFactory::getDBQuery();
 		if(!$qry->execute($sql)) return 0;
