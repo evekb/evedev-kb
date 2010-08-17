@@ -40,13 +40,22 @@ class thumb
 		{
 			if (!$this->genCache())
 			{
+				if(file_exists('img/portrait_0_'.$this->size.'.jpg'))
+				{
+					header("Content-Type: image/jpeg");
+					readfile('img/portrait_0_'.$this->size.'.jpg');
+				}
+				else
+				{
+					echo "The image could not be displayed.";
+				}
 				return false;
 			}
 		}
 
 		if (headers_sent() || ob_get_contents())
 		{
-			echo 'An error occured.<br/>';
+			echo 'An error occurred.<br/>';
 			return false;
 		}
 		if ($this->encoding == 'jpeg')
@@ -273,7 +282,7 @@ class thumb
 		else if (is_numeric($this->id))
 		{
 			$img = $this->fetchImage("Alliance", 128);
-			if($this->size == 128) return true;
+			if($this->size == 128 && $img) return true;
 			//else $source = CacheHandler::getInternal($this->id.'_256.png', 'img');
 		}
 		else $img = imagecreatefrompng($source);
