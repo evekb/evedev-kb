@@ -3,7 +3,7 @@
 {foreach from=$involved key="key" item="i"}
 	<tr class="{cycle name="ccl"}">
 		<td rowspan="5" width="64" onclick="CCPEVE.showInfo({$i.typeID}, {$i.externalID})"><img {if $i.finalBlow == "true"}class="finalblow"{/if} height="64" width="64" src="{$i.portrait}" border="0" alt="inv portrait" /></td>
-		<td rowspan="5" width="64" onclick="CCPEVE.showPreview({$i.shipID})"><img {if $i.finalBlow == "true"}class="finalblow"{/if} height="64" width="64" src="{$i.shipImage}" border="0" alt="{$i.shipName}" /></a></td>
+		<td rowspan="5" width="64" onclick="CCPEVE.showPreview({$i.shipID})"><img {if $i.finalBlow == "true"}class="finalblow"{/if} height="64" width="64" src="{$i.shipImage}" border="0" alt="{$i.shipName}" /></td>
 
 		<td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;"><a href="{$i.pilotURL}">{$i.pilotName}</a></td>
 	</tr>

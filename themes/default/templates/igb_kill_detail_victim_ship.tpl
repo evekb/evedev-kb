@@ -1,7 +1,7 @@
 {cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
 <table class="kb-table" width="398" cellspacing="1">
 	<tr class="{cycle name="ccl"}">
-		<td width="64" height="64" rowspan="3" onClick="CCPEVE.showPreview({$victimShipID})"><img src="{$victimShipImg}" width="64" height="64" alt="{$victimShipName}" /></a></td>
+		<td width="64" height="64" rowspan="3" onClick="CCPEVE.showPreview({$victimShipID})"><img src="{$victimShipImg}" width="64" height="64" alt="{$victimShipName}" /></td>
 		<td class="kb-table-cell"><b>Ship:</b></td>
 		<td class="kb-table-cell"><b><a href="javascript:CCPEVE.showInfo({$victimShipID})">{$victimShipName}</a></b> ({$victimShipClassName})</td>
 	</tr>
