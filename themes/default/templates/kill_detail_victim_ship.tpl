@@ -2,7 +2,7 @@
 {cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
 	<table class="kb-table" width="100%" cellspacing="1">
 		<tr class="{cycle name="ccl"}" >
-			<td style="width:64px; height:64px"rowspan="3"><img src="{$victimShipImg}" width="64" height="64" alt="{$victimShipName}" /></td>
+			<td style="width:64px; height:64px" rowspan="3"><img src="{$victimShipImg}" width="64" height="64" alt="{$victimShipName}" /></td>
 			<td class="kb-table-cell" style="height:17px"><b>Ship:</b></td>
 			<td class="kb-table-cell"><b><a href="?a=invtype&amp;id={$victimShipID}">{$victimShipName}</a></b> ({$victimShipClassName})</td>
 		</tr>
