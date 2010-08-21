@@ -99,7 +99,6 @@ class cache
 				$cachetime = config::get('cache_time');
 			}
 
-			$cachetime = config::get('cache_time');
 			$cachetime = $cachetime * 60;
 
 			if (config::get('is_reinforced'))
@@ -110,7 +109,7 @@ class cache
 				$cachetime = $cachetime * 20;
 			}
 			$timestamp = time() - $cachehandler->age($cachefile);
-			
+
 			if(config::get('cache_update') == '*'
 				&& file_exists(KB_CACHEDIR.'/killadded.mk')
 				&& $timestamp < @filemtime(KB_CACHEDIR.'/killadded.mk'))
@@ -222,7 +221,10 @@ class cache
 	public static function deleteCache()
 	{
 		$cachefile = cache::genCacheName();
-		@unlink($cachefile);
+
+		if(DB_USE_MEMCACHE) $cachehandler = new CacheHandlerHashedMem();
+		$cachehandler = new CacheHandlerHashed();
+		$cachehandler->remove($cachefile);
 	}
 	//! Mark the cached page as still current without rebuilding it.
 	public static function touchCache()
