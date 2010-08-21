@@ -99,7 +99,6 @@ class cache
 				$cachetime = config::get('cache_time');
 			}
 
-			$cachetime = config::get('cache_time');
 			$cachetime = $cachetime * 60;
 
 			if (config::get('is_reinforced'))
