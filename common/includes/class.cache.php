@@ -78,7 +78,7 @@ class cache
 			&& !ini_get('zlib.output_compression');
 		$cachefile = cache::genCacheName();
 		if(defined('DB_USE_MEMCACHE')) $cachehandler = new CacheHandlerHashedMem();
-		$cachehandler = new CacheHandlerHashed();
+		else $cachehandler = new CacheHandlerHashed();
 
 		// If the cache doesn't exist then we don't need to check times.
 		if (cache::shouldCache($page) && $cachehandler->exists(cache::genCacheName()))
@@ -172,7 +172,7 @@ class cache
 			$cachefile = cache::genCacheName();
 
 			if(DB_USE_MEMCACHE) $cachehandler = new CacheHandlerHashedMem();
-			$cachehandler = new CacheHandlerHashed();
+			else $cachehandler = new CacheHandlerHashed();
 			$cachehandler->put($cachefile, preg_replace('/profile -->.*<!-- \/profile/','profile -->Cached '.gmdate("d M Y H:i:s").'<!-- /profile',ob_get_contents()));
 //			// Create directories if needed.
 //			if (!file_exists(KB_PAGECACHEDIR.'/'.KB_SITE.'/'.cache::genCacheName(true)))
@@ -223,7 +223,7 @@ class cache
 		$cachefile = cache::genCacheName();
 
 		if(DB_USE_MEMCACHE) $cachehandler = new CacheHandlerHashedMem();
-		$cachehandler = new CacheHandlerHashed();
+		else $cachehandler = new CacheHandlerHashed();
 		$cachehandler->remove($cachefile);
 	}
 	//! Mark the cached page as still current without rebuilding it.

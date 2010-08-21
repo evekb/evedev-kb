@@ -82,7 +82,7 @@ class CacheHandler
 	 * \param $dir String The directory to remove.
 	 * \param $parents Boolean Remove empty parent directory if true.
 	 */
-	private static function removeDir($dir, $parents = true)
+	protected static function removeDir($dir, $parents = true)
 	{
 		if(substr($dir, -1) != '/') $dir .= '/';
 		$dirfiles = scandir(self::$internalroot.'/'.$dir);
