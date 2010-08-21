@@ -57,13 +57,21 @@ class Comments
      */
     function addComment($name, $text) 
     { 
-        $comment = $this->bbencode($text); 
+        $comment = $this->bbencode($text);
 
-        $qry = DBFactory::getDBQuery(true);
-        $name = $qry->escape(strip_tags($name));
-        $qry->execute("INSERT INTO kb3_comments (`kll_id`,`site`, `comment`,`name`,`posttime`, `ip`)
-                       VALUES ('".$this->id_."','".KB_SITE."','".$comment."','".$name."','".kbdate('Y-m-d H:i:s')."', '".logger::getip()."')");
-        $id = $qry->getInsertID(); 
+		$qryP = new DBPreparedQuery();
+
+        $sql = "INSERT INTO kb3_comments (`kll_id`,`site`, `comment`,`name`,`posttime`, `ip`)
+                       VALUES (?, ?, ?, ?, ?, ?)";
+		$qryP->prepare($sql);
+		$site = KB_SITE;
+		$date = kbdate('Y-m-d H:i:s');
+		$ip = logger::getip();
+		$params = array('isssss', &$this->id_, &$site, &$comment, &$name, &$date, &$ip);
+		$qryP->bind_params($params);
+		$qryP->execute();
+
+        $id = $qryP->getInsertID();
         $this->comments_[] = array('time' => kbdate('Y-m-d H:i:s'), 
             'name' => $name, 'comment' => stripslashes($comment), 'id' => $id); 
 
