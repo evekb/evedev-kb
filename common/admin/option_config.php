@@ -97,7 +97,10 @@ class admin_config
 		if(strlen(trim($plt_id == '')) > 0) $plt_id = 0;
 
 		if($numeric || $plt_id > 0)
-		{ //second condition is for when nothing was posted and it uses the old PILOT_ID
+		{
+			//second condition is for when nothing was posted and it uses the old PILOT_ID
+			$plt_id = intval($plt_id);
+
 			if($plt_id > 100000000)
 			{ //external IDs are over 100 million
 				$qry->execute("SELECT `plt_name`, `plt_id` FROM `kb3_pilots` WHERE `plt_externalid` = " . $plt_id);
@@ -106,9 +109,9 @@ class admin_config
 					return admin_config::nameToId('idtoname', 'p', $plt_id);
 				}
 				$res = $qry->getRow();
-				$_POST['option_add_pilotid'] = $plt_id = $res['plt_id'];
+				$_POST['option_add_pilotid'] = $plt_id = intval($res['plt_id']);
 				$pilots = config::get('cfg_pilotid');
-				$pilots[] = $plt_id;
+				if(!in_array($plt_id, $pilots)) $pilots[] = $plt_id;
 				config::set('cfg_pilotid', $pilots);
 
 				$html = '<input type="text" id="option_add_pilotid" name="option_add_pilotid" value="" size="40" maxlength="64" />';
@@ -120,8 +123,7 @@ class admin_config
 				$html = '<input type="text" id="option_add_pilotid" name="option_add_pilotid" value="" size="40" maxlength="64" />';
 				if(!$qry->recordCount()) return $html;
 				$arr = config::get('cfg_pilotid');
-				$arr[] = intval($plt_id);
-				sort($arr);
+				if(!in_array($plt_id, $arr)) $arr[] = $plt_id;
 				config::set('cfg_pilotid',$arr);
 				unset($_POST['option_add_pilotid']);
 				return $html; // . ' &nbsp;('.$res['plt_name'].')';
@@ -138,9 +140,9 @@ class admin_config
 			else
 			{ //name is found
 				$res = $qry->getRow();
-				$_POST['option_add_pilotid'] = $plt_id = $res['plt_id'];
+				$_POST['option_add_pilotid'] = $plt_id = intval($res['plt_id']);
 				$pilots = config::get('cfg_pilotid');
-				$pilots[] = $plt_id;
+				if(!in_array($plt_id, $pilots)) $pilots[] = $plt_id;
 				config::set('cfg_pilotid', $pilots);
 				$html = '<input type="text" id="option_add_pilotid" name="option_add_pilotid" value="" size="40" maxlength="64" />';
 				return $html;
@@ -180,7 +182,10 @@ class admin_config
 		if(strlen(trim($crp_id == '')) > 0) $crp_id = 0;
 
 		if($numeric || $crp_id > 0)
-		{ //second condition is for when nothing was posted and it uses the old PILOT_ID
+		{ 
+			//second condition is for when nothing was posted and it uses the old PILOT_ID
+			$crp_id = intval($crp_id);
+
 			if($crp_id > 100000000)
 			{ //external IDs are over 100 million
 				$qry->execute("SELECT `crp_name`, `crp_id` FROM `kb3_corps` WHERE `crp_external_id` = " . $crp_id);
@@ -189,10 +194,10 @@ class admin_config
 					return admin_config::nameToId('idtoname', 'c', $crp_id);
 				}
 				$res = $qry->getRow();
-				$_POST['option_add_corpid'] = $crp_id = $res['crp_id'];
-				$corps = config::get('cfg_corpid');
-				$corps[] = $crp_id;
-				config::set('cfg_corpid', $corps);
+				$_POST['option_add_corpid'] = $crp_id = intval($res['crp_id']);
+				$arr = config::get('cfg_corpid');
+				if(!in_array($crp_id, $arr)) $arr[] = $crp_id;
+				config::set('cfg_corpid', $arr);
 
 				$html = '<input type="text" id="option_add_corpid" name="option_add_corpid" value="" size="40" maxlength="64" />';
 				return $html;
@@ -203,8 +208,7 @@ class admin_config
 				$html = '<input type="text" id="option_add_corpid" name="option_add_corpid" value="" size="40" maxlength="64" />';
 				if(!$qry->recordCount()) return $html;
 				$arr = config::get('cfg_corpid');
-				$arr[] = intval($crp_id);
-				sort($arr);
+				if(!in_array($crp_id, $arr)) $arr[] = $crp_id;
 				config::set('cfg_corpid',$arr);
 				unset($_POST['option_add_corpid']);
 				return $html;
@@ -221,10 +225,10 @@ class admin_config
 			else
 			{ //name is found
 				$res = $qry->getRow();
-				$_POST['option_add_corpid'] = $crp_id = $res['crp_id'];
-				$corps = config::get('cfg_corpid');
-				$corps[] = $crp_id;
-				config::set('cfg_corpid', $corps);
+				$_POST['option_add_corpid'] = $crp_id = intval($res['crp_id']);
+				$arr = config::get('cfg_corpid');
+				if(!in_array($crp_id, $arr)) $arr[] = $crp_id;
+				config::set('cfg_corpid', $arr);
 				$html = '<input type="text" id="option_add_corpid" name="option_add_corpid" value="" size="40" maxlength="64" />';
 				return $html;
 			}
@@ -277,6 +281,7 @@ class admin_config
 
 		if($numeric || $all_id > 0)
 		{
+			$all_id = intval($all_id);
 			if($all_id > 100000000)
 			{ //external IDs are over 100 million
 				$qry->execute("SELECT `all_name`, `all_id` FROM `kb3_alliances` WHERE `all_external_id` = " . $all_id);
@@ -286,9 +291,9 @@ class admin_config
 				}
 				$res = $qry->getRow();
 				$all_id = $res['all_id'];
-				$alliances = config::get('cfg_allianceid');
-				if(!in_array($all_id, $alliances)) $alliances[] = $all_id;
-				config::set('cfg_allianceid', $alliances);
+				$arr = config::get('cfg_allianceid');
+				if(!in_array($all_id, $arr)) $arr[] = $all_id;
+				config::set('cfg_allianceid', $arr);
 				$html = '<input type="text" id="option_add_allianceid" name="option_add_allianceid" value="" size="40" maxlength="64" />';
 				return $html;
 			}
@@ -299,8 +304,7 @@ class admin_config
 				if(!$qry->recordCount()) return $html;
 				$res = $qry->getRow();
 				$arr = config::get('cfg_allianceid');
-				if(!in_array($all_id, $arr)) $arr[] = intval($all_id);
-				sort($arr);
+				if(!in_array($all_id, $arr)) $arr[] = $all_id;
 				config::set('cfg_allianceid',$arr);
 				unset($_POST['option_add_allianceid']);
 				return $html;
@@ -318,10 +322,9 @@ class admin_config
 			{ //name is found
 				$res = $qry->getRow();
 				$_POST['option_add_allianceid'] = $all_id = $res['all_id'];
-				$alliances = config::get('cfg_allianceid');
-				if(!in_array($all_id, $alliances)) $alliances[] = $all_id;
-				sort($alliances);
-				config::set('cfg_allianceid', $alliances);
+				$arr = config::get('cfg_allianceid');
+				if(!in_array($all_id, $arr)) $arr[] = $all_id;
+				config::set('cfg_allianceid', $arr);
 				$html = '<input type="text" id="option_add_allianceid" name="option_add_allianceid" value="" size="40" maxlength="64" />';
 				return $html;
 			}
@@ -346,12 +349,14 @@ class admin_config
 			unset($_POST['option_rem_pilotid']);
 		}
 
-		$options = array(array('value' => '0', 'descr' => '-', 'state' => 1));
+		$options = array();
 		foreach(config::get('cfg_pilotid') as $val)
 		{
 			$plt = new Pilot($val);
-			$options[] = array('value' => $val, 'descr' => $plt->getName(), 'state' => 0);
+			$options[$plt->getName()] = array('value' => $val, 'descr' => $plt->getName(), 'state' => 0);
 		}
+		ksort($options);
+		array_unshift($options, array('value' => '0', 'descr' => '-', 'state' => 1));
 		return $options;
 	}
 	//! Remove selected corps then return an array of corps remaining.
@@ -367,12 +372,14 @@ class admin_config
 			unset($_POST['option_rem_corpid']);
 		}
 
-		$options = array(array('value' => '0', 'descr' => '-', 'state' => 1));
+		$options = array();
 		foreach(config::get('cfg_corpid') as $val)
 		{
 			$crp = new Corporation($val);
-			$options[] = array('value' => $val, 'descr' => $crp->getName(), 'state' => 0);
+			$options[$crp->getName()] = array('value' => $val, 'descr' => $crp->getName(), 'state' => 0);
 		}
+		ksort($options);
+		array_unshift($options, array('value' => '0', 'descr' => '-', 'state' => 1));
 		return $options;
 
 	}
@@ -389,12 +396,14 @@ class admin_config
 			unset($_POST['option_rem_allianceid']);
 		}
 
-		$options = array(array('value' => '0', 'descr' => '-', 'state' => 1));
+		$options = array();
 		foreach(config::get('cfg_allianceid') as $val)
 		{
 			$all = new Alliance($val);
-			$options[] = array('value' => $val, 'descr' => $all->getName(), 'state' => 0);
+			$options[$all->getName()] = array('value' => $val, 'descr' => $all->getName(), 'state' => 0);
 		}
+		ksort($options);
+		array_unshift($options, array('value' => '0', 'descr' => '-', 'state' => 1));
 		return $options;
 	}
 
@@ -443,7 +452,7 @@ class admin_config
 
 				$_POST['option_cfg_pilotid'] = $value = $plt->getID();
 				$pilots = config::get('cfg_pilotid');
-				$pilots[] = $value;
+				$pilots[] = intval($value);
 				config::set('cfg_pilotid', $pilots);
 
 				$html = '<input type="text" id="option_cfg_pilotid" name="option_cfg_pilotid" value="" size="40" maxlength="64" />';
@@ -458,7 +467,7 @@ class admin_config
 
 				$_POST['option_cfg_corpid'] = $value = $crp->getID();
 				$corps = config::get('cfg_corpid');
-				$corps[] = $value;
+				$corps[] = intval($value);
 				config::set('cfg_pilotid', $corps);
 
 				$html = '<input type="text" id="option_cfg_corpid" name="option_cfg_corpid" value="" size="40" maxlength="64" />';
@@ -470,7 +479,7 @@ class admin_config
 
 				$_POST['option_cfg_allianceid'] = $value = $all->getID();
 				$alliances = config::get('option_cfg_allianceid');
-				$alliances[] = $value;
+				$alliances[] = intval($value);
 				config::set('option_cfg_allianceid', $alliances);
 
 				$html = '<input type="text" id="option_cfg_allianceid" name="option_cfg_allianceid" value="" size="40" maxlength="64" />';
