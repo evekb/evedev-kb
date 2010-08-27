@@ -33,7 +33,7 @@
 											<br/>
 											<span title="countdown" id="countdown">500</span> Letters left<br/>
 											<b>Name:</b>
-											<input {if $username} disabled="disabled" {/if}style="position:relative; right:-3px;" class="comment-button" name="name" type="text" size="24" maxlength="24" {if $username}value="{$username}" {/if}/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+											<input style="position:relative; right:-3px;" class="comment-button" name="name" type="text" size="24" maxlength="24" {if $username}value="{$username}" {/if}/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 {if $config->get('comments_pw') and !$page->isAdmin()}
 											<br/>
 											<b>Password:</b>
