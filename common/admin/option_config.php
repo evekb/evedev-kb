@@ -5,9 +5,6 @@
  * $HeadURL$
  */
 
-include_once('api/class.idtoname.php');
-include_once('api/class.nametoid.php');
-
 options::cat('Advanced', 'Configuration', 'Available updates');
 options::fadd('Code updates', 'none', 'custom', array('update', 'codeCheck'));
 options::fadd('Database updates', 'none', 'custom', array('update', 'dbCheck'));
