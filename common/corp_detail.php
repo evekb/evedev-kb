@@ -5,9 +5,6 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.toplist.php');
-require_once("common/includes/evelogo.php");
-
 class pCorpDetail extends pageAssembly
 {
 		private $viewList = array();

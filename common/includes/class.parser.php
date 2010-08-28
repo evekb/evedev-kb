@@ -5,8 +5,6 @@
  * $HeadURL$
  */
 
-require_once("class.parser.translate.php");
-
 class Parser
 {
 	private static $pilots = array();
@@ -363,7 +361,7 @@ class Parser
 		{
 			$authorized = true;
 		}
-		elseif (config::get('cfg_pilotid') && in_array($pilot->getID(), config::get('cfg_pilotid')))
+		elseif (config::get('cfg_pilotid') && in_array($victim->getID(), config::get('cfg_pilotid')))
 		{
 			$authorized = true;
 		}

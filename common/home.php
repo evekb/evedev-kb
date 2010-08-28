@@ -5,10 +5,6 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.killsummarytable.public.php');
-require_once('common/includes/class.contract.php');
-require_once('common/includes/class.toplist.php');
-
 class pHome extends pageAssembly
 {
 	function __construct()
@@ -58,7 +54,6 @@ class pHome extends pageAssembly
 		{
 			if (config::get('public_summarytable'))
 			{
-				require_once('common/includes/class.killsummarytable.public.php');
 				//$kslist = new KillList();
 				$summarytable = new KillSummaryTablePublic();
 				$this->loadTime($summarytable);

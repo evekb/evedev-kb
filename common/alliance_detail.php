@@ -5,8 +5,6 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.toplist.php');
-
 class pAllianceDetail extends pageAssembly
 {
 	//! Construct the Alliance Details object.

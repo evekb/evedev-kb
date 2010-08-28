@@ -5,8 +5,6 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.toplist.php');
-
 class pPilotDetail extends pageAssembly
 {
 	private $viewList = array();

@@ -17,7 +17,6 @@ if($_POST['submit'])
 	error_reporting(0);
 
 	require_once('common/admin/admin_menu.php');
-	require_once('class.valuefetcher.php');
 	/**
 	* 	Author: Niels Brink� (HyperBeanie)
 	*

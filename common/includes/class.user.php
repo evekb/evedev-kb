@@ -5,8 +5,6 @@
  * $HeadURL$
  */
 
-require_once('class.box.php');
-
 class user
 {
 	function user()

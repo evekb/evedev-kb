@@ -5,8 +5,6 @@
  * $HeadURL$
  */
 
-require_once('common/includes/class.toplist.php');
-
 class pContractDetail extends pageAssembly
 {
 	//! Construct the Contract Details object.

@@ -364,7 +364,6 @@ class thumb
 			{
 				// try alternative access via fsockopen
 				// happens if allow_url_fopen wrapper is false
-				require_once('class.http.php');
 
 				$http = new http_request($url);
 				$file = $http->get_content();
