@@ -44,6 +44,9 @@ if(!defined('KB_SITE'))
 require_once('common/includes/globals.php');
 if(isset($_GET['xajax'])) require_once('common/includes/xajax.functions.php');
 
+// Set the default encoding to UTF-8
+header('Content-Type: text/html; charset=UTF-8');
+
 //edkloader::setRoot(getcwd());
 
 // smarty doesnt like it
