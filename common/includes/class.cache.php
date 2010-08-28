@@ -77,7 +77,7 @@ class cache
 		$usegz = config::get('cfg_compress')
 			&& !ini_get('zlib.output_compression');
 		$cachefile = cache::genCacheName();
-		if(defined('DB_USE_MEMCACHE')) $cachehandler = new CacheHandlerHashedMem();
+		if(defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE == true) $cachehandler = new CacheHandlerHashedMem();
 		else $cachehandler = new CacheHandlerHashed();
 
 		// If the cache doesn't exist then we don't need to check times.
