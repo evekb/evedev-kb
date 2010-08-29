@@ -207,11 +207,19 @@ class Fetcher
 
 		if (config::get('fetch_verbose') )
 		{
-			$this->html .= "<div class=block-header2>".$this->killsAdded." kills added and ".$this->killsSkipped." kills skipped from feed: ".$url."<br />".$str." <br /></div>\n";
+			if($this->killsAdded == 1) $suffixA = '';
+			else $suffixA = 's';
+			if($this->killsSkipped == 1) $suffixS = '';
+			else $suffixS = 's';
+			$this->html .= "<div class=block-header2>".$this->killsAdded." kill$suffixA added and ".$this->killsSkipped." kill$suffixS skipped from feed: ".$url."<br />".$str." <br /></div>\n";
 		}
 		else
 		{
-			$this->html .= "<div class=block-header2>".$this->killsAdded." kills added and ".$this->killsSkipped." kills skipped from feed: ".$url." <br /><br /></div>\n";
+			if($this->killsAdded == 1) $suffixA = '';
+			else $suffixA = 's';
+			if($this->killsSkipped == 1) $suffixS = '';
+			else $suffixS = 's';
+			$this->html .= "<div class=block-header2>".$this->killsAdded." kill$suffixA added and ".$this->killsSkipped." kill$suffixS skipped from feed: ".$url." <br /><br /></div>\n";
 		}
 
 		return $this->html;
