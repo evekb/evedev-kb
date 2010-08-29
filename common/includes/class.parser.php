@@ -572,11 +572,11 @@ class Parser
 					$this->error('Weapon not found.', $iwname);
 				}
 
-				if (config::get('cfg_allianceid') != 0 && $ialliance->getID() == config::get('cfg_allianceid'))
+				if (config::get('cfg_allianceid') && $ialliance->getID() == config::get('cfg_allianceid'))
 				{
 					$authorized = true;
 				}
-				elseif (config::get('cfg_corpid') != 0)
+				elseif (config::get('cfg_corpid'))
 				{
 					$corps = explode(",", config::get('cfg_corpid'));
 					foreach($corps as $corp)
