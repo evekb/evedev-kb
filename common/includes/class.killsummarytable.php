@@ -363,7 +363,7 @@ class KillSummaryTable
 			$sql .= $sqlop.' ina.ina_kll_id IS NULL ';
 			$sqlop = " AND ";
 		}
-		else if ($this->inv_crp && !$this->inv_plt)
+		else if ($this->inv_crp && !($this->inv_plt || $this->inv_all))
 		{
 			$sql .= $sqlop.' inc.inc_kll_id IS NULL ';
 			$sqlop = " AND ";

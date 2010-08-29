@@ -359,7 +359,7 @@ class TopList
 			}
 			if ($this->inv_all)
 			{
-				$this->sql_ .= $op." ( ina.ina_all_id IN ( ".implode(",", $this->inv_all)." ) ";
+				$this->sql_ .= $op." ina.ina_all_id IN ( ".implode(",", $this->inv_all)." ) ";
 				$op = " AND ";
 			}
 		}
