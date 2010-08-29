@@ -311,11 +311,45 @@ class KillSummaryTable
 			$this->tkisk += $row['kisk'];
 		}
 
-
+		// LEFT JOIN to kb3_inv_all or kb3_inv_crp if only one type of entity
+		// otherwise LEFT JOIN to kb3_inv_detail
 		$sql = 'SELECT count( kll_id) AS lnb, scl_id, scl_class,';
 		$sql .= ' sum(kll_isk_loss) AS lisk FROM kb3_kills kll
                     INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )';
 		$sql .= ' INNER JOIN kb3_ship_classes scl ON ( scl.scl_id = shp.shp_class )';
+
+		if ($this->inv_all)
+		{
+			if(!($this->inv_crp || $this->inv_plt))
+			{
+				$sql .= ' LEFT JOIN kb3_inv_all ina ON (kll.kll_id = ina.ina_kll_id AND kll.kll_all_id = ina.ina_all_id)';
+			}
+			else
+			{
+				$sql .= ' LEFT JOIN kb3_inv_detail ind ON (kll.kll_id = ind.ind_kll_id AND (kll.kll_all_id = ind.ind_all_id ';
+				if($this->inv_crp)
+				{
+					$sql .= ' OR kll.kll_crp_id = ind.ind_crp_id';
+				}
+				if($this->inv_plt)
+				{
+					$sql .= ' OR kll.kll_victim_id = ind.ind_plt_id';
+				}
+				$sql .= ') )';
+			}
+		}
+		elseif ($this->inv_crp)
+		{
+			if(!$this->inv_plt)
+			{
+				$sql .= ' LEFT JOIN kb3_inv_crp inc ON (kll.kll_id = inc.inc_kll_id AND kll.kll_crp_id = inc.inc_crp_id)';
+			}
+			else
+			{
+				$sql .= ' LEFT JOIN kb3_inv_detail ind ON (kll.kll_id = ind.ind_kll_id AND (kll.kll_crp_id = ind.ind_crp_id';
+				$sql .= ' OR kll.kll_victim_id = ind.ind_plt_id))';
+			}
+		}
 
 		$sqlop = ' WHERE ';
 		if($this->setDateFilter())
@@ -324,24 +358,41 @@ class KillSummaryTable
 			$sqlop = " AND ";
 		}
 
+		if ($this->inv_all && !($this->inv_crp || $this->inv_plt))
+		{
+			$sql .= $sqlop.' ina.ina_kll_id IS NULL ';
+			$sqlop = " AND ";
+		}
+		else if ($this->inv_crp && !$this->inv_plt)
+		{
+			$sql .= $sqlop.' inc.inc_kll_id IS NULL ';
+			$sqlop = " AND ";
+		}
+		else
+		{
+			$sql .= $sqlop.' ind.ind_kll_id IS NULL ';
+			$sqlop = " AND ";
+		}
+
+		$invP = array();
 		if ($this->inv_all)
 		{
-			$sql .= $sqlop.' kll.kll_all_id IN ( '.implode(',', $this->inv_all).' ) ';
-			$sql .= 'AND EXISTS (SELECT 1 FROM kb3_inv_all ina WHERE kll.kll_id = ina_kll_id AND ina.ina_all_id NOT IN ( '.implode(',', $this->inv_all).' ) limit 0,1) ';
-			$sqlop = " AND ";
+			$invP[] = 'kll.kll_all_id IN ( '.implode(',', $this->inv_all).' ) ';
 		}
-		elseif ($this->inv_crp)
+		if ($this->inv_crp)
 		{
-			$sql .= $sqlop.' kll.kll_crp_id IN ( '.implode(',', $this->inv_crp).' ) ';
-			$sql .= 'AND EXISTS (SELECT 1 FROM kb3_inv_crp inc WHERE kll.kll_id = inc_kll_id AND inc.inc_crp_id NOT IN ( '.implode(',', $this->inv_crp).' ) limit 0,1) ';
-			$sqlop = " AND ";
+			$invP[] = 'kll.kll_crp_id IN ( '.implode(',', $this->inv_crp).' ) ';
 		}
-		elseif ($this->inv_plt)
+		if ($this->inv_plt)
 		{
-			$sql .= $sqlop.' kll.kll_victim_id IN ( '.implode(',', $this->inv_plt).' ) ';
-			$sql .= ' AND EXISTS (SELECT 1 FROM kb3_inv_detail ind WHERE kll.kll_id = ind_kll_id AND ind.ind_plt_id NOT IN ( '.implode(',', $this->inv_plt).' ) limit 0,1) ';
+			$invP[] = 'kll.kll_victim_id IN ( '.implode(',', $this->inv_plt).' ) ';
+		}
+		if($invP)
+		{
+			$sql .= $sqlop." (".implode(' OR ', $invP).") ";
 			$sqlop = " AND ";
 		}
+
 		if($this->system)
 		{
 			$sql .= $sqlop." kll.kll_system_id = ".join(',', $this->system)." ";

@@ -255,122 +255,118 @@ class TopList
             $this->sql_ .= " inner join kb3_inv_detail inp
                                  on ( inp.ind_plt_id in ( ".implode(",", $this->inv_plt)." ) and kll.kll_id = inp.ind_kll_id ) ";
 */
-        if ($this->inv_crp)
-            $this->sql_ .= " inner join kb3_inv_crp inc
-	                         on ( kll.kll_id = inc.inc_kll_id ) ";
+		if(!$this->mixedinvolved)
+		{
+			if ($this->inv_crp)
+				$this->sql_ .= "INNER JOIN kb3_inv_crp inc
+								 ON ( kll.kll_id = inc.inc_kll_id ) ";
 
-        if ($this->inv_all)
-            $this->sql_ .= " inner join kb3_inv_all ina
-                                 on ( kll.kll_id = ina.ina_kll_id ) ";
+			if ($this->inv_all)
+				$this->sql_ .= " INNER JOIN kb3_inv_all ina
+									 ON ( kll.kll_id = ina.ina_kll_id ) ";
+		}
 
 		if (count($this->inc_vic_scl) || count($this->exc_vic_scl))
 		{
 			$this->sql_ .= " INNER JOIN kb3_ships shp
-	  		         on ( shp.shp_id = kll.kll_ship_id )";
+	  		         ON ( shp.shp_id = kll.kll_ship_id )";
 		}
 
 		if (count($this->regions_))
 		{
-			$this->sql_ .= " inner join kb3_systems sys
+			$this->sql_ .= " INNER JOIN kb3_systems sys
       	                         on ( sys.sys_id = kll.kll_system_id )
-                         inner join kb3_constellations con
+                         INNER JOIN kb3_constellations con
       	                         on ( con.con_id = sys.sys_con_id and
 			         con.con_reg_id in ( ".implode($this->regions_, ",")." ) )";
 		}
 
+		$op = " WHERE ";
 		// victim filter
-		if ($this->mixedvictims)
+		if ($this->vic_plt || $this->vic_crp || $this->vic_all)
 		{
-			$this->sql_ .= " WHERE ( ";
-			$op = "";
+			$vicP = array();
+
+			if ($this->vic_plt)
+				$vicP[] = "kll.kll_victim_id IN ( ".implode(",", $this->vic_plt)." )";
+			if ($this->vic_crp)
+				$vicP[] = "kll.kll_crp_id IN ( ".implode(",", $this->vic_crp)." )";
+			if ($this->vic_all)
+				$vicP[] = "kll.kll_all_id IN ( ".implode(",", $this->vic_all)." )";
+
+			$this->sql_ .= $op."( ".implode(" OR ", $vicP).")";
+			$op = " AND ";
 		}
-		else
-		{
-			$op = " WHERE ";
-		}
+		if ($this->vic_plt || $this->vic_crp || $this->vic_all) $op = " AND ";
 
 		if (count($this->exc_vic_scl))
 		{
-			$this->sql_ .= $op." shp.shp_class not in ( ".implode(",", $this->exc_vic_scl)." ) ";
+			$this->sql_ .= $op." shp.shp_class not IN ( ".implode(",", $this->exc_vic_scl)." ) ";
 			$op = " AND ";
 		}
 
 		if (count($this->inc_vic_scl))
 		{
-			$this->sql_ .= $op." shp.shp_class in ( ".implode(",", $this->inc_vic_scl)." ) ";
+			$this->sql_ .= $op." shp.shp_class IN ( ".implode(",", $this->inc_vic_scl)." ) ";
 			$op = " AND ";
 		}
 
 		if (count($this->exc_vic_shp))
 		{
-			$this->sql_ .= $op." kll.kll_ship_id not in ( ".implode(",", $this->exc_vic_shp)." ) ";
+			$this->sql_ .= $op." kll.kll_ship_id not IN ( ".implode(",", $this->exc_vic_shp)." ) ";
 			$op = " AND ";
 		}
 
 		if (count($this->inc_vic_shp))
 		{
-			$this->sql_ .= $op." kll.kll_ship_id in ( ".implode(",", $this->inc_vic_shp)." ) ";
+			$this->sql_ .= $op." kll.kll_ship_id IN ( ".implode(",", $this->inc_vic_shp)." ) ";
 			$op = " AND ";
 		}
-
-
-		if ($this->vic_plt)
-		{
-			$this->sql_ .= " ".$op." kll.kll_victim_id in ( ".implode(",", $this->vic_plt)." )";
-			$op = " or ";
-		}
-		if ($this->vic_crp)
-		{
-			$this->sql_ .= " ".$op." kll.kll_crp_id in ( ".implode(",", $this->vic_crp)." )";
-			$op = " or ";
-		}
-		if ($this->vic_all)
-		{
-			$this->sql_ .= " ".$op." kll.kll_all_id in ( ".implode(",", $this->vic_all)." )";
-			$op = " or ";
-		}
-		if ($this->mixedvictims)
-		{
-			$this->sql_ .= " ) ";
-			$op = " AND ";
-		}
-		if ($this->vic_plt || $this->vic_crp || $this->vic_all) $op = " AND ";
 
 		if($this->mixedinvolved)
 		{
 			$this->sql_ .= $op." ( ";
 			$op = '';
-		}
-		if ($this->inv_plt)
-		{
-			$this->sql_ .= $op." ind.ind_plt_id in ( ".implode(",", $this->inv_plt)." ) ";
-			$op = " OR ";
-		}
-		if ($this->inv_crp)
-		{
-			$this->sql_ .= $op." ( inc.inc_crp_id in ( ".implode(",", $this->inv_crp)." ) ";
-			$this->sql_ .= " AND ind.ind_crp_id in ( ".implode(",", $this->inv_crp)." ) ) ";
-			$op = " OR ";
-		}
-		if ($this->inv_all)
-		{
-			$this->sql_ .= $op." ( ina.ina_all_id in ( ".implode(",", $this->inv_all)." ) ";
-			$this->sql_ .= " AND ind.ind_all_id in ( ".implode(",", $this->inv_all)." ) ) ";
-			$op = " OR ";
-		}
-		if($this->mixedinvolved)
-		{
+			if ($this->inv_plt)
+			{
+				$this->sql_ .= $op." ind.ind_plt_id IN ( ".implode(",", $this->inv_plt)." ) ";
+				$op = " OR ";
+			}
+			if ($this->inv_crp)
+			{
+				$this->sql_ .= $op." ind.ind_crp_id IN ( ".implode(",", $this->inv_crp)." ) ";
+				$op = " OR ";
+			}
+			if ($this->inv_all)
+			{
+				$this->sql_ .= $op." ind.ind_all_id IN ( ".implode(",", $this->inv_all)." ) ";
+				$op = " OR ";
+			}
 			$this->sql_ .= " ) ";
-		}
-
-		if($this->inv_plt || $this->inv_crp || $this->inv_all)
-		{
 			$op = " AND ";
+		}
+		else
+		{
+			if ($this->inv_plt)
+			{
+				$this->sql_ .= $op." ind.ind_plt_id IN ( ".implode(",", $this->inv_plt)." ) ";
+				$op = " AND ";
+			}
+			if ($this->inv_crp)
+			{
+				$this->sql_ .= $op." inc.inc_crp_id IN ( ".implode(",", $this->inv_crp)." ) ";
+				$op = " AND ";
+			}
+			if ($this->inv_all)
+			{
+				$this->sql_ .= $op." ( ina.ina_all_id IN ( ".implode(",", $this->inv_all)." ) ";
+				$op = " AND ";
+			}
 		}
 
 		if (count($this->systems_))
 		{
-			$this->sql_ .= $op." kll.kll_system_id in ( ".implode($this->systems_, ",").") ";
+			$this->sql_ .= $op." kll.kll_system_id IN ( ".implode($this->systems_, ",").") ";
 			$op = " AND ";
 		}
 
@@ -388,23 +384,32 @@ class TopList
 		$qstartdate = makeStartDate($this->weekno_, $this->yearno_, $this->monthno_, $this->startweekno_, $this->startDate_);
 		$qenddate = makeEndDate($this->weekno_, $this->yearno_, $this->monthno_, $this->endDate_);
 
-        if ($this->inv_crp)
-		{
-			if($qstartdate) $this->sql_ .= $op." inc.inc_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
-			if($qenddate) $this->sql_ .= " AND inc.inc_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
-			$op = " AND ";
-		}
-		if ($this->inv_all)
-		{
-			if($qstartdate) $this->sql_ .= $op." ina.ina_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
-			if($qenddate) $this->sql_ .= " AND ina.ina_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
-			$op = " AND ";
-		}
-		if($this->inv_plt)
+		if($this->mixedinvolved)
 		{
 			if($qstartdate) $this->sql_ .= $op." ind.ind_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
 			if($qenddate) $this->sql_ .= " AND ind.ind_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
 			$op = " AND ";
+		}
+		else
+		{
+			if ($this->inv_all)
+			{
+				if($qstartdate) $this->sql_ .= $op." ina.ina_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
+				if($qenddate) $this->sql_ .= " AND ina.ina_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
+				$op = " AND ";
+			}
+			else if ($this->inv_crp)
+			{
+				if($qstartdate) $this->sql_ .= $op." inc.inc_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
+				if($qenddate) $this->sql_ .= " AND inc.inc_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
+				$op = " AND ";
+			}
+			else if($this->inv_plt)
+			{
+				if($qstartdate) $this->sql_ .= $op." ind.ind_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
+				if($qenddate) $this->sql_ .= " AND ind.ind_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
+				$op = " AND ";
+			}
 		}
 
 		// This is a little ugly but is needed since the bottom can start with
