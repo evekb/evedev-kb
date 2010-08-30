@@ -10,32 +10,32 @@
 
 class TopList
 {
-	private $exc_vic_scl = array();
-	private $inc_vic_scl = array();
-	private $exc_vic_shp = array();
-	private $inc_vic_shp = array();
+	protected $exc_vic_scl = array();
+	protected $inc_vic_scl = array();
+	protected $exc_vic_shp = array();
+	protected $inc_vic_shp = array();
 
-	private $inv_all = array();
-	private $inv_crp = array();
-	private $inv_plt = array();
+	protected $inv_all = array();
+	protected $inv_crp = array();
+	protected $inv_plt = array();
 
-	private $vic_all = array();
-	private $vic_crp = array();
-	private $vic_plt = array();
+	protected $vic_all = array();
+	protected $vic_crp = array();
+	protected $vic_plt = array();
 
-	private $mixedvictims = false;
-	private $mixedinvolved = false;
+	protected $mixedvictims = false;
+	protected $mixedinvolved = false;
 
-	private $regions_ = array();
-	private $systems_ = array();
-	private $qry = null;
+	protected $regions_ = array();
+	protected $systems_ = array();
+	protected $qry = null;
 
-	private $weekno_ = 0;
-	private $yearno_ = 0;
-	private $monthno_ = 0;
-	private $startweekno_ = 0;
-	private $startDate_ = 0;
-	private $endDate_ = 0;
+	protected $weekno_ = 0;
+	protected $yearno_ = 0;
+	protected $monthno_ = 0;
+	protected $startweekno_ = 0;
+	protected $startDate_ = 0;
+	protected $endDate_ = 0;
 	
 	function TopList()
 	{
@@ -452,16 +452,23 @@ class TopKillsList extends TopList
 		      on ( ind.ind_kll_id = kll.kll_id )
               inner join kb3_pilots plt
 	 	      on ( plt.plt_id = ind.ind_plt_id )";
-/*
- 		if ($this->inv_crp)
-			$sql .= " and ind.ind_crp_id in ( ".implode(",", $this->inv_crp)." )";
-		if ($this->inv_all)
-			$sql .= " and ind.ind_all_id in ( ".implode(",", $this->inv_all)." )";
-		$sql .= ")";
-*/
+// Restrict results to pilots in the involved corp/all/pilot lists.
+		$sqlB = "";
+ 		if ($this->inv_crp || $this->inv_all || $this->inv_plt)
+		{
+			$invP = array();
+			if ($this->inv_plt)
+				$invP[] = "ind.ind_plt_id IN ( ".implode(",", $this->inv_plt)." )";
+			if ($this->inv_crp)
+				$invP[] = "ind.ind_crp_id IN ( ".implode(",", $this->inv_crp)." )";
+			if ($this->inv_all)
+				$invP[] = "ind.ind_all_id IN ( ".implode(",", $this->inv_all)." )";
+			$sqlB = " AND (".implode(" OR ", $invP).") ";
+		}
+		
 		$this->setSQLTop($sql);
 
-		$this->setSQLBottom("group by ind.ind_plt_id order by 1 desc
+		$this->setSQLBottom($sqlB." group by ind.ind_plt_id order by 1 desc
                             limit 10");
 		if (count($this->vic_scl_id))
 		{
@@ -518,10 +525,23 @@ class TopScoreList extends TopList
 		      on ( ind.ind_kll_id = kll.kll_id )
               inner join kb3_pilots plt
 	 	      on ( plt.plt_id = ind.ind_plt_id )";
+// Restrict results to pilots in the involved corp/all/pilot lists.
+		$sqlB = "";
+ 		if ($this->inv_crp || $this->inv_all || $this->inv_plt)
+		{
+			$invP = array();
+			if ($this->inv_plt)
+				$invP[] = "ind.ind_plt_id IN ( ".implode(",", $this->inv_plt)." )";
+			if ($this->inv_crp)
+				$invP[] = "ind.ind_crp_id IN ( ".implode(",", $this->inv_crp)." )";
+			if ($this->inv_all)
+				$invP[] = "ind.ind_all_id IN ( ".implode(",", $this->inv_all)." )";
+			$sqlB = " AND (".implode(" OR ", $invP).") ";
+		}
 
 		$this->setSQLTop($sql);
 
-		$this->setSQLBottom("group by ind.ind_plt_id order by 1 desc
+		$this->setSQLBottom($sqlB." group by ind.ind_plt_id order by 1 desc
                             limit 30");
 	}
 }
