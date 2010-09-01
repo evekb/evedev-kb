@@ -27,9 +27,10 @@ if ($_GET['op'] == 'view')
 	*/
 	$list = new ContractList();
 	if ($type == 'campaign') $list->setCampaigns(true);
+	$html = "[<a href=\"?a=admin_cc&amp;op=add&amp;type=".$type."\">Add ".$type."</a>]<br />";
 	if ($list->getCount() > 0)
 	{
-		$html = '<table class="kb-table" cellspacing="1">';
+		$html .= '<table class="kb-table" cellspacing="1">';
 		$html .= "<tr class='kb-table-header'><td class='kb-table-cell' width='160'>Name</td><td class='kb-table-cell' width='80'>Startdate</td><td class='kb-table-cell' width='80'>Enddate</td><td class='kb-table-cell' width='140' colspan='2' align='center'>Action</td></tr>";
 	}
 	while ($contract = $list->getContract())
@@ -42,8 +43,8 @@ if ($_GET['op'] == 'view')
 		$html .= "</tr>";
 	}
 	if ($list->getCount() > 0)
-		$html .= "</table><br>";
-	$html .= "[<a href=\"?a=admin_cc&op=add&type=".$type."\">Add ".$type."</a>]";
+		$html .= "</table><br />";
+	$html .= "[<a href=\"?a=admin_cc&amp;op=add&amp;type=".$type."\">Add ".$type."</a>]";
 }
 // delete
 if ($_GET['op'] == "del")
@@ -275,7 +276,7 @@ if ($_GET['op'] == "add")
 	if ($_POST['detail_submit'])
 	{
 		$contract = new Contract();
-		$contract->add($_POST['ctr_name'], $_GET['type'], $_POST['ctr_started'], $_POST['ctr_ended'], $_POST['ctr_comment']);
+		$contract->add(htmlentities($_POST['ctr_name']), $_GET['type'], $_POST['ctr_started'], $_POST['ctr_ended'], $_POST['ctr_comment']);
 
 		header("Location: ?a=admin_cc&ctr_id=".$contract->getID()."&op=edit&type=".$_GET['type']);
 	}
