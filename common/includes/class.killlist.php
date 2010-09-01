@@ -252,7 +252,7 @@ class KillList
 			if (!count($this->groupby_))
 			{
 				$this->sqltop_ = 'SELECT ';
-				if(count($this->inv_all_) > 1 || count($this->inv_crp_) > 1 || count($this->inv_plt_) > 1)
+				if(count($this->inv_all_) + count($this->inv_crp_) + count($this->inv_plt_) > 1)
 					$this->sqltop_ .= ' DISTINCT ';
 				$this->sqltop_ .= ' kll.kll_id, kll.kll_timestamp, kll.kll_external_id,
 							plt.plt_name, crp.crp_name, crp.crp_id,
