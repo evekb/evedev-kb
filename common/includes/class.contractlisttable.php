@@ -35,18 +35,18 @@ class ContractListTable
 			for ($i = 0; $i < 2; $i++)
 			{
 				$sql = 'select count(kll_id) AS ships, sum(kll_isk_loss) as isk from (';
+				$invcount = 0;
 
-				if($i) $invcount = count($contract->getAlliances()) + count($contract->getCorps());
-				else $invcount = 0;
+				if(!$i) $invcount = count($contract->getAlliances()) + count($contract->getCorps());
+				else $invcount = count(config::get('cfg_pilotid')) + count(config::get('cfg_corpid')) + count(config::get('cfg_allianceid'));
+
 				if($invcount > 1) $sql .= 'select distinct kll_id, kll_isk_loss FROM kb3_kills kll ';
 				else $sql .= 'select kll_id, kll_isk_loss FROM kb3_kills kll ';
 
 				if ($contract->getRegions())
 				{
 					$sql .= ' inner join kb3_systems sys on ( sys.sys_id = kll.kll_system_id )
-							inner join kb3_constellations con
-							on ( con.con_id = sys.sys_con_id
-							and con.con_reg_id in ( '.join(',', $contract->getRegions()).' ) )';
+							inner join kb3_constellations con on ( con.con_id = sys.sys_con_id)';
 				}
 				if(!$i)
 				{
@@ -137,12 +137,19 @@ class ContractListTable
 						$sqlwhereop = ' AND ';
 					}
 				}
+				$location = array();
 				if ($contract->getSystems())
 				{
-					$sql .= $sqlwhereop.' kll.kll_system_id in ( '.join(',', $contract->getSystems()).')';
+					$location[] = 'kll.kll_system_id in ( '.join(',', $contract->getSystems()).')';
 				}
+				if ($contract->getRegions())
+				{
+					$location[] = 'con.con_reg_id in ( '.join(',', $contract->getRegions()).' )';
+				}
+				if($location) $sql .= $sqlwhereop.' ('.implode(' OR ', $location).') ';
+				
 				$sql .= ') as kb3_shadow';
-				$sql .= " /* contract: getTableStats */";
+				$sql .= " /* contract: getTableStats '$invcount'$i' */";
 				$result = $qry->execute($sql);
 				$row = $qry->getRow($result);
 
