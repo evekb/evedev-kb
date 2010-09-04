@@ -29,9 +29,9 @@ options::fadd('Add Pilot', '', 'custom', array('admin_config', 'createPilot'));/
 options::fadd('Add Corporation', '', 'custom', array('admin_config', 'createCorp'));//, array('admin_config', 'reload'));
 options::fadd('Add Alliance', '', 'custom', array('admin_config', 'createAlliance'));//, array('admin_config', 'reload'));
 
-options::fadd('Remove Pilot', 'rem_pilotid', 'select', array('admin_config', 'removePilot'));//, array('admin_config', 'reload'));
-options::fadd('Remove Corporation', 'rem_corpid', 'select', array('admin_config', 'removeCorp'));//, array('admin_config', 'reload'));
-options::fadd('Remove Alliance', 'rem_allianceid', 'select', array('admin_config', 'removeAlliance'));//, array('admin_config', 'reload'));
+if(config::get('cfg_pilotid')) options::fadd('Remove Pilot', 'rem_pilotid', 'select', array('admin_config', 'removePilot'));//, array('admin_config', 'reload'));
+if(config::get('cfg_corpid')) options::fadd('Remove Corporation', 'rem_corpid', 'select', array('admin_config', 'removeCorp'));//, array('admin_config', 'reload'));
+if(config::get('cfg_allianceid')) options::fadd('Remove Alliance', 'rem_allianceid', 'select', array('admin_config', 'removeAlliance'));//, array('admin_config', 'reload'));
 
 class admin_config
 {
