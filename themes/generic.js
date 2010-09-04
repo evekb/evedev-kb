@@ -65,7 +65,7 @@ function handleResponse() {
 function ReverseContentDisplay(d) {
 if(d.length < 1) { return; }
 var dd = document.getElementById(d);
-if(dd.style.display == "none") { dd.style.display = "block"; }
+if(dd.style.display != "block") { dd.style.display = "block"; }
 else { dd.style.display = "none"; }
 }
 //-->
