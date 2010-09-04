@@ -38,7 +38,6 @@ edkloader::register('Smarty', 'common/smarty/Smarty.class.php');
 edkloader::register('APIChar', 'common/includes/api/class.char.php');
 edkloader::register('AllianceAPI', 'common/includes/api/class.alliance.php');
 edkloader::register('BarGraph', 'common/includes/class.graph.php');
-edkloader::register('AwardBox', 'common/includes/class.box.php');
 edkloader::register('TopList', 'common/includes/class.toplist.php');
 edkloader::register('TopKillsList', 'common/includes/class.toplist.php');
 edkloader::register('TopCorpKillsList', 'common/includes/class.toplist.php');
