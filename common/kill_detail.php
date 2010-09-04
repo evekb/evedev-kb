@@ -1047,14 +1047,18 @@ class pKillDetail extends pageAssembly
 		$this->addMenuItem("caption", "View");
 		$this->addMenuItem("link",
 			"Killmail",
-			"javascript:sndReq('index.php?a=kill_mail&amp;kll_id=" . $this->kill->getID()
+			"?a=kill_mail&amp;kll_id=" . $this->kill->getID(),
+			0,0,
+			"sndReq('?a=kill_mail&amp;kll_id=" . $this->kill->getID()
 			. "');ReverseContentDisplay('popup')");
 
 		if (config::get('kd_EFT'))
 		{
 			$this->addMenuItem("link",
 				"EFT Fitting",
-				"javascript:sndReq('index.php?a=eft_fitting&amp;kll_id=" . $this->kill->getID()
+				"?a=eft_fitting&amp;kll_id=" . $this->kill->getID(),
+				0,0,
+				"sndReq('?a=eft_fitting&amp;kll_id=" . $this->kill->getID()
 				. "');ReverseContentDisplay('popup')");
 			$this->addMenuItem("link",
 				"EvE Fitting",
@@ -1074,7 +1078,9 @@ class pKillDetail extends pageAssembly
 			$this->addMenuItem("caption", "Admin");
 			$this->addMenuItem("link",
 				"Delete",
-				"javascript:openWindow('?a=admin_kill_delete&amp;kll_id=" . $this->kill->getID()
+				"?a=admin_kill_delete&amp;kll_id=" . $this->kill->getID(),
+				0,0,
+				"openWindow('?a=admin_kill_delete&amp;kll_id=" . $this->kill->getID()
 				. "', null, 420, 300, '' );");
 
 			if (isset($_GET['view']) && $_GET['view'] == 'FixSlot')
@@ -1097,10 +1103,11 @@ class pKillDetail extends pageAssembly
 		$menubox->setIcon("menu-item.gif");
 		foreach($this->menuOptions as $options)
 		{
-			if(isset($options[2]))
-				$menubox->addOption($options[0],$options[1], $options[2]);
-			else
-				$menubox->addOption($options[0],$options[1]);
+			call_user_func_array(array($menubox,'addOption'), $options);
+//			if(isset($options[2]))
+//				$menubox->addOption($options[0],$options[1], $options[2]);
+//			else
+//				$menubox->addOption($options[0],$options[1]);
 		}
 
 		return $menubox->generate();
@@ -1147,7 +1154,7 @@ class pKillDetail extends pageAssembly
 	 */
 	function addMenuItem($type, $name, $url = '')
 	{
-		$this->menuOptions[] = array($type, $name, $url);
+		$this->menuOptions[] = func_get_args();
 	}
 	//! Update the stored value of an item and the total value of this kill.
 

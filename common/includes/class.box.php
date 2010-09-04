@@ -26,9 +26,11 @@ class Box
 
     //! Add something to the array that we send to smarty later.
     //! Types can be caption, img, link, points. Only links need all 3 attributes
-    function addOption($type, $name, $url = '', $width = 145, $height = 145)
+    function addOption($type, $name, $url = '', $width = 145, $height = 145, $onclick = false)
     {
-        $this->box_array[] = array('type' => $type, 'name' => $name, 'url' => $url, 'width' => $width, 'height' => $height);
+        $this->box_array[] = array('type' => $type, 'name' => $name, 
+			'url' => $url, 'width' => $width, 'height' => $height,
+			'onclick' => $onclick);
     }
     //! Generate the html from the template.
     function generate()
@@ -43,7 +45,7 @@ class Box
         $smarty->assign('title', $this->title_ );
         $smarty->assign('items', $this->box_array);
 
-        return $smarty->fetch(get_tpl('box'));
+		return $smarty->fetch(get_tpl('box'));
     }
 }
 //! Create a box to display TopList awards.

@@ -15,7 +15,7 @@
                 {if isset($icon)}
                     <img src="{$icon}" border="0" width="6" height="6" alt="menu item" />
                 {/if}
-                &nbsp;<a href="{$i.url}">{$i.name}</a><br />
+                &nbsp;<a href="{$i.url}"{if $i.onclick} onclick="{$i.onclick}; return false;"{/if}>{$i.name}</a><br />
 				</div>
 			{elseif $i.type == "img"}
                 {if $i.url}<a href="{$i.url}"><img src="{$i.name}" border="0" alt="" width="{$i.width}" height="{$i.height}"/></a>
