@@ -72,7 +72,7 @@ if ($_GET['op'] == "edit")
 	if (!$contract->validate()) exit;
 	if ($_POST['detail_submit'])
 	{
-		$contract->add($_POST['ctr_name'], $_GET['type'],
+		$contract->add(htmlentities($_POST['ctr_name']), $_GET['type'],
 			$_POST['ctr_started'], $_POST['ctr_ended'], $_POST['ctr_comment']);
 
 		header("Location: ?a=admin_cc&op=view&type=".$_GET['type']);
