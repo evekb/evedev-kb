@@ -11,7 +11,7 @@
 					<td class="kb-table-cell" style="width:{$class_width};">Ship class</td>
 {if $verbose}
 					<td class="kb-table-cell" style="width:60px; text-align:center">Kills</td>
-					<td class="kb-table-cell" style="width:60px;" text-align:center">ISK (M)</td>
+					<td class="kb-table-cell" style="width:60px; text-align:center">ISK (M)</td>
 	{if $losses}					<td class="kb-table-cell" style="width:60px; text-align:center">Losses</td>
 					<td class="kb-table-cell" style="width:60px; text-align:center">ISK (M)</td>
 	{/if}
@@ -28,7 +28,7 @@
 	{if $verbose}					<td class="kb-table-cell" style="width:60px; text-align:center">Kills</td>
 					<td class="kb-table-cell" style="width:60px; text-align:center">ISK (M)</td>
 		{if $losses}					<td class="kb-table-cell" style="width:60px; text-align:center">Losses</td>
-					<td class="kb-table-cell" style="width:60px;" text-align:center">ISK (M)</td>
+					<td class="kb-table-cell" style="width:60px; text-align:center">ISK (M)</td>
 		{/if}
 	{else}					<td class="kb-table-cell" style="width:30px; text-align:center">K</td>
 		{if $losses}					<td class="kb-table-cell" style="width:30px; text-align:center">L</td>
