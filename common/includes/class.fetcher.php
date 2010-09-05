@@ -211,7 +211,7 @@ class Fetcher
 			else $suffixA = 's';
 			if($this->killsSkipped == 1) $suffixS = '';
 			else $suffixS = 's';
-			$this->html .= "<div class=block-header2>".$this->killsAdded." kill$suffixA added and ".$this->killsSkipped." kill$suffixS skipped from feed: ".$url."<br />".$str." <br /></div>\n";
+			$this->html .= "<div class=block-header2>".$this->killsAdded." kill$suffixA added and ".$this->killsSkipped." kill$suffixS skipped from feed: ".$url.$str."<br />".$str." <br /></div>\n";
 		}
 		else
 		{
@@ -219,7 +219,7 @@ class Fetcher
 			else $suffixA = 's';
 			if($this->killsSkipped == 1) $suffixS = '';
 			else $suffixS = 's';
-			$this->html .= "<div class=block-header2>".$this->killsAdded." kill$suffixA added and ".$this->killsSkipped." kill$suffixS skipped from feed: ".$url." <br /><br /></div>\n";
+			$this->html .= "<div class=block-header2>".$this->killsAdded." kill$suffixA added and ".$this->killsSkipped." kill$suffixS skipped from feed: ".$url.$str." <br /><br /></div>\n";
 		}
 
 		return $this->html;

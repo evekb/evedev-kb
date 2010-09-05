@@ -94,22 +94,27 @@ for ($i = 1; $i <= $feedcount; $i++)
 // building the request query and fetching of the feeds
 if ($_POST['fetch'])
 {
-	if (PILOT_ID && !MASTER)
+	$myid = array();
+	if(!MASTER)
 	{
-		$pilot = new Pilot(PILOT_ID);
-		$myid = '&pilot=' . urlencode($pilot->getName());
-	}
+		foreach (config::get('cfg_pilotid') as $entity)
+		{
+			$pilot = new Pilot($entity);
+			$myid[] = '&pilot=' . urlencode($pilot->getName());
+		}
 
-    if (CORP_ID && !MASTER)
-    {
-        $corp = new Corporation(CORP_ID);
-        $myid = '&corp=' . urlencode($corp->getName());
-    }
-    if (ALLIANCE_ID && !MASTER)
-    {
-        $alli = new Alliance(ALLIANCE_ID);
-        $myid = '&alli=' . urlencode($alli->getName());
-    }
+		foreach (config::get('cfg_corpid') as $entity)
+		{
+			$corp = new Corporation($entity);
+			$myid[] = '&corp=' . urlencode($corp->getName());
+		}
+		foreach (config::get('cfg_allianceid') as $entity)
+		{
+			$alli = new Alliance($entity);
+			$myid[] = '&alli=' . urlencode($alli->getName());
+		}
+	}
+	else $myid[] = '';
     for ($i = 1; $i <= $feedcount; $i++)
     {
         $feedfetch = new Fetcher();
@@ -137,25 +142,35 @@ if ($_POST['fetch'])
                 }
                 for ($l = $range1; $l <= $range2; $l++)
                 {
-                    $html .= "<b>Week: " . $l . " losses</b><br>";
-                // Fetch for current and previous weeks, both kills and losses
-                    $html .= $feedfetch->grab($feed[$i] . "&year=" . $_POST['year'] . "&week=" . $l, $myid . $str, $trusted[$i], $cfg). "\n";
-                    if(intval($feedfetch->lastkllid_)) $feedlast[$i] = intval($feedfetch->lastkllid_);
-                    $html .= "<b>Week: " . $l . " kills</b><br>";
-                    $html .= $feedfetch->grab($feed[$i] . "&year=" . $_POST['year'] . "&week=" . $l, $myid . $str . "&losses=1", $trusted[$i], $cfg) . "\n";
-                    if(intval($feedfetch->lastkllid_ )) $feedlast[$i] = intval($feedfetch->lastkllid_);
-                // Store most recent kill id fetched
-                if($feedlast[$i]) config::set("fetch_url_" . $i, $feed[$i] . ':::' . $feedlast[$i] . ':::' . 0 . ':::' . $apikills[$i] . ':::' . $trusted[$i]);
+					$lastkill = 0;
+					// Fetch for current and previous weeks, both kills and losses
+					foreach($myid as $id)
+					{
+	                    $html .= "<b>Week: " . $l . " losses</b><br>";
+						$html .= $feedfetch->grab($feed[$i] . "&year=" . $_POST['year'] . "&week=" . $l, $id . $str, $trusted[$i], $cfg). "\n";
+						if(intval($feedfetch->lastkllid_) < $lastkill || !$lastkill) $lastkill = intval($feedfetch->lastkllid_);
+						$html .= "<b>Week: " . $l . " kills</b><br>";
+						$html .= $feedfetch->grab($feed[$i] . "&year=" . $_POST['year'] . "&week=" . $l, $id . $str . "&losses=1", $trusted[$i], $cfg) . "\n";
+						if(intval($feedfetch->lastkllid_) < $lastkill || !$lastkill) $lastkill = intval($feedfetch->lastkllid_);
+					}
+					if($lastkill > $feedlast[$i]) $feedlast[$i] = $lastkill;
+					// Store oldest 'most recent kill id' fetched from all entities.
+					// (since kills may be posted during multiple fetches)
+					if($feedlast[$i]) config::set("fetch_url_" . $i, $feed[$i] . ':::' . $feedlast[$i] . ':::' . 0 . ':::' . $apikills[$i] . ':::' . $trusted[$i]);
                 }
             }
             else
 			{
+				$lastkill = 0;
+				foreach($myid as $id)
+				{
+					$html .= $feedfetch->grab($feed[$i], $id . $str);
+					if(intval($feedfetch->lastkllid_) < $lastkill || !$lastkill) $lastkill = intval($feedfetch->lastkllid_);
 
-                $html .= $feedfetch->grab($feed[$i], $myid . $str);
-				if(intval($feedfetch->lastkllid_) > $feedlast[$i])$feedlast[$i] = intval($feedfetch->lastkllid);
-
-                $html .= $feedfetch->grab($feed[$i], $myid . $str .  "&losses=1");
-
+					$html .= $feedfetch->grab($feed[$i], $id . $str .  "&losses=1");
+					if(intval($feedfetch->lastkllid_) > $lastkill || !$lastkill) $lastkill = intval($feedfetch->lastkllid_);
+				}
+				if($lastkill > $feedlast[$i]) $feedlast[$i] = $lastkill;
 				// If kills are fetched then change the last kill id for the feed
 				if($feedlast[$i])
 				{
