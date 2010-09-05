@@ -11,7 +11,7 @@ class MapView
 	private $expiry = 15552000; // 180 days
 	private $imgwidth_;
 	private $imgheight_;
-	private $sys_colors_;
+	private $sys_colors_ = array();
 	private $ly_;
 	private $offset_ = 10;
 	private $linecolor_ = array(75, 75, 75);
@@ -20,6 +20,15 @@ class MapView
 	private $normalcolor_ = array(81, 103, 146);
 	private $hlcolor_ = array(200, 200, 200);
 	private $showsysnames_ = false;
+	private $title_ = '';
+
+	private $systemid_ = 0;
+	private $conid_ = 0;
+	private $regionid_ = 0;
+	private $conname_ = '';
+	private $regname_ = '';
+	private $sysname_ = '';
+	private $syssec_ = 0;
 
 	function MapView($mode, $size = 200)
 	{
@@ -107,7 +116,7 @@ class MapView
 			and (sys.sys_eve_id = '.intval($systemid).' OR sys.sys_id = '
 				.intval($systemid).')';
 
-		$qry = DBFactory::getDBQuery();;
+		$qry = DBFactory::getDBQuery();
 		$qry->execute($sql);
 		if(!$qry->recordCount()) die;
 		$row = $qry->getRow();
@@ -182,10 +191,10 @@ class MapView
         else
             $sql .= " AND sys.sys_eve_id < 31000007";
 
-		$qry = DBFactory::getDBQuery();;
+		$qry = DBFactory::getDBQuery();
 		$qry->execute($sql) or die($qry->getErrorMsg());
 
-		if (!$img) $img = imagecreatetruecolor($this->imgwidth_, $this->imgheight_);
+		$img = imagecreatetruecolor($this->imgwidth_, $this->imgheight_);
 		$white = imagecolorallocate($img, 255, 255, 255);
 		$red = imagecolorallocate($img, 255, 0, 0);
 		$bgcolor = imagecolorallocate($img, $this->bgcolor_[0], $this->bgcolor_[1], $this->bgcolor_[2]);
@@ -225,20 +234,21 @@ class MapView
 
 			$sys[$i][0] = $x;
 			$sys[$i][1] = $z;
-			if ($i == $pi || $pi == 0)
+			if ($this->showlines_)
 			{
-				$sys[$i][2][$sc] = $row['sjp_to'];
-				$sys[$i][3] = $sc++;
+				if($i == $pi || $pi == 0)
+				{
+					$sys[$i][2][$sc] = $row['sjp_to'];
+					$sc++;
+				}
+				else
+					$sc = 0;
 			}
-			else
+			if ($this->mode_ == "map" && $this->regionid_ == $row['reg_id'])
 			{
-				$sc = 0;
+				$sys[$i][9] = true;
 			}
-			if ($this->mode_ == "map")
-			{
-				$sys[$i][9] = $row['reg_id'];
-			}
-			elseif ($this->mode_ == "region")
+			elseif ($this->mode_ == "region" && $this->conid_ == $row['con_id'])
 			{
 				$sys[$i][7] = $row['con_id'];
 			}
@@ -249,6 +259,7 @@ class MapView
 			$sys[$i][6] = $row['sys_sec'];
 			$pi = $i;
 		}
+		unset($qry);
 		$dx = abs($maxx - $minx);
 		$dz = abs($maxz - $minz);
 		$xscale = 1 / ($dx / ($this->imgwidth_ - ($this->offset_ * 2)));
@@ -278,10 +289,9 @@ class MapView
 
 				$line_col = imagecolorallocate($img, $this->linecolor_[0], $this->linecolor_[1], $this->linecolor_[2]);
 
-				if(isset($sys[$n][3]))
-					for ($m = 0; $m <= $sys[$n][3]; $m++)
+				if(isset($sys[$n][2]))
+					foreach($sys[$n][2] as $sys_to)
 					{
-						$sys_to = $sys[$n][2][$m];
 
 						if (isset($sys[$sys_to]))
 						{
@@ -309,14 +319,14 @@ class MapView
 
 			if ($this->mode_ == "map")
 			{
-				if ($sys[$n][9] == $this->regionid_)
+				if (isset($sys[$n][9]))
 					$color = imagecolorallocate($img, $this->hlcolor_[0], $this->hlcolor_[1], $this->hlcolor_[2]);
 				else
 					$color = $this->secColor($img, $sys[$n][6]);
 			}
 			if ($this->mode_ == "region")
 			{
-				if ($sys[$n][7] == $this->conid_)
+				if (isset($sys[$n][7]))
 					$color = imagecolorallocate($img, $this->hlcolor_[0], $this->hlcolor_[1], $this->hlcolor_[2]);
 				else
 					$color = $this->secColor($img, $sys[$n][6]);
