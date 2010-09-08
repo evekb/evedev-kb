@@ -5,10 +5,11 @@
 {$error}<br/><br/>
 {/if}
 <table class="kb-subtable">
-<!--<tr>
+{if !$config->get("user_regdisabled")}<tr>
   <td width="160"><b>Login:</b></td>
   <td><input type="text" name="usrlogin" maxlength="40"{if $user_name} value="{$user_name}"{/if}></td>
-</tr>-->
+</tr>
+{/if}
 <tr>
   <td width="160"><b>Password:</b></td>
   <td><input type="password" name="usrpass" maxlength="32" /></td>
