@@ -13,7 +13,7 @@
 {/if}
 								<p>{$comments[i].comment}</p>
 {if $page->isAdmin()}
-								<a href="javascript:openWindow('?a=admin_comments_delete&amp;c_id={$comments[i].id}', null, 480, 350, '' );">Delete Comment</a>
+								<a href='?a=admin_comments_delete&amp;c_id={$comments[i].id}' onclick="openWindow('?a=admin_comments_delete&amp;c_id={$comments[i].id}', null, 480, 350, '' ); return false;">Delete Comment</a>
 								<span style="position:absolute; right: 0px;">Posters IP:{$comments[i].ip}</span>
 {/if}
 							</div></td>
