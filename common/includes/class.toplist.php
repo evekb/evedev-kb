@@ -10,32 +10,32 @@
 
 class TopList
 {
-	private $exc_vic_scl = array();
-	private $inc_vic_scl = array();
-	private $exc_vic_shp = array();
-	private $inc_vic_shp = array();
+	protected $exc_vic_scl = array();
+	protected $inc_vic_scl = array();
+	protected $exc_vic_shp = array();
+	protected $inc_vic_shp = array();
 
-	private $inv_all = array();
-	private $inv_crp = array();
-	private $inv_plt = array();
+	protected $inv_all = array();
+	protected $inv_crp = array();
+	protected $inv_plt = array();
 
-	private $vic_all = array();
-	private $vic_crp = array();
-	private $vic_plt = array();
+	protected $vic_all = array();
+	protected $vic_crp = array();
+	protected $vic_plt = array();
 
-	private $mixedvictims = false;
-	private $mixedinvolved = false;
+	protected $mixedvictims = false;
+	protected $mixedinvolved = false;
 
-	private $regions_ = array();
-	private $systems_ = array();
-	private $qry = null;
+	protected $regions_ = array();
+	protected $systems_ = array();
+	protected $qry = null;
 
-	private $weekno_ = 0;
-	private $yearno_ = 0;
-	private $monthno_ = 0;
-	private $startweekno_ = 0;
-	private $startDate_ = 0;
-	private $endDate_ = 0;
+	protected $weekno_ = 0;
+	protected $yearno_ = 0;
+	protected $monthno_ = 0;
+	protected $startweekno_ = 0;
+	protected $startDate_ = 0;
+	protected $endDate_ = 0;
 	
 	function TopList()
 	{
