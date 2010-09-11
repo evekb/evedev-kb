@@ -1,10 +1,18 @@
 -------------------------------------------
-Eve Development Network Killboard v3.1.0
+Eve Development Network Killboard v3.1.1
 -------------------------------------------
 
 VERSION HISTORY
+v3.1.1
+IDFeed reader works for Corporate boards.
+corp_detail correctly links to CEO
+Constellation highlighting on maps highlights
+Memcache support in page cache improved.
+Region names on kill lists return
+-------------------------------------------
+VERSION HISTORY
 v3.1.0
-IDFeeder reader implemented similar to CCP API feed.
+IDFeed reader implemented similar to CCP API feed.
 Classes can be overridden by mods.
 Code has been rewritten to fit a more OO design.
 Code has been rewritten to be more maintainable.

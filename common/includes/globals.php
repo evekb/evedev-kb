@@ -22,7 +22,7 @@ define ("APIVERSION", "V3.3");
 
 // current version: major.minor.sub
 // unpair numbers for minor = development version
-define('KB_VERSION', '3.1.0');
+define('KB_VERSION', '3.1.1');
 define('KB_RELEASE', '(Tyrannis)');
 
 // add new corporations here once you've added the logo to img/corps/
