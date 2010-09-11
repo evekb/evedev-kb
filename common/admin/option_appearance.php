@@ -285,7 +285,7 @@ class admin_appearance
 		$smarty->assign('theme_url', config::get('cfg_kbhost').'/themes/'.$themename);
 		$smarty->template_dir = './themes/'.$themename.'/templates';
 		if(!file_exists(KB_CACHEDIR.'/templates_c/'.$themename.'/'))
-			mkdir(KB_CACHEDIR.'/templates_c/'.$themename.'/');
+			mkdir(KB_CACHEDIR.'/templates_c/'.$themename.'/', 0755, true);
 		$smarty->compile_dir = KB_CACHEDIR.'/templates_c/'.$themename.'/';
 		admin_appearance::removeOld(0, KB_CACHEDIR.'/templates_c', true);
 	}
@@ -298,10 +298,12 @@ class admin_appearance
 			$themename = preg_replace('/[^a-zA-Z0-9-_]/', '', $_POST['option_theme_name']);
 			if(!is_dir("themes/$themename")) $themename = 'default';
 
-			config::set('style_name', $themename);
-			$_POST['option_style_name'] = $themename;
+			$arr = reset(self::createSelectStyle());
 
-			$smarty->assign('style', $themename);
+			config::set('style_name', $arr['value']);
+			$_POST['option_style_name'] = $arr['value'];
+
+			$smarty->assign('style', $arr['value']);
 		}
 		elseif(options::getPrevious('style_name') != $_POST['option_style_name'])
 		{
