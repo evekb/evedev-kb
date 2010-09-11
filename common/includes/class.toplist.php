@@ -853,41 +853,28 @@ class TopPilotTable
 
 	function generate()
 	{
+		global $smarty;
 		$this->toplist_->generate();
 
-		$html .= "<table class='kb-table' cellspacing='1'>";
-		$html .= "<tr class='kb-table-header'>";
-		$html .= "<td class='kb-table-cell' align='center' colspan='2'>Pilot</td>";
-		$html .= "<td class='kb-table-cell' align='center' width='60'>".$this->entity_."</td>";
-		$html .= "</tr>";
-
-		$odd = true;
 		$i = 1;
+		$rows = array();
 		while ($row = $this->toplist_->getRow())
 		{
 			$pilot = new Pilot($row['plt_id']);
-			if ($odd)
-			{
-				$class = "kb-table-row-odd";
-				$odd = false;
-			}
-			else
-			{
-				$class = "kb-table-row-even";
-				$odd = true;
-			}
-			$html .= "<tr class='".$class."'>";
-			$html .= "<td><img src=\"".$pilot->getPortraitURL(32)."\" alt=\"".$pilot->getName()."\" /></td>";
-			$html .= "<td class='kb-table-cell' width='200'><b>".$i.".</b>&nbsp;<a class='kb-shipclass' href=\"?a=pilot_detail&amp;plt_id=".$row['plt_id']."\">".$pilot->getName()."</a></td>";
-			$html .= "<td class='kb-table-cell' align='center'><b>".$row['cnt']."</b></td>";
-
-			$html .= "</tr>";
+			$rows[] = array(
+				'rank' => $i,
+				'name' => $pilot->getName(),
+				'uri' => "?a=pilot_detail&amp;plt_id=".$row['plt_id'],
+				'portrait' => $pilot->getPortraitURL(32),
+				'count' => $row['cnt']);
 			$i++;
 		}
 
-		$html .= "</table>";
+		$smarty->assign('tl_name', 'Pilot');
+		$smarty->assign('tl_type', $this->entity_);
+		$smarty->assignByRef('tl_rows', $rows);
 
-		return $html;
+		return $smarty->fetch(get_tpl('toplisttable'));
 	}
 }
 
@@ -901,42 +888,27 @@ class TopCorpTable
 
 	function generate()
 	{
+		global $smarty;
 		$this->toplist_->generate();
 
-		$html .= "<table class='kb-table' cellspacing='1'>";
-		$html .= "<tr class='kb-table-header'>";
-		$html .= "<td class='kb-table-cell' align='center'>#</td>";
-		$html .= "<td class='kb-table-cell' align='center'>Corporation</td>";
-		$html .= "<td class='kb-table-cell' align='center' width='60'>".$this->entity_."</td>";
-		$html .= "</tr>";
-
-		$odd = true;
 		$i = 1;
 		while ($row = $this->toplist_->getRow())
 		{
 			$corp = new Corporation($row['crp_id']);
-			if ($odd)
-			{
-				$class = "kb-table-row-odd";
-				$odd = false;
-			}
-			else
-			{
-				$class = "kb-table-row-even";
-				$odd = true;
-			}
-			$html .= "<tr class='".$class."'>";
-			$html .= "<td class='kb-table-cell' align='center'><b>".$i.".</b></td>";
-			$html .= "<td class='kb-table-cell' width='200'><a href=\"?a=corp_detail&amp;crp_id=".$row['crp_id']."\">".$corp->getName()."</a></td>";
-			$html .= "<td class='kb-table-cell' align='center'><b>".$row['cnt']."</b></td>";
-
-			$html .= "</tr>";
+			$rows[] = array(
+				'rank' => $i,
+				'name' => $corp->getName(),
+				'uri' => "?a=pilot_detail&amp;plt_id=".$row['crp_id'],
+				'portrait' => $corp->getPortraitURL(32),
+				'count' => $row['cnt']);
 			$i++;
 		}
 
-		$html .= "</table>";
+		$smarty->assign('tl_name', 'Corporation');
+		$smarty->assign('tl_type', $this->entity_);
+		$smarty->assignByRef('tl_rows', $rows);
 
-		return $html;
+		return $smarty->fetch(get_tpl('toplisttable'));
 	}
 }
 
@@ -972,39 +944,29 @@ class TopShipListTable
 
 	function generate()
 	{
+		global $smarty;
 		$this->toplist_->generate();
 
-		$html .= "<table class='kb-table' cellspacing='1'>";
-		$html .= "<tr class='kb-table-header'>";
-		$html .= "<td class='kb-table-cell' align='center' colspan='2'>Ship</td>";
-		$html .= "<td class='kb-table-cell' align='center' width='60'>Kills</td>";
-		$html .= "</tr>\n";
-		$odd = true;
 		while ($row = $this->toplist_->getRow())
 		{
 			$ship = new Ship($row['shp_id']);
 			$shipclass = $ship->getClass();
-			if ($odd)
-			{
-				$class = "kb-table-row-odd";
-				$odd = false;
-			}
-			else
-			{
-				$class = "kb-table-row-even";
-				$odd = true;
-			}
-			$html .= "<tr style='height:32px' class='".$class."'>\n";
-			$html .= "\t<td width='32' valign='top' align='left'><span style=\"position:absolute; border: none; height:32px; width:32px; text-align:left;\"><img src=\"".$ship->getImage(32)."\" width='32' height='32' border='0' /></span></td>\n";
-			$html .= "\t<td class='kb-table-cell' width='200'><b>".$ship->getName()."</b><br />".$shipclass->getName()."</td>\n";
-			$html .= "\t<td class='kb-table-cell' align='center'><b>".$row['cnt']."</b></td>\n";
-
-			$html .= "</tr>\n";
+			$shipclass->getName();
+			
+			$rows[] = array(
+				'rank' => false,
+				'name' => $ship->getName(),
+				'subname' => $shipclass->getName(),
+				'uri' => "?a=invtype&amp;id=".$ship->getExternalID(),
+				'portrait' => $ship->getImage(32),
+				'count' => $row['cnt']);
 		}
 
-		$html .= "</table>";
+		$smarty->assign('tl_name', 'Ship');
+		$smarty->assign('tl_type', 'Kills');
+		$smarty->assignByRef('tl_rows', $rows);
 
-		return $html;
+		return $smarty->fetch(get_tpl('toplisttable'));
 	}
 }
 
@@ -1041,38 +1003,24 @@ class TopWeaponListTable
 
 	function generate()
 	{
+		global $smarty;
 		$this->toplist_->generate();
 
-		$html .= "<table class='kb-table' cellspacing='1'>";
-		$html .= "<tr class='kb-table-header'>";
-		$html .= "<td class='kb-table-cell' align='center' colspan='2'>Weapon</td>";
-		$html .= "<td class='kb-table-cell' align='center' width='60'>Kills</td>";
-		$html .= "</tr>";
-
-		$odd = true;
 		while ($row = $this->toplist_->getRow())
 		{
 			$item = new Item($row['itm_id']);
-			if ($odd)
-			{
-				$class = "kb-table-row-odd";
-				$odd = false;
-			}
-			else
-			{
-				$class = "kb-table-row-even";
-				$odd = true;
-			}
-			$html .= "<tr style='height:32px' class='".$class."'>";
-			$html .= "<td width='32' valign='top' align='left'>".$item->getIcon(32)."</td>";
-			$html .= "<td class='kb-table-cell' width='200'><b>".$item->getName()."</b></td>";
-			$html .= "<td class='kb-table-cell' align='center'><b>".$row['cnt']."</b></td>";
-
-			$html .= "</tr>";
+			$rows[] = array(
+				'rank' => false,
+				'name' => $item->getName(),
+				'uri' => "?a=invtype&amp;id=".$item->getID(),
+				'icon' => $item->getIcon(32),
+				'count' => $row['cnt']);
 		}
 
-		$html .= "</table>";
+		$smarty->assign('tl_name', 'Weapon');
+		$smarty->assign('tl_type', 'Kills');
+		$smarty->assignByRef('tl_rows', $rows);
 
-		return $html;
+		return $smarty->fetch(get_tpl('toplisttable'));
 	}
 }
