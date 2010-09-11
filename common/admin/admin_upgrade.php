@@ -37,6 +37,15 @@ switch($parser->getXML())
 		break;
 }
 
+if(isset($_GET['reset_code']))
+{
+	Config::set('upd_codeVersion', KB_VERSION);
+}
+if(isset($_GET['reset_db']))
+{
+	Config::set('upd_dbVersion', $parser->getLatestDBVersion());
+}
+
 if(count($page_error) == 0)
 {
 	$parser->retrieveData();
@@ -201,7 +210,7 @@ if(count($page_error) == 0)
 	//list the db updates
 	$db = $parser->getDBInfo();
 	$lowestDB = $parser->getLowestDBVersion();
-	if($parser->getLatestDBVersion() != $dbversion)
+	if($parser->getLatestDBVersion() > $dbversion)
 	{
 		$i = 0;
 		foreach($db as $piece)
@@ -243,7 +252,7 @@ if(count($page_error) == 0)
 	//list the code updates
 	$code = $parser->getCodeInfo();
 	$lowestCode = $parser->getLowestCodeVersion();
-	if($parser->getLatestCodeVersion() != $codeversion)
+	if($parser->getLatestCodeVersion() > $codeversion)
 	{
 		$i = 0;
 		foreach($code as $piece)
