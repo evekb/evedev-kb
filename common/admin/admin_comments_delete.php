@@ -5,41 +5,38 @@
  * $HeadURL$
  */
 
+if(isset($_GET['c_id'])) $_GET['c_id'] = intval($_GET['c_id']);
+else $_GET['c_id'] = 0;
+
 $page = new Page("Administration - Deletion of Comment ID \"".$_GET['c_id']."\"");
 $page->setAdmin();
 
+
 if ($_POST['confirm'])
 {
-    $qry = DBFactory::getDBQuery();;
-    $qry->execute("delete from kb3_comments where id='".$_GET['c_id']."'");
-    $html .= "Comment ID \"".$_GET['c_id']."\" deleted!";
-    $html .= "<br /><br /><a href=\"javascript:window.close();\">[close]</a>";
+    $qry = DBFactory::getDBQuery();
+    $qry->execute("DELETE FROM kb3_comments WHERE id='".$_GET['c_id']."'");
+	$smarty->assign('deleted', true);
+	$smarty->assign('id', $_GET['c_id']);
 }
 else
 {
-    $html .= "Confirm deletion of Comment ID \"".$_GET['c_id']."\": ";
     $qry = DBFactory::getDBQuery();;
     $qry->execute("SELECT id, name, comment FROM kb3_comments WHERE `id`='".$_GET['c_id']."'");
     if ($qry->recordCount() == 0)
     {
         // no commment
-        $html .= "Error: comment does not exist<br />\n";
+		$smarty->assign('id', false);
     }
     else
     {
-        while ($data = $qry->getRow())
+        if($data = $qry->getRow())
         {
-            $name = $data['name'];
-            $comment = $data['comment'];
-            $html .= "<div class=\"comment-text\"><a href=\"?a=search&amp;searchtype=pilot&amp;searchphrase=".$name."\">".$name."</a>:<p>".$comment."</p>";
-            $html .= "</div><br />";
+			$smarty->assign('id', $data['id']);
+			$smarty->assign('name', $data['name']);
+			$smarty->assign('comment', $data['comment']);
         }
-        $html .= "<form action='' method='post'>";
-        $html .= "<input type='submit' name='confirm' value='Yes' /> ";
-        $html .= "<button onclick=\"window.close();\">No</button>";
-        $html .= "</form>";        
     }
 }
-$page->setContent($html);
+$page->setContent($smarty->fetch(get_tpl('admin_comment_delete')));
 $page->generate();
-?>
