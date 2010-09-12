@@ -23,8 +23,8 @@ class pSearch extends pageAssembly
         parent::__construct();
 
         $this->queue("start");
+		$this->queue("newSearch");
         $this->queue("checkSearch");
-        $this->queue("display");
     }
     function start()
     {
@@ -139,12 +139,13 @@ class pSearch extends pageAssembly
 				$smarty->assignByRef('results', $results);
             }
         }
-        return '';
+		$smarty->assign('nonajax', true);
+        return $smarty->fetch(get_tpl('search_result'));
     }
-    function display()
+    function newSearch()
     {
         global $smarty;
-        return $smarty->fetch(get_tpl('search'));
+        return $smarty->fetch(get_tpl('search_new'));
     }
 }
 
