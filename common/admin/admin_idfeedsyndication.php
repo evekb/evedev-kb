@@ -17,7 +17,6 @@ require_once('common/admin/admin_menu.php');
 $page = new Page("Administration - IDFeed Syndication " . IDFeed::version);
 $page->setCachable(false);
 $page->setAdmin();
-$html .= "<script language=\"JavaScript\" type='text/javascript'>function checkAll(checkname, exby) {for (i = 0; i < checkname.length; i++)checkname[i].checked = exby.checked? true:false}</script>";
 
 $feeds = config::get("fetch_idfeeds");
 if(is_null($feeds))
@@ -106,43 +105,15 @@ if ($_POST['fetch'])
 	}
 }
 // generating the html
-$html .= '<form id="options" name="options" method="post" action="?a=admin_idfeedsyndication">';
-
-$html .= "<div class='block-header2'>Feeds</div><table>";
-//$html .= "<tr style='text-align: left;'><th>Feed URL</th><th>Last Kill</th><th>Trusted</th><th>API only</th><th>Fetch</th><th>Delete</th></tr>\n";
-$html .= "<tr style='text-align: left;'><th>Feed URL</th><th>Last Kill</th><th>Trusted</th><th>Fetch</th><th>Delete</th></tr>\n";
+$rows = array();
 foreach($feeds as $key => &$val)
 {
 	$key = md5($val['url']);
-    $html .= "<tr><td><input type='text' name='" . $key . "' size='50' class='password' value=\"";
-    $html .= $val['url'];
-    $html .= "\" /></td>";
-
-    $html .= "<td><input type='text' name='lastkill$key' class='lastkill' size='10' value='" . $val['lastkill'];
-//    $html .= "' readonly='readonly' /></td>";
-    $html .= "' /></td>";
-
-    $html .= "<td><input type='checkbox' name='trusted[]' class='trusted' value='" . $key."'";
-    if ($val['trusted'])
-        $html .= " checked=\"checked\"";
-    $html .= " /></td>";
-
-//	$html .= "<td><input type='checkbox' name='apikills[]' class='apikills' value='" . $key."'";
-//    if ($val['apikills']) $html .= " checked=\"checked\"";
-//    $html .= " /></td>";
-
-    $html .= "<td><input type='checkbox' name='fetch_feed[]' class='fetch' value='" . $key."'";
-    if (!isset($_POST['fetch_feed'][$key]) || $_POST['fetch_feed'][$key]) $html .= " checked=\"checked\"";
-    $html .= " /></td>";
-
-    $html .= "<td><input type='checkbox' name='delete[]' class='delete' value='" . $key."'";
-    $html .= " />";
-    $html .= "</td></tr>";
+    if (!isset($_POST['fetch_feed'][$key]) || $_POST['fetch_feed'][$key]) $fetch=false;
+	else $fetch = true;
+	$rows[] = array('name'=>$key, 'uri'=>$val['url'], 'lastkill'=>$val['lastkill'], 'trusted'=>$val['trusted'], 'fetch'=>!$fetch);
 }
-$html .= "<tr><td colspan='2'><i>Example: http://killboard.domain.com/?a=idfeed</i></td><td>";
-$html .= "</td><td><input type='checkbox' name='all' onclick='checkAll(this.form.fetch,this)' /><i>all</i>";
-//$html .= "</td><td></td><td><input type='checkbox' name='all' onclick='checkAll(this.form.fetch,this)' /><i>all</i>";
-$html .= "</td><td></td></tr></table><br /><br /><br />";
+$smarty->assignByRef('rows', $rows);
 
 //$html .= "<table><tr><td height='20px' width='150px'><b>First week:</b></td>";
 //$html .= '<td><select name="range1">';
@@ -179,20 +150,9 @@ $html .= "</td><td></td></tr></table><br /><br /><br />";
 //$html .= '</select>';
 //$html .= "</td></tr>";
 //$html .= "</table><br /><br />";
-$html .= "<input type='submit' id='submitFetch' name='fetch' value=\"Fetch!\" /><br /><br />";
-
-$html .= "<div class='block-header2'>Options</div><table>";
-//$html .= "<tr><td height='30px' width='150px'><b>Number of feeds:</b></td>";
-//$html .= "<td><input type='text' name='fetch_feed_count' size='2' maxlength='2' class='password' value='" . $feedcount . "'></td></tr>";
-$html .= "<tr><td height='50' width='150'><b>Comment for automatically parsed killmails?</b></td>";
-$html .= "<td><input type='text' size='50' class='password' name='fetch_comment' id='fetch_comment' value=\"";
 if (config::get('fetch_comment'))
-    $html .= config::get('fetch_comment');
-$html .= "\" /><br /><i> (leave blank for none)</i><br /></td></tr>";
-$html .= "</table><br /><br />";
-$html .= "<input type='submit' id='submitOptions' name='submit' value=\"Save\" />";
-$html .= "</form>";
-
+    $smarty->assign('comment', config::get('fetch_comment'));
+$smarty->assign('results', $html);
 $page->addContext($menubox->generate());
-$page->setContent($html);
+$page->setContent($smarty->fetch(get_tpl('admin_idfeed')));
 $page->generate();
