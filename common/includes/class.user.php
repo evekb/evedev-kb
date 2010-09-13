@@ -11,7 +11,18 @@ class user
 	{
 		trigger_error('The class "user" may only be invoked statically.', E_USER_ERROR);
 	}
-
+	
+	/*!
+	 * Checks to see if the given username and password are valid for this site,
+	 * and if they are, log the user in.
+	 * Roles, roles by title and extra user data are all stored in the user's session once
+	 * they are logged in.
+	 *
+	 * Roles are marked differently if the user has the role explicitly or given to them
+	 * by a title they have.
+	 *
+	 * Extra data is stored as key => value pairs within the user's session.
+	 */
     public static function login($login, $password)
     {
         if (user::loggedin())
@@ -19,49 +30,38 @@ class user
             return true;
         }
         $db = DBFactory::getDBQuery(true);
-        $db->execute('select * from kb3_user
-                      left join kb3_user_extra on kb3_user.usr_id = kb3_user_extra.use_usr_id
-                      left join kb3_user_titles on kb3_user.usr_id = kb3_user_titles.ust_usr_id
-                      left join kb3_user_roles on kb3_user.usr_id = kb3_user_roles.uro_usr_id
-                      WHERE usr_login='."'".slashfix($login)."'  and usr_state=0 and usr_site='".KB_SITE."'");
-		if (!$row = $db->getRow())
+        $db->execute("select usr_id,usr_login,usr_pass,usr_pilot_id from kb3_user
+                      WHERE usr_login='".slashfix($login)."' and usr_state=0 and usr_site='".KB_SITE."'
+					  AND usr_pass = '".md5($password)."'");
+		if (!$db->recordCount())
 		{
 			return false;
 		}
-		if ($row['usr_pass'] != md5($password))
-		{
-			return false;
-		}
-		$user = $row;
-		$titles = $roles = array();
-
+		
+		$roles = array();
+		$user = null;
 
 		Session::create();
-
-		// user extra information
-		if ($row['use_key'])
-		{
+		$row = $db->getRow();
+		$user = $row;
+		$userID = $row['usr_id'];
+		
+		// Extra data
+		$db->execute("SELECT * FROM kb3_user_extra WHERE use_usr_id = " . $userID);
+		while ($row = $db->getRow())
 			$user[$row['use_key']] = $row['use_value'];
-		}
-		// user roles
-		if ($row['uro_rol_id'])
-		{
-			$roles[] = $row['uro_rol_id'];
-		}
-		// user titles
+		
+		// Titles
+		$db->execute("SELECT DISTINCT rol_id FROM kb3_user_titles t INNER JOIN kb3_titles_roles r ON t.ust_ttl_id = r.ttl_id WHERE t.ust_usr_id = " . $userID);
+		while ($row = $db->getRow())
+			$roles[$row['rol_id']] = 2;
+		
+		// Roles
+		$db->execute("SELECT uro_rol_id FROM kb3_user_roles WHERE uro_usr_id = " . $userID);
+		while ($row = $db->getRow())
+			$roles[$row['uro_rol_id']] = 1;
 
-		if ($row['ust_ttl_id'])
-		{
-			$db2 = DBFactory::getDBQuery(true);
-			$db2->execute('select distinct rol_name from kb3_titles_roles a,kb3_roles b where a.rol_id=b.rol_id and  a.ttl_id='.$row['ust_ttl_id']);
-			while ($ttle = $db2->getRow())
-			{
-				$roles[$ttle['rol_name']] = 1;
-			}
-		}
-		$user['uro_rol_id']=$roles;
-		if ($row['usr_state'])
-			$user['usr_state']=$row['usr_state'];
+		$user['roles']=$roles;
 		$_SESSION['user'] = $user;
 
 		user::loggedin(true);
@@ -74,7 +74,7 @@ class user
 		$user = Session::get('user');
 		if (is_null($user)) return null;
 
-		if (isset($user['uro_rol_id'][$role])) return true;
+		if (array_key_exists($role, $user['roles'])) return true;
 
 		return false;
 	}
