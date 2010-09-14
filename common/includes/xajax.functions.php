@@ -119,6 +119,7 @@ function doAjaxSearch($searchphrase='', $type='pilot')
 				}
 				$result .= $name1."</a></td><td>".$name2."</td></tr>";
 			}
+			$result .= "</table>";
 		}
 	}
 	$objResponse = new xajaxResponse();
