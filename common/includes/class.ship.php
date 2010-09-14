@@ -151,6 +151,7 @@ class Ship
 			$this->shipname = $row['shp_name'];
 			$this->shipclass = new ShipClass($row['scl_id']);
 			$this->shiptechlevel = $row['shp_techlevel'];
+			$this->id = $row['shp_id'];
 			$this->externalid = $row['shp_externalid'];
 
 			if (!$this->value = $row['price'])
