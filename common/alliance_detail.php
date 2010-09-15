@@ -7,6 +7,23 @@
 
 class pAllianceDetail extends pageAssembly
 {
+	public $page = null;
+	public $scl_id = 0;
+	public $all_id = 0;
+	public $all_external_id = 0;
+	public $alliance = null;
+	private $view = null;
+	private $viewList = array();
+	private $menuOptions = array();
+	private $allianceCorps = array();
+	private $month = '';
+	private $year = '';
+	private $nmonth = '';
+	private $nyear = '';
+	private $pmonth = '';
+	private $pyear = '';
+	private $kill_summary = null;
+
 	//! Construct the Alliance Details object.
 
 	/** Set up the basic variables of the class and add the functions to the
@@ -15,15 +32,6 @@ class pAllianceDetail extends pageAssembly
 	function __construct()
 	{
 		parent::__construct();
-		$this->scl_id = intval($_GET['scl_id']);
-		$this->all_id = intval($_GET['all_id']);
-		if(isset($_GET['all_external_id'])) $this->all_external_id = intval($_GET['all_external_id']);
-		elseif(isset($_GET['all_ext_id'])) $this->all_external_id = intval($_GET['all_ext_id']);
-		else $this->all_external_id = 0;
-		$this->view = $_GET['view'];
-		$this->viewList = array();
-
-		$this->menuOptions = array();
 
 		$this->queue("start");
 		$this->queue("statSetup");
@@ -41,6 +49,14 @@ class pAllianceDetail extends pageAssembly
 	{
 		$this->page = new Page();
 		$this->page->addHeader('<meta name="robots" content="index, nofollow" />');
+
+		$this->scl_id = intval($_GET['scl_id']);
+		$this->all_id = intval($_GET['all_id']);
+		if(isset($_GET['all_external_id'])) $this->all_external_id = intval($_GET['all_external_id']);
+		elseif(isset($_GET['all_ext_id'])) $this->all_external_id = intval($_GET['all_ext_id']);
+		else $this->all_external_id = 0;
+		$this->view = $_GET['view'];
+
 		if (!$this->all_id && !$this->all_external_id)
 		{
 			$html = 'No valid alliance id specified.';
@@ -283,11 +299,11 @@ class pAllianceDetail extends pageAssembly
 				if ($this->scl_id)
 					$list->addVictimShipClass($this->scl_id);
 				$list->setPageSplit(config::get('killcount'));
-				$this->pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
+				$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 				$table = new KillListTable($list);
 				$table->setDayBreak(false);
 				$smarty->assign('kills', $table->generate());
-				$smarty->assign('splitter', $this->pagesplitter->generate());
+				$smarty->assign('splitter', $pagesplitter->generate());
 
 				return $smarty->fetch(get_tpl('detail_kl_kills'));
 
@@ -300,12 +316,12 @@ class pAllianceDetail extends pageAssembly
 				if ($this->scl_id)
 					$list->addVictimShipClass($this->scl_id);
 				$list->setPageSplit(config::get('killcount'));
-				$this->pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
+				$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 
 				$table = new KillListTable($list);
 				$table->setDayBreak(false);
 				$smarty->assign('losses', $table->generate());
-				$smarty->assign('splitter', $this->pagesplitter->generate());
+				$smarty->assign('splitter', $pagesplitter->generate());
 
 				return $smarty->fetch(get_tpl('detail_kl_losses'));
 
