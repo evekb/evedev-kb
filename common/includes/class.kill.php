@@ -470,7 +470,6 @@ class Kill
 			if($this->dupeid_ != 0) return $this->dupeid_;
 			$this->execQuery();
 		}
-		$this->dupeid_ = 0;
 		$qry = DBFactory::getDBQuery(true);
 		if (!$this->getFBPilotID() || !$this->victimid_)
 			return 0;
@@ -491,7 +490,11 @@ class Kill
 		{
 			$kll_id = $row['kll_id'];
 			// No involved parties found to differentiate kills
-			if(empty($this->involvedparties_)) return $kll_id;
+			if(empty($this->involvedparties_))
+			{
+				$this->dupeid_ = $kll_id;
+				return $kll_id;
+			}
 
 			// Check that all involved parties we know of are on the kill
 			// and did the same damage.
@@ -503,7 +506,11 @@ class Kill
 
 			$qryinv->execute($sql);
 			$row = $qryinv->getRow();
-			if($row['count'] == count($this->involvedparties_)) return $kll_id;
+			if($row['count'] == count($this->involvedparties_))
+			{
+				$this->dupeid_ = $kll_id;
+				return $kll_id;
+			}
 		}
 		return 0;
 	}
@@ -1254,7 +1261,7 @@ class Kill
 			$qry->autocommit(true);
 			return false;
 		}
-		if(!is_null($this->hash))
+		if($this->hash != false)
 		{
 			$sql = "INSERT INTO kb3_mails (  `kll_id`, `kll_timestamp`, `kll_external_id`, `kll_hash`, `kll_trust`, `kll_modified_time`)".
 				"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ";
