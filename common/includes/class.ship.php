@@ -138,12 +138,11 @@ class Ship
 		if (!$this->executed)
 		{
 			$qry = DBFactory::getDBQuery();
-			;
 
 			$sql = "select * from kb3_ships shp
 						   inner join kb3_ship_classes scl on shp.shp_class = scl.scl_id";
 			$sql .= ' left join kb3_item_price itm on (shp.shp_externalid = itm.typeID) ';
-			if($this->externalid) $sql .= " where shp.shp_externalid = ".$this->externalid;
+			if(isset($this->externalid)) $sql .= " where shp.shp_externalid = ".$this->externalid;
 			else $sql .= " where shp.shp_id = ".$this->id;
 
 			$qry->execute($sql);
