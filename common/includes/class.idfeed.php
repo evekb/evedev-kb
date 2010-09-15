@@ -28,7 +28,7 @@ class IDFeed
 	private $time = '';
 	private $cachedTime = '';
 	private $errormsg = '';
-	const version = "0.91";
+	const version = "0.92";
 
 	//! Construct the Fetcher class and initialise variables.
 
@@ -99,6 +99,7 @@ class IDFeed
 		if(!$sxe['edkapi'] || $sxe['edkapi'] < 0.91) return false;
 		$this->time = $sxe->currentTime;
 		$this->cachedTime = $sxe->cachedUntil;
+		//die( htmlentities($sxe->asXML()));
 		foreach($sxe->result->rowset->row as $row) $this->processKill($row);
 		return count($this->posted) + count($this->skipped);
 	}
@@ -278,11 +279,11 @@ class IDFeed
 			$qry = DBFactory::getDBQuery();
 
 			$kill = new Kill();
-			if($row['trust'] >= $this->trust && $row['killID']) $kill->setExternalID($row['killID']);
-			if($row['hash']) $kill->setHash(decbin(hexdec($row['hash'])));
-			if($row['trust']) $kill->setTrust($row['trust']);
+			if(intval($row['trust']) >= $this->trust && intval($row['killID'])) $kill->setExternalID(intval($row['killID']));
+			if($row['hash']) $kill->setHash(decbin(hexdec(strval($row['hash']))));
+			if($row['trust']) $kill->setTrust(intval($row['trust']));
 
-			$kill->setTimeStamp($row['killTime']);
+			$kill->setTimeStamp(strval($row['killTime']));
 
 			$qry->execute("SELECT sys_id FROM kb3_systems WHERE sys_eve_id = '".intval($row['solarSystemID'])."'");
 			if(!$qry->recordCount()) return false;
@@ -290,17 +291,17 @@ class IDFeed
 			$sys = new SolarSystem($qrow['sys_id']);
 			$kill->setSolarSystem($sys);
 
-			$this->processVictim($row->victim, $kill, $row['killTime']);
+			$this->processVictim($row->victim, $kill, strval(strval($row['killTime'])));
 
-			foreach($row->rowset[0]->row as $inv) $this->processInvolved($inv, $kill, $row['killTime']);
+			foreach($row->rowset[0]->row as $inv) $this->processInvolved($inv, $kill, strval($row['killTime']));
 			if(isset($row->rowset[1]->row[0])) foreach($row->rowset[1]->row as $item) $this->processItem($item, $kill);
 			$id = $kill->add();
 
 			$internalID = intval($row['killInternalID']);
 			if($id > 0) $this->posted[] = $id;
 			//TODO should these be reversed?
-			else if($internalID) $this->skipped[intval($internalID)] = $kill->getDupe();
-			else $this->skipped[$row['killID']] = $kill->getDupe();
+			else if($internalID) $this->skipped[$internalID] = $kill->getDupe();
+			else  $this->skipped[intval($row['killID'])] = $kill->getDupe();
 		}
 		else
 		{
@@ -319,63 +320,63 @@ class IDFeed
 		$alliance = new Alliance();
 		$corp = new Corporation();
 		if($victim['allianceID'])
-			$alliance->add($victim['allianceName'], $victim['allianceID']);
+			$alliance->add(strval($victim['allianceName']), intval($victim['allianceID']));
 		else if($victim['factionID'])
-			$alliance->add($victim['factionName'], $victim['factionID']);
+			$alliance->add(strval($victim['factionName']), intval($victim['factionID']));
 		else
 			$alliance->add("None");
-		$corp->add($victim['corporationName'], $alliance, $time, $victim['corporationID']);
+		$corp->add(strval($victim['corporationName']), $alliance, $time, intval($victim['corporationID']));
 
 		$pilot = new Pilot();
-		$pilot->add($victim['characterName'], $corp, $time, $victim['characterID']);
-		$ship = new Ship(0, $victim['shipTypeID']);
+		$pilot->add(strval($victim['characterName']), $corp, $time, intval($victim['characterID']));
+		$ship = new Ship(0, intval($victim['shipTypeID']));
 
 		$kill->setVictim($pilot);
 		$kill->setVictimID($pilot->getID());
 		$kill->setVictimCorpID($corp->getID());
 		$kill->setVictimAllianceID($alliance->getID());
 		$kill->setVictimShip($ship);
-		$kill->set('dmgtaken', $victim['damageTaken']);
+		$kill->set('dmgtaken', intval($victim['damageTaken']));
 	}
 	private function processInvolved($inv, &$kill, $time)
 	{
 		$alliance = new Alliance();
 		$corp = new Corporation();
 		if($inv['allianceID'])
-			$alliance->add($inv['allianceName'], $inv['allianceID']);
+			$alliance->add(strval($inv['allianceName']), intval($inv['allianceID']));
 		else if($inv['factionID'])
-			$alliance->add($inv['factionName'], $inv['factionID']);
+			$alliance->add(strval($inv['factionName']), intval($inv['factionID']));
 		else
 			$alliance->add("None");
-		$corp->add($inv['corporationName'], $alliance, $time, $inv['corporationID']);
+		$corp->add(strval($inv['corporationName']), $alliance, $time, intval($inv['corporationID']));
 		$pilot = new Pilot();
-		$pilot->add($inv['characterName'], $corp, $time, $inv['characterID']);
-		$ship = new Ship(0, $inv['shipTypeID']);
-		$weapon = new Item($inv['weaponTypeID']);
+		$pilot->add(strval($inv['characterName']), $corp, $time, intval($inv['characterID']));
+		$ship = new Ship(0, intval($inv['shipTypeID']));
+		$weapon = new Item(intval($inv['weaponTypeID']));
 
 		$iparty = new InvolvedParty($pilot->getID(), $corp->getID(),
-			$alliance->getID(), $inv['securityStatus'], $ship, $weapon, $inv['damageDone']);
+			$alliance->getID(), floatval($inv['securityStatus']), $ship, $weapon, intval($inv['damageDone']));
 
 		$kill->addInvolvedParty($iparty);
 		if($inv['finalBlow']) $kill->setFBPilotID($pilot->getID());
 	}
 	private function processItem($item, &$kill)
 	{
-		if($item['flag'] == 5) $location = 4;
-		else if($item['flag'] == 87) $location = 6;
+		if(intval($item['flag']) == 5) $location = 4;
+		else if(intval($item['flag']) == 87) $location = 6;
 		else
 		{
-			$litem = new Item($item['typeID']);
+			$litem = new Item(intval($item['typeID']));
 			$location = $litem->getSlot();
 		}
 
 		if($item['qtyDropped'])
 		{
-			$kill->addDroppedItem(new DroppedItem($item['typeID'], $item['qtyDropped'], '', $location));
+			$kill->addDroppedItem(new DroppedItem(new Item(intval($item['typeID'])), intval($item['qtyDropped']), '', $location));
 		}
 		else
 		{
-			$kill->addDestroyedItem(new DestroyedItem($item['typeID'], $item['qtyDestroyed'], '', $location));
+			$kill->addDestroyedItem(new DestroyedItem(new Item(intval($item['typeID'])), intval($item['qtyDestroyed']), '', $location));
 		}
 	}
 	//! Return the array of posted kill IDs.
@@ -408,7 +409,7 @@ class IDFeed
 	private function killExists(&$row)
 	{
 		$qry = DBFactory::getDBQuery(true);
-		if($row['killID'] > 0)
+		if(intval($row['killID']) > 0)
 		{
 			$qry->execute("SELECT kll_id FROM kb3_kills WHERE kll_external_id = ".intval($row['killID']));
 			if($qry->recordCount())
@@ -420,7 +421,7 @@ class IDFeed
 		}
 		if(strlen($row['hash']) > 1)
 		{
-			$qry->execute("SELECT kll_id FROM kb3_mails WHERE kll_hash = 0x".$qry->escape($row['hash']));
+			$qry->execute("SELECT kll_id FROM kb3_mails WHERE kll_hash = 0x".$qry->escape(strval($row['hash'])));
 			if($qry->recordCount())
 			{
 				$qrow = $qry->getRow();
