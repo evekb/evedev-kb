@@ -11,7 +11,7 @@ class Ship
 {
 	private $executed = false;
 	private $id = 0;
-	private $externalid = 0;
+	private $externalid = null;
 	private $shipname = null;
 	private $shipclass = null;
 	private $shiptechlevel = null;
