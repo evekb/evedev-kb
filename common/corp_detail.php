@@ -144,7 +144,7 @@ class pCorpDetail extends pageAssembly
 
 		$result .= $myAPI->fetchXML();
 		// Update the name if it has changed.
-		if(slashfix($myAPI->getCorporationName()) != slashfix($this->corp->getName()))
+		if($myAPI->getCorporationName() && slashfix($myAPI->getCorporationName()) != slashfix($this->corp->getName()))
 			$this->corp->add($myAPI->getCorporationName(),
 				$this->corp->getAlliance(), gmdate("Y-m-d H:i:s"),
 				$externalid = $this->corp->getExternalID());
