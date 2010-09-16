@@ -187,14 +187,6 @@ class API_CorporationSheet
 	function startElement($parser, $name, $attribs)
     {
 		$this->characterDataValue = "";
-
-		if ($name == "DESCRIPTION")
-		{
-			$this->DataIsDescription = true;
-			//$this->characterDataValue = "";
-		} else {
-			$this->DataIsDescription = false;
-		}
     }
 
     function endElement($parser, $name)
@@ -286,28 +278,7 @@ class API_CorporationSheet
 
     function characterData($parser, $data)
     {
-		//  This is a fix for some hosts that strip "<" and ">" from the API XML when it's put into a string. I have no idea why this happens, where or how - but this puts them back
-		if ($this->DataIsDescription)
-		{
-			if ( $data == "<" )
-			{
-				$this->tagsareworking = true;
-			}
-
-			if (!$this->tagsareworking)
-			{
-				if ( ($data == "br") || ($data == "b") || ($data == "/a") || ($data == "/b") || ($data == "/font") || (substr($data,0,4)== "font") || (substr($data,0,6)== "a href"))
-				{
-					$data = "<" .$data.">";
-				}
-			}
-			$this->characterDataValue .= $data;
-		} else {
-			$this->characterDataValue = $data;
-		}
-
-
-		//echo $data;
+		$this->characterDataValue .= $data;
     }
 
 	function loaddata($keystring)
