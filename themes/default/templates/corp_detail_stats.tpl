@@ -2,10 +2,10 @@
 			<div class="stats">
 			<table class="kb-table" width="100%" border="0" cellspacing="1">
 				<tr class="kb-table-row-even">
-					<td rowspan="8" width="128" align="center" bgcolor="black">
-						<img src="{$portrait_url}" border="0" alt="" />
+					<td rowspan="8" style="width:128px; height:128px; text-align:center; background-color:black">
+						<img src="{$portrait_url}" style="border:0px" alt="" />
 					</td>
-					<td class="kb-table-cell" width="150">
+					<td class="kb-table-cell" style="width:150px">
 						<b>Alliance:</b>
 					</td>
 					<td class="kb-table-cell">
@@ -15,7 +15,7 @@
 						{$alliance_name}
 {/if}
 					</td>
-					<td class="kb-table-cell" width="65">
+					<td class="kb-table-cell" style="width:65px">
 						<b>CEO:</b>
 					</td>
 					<td class="kb-table-cell">
