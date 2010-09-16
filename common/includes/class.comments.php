@@ -41,8 +41,13 @@ class Comments
 			$row['comment'] = str_replace("&", "&amp;", $row['comment']);
 			$row['comment'] = preg_replace('/<font color="([^\"]*)">(.*)<\/font>/', '<span style="color:\1">\2</span>', $row['comment']);
 			
-			$this->comments_[] = array('time' => $row['posttime'], 'name' => trim($row['name']),
-              'comment' => stripslashes($row['comment']), 'id' => $row['id'], 'ip' => $row['ip']);
+			$this->comments_[] = array(
+				'time' => $row['posttime'],
+				'name' => trim($row['name']),
+				'encoded_name' => urlencode(trim($row['name'])),
+				'comment' => stripslashes($row['comment']),
+				'id' => $row['id'],
+				'ip' => $row['ip']);
         } 
         $smarty->assignByRef('comments', $this->comments_);
 		$smarty->assign('norep', time()%3700);

@@ -7,7 +7,7 @@
 {cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}{section name=i loop=$comments}
 					<tr class="{cycle name=ccl}">
 						<td>
-							<div style="position: relative;"><a href="?a=search&amp;searchtype=pilot&amp;searchphrase={$comments[i].name}">{$comments[i].name}</a>:
+							<div style="position: relative;"><a href="?a=search&amp;searchtype=pilot&amp;searchphrase={$comments[i].encoded_name}">{$comments[i].name}</a>:
 {if $comments[i].time}
 								<span style="position:absolute; right: 0px;">{$comments[i].time}</span>
 {/if}
