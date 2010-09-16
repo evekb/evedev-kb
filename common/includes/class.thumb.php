@@ -146,7 +146,7 @@ class thumb
 	{
 		if (CacheHandler::exists($this->id.'_256.jpg', $this->thumbDir))
 		{
-			$img = imagecreatefromjpeg(CacheHandler::getInternal($this->id.'_256.jpg', 'img'));
+			$img = imagecreatefromjpeg(CacheHandler::getInternal($this->id.'_256.jpg', $this->thumbDir));
 		}
 		else
 		{
@@ -161,31 +161,15 @@ class thumb
 					$this->id = 0;
 					$this->thumbName = 'portrait_0_'.$this->size.'.jpg';
 					$this->thumbDir = 'img';
-					$this->thumb = CacheHandler::getInternal('portrait_0_'.$this->size.'.jpg', 'img/pilots');
+					$this->thumb = CacheHandler::getInternal('portrait_0_'.$this->size.'.jpg', $this->thumbDir);
 					return true;
 				}
 			}
 			// Assume external id < 100,000 is NPC structure/ship
-			if($this->id < 100000)
-			{
-				if(file_exists("img/ships/64_64/".$this->id.".png"))
-				{
-					$img = imagecreatefrompng("img/ships/64_64/".$this->id.".png");
-				}
-				else
-				{
-					// there is no such image so set it to 0
-					$this->id = 0;
-					$this->thumbName = 'portrait_0_'.$this->size.'.jpg';
-					$this->thumbDir = 'img';
-					$this->thumb = CacheHandler::getInternal('portrait_0_'.$this->size.'.jpg', 'img/pilots');
-					return true;
-				}
-			}
+			if($this->id < 100000 && file_exists("img/ships/64_64/".$this->id.".png"))
+				$img = imagecreatefrompng("img/ships/64_64/".$this->id.".png");
 			else
-			{
 				$img = $this->fetchImage('pilot', 256);
-			}
 		}
 
 		if ($img)
@@ -221,9 +205,9 @@ class thumb
 		// id matches an npc image.
 		if(file_exists($source)) $img = imagecreatefrompng($source);
 		// no matching image found so let's try the cache.
-		else if(CacheHandler::exists($this->id.'_128.png', 'img'))
+		else if(CacheHandler::exists($this->id.'_128.png', $this->thumbDir))
 		{
-			$img = imagecreatefrompng(CacheHandler::getInternal($this->id.'_128.png', 'img'));
+			$img = imagecreatefrompng(CacheHandler::getInternal($this->id.'_128.png', $this->thumbDir));
 		}
 		// no image found in the image folder, or the cache, so let's make it.
 		else
@@ -231,32 +215,6 @@ class thumb
 			$img = $this->fetchImage('Corporation', 128);
 			if($this->size == 128) return true;
 		}
-//		{
-//
-//			$myAPI = new API_CorporationSheet();
-//			$myAPI->setCorpID($this->id);
-//
-//			$result .= $myAPI->fetchXML();
-//
-//			$mylogo = $myAPI->getLogo();
-//
-//			if ($result == "Corporation is not part of alliance.")
-//			{
-//				$this->thumbName = '0_'.$this->size.'.png';
-//				$this->thumbDir = 'img';
-//				$this->thumb = CacheHandler::getInternal($this->thumbName, $this->thumbDir);
-//			}
-//			elseif ($result == "")
-//			{
-//				require_once("common/includes/evelogo.php");
-//				// create two sized logo's in 2 places - this allows checks already in place not to keep requesting corp logos each time page is viewed
-//				// class.thumb.php cannot work with png (although saved as jpg these are actually pngs) therefore we have to create the 128 size for it
-//				// doing this prevents the images being rendered each time the function is called and allows it to use one in the cache instead.
-//				CorporationLogo( $mylogo, 128, $this->id );
-//				CorporationLogo( $mylogo, $this->size, $this->id );
-//			}
-//			return true;
-//		}
 		if ($img)
 		{
 			$newimg = imagecreatetruecolor($this->size, $this->size);
@@ -264,7 +222,7 @@ class thumb
 			$oldy = imagesy($img);
 			imagecopyresampled($newimg, $img, 0, 0, 0, 0, $this->size, $this->size, $oldx, $oldy);
 
-			$this->thumb = CacheHandler::getInternal($this->id.'_'.$this->size.'.png', 'img');
+			$this->thumb = CacheHandler::getInternal($this->id.'_'.$this->size.'.png', $this->thumbDir);
 			imagepng($newimg, $this->thumb);
 		}
 		return true;
@@ -286,6 +244,7 @@ class thumb
 			//else $source = CacheHandler::getInternal($this->id.'_256.png', 'img');
 		}
 		else $img = imagecreatefrompng($source);
+		
 		if ($img)
 		{
 			$newimg = imagecreatetruecolor($this->size, $this->size);
@@ -309,7 +268,7 @@ class thumb
 		{
 			$this->id = 0;
 			$source = 'img/corps/0.png';
-			$this->thumb = CacheHandler::getInternal($this->id.'_'.$this->size.'.png','img');
+			$this->thumb = CacheHandler::getInternal($this->id.'_'.$this->size.'.png', $this->thumbDir);
 		}
 		$img = imagecreatefrompng($source);
 		if ($img)
@@ -323,7 +282,7 @@ class thumb
 			imagecopyresampled($newimg, $img, 0, 0, 0, 0, $this->size, $this->size, $oldx, $oldy);
 
 			// Check the cache directories have been created.
-			CacheHandler::getInternal($this->id.'_'.$this->size.'.png', 'img');
+			CacheHandler::getInternal($this->id.'_'.$this->size.'.png', $this->thumbDir);
 			return imagepng($newimg, $this->thumb);
 		}
 		return false;
@@ -370,7 +329,7 @@ class thumb
 			}
 		}
 		if ($img = @imagecreatefromstring($file))
-			CacheHandler::put($this->id.'_'.$size.'.'.$ext, $file, 'img');
+			CacheHandler::put($this->id.'_'.$size.'.'.$ext, $file, $this->thumbDir);
 		return $img;
 	}
 	function getThumb()
