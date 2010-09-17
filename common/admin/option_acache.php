@@ -83,22 +83,11 @@ class admin_acache
     }
     function clearPCache()
     {
-		admin_acache::removeOld(0, KB_PAGECACHEDIR.'/'.KB_SITE, false);
+		CacheHandler::removeByAge('',0);
     }
     function clearQCache()
     {
-		$dir = opendir(KB_QUERYCACHEDIR);
-		while ($line = readdir($dir))
-		{
-			if (strstr($line, 'qcache_qry') !== false)
-			{
-				@unlink(KB_QUERYCACHEDIR.'/'.$line);
-			}
-			elseif (strstr($line, 'qcache_tbl') !== false)
-			{
-				@unlink(KB_QUERYCACHEDIR.'/'.$line);
-			}
-		}
+		CacheHandler::removeByAge('SQL',0);
     }
     function setNotReinforced()
     {
@@ -132,7 +121,7 @@ class admin_acache
 	{
         if ($_POST['option_clear_page'] == 'on')
         {
-			admin_acache::removeOld(0, KB_PAGECACHEDIR.'/'.KB_SITE, true);
+			admin_acache::clearPCache();
 			$_POST['option_clear_page'] = 'off';
         }
         if ($_POST['option_clear_template'] == 'on')
@@ -154,7 +143,7 @@ class admin_acache
 			// Clear page and query cache as well since they also contain the
 			// summaries.
 			admin_acache::clearQCache();
-			admin_acache::removeOld(0, KB_PAGECACHEDIR.'/'.KB_SITE, true);
+			admin_acache::clearPCache();
 			$_POST['option_clear_sum'] == 'off';
         }
         if ($_POST['option_clear_sql'] == 'on')
@@ -162,18 +151,17 @@ class admin_acache
 			admin_acache::clearQCache();
 			// Also clear the page cache since it will have cached the results
 			// of the file cache
-			admin_acache::removeOld(0, KB_PAGECACHEDIR.'/'.KB_SITE, true);
+			admin_acache::clearPCache();
 			$_POST['option_clear_sql'] == 'off';
         }
         if ($_POST['option_clear_all'] == 'on')
         {
 			// Specify each in case they have been moved.
-			admin_acache::removeOld(0, KB_PAGECACHEDIR.'/'.KB_SITE, true);
+			admin_acache::clearPCache();
 			admin_acache::removeOld(0, KB_CACHEDIR.'/templates_c', false);
 			admin_acache::removeOld(0, KB_MAILCACHEDIR, false);
 			admin_acache::removeOld(0, KB_CACHEDIR.'/img', true);
 			admin_acache::removeOld(0, KB_CACHEDIR.'/data', false);
-			admin_acache::removeOld(0, KB_CACHEDIR.'/map', false);
 			admin_acache::removeOld(0, KB_CACHEDIR.'/api', false);
 			$qry = DBFactory::getDBQuery(true);;
 			$qry->execute("DELETE FROM kb3_sum_alliance");
@@ -196,7 +184,7 @@ class admin_acache
 		foreach ($files as $num => $fname)
 		{
 			if (file_exists("{$dir}{$fname}") && !is_dir("{$dir}{$fname}") && substr($fname,0,1) != "." && ((time() - filemtime("{$dir}{$fname}")) > $seconds))
-			{ 
+			{
 				$mod_time = filemtime("{$dir}{$fname}");
 				if (unlink("{$dir}{$fname}")) $del = $del + 1;
 			}

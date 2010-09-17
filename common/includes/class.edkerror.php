@@ -12,7 +12,7 @@ class EDKError
 	public static function handler  ( $errno  , $errstr  , $errfile, $errline, $errcontext)
 	{
 		$output = '';
-		$logfile = "cache/store/error.log";
+		$logfile = "cache/error.log";
 		switch ($errno)
 		{
 			case E_ERROR:
