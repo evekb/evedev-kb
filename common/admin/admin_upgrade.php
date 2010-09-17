@@ -37,6 +37,8 @@ switch($parser->getXML())
 		break;
 }
 
+$parser->retrieveData();
+
 if(isset($_GET['reset_code']))
 {
 	Config::set('upd_codeVersion', KB_VERSION);
@@ -48,7 +50,6 @@ if(isset($_GET['reset_db']))
 
 if(count($page_error) == 0)
 {
-	$parser->retrieveData();
 	$dbversion = Config::get('upd_dbVersion');
 	$codeversion = Config::get('upd_codeVersion');
 
