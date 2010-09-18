@@ -25,10 +25,6 @@ define ("APIVERSION", "V3.3");
 define('KB_VERSION', '3.2.0 Alpha');
 define('KB_RELEASE', '(Tyrannis)');
 
-// add new corporations here once you've added the logo to img/corps/
-$corp_npc = array('Guristas', 'Serpentis Corporation', 'Sansha\'s Nation', 'CONCORD',
-	'Mordus Legion', 'Blood Raider', 'Archangels', 'Guardian Angels', 'True Power');
-
 // Make sure the core functions are loaded.
 require_once('common/includes/class.edkloader.php');
 // Set up the external class files with the autoloader.

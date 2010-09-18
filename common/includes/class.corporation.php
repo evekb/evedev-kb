@@ -29,9 +29,6 @@ class Corporation
 	//! Return true if this corporation is an NPC corporation.
 	function isNPCCorp()
 	{
-		global $corp_npc;
-		if (in_array($this->getName(), $corp_npc))
-			return true;
 		if($this->externalid > 1000001 && $this->externalid < 1000183)
 			return true;
 		// These are NPC alliances but they may show up as corps on mails.
