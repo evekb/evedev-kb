@@ -74,7 +74,7 @@ class pCorpDetail extends pageAssembly
 			}
 		}
 		else $this->corp = new Corporation($this->crp_id);
-		if(isset($_GET['all_id'])) $this->all_id = intval($_GET['all_id']);
+
 		$this->alliance = $this->corp->getAlliance();
 
 		$this->month = intval($_GET['m']);
@@ -135,7 +135,6 @@ class pCorpDetail extends pageAssembly
 		$myAPI->setCorpID($this->corp->getExternalID());
 
 		$result .= $myAPI->fetchXML();
-		$myAPI->getCorporationName();
 		// Update the name if it has changed.
 		if($myAPI->getCorporationName() && slashfix($myAPI->getCorporationName()) != slashfix($this->corp->getName()))
 			$this->corp->add($myAPI->getCorporationName(),
