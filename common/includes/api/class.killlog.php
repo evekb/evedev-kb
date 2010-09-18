@@ -58,6 +58,23 @@ class API_KillLog
 		else
 			$cacheexists = false;
 
+		$qry = DBFactory::getDBQuery();
+		$qry->execute("SELECT log_errorcode FROM kb3_apilog WHERE log_site = '"
+			.KB_SITE."' AND log_keyname = '".
+			addslashes(config::get('API_Name_'.$keyindex)).
+			"' ORDER BY log_timestamp DESC");
+		if($qry->recordCount())
+		{
+			$row = $qry->getRow();
+			$errorcode = $row['log_errorcode'];
+		}
+		else $errorcode = 0;
+		// Don't let the cron keep checking jobs that have returned an
+		if(($errorcode >= 200 && $errorcode < 300|| $errorcode == 105) && $this->iscronjob_)
+		{
+			return "<div class=block-header2><i>".config::get('API_Name_'.$keyindex)." failed with error code ".$errorcode."</i></div><br><br>";
+		}
+
 		// if API_UseCache = 1 (off) then don't use cache
         if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($this->API_CacheTime_) > 0) || ($this->API_UseCaching_ == 1)  || !$cacheexists )
         {
@@ -136,7 +153,9 @@ class API_KillLog
 														. $this->verified_ . ","
 														. $this->totalmails_ . ",'"
 														. $logsource . "','"
-														. $logtype . "',UTC_TIMESTAMP() )" );
+														. $logtype . "','"
+														. $this->errorcode_ . "', "
+														. "UTC_TIMESTAMP() )" );
 
         return $this->Output_;
 
@@ -325,6 +344,7 @@ class API_KillLog
 						}
                         break;
 					case "CODE": // error code
+						var_dump($v);
 						$this->errorcode_ .= $v;
 						break;
                 }

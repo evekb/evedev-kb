@@ -5,7 +5,6 @@
  * $HeadURL$
  */
 
-@error_reporting(E_ALL ^ E_NOTICE);
 //
 // Eve-Dev API Killmail parser by Captain Thunk! (ISK donations are all gratefully received)
 //
@@ -288,8 +287,20 @@ if ($_POST['apilog'])
 	$qry = DBFactory::getDBQuery();
 	$qry->execute($sql) or die($qry->getErrorMsg());
 
-	$html .= '<table class="kb-table">';
-	$html .= "<tr class='kb-table-header'><td align='center' width='150'>Key Name</td><td width='60'>Posted</td><td width='60'>Malformed</td><td width='60'>Ignored</td><td width='60'>Verified</td><td width='80'>Total Mails</td><td width='60'>Source</td><td width='60'>Type</td><td width='150'>Time Stamp</td></tr>";
+	$html .= '<table class="kb-table" style="width:740px; margin-left:10px;">';
+	$html .= "	<tr class='kb-table-header'>
+			<td align='center' width='150'>Key Name</td>
+			<td width='50'>Posted</td>
+			<td width='50'>Malformed</td>
+			<td width='50'>Ignored</td>
+			<td width='50'>Verified</td>
+			<td width='80'>Total Mails</td>
+			<td width='70'>Source</td>
+			<td width='60'>Type</td>
+			<td width='60'>Code</td>
+			<td width='90'>Cached Until</td>
+			<td width='90'>Time Stamp</td>
+		</tr>";
 	$odd = false;
 	while ($row = $qry->getRow())
 	{
@@ -323,8 +334,8 @@ if ($_POST['apilog'])
 		if ( $datasource == "New XML" )
 			$datasource = "<font color = \"#00FF00\">" . $datasource . "</font>";
 			
-    	$html .= "<tr class=" . $class . ">";
-    	$html .= "<td align=center><b>" . stripslashes($row['log_keyname']) . "</b></td>";
+    	$html .= "<tr class='" . $class . "'>";
+    	$html .= "<td align='center'><b>" . stripslashes($row['log_keyname']) . "</b></td>";
     	$html .= "<td>" . $numposted . "</td>";
     	$html .= "<td>" . $numerrors . "</td>";
     	$html .= "<td>" . $numignored . "</td>";
@@ -332,13 +343,14 @@ if ($_POST['apilog'])
 		$html .= "<td>" . $row['log_totalmails'] . "</td>";
 		$html .= "<td>" . $datasource . "</td>";
 		$html .= "<td>" . $row['log_type'] . "</td>";
+		$html .= "<td>" . $row['log_errorcode'] . "</td>";
 		$html .= "<td>" . $row['log_timestamp'] . "</td>";
     	$html .= "</tr>";
 	}
 	$html .= "</table>";
 
 	$html .= "<br />";
-	$html .= "<table><tr><td width='60'><input type=\"submit\" name=\"back\" value=\"Back\" width='60' /></td><td><input type='submit' name='clearlog' value='Clear Log' /></td></tr></table>";
+	$html .= "<table><tr><td width='60'><input type=\"submit\" name=\"back\" value=\"Back\" /></td><td><input type='submit' name='clearlog' value='Clear Log' /></td></tr></table>";
 	$html .= "</form>";
 	
 } else {
