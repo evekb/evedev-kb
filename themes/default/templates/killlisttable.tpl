@@ -50,7 +50,7 @@ onmouseover="this.className='kb-table-row-hover';" onclick="window.location.href
 		{/if}
 {/if}
         <td style="width: 190px" class="kb-table-cell"><a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$k.fbid}"><b>{$k.fb}</b></a><br /><a href="{$kb_host}/?a=corp_detail&amp;crp_id={$k.fbcorpid}">{$k.fbcorp|truncate:35}</a></td>
-        <td style="width: 100px" class="kb-table-cell" align="center"><b>{$k.system|truncate:10}</b>{if $config->get('killlist_regionnames')} {else}<br />{/if} ({$k.systemsecurity|max:0|string_format:"%01.1f"}){if $config->get('killlist_regionnames')}<br />{$k.region|truncate:14}{/if}</td>
+        <td style="width: 100px" class="kb-table-cell" align="center"><b>{$k.system|truncate:10}</b>{if $config->get('killlist_regionnames')} {else}<br />{/if} ({if $k.loss || $k.kill}{$k.systemsecurity|max:0|string_format:"%01.1f"}{else}<span style="color:{if $k.systemsecurity >= 0.5}green{elseif $k.systemsecurity < 0.05}red{else}orange{/if};">{$k.systemsecurity|max:0|string_format:"%01.1f"}</span>{/if}){if $config->get('killlist_regionnames')}<br />{$k.region|truncate:14}{/if}</td>
         {if $config->get('killlist_involved')}
 			<td style="width: 30px" align="center" class="kb-table-cell"><b>{$k.inv}</b></td>
 		{/if}
