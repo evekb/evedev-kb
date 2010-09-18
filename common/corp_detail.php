@@ -150,7 +150,9 @@ class pCorpDetail extends pageAssembly
 
 		$smarty->assign('portrait_url', $this->corp->getPortraitURL(128));
 
-		if($this->alliance->getExternalID())
+		if($this->alliance->getName() == "None")
+			$smarty->assign('alliance_url', false);
+		else if($this->alliance->getExternalID())
 			$smarty->assign('alliance_url', "?a=alliance_detail&amp;all_ext_id=".$this->alliance->getExternalID());
 		else
 			$smarty->assign('alliance_url', "?a=alliance_detail&amp;all_id=".$this->alliance->getID());
