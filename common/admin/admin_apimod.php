@@ -298,8 +298,7 @@ if ($_POST['apilog'])
 			<td width='70'>Source</td>
 			<td width='60'>Type</td>
 			<td width='60'>Code</td>
-			<td width='90'>Cached Until</td>
-			<td width='90'>Time Stamp</td>
+			<td width='180'>Time Stamp</td>
 		</tr>";
 	$odd = false;
 	while ($row = $qry->getRow())
