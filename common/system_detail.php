@@ -86,14 +86,18 @@ class pSystemDetail extends pageAssembly
 			$klist->addVictimShipClass(intval($_GET['scl_id']));
 		else
 			$klist->setPodsNoobShips(config::get('podnoobs'));
-		$klist->setLimit(20);
 
-		if ($this->view == 'recent' || !isset($this->view))
+		if ($this->view == 'recent' || !$this->view)
+		{
+			$klist->setLimit(20);
 			$smarty->assign('klheader', config::get('killcount').' most recent kills');
+		}
 		elseif($this->view == 'losses')
 			$smarty->assign('klheader', 'All losses');
 		else
-			$smarty ->assign('klheader', config::get('killcount').' most recent kills');
+			$smarty ->assign('klheader', 'All kills');
+
+		$klist->setPageSplit(config::get('killcount'));
 
 		$pagesplitter = new PageSplitter($klist->getCount(), config::get('killcount'));
 
