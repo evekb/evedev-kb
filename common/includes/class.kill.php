@@ -1366,18 +1366,18 @@ class Kill
 			if($this->id_ && $this->externalid_)
 			{
 				$sql = "INSERT INTO kb3_mails (  `kll_id`, `kll_timestamp`, ".
-					"`kll_external_id`, `kll_hash`, `kll_trust`)".
+					"`kll_external_id`, `kll_hash`, `kll_trust`, `kll_modified_time`)".
 					"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ".
 					$this->externalid_.", '".$qry->escape($this->hash)."', ".
-					$this->trust.")";
+					$this->trust.", UTC_TIMESTAMP())";
 			}
 			else if($this->id_)
 			{
 				$sql = "INSERT INTO kb3_mails (  `kll_id`, `kll_timestamp`, ".
-					"`kll_hash`, `kll_trust`)".
+					"`kll_hash`, `kll_trust`, `kll_modified_time`)".
 					"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ".
 					"'".$qry->escape($this->hash)."', ".
-					$this->trust.")";
+					$this->trust.", UTC_TIMESTAMP())";
 			}
 			$qry->execute($sql);
 		}
