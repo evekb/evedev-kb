@@ -298,6 +298,7 @@ if(config::get('cfg_allianceid'))
 		$alliance=new Alliance($owner);
 		$owners[] = htmlentities($alliance->getName());
 	}
+	unset($alliance);
 }
 if (config::get('cfg_corpid'))
 {
@@ -306,6 +307,7 @@ if (config::get('cfg_corpid'))
 		$corp = new Corporation($owner);
 		$owners[] = htmlentities($corp->getName());
 	}
+	unset($corp);
 }
 if (config::get('cfg_pilotid'))
 {
@@ -314,6 +316,7 @@ if (config::get('cfg_pilotid'))
 		$pilot = new Pilot($owner);
 		$owners[] = htmlentities($pilot->getName());
 	}
+	unset($pilot);
 }
 if(!$owners) $smarty->assign('kb_owner', false);
 else $smarty->assign('kb_owner', implode(',', $owners));
