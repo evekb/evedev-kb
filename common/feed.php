@@ -84,6 +84,7 @@ if ($_GET['pilot'] || $_GET['pilot_name'])
 	$pilot = new Pilot();
 	$pilot->lookup(urldecode($p));
 }
+else $pilot = false;
 
 if ($_GET['corp'] || $_GET['corp_name'])
 {
@@ -98,6 +99,7 @@ if ($_GET['corp'] || $_GET['corp_name'])
 	$corp = new Corporation();
 	$corp->lookup(urldecode($c));
 }
+else $corp = false;
 
 if ($_GET['alli'] || $_GET['alliance_name'])
 {
@@ -112,6 +114,7 @@ if ($_GET['alli'] || $_GET['alliance_name'])
 	$alli = new Alliance();
 	$alli->add(urldecode($a));
 }
+else $alli = false;
 
 if ($_GET['master'] == 1 && config::get('feed_allowmaster') == 1)
 {
@@ -124,11 +127,11 @@ if (!$master && $_GET['losses'])
 	{
 		$klist->addVictimPilot(new Pilot(PILOT_ID));
 	}
-	if (CORP_ID  && !pilot && !$corp && !$alli) // local
+	if (CORP_ID  && !$pilot && !$corp && !$alli) // local
 	{
 		$klist->addVictimCorp(new Corporation(CORP_ID));
 	}
-	if (ALLIANCE_ID  && !pilot && !$corp && !$alli) // local
+	if (ALLIANCE_ID  && !$pilot && !$corp && !$alli) // local
 	{
 		$klist->addVictimAlliance(new Alliance(ALLIANCE_ID));
 	}
