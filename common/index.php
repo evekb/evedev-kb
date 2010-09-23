@@ -269,16 +269,19 @@ if (config::get('cfg_pilotid'))
 {
 	$pilot=new Pilot(PILOT_ID);
 	$smarty->assign('kb_owner', htmlentities($pilot->getName() ));
+	unset($pilot);
 }
 elseif (config::get('cfg_corpid'))
 {
 	$corp=new Corporation(CORP_ID);
 	$smarty->assign('kb_owner', htmlentities($corp->getName() ));
+	unset($corp);
 }
 elseif(config::get('cfg_allianceid'))
 {
 	$alliance=new Alliance(ALLIANCE_ID);
 	$smarty->assign('kb_owner', htmlentities($alliance->getName() ));
+	unset($alliance);
 }
 else
 {
