@@ -151,6 +151,11 @@ class Page
 	{
 		$this->title = $title;
 	}
+	// Get the page title.
+	public function getTitle()
+	{
+		return $this->title;
+	}
 	//! If this is not an admin session redirect to the login page.
 	public function setAdmin()
 	{
