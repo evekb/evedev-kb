@@ -98,6 +98,7 @@ function get_tpl($name)
 {
 	global $themename;
 	event::call('get_tpl', $name);
+	var_dump($name);
 	if($themename == 'default')
 	{
 		if (IS_IGB)
@@ -124,7 +125,11 @@ function get_tpl($name)
 	{
 		return $name.'.tpl';
 	}
-	return '../../default/templates/'.$name.'.tpl';
+	elseif(file_exists('./themes/default/templates/'.$name.'.tpl'))
+	{
+		return '../../default/templates/'.$name.'.tpl';
+	}
+	return $name.'.tpl';
 }
 
 // this is currently only a wrapper but might get
