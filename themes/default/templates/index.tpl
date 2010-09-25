@@ -15,6 +15,7 @@
 	<div id="popup">
 	</div>
 	<div id="main">
+{if $banner}
 		<div id="header">
 {if $bannerswf=='true'}
 		<OBJECT classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" WIDTH="1000" HEIGHT="200" id="{$banner}" ALIGN="">
@@ -25,6 +26,7 @@
 		</a>
 {/if}
 		</div>
+{/if}
 		<div class="navigation">
 			<table class="navigation" width="100%" style="height:25px;" border="0" cellspacing="1">
 				<tr class="kb-table-row-odd">

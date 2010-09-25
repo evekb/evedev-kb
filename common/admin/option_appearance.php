@@ -77,8 +77,8 @@ options::fadd('Show Ammo, charges, etc', 'fp_showammo', 'checkbox');
 
 class admin_appearance
 {
-    function createPanelTheme()
-    {
+	function createPanelTheme()
+	{
 /*	$sfp_themes =array("ArmyGreen" ,
 		"CoolGray" ,
 		"DarkOpaque" ,
@@ -103,21 +103,21 @@ class admin_appearance
 	$selected = config::get('fp_theme');
 	foreach ($sfp_themes as $theme)
 	{
-	    if ($theme == $selected)
-	    {
+		if ($theme == $selected)
+		{
 		$state = 1;
-	    }
-	    else
-	    {
+		}
+		else
+		{
 		$state = 0;
-	    }
-            $options[] = array('value' => $theme, 'descr' => $theme, 'state' => $state);
+		}
+			$options[] = array('value' => $theme, 'descr' => $theme, 'state' => $state);
 	}
 	return $options;
-    }
+	}
 
-    function createPanelStyle()
-    {
+	function createPanelStyle()
+	{
 	$sfp_styles =array("Windowed" ,
 		"OldWindow" ,
 		"Border" ,
@@ -126,21 +126,21 @@ class admin_appearance
 	$selected = config::get('fp_style');
 	foreach ($sfp_styles as $style)
 	{
-	    if ($style == $selected)
-	    {
+		if ($style == $selected)
+		{
 		$state = 1;
-	    }
-	    else
-	    {
+		}
+		else
+		{
 		$state = 0;
-	    }
-            $options[] = array('value' => $style, 'descr' => $style, 'state' => $state);
+		}
+			$options[] = array('value' => $style, 'descr' => $style, 'state' => $state);
 	}
 	return $options;
-    }
+	}
 
-    function createHighStyle()
-    {
+	function createHighStyle()
+	{
 	$sfp_highstyles =array("ring" ,
 		"square" ,
 		"round" ,
@@ -151,21 +151,21 @@ class admin_appearance
 	$selected = config::get('fp_highstyle');
 	foreach ($sfp_highstyles as $style)
 	{
-	    if ($style == $selected)
-	    {
+		if ($style == $selected)
+		{
 		$state = 1;
-	    }
-	    else
-	    {
+		}
+		else
+		{
 		$state = 0;
-	    }
-            $options[] = array('value' => $style, 'descr' => $style, 'state' => $state);
+		}
+			$options[] = array('value' => $style, 'descr' => $style, 'state' => $state);
 	}
 	return $options;
-    }
+	}
 
-    function createAmmoStyle()
-    {
+	function createAmmoStyle()
+	{
 	$sfp_ammostyles =array("solid" ,
 		"transparent",
 		"none");
@@ -173,102 +173,107 @@ class admin_appearance
 	$selected = config::get('fp_ammostyle');
 	foreach ($sfp_ammostyles as $style)
 	{
-	    if ($style == $selected)
-	    {
+		if ($style == $selected)
+		{
 		$state = 1;
-	    }
-	    else
-	    {
+		}
+		else
+		{
 		$state = 0;
-	    }
-            $options[] = array('value' => $style, 'descr' => $style, 'state' => $state);
+		}
+			$options[] = array('value' => $style, 'descr' => $style, 'state' => $state);
 	}
 	return $options;
-    }
+	}
 
 	//! Create the selection options for available banners
 
 	//! \return HTML for the banner selection dropdown list.
-    function createSelectBanner()
-    {
-        $options = array();
-        $dir = "banner/";
-        if (is_dir($dir))
-        {
-            if ($dh = scandir($dir))
-            {
-                foreach($dh as $file)
-                {
-                    $file = substr($file, 0);
-                    if (!is_dir($dir.$file))
-                    {
-                        if (config::get('style_banner') == $file) $state = 1;
-                        else $state = 0;
+	function createSelectBanner()
+	{
+		$options = array();
 
-                        $options[] = array('value' => $file, 'descr' => $file, 'state' => $state);
-                    }
-                }
-            }
-        }
-        return $options;
-    }
+		if (config::get('style_banner') == "0") $state = 1;
+		else $state = 0;
+		$options[] = array('value' => "0", 'descr' => "No banner", 'state' => $state);
+
+		$dir = "banner/";
+		if (is_dir($dir))
+		{
+			if ($dh = scandir($dir))
+			{
+				foreach($dh as $file)
+				{
+					$file = substr($file, 0);
+					if (!is_dir($dir.$file))
+					{
+						if (config::get('style_banner') == $file) $state = 1;
+						else $state = 0;
+
+						$options[] = array('value' => $file, 'descr' => $file, 'state' => $state);
+					}
+				}
+			}
+		}
+		return $options;
+	}
 
 	//! Create the selection options for available styles in the current theme.
 
 	//! \return HTML for the style selection dropdown list.
-    function createSelectStyle()
-    {
+	function createSelectStyle()
+	{
 		$options = array();
-        $dir = "themes/".config::get('theme_name')."/";
+		$dir = "themes/".config::get('theme_name')."/";
 
-        if (is_dir($dir))
-        {
-            if ($dh = scandir($dir))
-            {
-                foreach($dh as $file)
-                {
-                    if (!is_dir($dir.$file))
-                    {
-                        if (substr($file, -4) != ".css") continue;
+		if (is_dir($dir))
+		{
+			if ($dh = scandir($dir))
+			{
+				foreach($dh as $file)
+				{
+					if (!is_dir($dir.$file))
+					{
+						if (substr($file, -4) != ".css") continue;
 
-                        if (config::get('style_name').'.css' == $file) $state = 1;
-                        else $state = 0;
+						if (config::get('style_name').'.css' == $file) $state = 1;
+						else $state = 0;
 
-                        $options[] = array('value' => substr($file,0,-4), 'descr' => substr($file,0,-4), 'state' => $state);
-                    }
-                }
-            }
-        }
-        return $options;
-    }
+						$options[] = array('value' => substr($file,0,-4), 'descr' => substr($file,0,-4), 'state' => $state);
+					}
+				}
+			}
+		}
+		return $options;
+	}
 	//! Create the selection options for available themes.
 
 	//! \return HTML for the theme selection dropdown list.
 	function createSelectTheme()
-    {
+	{
 		$options = array();
-        $dir = "themes/";
+		$dir = "themes/";
 
-        if (is_dir($dir))
-        {
-            if ($dh = scandir($dir))
-            {
-                foreach($dh as $file)
-                {
-                    if (is_dir($dir.$file))
-                    {
-                        if ($file == "." || $file == ".." || $file == ".svn")
-                            continue;
-                        if (config::get('theme_name') == $file) $state = 1;
-                        else $state = 0;
+		if (is_dir($dir))
+		{
+			if ($dh = scandir($dir))
+			{
+				foreach($dh as $file)
+				{
+					if (is_dir($dir.$file))
+					{
+						if ($file == "." || $file == ".." || $file == ".svn")
+							continue;
+						if (config::get('theme_name') == $file) $state = 1;
+						else $state = 0;
 
-                        $options[] = array('value' => $file, 'descr' => $file, 'state' => $state);
-                    }
-                }
-            }
-        }
-        return $options;
-    }
+						$options[] = array('value' => $file, 'descr' => $file, 'state' => $state);
+					}
+				}
+			}
+		}
+		return $options;
+	}
 	//! Checks if theme has changed and updates page before display.
 	function changeTheme()
 	{
@@ -319,6 +324,7 @@ class admin_appearance
 	{
 		global $smarty;
 		if(options::getPrevious('style_banner') == $_POST['option_style_banner']) return;
+		if($_POST['option_style_banner'] == 0) return;
 
 		$dimensions = getimagesize('banner/'.$_POST['option_style_banner']);
 		if(!$dimensions) $dimensions = array(0,0);
