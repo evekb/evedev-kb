@@ -1,8 +1,14 @@
 -------------------------------------------
-Eve Development Network Killboard v3.1.1
+Eve Development Network Killboard v3.1.2
 -------------------------------------------
 
 VERSION HISTORY
+v3.1.2
+IDFeed reader works.
+Feed page works for pilot feeds.
+Hashing works for updated kills
+Update can reset db level.
+-------------------------------------------
 v3.1.1
 IDFeed reader works for Corporate boards.
 corp_detail correctly links to CEO
