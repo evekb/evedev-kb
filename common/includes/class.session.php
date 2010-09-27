@@ -12,7 +12,7 @@ class session
 
 	public static function init()
 	{
-		session_name("EDK_".preg_replace('/[^a-zA-Z0-9_-]/', '',KB_SITE));
+		session_name("EDK_".substr(hash('md5', KB_SITE),0,6));
 		if (isset($_COOKIE[session_name()]))
 		{
 			session_cache_limiter("");
@@ -38,7 +38,7 @@ class session
 
 	public static function create($admin = false)
 	{
-		session_name("EDK_".preg_replace('/[^a-zA-Z0-9_-]/', '',KB_SITE));
+		session_name("EDK_".substr(hash('md5', KB_SITE),0,6));
 		session_start();
 		if(function_exists('session_regenerate_id')) session_regenerate_id();
 		$_SESSION['admin'] = $admin;
@@ -48,7 +48,7 @@ class session
 
 	public static function destroy()
 	{
-		session_name("EDK_".preg_replace('/[^a-zA-Z0-9_-]/', '',KB_SITE));
+		session_name("EDK_".substr(hash('md5', KB_SITE),0,6));
 		session_start();
 		session_destroy();
 	}
