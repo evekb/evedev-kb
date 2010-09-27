@@ -62,7 +62,7 @@ if(is_writeable('../cache'))
 	$text .= checkdir('../cache/mails');
 	$text .= checkdir('../cache/img');
 	$text .= checkdir('../cache/img/map');
-	$text .= checkdir('../store');
+	$text .= checkdir('../cache/store');
 	$text .= checkdir('../cache/templates_c');
 
 	$smarty->assign('dir_text', $text);
