@@ -3,8 +3,8 @@
   <name>kb3_inv_all</name>
   <rows>0</rows>
   <structure>CREATE TABLE IF NOT EXISTS `kb3_inv_all` (
-  `ina_kll_id` int(6) NOT NULL DEFAULT '0',
-  `ina_all_id` int(3) NOT NULL DEFAULT '0',
+  `ina_kll_id` int(6) NOT NULL,
+  `ina_all_id` int(3) NOT NULL,
   `ina_timestamp` datetime NOT NULL,
   PRIMARY KEY (`ina_kll_id`,`ina_all_id`),
   KEY `ina_all_time` (`ina_all_id`,`ina_timestamp`)
