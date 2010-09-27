@@ -9,13 +9,15 @@
 //! Store summary statistics for Pilots.
 class pilotSummary extends statSummary
 {
+	private $plt_id_ = null;
+	
 	function pilotSummary($plt_id)
 	{
 		$this->plt_id_ = intval($plt_id);
 		$this->executed = false;
 	}
 	//! Fetch the summary information.
-	function execute()
+	protected function execute()
 	{
 		if($this->executed) return;
 		if(!$this->plt_id_)
@@ -27,7 +29,7 @@ class pilotSummary extends statSummary
 		$qry = DBFactory::getDBQuery();
 		$qry->execute("SELECT 1 FROM kb3_sum_pilot WHERE psm_plt_id = ".$this->plt_id_);
 		if(!$qry->recordCount())
-			$this->buildSummary($this->plt_id_);
+			self::buildSummary($this->plt_id_);
 
 		$sql = "SELECT scl_class, scl_id, kb3_sum_pilot.*
 			FROM kb3_ship_classes left join kb3_sum_pilot
@@ -46,7 +48,7 @@ class pilotSummary extends statSummary
 		$this->executed = true;
 	}
 	//! Build a new summary table for an pilot.
-	function buildSummary($plt_id)
+	private static function buildSummary($plt_id)
 	{
 		$plt_id = intval($plt_id);
 		if(!$plt_id) return false;
@@ -102,7 +104,7 @@ class pilotSummary extends statSummary
 		$qry->autocommit(true);
 	}
 	//! Add a Kill and its value to the summary.
-	function addKill($kill)
+	public static function addKill($kill)
 	{
 		$alls = array();
 		$qry = DBFactory::getDBQuery();
@@ -145,7 +147,7 @@ class pilotSummary extends statSummary
 		}
 	}
 	//! Add a Kill and its value to the summary.
-	function delKill($kill)
+	public static function delKill($kill)
 	{
 		$alls = array();
 		$qry = DBFactory::getDBQuery();
@@ -187,7 +189,7 @@ class pilotSummary extends statSummary
 		}
 	}
 	//! Update the summary table when a kill value changes.
-	function update($kill, $difference)
+	public static function update($kill, $difference)
 	{
 		$alls = array();
 		$qry = DBFactory::getDBQuery();

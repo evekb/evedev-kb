@@ -59,8 +59,7 @@ abstract class statSummary
 		if(!$this->executed) $this->execute();
 		return intval($this->summary[$ship_class]['lossisk']);
 	}
-	abstract public function buildSummary($id);
-	abstract public function addKill($id);
-	abstract public function delKill($id);
-	abstract public function update($kill, $difference);
+	abstract public static function addKill($id);
+	abstract public static function delKill($id);
+	abstract public static function update($kill, $difference);
 }
