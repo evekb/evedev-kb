@@ -56,14 +56,12 @@ $smarty->assign('dir_writable', is_writeable('../cache'));
 if(is_writeable('../cache'))
 {
 	$text = checkdir('../cache/SQL');
-	$text = checkdir('../cache/page');
 	$text .= checkdir('../cache/api');
 	$text .= checkdir('../cache/data');
 	$text .= checkdir('../cache/mails');
-	$text .= checkdir('../cache/img/pilots');
-	$text .= checkdir('../cache/img/alliances');
-	$text .= checkdir('../cache/img/corps');
+	$text .= checkdir('../cache/img');
 	$text .= checkdir('../cache/img/map');
+	$text .= checkdir('../cache/store');
 	$text .= checkdir('../cache/templates_c');
 
 	$smarty->assign('dir_text', $text);
