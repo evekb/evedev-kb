@@ -7,7 +7,11 @@
 
 require_once( "common/admin/admin_menu.php" );
 // Set version
-$version = "22/9 2009 - 1";
+$version = "28/9/2010";
+
+$page = new Page();
+$page->setAdmin();
+$page->setTitle('Fetcher - Item Values');
 
 if($_POST['submit'])
 {
@@ -24,11 +28,6 @@ if($_POST['submit'])
 	*		 Not warrantied for anything, might eat your cat.  Your responsibility.
 	*/
 
-
-	$page = new Page();
-	$page->setAdmin();
-	$page->setTitle('Fetcher - Item Values');
-
 	// Check if user wants to use a local file
 	$url = $_POST['turl'];
 	// If not set, use default
@@ -40,7 +39,12 @@ if($_POST['submit'])
 	$html = "<center>";
 	try
 	{
-		$count = $fetch->fetch_values();
+		$fetchfaction = false;
+		if ($_POST['faction'] == "factionyes")
+		{
+			$fetchfaction = true;
+		}
+		$count = $fetch->fetch_values($fetchfaction);
 		$html .= "Fetched and updated <b>". $count."</b> items!<br /><br />";
 
 		if ($_POST['ship'] == "shipyes")
@@ -67,12 +71,13 @@ else
 		$url = "http://eve.no-ip.de/prices/30d/prices-all.xml";
 	}
 
-	$page = new Page( "Settings - Value fetcher" );
 	$html = '<center>Mod version: <b><a href="http://eve-id.net/forum/viewtopic.php?f=505&t=9653">'. $version .'</a></b><br><br>';
 	$html .= 'Last update: '.$time.'<br><br>';
 
 	$html .= '<form method="post" action="?a=admin_value_fetch">';
-	$html .= '<table width="100%" border="1"><tr><td>Update Ship Values</td><td><input type="radio" name="ship" value="shipyes" checked>Yes</td><td><input type="radio" name="ship" value="shipno">No</td></tr>';
+	$html .= '<table width="100%" border="1">';
+	$html .= '<tr><td>Update Ship Values</td><td><input type="radio" name="ship" value="shipyes" checked>Yes</td><td><input type="radio" name="ship" value="shipno">No</td></tr>';
+	$html .= '<tr><td>Update Faction Values</td><td><input type="radio" name="faction" value="factionyes" checked>Yes</td><td><input type="radio" name="faction" value="factionno">No</td></tr>';
 	$html .= '<tr><td>Filename</td><td colspan="2"><input type="text" name="turl" id="turl" value="'.$url.'" size=110/></td></tr>';
 	$html .= '<tr><td colspan="3" align="center"><i>Leave above field empty to reset to default.</i></td></tr>';
 	if ((time() - $timestamp) < 86400)
