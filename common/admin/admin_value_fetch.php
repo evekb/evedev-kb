@@ -9,6 +9,10 @@ require_once( "common/admin/admin_menu.php" );
 // Set version
 $version = "22/9 2009 - 1";
 
+$page = new Page();
+$page->setAdmin();
+$page->setTitle('Fetcher - Item Values');
+
 if($_POST['submit'])
 {
 	// Set timeout and memory, we neeeeed it ;)
@@ -17,18 +21,12 @@ if($_POST['submit'])
 	error_reporting(0);
 
 	require_once('common/admin/admin_menu.php');
-	require_once('class.valuefetcher.php');
 	/**
 	* 	Author: Niels Brink� (HyperBeanie)
 	*
 	*	Licence: Do what you like with it, credit me as the original author
 	*		 Not warrantied for anything, might eat your cat.  Your responsibility.
 	*/
-
-
-	$page = new Page();
-	$page->setAdmin();
-	$page->setTitle('Fetcher - Item Values');
 
 	// Check if user wants to use a local file
 	$url = $_POST['turl'];
@@ -68,7 +66,6 @@ else
 		$url = "http://eve.no-ip.de/prices/30d/prices-all.xml";
 	}
 
-	$page = new Page( "Settings - Value fetcher" );
 	$html = '<center>Mod version: <b><a href="http://eve-id.net/forum/viewtopic.php?f=505&t=9653">'. $version .'</a></b><br><br>';
 	$html .= 'Last update: '.$time.'<br><br>';
 
