@@ -54,8 +54,9 @@ class allianceSummary extends statSummary
 		$qry = DBFactory::getDBQuery();
 		$qry->autocommit(false);
 
-		$sql = "REPLACE INTO kb3_sum_alliance (asm_all_id, asm_shp_id, asm_kill_count, asm_kill_isk, asm_loss_count, asm_loss_isk) select kills.asm_all_id, kills.asm_shp_id, kills.knb, kills.kisk, losses.lnb,losses.lisk 
-		FROM (SELECT $all_id as asm_all_id, shp_class as asm_shp_id, 0 as knb,0 as kisk ,count(kll_id) AS lnb, sum(kll_isk_loss) AS lisk
+		$sql = "REPLACE INTO kb3_sum_alliance (asm_all_id, asm_shp_id, asm_kill_count, asm_kill_isk, asm_loss_count, asm_loss_isk)
+		SELECT $all_id, losses.asm_shp_id, ifnull(kills.knb,0), ifnull(kills.kisk,0), ifnull(losses.lnb,0), ifnull(losses.lisk,0)
+		FROM (SELECT shp_class as asm_shp_id, 0 as knb,0 as kisk ,count(kll_id) AS lnb, sum(kll_isk_loss) AS lisk
 			FROM kb3_kills kll
 				INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )
 			WHERE  kll.kll_all_id = $all_id
@@ -63,7 +64,7 @@ class allianceSummary extends statSummary
 							FROM kb3_inv_all
 							WHERE kll.kll_id = ina_kll_id
 							AND ina_all_id <> $all_id limit 0,1)
-			GROUP BY shp_class) losses join (SELECT $all_id as asm_all_id, shp_class as asm_shp_id, COUNT(kll.kll_id) AS knb,
+			GROUP BY shp_class) losses left join (SELECT $all_id as asm_all_id, shp_class as asm_shp_id, COUNT(kll.kll_id) AS knb,
 				sum(kll_isk_loss) AS kisk,0 as lnb,0 as lisk
 			FROM kb3_kills kll
 				INNER JOIN kb3_ships shp
@@ -71,9 +72,26 @@ class allianceSummary extends statSummary
 				INNER JOIN kb3_inv_all ina ON (ina.ina_kll_id = kll.kll_id)
 			WHERE ina.ina_all_id = $all_id
 				AND kll.kll_all_id <> $all_id
-			GROUP BY shp_class) kills
-		WHERE kills.asm_all_id = losses.asm_all_id
-			AND kills.asm_shp_id = losses.asm_shp_id ";
+			GROUP BY shp_class) kills ON (kills.asm_shp_id = losses.asm_shp_id)
+		UNION
+		SELECT $all_id, kills.asm_shp_id, ifnull(kills.knb,0), ifnull(kills.kisk,0), ifnull(losses.lnb,0), ifnull(losses.lisk,0)
+		FROM (SELECT shp_class as asm_shp_id, 0 as knb,0 as kisk ,count(kll_id) AS lnb, sum(kll_isk_loss) AS lisk
+			FROM kb3_kills kll
+				INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )
+			WHERE  kll.kll_all_id = $all_id
+					AND EXISTS (SELECT 1
+							FROM kb3_inv_all
+							WHERE kll.kll_id = ina_kll_id
+							AND ina_all_id <> $all_id limit 0,1)
+			GROUP BY shp_class) losses right join (SELECT $all_id as asm_all_id, shp_class as asm_shp_id, COUNT(kll.kll_id) AS knb,
+				sum(kll_isk_loss) AS kisk,0 as lnb,0 as lisk
+			FROM kb3_kills kll
+				INNER JOIN kb3_ships shp
+					ON ( shp.shp_id = kll.kll_ship_id )
+				INNER JOIN kb3_inv_all ina ON (ina.ina_kll_id = kll.kll_id)
+			WHERE ina.ina_all_id = $all_id
+				AND kll.kll_all_id <> $all_id
+			GROUP BY shp_class) kills on (kills.asm_shp_id = losses.asm_shp_id)		";
 		$qry->execute($sql);
 		$qry->autocommit(true);
 		return;

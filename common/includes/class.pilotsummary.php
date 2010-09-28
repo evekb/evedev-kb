@@ -54,39 +54,36 @@ class pilotSummary extends statSummary
 		if(!$plt_id) return false;
 		$qry = DBFactory::getDBQuery();
 		$qry->autocommit(false);
-		$sql = "CREATE TEMPORARY TABLE `tmp_sum_pilot` (
-		  `psm_plt_id` int(11) NOT NULL DEFAULT '0',
-		  `psm_shp_id` int(3) NOT NULL DEFAULT '0',
-		  `psm_kill_count` int(11) NOT NULL DEFAULT '0',
-		  `psm_kill_isk` float NOT NULL DEFAULT '0',
-		  `psm_loss_count` int(11) NOT NULL DEFAULT '0',
-		  `psm_loss_isk` float NOT NULL DEFAULT '0',
-		  PRIMARY KEY (`psm_plt_id`,`psm_shp_id`)
-		) ENGINE = MEMORY";
-		$qry->execute($sql);
 
-		$sql = 'INSERT INTO tmp_sum_pilot (psm_plt_id, psm_shp_id, psm_kill_count, psm_kill_isk)
-			SELECT '.$plt_id.', shp_class, COUNT(kll.kll_id) AS knb,
-				sum(kll_isk_loss) AS kisk
+		$sql = "REPLACE INTO kb3_sum_pilot (psm_plt_id, psm_shp_id, psm_kill_count, psm_kill_isk, psm_loss_count, psm_loss_isk)
+select $plt_id as psm_plt_id, losses.psm_shp_id, ifnull(kills.knb,0), ifnull(kills.kisk,0), ifnull(losses.lnb,0), ifnull(losses.lisk,0)
+		FROM (SELECT shp_class as psm_shp_id, 0 as knb,0 as kisk ,count(kll_id) AS lnb, sum(kll_isk_loss) AS lisk
+			FROM kb3_kills kll
+				INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )
+			WHERE  kll.kll_victim_id = $plt_id
+			GROUP BY shp_class) losses left join (SELECT shp_class as psm_shp_id, COUNT(kll.kll_id) AS knb,
+				sum(kll_isk_loss) AS kisk,0 as lnb,0 as lisk
 			FROM kb3_kills kll
 				INNER JOIN kb3_ships shp
 					ON ( shp.shp_id = kll.kll_ship_id )
-				INNER JOIN kb3_inv_detail ind
-					ON (ind.ind_kll_id = kll.kll_id)
-			WHERE ind.ind_plt_id ='.$plt_id.'
-			GROUP BY shp_class';
-		$qry->execute($sql);
-		$sql = 'INSERT INTO tmp_sum_pilot (psm_plt_id, psm_shp_id, psm_loss_count, psm_loss_isk)
-			SELECT '.$plt_id.', shp_class, count(kll_id) AS lnb, sum(kll_isk_loss) AS lisk
+				INNER JOIN kb3_inv_detail ind ON (ind.ind_kll_id = kll.kll_id)
+			WHERE ind.ind_plt_id = $plt_id
+			GROUP BY shp_class) kills on (kills.psm_shp_id = losses.psm_shp_id)
+		UNION
+			select $plt_id as psm_plt_id, kills.psm_shp_id, ifnull(kills.knb,0), ifnull(kills.kisk,0), ifnull(losses.lnb,0), ifnull(losses.lisk,0)
+		FROM (SELECT shp_class as psm_shp_id, 0 as knb,0 as kisk ,count(kll_id) AS lnb, sum(kll_isk_loss) AS lisk
 			FROM kb3_kills kll
 				INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )
-			WHERE  kll.kll_victim_id = '.$plt_id.'
-			GROUP BY shp_class
-			ON DUPLICATE KEY UPDATE psm_loss_count = values(psm_loss_count),
-				psm_loss_isk = values(psm_loss_isk)';
+			WHERE  kll.kll_victim_id = $plt_id
+			GROUP BY shp_class) losses right join (SELECT $plt_id as psm_plt_id, shp_class as psm_shp_id, COUNT(kll.kll_id) AS knb,
+				sum(kll_isk_loss) AS kisk,0 as lnb,0 as lisk
+			FROM kb3_kills kll
+				INNER JOIN kb3_ships shp
+					ON ( shp.shp_id = kll.kll_ship_id )
+				INNER JOIN kb3_inv_detail ind ON (ind.ind_kll_id = kll.kll_id)
+			WHERE ind.ind_plt_id = $plt_id
+			GROUP BY shp_class) kills on (kills.psm_shp_id = losses.psm_shp_id)";
 		$qry->execute($sql);
-		$qry->execute("INSERT INTO kb3_sum_pilot SELECT * FROM tmp_sum_pilot");
-		$qry->execute("DROP TEMPORARY TABLE tmp_sum_pilot");
 
 		$klist = new KillList();
 		$klist->addInvolvedPilot($plt_id);
@@ -100,8 +97,58 @@ class pilotSummary extends statSummary
 		unset($llist);
 		$qry->execute("UPDATE kb3_pilots SET plt_kpoints = $kpoints,
 			 plt_lpoints = $lpoints WHERE plt_id = $plt_id");
-		
+
 		$qry->autocommit(true);
+		return;
+
+//		$sql = "CREATE TEMPORARY TABLE `tmp_sum_pilot` (
+//		  `psm_plt_id` int(11) NOT NULL DEFAULT '0',
+//		  `psm_shp_id` int(3) NOT NULL DEFAULT '0',
+//		  `psm_kill_count` int(11) NOT NULL DEFAULT '0',
+//		  `psm_kill_isk` float NOT NULL DEFAULT '0',
+//		  `psm_loss_count` int(11) NOT NULL DEFAULT '0',
+//		  `psm_loss_isk` float NOT NULL DEFAULT '0',
+//		  PRIMARY KEY (`psm_plt_id`,`psm_shp_id`)
+//		) ENGINE = MEMORY";
+//		$qry->execute($sql);
+//
+//		$sql = 'INSERT INTO tmp_sum_pilot (psm_plt_id, psm_shp_id, psm_kill_count, psm_kill_isk)
+//			SELECT '.$plt_id.', shp_class, COUNT(kll.kll_id) AS knb,
+//				sum(kll_isk_loss) AS kisk
+//			FROM kb3_kills kll
+//				INNER JOIN kb3_ships shp
+//					ON ( shp.shp_id = kll.kll_ship_id )
+//				INNER JOIN kb3_inv_detail ind
+//					ON (ind.ind_kll_id = kll.kll_id)
+//			WHERE ind.ind_plt_id ='.$plt_id.'
+//			GROUP BY shp_class';
+//		$qry->execute($sql);
+//		$sql = 'INSERT INTO tmp_sum_pilot (psm_plt_id, psm_shp_id, psm_loss_count, psm_loss_isk)
+//			SELECT '.$plt_id.', shp_class, count(kll_id) AS lnb, sum(kll_isk_loss) AS lisk
+//			FROM kb3_kills kll
+//				INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )
+//			WHERE  kll.kll_victim_id = '.$plt_id.'
+//			GROUP BY shp_class
+//			ON DUPLICATE KEY UPDATE psm_loss_count = values(psm_loss_count),
+//				psm_loss_isk = values(psm_loss_isk)';
+//		$qry->execute($sql);
+//		$qry->execute("INSERT INTO kb3_sum_pilot SELECT * FROM tmp_sum_pilot");
+//		$qry->execute("DROP TEMPORARY TABLE tmp_sum_pilot");
+//
+//		$klist = new KillList();
+//		$klist->addInvolvedPilot($plt_id);
+//		$klist->getAllKills();
+//		$kpoints = $klist->getPoints();
+//		unset($klist);
+//		$llist = new KillList();
+//		$llist->addVictimPilot($plt_id);
+//		$llist->getAllKills();
+//		$lpoints = $llist->getPoints();
+//		unset($llist);
+//		$qry->execute("UPDATE kb3_pilots SET plt_kpoints = $kpoints,
+//			 plt_lpoints = $lpoints WHERE plt_id = $plt_id");
+//
+//		$qry->autocommit(true);
 	}
 	//! Add a Kill and its value to the summary.
 	public static function addKill($kill)
