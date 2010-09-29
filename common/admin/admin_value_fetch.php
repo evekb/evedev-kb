@@ -5,13 +5,11 @@
  * $HeadURL$
  */
 
-require_once( "common/admin/admin_menu.php" );
 // Set version
 $version = "28/9/2010";
 
-$page = new Page();
+$page = new Page('Fetcher - Item Values');
 $page->setAdmin();
-$page->setTitle('Fetcher - Item Values');
 
 if($_POST['submit'])
 {
@@ -20,7 +18,6 @@ if($_POST['submit'])
 	@ini_set('memory_limit',999999999);
 	error_reporting(0);
 
-	require_once('common/admin/admin_menu.php');
 	/**
 	* 	Author: Niels Brink� (HyperBeanie)
 	*
@@ -71,21 +68,21 @@ else
 		$url = "http://eve.no-ip.de/prices/30d/prices-all.xml";
 	}
 
-	$html = '<center>Mod version: <b><a href="http://eve-id.net/forum/viewtopic.php?f=505&t=9653">'. $version .'</a></b><br><br>';
-	$html .= 'Last update: '.$time.'<br><br>';
+	$html = '<center>Mod version: <b><a href="http://eve-id.net/forum/viewtopic.php?f=505&amp;t=9653">'. $version .'</a></b><br /><br />';
+	$html .= 'Last update: '.$time.'<br /><br />';
 
 	$html .= '<form method="post" action="?a=admin_value_fetch">';
 	$html .= '<table width="100%" border="1">';
-	$html .= '<tr><td>Update Ship Values</td><td><input type="radio" name="ship" value="shipyes" checked>Yes</td><td><input type="radio" name="ship" value="shipno">No</td></tr>';
-	$html .= '<tr><td>Update Faction Values</td><td><input type="radio" name="faction" value="factionyes" checked>Yes</td><td><input type="radio" name="faction" value="factionno">No</td></tr>';
-	$html .= '<tr><td>Filename</td><td colspan="2"><input type="text" name="turl" id="turl" value="'.$url.'" size=110/></td></tr>';
+	$html .= '<tr><td>Update Ship Values</td><td><input type="radio" name="ship" value="shipyes" checked="checked" />Yes</td><td><input type="radio" name="ship" value="shipno" />No</td></tr>';
+	$html .= '<tr><td>Update Faction Values</td><td><input type="radio" name="faction" value="factionyes" checked="checked" />Yes</td><td><input type="radio" name="faction" value="factionno" />No</td></tr>';
+	$html .= '<tr><td>Filename</td><td colspan="2"><input type="text" name="turl" id="turl" value="'.$url.'" size="110" /></td></tr>';
 	$html .= '<tr><td colspan="3" align="center"><i>Leave above field empty to reset to default.</i></td></tr>';
 	if ((time() - $timestamp) < 86400)
 	{
 		$html .= '<tr><td colspan="3" align="center"><b>YOU HAVE UPDATED LESS THAN 24 HOURS AGO!</b></td></tr>';
 	}
 	$html .= '<tr><td colspan="3"><button value="submit" type="submit" name="submit">Fetch</button></td></tr>';
-	$html .= '</table></center>';
+	$html .= '</table></form></center>';
 }
 
 $page->setContent($html);
