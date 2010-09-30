@@ -344,7 +344,6 @@ class API_KillLog
 						}
                         break;
 					case "CODE": // error code
-						var_dump($v);
 						$this->errorcode_ .= $v;
 						break;
                 }
