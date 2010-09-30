@@ -120,7 +120,7 @@ for (; $i <= $feedcount; $i++)
             $str .= '&combined=1';
             $str .= '&lastkllid='.$feedlast[$i];
         }
-		if (isset($apikills[$i]))
+		if (($apikills[$i]))
 			$str .= '&APIkills=1';
         // If a last kill id is specified fetch all kills since then
         if($feedlast[$i] > 0)
