@@ -572,19 +572,19 @@ class Parser
 					$this->error('Weapon not found.', $iwname);
 				}
 
-				if (config::get('cfg_allianceid') && $ialliance->getID() == config::get('cfg_allianceid'))
+				if (config::get('cfg_allianceid') && in_array($ialliance->getID(), config::get('cfg_allianceid')))
 				{
 					$authorized = true;
 				}
-				elseif (config::get('cfg_corpid'))
+				elseif (config::get('cfg_corpid') && in_array($icorp->getID(), config::get('cfg_corpid')))
 				{
-					$corps = explode(",", config::get('cfg_corpid'));
-					foreach($corps as $corp)
-					{
-						if ($icorp->getID() == $corp)
-							$authorized = true;
-					}
+					$authorized = true;
 				}
+				elseif (config::get('cfg_pilotid') && in_array($ipilot->getID(), config::get('cfg_pilotid')))
+				{
+					$authorized = true;
+				}
+
 				if (!$authorized)
 				{
 					if ($string = config::get('post_permission'))
