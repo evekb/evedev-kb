@@ -34,7 +34,7 @@ class Page
 			config::set('public_stats','do nothing');
 		}
 
-		$this->title = $title;
+		$this->title = htmlspecialchars($title);
 		$this->cachable = $cachable;
 	}
 	//! Set the content html that is displayed in the main body panel.
@@ -149,7 +149,7 @@ class Page
 	// Set the page title.
 	public function setTitle($title)
 	{
-		$this->title = $title;
+		$this->title = htmlspecialchars($title);
 	}
 	// Get the page title.
 	public function getTitle()
