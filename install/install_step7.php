@@ -27,16 +27,16 @@ if (file_exists('../kbconfig.php'))
 	mysql_select_db(DB_NAME);
 
 	// move stuff from the config to the database
-	insertConfig('cfg_allianceid', $aid);
-	insertConfig('cfg_corpid', $cid);
+	if($aid) insertConfig('cfg_allianceid', serialize(array($aid)));
+	else insertConfig('cfg_allianceid', serialize(array()));
+	if($cid) insertConfig('cfg_corpid', serialize(array($cid)));
+	else insertConfig('cfg_corpid', serialize(array()));
+	if($pid) insertConfig('cfg_pilotid', serialize(array($pid)));
+	else insertConfig('cfg_cilotid', serialize(array()));
 
 	insertConfig('cfg_img', $img);
 	insertConfig('cfg_kbhost', $host);
 	insertConfig('cfg_kbtitle', $title);
-
-	insertConfig('cfg_profile', 0);
-	insertConfig('cfg_qcache', 1);
-	insertConfig('cfg_sqlhalt', 0);
 
 	insertConfig('cfg_mainsite', '');
 

@@ -12,7 +12,7 @@
     <tr style="height: 100%">
     <td valign="top" style="height: 100%">
     <div id="header">
-    <img src="quantum_rise.jpg" border="0">
+    <img src="quantum_rise.jpg" border="0" alt="banner" />
     </div>
     <div id="page-title">Install Step {$stepnumber} / 8</div>
     <table cellpadding="0" cellspacing="0" width="100%" border="0">

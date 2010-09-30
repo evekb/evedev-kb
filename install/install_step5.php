@@ -27,7 +27,7 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'create')
 		}
 		$_REQUEST['a'] = $id;
 	}
-	else
+	else if(!empty($_REQUEST['c']))
 	{
 		$result = mysql_query('SELECT all_id FROM kb3_alliances WHERE all_name like \'%Unknown%\'');
 		if ($row = @mysql_fetch_row($result))
@@ -55,14 +55,55 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'create')
 		}
 		$_REQUEST['c'] = $id;
 	}
+	else
+	{
+		$result = mysql_query('SELECT all_id FROM kb3_alliances WHERE all_name like \'%Unknown%\'');
+		if ($row = @mysql_fetch_row($result))
+		{
+			$id = $row[0];
+		}
+		else
+		{
+			$query = 'INSERT INTO kb3_alliances (all_name) VALUES (\'Unknown\')';
+			mysql_query($query);
+			$id = mysql_insert_id();
+		}
+		$result = mysql_query('SELECT crp_id FROM kb3_corps WHERE crp_name like \'%Unknown%\'');
+		if ($row = @mysql_fetch_row($result))
+		{
+			$id = $row[0];
+		}
+		else
+		{
+			$query = 'INSERT INTO kb3_corps (crp_name, crp_all_id) VALUES (\'Unknown\', '.$id.')';
+			mysql_query($query);
+			$id = mysql_insert_id();
+		}
+		$query = 'SELECT plt_id FROM kb3_pilots WHERE plt_name LIKE \'%'.addslashes(stripslashes($_REQUEST['p'])).'%\'';
+		$result = mysql_query($query);
+
+		if ($row = @mysql_fetch_row($result))
+		{
+			$id = $row[0];
+		}
+		else
+		{
+			$query = 'INSERT INTO kb3_pilots (plt_name, plt_crp_id) VALUES (\''.addslashes(stripslashes($_REQUEST['p'])).'\','.$id.')';
+			mysql_query($query);
+			$id = mysql_insert_id();
+		}
+		$_REQUEST['p'] = $id;
+	}
 	$_SESSION['sett']['aid'] = $_REQUEST['a'];
 	$_SESSION['sett']['cid'] = $_REQUEST['c'];
+	$_SESSION['sett']['pid'] = $_REQUEST['p'];
 	$stoppage = false;
 }
 if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'select')
 {
 	$_SESSION['sett']['aid'] = $_REQUEST['a'];
 	$_SESSION['sett']['cid'] = $_REQUEST['c'];
+	$_SESSION['sett']['pid'] = $_REQUEST['p'];
 	$stoppage = false;
 }
 if ($stoppage)
@@ -72,6 +113,13 @@ if ($stoppage)
 	{
 		switch ($_REQUEST['searchtype'])
 		{
+			case "pilot":
+				$query = "SELECT plt.plt_id, plt.plt_name, crp.crp_name
+			FROM kb3_pilots plt, kb3_corps crp
+			WHERE plt.plt_name LIKE '%".addslashes(stripslashes($_REQUEST['searchphrase']))."%'
+			AND plt.plt_crp_id = crp.crp_id
+			ORDER BY plt.plt_name";
+				break;
 			case "corp":
 				$query = "SELECT crp.crp_id, crp.crp_name, ali.all_name
 			FROM kb3_corps crp, kb3_alliances ali
@@ -95,8 +143,16 @@ if ($stoppage)
 		{
 			switch ($_REQUEST['searchtype'])
 			{
+				case 'pilot':
+					$link = "?step=5&amp;do=select&amp;a=0&amp;c=0&amp;p=".$row['plt_id'].'">Select';
+					$descr = 'Pilot '.$row['plt_name'].', member of '.$row['crp_name'];
+					if ($row['plt_name'] == addslashes(stripslashes($_REQUEST['searchphrase'])))
+					{
+						$unsharp = false;
+					}
+					break;
 				case 'corp':
-					$link = "?step=5&amp;do=select&amp;a=0&amp;c=".$row['crp_id'].'">Select';
+					$link = "?step=5&amp;do=select&amp;a=0&amp;p=0&amp;c=".$row['crp_id'].'">Select';
 					$descr = 'Corp '.$row['crp_name'].', member of '.$row['all_name'];
 					if ($row['crp_name'] == addslashes(stripslashes($_REQUEST['searchphrase'])))
 					{
@@ -104,7 +160,7 @@ if ($stoppage)
 					}
 					break;
 				case 'alliance':
-					$link = '?step=5&amp;do=select&amp;c=0&amp;a='.$row['all_id'].'">Select';
+					$link = '?step=5&amp;do=select&amp;c=0&amp;p=0&amp;a='.$row['all_id'].'">Select';
 					$descr = 'Alliance '.$row['all_name'];
 					if (strtolower($row['all_name']) == strtolower(stripslashes($_REQUEST['searchphrase'])))
 					{
@@ -141,20 +197,33 @@ if ($stoppage)
 					$descr = 'Corporation: '.htmlentities($idArr['characterName']);
 				}
 			}
-			else
+			else if($_REQUEST['searchtype'] == 'alliance')
 			{
 				// Could check against the alliance xml but the download is big
 				// enough to risk timeouts. For now just check if name exists
 				// and is not a corporation.
 				if(empty($idArr['characterID']) || !empty($cidArr['corporationID']))
 				{
-					$link = '?step=5&amp;do=create&amp;a='.stripslashes($_REQUEST['searchphrase']).'&amp;c=0">Create';
+					$link = '?step=5&amp;do=create&amp;a='.stripslashes($_REQUEST['searchphrase']).'&amp;c=0&amp;p=0">Create';
 					$descr = 'Alliance not found. Check spelling.';
 				}
 				else
 				{
-					$link = '?step=5&amp;do=create&amp;a='.htmlentities($idArr['characterName']).'&amp;c=0">Create';
+					$link = '?step=5&amp;do=create&amp;a='.htmlentities($idArr['characterName']).'&amp;c=0&amp;p=0">Create';
 					$descr = 'Alliance: '.htmlentities($idArr['characterName']);
+				}
+			}
+			else
+			{
+				if(empty($idArr['characterID']) || !empty($cidArr['corporationID']))
+				{
+					$link = '?step=5&amp;do=create&amp;p='.stripslashes($_REQUEST['searchphrase']).'&amp;c=0&amp;a=0">Create';
+					$descr = 'Pilot not found. Check spelling.';
+				}
+				else
+				{
+					$link = '?step=5&amp;do=create&amp;p='.htmlentities($idArr['characterName']).'&amp;c=0&amp;a=0">Create';
+					$descr = 'Pilot: '.htmlentities($idArr['characterName']);
 				}
 			}
 			$results[] = array('descr' => $descr, 'link' => $link);
@@ -164,7 +233,7 @@ if ($stoppage)
 	}
 }
 $smarty->assign('stoppage', $stoppage);
-$smarty->assign('conflict', empty($_SESSION['sett']['aid']) && empty($_SESSION['sett']['cid']));
+$smarty->assign('conflict', empty($_SESSION['sett']['aid']) && empty($_SESSION['sett']['cid']) && empty($_SESSION['sett']['pid']));
 $smarty->assign('nextstep', $_SESSION['state']+1);
 $smarty->display('install_step5.tpl');
 
