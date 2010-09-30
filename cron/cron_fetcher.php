@@ -123,7 +123,7 @@ for (; $i <= $feedcount; $i++)
 			$str .= '&combined=1';
             $str .= '&lastkllid='.$feedlast[$i];
 		}
-		if (isset($apikills[$i])) $str .= '&APIkills=1';
+		if (($apikills[$i])) $str .= '&APIkills=1';
 		$lastkill = 0;
 		foreach($myids as $myid)
 		{
