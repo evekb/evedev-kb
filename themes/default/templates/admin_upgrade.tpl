@@ -11,9 +11,9 @@
     <div class="block-header">Message from the devs</div>
     <p>{$codemessage}</p>
 {/if}
-<table class="kb-table" width="100%">
+<table class="kb-table" style="width:100%">
     <tr class="kb-table-header">
-	<td>Ver</td>
+	<td>Version</td>
 	<td>SVN</td>
 	<td>File</td>
 	<td>Description</td>
@@ -66,9 +66,9 @@
     <div class="block-header">Message from the devs</div>
     <p>{$DBmessage}</p>
 {/if}
-    <table class="kb-table" width="100%">
+    <table class="kb-table" style="width:100%">
     <tr class="kb-table-header">
-	<td>Ver</td>
+	<td>Version</td>
 	<td>File</td>
 	<td>Description</td>
 	<td>Action</td>
@@ -112,9 +112,9 @@
 	<br/>
     {/if}
 <br/>
-The update description file will be retrieved again at: <b>{$update_time} GMT</b><br/>
-You can force the update description file to retrieved now by clicking on the <a href="?a=admin_upgrade&amp;refresh">link</a><br/>
-Alternatively, you can refresh the page by clicking on the <a href="?a=admin_upgrade">link</a><br/><br />
+The upgrade description file will be retrieved again at: <b>{$update_time} GMT</b>.<br/>
+You can force the update description file to retrieved now by clicking on the <a href="?a=admin_upgrade&amp;refresh">link</a>.<br/>
+Alternatively, you can refresh the page by clicking on the <a href="?a=admin_upgrade">link</a>.<br/><br />
 
-<a href="?a=admin_upgrade&amp;reset_code">Reset the reported code update level to the level in globals.php.</a><br />
-<a href="?a=admin_upgrade&amp;reset_db">Reset the reported db update level to the most recent.</a><br />
+<a href="?a=admin_upgrade&amp;reset_code">Reset stored code level.</a><br />
+<a href="?a=admin_upgrade&amp;reset_db">Reset stored database level.</a><br />
