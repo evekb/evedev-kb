@@ -369,6 +369,10 @@ class Parser
 					$authorized = true;
 			}
 		}
+		elseif (PILOT_ID !=0 && $victim->getID() == PILOT_ID)
+		{
+			$authorized = true;
+		}
 
 		// involved parties section
 		$end = strpos($this->killmail_, "Destroyed items:");
@@ -589,6 +593,11 @@ class Parser
 							$authorized = true;
 					}
 				}
+				elseif (PILOT_ID != 0 && $ipilot->getID() == PIOT_ID)
+				{
+					$authorized = true;
+				}
+				
 				if (!$authorized)
 				{
 					if ($string = config::get('post_permission'))
