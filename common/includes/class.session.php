@@ -18,7 +18,7 @@ class session
 			session_cache_limiter("");
 			session_start();
 			self::$vars = $_SESSION;
-			session_commit();
+			//session_commit();
 			
 			if (isset(self::$vars['user'])) user::loggedin(true);
 		}
