@@ -30,7 +30,7 @@ class Comments
     { 
         global $smarty;
         
-        $qry = DBFactory::getDBQuery(true);;
+        $qry = DBFactory::getDBQuery();
 		// NULL site id is shown on all boards
         $qry->execute("SELECT *,id FROM kb3_comments WHERE `kll_id` = '".
             $this->id_."' AND (site = '".KB_SITE."' OR site IS NULL) order by posttime asc");
@@ -90,7 +90,7 @@ class Comments
      */
     function delComment($c_id) 
     { 
-        $qry = DBFactory::getDBQuery(true);; 
+        $qry = DBFactory::getDBQuery();
         $qry->execute("DELETE FROM kb3_comments WHERE id='".$c_id); 
     } 
     //! Set whether to post the raw comment text or bbencode it.
