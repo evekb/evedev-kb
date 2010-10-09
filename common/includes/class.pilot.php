@@ -12,9 +12,9 @@ class Pilot
 	private $executed = false;
 	private $id_ = 0;
 	private $externalid_ = 0;
-	private $corpid_ = 0;
+	private $corpid_ = null;
 	private $valid_ = false;
-	private $corp;
+	private $corp = null;
 
 	//! Create a new Pilot object from the given ID.
 
@@ -40,7 +40,7 @@ class Pilot
 		}
 	}
 	//! Return the alliance ID.
-	function getID()
+	public function getID()
 	{
 		if($this->id_) return $this->id_;
 		elseif($this->externalid_)
@@ -54,7 +54,7 @@ class Pilot
         /*! When populateList is true, the lookup will return 0 in favour of getting the
          *  external ID from CCP. This helps the kill_detail page load times.
          */
-	function getExternalID($populateList = false)
+	public function getExternalID($populateList = false)
 	{
 		if($this->externalid_) return $this->externalid_;
 		if(!$populateList)
@@ -90,7 +90,7 @@ class Pilot
 		else return 0;
 	}
 	//! Return the pilot name.
-	function getName()
+	public function getName()
 	{
 		if(!$this->name_) $this->execQuery();
 		$pos = strpos($this->name_, "#");
@@ -111,7 +111,7 @@ class Pilot
      * \param $size The desired portrait size.
 	 * \return URL for a portrait.
      */
-	function getPortraitURL($size = 64)
+	public function getPortraitURL($size = 64)
 	{
 		if(!$this->externalid_) $this->execQuery();
 		if (!$this->externalid_)
@@ -135,7 +135,7 @@ class Pilot
 	 * use the ID for this pilot.
 	 * \return path for a portrait.
      */
-	function getPortraitPath($size = 64, $id = 0)
+	public function getPortraitPath($size = 64, $id = 0)
 	{
 		$size = intval($size);
 		$id = intval($id);
@@ -143,7 +143,7 @@ class Pilot
 		return CacheHandler::getInternal($id."_".$size.".jpg", "img");
 	}
 	//! Fetch the pilot details from the database using the id given on construction.
-	function execQuery()
+	private function execQuery()
 	{
 		if (!$this->executed)
 		{
@@ -187,7 +187,7 @@ class Pilot
     /*!
 	 * \return Corporation object
      */
-	function getCorp()
+	public function getCorp()
 	{
 		if(isset($this->corp)) return $this->corp;
 		if(!isset($this->corpid_)) $this->execQuery();
@@ -200,7 +200,7 @@ class Pilot
     /*!
 	 * \return boolean - true for exists.
      */
-	function exists()
+	public function exists()
 	{
 		$this->execQuery();
 		return $this->valid_;
@@ -213,7 +213,7 @@ class Pilot
 	 * \param $timestamp time this pilot's corp was updated
 	 * \param $externalID CCP external id
      */
-	function add($name, $corp, $timestamp, $externalID = 0, $loadExternals = true)
+	public function add($name, $corp, $timestamp, $externalID = 0, $loadExternals = true)
 	{
 	// Check if pilot exists with a non-cached query.
 		$qry = DBFactory::getDBQuery(true);
@@ -303,7 +303,7 @@ class Pilot
      * \param $timestamp A timestamp to compare this pilot's details with.
 	 * \return boolean - true if update time was before the given timestamp.
      */
-	function isUpdatable($timestamp)
+	public function isUpdatable($timestamp)
 	{
 		$timestamp = preg_replace("/\./","-",$timestamp);
 		if(isset($this->updated_))
@@ -325,7 +325,7 @@ class Pilot
 	 * If a character already exists with this id then a name change is assumed
 	 * and the old pilot is updated.
      */
-	function setCharacterID($externalID)
+	public function setCharacterID($externalID)
 	{
 		if (!intval($externalID))
 		{
@@ -359,7 +359,7 @@ class Pilot
     /*!
      * \param $name The pilot name to look up.
      */
-    function lookup($name)
+    public function lookup($name)
     {
         $qry = DBFactory::getDBQuery();
         $qry->execute("select * from kb3_pilots
