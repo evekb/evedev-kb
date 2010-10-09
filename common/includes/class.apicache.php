@@ -8,9 +8,11 @@
 class ApiCache
 {
 	private static $cache = array();
+	private static $configSite = KB_SITE;
 
-	function ApiCache($site)
+	function ApiCache($site = KB_SITE)
 	{
+		self::$configSite = $site;
 		ApiCache::init();
 	}
 
@@ -34,8 +36,8 @@ class ApiCache
 			return;
 		}
 
-		$db = DBFactory::getDBQuery(true);;
-		$db->execute('select * from kb3_apicache where cfg_site=\''.KB_SITE."'");
+		$db = DBFactory::getDBQuery();
+		$db->execute('select * from kb3_apicache where cfg_site=\''.self::$configSite."'");
 		while ($row = $db->getRow())
 		{
 			if (substr($row['cfg_value'], 0, 2) == 'a:')
@@ -59,9 +61,9 @@ class ApiCache
 			unset(self::$cache[$key]);
 		}
 
-		$qry = DBFactory::getDBQuery();;
+		$qry = DBFactory::getDBQuery();
 		$qry->execute("delete from kb3_apicache where cfg_key = '".$key."'
-        		       and cfg_site = '".KB_SITE."'");
+        		       and cfg_site = '".self::$configSite."'");
 	}
 
 	public static function set($key, $value)
@@ -86,9 +88,9 @@ class ApiCache
 		}
 		$value = addslashes($value);
 
-		$qry = DBFactory::getDBQuery();;
+		$qry = DBFactory::getDBQuery();
 		$sql = "INSERT INTO kb3_apicache (cfg_site, cfg_key, cfg_value) VALUES ('".
-			KB_SITE."','".$key."','".$value.
+			self::$configSite."','".$key."','".$value.
 			"') ON DUPLICATE KEY UPDATE cfg_value = '".$value."'";
 		$qry->execute($sql);
 	}
