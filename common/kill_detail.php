@@ -585,7 +585,7 @@ class pKillDetail extends pageAssembly
 		$smarty->assign('victimCorpName', $this->kill->getVictimCorpName());
 		$smarty->assign('victimAllianceURL', "?a=alliance_detail&amp;all_id=" . $this->kill->getVictimAllianceID());
 		$smarty->assign('victimAllianceName', $this->kill->getVictimAllianceName());
-		$smarty->assign('victimDamageTaken', $this->kill->VictimDamageTaken);
+		$smarty->assign('victimDamageTaken', $this->kill->getDamageTaken());
 
 		return $smarty->fetch(get_tpl('kill_detail_victim'));
 	}

@@ -17,7 +17,7 @@ class Kill
 	private $fullinvolved_ = false;
 	private $timestamp_ = false;
 	private $victim_ = null;
-	private $dmgdone_ = 0;
+	private $dmgtaken = 0;
 	private $iskloss_ = 0;
 	private $victimship_ = null;
 	private $dupeid_ = 0;
@@ -100,7 +100,7 @@ class Kill
 	function getDamageTaken()
 	{
 		$this->execQuery();
-		return $this->VictimDamageTaken;
+		return $this->dmgtaken;
 	}
 
 	function getVictimName()
@@ -354,7 +354,7 @@ class Kill
 			$system = $this->getSystem();
 			$mail .= "System: ".$system->getName()."\r\n";
 			$mail .= "Security: ".$system->getSecurity(true)."\r\n";
-			$mail .= "Damage Taken: ".$this->VictimDamageTaken."\r\n\r\n";
+			$mail .= "Damage Taken: ".$this->dmgtaken."\r\n\r\n";
 			$mail .= "Involved parties:\r\n\r\n";
 		}
 		else
@@ -369,7 +369,7 @@ class Kill
 			$system = $this->getSystem();
 			$mail .= "System: ".$system->getName()."\r\n";
 			$mail .= "Security: ".$system->getSecurity(true)."\r\n";
-			$mail .= "Damage Taken: ".$this->VictimDamageTaken."\r\n\r\n";
+			$mail .= "Damage Taken: ".$this->dmgtaken."\r\n\r\n";
 			$mail .= "Involved parties:\r\n\r\n";
 		}
 
@@ -585,6 +585,7 @@ class Kill
 			//$this->plt_ext_ = $row['plt_externalid'];
 			$this->fbplt_ext_ = $row['fbplt_externalid'];
 			$this->VictimDamageTaken = $row['kll_dmgtaken'];
+			$this->dmgtaken = $row['kll_dmgtaken'];
 
 			// involved
 			if($this->fullinvolved_)
