@@ -11,6 +11,10 @@
 
 class AllianceAPI
 {
+	protected $sxe = null;
+	protected $CachedUntil_ = null;
+	protected $CurrentTime_ = null;
+
 	function getCachedUntil()
 	{
 		return $this->CachedUntil_;
@@ -24,139 +28,51 @@ class AllianceAPI
 
 	function initXML()
 	{
-		global $myalliancelist;
-
 		$data = API_Helpers::LoadGlobalData('/eve/AllianceList.xml.aspx');
 
-		$xml_parser = xml_parser_create();
-		xml_set_object ( $xml_parser, $this );
-		xml_set_element_handler($xml_parser, "startElement", "endElement");
-		xml_set_character_data_handler ( $xml_parser, 'characterData' );
-
-		if (!xml_parse($xml_parser, $data, true))
+		$this->sxe = simplexml_load_string($data);
+		if(!$this->sxe)
+		{
+			$this->errormsg = "XML error:\n";
+			foreach(libxml_get_errors() as $error)
+			{
+				$this->errormsg .= "\t".$error->message."\n";
+			}
 			return false;
-
-		xml_parser_free($xml_parser);
+		}
+		$this->CurrentTime_ = strval($this->sxe->currentTime);
+		
+		if(config::get('API_extendedtimer_alliancelist') == 0)
+			$this->CachedUntil_ = date("Y-m-d H:i:s", (strtotime($this->CurrentTime_)) + 85500);
+		else
+			$this->CachedUntil_ = strval(cachedUntil);
+		ApiCache::set('API_eve_AllianceList' , $this->CachedUntil_);
 		return true;
 	}
 
 	function fetchalliances($overide=false)
 	{
-		global $myalliancelist;
-
 		if (!isset($this->alliances_))
 			$this->initXML($overide);
 
+		$myalliancelist = array();
+		$myalliancelist['Name'] = array();
+		$myalliancelist['allianceID'] = array();
+
+		foreach($this->sxe->result->rowset->row as $row)
+		{
+			$myalliancelist['Name'][] = $row['allianceName'];
+			$myalliancelist['allianceID'][] = $row['allianceID'];
+		}
 		return $myalliancelist;
-	}
-
-	function startElement($parser, $name, $attribs)
-	{
-		global $myalliancelist, $alliancedetail, $membercorps, $membercorp, $iscorpsection;
-
-		if ($name == "ROW")
-		{
-			if (count($attribs))
-			{
-				foreach ($attribs as $k => $v)
-				{
-					switch ($k)
-					{
-						case "NAME":
-							$alliancedetail['allianceName'] = $v;
-							break;
-						case "SHORTNAME":
-							$alliancedetail['shortName'] = $v;
-							break;
-						case "ALLIANCEID":
-							$alliancedetail['allianceID'] = $v;
-							break;
-						case "EXECUTORCORPID":
-							$alliancedetail['executorCorpID'] = $v;
-							break;
-						case "MEMBERCOUNT":
-							$alliancedetail['memberCount'] = $v;
-							break;
-						case "STARTDATE":
-							if (!$iscorpsection)
-							{
-								$alliancedetail['startDate'] = $v;
-							} else
-							{
-								$membercorp['startDate'] = $v;
-								$membercorps[] = $membercorp;
-							}
-							break;
-						case "CORPORATIONID":
-							$membercorp['corporationID'] = $v;
-							$iscorpsection = true;
-							break;
-					}
-				}
-			}
-		}
-	}
-
-	function endElement($parser, $name)
-	{
-		global $myalliancelist, $alliancedetail, $membercorps, $membercorp, $iscorpsection;
-		global $tempvalue;
-
-		if ($name == "CURRENTTIME")
-			$this->CurrentTime_ = $tempvalue;
-		if ($name == "CACHEDUNTIL")
-		{
-			if  (config::get('API_extendedtimer_alliancelist') == 0)
-			{
-				$this->CachedUntil_ = date("Y-m-d H:i:s", (strtotime($this->CurrentTime_)) + 85500);
-			} else
-			{
-				$this->CachedUntil_ = $tempvalue;
-			}
-			ApiCache::set('API_eve_AllianceList' , $this->CachedUntil_);
-		}
-
-		switch ($name)
-		{
-			case "ROWSET":
-				if ($alliancedetail['allianceName'] != "" && $alliancedetail['allianceID'] != "0")
-				{
-					$myalliancelist['Name'][] = $alliancedetail['allianceName'];
-					$myalliancelist['allianceID'][] = $alliancedetail['allianceID'];
-				}
-				$alliancedetail['memberCorps'] = $membercorps;
-				$this->alliances_[] = $alliancedetail;
-
-				$alliancedetail['allianceName'] = "";
-				$alliancedetail['shortName'] = "";
-				$alliancedetail['allianceID'] = "";
-				$alliancedetail['executorCorpID'] = "";
-				$alliancedetail['memberCount'] = "";
-				$alliancedetail['startDate'] = "";
-				$alliancedetail['memberCorps'] = array();
-				$membercorps = array();
-				$membercorp = array();
-				unset($alliancedetail['memberCorps']);
-				unset($membercorps);
-				unset($membercorp);
-				$iscorpsection = false;
-				break;
-		}
-	}
-
-	function characterData($parser, $data)
-	{
-		global $tempvalue;
-
-		$tempvalue = $data;
 	}
 
 	function updatealliancetable()
 	{
-		if (!isset($this->alliances_))
+		if (!isset($this->sxe))
 			$this->initXML();
 
-		if (!isset($this->alliances_))
+		if (!isset($this->sxe))
 			return false;
 
 		$qry = DBFactory::getDBQuery();
@@ -167,54 +83,78 @@ class AllianceAPI
               all_name varchar(200) default NULL
             ) ");
 
-		$alliances = $this->alliances_;
-
-		foreach ($alliances as $arraykey => $arrayvalue)
+		foreach($this->sxe->result->rowset->row as $row)
 		{
-			$tempally = $arrayvalue;
-
-			foreach ($tempally as $key => $value)
+			$allID = intval($row['allianceID']);
+			foreach($row->rowset->row as $corpRow)
 			{
-				switch ($key)
-				{
-					case "allianceName":
-						$allyname = $value;
-						break;
-					case "allianceID":
-						$allyid = $value;
-						break;
-					case "memberCorps":
-						$allycorps = $value;
-						$q='';
-						foreach ($allycorps as $corpkey => $corpvalue)
-						{
-							$tempcorp = $corpvalue;
-							foreach ($tempcorp as $tempkey => $tempvalue)
-							{
-								switch ($tempkey)
-								{
-									case "corporationID":
-										$q.="(".$allyid.",".$tempvalue.",'".slashfix($allyname)."'),";
-										break;
-								}
-							}
-						}
-						if (strlen($q)>0)
-							$qry->execute("INSERT INTO kb3_all_corp values ".substr($q,0,strlen($q)-1));
-						break;
-				}
+				$res['memberCorps'][] = array('corporationID'=>intval($corpRow['corporationID']), 'startDate'=>strval($corpRow['startDate']));
+				$qry->execute("INSERT INTO kb3_all_corp values ($allID, ".intval($corpRow['corporationID']).", ".strval($corpRow['startDate']).")");
 			}
 		}
+//		$alliances = $this->alliances_;
+//
+//		foreach ($alliances as $arraykey => $arrayvalue)
+//		{
+//			$tempally = $arrayvalue;
+//
+//			foreach ($tempally as $key => $value)
+//			{
+//				switch ($key)
+//				{
+//					case "allianceName":
+//						$allyname = $value;
+//						break;
+//					case "allianceID":
+//						$allyid = $value;
+//						break;
+//					case "memberCorps":
+//						$allycorps = $value;
+//						$q='';
+//						foreach ($allycorps as $corpkey => $corpvalue)
+//						{
+//							$tempcorp = $corpvalue;
+//							foreach ($tempcorp as $tempkey => $tempvalue)
+//							{
+//								switch ($tempkey)
+//								{
+//									case "corporationID":
+//										$q.="(".$allyid.",".$tempvalue.",'".slashfix($allyname)."'),";
+//										break;
+//								}
+//							}
+//						}
+//						if (strlen($q)>0)
+//							$qry->execute("INSERT INTO kb3_all_corp values ".substr($q,0,strlen($q)-1));
+//						break;
+//				}
+//			}
+//		}
 		return true;
 	}
 
 	function LocateAlliance($name)
 	{
-		if (!isset($this->alliances_))
+		if (!isset($this->sxe))
 			$this->initXML();
 
-		if (!isset($this->alliances_))
+		if (!isset($this->sxe))
 			return false;
+
+		foreach($this->sxe->result->rowset->row as $row)
+		{
+			if($row['name'] != $name) continue;
+			foreach($row->attributes() as $key=>$val)
+				$res[strval($key)] = strval($val);
+			$res['allianceName'] = $res['name'];
+			$res['memberCorps'] = array();
+			foreach($row->rowset->row as $corpRow)
+			{
+				$res['memberCorps'][] = array('corporationID'=>intval($corpRow['corporationID']), 'startDate'=>strval($corpRow['startDate']));
+			}
+			return $res;
+		}
+		return false;
 
 		$alliances = $this->alliances_;
 
@@ -223,73 +163,53 @@ class AllianceAPI
 			$tempally = $arrayvalue;
 			if($tempally['allianceName'] == $name) return $tempally;
 
-//            foreach ($tempally as $key => $value)
-//            {
-//                switch ($key)
-//                {
-//                    case "allianceName":
-//                        //return $tempally;
-//						if ( $value == $name )
-//						{
-//							return $tempally;
-//						}
-//                        break;
-//                }
-//            }
 		}
 		return false;
 	}
 
 	function LocateAllianceID($id)
 	{
-		if (!isset($this->alliances_))
+		if (!isset($this->sxe))
 			$this->initXML();
 
-		if (!isset($this->alliances_))
+		if (!isset($this->sxe))
 			return false;
 
-		$alliances = $this->alliances_;
-
-		foreach ($alliances as $arraykey => $arrayvalue)
+		foreach($this->sxe->result->rowset->row as $row)
 		{
-			$tempally = $arrayvalue;
-			if($tempally['allianceID'] == $id) return $tempally;
-//            foreach ($tempally as $key => $value)
-//            {
-//                switch ($key)
-//                {
-//                    case "allianceID":
-//                        //return $tempally;
-//						if ( $value == $id )
-//						{
-//							return $tempally;
-//						}
-//                        break;
-//                }
-//            }
+			if($row['allianceID'] != $id) continue;
+			foreach($row->attributes() as $key=>$val)
+				$res[strval($key)] = strval($val);
+			$res['allianceName'] = $res['name'];
+			$res['memberCorps'] = array();
+			foreach($row->rowset->row as $corpRow)
+			{
+				$res['memberCorps'][] = array('corporationID'=>intval($corpRow['corporationID']), 'startDate'=>strval($corpRow['startDate']));
+			}
+			return $res;
 		}
 		return false;
 	}
 
 	function UpdateAlliances($andCorps = false)
 	{
-		if (!isset($this->alliances_))
+		if (!isset($this->sxe))
 			$this->initXML();
 
-		if (!isset($this->alliances_))
+		if (!isset($this->sxe))
 			return false;
 
-		if ($andCorps)
-		{
-			// Remove every single corp in the Killboard DB from their current Alliance
-			$db = DBFactory::getDBQuery(true);
-			$db->execute("SELECT all_id FROM kb3_alliances WHERE all_name LIKE 'None'");
-			$row = $db->getRow();
-			$db->execute("UPDATE kb3_corps
-							SET crp_all_id = ".$row['all_id']);
-		}
+//		if ($andCorps)
+//		{
+//			// Remove every single corp in the Killboard DB from their current Alliance
+//			$db = DBFactory::getDBQuery(true);
+//			$db->execute("SELECT all_id FROM kb3_alliances WHERE all_name LIKE 'None'");
+//			$row = $db->getRow();
+//			$db->execute("UPDATE kb3_corps
+//							SET crp_all_id = ".$row['all_id']);
+//		}
 
-		$alliances = $this->alliances_;
+//		$alliances = $this->alliances_;
 		$alliance = new Alliance();
 		$tempMyCorp = new Corporation();
 		$myCorpAPI = new API_CorporationSheet();
@@ -299,40 +219,56 @@ class AllianceAPI
 		$NumberOfAlliancesAdded = 0; // we won't know this
 		$NumberOfCorpsAdded = 0;
 
-		foreach ($alliances as $arraykey => $arrayvalue)
+		foreach($this->sxe->result->rowset->row as $row)
 		{
-			$tempally = $arrayvalue;
 			$NumberOfAlliances++;
-
-			foreach ($tempally as $key => $value)
-			{
-				switch ($key)
+			$alliance->add(strval($row['name']), intval($row['allianceID']));
+			if($andCorps)
+				foreach($row->rowset->row as $corpRow)
 				{
-					case "allianceName":
-						$alliance->add($value);
-						break;
-					case "memberCorps":
-					// if $andCorps = true then add each and every single corp to the evekb db - resolving each name (expect this to be slow)
-					// WARNING: Processing 5000+ corps this way is extremely slow and is almost guaranteed not to complete
-						if ($andCorps)
-						{
-							foreach ($value as $tempcorp)
-							{
-								$NumberOfCorps++;
+					$NumberOfCorps++;
+					$res['memberCorps'][] = array('corporationID'=>intval($corpRow['corporationID']), 'startDate'=>strval($corpRow['startDate']));
+					$myCorpAPI->setCorpID(intval($corpRow['corporationID']));
+					$result .= $myCorpAPI->fetchXML();
 
-								$myCorpAPI->setCorpID($tempcorp["corporationID"]);
-								$result .= $myCorpAPI->fetchXML();
-
-								//$NumberOfCorpsAdded++;
-								$tempMyCorp->add($myCorpAPI->getCorporationName(), $alliance , gmdate("Y-m-d H:i:s"));
-
-							}
-
-						}
-						break;
+					$tempMyCorp->add($myCorpAPI->getCorporationName(), $alliance , gmdate("Y-m-d H:i:s"));
 				}
-			}
+
 		}
+//		foreach ($alliances as $arraykey => $arrayvalue)
+//		{
+//			$tempally = $arrayvalue;
+//			$NumberOfAlliances++;
+//
+//			foreach ($tempally as $key => $value)
+//			{
+//				switch ($key)
+//				{
+//					case "allianceName":
+//						$alliance->add($value);
+//						break;
+//					case "memberCorps":
+//					// if $andCorps = true then add each and every single corp to the evekb db - resolving each name (expect this to be slow)
+//					// WARNING: Processing 5000+ corps this way is extremely slow and is almost guaranteed not to complete
+//						if ($andCorps)
+//						{
+//							foreach ($value as $tempcorp)
+//							{
+//								$NumberOfCorps++;
+//
+//								$myCorpAPI->setCorpID($tempcorp["corporationID"]);
+//								$result .= $myCorpAPI->fetchXML();
+//
+//								//$NumberOfCorpsAdded++;
+//								$tempMyCorp->add($myCorpAPI->getCorporationName(), $alliance , gmdate("Y-m-d H:i:s"));
+//
+//							}
+//
+//						}
+//						break;
+//				}
+//			}
+//		}
 		$returnarray["NumAlliances"] = $NumberOfAlliances;
 		$returnarray["NumCorps"] = $NumberOfCorps;
 		$returnarray["NumAlliancesAdded"] = $NumberOfAlliancesAdded;
