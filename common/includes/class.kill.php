@@ -13,11 +13,12 @@ class Kill
 	public $involvedparties_ = array();
 	public $destroyeditems_ = array();
 	public $droppeditems_ = array();
+	//legacy support
 	public $VictimDamageTaken = 0;
 	private $fullinvolved_ = false;
 	private $timestamp_ = false;
 	private $victim_ = null;
-	private $dmgdone_ = 0;
+	private $dmgtaken = 0;
 	private $iskloss_ = 0;
 	private $victimship_ = null;
 	private $dupeid_ = 0;
@@ -100,7 +101,7 @@ class Kill
 	function getDamageTaken()
 	{
 		$this->execQuery();
-		return $this->VictimDamageTaken;
+		return $this->dmgtaken;
 	}
 
 	function getVictimName()
@@ -352,7 +353,7 @@ class Kill
 			$system = $this->getSystem();
 			$mail .= "System: ".$system->getName()."\r\n";
 			$mail .= "Security: ".$system->getSecurity(true)."\r\n";
-			$mail .= "Damage Taken: ".$this->VictimDamageTaken."\r\n\r\n";
+			$mail .= "Damage Taken: ".$this->dmgtaken."\r\n\r\n";
 			$mail .= "Involved parties:\r\n\r\n";
 		}
 		else
@@ -367,7 +368,7 @@ class Kill
 			$system = $this->getSystem();
 			$mail .= "System: ".$system->getName()."\r\n";
 			$mail .= "Security: ".$system->getSecurity(true)."\r\n";
-			$mail .= "Damage Taken: ".$this->VictimDamageTaken."\r\n\r\n";
+			$mail .= "Damage Taken: ".$this->dmgtaken."\r\n\r\n";
 			$mail .= "Involved parties:\r\n\r\n";
 		}
 
@@ -470,6 +471,7 @@ class Kill
 			if($this->dupeid_ != 0) return $this->dupeid_;
 			$this->execQuery();
 		}
+		$this->dupeid_ = 0;
 		$qry = DBFactory::getDBQuery(true);
 		if (!$this->getFBPilotID() || !$this->victimid_)
 			return 0;
@@ -582,6 +584,7 @@ class Kill
 			//$this->plt_ext_ = $row['plt_externalid'];
 			$this->fbplt_ext_ = $row['fbplt_externalid'];
 			$this->VictimDamageTaken = $row['kll_dmgtaken'];
+			$this->dmgtaken = $row['kll_dmgtaken'];
 
 			// involved
 			if($this->fullinvolved_)
@@ -764,8 +767,8 @@ class Kill
 		if(ALLIANCE_ID)
 		{
 			$sql ="SELECT COUNT(ina_kll_id) AS kills FROM kb3_inv_all INNER JOIN
-				kb3_kills ON (kll_id = ina_kll_id) WHERE 
-				ina_all_id = ".ALLIANCE_ID." AND 
+				kb3_kills ON (kll_id = ina_kll_id) WHERE
+				ina_all_id = ".ALLIANCE_ID." AND
 				ina_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
 				AND ina_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
 				AND kll_system_id = ".$this->solarsystem_->getID();
@@ -773,8 +776,8 @@ class Kill
 		else if(CORP_ID)
 		{
 			$sql ="SELECT COUNT(inc_kll_id) AS kills FROM kb3_inv_crp INNER JOIN
-				kb3_kills ON (kll_id = inc_kll_id) WHERE 
-				inc_crp_id = ".CORP_ID." AND 
+				kb3_kills ON (kll_id = inc_kll_id) WHERE
+				inc_crp_id = ".CORP_ID." AND
 				inc_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
 				AND inc_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
 				AND kll_system_id = ".$this->solarsystem_->getID();
@@ -782,8 +785,8 @@ class Kill
 		else if(PILOT_ID)
 		{
 			$sql ="SELECT COUNT(ind_kll_id) AS kills FROM kb3_inv_detail INNER JOIN
-				kb3_kills ON (kll_id = ind_kll_id) WHERE 
-				ind_plt_id = ".PILOT_ID." AND 
+				kb3_kills ON (kll_id = ind_kll_id) WHERE
+				ind_plt_id = ".PILOT_ID." AND
 				ind_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
 				AND ind_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
 				AND kll_system_id = ".$this->solarsystem_->getID();
@@ -1604,7 +1607,7 @@ class DetailedInv extends InvolvedParty
 	private $pilot_;
 	private $corp_;
 	private $alliance_;
-	
+
 	function DetailedInv($pilot, $secstatus, $corp, $alliance, $ship, $weapon, $dmgdone = 0)
 	{
 		$this->pilot_ = $pilot;
