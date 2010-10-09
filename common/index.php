@@ -77,8 +77,7 @@ else
 }
 
 // load the config from the database
-$config = new Config(KB_SITE);
-$ApiCache = new ApiCache(KB_SITE);
+$config = new Config();
 define('KB_HOST', config::get('cfg_kbhost'));
 define('MAIN_SITE', config::get('cfg_mainsite'));
 define('IMG_URL', config::get('cfg_img'));
