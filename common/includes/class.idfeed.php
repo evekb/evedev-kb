@@ -298,7 +298,11 @@ class IDFeed
 			$id = $kill->add();
 
 			$internalID = intval($row['killInternalID']);
-			if($id > 0) $this->posted[] = $id;
+			if($id > 0)
+			{
+				$this->posted[] = $id;
+				logger::logKill($id, "ID:".$this->url);
+			}
 			//TODO should these be reversed?
 			else if($internalID) $this->skipped[$internalID] = $kill->getDupe();
 			else  $this->skipped[intval($row['killID'])] = $kill->getDupe();
