@@ -24,6 +24,7 @@ class Kill
 	private $hash = false;
 	private $mail = null;
 	private $trust = 0;
+	private $executed = false;
 
 	function Kill($id = 0, $external = false)
 	{
@@ -51,6 +52,16 @@ class Kill
 		}
 	}
 
+	//! Set internal variables.
+
+	/*!
+	 * \param $arr Array of values indexed by internal variable name.
+	 */
+	function setArray($arr)
+	{
+		foreach($arr as $key=>$val) $this->$key = $val;
+	}
+
 	function set($var, $value)
 	{
 		$this->$var = $value;
@@ -69,7 +80,7 @@ class Kill
 	function getExternalID()
 	{
 		if($this->externalid_) return $this->externalid_;
-		$this->execQuery();
+		if(!isset($this->externalid_)) $this->execQuery();
 		return $this->externalid_;
 	}
 	//! Return the dropped items array for this kill.
@@ -84,7 +95,7 @@ class Kill
 	}
 	function getTimeStamp()
 	{
-		$this->execQuery();
+		if(!isset($this->timestamp_)) $this->execQuery();
 		return $this->timestamp_;
 	}
 	//! Return the victim Pilot object.
@@ -93,33 +104,33 @@ class Kill
 	*/
 	function getVictim()
 	{
-		$this->execQuery();
+		if(!isset($this->victim_)) $this->execQuery();
 		return $this->victim_;
 	}
 	//! Return the amount of damage taken by the victim.
 	function getDamageTaken()
 	{
-		$this->execQuery();
+		if(!isset($this->dmgtaken)) $this->execQuery();
 		return $this->dmgtaken;
 	}
 
 	function getVictimName()
 	{
-		$this->execQuery();
+		if(!isset($this->victimname_)) $this->execQuery();
 		if(isset($this->victim_)) return $this->victim_->getName();
 		return $this->victimname_;
 	}
 
 	function getVictimID()
 	{
-		$this->execQuery();
+		if(!isset($this->victimid_)) $this->execQuery();
 		if(isset($this->victim_)) return $this->victim_->getID();
 		return $this->victimid_;
 	}
 
 	function getVictimExternalID()
 	{
-		$this->execQuery();
+		if(!isset($this->plt_ext_)) $this->execQuery();
 		if(isset($this->victim_)) return $this->victim_->getExternalID();
 		return $this->plt_ext_;
 	}
@@ -134,7 +145,7 @@ class Kill
 
 	function getVictimCorpID()
 	{
-		$this->execQuery();
+		if(!isset($this->victimcorpid_)) $this->execQuery();
 // Removing this until the victim set is the victim status at the time of the kill
 //		if(isset($this->victim_)) return $this->victim_->getCorp()->getID();
 		return $this->victimcorpid_;
@@ -142,7 +153,7 @@ class Kill
 
 	function getVictimCorpName()
 	{
-		$this->execQuery();
+		if(!isset($this->victimcorpname_)) $this->execQuery();
 // Removing this until the victim set is the victim status at the time of the kill
 //		if(isset($this->victim_)) return $this->victim_->getCorp()->getName();
 		return $this->victimcorpname_;
@@ -150,7 +161,7 @@ class Kill
 
 	function getVictimAllianceName()
 	{
-		$this->execQuery();
+		if(!isset($this->victimalliancename_)) $this->execQuery();
 // Removing this until the victim set is the victim status at the time of the kill
 //		if(isset($this->victim_)) return $this->victim_->getCorp()->getAlliance()->getName();
 		return $this->victimalliancename_;
@@ -173,7 +184,7 @@ class Kill
 
 	function getVictimAllianceID()
 	{
-		$this->execQuery();
+		if(!isset($this->victimallianceid_)) $this->execQuery();
 // Removing this until the victim set is the victim status at the time of the kill
 //		if(isset($this->victim_)) return $this->victim_->getCorp()->getAlliance()->getID();
 		return $this->victimallianceid_;
@@ -181,13 +192,13 @@ class Kill
 
 	function getVictimShip()
 	{
-		$this->execQuery();
+		if(!isset($this->victimship_)) $this->execQuery();
 		return $this->victimship_;
 	}
 
 	function getSystem()
 	{
-		$this->execQuery();
+		if(!isset($this->solarsystem_)) $this->execQuery();
 		return $this->solarsystem_;
 	}
 
@@ -202,7 +213,7 @@ class Kill
 
 	function getFBPilotName()
 	{
-		$this->execQuery();
+		if(!isset($this->fbpilotname_)) $this->execQuery();
 		if(isset($this->fbpilot_)) return $this->fbpilot_->getName();
 		return $this->fbpilotname_;
 	}
@@ -218,7 +229,7 @@ class Kill
 
 	function getFBCorpName()
 	{
-		$this->execQuery();
+		if(!isset($this->fbcorpname_)) $this->execQuery();
 		if(isset($this->fbpilot_)) return $this->fbpilot_->getCorp()->getName();
 		return $this->fbcorpname_;
 	}
@@ -234,13 +245,13 @@ class Kill
 
 	function getFBAllianceName()
 	{
-		$this->execQuery();
+		if(!isset($this->fballiancename_)) $this->execQuery();
 		return $this->fballiancename_;
 	}
 
 	function getISKLoss()
 	{
-		$this->execQuery();
+		if(!isset($this->iskloss_)) $this->execQuery();
 		return $this->iskloss_;
 	}
 	function getKillPoints()
@@ -253,7 +264,8 @@ class Kill
 
 	function getSolarSystemName()
 	{
-		if(isset($this->solarsystemname_))return $this->solarsystemname_;
+		if(isset($this->solarsystemname_)) return $this->solarsystemname_;
+		if(isset($this->solarsystem_)) return $this->solarsystem_->getName();
 		$this->execQuery();
 		return $this->solarsystem_->getName();
 	}
@@ -261,6 +273,7 @@ class Kill
 	function getSolarSystemSecurity()
 	{
 		if(isset($this->solarsystemsecurity_))return $this->solarsystemsecurity_;
+		if(isset($this->solarsystem_)) return $this->solarsystem_->getSecurity();
 		$this->execQuery();
 		return $this->solarsystem_->getSecurity();
 	}
@@ -520,7 +533,7 @@ class Kill
 
 	function execQuery()
 	{
-		if (!$this->timestamp_)
+		if (!$this->executed)
 		{
 			$qry = DBFactory::getDBQuery();
 
@@ -562,7 +575,7 @@ class Kill
 				$this->valid_ = true;
 			}
 
-			$this->setTimeStamp($row['kll_timestamp']);
+			$this->timestamp_ = $row['kll_timestamp'];
 			$this->setSolarSystem(new SolarSystem($row['kll_system_id']));
 			$this->setVictim(new Pilot($row['kll_victim_id'], $row['plt_externalid'], $row['plt_name'], $row['kll_crp_id']));
 			$this->setVictimID($row['kll_victim_id']);
@@ -683,6 +696,7 @@ class Kill
 				array_push($this->droppeditems_, $dropped);
 			}
 		}
+		$this->executed = true;
 	}
 
 	function isClassified()
@@ -755,7 +769,7 @@ class Kill
 	}
 	function exists()
 	{
-		$this->execQuery();
+		if(!isset($this->valid_)) $this->execQuery();
 		return $this->valid_;
 	}
 
@@ -1375,7 +1389,7 @@ class Kill
 	*/
 	function getInvolved()
 	{
-		$this->execQuery();
+		if(!isset($this->involvedparties_)) $this->execQuery();
 		return $this->involvedparties_;
 	}
 	function setHash($hash)

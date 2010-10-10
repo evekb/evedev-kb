@@ -257,7 +257,7 @@ class KillList
 				$this->sqltop_ .= ' kll.kll_id, kll.kll_timestamp, kll.kll_external_id,
 							plt.plt_name, crp.crp_name, crp.crp_id,
 							ali.all_name, ali.all_id,
-							kll.kll_system_id, kll.kll_ship_id,
+							kll.kll_system_id, kll.kll_ship_id, kll.kll_dmgtaken,
 							kll.kll_victim_id, plt.plt_externalid,
 							kll.kll_crp_id, kll.kll_points, kll.kll_isk_loss,
 							shp.shp_class, shp.shp_name,
@@ -641,10 +641,12 @@ class KillList
 			$kill->setKillPoints($row['kll_points']);
 			$kill->setExternalID($row['kll_external_id']);
 			$kill->setISKLoss($row['kll_isk_loss']);
-			$kill->plt_ext_ = $row['plt_externalid'];
-			$kill->fbplt_ext_ = $row['fbplt_externalid'];
-			$kill->_sclid = $row['scl_id'];
-			$kill->_shpid = $row['shp_id'];
+			$arr = array('plt_ext_' => $row['plt_externalid'],
+				'fbplt_ext_' => $row['fbplt_externalid'],
+				'_sclid' => $row['scl_id'],
+				'_shpid' => $row['shp_id'],
+				'dmgtaken' => $row['kll_dmgtaken']);
+			$kill->setArray($arr);
 			//Set the involved party count if it is known
 			if($this->involved_) $kill->setInvolvedPartyCount($row['inv']);
 			//Set the comment count if it is known

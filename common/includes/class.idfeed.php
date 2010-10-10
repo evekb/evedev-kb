@@ -28,7 +28,7 @@ class IDFeed
 	private $time = '';
 	private $cachedTime = '';
 	private $errormsg = '';
-	const version = "1.01";
+	const version = "1.02";
 
 	//! Construct the Fetcher class and initialise variables.
 
@@ -291,7 +291,11 @@ class IDFeed
 			$id = $kill->add();
 
 			$internalID = intval($row['killInternalID']);
-			if($id > 0) $this->posted[] = $id;
+			if($id > 0)
+			{
+				$this->posted[] = $id;
+				logger::logKill($id, "ID:".$this->url);
+			}
 			//TODO should these be reversed?
 			else if($internalID) $this->skipped[$internalID] = $kill->getDupe();
 			else  $this->skipped[intval($row['killID'])] = $kill->getDupe();
@@ -303,10 +307,10 @@ class IDFeed
 			if($internalID) $this->skipped[$internalID] = $id;
 			else $this->skipped[intval($row['killID'])] = $id;
 		}
-		
+
 		if($this->lastReturned < intval($row['killID'])) $this->lastReturned = intval($row['killID']);
 		if($this->lastInternalReturned < $internalID) $this->lastInternalReturned = $internalID;
-		
+
 	}
 	private function processVictim($victim, &$kill, $time)
 	{
@@ -322,7 +326,7 @@ class IDFeed
 
 		$pilot = new Pilot();
 		$pilot->add(strval($victim['characterName']), $corp, $time, intval($victim['characterID']));
-		$ship = new Ship(0, $victim['shipTypeID']);
+		$ship = new Ship(0, intval($victim['shipTypeID']));
 
 		$kill->setVictim($pilot);
 		$kill->setVictimID($pilot->getID());
@@ -351,7 +355,7 @@ class IDFeed
 			$alliance->getID(), floatval($inv['securityStatus']), $ship, $weapon, intval($inv['damageDone']));
 
 		$kill->addInvolvedParty($iparty);
-		if($inv['finalBlow']) $kill->setFBPilotID($pilot->getID());
+		if($inv['finalBlow'] == 1) $kill->setFBPilotID($pilot->getID());
 	}
 	private function processItem($item, &$kill)
 	{
@@ -391,10 +395,10 @@ class IDFeed
 		return $this->cachedTime;
 	}
 	//! Returns the id of a matching existing kill if found.
-	
+
 	/*! This does not guarantee non-existence as it only checks external id and
 	 * hash
-	 * 
+	 *
 	 * \param $row A SimpleXML object containing the kill.
 	 *
 	 * \return 0 if no match found, the kll_id if found.
