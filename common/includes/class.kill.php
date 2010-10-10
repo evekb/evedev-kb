@@ -25,6 +25,7 @@ class Kill
 	private $hash = false;
 	private $mail = null;
 	private $trust = 0;
+	private $executed = false;
 
 	function Kill($id = 0, $external = false)
 	{
@@ -519,7 +520,7 @@ class Kill
 
 	function execQuery()
 	{
-		if (!$this->timestamp_)
+		if (!$this->executed)
 		{
 			$qry = DBFactory::getDBQuery();
 
@@ -682,6 +683,7 @@ class Kill
 				array_push($this->droppeditems_, $dropped);
 			}
 		}
+		$this->executed = true;
 	}
 
 	function isClassified()

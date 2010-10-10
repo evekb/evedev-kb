@@ -28,7 +28,7 @@ class IDFeed
 	private $time = '';
 	private $cachedTime = '';
 	private $errormsg = '';
-	const version = "0.92";
+	const version = "0.93";
 
 	//! Construct the Fetcher class and initialise variables.
 
@@ -362,7 +362,7 @@ class IDFeed
 			$alliance->getID(), floatval($inv['securityStatus']), $ship, $weapon, intval($inv['damageDone']));
 
 		$kill->addInvolvedParty($iparty);
-		if($inv['finalBlow']) $kill->setFBPilotID($pilot->getID());
+		if($inv['finalBlow'] == 1) $kill->setFBPilotID($pilot->getID());
 	}
 	private function processItem($item, &$kill)
 	{
