@@ -1,8 +1,12 @@
 -------------------------------------------
-Eve Development Network Killboard v3.1.2
+Eve Development Network Killboard v3.1.3
 -------------------------------------------
 
 VERSION HISTORY
+v3.1.3
+IDFeed reader works more convincingly.
+Single pilots authorise owner to post kills
+-------------------------------------------
 v3.1.2
 IDFeed reader works.
 Feed page works for pilot feeds.
