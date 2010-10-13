@@ -284,7 +284,7 @@ class IDFeed
 			$sys = new SolarSystem($qrow['sys_id']);
 			$kill->setSolarSystem($sys);
 
-			$this->processVictim($row->victim, $kill, strval(strval($row['killTime'])));
+			$this->processVictim($row->victim, $kill, strval($row['killTime']));
 
 			foreach($row->rowset[0]->row as $inv) $this->processInvolved($inv, $kill, strval($row['killTime']));
 			if(isset($row->rowset[1]->row[0])) foreach($row->rowset[1]->row as $item) $this->processItem($item, $kill);
@@ -308,7 +308,7 @@ class IDFeed
 			else $this->skipped[intval($row['killID'])] = $id;
 		}
 
-		if($this->lastReturned < intval($row['killID'])) $this->lastReturned = intval($row['killID']);
+		if($this->lastReturned < $row['killID']) $this->lastReturned = $row['killID'];
 		if($this->lastInternalReturned < $internalID) $this->lastInternalReturned = $internalID;
 
 	}
@@ -316,9 +316,9 @@ class IDFeed
 	{
 		$alliance = new Alliance();
 		$corp = new Corporation();
-		if($victim['allianceID'])
+		if(intval($victim['allianceID']))
 			$alliance->add(strval($victim['allianceName']), intval($victim['allianceID']));
-		else if($victim['factionID'])
+		else if(intval($victim['factionID']))
 			$alliance->add(strval($victim['factionName']), intval($victim['factionID']));
 		else
 			$alliance->add("None");
@@ -339,9 +339,9 @@ class IDFeed
 	{
 		$alliance = new Alliance();
 		$corp = new Corporation();
-		if($inv['allianceID'])
+		if(intval($inv['allianceID']))
 			$alliance->add(strval($inv['allianceName']), intval($inv['allianceID']));
-		else if($inv['factionID'])
+		else if(intval($inv['factionID']))
 			$alliance->add(strval($inv['factionName']), intval($inv['factionID']));
 		else
 			$alliance->add("None");
@@ -367,7 +367,7 @@ class IDFeed
 			$location = $litem->getSlot();
 		}
 
-		if($item['qtyDropped'])
+		if(intval($item['qtyDropped']))
 		{
 			$kill->addDroppedItem(new DroppedItem(new Item(intval($item['typeID'])), intval($item['qtyDropped']), '', $location));
 		}
