@@ -1,8 +1,11 @@
 -------------------------------------------
-Eve Development Network Killboard v3.1.3
+Eve Development Network Killboard v3.1.4
 -------------------------------------------
 
 VERSION HISTORY
+v3.1.4
+IDFeed reader stops posting 0 quantity kills.
+-------------------------------------------
 v3.1.3
 IDFeed reader works more convincingly.
 Single pilots authorise owner to post kills
