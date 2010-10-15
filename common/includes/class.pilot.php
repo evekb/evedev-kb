@@ -252,7 +252,8 @@ class Pilot
 					$this->name_ = $name;
 					$this->externalid_ = $row['plt_externalid'];
 					$this->corpid_ = $row['plt_crp_id'];
-					$this->updated_ = strtotime($row['plt_updated']." UTC");
+					if(!is_null($row['plt_updated'])) $this->updated_ = strtotime($row['plt_updated']." UTC");
+					else $this->updated_ = null;
 
 					// Now check if the corp needs to be updated.
 					if ($row['plt_crp_id'] != $corp->getID() && $this->isUpdatable($timestamp))
@@ -281,8 +282,8 @@ class Pilot
 		{
 			$row = $qry->getRow();
 			$this->id_ = $row['plt_id'];
-			$this->updated_ = strtotime($row['plt_updated']." UTC");
-			if(!$this->updated_) $this->updated_ = 0;
+			if(!is_null($row['plt_updated'])) $this->updated_ = strtotime($row['plt_updated']." UTC");
+			else $this->updated_ = null;
 			if ($this->isUpdatable($timestamp) && $row['plt_crp_id'] != $corp->getID())
 			{
 				$qryI->execute("update kb3_pilots
@@ -313,7 +314,7 @@ class Pilot
 		$qry->execute("select plt_id
                         from kb3_pilots
                        where plt_id = ".$this->id_."
-                         and ( plt_updated < date_format( '".$timestamp."', '%Y.%m.%d %H:%i')
+                         and ( plt_updated < date_format( '".$timestamp."', '%Y-%m-%d %H:%i')
                                or plt_updated is null )");
 
 		return $qry->recordCount() == 1;

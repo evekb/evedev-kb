@@ -204,7 +204,8 @@ class Corporation
 					$this->name = stripslashes($name);
 					$this->externalid = $row['crp_external_id'];
 					$this->alliance = $row['crp_all_id'];
-					$this->updated = strtotime($row['crp_updated']." UTC");
+					if(!is_null($row['crp_updated'])) $this->updated = strtotime($row['crp_updated']." UTC");
+					else $this->updated = null;
 					if(!$this->updated) $this->updated = 0;
 					// Now check if the alliance needs to be updated.
 					if ($row['crp_all_id'] != $alliance->getID() && $this->isUpdatable($timestamp))
@@ -243,7 +244,8 @@ class Corporation
 			$this->name = $row['crp_name'];
 			$this->externalid = $row['crp_external_id'];
 			$this->alliance = $row['crp_all_id'];
-			$this->updated = strtotime($row['crp_updated']." UTC");
+			if(!is_null($row['crp_updated'])) $this->updated = strtotime($row['crp_updated']." UTC");
+			else $this->updated = null;
 			if ($row['crp_all_id'] != $alliance->getID() && $this->isUpdatable($timestamp))
 			{
 				$sql = 'update kb3_corps
@@ -276,7 +278,7 @@ class Corporation
 		$qry = DBFactory::getDBQuery();
 		$qry->execute("select crp_id from kb3_corps
 		               where crp_id = ".$this->id."
-		               and ( crp_updated < date_format( '".$timestamp."', '%Y.%m.%d %H:%i' )
+		               and ( crp_updated < date_format( '".$timestamp."', '%Y-%m-%d %H:%i' )
 			           or crp_updated is null )");
 		return $qry->recordCount() == 1;
 	}
