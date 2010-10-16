@@ -34,7 +34,10 @@ if(defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE == true)
 	else if(method_exists(Memcache, 'setCompressThreshold')) $mc->setCompressThreshold(10000, 0.2);
 }
 // If DB_USE_QCACHE is defined then it needs no further setup.
-else if(defined('DB_USE_QCACHE')) define('DB_USE_MEMCACHE', false);
+else if(defined('DB_USE_QCACHE'))
+{ 
+	if(!defined('DB_USE_MEMCACHE')) define('DB_USE_MEMCACHE', false);
+}
 else
 {
 	if(!isset($config)) $config = new Config(KB_SITE);
