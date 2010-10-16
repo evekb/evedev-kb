@@ -117,9 +117,9 @@ class CacheHandler
 	 *
 	 * \return int The count of files removed.
 	 */
-	public static function removeByAge($dir = null, $hours = 24)
+	public static function removeByAge($dir = null, $hours = 24, $removeDir = true)
 	{
-		if(is_null($dir)) $dir = self::$defaultLocation;
+		if(is_null($dir))$dir = self::$defaultLocation;
 		if(!is_dir(self::$internalroot.'/'.$dir)) return 0;
 		if(substr($dir, -1) != '/') $dir .= '/';
 		$seconds = (int) $hours * 60 * 60;
@@ -139,11 +139,11 @@ class CacheHandler
 			if (is_dir(self::$internalroot.'/'.$dir.$fname)
 				 && substr($fname, 0, 1) != ".")
 			{
-				$del += self::removeByAge($dir.$fname."/", $hours);
+				$del += self::removeByAge($dir.$fname."/", $hours, $removeDir);
 			}
 		}
 		// Directories with files in are not deleted.
-		@rmdir(self::$internalroot.'/'.$dir);
+		if($removeDir && $dir != '/') @rmdir(self::$internalroot.'/'.$dir);
 		return $del;
 	}
 	//! Remove files in a cache directory to reduce total size to that given.

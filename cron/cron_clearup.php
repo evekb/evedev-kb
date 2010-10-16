@@ -39,48 +39,50 @@ if($qcache) config::set('cfg_qcache', 0);
 $pcache = config::get('cache_enabled');
 if($pcache) config::set('cache_enabled', 0);
 
-remove_old(7 * 24, KB_QUERYCACHEDIR.'/');
-remove_old(7 * 24, KB_PAGECACHEDIR.'/'.KB_SITE.'/', true);
-remove_old(1 * 24, KB_CACHEDIR."/templates_c/", true);
-remove_old(7 * 24, KB_MAILCACHEDIR.'/');
-remove_old(30 * 24, KB_CACHEDIR.'/', true);
+echo "<br />Removed ".CacheHandler::removeByAge('SQL/', 7 * 24)." files from SQL/<br />";
+echo "Removed ".CacheHandler::removeByAge('page/'.KB_SITE.'/', 7 * 24)." files from page/<br />";
+echo "Removed ".CacheHandler::removeByAge("templates_c/", 1 * 24)." files from templates_c/<br />";
+echo "Removed ".CacheHandler::removeByAge("mail/", 7 * 24)." files from mail/<br />";
+echo "Removed ".CacheHandler::removeByAge('img/', 90 * 24)." files from img/<br />";
+echo "Removed ".CacheHandler::removeByAge('store/', 7 * 24)." files from store/<br />";
+echo "Removed ".CacheHandler::removeByAge('/', 0 * 24, false)." files from entire cache<br />";
 
 if($qcache) config::set('cfg_qcache', 1);
 if($pcache) config::set('cache_enabled', 1);
-//! Remove old files from the given directory.
-
-/*! \param $hours The oldest a file can be before being removed.
- *  \param $dir The directory to remove files from.
- *  \param $recurse Whether to clear subdirectories.
- */
-function remove_old($hours, $dir, $recurse = false)
-{
-	if(!is_dir($dir)) return 0;
-	$seconds = $hours*60*60;
-	$del = 0;
-	$files = scandir($dir);
-	if(!$files)
-	{
-		echo "Directory invalid: ".$dir."<br>\n";
-		return 0;
-	}
-	echo $dir."<br>".$hours." hours<br>\n";
-	foreach ($files as $num => $fname)
-	{
-		if (file_exists("{$dir}{$fname}") && !is_dir("{$dir}{$fname}") && substr($fname,0,1) != "." && ((time() - filemtime("{$dir}{$fname}")) > $seconds))
-		{
-			$mod_time = filemtime("{$dir}{$fname}");
-			if (unlink("{$dir}{$fname}"))
-			{
-				$del = $del + 1; 
-				echo "Deleted: {$del} - {$fname} --- ".(round((time()-$mod_time)/3600))." hours old<br>\n";
-			}
-		}
-		// Clear subdirectories if $recurse is true.
-		if ($recurse && file_exists("{$dir}{$fname}") && is_dir("{$dir}{$fname}")
-			 && substr($fname,0,1) != "." && $fname != "..")
-		{
-			remove_old($hours, $dir.$fname."/", $recurse);
-		}
-	}
-}
+////! Remove old files from the given directory.
+//
+///*! \param $hours The oldest a file can be before being removed.
+// *  \param $dir The directory to remove files from.
+// *  \param $recurse Whether to clear subdirectories.
+// */
+//function remove_old($hours, $dir, $recurse = false)
+//{
+//	if(!is_dir($dir)) return 0;
+//	$seconds = $hours*60*60;
+//	$del = 0;
+//	$files = scandir($dir);
+//	if(!$files)
+//	{
+//		echo "Directory invalid: ".$dir."<br>\n";
+//		return 0;
+//	}
+//	echo $dir."<br>".$hours." hours<br>\n";
+//	foreach ($files as $num => $fname)
+//	{
+//		if (file_exists("{$dir}{$fname}") && !is_dir("{$dir}{$fname}") && substr($fname,0,1) != "." && ((time() - filemtime("{$dir}{$fname}")) > $seconds))
+//		{
+//			$mod_time = filemtime("{$dir}{$fname}");
+//			if (unlink("{$dir}{$fname}"))
+//			{
+//				$del = $del + 1;
+//				echo "Deleted: {$del} - {$fname} --- ".(round((time()-$mod_time)/3600))." hours old<br>\n";
+//			}
+//		}
+//		// Clear subdirectories if $recurse is true.
+//		if ($recurse && file_exists("{$dir}{$fname}") && is_dir("{$dir}{$fname}")
+//			 && substr($fname,0,1) != "." && $fname != "..")
+//		{
+//			remove_old($hours, $dir.$fname."/", $recurse);
+//		}
+//	}
+//}
