@@ -43,9 +43,9 @@ for ( $i = 1; $i <= $keycount; $i++ )
         $html .= "Click the character you'd like to set:<br /><br />";
         $selectid = $i;
 
-        $apistring = 'userID=' . config::get('API_UserID_' . $selectid) . '&apiKey=' . config::get('API_Key_' . $selectid);
-        $myCharSelect = new APIChar();
-        $CharList = $myCharSelect->fetchChars($apistring);
+        $myCharSelect = new API_Char();
+        $CharList = $myCharSelect->fetch(config::get('API_UserID_' . $selectid), config::get('API_Key_' . $selectid));
+		
         $charcount = count($CharList);
         if ( $charcount > 0 ) 
         {

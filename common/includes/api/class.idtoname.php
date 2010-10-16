@@ -14,7 +14,6 @@ class API_IDtoName
 	private $CurrentTime_ = '';
 	private $API_IDs_ = '';
 	private $NameData_ = array();
-	private $html = '';
 
 	public function getCachedUntil()
 	{
@@ -43,121 +42,30 @@ class API_IDtoName
 
 	public function fetchXML()
 	{
-		if ($this->API_IDs_ != "")
-		{
-			$myKeyString = "ids=" . $this->API_IDs_;
-			$data = $this->loaddata($myKeyString);
-		} else {
-			return "No IDs have been input.";
-		}
+		if ($this->API_IDs_ != "") $data = $this->loaddata($this->API_IDs_);
+		else return "No IDs have been input.";
 
-        $xml_parser = xml_parser_create();
-        xml_set_object ( $xml_parser, $this );
-        xml_set_element_handler($xml_parser, "startElement", "endElement");
-        xml_set_character_data_handler ( $xml_parser, 'characterData' );
+		$sxe = simplexml_load_string($data);
+		
+		if(strval($sxe->error)) return strval("Error code ".$sxe->error['code'].": ".$sxe->error);
 
-        if (!xml_parse($xml_parser, $data, true))
-            return "<i>Error getting XML data from api.eve-online.com/CharacterName.xml.aspx  </i><br><br>";
+		foreach($sxe->result->rowset->row as $row)
+			$this->NameData_[] = array('name'=>strval($row['name']),
+				'characterID'=>intval($row['characterID']));
+		
+		$this->CurrentTime_ = strval($sxe->currentTime);
+		$this->CachedUntil_ = strval($sxe->cachedUntil);
 
-        xml_parser_free($xml_parser);
-
-		return $this->html; // should be empty, but keeping just incase - errors are returned by Text so worth looking anyway.
+		return "";
 	}
 
-	public function startElement($parser, $name, $attribs)
+	private function loaddata($ids)
     {
-		global $NameData;
+        $url = "http://api.eve-online.com/eve/CharacterName.xml.aspx?" . $ids;
 
-		if ($name == "ROW")
-        {
-            if (count($attribs))
-            {
-                foreach ($attribs as $k => $v)
-                {
-                    switch ($k)
-                    {
-                        case "NAME":
-                            $NameData['name'] = $v;
-                            break;
-                        case "CHARACTERID":
-                            $NameData['characterID'] = $v;
-                            break;
-                    }
-                }
-            }
-        }
-    }
+		$http = new http_request($url);
+		$http->set_useragent("PHPApi");
 
-    public function endElement($parser, $name)
-    {
-		global $NameData;
-
-		// Details
-		if ($name == "ERROR")
-			$this->html .= $this->characterDataValue;
-
-		if ($name == "ROW")
-		{
-			$this->NameData_[] = $NameData;
-			$NameData = array();
-			unset($NameData);
-		}
-
-		if ($name == "CURRENTTIME")
-			$this->CurrentTime_ = $this->characterDataValue;
-		if ($name == "CACHEDUNTIL") // cache not needed for this process
-		{
-			$this->CachedUntil_ = $this->characterDataValue;
-			//ApiCache::set('API_eve_RefTypes' , $this->characterDataValue);
-			//ApiCache::set( $this->CharName_ . 'CharacterID' , $this->characterDataValue);
-		}
-    }
-
-    public function characterData($parser, $data)
-    {
-		$this->characterDataValue = $data;
-    }
-
-	public function loaddata($keystring)
-    {
-        $url = "http://api.eve-online.com/eve/CharacterName.xml.aspx" . $keystring;
-
-        $path = '/eve/CharacterName.xml.aspx';
-
-
-        $fp = @fsockopen("api.eve-online.com", 80);
-
-        if (!$fp)
-        {
-            $this->Output_ .= "Could not connect to API URL";
-        } else {
-           	 // request the xml
-            fputs ($fp, "POST " . $path . " HTTP/1.0\r\n");
-            fputs ($fp, "Host: api.eve-online.com\r\n");
-            fputs ($fp, "Content-Type: application/x-www-form-urlencoded\r\n");
-            fputs ($fp, "User-Agent: PHPApi\r\n");
-            fputs ($fp, "Content-Length: " . strlen($keystring) . "\r\n");
-            fputs ($fp, "Connection: close\r\n\r\n");
-            fputs ($fp, $keystring."\r\n");
-			stream_set_timeout($fp, 10);
-
-           	 // retrieve contents
-            $contents = "";
-            while (!feof($fp))
-            {
-                $contents .= fgets($fp);
-            }
-
-            // close connection
-            fclose($fp);
-
-            $start = strpos($contents, "?>");
-            if ($start !== FALSE)
-            {
-                	$contents = substr($contents, $start + strlen("\r\n\r\n"));
-            }
-        }
-
-        return $contents;
-    }
+		return $http->get_content();
+	}
 }
