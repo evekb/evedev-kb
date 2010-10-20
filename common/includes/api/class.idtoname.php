@@ -45,6 +45,8 @@ class API_IDtoName
 		if ($this->API_IDs_ != "") $data = $this->loaddata($this->API_IDs_);
 		else return "No IDs have been input.";
 
+		if(!$data) return "Error fetching IDs";
+
 		$sxe = simplexml_load_string($data);
 		
 		if(strval($sxe->error)) return strval("Error code ".$sxe->error['code'].": ".$sxe->error);

@@ -40,6 +40,8 @@ class API_NametoID
 		if ($this->API_Names_ != "") $data = $this->loaddata($this->API_Names_);
 		else return "No Names have been input.";
 
+		if(!$data) return "Error fetching names";
+
 		$sxe = simplexml_load_string($data);
 
 		if(strval($sxe->error)) return strval("Error code ".$sxe->error['code'].": ".$sxe->error);
@@ -56,7 +58,7 @@ class API_NametoID
 
 	private function loaddata($names)
     {
-        $url = "http://api.eve-online.com/eve/CharacterID.xml.aspx?names=".$names;
+        $url = "http://1api.eve-online.com/eve/CharacterID.xml.aspx?names=".$names;
 
 		$http = new http_request($url);
 		$http->set_useragent("PHPApi");
