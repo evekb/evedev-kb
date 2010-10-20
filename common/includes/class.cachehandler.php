@@ -85,7 +85,8 @@ class CacheHandler
 	protected static function removeDir($dir, $parents = true)
 	{
 		if(substr($dir, -1) != '/') $dir .= '/';
-		$dirfiles = scandir(self::$internalroot.'/'.$dir);
+		$dirfiles = @scandir(self::$internalroot.'/'.$dir);
+		if($dirfiles === false) return false;
 		if(count($dirfiles) > 2)
 		{
 			// Remove empty subdirectories

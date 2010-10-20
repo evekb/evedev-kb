@@ -120,7 +120,8 @@ class CacheHandlerHashed extends CacheHandler
 
 		if(!self::exists($key, $location)) return true;
 		if(!unlink($path)) return false;
-		self::removeDir($dir);
+		self::removeDir(dirname($dir));
+
 		return true;
 	}
 	//! Return the age of the given cache object.
