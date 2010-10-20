@@ -27,7 +27,7 @@ class CacheHandler
 	public static function put($filename, $data, $location = null)
 	{
 		$path = self::getPath($filename, $location, true);
-		
+
 		return file_put_contents(self::$internalroot."/".$path, $data);
 	}
 	//! Get a file from the cache.
@@ -59,7 +59,7 @@ class CacheHandler
 		if(is_dir(self::$internalroot.'/'.$dir)) return self::$internalroot.'/'.$dir;
 		else if(empty($dir)) return self::$internalroot.'/data';
 		else if(!mkdir(self::$internalroot.'/'.$dir, 0755, true)) return false;
-		
+
 		return self::$internalroot.'/'.$dir;
 	}
 
@@ -85,7 +85,8 @@ class CacheHandler
 	protected static function removeDir($dir, $parents = true)
 	{
 		if(substr($dir, -1) != '/') $dir .= '/';
-		$dirfiles = scandir(self::$internalroot.'/'.$dir);
+		$dirfiles = @scandir(self::$internalroot.'/'.$dir);
+		if($dirfiles === false) return false;
 		if(count($dirfiles) > 2)
 		{
 			// Remove empty subdirectories
@@ -105,7 +106,7 @@ class CacheHandler
 		$pdir = substr($dir, 0, strrpos($dir, '/'));
 		rmdir(self::$internalroot.'/'.$dir);
 		if(!$parents) return true;
-		
+
 		if(empty($pdir)) return true;
 		else return self::removeDir($pdir);
 	}
@@ -208,7 +209,7 @@ class CacheHandler
 	{
 		if(strpos($dir, '..')
 			|| !is_dir(self::$internalroot.'/'.$dir)) return array();
-		
+
 		if(substr($dir, -1) != '/') $dir .= '/';
 		$del = 0;
 		$files = scandir(self::$internalroot.'/'.$dir);
@@ -256,7 +257,7 @@ class CacheHandler
 			die;
 		}
 		$newlocation = $location;
-		
+
 		if($newlocation != self::$defaultLocation)
 		{
 			if(strpos($newlocation, "..") !== false
