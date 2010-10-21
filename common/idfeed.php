@@ -138,7 +138,7 @@ while($kill = $list->getKill())
 	if($kill->isClassified()) continue;
 	$row = $kills->addChild('row');
 	$row->addAttribute('killID', intval($kill->getExternalID()));
-	if(isset($_GET['allkills'])) $row->addAttribute('killInternalID', intval($kill->getID()));
+	$row->addAttribute('killInternalID', intval($kill->getID()));
 	$row->addAttribute('solarSystemID', $kill->getSystem()->getExternalID());
 	$row->addAttribute('killTime', $kill->getTimeStamp());
 	$row->addAttribute('moonID', '0');
