@@ -24,6 +24,8 @@
  * alliancename = alliance name to retrieve kills for
  * system = restrict kills to a specific system
  * region = restrict kills to a specific region
+ * kll_id = show one kill only.
+ * kll_ext_id = show one kill only.
  *
  */
 
@@ -37,6 +39,18 @@ $xml = "<?xml version='1.0' encoding='UTF-8'?>
 </eveapi>";
 
 $list = new KillList();
+if(isset($_GET['kll_id']))
+{
+	$_GET['lastintID'] = $_GET['kll_id'];
+	$_GET['allkills'] = 1;
+	$_GET['range'] = 0;
+}
+if(isset($_GET['kll_ext_id']))
+{
+	$_GET['lastID'] = $_GET['kll_ext_id'];
+	$_GET['allkills'] = 1;
+	$_GET['range'] = 0;
+}
 if(!isset($_GET['allkills'])) $list->setAPIKill();
 $list->setLimit($maxkillsreturned);
 $list->setOrdered(true);
