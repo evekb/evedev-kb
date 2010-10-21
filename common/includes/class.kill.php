@@ -280,16 +280,31 @@ class Kill
 
 	function getVictimShipName()
 	{
+		if(!isset($this->victimshipname_))
+		{
+			$this->execQuery();
+			$this->victimshipname_ = $this->victimship_->getName();
+		}
 		return $this->victimshipname_;
 	}
 
 	function getVictimShipExternalID()
 	{
+		if(!isset($this->victimshipexternalid_))
+		{
+			$this->execQuery();
+			$this->victimshipexternalid_ = $this->victimship_->getExternalID();
+		}
 		return $this->victimshipexternalid_;
 	}
 
 	function getVictimShipClassName()
 	{
+		if(!isset($this->victimshipclassname_))
+		{
+			$this->execQuery();
+			$this->victimshipclassname_ = $this->victimship_->getClass()->getName();
+		}
 		return $this->victimshipclassname_;
 	}
 
