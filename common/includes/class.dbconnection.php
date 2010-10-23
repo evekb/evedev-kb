@@ -51,5 +51,12 @@ class DBConnection
 		if(is_null(self::$conn_id)) self::init();
 		return mysqli_affected_rows(self::$conn_id);
 	}
+	public static function close()
+	{
+		if(is_null(self::$conn_id)) return true;
+		$res = self::$conn_id->close();
+		self::$conn_id = null;
+		return $res;
+	}
 }
 
