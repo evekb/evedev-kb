@@ -12,7 +12,8 @@
     log_totalmails INT NOT NULL ,
     log_source VARCHAR( 20 ) NOT NULL ,
     log_type VARCHAR( 20 ) NOT NULL ,
-    log_timestamp DATETIME NOT NULL DEFAULT &#039;0000-00-00 00:00:00&#039;
+	log_errorcode INT NOT NULL DEFAULT '0',
+	log_timestamp DATETIME NOT NULL DEFAULT &#039;0000-00-00 00:00:00&#039;
     ) TYPE=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>
  
