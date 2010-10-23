@@ -1,6 +1,8 @@
 #!/usr/bin/php
 <?php
 
+@error_reporting(E_ERROR);
+
 if (!substr_compare(PHP_OS, 'win', 0, 3, true))
 {
 	@ini_set('include_path', ini_get('include_path').';.\\common\\includes');
@@ -13,7 +15,7 @@ else
 $cronStartTime = microtime(true);
 
 // Has to be run from the KB main directory for nested includes to work
-if(file_exists(getcwd().'/cron_fetcher.php'))
+if(file_exists(getcwd().'/cron_idfeed.php'))
 {
 	// current working directory minus last 5 letters of string ("/cron")
 	$KB_HOME = preg_replace('/[\/\\\\]cron$/', '', getcwd());
