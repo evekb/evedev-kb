@@ -8,6 +8,8 @@
   `plt_crp_id` int(11) NOT NULL default &#039;0&#039;,
   `plt_externalid` int(11) default NULL,
   `plt_updated` datetime default NULL,
+  `plt_kpoints` INTEGER NOT NULL DEFAULT 0,
+  `plt_lpoints` INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY  (`plt_id`),
   UNIQUE KEY `plt_name` (`plt_name`),
   KEY `plt_externalid` (`plt_externalid`)
