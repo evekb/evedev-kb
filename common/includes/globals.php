@@ -11,7 +11,7 @@ $svnrevision = trim(substr($svnrevision, 10, strlen($svnrevision)-11));
 
 define('SVN_REV', "Dev ".$svnrevision);
 
-if(!defined('LATEST_DB_UPDATE')) define('LATEST_DB_UPDATE',"018");
+if(!defined('LATEST_DB_UPDATE')) define('LATEST_DB_UPDATE',"019");
 
 define('KB_CACHEDIR', 'cache');
 define('KB_PAGECACHEDIR', KB_CACHEDIR.'/page');

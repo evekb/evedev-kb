@@ -4,7 +4,7 @@
   <rows>0</rows>
   <structure>CREATE TABLE `kb3_pilots` (
   `plt_id` int(11) NOT NULL auto_increment,
-  `plt_name` char(64) NOT NULL,
+  `plt_name` varchar(255) NOT NULL,
   `plt_crp_id` int(11) NOT NULL default &#039;0&#039;,
   `plt_externalid` int(11) default NULL,
   `plt_updated` datetime default NULL,
