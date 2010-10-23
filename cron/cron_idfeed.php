@@ -13,16 +13,16 @@ else
 $cronStartTime = microtime(true);
 
 // Has to be run from the KB main directory for nested includes to work
-if(file_exists(getcwd().'/cron_fetcher.php'))
+if(file_exists(getcwd().'/cron_idfeed.php'))
 {
 	// current working directory minus last 5 letters of string ("/cron")
 	$KB_HOME = preg_replace('/[\/\\\\]cron$/', '', getcwd());
 }
 elseif(file_exists(__FILE__))
 {
-	$KB_HOME = preg_replace('/[\/\\\\]cron[\/\\\\]cron_fetcher\.php$/', '', __FILE__);
+	$KB_HOME = preg_replace('/[\/\\\\]cron[\/\\\\]cron_idfeed\.php$/', '', __FILE__);
 }
-else die("Set \$KB_HOME to the killboard root in cron/cron_fetcher.php.");
+else die("Set \$KB_HOME to the killboard root in cron/cron_idfeed.php.");
 
 // If the above doesn't work - place your working directory path to killboard root below - comment out the above two lines and uncomment the two below
 
