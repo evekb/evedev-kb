@@ -42,9 +42,9 @@ class API_NametoID
 
 		if(!$data) return "Error fetching names";
 
-		$sxe = simplexml_load_string($data);
+		$sxe = @simplexml_load_string($data);
 
-		if(strval($sxe->error)) return strval("Error code ".$sxe->error['code'].": ".$sxe->error);
+		if(!$sxe || strval($sxe->error)) return strval("Error code ".$sxe->error['code'].": ".$sxe->error);
 
 		foreach($sxe->result->rowset->row as $row)
 			$this->NameData_[] = array('name'=>strval($row['name']),
@@ -58,7 +58,7 @@ class API_NametoID
 
 	private function loaddata($names)
     {
-        $url = "http://api.eve-online.com/eve/CharacterID.xml.aspx?names=".$names;
+        $url = "http://api.eve-online.com/eve/CharacterID.xml.aspx?names=".urlencode($names);
 
 		$http = new http_request($url);
 		$http->set_useragent("PHPApi");
