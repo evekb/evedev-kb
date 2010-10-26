@@ -24,16 +24,7 @@ class admin_db
 	//! Check the size of the query cache and create a clear cache option.
 	function checkCache()
 	{
-		$size = 0;
-		$dir = opendir(KB_QUERYCACHEDIR);
-		while ($line = readdir($dir))
-		{
-			if (strstr($line, 'qcache_qry') !== false)
-			{
-				$size += filesize(KB_QUERYCACHEDIR.'/'.$line);
-			}
-		}
-
+		$size = self::size(KB_QUERYCACHEDIR);
 		// GB
 		if (($size / 1073741824) > 1)
 		{
@@ -55,19 +46,7 @@ class admin_db
 		{
 			return;
 		}
-
-		$dir = opendir(KB_QUERYCACHEDIR);
-		while ($line = readdir($dir))
-		{
-			if (strstr($line, 'qcache_qry') !== false)
-			{
-				@unlink(KB_QUERYCACHEDIR.'/'.$line);
-			}
-			elseif (strstr($line, 'qcache_tbl') !== false)
-			{
-				@unlink(KB_QUERYCACHEDIR.'/'.$line);
-			}
-		}
+		CacheHandler::removeBySize("SQL", 1);
 	}
 	//! Create an option to link to the database upgrade page.
 	function CCPDBlink()
@@ -79,5 +58,17 @@ class admin_db
 
 		return "<a href='".KB_HOST."/update/index.php?package=CCPDB&amp;do=reset'>".
 			"Reinstall</a>";
+	}
+	private static function size($dir = null)
+	{
+		if(is_null($dir)) return 0;
+		if(!is_dir($dir)) return filesize($dir);
+		$size = 0;
+		$files = scandir($dir);
+		foreach ($files as $file)
+			if (substr($file, 0, 1) != '.')
+				$size += self::size($dir.'/'.$file);
+
+		return $size;
 	}
 }
