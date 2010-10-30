@@ -629,6 +629,8 @@ class KillList
 			$kill->_sclid = $row['scl_id'];
 			$kill->_shpid = $row['shp_id'];
 			$kill->set('dmgtaken', $row['kll_dmgtaken']);
+			//TODO Should we be doing this or should the kill class decide?
+			$kill->set('executed', true);
 			//Set the involved party count if it is known
 			if($this->involved_) $kill->setInvolvedPartyCount($row['inv']);
 			//Set the comment count if it is known
