@@ -50,22 +50,22 @@ $out = '';
 // Sovereignty
 $mySovAPI = new API_Sovereignty();
 $Sovtemp = $mySovAPI->fetchXML();
-$out .= "Caching Sovereignty XML - cached until:" . API_Helpers::ConvertTimestamp($mySovAPI->CachedUntil_) . "\n";
+$out .= "Caching Sovereignty XML - cached until:" . API_Helpers::ConvertTimestamp($mySovAPI->getCachedUntil()) . "\n";
 
 // Alliance
 $myAlliAPI = new AllianceAPI();
 $Allitemp .= $myAlliAPI->initXML();
-$out .= "Caching Alliance XML - cached until:" . API_Helpers::ConvertTimestamp($myAlliAPI->CachedUntil_) . "\n";
+$out .= "Caching Alliance XML - cached until:" . API_Helpers::ConvertTimestamp($myAlliAPI->getCachedUntil()) . "\n";
 
 // Conquerable Station and Outposts list
 $myConqAPI = new API_ConquerableStationList();
 $Conqtemp .= $myConqAPI->fetchXML();
-$out .= "Caching Conquerable Station XML - cached until:" . API_Helpers::ConvertTimestamp($myConqAPI->CachedUntil_) . "\n";
+$out .= "Caching Conquerable Station XML - cached until:" . API_Helpers::ConvertTimestamp($myConqAPI->getCachedUntil()) . "\n";
 
 // Factional Warfare Systems
 $myFacAPI = new API_FacWarSystems();
 $Factemp .= $myFacAPI->fetchXML();
-$out .= "Caching Factional Warfare Systems XML - cached until:" . API_Helpers::ConvertTimestamp($myFacAPI->CachedUntil_) . "\n";
+$out .= "Caching Factional Warfare Systems XML - cached until:" . API_Helpers::ConvertTimestamp($myFacAPI->getCachedUntil()) . "\n";
 
 if ($out)
 {
