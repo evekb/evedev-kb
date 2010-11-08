@@ -1,8 +1,14 @@
 -------------------------------------------
-Eve Development Network Killboard v3.1.4
+Eve Development Network Killboard v3.1.5
 -------------------------------------------
 
 VERSION HISTORY
+v3.1.5
+Fixed killlist generation speed issues.
+Fixes for cache generation issues
+Corp/alliances with a null timestamp are updated correctly.
+Alliance portraits show same image for small and large sizes
+-------------------------------------------
 v3.1.4
 IDFeed reader stops posting 0 quantity kills.
 -------------------------------------------
