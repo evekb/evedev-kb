@@ -76,7 +76,7 @@ class pKillRelated extends pageAssembly
 		// the board has an owner swap sides if necessary so board owner is the killer
 		foreach ($this->kill->involvedparties_ as $inv)
 		{
-			if(!strcasecmp($inv->getAlliance()->getName(),'None'))
+			if(strcasecmp($inv->getAlliance()->getName(),'None'))
 			{
 				if($inv->getAllianceID() != $this->kill->getVictimAllianceID())
 				{
@@ -87,7 +87,7 @@ class pKillRelated extends pageAssembly
 				$this->invCorp[$inv->getCorpID()] = $inv->getCorpID();
 
 		}
-		if(!strcasecmp($this->kill->getVictimAllianceName(), 'None' ))
+		if(strcasecmp($this->kill->getVictimAllianceName(), 'None' ))
 			$this->victimAll[$this->kill->getVictimAllianceID()] = $this->kill->getVictimAllianceID();
 		else $this->victimCorp[$this->kill->getVictimCorpID()] = $this->kill->getVictimCorpID();
 
