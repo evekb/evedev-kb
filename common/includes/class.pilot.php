@@ -12,7 +12,7 @@ class Pilot
 	private $executed = false;
 	private $id_ = 0;
 	private $externalid_ = 0;
-	private $corpid_ = 0;
+	private $corpid_ = null;
 	private $valid_ = false;
 	private $corp;
 
