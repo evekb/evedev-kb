@@ -100,8 +100,18 @@ class KillListTable
 			{
 				// Need to return yet another value from killlists.
 				$all = new Alliance($kill->getVictimAllianceID());
-				$kll['allianceexists'] = true;
-				$kll['victimallianceicon'] = $all->getPortraitURL(32);
+				if($all->getName()!="None")
+				{
+					$kll['allianceexists'] = true;
+					$kll['victimallianceicon'] = $all->getPortraitURL(32);
+				}
+				else
+				{
+					$kll['allianceexists'] = true;
+					$crp = new Corporation($kill->getVictimCorpID());
+					$kll['victimallianceicon'] = $crp->getPortraitURL(32);
+				}
+
 //				$kll['victimallianceicon'] = preg_replace('/[^a-zA-Z0-9]/', '', $kll['victimalliancename']);
 //				if(CacheHandler::exists($kll['victimallianceicon']."_32.png", 'img'))
 //				{
