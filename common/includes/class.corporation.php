@@ -82,9 +82,8 @@ class Corporation
 		{
 			if($this->externalid) return $this->externalid;
 
-			$corpname = str_replace(" ", "%20", $this->getName() );
 			$myID = new API_NametoID();
-			$myID->setNames($corpname);
+			$myID->setNames($this->getName());
 			$myID->fetchXML();
 			$myNames = $myID->getNameData();
 			if($this->setExternalID($myNames[0]['characterID']))

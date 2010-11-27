@@ -77,9 +77,8 @@ class Pilot
 					return $this->externalid_;
 				}
 			}
-			$pilotname = str_replace(" ", "%20", $this->getName() );
 			$myID = new API_NametoID();
-			$myID->setNames($pilotname);
+			$myID->setNames($this->getName());
 			$myID->fetchXML();
 			$myNames = $myID->getNameData();
 
