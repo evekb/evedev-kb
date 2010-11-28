@@ -250,4 +250,9 @@ class ajcron
         #sleep(15);
         return $objResponse;
     }
+	public static function helpFormat()
+	{
+		return "<div id='ajcron_help>/65 http://yoursite.com/cron/cron_fetcher.php [FeedSync]<br />
+01:00 http://yoursite.com/cron/cron_clearup.php [CleanUp]<br /></div>";
+	}
 }
