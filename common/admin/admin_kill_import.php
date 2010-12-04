@@ -23,7 +23,7 @@ else
 {
     $ext = $_POST['ext'];
 }
-if ($_POST['submit'] == 'Reset')
+if ($_GET['submit'] == 'Reset')
 {
     unset($_SESSION['kill_import']);
     unset($_POST);
