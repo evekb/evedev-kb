@@ -192,9 +192,9 @@ while($kill = $list->getKill())
 	{
 		$invrow = $involved->addChild('row');
 		$invrow->addAttribute('characterID', $inv['plt_externalid']);
-		if(strpos($inv['plt_name'], '-') !== false)
+		if(strpos($inv['plt_name'], '- ') !== false)
 		{
-			$inv['plt_name'] = substr($inv['plt_name'], strpos($inv['plt_name'], '-')+2);
+			$inv['plt_name'] = substr($inv['plt_name'], strpos($inv['plt_name'], '- ')+2);
 		}
 		else if(strpos($inv['plt_name'], '#') !== false)
 		{

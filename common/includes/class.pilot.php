@@ -96,7 +96,7 @@ class Pilot
 		$pos = strpos($this->name_, "#");
 		if ($pos === false)
 		{
-			$pos = strpos($this->name_, "-");
+			$pos = strpos($this->name_, "- ");
 			if ($pos === false) return $this->name_;
 			else return substr($this->name_, $pos + 2);
 		}
