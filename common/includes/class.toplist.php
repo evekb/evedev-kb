@@ -656,8 +656,17 @@ class TopSoloKillerList extends TopList
 			" FROM kb3_inv_detail ind".
 			" JOIN kb3_kills kll ON kll.kll_id = ind.ind_kll_id AND ind.ind_order = 0 ";
 
+		$inv = array();
+		if ($this->inv_all)
+			$inv[] = "ind.ind_all_id IN ( ".implode(",", $this->inv_all)." )";
+
 		if ($this->inv_crp)
-			$sql .= " AND ind.ind_crp_id IN ( ".implode(",", $this->inv_crp)." ) ";
+			$inv[] = "ind.ind_crp_id IN ( ".implode(",", $this->inv_crp)." )";
+
+		if ($this->inv_plt)
+			$inv[] = "ind.ind_plt_id IN ( ".implode(",", $this->inv_plt)." )";
+
+		if($inv) $sql .= " AND (".implode(' OR ', $inv).") ";
 
 		$this->setSQLTop($sql);
 
