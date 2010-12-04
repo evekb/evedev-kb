@@ -6,7 +6,7 @@
  */
 
 // An ajax search function for this page is in common/includes/xajax.functions.php
-require_once('xajax.functions.php');
+require_once('common/includes/xajax.functions.php');
 
 
 class pSearch extends pageAssembly
