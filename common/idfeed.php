@@ -30,13 +30,14 @@
  */
 
 $starttime = microtime(true);
-$idfeedversion = "1.00";
+$idfeedversion = "1.03";
 
 $maxkillsreturned = 200;
 
 $xml = "<?xml version='1.0' encoding='UTF-8'?>
 <eveapi version='2' edkapi='".$idfeedversion."'>
 </eveapi>";
+$sxe = new SimpleXMLElement($xml);
 
 $list = new KillList();
 if(isset($_GET['kll_id']))
@@ -61,55 +62,62 @@ $qry = DBFactory::getDBQuery();
 
 if(isset($_GET['alliance']))
 {
-	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_external_id IN (".$qry->escape($_GET['alliance']).")");
-	if(!$qry->recordCount()) die($xml);
+	$arr = explode(',',$_GET['alliance']);
+	foreach($arr as &$val) $val = intval($val);
+	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_external_id IN (".implode(',', $arr).")");
+	if(!$qry->recordCount()) show($sxe);
 	while($row = $qry->getRow()) $list->addCombinedAlliance($row['all_id']);
 }
 if(isset($_GET['corp']))
 {
-	$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_external_id IN (".$qry->escape($_GET['corp']).")");
-	if(!$qry->recordCount()) die($xml);
+	$arr = explode(',',$_GET['corp']);
+	foreach($arr as &$val) $val = intval($val);
+	$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_external_id IN (".implode(',', $arr).")");
+	if(!$qry->recordCount()) show($sxe);
 	while($row = $qry->getRow()) $list->addCombinedCorp($row['crp_id']);
 }
 if(isset($_GET['pilot']))
 {
-	$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_externalid IN (".$qry->escape($_GET['pilot']).")");
-	if(!$qry->recordCount()) die($xml);
+	$arr = explode(',',$_GET['pilot']);
+	foreach($arr as &$val) $val = intval($val);
+	$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_externalid IN (".implode(',', $arr).")");
+	if(!$qry->recordCount()) show($sxe);
 	while($row = $qry->getRow()) $list->addCombinedPilot($row['plt_id']);
 }
 if(isset($_GET['alliancename']))
 {
-	$_GET['alliancename'] = '"'.str_replace(',', '","', $_GET['alliancename']).'"';
-	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_name IN (".$qry->escape(urldecode($_GET['alliancename'])).")");
-	if(!$qry->recordCount()) die($xml);
+	$_GET['alliancename'] = '"'.str_replace(',', '","', $qry->escape(urldecode($_GET['alliancename']))).'"';
+	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_name IN (".$_GET['alliancename'].")");
+	if(!$qry->recordCount()) show($sxe);
 	while($row = $qry->getRow()) $list->addCombinedAlliance($row['all_id']);
 }
 if(isset($_GET['corpname']))
 {
-	$_GET['corpname'] = '"'.str_replace(',', '","', $_GET['corpname']).'"';
-	$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_name IN (".$qry->escape(urldecode($_GET['corpname'])).")");
-	if(!$qry->recordCount()) die($xml);
+	$_GET['corpname'] = '"'.str_replace(',', '","', $qry->escape(urldecode($_GET['corpname']))).'"';
+	$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_name IN (".$_GET['corpname'].")");
+	if(!$qry->recordCount()) show($sxe);
 	while($row = $qry->getRow()) $list->addCombinedCorp($row['crp_id']);
+	var_dump($list);die;
 }
 if(isset($_GET['pilotname']))
 {
-	$_GET['corpname'] = '"'.str_replace(',', '","', $_GET['corpname']).'"';
-	$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_name IN (".$qry->escape(urldecode($_GET['pilotname'])).")");
-	if(!$qry->recordCount()) die($xml);
+	$_GET['corpname'] = '"'.str_replace(',', '","', $qry->escape(urldecode($_GET['pilotname']))).'"';
+	$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_name IN (".$_GET['corpname'].")");
+	if(!$qry->recordCount()) show($sxe);
 	while($row = $qry->getRow()) $list->addCombinedPilot($row['plt_id']);
 }
 
 if(isset($_GET['system']))
 {
 	$qry->execute("SELECT sys_id FROM kb3_systems WHERE sys_eve_id = ".intval($_GET['system'])." LIMIT 1");
-	if(!$qry->recordCount()) die($xml);
+	if(!$qry->recordCount()) show($sxe);
 	$row = $qry->getRow();
 	$list->addSystem($row['sys_id']);
 }
 else if(isset($_GET['region']))
 {
 	$qry->execute("SELECT reg_id FROM kb3_regions WHERE reg_id = ".intval($_GET['region'])." LIMIT 1");
-	if(!$qry->recordCount()) die($xml);
+	if(!$qry->recordCount()) show($sxe);
 	$row = $qry->getRow();
 	$list->addRegion($row['reg_id']);
 }
@@ -129,7 +137,6 @@ if(isset($_GET['enddate'])) $list->setEndDate(gmdate('Y-m-d H:i:s',intval($_GET[
 $date = gmdate('Y-m-d H:i:s');
 
 // Let's start making the xml.
-$sxe = new SimpleXMLElement($xml);
 $sxe->addChild('currentTime', $date);
 $result = $sxe->addChild('result');
 $kills = $result->addChild('rowset');
@@ -200,6 +207,15 @@ while($kill = $list->getKill())
 	{
 		$invrow = $involved->addChild('row');
 		$invrow->addAttribute('characterID', $inv['plt_externalid']);
+		if(strpos($inv['plt_name'], '-') !== false)
+		{
+			$inv['plt_name'] = substr($inv['plt_name'], strpos($inv['plt_name'], '-')+2);
+		}
+		else if(strpos($inv['plt_name'], '#') !== false)
+		{
+			$name = explode("#", $inv['plt_name']);
+			$inv['plt_name'] = $name[3];
+		}
 		$invrow->addAttribute('characterName', $inv['plt_name']);
 		$invrow->addAttribute('corporationID', $inv['crp_external_id']);
 		$invrow->addAttribute('corporationName', $inv['crp_name']);
@@ -382,4 +398,11 @@ function AddXMLElement($dest, $source)
 	{
 		AddXMLElement($new_dest, $child);
 	}
+}
+function show($sxe)
+{
+	header("Content-Type: text/xml");
+	echo $sxe->asXML();
+	cache::generate(); // We should really be in a class so this isn't needed.
+	die;
 }

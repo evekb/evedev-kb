@@ -28,7 +28,7 @@ class IDFeed
 	private $time = '';
 	private $cachedTime = '';
 	private $errormsg = '';
-	const version = "1.02";
+	const version = "1.03";
 
 	//! Construct the Fetcher class and initialise variables.
 
@@ -99,7 +99,7 @@ class IDFeed
 		if(!$sxe['edkapi'] || $sxe['edkapi'] < 0.91) return false;
 		$this->time = $sxe->currentTime;
 		$this->cachedTime = $sxe->cachedUntil;
-		foreach($sxe->result->rowset->row as $row) $this->processKill($row);
+		if(!is_null($sxe->result)) foreach($sxe->result->rowset->row as $row) $this->processKill($row);
 		return count($this->posted) + count($this->skipped);
 	}
 	function setID($type = '', $id = 0)
@@ -120,7 +120,6 @@ class IDFeed
 					$alls[] = $all->getExternalID();
 				}
 				$this->options['alliance'] = implode(',', $alls);
-				return true;
 			}
 			if(config::get('cfg_corpid'))
 			{
@@ -132,7 +131,6 @@ class IDFeed
 					$crps[] = $crp->getExternalID();
 				}
 				$this->options['corp'] = implode(',', $crps);
-				return true;
 			}
 			if(config::get('cfg_pilotid'))
 			{
@@ -144,7 +142,6 @@ class IDFeed
 					$pilots[] = $pilot->getExternalID();
 				}
 				$this->options['pilot'] = implode(',', $pilots);
-				return true;
 			}
 			return true;
 		}
@@ -337,6 +334,9 @@ class IDFeed
 	}
 	private function processInvolved($inv, &$kill, $time)
 	{
+		$ship = new Ship(0, intval($inv['shipTypeID']));
+		$weapon = new Item(intval($inv['weaponTypeID']));
+
 		$alliance = new Alliance();
 		$corp = new Corporation();
 		if(intval($inv['allianceID']))
@@ -346,10 +346,19 @@ class IDFeed
 		else
 			$alliance->add("None");
 		$corp->add(strval($inv['corporationName']), $alliance, $time, intval($inv['corporationID']));
+
 		$pilot = new Pilot();
+		// Allow for blank names for consistency with CCP API.
+		if(preg_match("/^(Mobile \w+ Warp|\w+ Control Tower( \w+)?)/", $inv['characterName']))
+		{
+			$inv['characterName'] = $inv['corporationName'].' - '.$inv['characterName'];
+		}
+		else if($inv['characterName'] == ""
+			&&(preg_match("/^(Mobile \w+ Warp|\w+ Control Tower( \w+)?)/", $weapon->getName())))
+		{
+			$inv['characterName'] = $inv['corporationName'].' - '.$weapon->getName();
+		}
 		$pilot->add(strval($inv['characterName']), $corp, $time, intval($inv['characterID']));
-		$ship = new Ship(0, intval($inv['shipTypeID']));
-		$weapon = new Item(intval($inv['weaponTypeID']));
 
 		$iparty = new InvolvedParty($pilot->getID(), $corp->getID(),
 			$alliance->getID(), floatval($inv['securityStatus']), $ship, $weapon, intval($inv['damageDone']));
