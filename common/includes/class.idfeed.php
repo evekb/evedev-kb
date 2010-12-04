@@ -28,7 +28,7 @@ class IDFeed
 	private $time = '';
 	private $cachedTime = '';
 	private $errormsg = '';
-	const version = "0.93";
+	const version = "0.94";
 
 	//! Construct the Fetcher class and initialise variables.
 
@@ -344,6 +344,9 @@ class IDFeed
 	}
 	private function processInvolved($inv, &$kill, $time)
 	{
+		$ship = new Ship(0, intval($inv['shipTypeID']));
+		$weapon = new Item(intval($inv['weaponTypeID']));
+
 		$alliance = new Alliance();
 		$corp = new Corporation();
 		if(intval($inv['allianceID']))
@@ -354,9 +357,17 @@ class IDFeed
 			$alliance->add("None");
 		$corp->add(strval($inv['corporationName']), $alliance, $time, intval($inv['corporationID']));
 		$pilot = new Pilot();
+		// Allow for blank names for consistency with CCP API.
+		if(preg_match("/^(Mobile \w+ Warp|\w+ Control Tower( \w+)?)/", $inv['characterName']))
+		{
+			$inv['characterName'] = $inv['corporationName'].' - '.$inv['characterName'];
+		}
+		else if($inv['characterName'] == ""
+			&&(preg_match("/^(Mobile \w+ Warp|\w+ Control Tower( \w+)?)/", $weapon->getName())))
+		{
+			$inv['characterName'] = $inv['corporationName'].' - '.$weapon->getName();
+		}
 		$pilot->add(strval($inv['characterName']), $corp, $time, intval($inv['characterID']));
-		$ship = new Ship(0, intval($inv['shipTypeID']));
-		$weapon = new Item(intval($inv['weaponTypeID']));
 
 		$iparty = new InvolvedParty($pilot->getID(), $corp->getID(),
 			$alliance->getID(), floatval($inv['securityStatus']), $ship, $weapon, intval($inv['damageDone']));

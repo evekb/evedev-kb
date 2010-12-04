@@ -28,7 +28,7 @@
  */
 
 $starttime = microtime(true);
-$idfeedversion = 0.91;
+$idfeedversion = 0.94;
 
 $maxkillsreturned = 200;
 
@@ -47,45 +47,48 @@ $qry = DBFactory::getDBQuery();
 
 if(isset($_GET['alliance']))
 {
-	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_external_id = ".intval($_GET['alliance']));
-	if(!$qry->recordCount()) die($xml);
-	$row = $qry->getRow();
-	$list->addCombinedAlliance($row['all_id']);
+	$arr = explode(',',$_GET['alliance']);
+	foreach($arr as &$val) $val = intval($val);
+	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_external_id IN (".implode(',', $arr).")");
+	if(!$qry->recordCount()) show($sxe);
+	while($row = $qry->getRow()) $list->addCombinedAlliance($row['all_id']);
 }
-else if(isset($_GET['corp']))
+if(isset($_GET['corp']))
 {
-	$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_external_id = ".intval($_GET['corp']));
-	if(!$qry->recordCount()) die($xml);
-	$row = $qry->getRow();
-	$list->addCombinedCorp($row['crp_id']);
+	$arr = explode(',',$_GET['corp']);
+	foreach($arr as &$val) $val = intval($val);
+	$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_external_id IN (".implode(',', $arr).")");
+	if(!$qry->recordCount()) show($sxe);
+	while($row = $qry->getRow()) $list->addCombinedCorp($row['crp_id']);
 }
-else if(isset($_GET['pilot']))
+if(isset($_GET['pilot']))
 {
-	$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_externalid = ".intval($_GET['pilot'])." LIMIT 1");
-	if(!$qry->recordCount()) die($xml);
-	$row = $qry->getRow();
-	$list->addCombinedPilot($row['plt_id']);
+	$arr = explode(',',$_GET['pilot']);
+	foreach($arr as &$val) $val = intval($val);
+	$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_externalid IN (".implode(',', $arr).")");
+	if(!$qry->recordCount()) show($sxe);
+	while($row = $qry->getRow()) $list->addCombinedPilot($row['plt_id']);
 }
-else if(isset($_GET['alliancename']))
+if(isset($_GET['alliancename']))
 {
-	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_name = '".$qry->escape(urldecode($_GET['alliancename']))."' LIMIT 1");
-	if(!$qry->recordCount()) die($xml);
-	$row = $qry->getRow();
-	$list->addCombinedAlliance($row['all_id']);
+	$_GET['alliancename'] = '"'.str_replace(',', '","', $qry->escape(urldecode($_GET['alliancename']))).'"';
+	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_name IN (".$_GET['alliancename'].")");
+	if(!$qry->recordCount()) show($sxe);
+	while($row = $qry->getRow()) $list->addCombinedAlliance($row['all_id']);
 }
-else if(isset($_GET['corpname']))
+if(isset($_GET['corpname']))
 {
-	$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_name = '".$qry->escape(urldecode($_GET['corpname']))."' LIMIT 1");
-	if(!$qry->recordCount()) die($xml);
-	$row = $qry->getRow();
-	$list->addCombinedCorp($row['crp_id']);
+	$_GET['corpname'] = '"'.str_replace(',', '","', $qry->escape(urldecode($_GET['corpname']))).'"';
+	$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_name IN (".$_GET['corpname'].")");
+	if(!$qry->recordCount()) show($sxe);
+	while($row = $qry->getRow()) $list->addCombinedCorp($row['crp_id']);
 }
-else if(isset($_GET['pilotname']))
+if(isset($_GET['pilotname']))
 {
-	$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_name = '".$qry->escape(urldecode($_GET['pilotname']))."' LIMIT 1");
-	if(!$qry->recordCount()) die($xml);
-	$row = $qry->getRow();
-	$list->addCombinedPilot($row['plt_id']);
+	$_GET['corpname'] = '"'.str_replace(',', '","', $qry->escape(urldecode($_GET['pilotname']))).'"';
+	$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_name IN (".$_GET['corpname'].")");
+	if(!$qry->recordCount()) show($sxe);
+	while($row = $qry->getRow()) $list->addCombinedPilot($row['plt_id']);
 }
 
 if(isset($_GET['system']))
@@ -189,6 +192,15 @@ while($kill = $list->getKill())
 	{
 		$invrow = $involved->addChild('row');
 		$invrow->addAttribute('characterID', $inv['plt_externalid']);
+		if(strpos($inv['plt_name'], '-') !== false)
+		{
+			$inv['plt_name'] = substr($inv['plt_name'], strpos($inv['plt_name'], '-')+2);
+		}
+		else if(strpos($inv['plt_name'], '#') !== false)
+		{
+			$name = explode("#", $inv['plt_name']);
+			$inv['plt_name'] = $name[3];
+		}
 		$invrow->addAttribute('characterName', $inv['plt_name']);
 		$invrow->addAttribute('corporationID', $inv['crp_external_id']);
 		$invrow->addAttribute('corporationName', $inv['crp_name']);

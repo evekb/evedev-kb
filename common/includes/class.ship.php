@@ -158,6 +158,7 @@ class Ship
 				$this->value = $row['shp_baseprice'];
 			}
 		}
+		$this->executed = true;
 	}
 	//! Look up a Ship by name.
 
