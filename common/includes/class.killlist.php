@@ -48,10 +48,44 @@ class KillList
 	private $minkllid_ = 0;
 	private $maxkllid_ = 0;
 	private $killpoints_ = 0;
+	private $expr = array();
 
 	function KillList()
 	{
 		$this->qry_ = DBFactory::getDBQuery();
+		$this->expr = array("kll.kll_id",
+			"kll.kll_timestamp",
+			"kll.kll_external_id",
+			"plt.plt_name",
+			"crp.crp_name",
+			"crp.crp_id",
+			"ali.all_name",
+			"ali.all_id",
+			"kll.kll_system_id",
+			"kll.kll_ship_id",
+			"kll.kll_dmgtaken",
+			"kll.kll_victim_id",
+			"plt.plt_externalid",
+			"kll.kll_crp_id",
+			"kll.kll_points",
+			"kll.kll_isk_loss",
+			"shp.shp_class",
+			"shp.shp_name",
+			"shp.shp_externalid",
+			"shp.shp_id",
+			"scl.scl_id",
+			"scl.scl_class",
+			"scl.scl_value",
+			"sys.sys_id",
+			"sys.sys_name",
+			"sys.sys_sec",
+			"fbplt.plt_name as fbplt_name",
+			"fbplt.plt_id as fbplt_id",
+			"fbplt.plt_externalid as fbplt_externalid",
+			"fbcrp.crp_name as fbcrp_name",
+			"fbali.all_name as fball_name",
+			"fbcrp.crp_id as fbcrp_id",
+			"fbali.all_id as fball_id");
 	}
 
 	private function makeKllQuery($startdate, $enddate)
@@ -254,24 +288,8 @@ class KillList
 				$this->sqltop_ = 'SELECT ';
 				if(count($this->inv_all_) + count($this->inv_crp_) + count($this->inv_plt_) > 1)
 					$this->sqltop_ .= ' DISTINCT ';
-				$this->sqltop_ .= ' kll.kll_id, kll.kll_timestamp, kll.kll_external_id,
-							plt.plt_name, crp.crp_name, crp.crp_id,
-							ali.all_name, ali.all_id,
-							kll.kll_system_id, kll.kll_ship_id, kll.kll_dmgtaken,
-							kll.kll_victim_id, plt.plt_externalid,
-							kll.kll_crp_id, kll.kll_points, kll.kll_isk_loss,
-							shp.shp_class, shp.shp_name,
-							shp.shp_externalid, shp.shp_id,
-							scl.scl_id, scl.scl_class, scl.scl_value,
-							sys.sys_id, sys.sys_name, sys.sys_sec,
-							fbplt.plt_name as fbplt_name,
-							fbplt.plt_id as fbplt_id,
-							fbplt.plt_externalid as fbplt_externalid,
-							fbcrp.crp_name as fbcrp_name,
-							fbali.all_name as fball_name,
-							fbcrp.crp_id as fbcrp_id,
-							fbali.all_id as fball_id';
-				event::call('killlist_select_expr', $this);
+				$this->sqltop_ .= implode(', ', $this->expr);
+				event::call('killlist_select_expr', $this->sqltop_);
 			}
 			else
 			{
@@ -679,6 +697,35 @@ class KillList
 		{
 		}
 		$this->rewind();
+	}
+
+	//! Add an expression to the SQL query.
+
+	/*
+	 * This function can be used if an expression needs to be added to the
+	 * query, e.g. ship name
+	 *
+	 * \param $expr The expression to add
+	 */
+	public function addExpression($expr)
+	{
+		$this->expr[] = strval($expr);
+		return count($this->expr);
+	}
+
+	//! Add an expression to the SQL query.
+
+	/*
+	 * This function can be used to remove an expression. If $expr is true, or
+	 * omitted, all expressions will be removed.
+	 *
+	 * \param $expr The expression to remove
+	 */
+	public function delExpression($expr = true)
+	{
+		if($expr === true) $expr = array();
+		else unset($this->expr[array_search($expr, $this->expr)]);
+		return count($this->expr);
 	}
 
 	public function addInvolved($obj)
