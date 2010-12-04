@@ -97,7 +97,6 @@ if(isset($_GET['corpname']))
 	$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_name IN (".$_GET['corpname'].")");
 	if(!$qry->recordCount()) show($sxe);
 	while($row = $qry->getRow()) $list->addCombinedCorp($row['crp_id']);
-	var_dump($list);die;
 }
 if(isset($_GET['pilotname']))
 {
