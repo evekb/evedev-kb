@@ -95,13 +95,14 @@ class Pilot
 		$pos = strpos($this->name_, "#");
 		if ($pos === false)
 		{
-			return $this->name_;
+			$pos = strpos($this->name_, "-");
+			if ($pos === false) return $this->name_;
+			else return substr($this->name_, $pos + 2);
 		}
 		else
 		{
 			$name = explode("#", $this->name_);
-			$item = new Item($name[2]);
-			return $item->getName();
+			return $name[3];
 		}
 	}
 	//! Return the URL for the pilot's portrait.
