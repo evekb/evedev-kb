@@ -151,12 +151,14 @@ class Ship
 			$this->shipclass = new ShipClass($row['scl_id']);
 			$this->shiptechlevel = $row['shp_techlevel'];
 			$this->externalid = $row['shp_externalid'];
+			$this->id = $row['shp_id'];
 
 			if (!$this->value = $row['price'])
 			{
 				$this->value = $row['shp_baseprice'];
 			}
 		}
+		$this->executed = true;
 	}
 	//! Look up a Ship by name.
 
