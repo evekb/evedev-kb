@@ -36,9 +36,26 @@ class TopList
 	protected $startweekno_ = 0;
 	protected $startDate_ = 0;
 	protected $endDate_ = 0;
+	protected $limit = 10;
+
+	protected $finalStartDate = null;
+	protected $finalEndDate = null;
 	
 	function TopList()
 	{
+	}
+
+	//! Set the maximum number of results to show in the toplist.
+
+	/*!
+	 *  \param $limit Maximum number of kills to show.
+	 *
+	 *  \returns value toplist was set to.
+	 */
+	function setLimit($limit = 10)
+	{
+		$this->limit = intval($limit);
+		return $this->limit;
 	}
 	//! Include or exclude pods/noob ships/shuttles.
 
@@ -53,6 +70,22 @@ class TopList
 			$this->excludeVictimShipClass(3);
 			$this->excludeVictimShipClass(11);
 		}
+	}
+
+	//! Remove structures.
+
+	/*!
+	 *  Note that these class types are hard coded so will need modification
+	 * if the classes are changed in future.
+	 */
+	function setNoStructures()
+	{
+		$this->excludeVictimShipClass(35);
+		$this->excludeVictimShipClass(36);
+		$this->excludeVictimShipClass(37);
+		$this->excludeVictimShipClass(38);
+		$this->excludeVictimShipClass(41);
+		$this->excludeVictimShipClass(42);
 	}
 
 	function setSQLTop($sql)
@@ -225,15 +258,19 @@ class TopList
 	}
 
 	// Convert given date ranges to SQL date range.
-	function getDateFilter()
+	function getDateFilter($field = "kll.kll_timestamp")
 	{
-		$qstartdate = makeStartDate($this->weekno_, $this->yearno_, $this->monthno_, $this->startweekno_, $this->startDate_);
-		$qenddate = makeEndDate($this->weekno_, $this->yearno_, $this->monthno_, $this->endDate_);
-		if($qstartdate || $qenddate)
+		$sql = "";
+		if(is_null($this->finalStartDate))
 		{
-			if($qstartdate) $sql .= " kll.kll_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
-			if($qstartdate && $qenddate) $sql .= " AND ";
-			if($qenddate) $sql .= " kll.kll_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
+			$this->finalStartDate = makeStartDate($this->weekno_, $this->yearno_, $this->monthno_, $this->startweekno_, $this->startDate_);
+			$this->finalEndDate = makeEndDate($this->weekno_, $this->yearno_, $this->monthno_, $this->endDate_);
+		}
+		if($this->finalStartDate || $this->finalEndDate)
+		{
+			if($this->finalStartDate) $sql .= " $field >= '".gmdate('Y-m-d H:i',$this->finalStartDate)."' ";
+			if($this->finalStartDate && $this->finalEndDate) $sql .= " AND ";
+			if($this->finalEndDate) $sql .= " $field <= '".gmdate('Y-m-d H:i',$this->finalEndDate)."' ";
 		}
 		return $sql;
 	}
@@ -251,37 +288,55 @@ class TopList
 			|| $this->vic_crp && $this->vic_all) $this->mixedvictims = true;
 		$this->sql_ .= $this->sqltop_;
 		// involved
-/*		if ($this->inv_plt)
-            $this->sql_ .= " inner join kb3_inv_detail inp
-                                 on ( inp.ind_plt_id in ( ".implode(",", $this->inv_plt)." ) and kll.kll_id = inp.ind_kll_id ) ";
-*/
 		if(!$this->mixedinvolved)
 		{
 			if ($this->inv_crp)
-				$this->sql_ .= "INNER JOIN kb3_inv_crp inc
-								 ON ( kll.kll_id = inc.inc_kll_id ) ";
-
+				$this->sql_ .= "\n\tINNER JOIN kb3_inv_crp inc ON (kll.kll_id = inc.inc_kll_id) ";
 			if ($this->inv_all)
-				$this->sql_ .= " INNER JOIN kb3_inv_all ina
-									 ON ( kll.kll_id = ina.ina_kll_id ) ";
+				$this->sql_ .= "\n\tINNER JOIN kb3_inv_all ina ON (kll.kll_id = ina.ina_kll_id) ";
+		}
+		else
+		{
+			$mixedinv = array();
+			if ($this->inv_crp)
+			{
+				$misql = "SELECT inc_kll_id as kll_id
+					FROM kb3_inv_crp
+					WHERE ";
+				if($this->getDateFilter())
+					$misql .= $this->getDateFilter("inc_timestamp")." AND ";
+				$misql .= "inc_crp_id IN (".implode(",", $this->inv_crp).")";
+				$mixedinv[] = $misql;
+			}
+			if ($this->inv_all)
+			{
+				$misql = "SELECT ina_kll_id as kll_id
+					FROM kb3_inv_all
+					WHERE ";
+				if($this->getDateFilter())
+					$misql .= $this->getDateFilter("ina_timestamp")." AND ";
+				$misql .= "ina_all_id IN (".implode(",", $this->inv_all).")";
+				$mixedinv[] = $misql;
+			}
+			$this->sql_ .= "\n\tINNER JOIN (".implode("\nUNION\n", $mixedinv).") inv ON (inv.kll_id = ind.ind_kll_id)";
 		}
 
 		if (count($this->inc_vic_scl) || count($this->exc_vic_scl))
 		{
-			$this->sql_ .= " INNER JOIN kb3_ships shp
+			$this->sql_ .= "\n\tINNER JOIN kb3_ships shp
 	  		         ON ( shp.shp_id = kll.kll_ship_id )";
 		}
 
 		if (count($this->regions_))
 		{
-			$this->sql_ .= " INNER JOIN kb3_systems sys
+			$this->sql_ .= "\n\tINNER JOIN kb3_systems sys
       	                         on ( sys.sys_id = kll.kll_system_id )
                          INNER JOIN kb3_constellations con
       	                         on ( con.con_id = sys.sys_con_id and
 			         con.con_reg_id in ( ".implode($this->regions_, ",")." ) )";
 		}
 
-		$op = " WHERE ";
+		$op = "\nWHERE ";
 		// victim filter
 		if ($this->vic_plt || $this->vic_crp || $this->vic_all)
 		{
@@ -297,7 +352,6 @@ class TopList
 			$this->sql_ .= $op."( ".implode(" OR ", $vicP).")";
 			$op = " AND ";
 		}
-		if ($this->vic_plt || $this->vic_crp || $this->vic_all) $op = " AND ";
 
 		if (count($this->exc_vic_scl))
 		{
@@ -325,24 +379,14 @@ class TopList
 
 		if($this->mixedinvolved)
 		{
-			$this->sql_ .= $op." ( ";
-			$op = '';
+			$invP = array();
 			if ($this->inv_plt)
-			{
-				$this->sql_ .= $op." ind.ind_plt_id IN ( ".implode(",", $this->inv_plt)." ) ";
-				$op = " OR ";
-			}
+				$invP[] = "ind.ind_plt_id IN (".implode(",", $this->inv_plt).")";
 			if ($this->inv_crp)
-			{
-				$this->sql_ .= $op." ind.ind_crp_id IN ( ".implode(",", $this->inv_crp)." ) ";
-				$op = " OR ";
-			}
+				$invP[] = "ind.ind_crp_id IN (".implode(",", $this->inv_crp).")";
 			if ($this->inv_all)
-			{
-				$this->sql_ .= $op." ind.ind_all_id IN ( ".implode(",", $this->inv_all)." ) ";
-				$op = " OR ";
-			}
-			$this->sql_ .= " ) ";
+				$invP[] = "ind.ind_all_id IN (".implode(",", $this->inv_all).")";
+			$this->sql_ .= $op." ( ".implode(' OR ', $invP)." ) ";
 			$op = " AND ";
 		}
 		else
@@ -384,30 +428,16 @@ class TopList
 		$qstartdate = makeStartDate($this->weekno_, $this->yearno_, $this->monthno_, $this->startweekno_, $this->startDate_);
 		$qenddate = makeEndDate($this->weekno_, $this->yearno_, $this->monthno_, $this->endDate_);
 
-		if($this->mixedinvolved)
+		if($this->getDateFilter())
 		{
-			if($qstartdate) $this->sql_ .= $op." ind.ind_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
-			if($qenddate) $this->sql_ .= " AND ind.ind_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
-			$op = " AND ";
-		}
-		else
-		{
-			if ($this->inv_all)
+			$filter = "";
+			if($this->mixedinvolved) $filter = "ind.ind_timestamp";
+			else if($this->inv_all) $filter = "ina.ina_timestamp";
+			else if($this->inv_crp) $filter = "inc.inc_timestamp";
+			else if($this->inv_plt) $filter = "ind.ind_timestamp";
+			if($filter)
 			{
-				if($qstartdate) $this->sql_ .= $op." ina.ina_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
-				if($qenddate) $this->sql_ .= " AND ina.ina_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
-				$op = " AND ";
-			}
-			else if ($this->inv_crp)
-			{
-				if($qstartdate) $this->sql_ .= $op." inc.inc_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
-				if($qenddate) $this->sql_ .= " AND inc.inc_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
-				$op = " AND ";
-			}
-			else if($this->inv_plt)
-			{
-				if($qstartdate) $this->sql_ .= $op." ind.ind_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
-				if($qenddate) $this->sql_ .= " AND ind.ind_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
+				$this->sql_ .= $op.$this->getDateFilter($filter)." ";
 				$op = " AND ";
 			}
 		}
@@ -417,7 +447,7 @@ class TopList
 		if($op == " WHERE ") $this->sql_ .= $op." 1=1 ";
 
 		$this->sql_ .= " ".$this->sqlbottom_;
-		$this->sql_ .= " /* toplist */";
+		$this->sql_ .= " /* ".get_class($this)." */";
 		$this->qry = DBFactory::getDBQuery();
 		$this->qry->execute($this->sql_);
 	}
@@ -448,28 +478,15 @@ class TopKillsList extends TopList
 	{
 		$sql = "select count(ind.ind_kll_id) as cnt, ind.ind_plt_id as plt_id, plt.plt_name
                 from kb3_kills kll
-	      inner join kb3_inv_detail ind
+	      INNER JOIN kb3_inv_detail ind
 		      on ( ind.ind_kll_id = kll.kll_id )
-              inner join kb3_pilots plt
+              INNER JOIN kb3_pilots plt
 	 	      on ( plt.plt_id = ind.ind_plt_id )";
-// Restrict results to pilots in the involved corp/all/pilot lists.
-		$sqlB = "";
- 		if ($this->inv_crp || $this->inv_all || $this->inv_plt)
-		{
-			$invP = array();
-			if ($this->inv_plt)
-				$invP[] = "ind.ind_plt_id IN ( ".implode(",", $this->inv_plt)." )";
-			if ($this->inv_crp)
-				$invP[] = "ind.ind_crp_id IN ( ".implode(",", $this->inv_crp)." )";
-			if ($this->inv_all)
-				$invP[] = "ind.ind_all_id IN ( ".implode(",", $this->inv_all)." )";
-			$sqlB = " AND (".implode(" OR ", $invP).") ";
-		}
 		
 		$this->setSQLTop($sql);
 
 		$this->setSQLBottom($sqlB." group by ind.ind_plt_id order by 1 desc
-                            limit 10");
+                            limit ".$this->limit);
 		if (count($this->vic_scl_id))
 		{
 			$this->setPodsNoobShips(true);
@@ -492,13 +509,13 @@ class TopCorpKillsList extends TopList
 	{
 		$sql = "select count(distinct(kll.kll_id)) as cnt, ind.ind_crp_id as crp_id
                 from kb3_kills kll
-	      inner join kb3_inv_detail ind
+	      INNER JOIN kb3_inv_detail ind
 		      on ( ind.ind_kll_id = kll.kll_id )";
 
 		$this->setSQLTop($sql);
 
 		$this->setSQLBottom("group by ind.ind_crp_id order by 1 desc
-                            limit 10");
+                            limit ".$this->limit);
 		if (count($this->vic_scl_id))
 		{
 			$this->setPodsNoobShips(true);
@@ -514,6 +531,7 @@ class TopScoreList extends TopList
 {
 	function TopScoreList()
 	{
+		$this->limit = 30;
 		$this->TopList();
 	}
 
@@ -521,9 +539,9 @@ class TopScoreList extends TopList
 	{
 		$sql = "select sum(kll.kll_points) as cnt, ind.ind_plt_id as plt_id, plt.plt_name
                 from kb3_kills kll
-	      inner join kb3_inv_detail ind
+	      INNER JOIN kb3_inv_detail ind
 		      on ( ind.ind_kll_id = kll.kll_id )
-              inner join kb3_pilots plt
+              INNER JOIN kb3_pilots plt
 	 	      on ( plt.plt_id = ind.ind_plt_id )";
 // Restrict results to pilots in the involved corp/all/pilot lists.
 		$sqlB = "";
@@ -542,7 +560,7 @@ class TopScoreList extends TopList
 		$this->setSQLTop($sql);
 
 		$this->setSQLBottom($sqlB." group by ind.ind_plt_id order by 1 desc
-                            limit 30");
+                            limit ".$this->limit);
 	}
 }
 
@@ -558,7 +576,7 @@ class TopLossesList extends TopList
 		$this->setSQLTop("select count(*) as cnt, kll.kll_victim_id as plt_id
                            from kb3_kills kll");
 		$this->setSQLBottom("group by kll.kll_victim_id order by 1 desc
-                            limit 10");
+                            limit ".$this->limit);
 		if (!count($this->inc_vic_scl))
 		{
 			$this->setPodsNoobShips(config::get('podnoobs'));
@@ -578,7 +596,7 @@ class TopCorpLossesList extends TopList
 		$this->setSQLTop("select count(*) as cnt, kll.kll_crp_id as crp_id
                            from kb3_kills kll");
 		$this->setSQLBottom("group by kll.kll_crp_id order by 1 desc
-                            limit 10");
+                            limit ".$this->limit);
 		if (count($this->vic_scl_id))
 		{
 			$this->setPodsNoobShips(true);
@@ -601,17 +619,12 @@ class TopFinalBlowList extends TopList
 	{
 		$sql = "select count(ind.ind_kll_id) as cnt, kll.kll_fb_plt_id as plt_id
                 from kb3_inv_detail ind
-                inner join kb3_kills kll on (ind.ind_kll_id = kll.kll_id ";
-		if ($this->inv_crp)
-			$sql .= " and ind.ind_crp_id in ( ".implode(",", $this->inv_crp)." )";
-
-		$sql .= ")";
+                INNER JOIN kb3_kills kll on (ind.ind_kll_id = kll.kll_id)";
 
 		$this->setSQLTop($sql);
 
 		$this->setSQLBottom("AND ind.ind_plt_id = kll.kll_fb_plt_id group by ind.ind_plt_id order by cnt desc
                             limit 10 /* TopFinalBlowList */");
-		$this->setPodsNoobShips(config::get('podnoobs'));
 	}
 }
 
@@ -626,20 +639,17 @@ class TopDamageDealerList extends TopList
 	{
 		$sql = "select count(kll.kll_id) as cnt, ind.ind_plt_id as plt_id
                 from kb3_kills kll
-	      inner join kb3_inv_detail ind
+	      INNER JOIN kb3_inv_detail ind
 		      on ( ind.ind_kll_id = kll.kll_id and ind.ind_order = 0)
-              inner join kb3_pilots plt
+              INNER JOIN kb3_pilots plt
 	 	      on ( plt.plt_id = ind.ind_plt_id ";
-		if ($this->inv_crp)
-			$sql .= " and plt.plt_crp_id in ( ".implode(",", $this->inv_crp)." )";
 
 		$sql .= ")";
 
 		$this->setSQLTop($sql);
 
 		$this->setSQLBottom("group by ind.ind_plt_id order by 1 desc
-                            limit 10");
-		$this->setPodsNoobShips(config::get('podnoobs'));
+                            limit ".$this->limit);
 	}
 }
 
@@ -656,18 +666,6 @@ class TopSoloKillerList extends TopList
 			" FROM kb3_inv_detail ind".
 			" JOIN kb3_kills kll ON kll.kll_id = ind.ind_kll_id AND ind.ind_order = 0 ";
 
-		$inv = array();
-		if ($this->inv_all)
-			$inv[] = "ind.ind_all_id IN ( ".implode(",", $this->inv_all)." )";
-
-		if ($this->inv_crp)
-			$inv[] = "ind.ind_crp_id IN ( ".implode(",", $this->inv_crp)." )";
-
-		if ($this->inv_plt)
-			$inv[] = "ind.ind_plt_id IN ( ".implode(",", $this->inv_plt)." )";
-
-		if($inv) $sql .= " AND (".implode(' OR ', $inv).") ";
-
 		$this->setSQLTop($sql);
 
 		$this->setSQLBottom(" AND ".
@@ -676,63 +674,26 @@ class TopSoloKillerList extends TopList
 			"ind2.ind_order = 1 ) ".
 			"GROUP BY ind.ind_plt_id ".
 			"ORDER BY cnt DESC ".
-			"limit 10");
-		$this->setPodsNoobShips(config::get('podnoobs'));
+			"limit ".$this->limit);
 	}
 }
 
-class TopPodKillerList extends TopList
+class TopPodKillerList extends TopKillsList
 {
 	function TopPodKillerList()
 	{
-		$this->TopList();
-	}
-
-	function generate()
-	{
-		$sql = "select count(kll.kll_id) as cnt, ind.ind_plt_id as plt_id
-                from kb3_kills kll
-	      inner join kb3_inv_detail ind
-		      on ( ind.ind_kll_id = kll.kll_id )
-              inner join kb3_pilots plt
-	 	      on ( plt.plt_id = ind.ind_plt_id";
-		if ($this->inv_crp)
-			$sql .= " and plt.plt_crp_id in ( ".implode(",", $this->inv_crp)." )";
-
-		$sql .= ")";
-
-		$this->setSQLTop($sql);
-
-		$this->setSQLBottom("group by ind.ind_plt_id order by 1 desc
-                            limit 10");
+		trigger_error("Using ".get_class($this)." is deprecated. Use TopKillsList and set ship classes as needed.", E_USER_NOTICE);
+		$this->TopKillsList();
 		$this->addVictimShipClass(2); // capsule
 	}
 }
 
-class TopGrieferList extends TopList
+class TopGrieferList extends TopKillsList
 {
 	function TopGrieferList()
 	{
-		$this->TopList();
-	}
-
-	function generate()
-	{
-		$sql = "select count(kll.kll_id) as cnt, ind.ind_plt_id as plt_id
-                from kb3_kills kll
-	      inner join kb3_inv_detail ind
-		      on ( ind.ind_kll_id = kll.kll_id )
-              inner join kb3_pilots plt
-	 	      on ( plt.plt_id = ind.ind_plt_id";
-		if ($this->inv_crp)
-			$sql .= " and plt.plt_crp_id in ( ".implode(",", $this->inv_crp)." )";
-
-		$sql .= ")";
-
-		$this->setSQLTop($sql);
-
-		$this->setSQLBottom("group by ind.ind_plt_id order by 1 desc
-                            limit 10");
+		trigger_error("Using ".get_class($this)." is deprecated. Use TopKillsList and set ship classes as needed.", E_USER_NOTICE);
+		$this->TopKillsList();
 		$this->addVictimShipClass(20); // freighter
 		$this->addVictimShipClass(22); // exhumer
 		$this->addVictimShipClass(7); // industrial
@@ -741,30 +702,12 @@ class TopGrieferList extends TopList
 	}
 }
 
-class TopCapitalShipKillerList extends TopList
+class TopCapitalShipKillerList extends TopKillsList
 {
 	function TopCapitalShipKillerList()
 	{
-		$this->TopList();
-	}
-
-	function generate()
-	{
-		$sql = "select count(kll.kll_id) as cnt, ind.ind_plt_id as plt_id
-                from kb3_kills kll
-	      inner join kb3_inv_detail ind
-		      on ( ind.ind_kll_id = kll.kll_id )
-              inner join kb3_pilots plt
-	 	      on ( plt.plt_id = ind.ind_plt_id";
-		if ($this->inv_crp)
-			$sql .= " and plt.plt_crp_id in ( ".implode(",", $this->inv_crp)." )";
-
-		$sql .= ")";
-
-		$this->setSQLTop($sql);
-
-		$this->setSQLBottom("group by ind.ind_plt_id order by 1 desc
-                            limit 10");
+		trigger_error("Using ".get_class($this)." is deprecated. Use TopKillsList and set ship classes as needed.", E_USER_NOTICE);
+		$this->TopKillsList();
 		$this->addVictimShipClass(20); // freighter
 		$this->addVictimShipClass(19); // dread
 		$this->addVictimShipClass(27); // carrier
@@ -932,8 +875,8 @@ class TopShipList extends TopList
 	{
 		$sqltop = "select count( ind.ind_kll_id) as cnt, ind.ind_shp_id as shp_id
               from kb3_inv_detail ind
-			  inner join kb3_kills kll on (kll.kll_id = ind.ind_kll_id)
-	      inner join kb3_ships shp on ( shp_id = ind.ind_shp_id )";
+			  INNER JOIN kb3_kills kll on (kll.kll_id = ind.ind_kll_id)
+	      INNER JOIN kb3_ships shp on ( shp_id = ind.ind_shp_id )";
 
 		$this->setSQLTop($sqltop);
 
@@ -992,8 +935,8 @@ class TopWeaponList extends TopList
 		// pilots on one kill, but in this case using distinct is twice as fast.
 		$sql = "select count(distinct ind.ind_kll_id) as cnt, ind.ind_wep_id as itm_id
 				from kb3_inv_detail ind
-				inner join kb3_kills kll on (kll.kll_id = ind.ind_kll_id)
-				inner join kb3_invtypes itm on (typeID = ind.ind_wep_id)";
+				INNER JOIN kb3_kills kll on (kll.kll_id = ind.ind_kll_id)
+				INNER JOIN kb3_invtypes itm on (typeID = ind.ind_wep_id)";
 
 		$this->setSQLTop($sql);
 		// since ccps database doesnt have icons for ships this will also fix the ship as weapon bug
