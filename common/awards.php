@@ -133,28 +133,47 @@ class pAwards extends pageAssembly
 		$tkbox = new AwardBox($tklist, "Top finalblows", "final blows", "kills", "skull");
 		$awardboxes[] = $tkbox->generate();
 		// top podkillers
-		$tklist = new TopPodKillerList();
+		$tklist = new TopKillsList();
 		$tklist->setMonth($this->month);
 		$tklist->setYear($this->year);
 		involved::load($tklist,'kill');
+
+		$tklist->addVictimShipClass(2); // pod
 
 		$tklist->generate();
 		$tkbox = new AwardBox($tklist, "Top podkillers", "podkills", "kills", "globe");
 		$awardboxes[] = $tkbox->generate();
 		// top griefers
-		$tklist = new TopGrieferList();
+		$tklist = new TopKillsList();
 		$tklist->setMonth($this->month);
 		$tklist->setYear($this->year);
 		involved::load($tklist,'kill');
+
+		$tklist->addVictimShipClass(20); // freighter
+		$tklist->addVictimShipClass(22); // exhumer
+		$tklist->addVictimShipClass(7); // industrial
+		$tklist->addVictimShipClass(12); // barge
+		$tklist->addVictimShipClass(14); // transport
+		$tklist->addVictimShipClass(39); // industrial command
+		$tklist->addVictimShipClass(43); // exploration ship
+		$tklist->addVictimShipClass(29); // capital industrial
+
 
 		$tklist->generate();
 		$tkbox = new AwardBox($tklist, "Top griefers", "carebear kills", "kills", "star");
 		$awardboxes[] = $tkbox->generate();
 		// top capital killers
-		$tklist = new TopCapitalShipKillerList();
+		$tklist = new TopKillsList();
 		$tklist->setMonth($this->month);
 		$tklist->setYear($this->year);
 		involved::load($tklist,'kill');
+
+		$tklist->addVictimShipClass(20); // freighter
+		$tklist->addVictimShipClass(19); // dread
+		$tklist->addVictimShipClass(27); // carrier
+		$tklist->addVictimShipClass(28); // mothership
+		$tklist->addVictimShipClass(26); // titan
+		$tklist->addVictimShipClass(29); // cap. industrial
 
 		$tklist->generate();
 		$tkbox = new AwardBox($tklist, "Top ISK killers", "capital shipkills", "kills", "wing2");
