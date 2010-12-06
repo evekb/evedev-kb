@@ -7,8 +7,11 @@ function update020()
 	if (CURRENT_DB_UPDATE < "020" )
 	{
 		$qry = DBFactory::getDBQuery(true);
-		
+		$sql = "ALTER TABLE `kb3_roles` ADD INDEX `tmp` (  `rol_id` )";
+		$qry->execute($sql);
 		$sql = "ALTER TABLE `kb3_roles` DROP PRIMARY KEY , ADD PRIMARY KEY ( `rol_site` , `rol_id` ) ";
+		$qry->execute($sql);
+		$sql = "ALTER TABLE `kb3_roles` DROP INDEX `tmp`";
 		$qry->execute($sql);
 
 		config::set("DBUpdate", "020");
