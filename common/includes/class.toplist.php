@@ -377,36 +377,28 @@ class TopList
 			$op = " AND ";
 		}
 
-		if($this->mixedinvolved)
+		if(!$this->mixedinvolved)
 		{
-			$invP = array();
-			if ($this->inv_plt)
-				$invP[] = "ind.ind_plt_id IN (".implode(",", $this->inv_plt).")";
-			if ($this->inv_crp)
-				$invP[] = "ind.ind_crp_id IN (".implode(",", $this->inv_crp).")";
-			if ($this->inv_all)
-				$invP[] = "ind.ind_all_id IN (".implode(",", $this->inv_all).")";
-			$this->sql_ .= $op." ( ".implode(' OR ', $invP)." ) ";
-			$op = " AND ";
-		}
-		else
-		{
-			if ($this->inv_plt)
-			{
-				$this->sql_ .= $op." ind.ind_plt_id IN ( ".implode(",", $this->inv_plt)." ) ";
-				$op = " AND ";
-			}
 			if ($this->inv_crp)
 			{
 				$this->sql_ .= $op." inc.inc_crp_id IN ( ".implode(",", $this->inv_crp)." ) ";
 				$op = " AND ";
 			}
-			if ($this->inv_all)
+			else if ($this->inv_all)
 			{
 				$this->sql_ .= $op." ina.ina_all_id IN ( ".implode(",", $this->inv_all)." ) ";
 				$op = " AND ";
 			}
 		}
+		$invP = array();
+		if ($this->inv_plt)
+			$invP[] = "ind.ind_plt_id IN (".implode(",", $this->inv_plt).")";
+		if ($this->inv_crp)
+			$invP[] = "ind.ind_crp_id IN (".implode(",", $this->inv_crp).")";
+		if ($this->inv_all)
+			$invP[] = "ind.ind_all_id IN (".implode(",", $this->inv_all).")";
+		$this->sql_ .= $op." ( ".implode(' OR ', $invP)." ) ";
+		$op = " AND ";
 
 		if (count($this->systems_))
 		{
@@ -424,9 +416,6 @@ class TopList
 						$op = " AND ";
 					}
 				}
-
-		$qstartdate = makeStartDate($this->weekno_, $this->yearno_, $this->monthno_, $this->startweekno_, $this->startDate_);
-		$qenddate = makeEndDate($this->weekno_, $this->yearno_, $this->monthno_, $this->endDate_);
 
 		if($this->getDateFilter())
 		{
