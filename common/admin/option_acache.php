@@ -10,7 +10,7 @@
 * look here for some examples.
 */
 options::cat('Advanced', 'Cache', 'Page Cache');
-options::fadd('Enable Page Cache', 'cache_enabled', 'checkbox','', array('admin_acache', 'clearPCache'));
+options::fadd('Enable Page Cache', 'cache_enabled', 'checkbox','', array('admin_acache', 'clearPCache'), "Cache created webpages");
 options::fadd('Global lifetime', 'cache_time', 'edit:size:4','','','minutes');
 //options::fadd('Cache directory', 'cache_dir', 'edit:size:40');
 options::fadd('Ignore pages', 'cache_ignore', 'edit:size:60','','','page1,page2 [no spaces]');
@@ -18,18 +18,18 @@ options::fadd('Page specific times', 'cache_times', 'edit:size:60','','','page:t
 options::fadd('Pages updated every kill', 'cache_update', 'edit:size:60','','','* or page1,page2 [no spaces]');
 
 options::cat('Advanced', 'Cache', 'Query Cache');
-options::fadd('Enable SQL-Query MemCache', 'cfg_memcache', 'checkbox');
+options::fadd('Enable SQL-Query File Cache', 'cfg_qcache', 'checkbox', '', array('admin_acache', 'clearQCache'),'Select only one of file cache or memcache');
+options::fadd('Enable SQL-Query MemCache', 'cfg_memcache', 'checkbox','','','Requires a separate memcached installation');
 options::fadd('Memcached server', 'cfg_memcache_server', 'edit:size:50');
 options::fadd('Memcached port', 'cfg_memcache_port', 'edit:size:8');
 options::fadd('Halt on SQLError', 'cfg_sqlhalt', 'checkbox');
-options::fadd('Enable SQL-Query File Cache', 'cfg_qcache', 'checkbox', '', array('admin_acache', 'clearQCache'));
 
 options::cat('Advanced', 'Cache', 'Killmail Cache');
 options::fadd('Killmail Caching enabled','km_cache_enabled','checkbox');
 //options::fadd('Killmail Cache directory', 'km_cache_dir', 'edit:size:40');
 options::fadd('Cached Killmails', 'none', 'custom', array('admin_acache', 'getKillmails'));
 
-options::cat('Advanced', 'Cache', 'Reinforce Control');
+options::cat('Advanced', 'Cache', 'Reinforced Control');
 options::fadd('Enable Reinforced Management', 'auto_reinforced', 'checkbox', '', array('admin_acache', 'setNotReinforced'));
 options::fadd('Current Load', 'none', 'custom', array('admin_acache', 'showLoad'));
 options::fadd('Reinforcement threshold', 'reinforced_threshold', 'edit:size:4', '', '', 'load above this threshold triggers reinforced mode');
