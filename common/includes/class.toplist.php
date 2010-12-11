@@ -397,8 +397,11 @@ class TopList
 			$invP[] = "ind.ind_crp_id IN (".implode(",", $this->inv_crp).")";
 		if ($this->inv_all)
 			$invP[] = "ind.ind_all_id IN (".implode(",", $this->inv_all).")";
-		$this->sql_ .= $op." ( ".implode(' OR ', $invP)." ) ";
-		$op = " AND ";
+		if($invP)
+		{
+			$this->sql_ .= $op." ( ".implode(' OR ', $invP)." ) ";
+			$op = " AND ";
+		}
 
 		if (count($this->systems_))
 		{
