@@ -59,7 +59,7 @@ class API_Char
 
 	private function updateChars()
 	{
-		if(empty($this->chars_)) $this->chars_;
+		if(empty($this->chars_)) return $this->chars_;
 		foreach($this->chars_ as $char )
 		{
 			// check if chars eveid exists in kb
