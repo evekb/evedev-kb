@@ -1136,13 +1136,13 @@ class Kill
 		{
 			$this->realadd();
 		}
-		elseif (config::get('readd_dupes'))
-		{
-			$this->id_ = $this->dupeid_;
-			$this->remove(false);
-			$this->realadd($this->dupeid_);
-			$this->id_ = -1;
-		}
+//		elseif (config::get('readd_dupes'))
+//		{
+//			$this->id_ = $this->dupeid_;
+//			$this->remove(false);
+//			$this->realadd($this->dupeid_);
+//			$this->id_ = -1;
+//		}
 		else
 		{
 			$this->id_ = -1;
