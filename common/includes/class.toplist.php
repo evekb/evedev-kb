@@ -805,10 +805,12 @@ class TopPilotTable
 		while ($row = $this->toplist_->getRow())
 		{
 			$pilot = new Pilot($row['plt_id']);
+			if($pilot->getExternalID()) $uri = "?a=pilot_detail&amp;plt_ext_id=".$pilot->getExternalID();
+			else $uri = "?a=pilot_detail&amp;plt_id=".$row['plt_id'];
 			$rows[] = array(
 				'rank' => $i,
 				'name' => $pilot->getName(),
-				'uri' => "?a=pilot_detail&amp;plt_id=".$row['plt_id'],
+				'uri' => $uri,
 				'portrait' => $pilot->getPortraitURL(32),
 				'count' => $row['cnt']);
 			$i++;
@@ -839,10 +841,12 @@ class TopCorpTable
 		while ($row = $this->toplist_->getRow())
 		{
 			$corp = new Corporation($row['crp_id']);
+			if($corp->getExternalID()) $uri = "?a=corp_detail&amp;crp_ext_id=".$corp->getExternalID();
+			else $uri = "?a=corp_detail&amp;crp_id=".$row['crp_id'];
 			$rows[] = array(
 				'rank' => $i,
 				'name' => $corp->getName(),
-				'uri' => "?a=pilot_detail&amp;plt_id=".$row['crp_id'],
+				'uri' => $uri,
 				'portrait' => $corp->getPortraitURL(32),
 				'count' => $row['cnt']);
 			$i++;
