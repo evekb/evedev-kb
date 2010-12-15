@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kb3>
   <name>kb3_item_price</name>
-  <rows>17343</rows>
+  <rows>17360</rows>
   <structure>CREATE TABLE `kb3_item_price` (
   `typeID` int(11) NOT NULL,
   `price` bigint(11) NOT NULL,

@@ -9,6 +9,7 @@
   `rol_descr` char(150) NOT NULL,
   PRIMARY KEY  (`rol_id`, `rol_site`),
   KEY `rol_name` (`rol_name`),
-  KEY `rol_site` (`rol_site`,`rol_name`,`rol_descr`)
+  KEY `rol_site` (`rol_site`,`rol_name`,`rol_descr`),
+  KEY `rol_id` (`rol_id`)
 ) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

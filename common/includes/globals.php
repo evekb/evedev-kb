@@ -23,7 +23,7 @@ define ("APIVERSION", "V3.3");
 // current version: major.minor.sub
 // even numbers for minor = development version
 define('KB_VERSION', '3.2.0 Alpha');
-define('KB_RELEASE', '(Tyrannis)');
+define('KB_RELEASE', '(Incursion)');
 
 // Make sure the core functions are loaded.
 require_once('common/includes/class.edkloader.php');
