@@ -154,7 +154,7 @@ for (; $i <= $feedcount; $i++)
                         if(intval($feedfetch->lastkllid_ ) > $feedlast[$i]) $feedlast[$i] = intval($feedfetch->lastkllid_);
                 }
                 // Store most recent kill id fetched
-                if($feedfetch->lastkllid_ > $feedlast[$i]) config::set("fetch_url_" . $i, $feed[$i] . ':::' . $feedlast[$i] . ':::' . 0 . ':::' . $apikills[$i] . ':::' . $trusted[$i]);
+                if($feedlast[$i]) config::set("fetch_url_" . $i, $feed[$i] . ':::' . $feedlast[$i] . ':::' . 0 . ':::' . $apikills[$i] . ':::' . $trusted[$i]);
         }
     }
 }
