@@ -1,8 +1,16 @@
 -------------------------------------------
-Eve Development Network Killboard v3.1.5
+Eve Development Network Killboard v3.1.6
 -------------------------------------------
 
 VERSION HISTORY
+v3.1.6
+Incursion updates
+- Name
+- Image files
+- Installation db
+IDFeed renames structures as per standard parser.
+kill_related improvements
+-------------------------------------------
 v3.1.5
 Fixed killlist generation speed issues.
 Fixes for cache generation issues
@@ -14,7 +22,7 @@ IDFeed reader stops posting 0 quantity kills.
 -------------------------------------------
 v3.1.3
 IDFeed reader works more convincingly.
-Single pilots authorise owner to post kills
+Single pilot boards authorise owner to post kills
 -------------------------------------------
 v3.1.2
 IDFeed reader works.
