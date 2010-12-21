@@ -1,10 +1,8 @@
 <?php
-if(!$installrunning) {header('Location: index.php');die();}
-if (file_exists('../config.php'))
+if(!$installrunning)
 {
-	echo 'Redirecting you to the update page, please wait.<br/>';
-	echo '<meta http-equiv="refresh" content="1; URL=?step=40&action=drop" />';
-	return;
+	header('Location: index.php');
+	die();
 }
 
 $stoppage = true;
@@ -17,6 +15,8 @@ $kb = $xml->parse(file_get_contents('../packages/database/contents.xml'));
 $struct = $opt = $data = array();
 $structc = $dcnt = $optcnt = $datacnt = 0;
 $tables = array();
+
+//iterate through contents.xml and populate a structure list
 foreach($kb['kb3']['table'] as $idx => $tbl)
 {
 	$table = $tbl['name'];
@@ -29,20 +29,22 @@ foreach($kb['kb3']['table'] as $idx => $tbl)
 	$kb['kb3']['table'][$idx]['rows'] = $st['kb3']['rows'];
 	$structc++;
 
+	//check various aspects of the directory contents per file / directory
 	while ($file = readdir($dir))
 	{
+		//is the file non-path directive or part of the subversion repository?
 		if ($file == '.' || $file == '..' || $file == '.svn')
 		{
 			continue;
 		}
-		if (strpos($file, '_opt_'))
+		if (strpos($file, '_opt_')) //is it an optional package?
 		{
 			$dcnt++;
 			$optcnt++;
 			$opt[$table][] = '../packages/database/'.$table.'/'.$file;
 			asort($opt[$table]);
 		}
-		elseif (!strpos($file, 'xml'))
+		elseif (!strpos($file, 'xml')) //with xml it is probably the table definition file...
 		{
 			$dcnt++;
 			$datacnt++;
@@ -51,16 +53,19 @@ foreach($kb['kb3']['table'] as $idx => $tbl)
 		}
 	}
 }
-
+//start a new db connection with stored session info
 $db = mysql_connect($_SESSION['sql']['host'], $_SESSION['sql']['user'], $_SESSION['sql']['pass']);
 mysql_select_db($_SESSION['sql']['db']);
-$result = mysql_query('show tables');
+$result = mysql_query('SHOW TABLES');
+
+//compare the listed tables to the structure list's and remove if they are the same
 while ($row = mysql_fetch_row($result))
 {
 	$table = $row[0];
 	unset($struct[$table]);
 }
 
+//if structure creation action has been set, create the missing tables
 if (isset($_REQUEST['sub']) && $_REQUEST['sub'] == 'struct')
 {
 	foreach ($struct as $table => $structure)
@@ -71,7 +76,7 @@ if (isset($_REQUEST['sub']) && $_REQUEST['sub'] == 'struct')
 		{
 			$query = preg_replace('/MyISAM/', 'InnoDB', $query);
 		}
-		#echo $query;
+
 		$id = mysql_query($query);
 		if ($id)
 		{
@@ -84,12 +89,15 @@ if (isset($_REQUEST['sub']) && $_REQUEST['sub'] == 'struct')
 		unset($struct[$table]);
 	}
 }
+
+//forget progress in insertion which should force it back to step4 as if it started fresh
 if (!empty($_REQUEST['do']) && $_REQUEST['do'] == 'reset')
 {
 	unset($_SESSION['sqlinsert']);
 	unset($_SESSION['doopt']);
 }
 
+//advance one screen in the data insertion process
 if (!empty($_REQUEST['sub']) && $_REQUEST['sub'] == 'data')
 {
 	if (!isset($_SESSION['sqlinsert']))
@@ -185,89 +193,7 @@ if (!empty($_REQUEST['sub']) && $_REQUEST['sub'] == 'data')
 			}
 		}
 	}
-
-	if (isset($_SESSION['useopt']) && !$did)
-	{
-		$i = 0;
-		if (!isset($_SESSION['doopt']))
-		{
-			$_SESSION['doopt'] = true;
-			$_SESSION['sqlinsert'] = 1;
-		}
-		$optsel = 0;
-		foreach ($opt as $table => $files)
-		{
-			if (!in_array($table, $_SESSION['useopt']))
-			{
-				continue;
-			}
-			foreach ($files as $file)
-			{
-				$optsel++;
-			}
-		}
-		foreach ($opt as $table => $files)
-		{
-			if (!in_array($table, $_SESSION['useopt']))
-			{
-				continue;
-			}
-			foreach ($files as $file)
-			{
-				$i++;
-				if ($_SESSION['sqlinsert'] > $i)
-				{
-					continue;
-				}
-				echo '<br/>Inserting optional data ('.$i.'/'.$optsel.') into '.$table.'<br/> using file '.$file.'...';
-				$fp = gzopen($file, 'r');
-				$text = '';
-				mysql_query("START TRANSACTION");
-				while ($query = gzgets($fp, 4000))
-				{
-					$text .= $query;
-					if (substr(trim($query), -1, 1) != ';')
-					{
-						continue;
-					}
-					$query = $text;
-					$text = '';
-					$query = trim($query);
-					if ($query)
-					{
-						if (substr($query, -1, 1) == ';')
-						{
-							$query = substr($query, 0, -1);
-						}
-						if (strpos($query, 'TRUNCATE') !== FALSE)
-						{
-							mysql_query("COMMIT");
-						}
-						$id = mysql_query($query);
-						if (strpos($query, 'TRUNCATE') !== FALSE)
-						{
-							mysql_query("START TRANSACTION");
-						}
-					#echo $query;
-					}
-				}
-				mysql_query("COMMIT");
-				if ($id)
-				{
-					echo 'done<br/>';
-				}
-				else
-				{
-					echo 'error: '.mysql_error().'<br/>';
-				}
-				$_SESSION['sqlinsert']++;
-				echo '<meta http-equiv="refresh" content="1; URL=?step=4&sub=data" />';
-				echo 'Automatic reload in 1s for next chunk. <a href="?step=4&amp;sub=data">Manual Reload</a><br/>';
-				$did = true;
-				break 2;
-			}
-		}
-	}
+	
 	if (!$did)
 	{
 		$stoppage = false;
@@ -310,18 +236,20 @@ Found <?php echo $structc; ?> table structures and <?php echo $dcnt; ?> data fil
 
 $structadd = 0;
 $failed = 0;
+//the dupes have been turfed out previously, if anything remains add these tables as they are missing
 foreach ($struct as $table => $file)
 {
 	echo 'This table structure is missing and has to be added: '.$table.'<br/>';
 	$structadd++;
 }
 echo '<br/>';
+//if not inserting data (sub = data) or showing the optional packages (sub = datasel), show the structures provided
 if (!$structadd && (empty($_REQUEST['sub']) || ($_REQUEST['sub'] != 'datasel' && $_REQUEST['sub'] != 'data')))
 {
 	echo 'All of the table structures seem to be in the database.<br/>';
 	echo 'Please proceed with <a href="?step=4&amp;sub=datasel">importing the data</a><br/>';
 
-	echo '<br/><br/>If you have aborted the installation and you already have the data in your tables, you may now <a href="?step=5">bypass the import</a><br/>';
+	echo '<br/><br/>If you have aborted the installation and you already have the data in your tables, you may <a href="?step=5">bypass the import</a><br/>';
 	echo 'To make sure, I will check some table data for you now:<br/><br/>';
 	foreach ($kb['kb3']['table'] as $line)
 	{
@@ -331,7 +259,11 @@ if (!$structadd && (empty($_REQUEST['sub']) || ($_REQUEST['sub'] != 'datasel' &&
 		$result = mysql_query('SELECT count(*) AS cnt FROM '.$table);
 		$test = mysql_fetch_array($result);
 
-		if ($test['cnt'] != $count && $count != 0)
+		if ($test['cnt'] > $count)
+		{
+			echo $test['cnt'].'/'.$count.' - <font color="orange"><b>PASSED</b></font>';
+		}
+		elseif ($test['cnt'] != $count && $count != 0)
 		{
 			echo $test['cnt'].'/'.$count.' - <font color="red"><b>FAILED</b></font>';
 			$failed++;
@@ -351,11 +283,12 @@ if (!$structadd && (empty($_REQUEST['sub']) || ($_REQUEST['sub'] != 'datasel' &&
 		echo '<br/>There was an error in one of the important tables. Please run the import.<br/>';
 	}
 }
-elseif ($structadd)
+elseif ($structadd) //create the table structures
 {
 	echo 'Table structures have to be added. Please <a href="?step=4&amp;sub=struct">create them</a>.<br/>';
 }
 
+//goto the menu where we select optional packages
 if (isset($_REQUEST['sub']) && $_REQUEST['sub'] == 'datasel')
 {
 ?>
