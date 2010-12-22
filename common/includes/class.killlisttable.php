@@ -70,6 +70,9 @@ class KillListTable
 			$kll = array();
 			$kll['id'] = $kill->getID();
 			$kll['victimshipimage'] = $kill->getVictimShipImage(32);
+			$vic_ship = $kill->getVictimShip();
+			$kll['victimshiptechlevel'] = $vic_ship->getTechLevel();
+			$kll['victimshipisfaction'] = $vic_ship->isFaction();
 			$kll['victimshipname'] = $kill->getVictimShipName();
 			$kll['victimshipclass'] = $kill->getVictimShipClassName();
 			$kll['victimshipindicator'] = $kill->getVictimShipValueIndicator();

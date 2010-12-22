@@ -15,6 +15,8 @@ class Ship
 	private $shipname = null;
 	private $shipclass = null;
 	private $shiptechlevel = null;
+	private $shipisofficer = null;
+	private $shipisfaction = null;
 	private $value = 0;
 
 	//! Construct the Ship object.
@@ -95,6 +97,16 @@ class Ship
 		if (is_null($this->shiptechlevel)) $this->execQuery();
 		return $this->shiptechlevel;
 	}
+	//! Return if this Ship is faction.
+
+	/*!
+	 * \return boolean factionality for this Ship.
+	*/
+	function isFaction()
+	{
+		if (is_null($this->shipisfaction)) $this->execQuery();
+		return $this->shipisfaction;
+	}
 	//! Return the URL for a portrait of this Ship.
 
 	/*!
@@ -150,6 +162,7 @@ class Ship
 			$this->shipname = $row['shp_name'];
 			$this->shipclass = new ShipClass($row['scl_id']);
 			$this->shiptechlevel = $row['shp_techlevel'];
+			$this->shipisfaction = $row['shp_isfaction'];
 			$this->externalid = $row['shp_externalid'];
 			$this->id = $row['shp_id'];
 
@@ -168,13 +181,13 @@ class Ship
 	function lookup($name)
 	{
 		$pqry = new DBPreparedQuery();
-		$pqry->prepare("select shp_id, shp_name, shp_techlevel, shp_externalid, price, shp_baseprice, shp_class from kb3_ships left join kb3_item_price on (shp_externalid = typeID) where shp_name = ?");
+		$pqry->prepare("select shp_id, shp_name, shp_techlevel, shp_externalid, price, shp_baseprice, shp_class, shp_isfaction from kb3_ships left join kb3_item_price on (shp_externalid = typeID) where shp_name = ?");
 		$pqry->bind_param('s', $name);
 		$baseprice=0;
 		$price = 0;
 		$scl_id = 0;
 		$pqry->bind_result($this->id, $this->shipname, $this->shiptechlevel,
-			$this->externalid, $price, $baseprice, $scl_id);
+			$this->externalid, $price, $baseprice, $scl_id, $this->shipisfaction);
 		if(!$pqry->execute() || !$pqry->recordCount()) return false;
 		else $pqry->fetch();
 

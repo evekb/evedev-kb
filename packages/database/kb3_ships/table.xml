@@ -10,6 +10,7 @@
   `shp_rce_id` int(11) NOT NULL default &#039;0&#039;,
   `shp_baseprice` bigint(12) NOT NULL default &#039;0&#039;,
   `shp_techlevel` tinyint(4) NOT NULL default &#039;1&#039;,
+  `shp_isfaction` tinyint(1) NOT NULL default &#039;0&#039;,
   PRIMARY KEY  (`shp_id`),
   UNIQUE KEY `shp_name` (`shp_name`),
   KEY `shp_class` (`shp_class`)

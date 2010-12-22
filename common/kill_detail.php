@@ -390,6 +390,8 @@ class pKillDetail extends pageAssembly
 			$weapon                    =$inv->getWeapon();
 
 			$this->involved[$i]['shipImage'] =$ship->getImage(64);
+			$this->involved[$i]['shipTechLevel'] = $ship->getTechLevel();
+			$this->involved[$i]['shipIsFaction'] = $ship->isFaction();		
 			$this->involved[$i]['pilotURL']  ="?a=pilot_detail&amp;plt_id=" . $pilot->getID();
 			$this->involved[$i]['pilotName'] =$pilot->getName();
 			$this->involved[$i]['corpURL']   ="?a=corp_detail&amp;crp_id=" . $corp->getID();
@@ -703,9 +705,12 @@ class pKillDetail extends pageAssembly
 		$smarty->assign('victimShip', $this->kill->getVictimShip());
 		$smarty->assign('victimShipClass', $ship->getClass());
 		$smarty->assign('victimShipImage', $ship->getImage(64));
+		$smarty->assign('victimShipTechLevel', $ship->getTechLevel());
+		$smarty->assign('victimShipIsFaction', $ship->isFaction());
 		$smarty->assign('victimShipName', $ship->getName());
 		$smarty->assign('victimShipID', $ship->getExternalID());
 		$smarty->assign('victimShipClassName', $shipclass->getName());
+		$smarty->assignByRef('victimShipIcon', $smarty->fetch(get_tpl('ship_victim_64')));
 		if($this->page->isAdmin()) $smarty->assign('ship', $ship);
 
 		include_once('common/includes/class.dogma.php');

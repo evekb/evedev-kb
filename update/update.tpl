@@ -21,7 +21,7 @@
 							</tr>
 						</table>
 						<div class="counter">
-							<font style="font-size: 9px;">&copy;2006-2009 <a href="http://www.eve-id.net/" target="_blank">EVE Development Network</a></font>
+							<font style="font-size: 9px;">&copy;2006-2010 <a href="http://www.eve-id.net/" target="_blank">EVE Development Network</a></font>
 						</div>
 				</td>
 			</tr>

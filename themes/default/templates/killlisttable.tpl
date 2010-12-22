@@ -31,7 +31,16 @@
 <tr class="{cycle advance=false name=ccl}" onmouseout="this.className='{cycle name=ccl}';" style="height: 34px; cursor: pointer;"
 onmouseover="this.className='kb-table-row-hover';" onclick="window.location.href='?a=kill_detail&amp;kll_id={$k.id}';">
 {/if}
-        <td style="text-align:center; width: 32px" ><img src="{$k.victimshipimage}" style="border: 0px; width: 32px; height: 32px;" alt="" /></td>
+        <td style="width: 32px; vertical-align: top" >
+	    <span style="position:relative; border: none; height:32px; width:32px; left: -1px">
+		<img src='{$k.victimshipimage}' style="position: absolute; border: 0px; width: 32px; height: 32px;" alt="" />
+		{if $k.victimshiptechlevel > 1}
+		    <img src='{$img_url}/items/64_64/t{$k.victimshiptechlevel}.png' style="position: absolute; border: 0px; width: 12px; height: 12px;" alt="" />
+		{elseif $k.victimshipisfaction == 1}
+		    <img src='{$img_url}/items/64_64/fac.png' style="position: absolute; border: 0px; width: 12px; height: 12px;" alt="" />
+		{/if}
+	    </span>
+	 </td>
         <td style="height: 34px; width: 158px; vertical-align: middle;"><div class="kb-shiptype"><b>{$k.victimshipname|truncate:21:"...":true}</b><br />{$k.victimshipclass|truncate:24:"...":true}</div>{if 0}<div class="kb-shipicon"><img src="{$k.victimshipindicator}" style="border-width: 0px; width: 6px; height: 6px;" alt="" /></div>{/if}</td>
         {if $config->get('killlist_alogo')}
             {if !$k.allianceexists}

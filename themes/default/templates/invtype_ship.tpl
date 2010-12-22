@@ -5,7 +5,21 @@
 			<div class="block-header">{$item->item.typeName}</div>
 			<table class="kb-table" width="360" cellpadding="0" cellspacing="1" border="0">
 				<tr class="kb-table-row-even">
-					<td><img style="float: left; margin-right: 10px;" src="{$img_url}/ships/64_64/{$item->item.typeID}.png" />{$item->item.description|nl2br}</td>
+				    <td style="vertical-align: top" width="64px" height="64px">
+					<span class="item-icon" style="position:relative; border: none; height:64px; width:64px">
+					    <img border="0" style="position: absolute; height:64px; width:64px;" src="{$img_url}/ships/64_64/{$item->item.typeID}.png" />
+					    {if $shiptechlevel > 1}
+						<img border="0" style="position: absolute; height:16px; width:16px;" src="{$img_url}/items/64_64/t{$shiptechlevel}.png" />
+					    {elseif $shipisfaction == 1}
+						<img border="0" style="position: absolute; height:16px; width:16px;" src="{$img_url}/items/64_64/fac.png" />
+					    {/if}
+					</span>
+				    </td>
+				    <td>
+					<span style="position: relative">
+					    {$item->item.description|nl2br}
+					</span>
+				    </td>
 				</tr>
 			</table>
 			<div class="block-header">Armor</div>

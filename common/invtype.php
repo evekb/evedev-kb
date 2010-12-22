@@ -32,6 +32,12 @@ $smarty->assignByRef('item', $item);
 
 if ($item->get('itt_cat') == 6)
 {
+	//we have a ship, so get it from the db
+	include_once('common/includes/class.ship.php');
+	$ship = new Ship(0, $item->get('typeID'));
+	$smarty->assign('shiptechlevel', $ship->getTechLevel());
+	$smarty->assign('shipisfaction', $ship->isFaction());
+
 	$smarty->assign('armour', array('armorHP','armorEmDamageResonance',
 		'armorExplosiveDamageResonance','armorKineticDamageResonance',
 		'armorThermalDamageResonance'));
