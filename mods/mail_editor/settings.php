@@ -2,14 +2,14 @@
 require_once( "common/admin/admin_menu.php" );
 require_once( "common/includes/class.kill.php" );
 require_once( "common/includes/class.pilot.php");
-require_once( "common/includes/class.corp.php");
+require_once( "common/includes/class.corporation.php");
 require_once( "common/includes/class.alliance.php");
 require_once( "common/includes/class.ship.php");
 require_once( "common/includes/class.item.php");
-require_once( "common/includes/class.db.php");
+require_once( "common/includes/class.dbnormalquery.php");
 require_once( "helper_functions.php");
 
-define ("ME_VER", "0.9.1");
+define ("ME_VER", "0.9.2");
 
 $page = new Page( "Mail Editor v". ME_VER ." by FriedRoadKill");
 $page->setAdmin();
@@ -196,7 +196,7 @@ if (is_numeric($kiddie) > 0 || (is_numeric($old_kid) > 0)) {
     }
 }
 else {
-    $html .= "You need to enter in digits already!<br/><br/>"; //that means you...
+    $html .= "You haven't enterend in any values yet.<br/><br/>"; //that means you...
 }
 
 $html .= selectorThinger($kiddie, 1);

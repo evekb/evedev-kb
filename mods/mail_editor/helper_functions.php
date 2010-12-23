@@ -7,11 +7,11 @@
 require_once( "common/admin/admin_menu.php" );
 require_once( "common/includes/class.kill.php" );
 require_once( "common/includes/class.pilot.php");
-require_once( "common/includes/class.corp.php" );
+require_once( "common/includes/class.corporation.php" );
 require_once( "common/includes/class.alliance.php" );
 require_once( "common/includes/class.ship.php" );
 require_once( "common/includes/class.item.php" );
-require_once( "common/includes/class.db.php" );
+require_once( "common/includes/class.dbnormalquery.php" );
 
 function itemThinger($type, $kid) {//just fetches the items of a mail
     $html_f = "";
