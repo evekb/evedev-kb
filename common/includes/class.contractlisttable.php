@@ -76,6 +76,16 @@ class ContractListTable
 				}
 				else $sqlwhereop = ' WHERE ';
 
+				if($contract->getEndDate())
+				{
+					$sql .= $sqlwhereop."kll.kll_timestamp < '".$contract->getEndDate()."' ";
+					if ((!$i && $contract->getCorps()) || ($i && CORP_ID))
+						$sql .= " AND inc.inc_timestamp < '".$contract->getEndDate()."' ";
+					if ((!$i && $contract->getAlliances()) && ($i && ALLIANCE_ID))
+						$sql .= " AND ina.ina_timestamp < '".$contract->getEndDate()."' ";
+					$sqlwhereop = ' AND ';
+				}
+
 				$tmp = array();
 				if(!$i)
 				{
