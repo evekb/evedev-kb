@@ -213,7 +213,7 @@ class thumb
 		else
 		{
 			$img = $this->fetchImage('Corporation', 128);
-			if($this->size == 128) return true;
+			if($this->size == 128 && $img) return true;
 		}
 		if ($img)
 		{
@@ -225,6 +225,8 @@ class thumb
 			$this->thumb = CacheHandler::getInternal($this->id.'_'.$this->size.'.png', $this->thumbDir);
 			imagepng($newimg, $this->thumb);
 		}
+		else return false;
+
 		return true;
 	}
 
