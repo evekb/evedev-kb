@@ -83,7 +83,7 @@ class admin_acache
     }
     function clearPCache()
     {
-		CacheHandler::removeByAge('',0);
+		CacheHandler::removeByAge(null,0);
     }
     function clearQCache()
     {
