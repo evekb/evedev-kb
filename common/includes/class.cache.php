@@ -103,10 +103,11 @@ class cache
 
 			if (config::get('is_reinforced'))
 			{
-				global $smarty;
-				$smarty->assign('message', 'Note: This killboard has entered reinforced operation mode.');
+				//global $smarty;
+				//$smarty->assign('message', 'Note: This killboard has entered reinforced operation mode.');
 				// cache is extended in reinforced mode
 				$cachetime = $cachetime * 20;
+				if($cachetime < 60) $cachetime = 60;
 			}
 			$timestamp = time() - $cachehandler->age($cachefile);
 			
