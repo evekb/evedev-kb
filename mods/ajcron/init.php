@@ -226,7 +226,6 @@ class ajcron
         }
 
         // run the job (finally)
-        include_once('common/includes/class.http.php');
         $http = new http_request($currentJob['url']);
         $http->set_timeout(120);
         $data = $http->get_content();

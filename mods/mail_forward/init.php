@@ -10,8 +10,6 @@ class post_forward
         {
             return;
         }
-        require_once('common/includes/class.http.php');
-
         $req = new http_request(config::get('forward_site').'?a=post');
 
         $req->set_postform('password', config::get('forward_pass'));

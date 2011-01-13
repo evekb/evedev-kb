@@ -1,6 +1,5 @@
 <?php
 require_once( "common/admin/admin_menu.php" );
-require_once("common/includes/class.ship.php");
 
 $colours =array("red" ,
 "blue" ,

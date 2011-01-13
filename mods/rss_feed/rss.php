@@ -6,10 +6,6 @@
 *
 */
 
-require_once("common/includes/class.corp.php");
-require_once("common/includes/class.alliance.php");
-require_once("common/includes/class.killlist.php");
-require_once("common/includes/class.killlisttable.php");
 require_once("class.rss.php");
 
 $scl_id = intval($_GET['scl_id']);

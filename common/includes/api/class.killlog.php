@@ -883,8 +883,7 @@ class API_KillLog
 				// For testing purposes
 				//$this->Output_ .= str_replace("\r\n", "<br>", $this->killmail_);
 
-				if ( file_exists("common/includes/class.comments.php") )
-                if (class_exists('Comments') && config::get('API_Comment')) { // for the Eve-Dev Comment Class
+                if (config::get('API_Comment')) { // for the Eve-Dev Comment Class
                     $comments = new Comments($killid);
                     $comments->addComment("Captain Thunks API " . APIVERSION, config::get('API_Comment'));
                 }

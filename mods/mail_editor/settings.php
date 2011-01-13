@@ -1,12 +1,5 @@
 <?php
 require_once( "common/admin/admin_menu.php" );
-require_once( "common/includes/class.kill.php" );
-require_once( "common/includes/class.pilot.php");
-require_once( "common/includes/class.corporation.php");
-require_once( "common/includes/class.alliance.php");
-require_once( "common/includes/class.ship.php");
-require_once( "common/includes/class.item.php");
-require_once( "common/includes/class.dbnormalquery.php");
 require_once( "helper_functions.php");
 
 define ("ME_VER", "0.9.2");

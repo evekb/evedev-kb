@@ -12,7 +12,6 @@ if (!$id = intval($_GET['id']))
 	$page->generate();
 	exit;
 }
-include_once('common/includes/class.dogma.php');
 
 $item = new dogma($id);
 
@@ -33,7 +32,6 @@ $smarty->assignByRef('item', $item);
 if ($item->get('itt_cat') == 6)
 {
 	//we have a ship, so get it from the db
-	include_once('common/includes/class.ship.php');
 	$ship = new Ship(0, $item->get('typeID'));
 	$smarty->assign('shiptechlevel', $ship->getTechLevel());
 	$smarty->assign('shipisfaction', $ship->isFaction());

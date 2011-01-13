@@ -1,12 +1,5 @@
 popup| <?php	
-require_once('common/includes/class.killlist.php');
-require_once('common/includes/class.killlisttable.php');
 require_once('mods/forum_post/class.killsummarytable.php');
-require_once('common/includes/class.contract.php');
-require_once('common/includes/class.toplist.php');
-
-require_once('common/includes/class.corp.php');
-require_once('common/includes/class.alliance.php');
 
 if(isset($_GET['ctr_id'])){
 $ctr_id = intval($_GET['ctr_id']);
