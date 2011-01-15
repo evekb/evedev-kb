@@ -155,11 +155,17 @@ if(count($page_error) == 0)
 				//the board admin to roll back the source manually at a later time.
 				$readingZip = new Zip($cacheFileName);
 				$fileList = $readingZip->getFileList();
+				$deleteList = array();
 				if(is_array($fileList))
 				{
 					foreach($fileList as $file)
 					{
-						if(is_dir($file['filename']))
+						if($file['filename'] == "cache/todelete.txt")
+						{
+							$tmp = $readingZip->extractFile($file['index']);
+							$deleteList = explode("\n",$tmp[0]["content"]);
+						}
+						else if(is_dir($file['filename']))
 						{
 							// Add empty directories to the backup list.
 							$dirlist = scandir($file['filename']);
@@ -171,6 +177,14 @@ if(count($page_error) == 0)
 				}
 				if($readingZip->getErrors())
 					$page_error[] = $readingZip->getErrors();
+				if($deleteList)
+				{
+					foreach($deleteList as &$curFile)
+					{
+						$curFile = trim($curFile);
+						if($curFile && substr($curFile, 0, 1) != "/") $fileName[] = $curFile;
+					}
+				}
 
 				$writingZip = new Zip(KB_CACHEDIR. '/update/backup/'. $codeversion. '.zip');
 				$writingZip->addFileArray($fileName);
@@ -181,10 +195,17 @@ if(count($page_error) == 0)
 				}
 
 				$readingZip->extractZip(getcwd());
+				if($deleteList)
+				{
+					foreach($deleteList as $curFile)
+					{
+						if($curFile && substr($curFile, 0, 1) != "/")
+							if(!@unlink($curFile)) $page_error[] = "Could not unlink ".$curFile;
+					}
+				}
 
 				if($readingZip->getErrors())
 					$page_error[] = $readingZip->getErrors();
-
 				else
 				{
 					Config::set('upd_CodeVersion', $piece['version']);

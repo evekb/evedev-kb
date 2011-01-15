@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  * $Date$
  * $Revision$
@@ -45,7 +45,7 @@ class Zip
 	    if(!file_exists($oneFile))
 		unset($this->fileList[$index]);
 	}
-	
+
 	//actually create the zip file
 	$this->archive = new PclZip($this->filename);
 	$this->errors = $this->archive->create($this->fileList);
@@ -53,8 +53,13 @@ class Zip
     }
 
     function extractZip($pathToExtractTo) {
-	$this->archive = new PclZip($this->filename);
+	if(!isset($this->archive)) $this->archive = new PclZip($this->filename);
 	$this->errors =$this->archive->extract(PCLZIP_OPT_PATH, $pathToExtractTo);
+    }
+
+    function extractFile($index) {
+	if(!isset($this->archive)) $this->archive = new PclZip($this->filename);
+	return $this->archive->extractByIndex($index, PCLZIP_OPT_EXTRACT_AS_STRING);
     }
 
     /*! Errors are returned as textual messages.
@@ -69,9 +74,8 @@ class Zip
     /*! Gets the file list from an existing zip.
      */
     function getFileList() {
-	$this->archive = new PclZip($this->filename);
+	if(!isset($this->archive)) $this->archive = new PclZip($this->filename);
 	$this->errors = $this->archive->listContent();
 	return $this->errors;
     }
 }
-?>
