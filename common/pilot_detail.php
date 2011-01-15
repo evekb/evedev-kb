@@ -90,6 +90,37 @@ class pPilotDetail extends pageAssembly
 		}
 		$this->corp = $this->pilot->getCorp();
 		$this->alliance = $this->corp->getAlliance();
+		
+		$this->month = intval($_GET['m']);
+		$this->year = intval($_GET['y']);
+
+		if ($this->month == '')
+			$this->month = kbdate('m');
+
+		if ($this->year == '')
+			$this->year = kbdate('Y');
+
+		if ($this->month == 12)
+		{
+			$this->nmonth = 1;
+			$this->nyear = $this->year + 1;
+		}
+		else
+		{
+			$this->nmonth = $this->month + 1;
+			$this->nyear = $this->year;
+		}
+		if ($this->month == 1)
+		{
+			$this->pmonth = 12;
+			$this->pyear = $this->year - 1;
+		}
+		else
+		{
+			$this->pmonth = $this->month - 1;
+			$this->pyear = $this->year;
+		}
+		$this->monthname = kbdate("F", strtotime("2000-".$this->month."-2"));
 	}
 	//! Set up the stats used by stats and summaryTable functions.
 	function statSetup()
