@@ -15,11 +15,26 @@ if (file_exists('../kbconfig.php'))
 	{
 		$conn = mysql_connect(DB_HOST.':'.DB_PORT, DB_USER, DB_PASS);
 		mysql_select_db(DB_NAME);
-		$res = mysql_query("SELECT * FROM kb3_config WHERE cfg_site = '".KB_SITE."'", $conn);
-		if($res && mysql_num_rows($res))
+		if($_GET['erase']==1)
 		{
-			$smarty->assign('previous_install', true);
-			$smarty->assign('previous_image', $fail_img);
+			$res = mysql_query("SHOW TABLES", $conn);
+			if($res && mysql_num_rows($res))
+			{
+				while($row = mysql_fetch_array($res))
+					mysql_query("DROP TABLE ".$row[0], $conn);
+
+			}
+		}
+		else
+		{
+			$res = mysql_query("SELECT * FROM kb3_config WHERE cfg_site = '".KB_SITE."'", $conn);
+			if($res && mysql_num_rows($res))
+			{
+				$smarty->assign('previous_install', true);
+				$smarty->assign('previous_image', $fail_img);
+				$smarty->assign('update', substr($_SERVER['REQUEST_URI'],0,strrpos($_SERVER['REQUEST_URI'],'install'))."update/");
+				$stoppage = true;
+			}
 		}
 	}
 }

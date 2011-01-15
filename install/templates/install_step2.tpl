@@ -1,8 +1,11 @@
 {if $previous_install}
     <br/><div class="block-header2"><img src="{$previous_image}" border="0" alt=""> The EVE Development Killboard is already installed!</div>
-    The EVE Development Killboard is already installed. Proceeding with the installation may damage the existing installation.<br/>
-    If you do not wish to run the installation then remove the /install directory from your EVE Development Killboard installation to ensure it isn't run again.<br/>
-    <br/>
+    The EVE Development Killboard is already installed. You can either update your board or erase all kills and reinstall.<br/>
+	<p><a href="{$update}">Update --&gt;</a></p>
+	<p><a href="?step=2&erase=1">Permanently erase all kills --&gt;</a></p>
+
+    <p>If you do not wish to run the installation then remove the /install directory from your EVE Development Killboard installation to ensure it isn't run again.
+    </p>
 {/if}
 
 <div class="block-header2"><img src="{$php_image}" border="0" alt=""> PHP Version &amp; Extensions</div>
