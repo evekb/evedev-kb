@@ -225,7 +225,7 @@ class Alliance
 	 */
 	private function fetchAlliance()
 	{
-		if(is_null($this->externalid)) return false;
+		if(!$this->externalid) return false;
 
 		$myID = new API_IDtoName();
 		$myID->setIDs($this->externalid);

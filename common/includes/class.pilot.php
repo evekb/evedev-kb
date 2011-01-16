@@ -380,7 +380,7 @@ class Pilot
 	 */
 	private function fetchPilot()
 	{
-		if(is_null($this->externalid_)) return false;
+		if(!$this->externalid_) return false;
 
 		$myID = new API_IDtoName();
 		$myID->setIDs($this->externalid_);

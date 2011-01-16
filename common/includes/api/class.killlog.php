@@ -262,11 +262,12 @@ class API_KillLog
                         $this->typeid_ = API_Helpers::gettypeIDname($v);
 
 						// Missing Item correction
-						if ($this->typeid_ == "")
+						if (!$this->typeid_)
 						{
 							$this->myIDName->clear();
 							$this->myIDName->setIDs($v);
-							$this->Output_ .= $this->myIDName->fetchXML();
+							$output = $this->myIDName->fetchXML();
+							if($output)	$this->Output_ .= $this->killid_.":".$output;
 							$myNames = $this->myIDName->getIDData();
 							//$this->typeid_ = "Item missing from DB: " . $myNames[0]['name'];
 							$this->typeid_ = $myNames[0]['name'];
@@ -324,7 +325,8 @@ class API_KillLog
 						{
 							$this->myIDName->clear();
 							$this->myIDName->setIDs($v);
-							$this->Output_ .= $this->myIDName->fetchXML();
+							$output = $this->myIDName->fetchXML();
+							if($output)	$this->Output_ .= $this->killid_.":".$output;
 							$myNames = $this->myIDName->getIDData();
 							//$this->typeid_ = "Item missing from DB: " . $myNames[0]['name'];
 							$this->moonname_ = $myNames[0]['name'];
@@ -390,31 +392,17 @@ class API_KillLog
 
                 if ( config::get('API_Update') == 0 )
                 {
-					// update Victim portrait while we're here
-                    $sql = 'select plts.plt_id, plts.plt_externalid from kb3_pilots plts where plts.plt_name = "' . $this->pname_ . '"';
+					$alliance = new Alliance();
+					if ($this->allianceID_ != 0)
+						$alliance->add($this->alliance_, $this->allianceID_);
+					else $alliance->add("None");
 
-					$qry = DBFactory::getDBQuery();;
-                    $qry->execute($sql);
-                    $row = $qry->getRow();
-                    if ($qry->recordCount() != 0)
-                    {
-                        $pilot_id = $row['plt_id'];
-                        $pilot_external_id = $row['plt_externalid'];
+					$corporation = new Corporation();
+					$corporation->add($this->corporation_, $alliance, $this->killtime_, $this->corporationID_);
 
-                        if ( $pilot_external_id == 0 && $pilot_id != 0)
-                        {
-							// update DB with ID
-                            $qry->execute("update kb3_pilots set plt_externalid = " . intval($this->charid_) . "
-                                            where plt_id = " . $pilot_id);
-                        }
-                    }
+					$pilot = new Pilot();
+					$pilot->add($this->pname_, $corporation, $this->killtime_, $this->charid_);
                 }
-
-				// update crp_external_id
-				//API_Helpers::Update_CorpID($this->corporation_, $this->corporationID_);
-				// update all_external_id
-				//if ($this->allianceID_ != 0)
-				//	API_Helpers::Update_AllianceID($this->alliance_, $this->allianceID_);
 
                 // set victim corp and alliance for FF check
                 $this->valliance_ = $this->alliance_;
@@ -483,33 +471,19 @@ class API_KillLog
                     $this->attackerslist_['weapon'][] = $this->weapon_;
                     $this->attackerslist_['damagedone'][] = $this->damagedone_;
 
-                    if ( config::get('API_Update') == 0 )
-                    {
-						// update Attacker portrait while we're here
-                        $sql = 'select plts.plt_id, plts.plt_externalid from kb3_pilots plts where plts.plt_name = "' . $this->pname_ . '"';
+					if ( config::get('API_Update') == 0 )
+					{
+						$alliance = new Alliance();
+						if ($this->allianceID_ != 0)
+							$alliance->add($this->alliance_, $this->allianceID_);
+						else $alliance->add("None");
 
-                        $qry = DBFactory::getDBQuery();;
-                        $qry->execute($sql);
-                        $row = $qry->getRow();
-                        if ($qry->recordCount() != 0)
-                        {
-                            $pilot_id = $row['plt_id'];
-                            $pilot_external_id = $row['plt_externalid'];
+						$corporation = new Corporation();
+						$corporation->add($this->corporation_, $alliance, $this->killtime_, $this->corporationID_);
 
-                            if ( $pilot_external_id == 0 && $pilot_id != 0 )
-                            {
-								// update DB with ID
-                                $qry->execute("update kb3_pilots set plt_externalid = " . intval($this->charid_) . "
-                                                where plt_id = " . $pilot_id);
-                            }
-                        }
+						$pilot = new Pilot();
+						$pilot->add($this->pname_, $corporation, $this->killtime_, $this->charid_);
                     }
-
-					// update crp_external_id
-					//API_Helpers::Update_CorpID($this->corporation_, $this->corporationID_);
-					// update all_external_id
-					//if ($this->allianceID_ != 0)
-						//API_Helpers::Update_AllianceID($this->alliance_, $this->allianceID_);
 
                     $this->pname_ = "";
                     $this->finalblow_ = 0;

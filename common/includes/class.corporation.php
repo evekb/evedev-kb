@@ -342,8 +342,8 @@ class Corporation
 	//! Fetch corporation name and alliance from CCP using the stored external ID.
 	public function fetchCorp()
 	{
-		if(is_null($this->externalid)) $this->execQuery();
-		if(is_null($this->externalid)) return false;
+		if(!$this->externalid) $this->execQuery();
+		if(!$this->externalid) return false;
 		
 		$myID = new API_IDtoName();
 		$myID->setIDs($this->externalid);
