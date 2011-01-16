@@ -62,7 +62,6 @@ class pKillDetail extends pageAssembly
 	function start()
 	{
 		$this->page = new Page('Kill details');
-		$this->page->addHeader('<meta name="robots" content="noindex, nofollow" />');
 
 		if (!$this->kll_id && !$this->kll_external_id)
 		{

@@ -49,7 +49,6 @@ class pCorpDetail extends pageAssembly
 	function start()
 	{
 		$this->page = new Page('Corporation details');
-		$this->page->addHeader('<meta name="robots" content="index, nofollow" />');
 
 		if(isset($_GET['scl_id'])) $this->scl_id = intval($_GET['scl_id']);
 		else $this->scl_id = false;
@@ -57,6 +56,7 @@ class pCorpDetail extends pageAssembly
 		if(isset($_GET['crp_external_id'])) $this->crp_external_id = intval($_GET['crp_external_id']);
 		elseif(isset($_GET['crp_ext_id'])) $this->crp_external_id = intval($_GET['crp_ext_id']);
 		$this->view = $_GET['view'];
+		if($this->view) $this->page->addHeader('<meta name="robots" content="noindex, nofollow" />');
 
 		if(!$this->crp_id)
 		{

@@ -24,7 +24,7 @@ class pHome extends pageAssembly
 	function start()
 	{
 		$this->page = new Page();
-		if(isset($_GET['scl_id'])) $this->page->addHeader('<meta name="robots" content="noindex, nofollow" />');
+		if(isset($_GET['scl_id']) || isset($_GET['y'])) $this->page->addHeader('<meta name="robots" content="index, nofollow" />');
 		$this->menuOptions = array();
 
 		$this->scl_id = intval($_GET['scl_id']);

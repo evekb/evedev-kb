@@ -50,7 +50,6 @@ class pPilotDetail extends pageAssembly
 	function start()
 	{
 		$this->page = new Page();
-		$this->page->addHeader('<meta name="robots" content="index, nofollow" />');
 
 		$this->scl_id = intval($_GET['scl_id']);
 		$this->plt_id = intval($_GET['plt_id']);
@@ -58,6 +57,7 @@ class pPilotDetail extends pageAssembly
 		elseif(isset($_GET['plt_ext_id'])) $this->plt_external_id = intval($_GET['plt_ext_id']);
 		else $this->plt_external_id = 0;
 		$this->view =  preg_replace('/[^a-zA-Z0-9_-]/','',$_GET['view']);
+		if($this->view) $this->page->addHeader('<meta name="robots" content="noindex, nofollow" />');
 
 		if(!$this->plt_id)
 		{

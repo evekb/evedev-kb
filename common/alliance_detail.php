@@ -48,7 +48,6 @@ class pAllianceDetail extends pageAssembly
 	function start()
 	{
 		$this->page = new Page();
-		$this->page->addHeader('<meta name="robots" content="index, nofollow" />');
 
 		$this->scl_id = intval($_GET['scl_id']);
 		$this->all_id = intval($_GET['all_id']);
@@ -56,6 +55,7 @@ class pAllianceDetail extends pageAssembly
 		elseif(isset($_GET['all_ext_id'])) $this->all_external_id = intval($_GET['all_ext_id']);
 		else $this->all_external_id = 0;
 		$this->view = $_GET['view'];
+		if($this->view) $this->page->addHeader('<meta name="robots" content="noindex, nofollow" />');
 
 		if (!$this->all_id && !$this->all_external_id)
 		{
