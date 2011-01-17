@@ -173,7 +173,7 @@ class Alliance
 				$qry->execute("UPDATE kb3_inv_all SET ina_all_id = $newid WHERE ina_all_id = ".$this->id);
 				$qry->execute("UPDATE kb3_kills SET kll_all_id = $newid WHERE kll_all_id = ".$this->id);
 				$qry->execute("DELETE FROM kb3_alliances WHERE all_id = ".$this->id);
-				$qry->execute("UPDATE kb3_alliances SET all_name = '".$this->name."' WHERE all_external_id = ".$externalid);
+				$qry->execute("UPDATE kb3_alliances SET all_name = '".$qry->escape($this->name)."' WHERE all_external_id = ".$externalid);
 
 				$this->id = $newid;
 				$this->externalid = $externalid;
