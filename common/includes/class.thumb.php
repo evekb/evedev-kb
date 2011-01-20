@@ -194,14 +194,6 @@ class thumb
 	function genCorp()
 	{
 		$source = 'img/corps/'.$this->id.'.png';
-		// id is not a number and the matching npc corp image does not exist.
-//		if (!file_exists($source) && !is_numeric($this->id))
-//		{
-//			$this->id = 0;
-//			$this->thumbName = '0_'.$this->size.'.png';
-//			$this->thumbDir = 'img';
-//			$this->thumb = CacheHandler::getInternal($this->thumbName, $this->thumbDir);
-//		}
 		// id matches an npc image.
 		if(file_exists($source)) $img = imagecreatefrompng($source);
 		// no matching image found so let's try the cache.
@@ -243,7 +235,6 @@ class thumb
 		{
 			$img = $this->fetchImage("Alliance", 128);
 			if($this->size == 128 && $img) return true;
-			//else $source = CacheHandler::getInternal($this->id.'_256.png', 'img');
 		}
 		else $img = imagecreatefrompng($source);
 		
@@ -304,7 +295,6 @@ class thumb
 
 		if($type != 'Character' & $type != 'Corporation' && $type != 'Alliance') return false;
 		$url = "http://image.eveonline.com/".$type."/".$this->id."_".$size.".".$ext;
-		//$url = 'http://img.eve.is/serv.asp?s=256&c='.$this->id;
 		if (function_exists('curl_init'))
 		{
 			// in case of a dead eve server we only want to wait 2 seconds
@@ -313,7 +303,19 @@ class thumb
 			curl_setopt($ch, CURLOPT_URL, $url);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, 2);
+			
+			// For pilots we should try from oldportraits.eveonline.com if the main server doesn't have them.
+			if($type != 'Character') curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 			$file = curl_exec($ch);
+
+			if($type == 'Character' && $file === "" && curl_errno($ch) == 0)
+			{
+				$url = "http://oldportraits.eveonline.com/".$type."/".$this->id."_".$size.".".$ext;
+				curl_setopt($ch, CURLOPT_URL, $url);
+				curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+				$file = curl_exec($ch);
+			}
+
 			curl_close($ch);
 		}
 		else
