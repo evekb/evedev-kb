@@ -1,10 +1,52 @@
 -------------------------------------------
-Eve Development Network Killboard v3.1.0
+Eve Development Network Killboard v3.2 beta
 -------------------------------------------
 
 VERSION HISTORY
+v3.2 beta
+Mixed pilot/corp/alliance board owner
+Code cleaning
+Speed optimisations
+Quicker install
+Moved everything to the left a bit.
+-------------------------------------------
+v3.1.6
+Incursion updates
+- Name
+- Image files
+- Installation db
+IDFeed renames structures as per standard parser.
+kill_related improvements
+-------------------------------------------
+v3.1.5
+Fixed killlist generation speed issues.
+Fixes for cache generation issues
+Corp/alliances with a null timestamp are updated correctly.
+Alliance portraits show same image for small and large sizes
+-------------------------------------------
+v3.1.4
+IDFeed reader stops posting 0 quantity kills.
+-------------------------------------------
+v3.1.3
+IDFeed reader works more convincingly.
+Single pilot boards authorise owner to post kills
+-------------------------------------------
+v3.1.2
+IDFeed reader works.
+Feed page works for pilot feeds.
+Hashing works for updated kills
+Update can reset db level.
+-------------------------------------------
+v3.1.1
+IDFeed reader works for Corporate boards.
+corp_detail correctly links to CEO
+Constellation highlighting on maps highlights
+Memcache support in page cache improved.
+Region names on kill lists return
+-------------------------------------------
+VERSION HISTORY
 v3.1.0
-IDFeeder reader implemented similar to CCP API feed.
+IDFeed reader implemented similar to CCP API feed.
 Classes can be overridden by mods.
 Code has been rewritten to fit a more OO design.
 Code has been rewritten to be more maintainable.
@@ -219,4 +261,3 @@ upload the files, as it has a built in easy to use
 error log, that allows you to upload files if they
 time out or error on the upload due to server
 settings.
-
