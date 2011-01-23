@@ -142,7 +142,23 @@ class pPilotDetail extends pageAssembly
 	function stats()
 	{
 		$this->summary->generate();
-
+		if($this->pilot->getExternalID())
+		{
+			$apiInfo = new API_CharacterInfo();
+			$apiInfo->setID($this->pilot->getExternalID());
+			$result .= $apiInfo->fetchXML();
+			// Update the name if it has changed.
+			if($result == "")
+			{
+				$data = $apiInfo->getData();
+				$this->alliance->add($data['alliance'],
+					$data['allianceID']);
+				$this->corp->add($data['corporation'],
+					$this->alliance, $apiInfo->getCurrentTime(),
+					$data['corporationID']);
+				$this->pilot->add($data['characterName'], $this->corp, $apiInfo->getCurrentTime(), $data['characterID']);
+			}
+		}
 		global $smarty;
 		$smarty->assign('portrait_URL',$this->pilot->getPortraitURL(128));
 		$smarty->assign('corp_id',$this->corp->getID());

@@ -133,20 +133,17 @@ class pCorpDetail extends pageAssembly
 
 		$myAPI = new API_CorporationSheet();
 		$myAPI->setCorpID($this->corp->getExternalID());
-
 		$result .= $myAPI->fetchXML();
 		// Update the name if it has changed.
-		if($myAPI->getCorporationName() && slashfix($myAPI->getCorporationName()) != slashfix($this->corp->getName()))
-			$this->corp->add($myAPI->getCorporationName(),
-				$this->corp->getAlliance(), gmdate("Y-m-d H:i:s"),
-				$externalid = $this->corp->getExternalID());
-
-		if ($result == "Corporation is not part of alliance.")
+		if($result == "")
 		{
-			$this->page->setTitle('Corporation details - '.$this->corp->getName());
-		} else {
-			$this->page->setTitle('Corporation details - '.$this->corp->getName() . " [" . $myAPI->getTicker() . "]");
+			$this->alliance->add($myAPI->getAllianceName(),
+				$myAPI->getAllianceID());
+			$this->corp->add($myAPI->getCorporationName(),
+				$this->alliance, $myAPI->getCurrentTime(),
+				$externalid = $this->corp->getExternalID());
 		}
+		$this->page->setTitle('Corporation details - '.$this->corp->getName() . " [" . $myAPI->getTicker() . "]");
 
 		$smarty->assign('portrait_url', $this->corp->getPortraitURL(128));
 
