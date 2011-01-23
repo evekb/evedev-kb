@@ -243,7 +243,7 @@ class API_KillLog
 						{
                             $this->shipname_ = "Unknown";
 						} else {
-                            $this->shipname_ = API_Helpers::gettypeIDname($v);
+                            $this->shipname_ = API_Helpers::gettypeIDname($v, true);
                         }
                         break;
                     case "FINALBLOW":
@@ -255,23 +255,11 @@ class API_KillLog
 						$this->security_ = number_format($v, 1);
                         break;
                     case "WEAPONTYPEID":
-                        $this->weapon_ = API_Helpers::gettypeIDname($v);
+                        $this->weapon_ = API_Helpers::gettypeIDname($v, true);
                         break;
                     // for items
                     case "TYPEID":
-                        $this->typeid_ = API_Helpers::gettypeIDname($v);
-
-						// Missing Item correction
-						if (!$this->typeid_)
-						{
-							$this->myIDName->clear();
-							$this->myIDName->setIDs($v);
-							$output = $this->myIDName->fetchXML();
-							if($output)	$this->Output_ .= $this->killid_.":".$output;
-							$myNames = $this->myIDName->getIDData();
-							//$this->typeid_ = "Item missing from DB: " . $myNames[0]['name'];
-							$this->typeid_ = $myNames[0]['name'];
-						}
+                        $this->typeid_ = API_Helpers::gettypeIDname($v, true);
                         break;
                     case "FLAG":
                         $this->itemFlag_ = $v;

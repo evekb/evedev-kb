@@ -95,15 +95,35 @@ class API_Helpers
 	// **********************************************************************************************************************************************
 	// ****************                         					Convert ID -> Name               					             ****************
 	// **********************************************************************************************************************************************
-	public static function gettypeIDname($id)
+	public static function gettypeIDname($id, $update = false)
 	{
 		$sql = 'select inv.typeName from kb3_invtypes inv where inv.typeID = ' . $id;
 
 		$qry = DBFactory::getDBQuery();
 		$qry->execute($sql);
-		$row = $qry->getRow();
+		if($qry->recordCount())
+		{
+			$row = $qry->getRow();
 
-		return $row['typeName'];
+			return $row['typeName'];
+		}
+		else
+		{
+			$info = new API_IDtoName();
+			$info->setIDs($id);
+			$result = $info->fetchXML();
+			if($result == "")
+			{
+				$data = $info->getIDData();
+				if($update && $data[0]['characterID'] > 0 && $data[0]['name'])
+				{
+					$sql = "INSERT INTO kb3_invtypes (typeID, typeName, description) values(".$qry->escape($id).", ".$qry->escape($data[0]['name']).", '')";
+					$qry->execute($sql);
+				}
+				return $data[0]['name'];
+			}
+			return null;
+		}
 	}
 
 	// **********************************************************************************************************************************************
