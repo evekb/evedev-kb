@@ -118,8 +118,8 @@ class thumb
 				$this->thumbDir = 'img';
 				break;
 		}
-				$this->thumb = CacheHandler::getInternal($this->thumbName, $this->thumbDir);
-				return CacheHandler::exists($this->thumbName, $this->thumbDir);
+		$this->thumb = CacheHandler::getInternal($this->thumbName, $this->thumbDir);
+		return CacheHandler::exists($this->thumbName, $this->thumbDir);
 	}
 
 	function genCache()
@@ -280,10 +280,6 @@ class thumb
 		}
 		return false;
 	}
-	function fetchPilotImage()
-	{
-		return $this->fetchImage('Character', 256);
-	}
 	function fetchImage($type = 'Character', $size = 128)
 	{
 		if($type == 'pilot') $type = 'Character';
@@ -303,33 +299,58 @@ class thumb
 			curl_setopt($ch, CURLOPT_URL, $url);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, 2);
+			// CURLOPT_FOLLOWLOCATION doesn't work if safe mode or open_basedir is set
 			
 			// For pilots we should try from oldportraits.eveonline.com if the main server doesn't have them.
-			if($type != 'Character') curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+			//if($type != 'Character') curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+			//curl_setopt($ch, CURLOPT_HEADER, true);
 			$file = curl_exec($ch);
+			//list($header, $file) = explode("\n\n", $file, 2);
+			$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-			if($type == 'Character' && $file === "" && curl_errno($ch) == 0)
+			if($http_code != 200)
 			{
-				$url = "http://oldportraits.eveonline.com/".$type."/".$this->id."_".$size.".".$ext;
-				curl_setopt($ch, CURLOPT_URL, $url);
-				curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-				$file = curl_exec($ch);
+				if($type == 'Character')
+				{
+					$url = "http://oldportraits.eveonline.com/".$type."/".$this->id."_".$size.".".$ext;
+					curl_setopt($ch, CURLOPT_URL, $url);
+					curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+					$file = curl_exec($ch);
+					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					if($http_code != 200)
+						$file = file_get_contents("img/1_$size.jpg");
+				}
+				else if($type == 'Alliance')
+					$file = file_get_contents("img/alliances/default.png");
+				else
+					$file = file_get_contents("img/corps/default.png");
 			}
-
 			curl_close($ch);
 		}
 		else
 		{
 			// in case of a dead eve server we only want to wait 2 seconds
 			@ini_set('default_socket_timeout', 2);
-			$file = @file_get_contents($url);
-			if($file === false)
+			// try alternative access via fsockopen
+			// happens if allow_url_fopen wrapper is false
+			$http = new http_request($url);
+			$file = $http->get_content();
+			$http_code = $http->get_http_code();
+			if($http_code != 200)
 			{
-				// try alternative access via fsockopen
-				// happens if allow_url_fopen wrapper is false
-
-				$http = new http_request($url);
-				$file = $http->get_content();
+				if($type == 'Character')
+				{
+					$url = "http://oldportraits.eveonline.com/".$type."/".$this->id."_".$size.".".$ext;
+					$http = new http_request($url);
+					$file = $http->get_content();
+					$http_code = $http->get_http_code();
+					if($http_code != 200)
+						$file = file_get_contents("img/1_$size.jpg");
+				}
+				else if($type == 'Alliance')
+					$file = file_get_contents("img/alliances/default.png");
+				else
+					$file = file_get_contents("img/corps/default.png");
 			}
 		}
 		if ($img = @imagecreatefromstring($file))
