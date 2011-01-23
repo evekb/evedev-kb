@@ -1,8 +1,8 @@
 <?php
-define('MFONT', 'mods/signature_generator/signatures/gesc_blue/evesansmm.ttf');
+define('MFONT', dirname(__FILE__).'/evesansmm.ttf');
 define('FSIZE', 12);
 
-$im = imagecreatefromjpeg('mods/signature_generator/signatures/guard_blue/base.jpg');
+$im = imagecreatefromjpeg(dirname(__FILE__).'/base.jpg');
 
 $red = imagecolorallocate($im, 255, 10, 10);
 $orange = imagecolorallocate($im, 150, 120, 20);

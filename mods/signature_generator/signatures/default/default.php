@@ -1,5 +1,5 @@
 <?php
-define('MPATH', 'mods/signature_generator/signatures/default/');
+define('MPATH', dirname(__FILE__)."/");
 $im = imagecreatefrompng(MPATH.'default.png');
 
 $red = imagecolorallocate($im, 255, 10, 10);

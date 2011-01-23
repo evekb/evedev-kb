@@ -1,8 +1,8 @@
 <?php
-define('MFONT', 'mods/signature_generator/signatures/wolf/evesansmm.ttf');
+define('MFONT', dirname(__FILE__).'/evesansmm.ttf');
 define('FSIZE', 12);
 
-$im = imagecreatefromjpeg('mods/signature_generator/signatures/wolf/base.jpg');
+$im = imagecreatefromjpeg(dirname(__FILE__).'/base.jpg');
 
 $red = imagecolorallocate($im, 255, 10, 10);
 $orange = imagecolorallocate($im, 150, 120, 20);

@@ -52,7 +52,7 @@ if (file_exists(KB_CACHEDIR.'/data/sig_'.$id.'_'.$plt_id))
 	// cache files for 30 minutes
 	if (time() - $age < 30*60)
 	{
-		if (file_exists('mods/signature_generator/signatures/'.$sig_name.'/typ.png'))
+		if (file_exists(dirname(__FILE__).'/signatures/'.$sig_name.'/typ.png'))
 		{
 			header('Content-Type: image/png');
 		}
@@ -68,41 +68,17 @@ if (file_exists(KB_CACHEDIR.'/data/sig_'.$id.'_'.$plt_id))
 $pid = $pilot->getExternalID();
 $cachePath = $pilot->getPortraitPath(256);
 
-if (!file_exists($cachePath))
-{
-	// in case of a dead eve server we only want to wait 5 seconds
-	@ini_set('default_socket_timeout', 5);
-	$file = @file_get_contents('http://img.eve.is/serv.asp?s=256&c='.$pid);
-	if ($img = @imagecreatefromstring($file))
-	{
-		CacheHandler::put($pid."_256.jpg", $file, "img");
-	}
-	else
-	{
-		// try alternative access via fsockopen
-		// happens if allow_url_fopen wrapper is false
-		require_once('class.http.php');
-
-		$url = 'http://img.eve.is/serv.asp?s=256&c='.$pid;
-		$http = new http_request($url);
-		$file = $http->get_content();
-
-		if ($img = @imagecreatefromstring($file))
-		{
-			CacheHandler::put($pid."_256.jpg", $file, "img");
-		}
-	}
-}
-
+$thumb = new thumb($pid, 256);
+if(!$thumb->isCached()) $thumb->genCache();
 
 // check template
-if (!is_dir('mods/signature_generator/signatures/'.$sig_name))
+if (!is_dir(dirname(__FILE__).'/signatures/'.$sig_name))
 {
 	errorPic('Template not found.');
 }
 
 // let the template do the work, we just output $im
-require('mods/signature_generator/signatures/'.$sig_name.'/'.$sig_name.'.php');
+require(dirname(__FILE__).'/signatures/'.$sig_name.'/'.$sig_name.'.php');
 
 if (headers_sent())
 {
@@ -112,7 +88,7 @@ if (ob_get_contents())
 {
 	trigger_error('An error occured. Content has already been sent.<br/>', E_USER_ERROR);
 }
-else if (file_exists('mods/signature_generator/signatures/'.$sig_name.'/typ.png'))
+else if (file_exists(dirname(__FILE__).'/signatures/'.$sig_name.'/typ.png'))
 {
 	header('Content-Type: image/png');
 	imagepng($im, 'cache/data/sig_'.$id.'_'.$plt_id);
