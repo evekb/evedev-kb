@@ -98,6 +98,7 @@ class Alliance
      */
     function add($name, $externalid = false)
     {
+		var_dump($name);
         $qry = DBFactory::getDBQuery();
 		$name = $qry->escape(stripslashes($name));
         $qry->execute("select * from kb3_alliances where all_name = '".$name."'");
@@ -119,6 +120,7 @@ class Alliance
 			// then return.
 			if($externalid)
 			{
+		var_dump($name);
 				$qry->execute("SELECT * FROM kb3_alliances WHERE all_external_id = ".$externalid);
 				if ($qry->recordCount() > 0)
 				{
@@ -143,7 +145,7 @@ class Alliance
         {
             $row = $qry->getRow();
             $this->id = $row['all_id'];
-			$this->name = $name;
+			$this->name = $row['all_name'];
 			$this->externalid = intval($row['all_external_id']);
         }
     }
