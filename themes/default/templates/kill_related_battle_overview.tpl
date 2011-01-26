@@ -17,9 +17,9 @@
     <tr class="{cycle name=ccl}"{if $i.destroyed} style="background-color: #EE4444;"{/if}>
       <td width="32" height="32" style="max-width: 32px;">
 {if $i.destroyed}
-        <a href="?a=kill_detail&amp;kll_id={$i.kll_id}"><img src="{$i.spic}" width="32" height="32" border="0"></a>
+		  <a href="?a=kill_detail&amp;kll_id={$i.kll_id}"><img src="{$i.spic}" width="32" height="32" border="0" alt="" /></a>
 {else}
-        <img src="{$i.spic}" width="32" height="32" border="0">
+        <img src="{$i.spic}" width="32" height="32" border="0" alt="" />
 {/if}
       </td>
 {if $i.podded}
@@ -29,7 +29,7 @@
       </td>
     {else}
       <td class="kb-table-cell"><div style="position: relative;"><b><a href="?a=pilot_detail&amp;plt_id={$pilot}">{$i.name}</a></b><br/>{$i.ship}
-	<div style="position: absolute; right:0px; top:-6px; width:32px; height:32px; z-index:1;"><a href="?a=kill_detail&amp;kll_id={$i.podid}"><img src="{$podpic}"></a></div>
+	<div style="position: absolute; right:0px; top:-6px; width:32px; height:32px; z-index:1;"><a href="?a=kill_detail&amp;kll_id={$i.podid}"><img src="{$podpic}" alt="" /></a></div>
         </div>
     </td>
     {/if}
@@ -58,9 +58,9 @@
     <tr class="{cycle name=ccl}"{if $i.destroyed} style="background-color: #EE4444;"{/if}>
       <td width="32" height="32" style="max-width: 32px;">
 {if $i.destroyed}
-        <a href="?a=kill_detail&amp;kll_id={$i.kll_id}"><img src="{$i.spic}" width="32" height="32" border="0"></a>
+        <a href="?a=kill_detail&amp;kll_id={$i.kll_id}"><img src="{$i.spic}" width="32" height="32" border="0" alt="" /></a>
 {else}
-        <img src="{$i.spic}" width="32" height="32" border="0">
+        <img src="{$i.spic}" width="32" height="32" border="0" alt="" />
 {/if}
       </td>
 {if $i.podded}
@@ -70,7 +70,7 @@
       </td>
     {else}
     <td class="kb-table-cell"><div style="position: relative;"><b><a href="?a=pilot_detail&amp;plt_id={$pilot}">{$i.name}</a></b><br/>{$i.ship}
-	    <div style="position: absolute; right:0px; top:-6px; width:32px; height:32px; z-index:1;"><a href="?a=kill_detail&amp;kll_id={$i.podid}"><img src="{$podpic}"></a></div>
+	    <div style="position: absolute; right:0px; top:-6px; width:32px; height:32px; z-index:1;"><a href="?a=kill_detail&amp;kll_id={$i.podid}"><img src="{$podpic}" alt="" /></a></div>
         </div>
     </td>
     {/if}

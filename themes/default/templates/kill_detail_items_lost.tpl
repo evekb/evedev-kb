@@ -109,8 +109,8 @@
 			<td colspan="3"><div style="text-align:right"><strong>Total Module Loss:</strong></div></td>
 			<td align="right">{$itemValue}</td>
 		</tr>
-		<tr class="{cycle name="ccl"}" style="background-color: {$dropped_colour};">
-			<td style="border: 1px solid {$dropped_colour};" colspan="3"><div style="text-align:right"><strong>Total Module Drop:</strong></div></td>
+		<tr class="{cycle name="ccl"}" style="background-color: #006000;">
+			<td style="border: 1px solid #006000;" colspan="3"><div style="text-align:right"><strong>Total Module Drop:</strong></div></td>
 			<td style="border: 1px solid green;" align="right">{$dropValue}</td>
 		</tr>
 	{if $BPOValue > 0}<tr class="{cycle name="ccl"}" style="background-color: {$dropped_colour};">

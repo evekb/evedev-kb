@@ -2,7 +2,7 @@
 	<div class="block-header">Comments</div>
 	<table class="kb-table" width="100%" border="0" cellspacing="1">
 		<tr>
-			<td style="width:100% text-align:left; vertical-align:top">
+			<td style="width:100%; text-align:left; vertical-align:top">
 				<table width="100%" border="0" cellspacing="0">
 {cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}{section name=i loop=$comments}
 					<tr class="{cycle name=ccl}">
