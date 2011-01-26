@@ -84,6 +84,8 @@ class IDFeed
 			trigger_error("Error reading feed.", E_USER_NOTICE);
 			return false;
 		}
+		// Remove error messages at the top.
+		if(strpos($this->xml,"<?xml") !== 0) $this->xml = substr($this->xml, strpos($this->xml,"<?xml"));
 
 		libxml_use_internal_errors(true);
 		$sxe = simplexml_load_string($this->xml);
