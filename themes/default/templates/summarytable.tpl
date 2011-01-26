@@ -8,7 +8,7 @@
 			<td style="width:{$width}%; vertical-align:top">
 				<table class="kb-table" style="border-spacing:1px; width:100%">
 					<tr class="kb-table-header">
-						<td class="kb-table-cell" style="width:{$class_width};">Ship class</td>
+						<td class="kb-table-cell" style="width:{$class_width}px;">Ship class</td>
 {if $verbose}
 						<td class="kb-table-cell" style="width:60px; text-align:center">Kills</td>
 						<td class="kb-table-cell" style="width:60px; text-align:center">ISK (M)</td>
