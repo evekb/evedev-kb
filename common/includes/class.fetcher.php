@@ -60,8 +60,8 @@ class Fetcher
 		$fetchurl = $url.$str."&board=".urlencode(KB_TITLE);
 		if(strpos($fetchurl, 'apikills=1')) $this->apikills = true;
 		else $this->apikills = false;
-		if(!strpos($fetchurl,'?')) $fetchurl =
-				substr_replace($fetchurl,'?', strpos($fetchurl,'&'),0);
+		if(strpos($fetchurl,'?') === false)
+			$fetchurl = substr_replace($fetchurl,'?', strpos($fetchurl,'&'),1);
 		$this->uurl = $url;
 // only lists fetched with lastkllid are ordered by id.
 		if(strpos($fetchurl, 'lastkllid')) $this->idordered = true;
@@ -94,7 +94,10 @@ class Fetcher
 			if(strpos($http->get_header(),"Content-Encoding: gzip")
 				&& gzinflate(substr($data,10)))
 				$data = gzinflate(substr($data,10));
+
+			if(strpos($data,"<?xml") != 0) $data = substr($data, strpos($data,"<?xml"));
 			$data = trim($data); // helps with broken sites that add extra white space.
+
 			file_put_contents($this->feedfilename, $data);
 
 // Process all new pilots and corps
