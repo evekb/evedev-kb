@@ -5,7 +5,7 @@
 {* set to true to show empty slots *}
 {if $destroyed.$slotindex or $dropped.$slotindex}
 		<tr class="kb-table-row-even">
-			<td class="item-icon" style="width:32px"><img style="width:32px; height:32px border:0px" src="{$img_url}/{$slot.img}" alt="{$slot.text}" /></td>
+			<td class="item-icon" style="width:32px"><img style="width:32px; height:32px; border:0px" src="{$img_url}/{$slot.img}" alt="{$slot.text}" /></td>
 			<td colspan="2" class="kb-table-cell"><b>{$slot.text}</b> </td>
     {if $config->get('item_values')}
 			<td align="center" class="kb-table-cell"><b>Current Value</b></td>
@@ -13,9 +13,9 @@
 		</tr>
     {foreach from=$destroyed.$slotindex item="i"}
 		<tr class="kb-table-row-odd" style="height:32px;">
-			<td class="item-icon" style="width:32; vertical-align:top"><a href="?a=invtype&amp;id={$i.itemID}">{$i.Icon}</a></td>
+			<td class="item-icon" style="width:32px; vertical-align:top"><a href="?a=invtype&amp;id={$i.itemID}">{$i.Icon}</a></td>
 			<td class="kb-table-cell">{$i.Name}</td>
-			<td style="width:30px text-align:center">{$i.Quantity}</td>
+			<td style="width:30px; text-align:center">{$i.Quantity}</td>
         {if $config->get('item_values')}
 			<td align="center">{$i.Value}</td>
         {/if}
@@ -60,7 +60,7 @@
 		<tr class="kb-table-row-odd" style="background-color: #006000; height:34px">
 			<td style="border: 1px solid green; width:32px; vertical-align:top"><a href="?a=invtype&amp;id={$i.itemID}">{$i.Icon}</a></td>
 			<td class="kb-table-cell">{$i.Name}</td>
-			<td style="width:30px text-align:center">{$i.Quantity}</td>
+			<td style="width:30px; text-align:center">{$i.Quantity}</td>
         {if $config->get('item_values')}
 			<td align="center">{$i.Value}</td>
         {/if}
