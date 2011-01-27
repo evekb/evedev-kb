@@ -3,22 +3,22 @@
 	<table class="kb-table" width="100%" border="0" cellspacing="1">
 {foreach from=$involved key="key" item="i"}
 		<tr class="{cycle name="ccl"}">
-			<td rowspan="5" style="width:64px;">
+			<td rowspan="5" style="width:64px; vertical-align:middle">
 			    <img {if $i.finalBlow == "true"} class="finalblow" {/if}
 				style="width:64px; height:64px" src="{$i.portrait}" alt="inv portrait" /> 
 			</td>
-			<td rowspan="5" style="width:64px; vertical-align: top">
-			    <a href="?a=invtype&amp;id={$i.shipID}">
-				    <span class="item-icon" style="position:relative; border: none; height:64px; width:64px; top: 4px">
+			<td rowspan="5" style="width:64px; vertical-align:middle">
+				<div class="item-icon" style="height:64px; width:64px;">
+				    <a href="?a=invtype&amp;id={$i.shipID}" style="height:64px; width:64px;">
 					<img {if $i.finalBlow == "true"} class="finalblow" {/if}
-					    border="0" style="position: absolute; height:64px; width:64px;" src='{$i.shipImage}' alt='{$i.shipName}' title='{$i.shipName}' />
+					    style="border:0px; position:absolute; height:64px; width:64px;" src='{$i.shipImage}' alt='{$i.shipName}' title='{$i.shipName}' />
 					{if $i.shipTechLevel > 1}
-					    <img border="0" style="position:absolute; height:16px; width:16px;" src='{$img_url}/items/64_64/t{$i.shipTechLevel}.png' title="T{$i.shipTechLevel}" alt="T{$i.shipTechLevel}" />
+					    <img style="border:0px; position:absolute; height:16px; width:16px;" src='{$img_url}/items/64_64/t{$i.shipTechLevel}.png' title="T{$i.shipTechLevel}" alt="T{$i.shipTechLevel}" />
 					{else if $i.shipIsFaction == 1}
-					    <img border="0" style="position:absolute; height:16px; width:16px;" src='{$img_url}/items/64_64/fac.png' title="Faction" alt="Faction" />
+					    <img style="border:0px; position:absolute; height:16px; width:16px;" src='{$img_url}/items/64_64/fac.png' title="Faction" alt="Faction" />
 					{/if}
-				    </span>
-			    </a>
+				    </a>
+			    </div>
 			</td>
 
 			<td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;"><a href="{$i.pilotURL}">{$i.pilotName}</a></td>
