@@ -44,7 +44,7 @@ if ($_GET['op'] == 'view')
 	}
 	if ($list->getCount() > 0)
 		$html .= "</table><br />";
-	$html .= "[<a href=\"?a=admin_cc&amp;op=add&amp;type=".$type."\">Add ".$type."</a>]";
+	if ($list->getCount() > 10) $html .= "[<a href=\"?a=admin_cc&amp;op=add&amp;type=".$type."\">Add ".$type."</a>]";
 }
 // delete
 if ($_GET['op'] == "del")
