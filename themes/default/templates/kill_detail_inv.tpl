@@ -9,16 +9,16 @@
 			</td>
 			<td rowspan="5" style="width:64px; vertical-align:middle">
 				<div class="item-icon" style="height:64px; width:64px;">
-				    <a href="?a=invtype&amp;id={$i.shipID}" style="height:64px; width:64px;">
-					<img {if $i.finalBlow == "true"} class="finalblow" {/if}
-					    style="border:0px; position:absolute; height:64px; width:64px;" src='{$i.shipImage}' alt='{$i.shipName}' title='{$i.shipName}' />
+			    <a href="?a=invtype&amp;id={$i.shipID}">
+					<img {if $i.finalBlow == "true"} class="finalblow"{/if}
+					    style="{if $i.finalBlow != "true"}border:none; {/if}position: absolute; height:64px; width:64px;" src='{$i.shipImage}' alt='{$i.shipName}' title='{$i.shipName}' />
 					{if $i.shipTechLevel > 1}
 					    <img style="border:0px; position:absolute; height:16px; width:16px;" src='{$img_url}/items/64_64/t{$i.shipTechLevel}.png' title="T{$i.shipTechLevel}" alt="T{$i.shipTechLevel}" />
 					{else if $i.shipIsFaction == 1}
 					    <img style="border:0px; position:absolute; height:16px; width:16px;" src='{$img_url}/items/64_64/fac.png' title="Faction" alt="Faction" />
 					{/if}
-				    </a>
-			    </div>
+			    </a>
+				</div>
 			</td>
 
 			<td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;"><a href="{$i.pilotURL}">{$i.pilotName}</a></td>
