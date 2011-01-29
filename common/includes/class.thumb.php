@@ -40,13 +40,22 @@ class thumb
 		{
 			if (!$this->genCache())
 			{
+				if(file_exists('img/portrait_0_'.$this->size.'.jpg'))
+				{
+					header("Content-Type: image/jpeg");
+					readfile('img/portrait_0_'.$this->size.'.jpg');
+				}
+				else
+				{
+					echo "The image could not be displayed.";
+				}
 				return false;
 			}
 		}
 
 		if (headers_sent() || ob_get_contents())
 		{
-			echo 'An error occured.<br/>';
+			echo 'An error occurred.<br/>';
 			return false;
 		}
 		if ($this->encoding == 'jpeg')
@@ -109,8 +118,8 @@ class thumb
 				$this->thumbDir = 'img';
 				break;
 		}
-				$this->thumb = CacheHandler::getInternal($this->thumbName, $this->thumbDir);
-				return CacheHandler::exists($this->thumbName, $this->thumbDir);
+		$this->thumb = CacheHandler::getInternal($this->thumbName, $this->thumbDir);
+		return CacheHandler::exists($this->thumbName, $this->thumbDir);
 	}
 
 	function genCache()
@@ -137,7 +146,7 @@ class thumb
 	{
 		if (CacheHandler::exists($this->id.'_256.jpg', $this->thumbDir))
 		{
-			$img = imagecreatefromjpeg(CacheHandler::getInternal($this->id.'_256.jpg', 'img'));
+			$img = imagecreatefromjpeg(CacheHandler::getInternal($this->id.'_256.jpg', $this->thumbDir));
 		}
 		else
 		{
@@ -152,31 +161,15 @@ class thumb
 					$this->id = 0;
 					$this->thumbName = 'portrait_0_'.$this->size.'.jpg';
 					$this->thumbDir = 'img';
-					$this->thumb = CacheHandler::getInternal('portrait_0_'.$this->size.'.jpg', 'img/pilots');
+					$this->thumb = CacheHandler::getInternal('portrait_0_'.$this->size.'.jpg', $this->thumbDir);
 					return true;
 				}
 			}
 			// Assume external id < 100,000 is NPC structure/ship
-			if($this->id < 100000)
-			{
-				if(file_exists("img/ships/64_64/".$this->id.".png"))
-				{
-					$img = imagecreatefrompng("img/ships/64_64/".$this->id.".png");
-				}
-				else
-				{
-					// there is no such image so set it to 0
-					$this->id = 0;
-					$this->thumbName = 'portrait_0_'.$this->size.'.jpg';
-					$this->thumbDir = 'img';
-					$this->thumb = CacheHandler::getInternal('portrait_0_'.$this->size.'.jpg', 'img/pilots');
-					return true;
-				}
-			}
+			if($this->id < 100000 && file_exists("img/ships/64_64/".$this->id.".png"))
+				$img = imagecreatefrompng("img/ships/64_64/".$this->id.".png");
 			else
-			{
 				$img = $this->fetchImage('pilot', 256);
-			}
 		}
 
 		if ($img)
@@ -201,53 +194,19 @@ class thumb
 	function genCorp()
 	{
 		$source = 'img/corps/'.$this->id.'.png';
-		// id is not a number and the matching npc corp image does not exist.
-//		if (!file_exists($source) && !is_numeric($this->id))
-//		{
-//			$this->id = 0;
-//			$this->thumbName = '0_'.$this->size.'.png';
-//			$this->thumbDir = 'img';
-//			$this->thumb = CacheHandler::getInternal($this->thumbName, $this->thumbDir);
-//		}
 		// id matches an npc image.
 		if(file_exists($source)) $img = imagecreatefrompng($source);
 		// no matching image found so let's try the cache.
-		else if(CacheHandler::exists($this->id.'_128.png', 'img'))
+		else if(CacheHandler::exists($this->id.'_128.png', $this->thumbDir))
 		{
-			$img = imagecreatefrompng(CacheHandler::getInternal($this->id.'_128.png', 'img'));
+			$img = imagecreatefrompng(CacheHandler::getInternal($this->id.'_128.png', $this->thumbDir));
 		}
 		// no image found in the image folder, or the cache, so let's make it.
 		else
 		{
 			$img = $this->fetchImage('Corporation', 128);
-			if($this->size == 128) return true;
+			if($this->size == 128 && $img) return true;
 		}
-//		{
-//
-//			$myAPI = new API_CorporationSheet();
-//			$myAPI->setCorpID($this->id);
-//
-//			$result .= $myAPI->fetchXML();
-//
-//			$mylogo = $myAPI->getLogo();
-//
-//			if ($result == "Corporation is not part of alliance.")
-//			{
-//				$this->thumbName = '0_'.$this->size.'.png';
-//				$this->thumbDir = 'img';
-//				$this->thumb = CacheHandler::getInternal($this->thumbName, $this->thumbDir);
-//			}
-//			elseif ($result == "")
-//			{
-//				require_once("common/includes/evelogo.php");
-//				// create two sized logo's in 2 places - this allows checks already in place not to keep requesting corp logos each time page is viewed
-//				// class.thumb.php cannot work with png (although saved as jpg these are actually pngs) therefore we have to create the 128 size for it
-//				// doing this prevents the images being rendered each time the function is called and allows it to use one in the cache instead.
-//				CorporationLogo( $mylogo, 128, $this->id );
-//				CorporationLogo( $mylogo, $this->size, $this->id );
-//			}
-//			return true;
-//		}
 		if ($img)
 		{
 			$newimg = imagecreatetruecolor($this->size, $this->size);
@@ -255,9 +214,11 @@ class thumb
 			$oldy = imagesy($img);
 			imagecopyresampled($newimg, $img, 0, 0, 0, 0, $this->size, $this->size, $oldx, $oldy);
 
-			$this->thumb = CacheHandler::getInternal($this->id.'_'.$this->size.'.png', 'img');
+			$this->thumb = CacheHandler::getInternal($this->id.'_'.$this->size.'.png', $this->thumbDir);
 			imagepng($newimg, $this->thumb);
 		}
+		else return false;
+
 		return true;
 	}
 
@@ -273,10 +234,10 @@ class thumb
 		else if (is_numeric($this->id))
 		{
 			$img = $this->fetchImage("Alliance", 128);
-			if($this->size == 128) return true;
-			//else $source = CacheHandler::getInternal($this->id.'_256.png', 'img');
+			if($this->size == 128 && $img) return true;
 		}
 		else $img = imagecreatefrompng($source);
+
 		if ($img)
 		{
 			$newimg = imagecreatetruecolor($this->size, $this->size);
@@ -300,7 +261,7 @@ class thumb
 		{
 			$this->id = 0;
 			$source = 'img/corps/0.png';
-			$this->thumb = CacheHandler::getInternal($this->id.'_'.$this->size.'.png','img');
+			$this->thumb = CacheHandler::getInternal($this->id.'_'.$this->size.'.png', $this->thumbDir);
 		}
 		$img = imagecreatefrompng($source);
 		if ($img)
@@ -314,14 +275,10 @@ class thumb
 			imagecopyresampled($newimg, $img, 0, 0, 0, 0, $this->size, $this->size, $oldx, $oldy);
 
 			// Check the cache directories have been created.
-			CacheHandler::getInternal($this->id.'_'.$this->size.'.png', 'img');
+			CacheHandler::getInternal($this->id.'_'.$this->size.'.png', $this->thumbDir);
 			return imagepng($newimg, $this->thumb);
 		}
 		return false;
-	}
-	function fetchPilotImage()
-	{
-		return $this->fetchImage('Character', 256);
 	}
 	function fetchImage($type = 'Character', $size = 128)
 	{
@@ -334,7 +291,6 @@ class thumb
 
 		if($type != 'Character' & $type != 'Corporation' && $type != 'Alliance') return false;
 		$url = "http://image.eveonline.com/".$type."/".$this->id."_".$size.".".$ext;
-		//$url = 'http://img.eve.is/serv.asp?s=256&c='.$this->id;
 		if (function_exists('curl_init'))
 		{
 			// in case of a dead eve server we only want to wait 2 seconds
@@ -343,26 +299,62 @@ class thumb
 			curl_setopt($ch, CURLOPT_URL, $url);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, 2);
+			// CURLOPT_FOLLOWLOCATION doesn't work if safe mode or open_basedir is set
+
+			// For pilots we should try from oldportraits.eveonline.com if the main server doesn't have them.
+			//if($type != 'Character') curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+			//curl_setopt($ch, CURLOPT_HEADER, true);
 			$file = curl_exec($ch);
+			//list($header, $file) = explode("\n\n", $file, 2);
+			$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+			if($http_code != 200)
+			{
+				if($type == 'Character')
+				{
+					$url = "http://oldportraits.eveonline.com/".$type."/".$this->id."_".$size.".".$ext;
+					curl_setopt($ch, CURLOPT_URL, $url);
+					curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+					$file = curl_exec($ch);
+					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					if($http_code != 200)
+						$file = file_get_contents("img/1_$size.jpg");
+				}
+				else if($type == 'Alliance')
+					$file = file_get_contents("img/alliances/default.png");
+				else
+					$file = file_get_contents("img/corps/default.png");
+			}
 			curl_close($ch);
 		}
 		else
 		{
 			// in case of a dead eve server we only want to wait 2 seconds
 			@ini_set('default_socket_timeout', 2);
-			$file = @file_get_contents($url);
-			if($file === false)
+			// try alternative access via fsockopen
+			// happens if allow_url_fopen wrapper is false
+			$http = new http_request($url);
+			$file = $http->get_content();
+			$http_code = $http->get_http_code();
+			if($http_code != 200)
 			{
-				// try alternative access via fsockopen
-				// happens if allow_url_fopen wrapper is false
-				require_once('class.http.php');
-
-				$http = new http_request($url);
-				$file = $http->get_content();
+				if($type == 'Character')
+				{
+					$url = "http://oldportraits.eveonline.com/".$type."/".$this->id."_".$size.".".$ext;
+					$http = new http_request($url);
+					$file = $http->get_content();
+					$http_code = $http->get_http_code();
+					if($http_code != 200)
+						$file = file_get_contents("img/1_$size.jpg");
+				}
+				else if($type == 'Alliance')
+					$file = file_get_contents("img/alliances/default.png");
+				else
+					$file = file_get_contents("img/corps/default.png");
 			}
 		}
 		if ($img = @imagecreatefromstring($file))
-			CacheHandler::put($this->id.'_'.$size.'.'.$ext, $file, 'img');
+			CacheHandler::put($this->id.'_'.$size.'.'.$ext, $file, $this->thumbDir);
 		return $img;
 	}
 	function getThumb()

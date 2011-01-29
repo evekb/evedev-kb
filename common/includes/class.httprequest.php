@@ -67,6 +67,13 @@ class http_request
         return $this->recv;
     }
 
+	function get_http_code()
+	{
+		if(!$this->header) return false;
+		$result = explode(" ", $this->header, 3);
+		return $result[1];
+	}
+
     function connect()
     {
         if ($this->fp)
