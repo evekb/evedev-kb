@@ -341,7 +341,7 @@ class Fetcher
 					else
 					{
 						if(strpos($this->uurl, '?')) $logurl = substr($this->uurl,0,strpos($this->uurl, '?')).'?a=kill_detail&kll_id='.intval($this->title);
-						else $logurl = uurl.'?a=kill_detail&kll_id='.intval($this->title);
+						else $logurl = $this->uurl.'?a=kill_detail&kll_id='.intval($this->title);
 						logger::logKill($killid, $logurl);
 
 						$this->html .= "Killmail ".intval($this->title)." successfully posted <a href=\"?a=kill_detail&kll_id=".$killid."\">here</a>.<br />";
