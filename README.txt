@@ -1,8 +1,17 @@
 -------------------------------------------
-Eve Development Network Killboard v3.1.6
+Eve Development Network Killboard v3.1.7
 -------------------------------------------
 
 VERSION HISTORY
+v3.1.7
+Handles CCP's new default image system
+Incursion 1.1 DB
+Campaign end dates are respected
+Cronjob feed fetches update last kill on first run
+Fixed hyphenated name display
+Structure names handled consistently
+Improved alliance clustering in related kills
+-------------------------------------------
 v3.1.6
 Incursion updates
 - Name
