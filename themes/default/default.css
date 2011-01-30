@@ -292,8 +292,13 @@ td.battleship
 td.kb-table-cell
 {
   padding: 2px;
-  padding-left: 3px;
-  padding-right: 3px;
+}
+
+td.kb-table-imgcell
+{
+  padding: 0px;
+  width: 32px;
+  vertical-align: top;
 }
 
 .kb-date-header
