@@ -18,11 +18,13 @@ define('KB_PAGECACHEDIR', KB_CACHEDIR.'/page');
 define('KB_MAILCACHEDIR', KB_CACHEDIR.'/mails');
 define('KB_QUERYCACHEDIR', KB_CACHEDIR.'/SQL');
 define('KB_UPDATE_URL', 'http://evedev-kb.googlecode.com/files');
+define('API_SERVER', "api.eveonline.com");
+define('IMG_SERVER', "image.eveonline.com");
 define ("APIVERSION", "V3.3");
 
 // current version: major.minor.sub
 // even numbers for minor = development version
-define('KB_VERSION', '3.2.0 Alpha');
+define('KB_VERSION', '3.2.0 Beta');
 define('KB_RELEASE', '(Incursion)');
 
 // Make sure the core functions are loaded.

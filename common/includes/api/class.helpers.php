@@ -39,48 +39,24 @@ class API_Helpers
 
 		if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($CachedTime) > 0) || ($UseCaching == 1)  || !$cacheexists )// if API_UseCache = 1 (off) then don't use cache
 		{
-			$fp = @fsockopen("api.eve-online.com", 80);
+			$url = "http://".API_SERVER.$path;
 
-			if (!$fp)
+			$http = new http_request($url);
+			$http->set_useragent("PHPApi EDK".KB_VERSION);
+
+			$contents = $http->get_content();
+
+			// Save the file if we're caching (0 = true in Thunks world)
+			if ( $UseCaching == 0 )
 			{
-				echo "Error", "Could not connect to API URL<br>";
-			} else {
-				// request the xml
-				fputs ($fp, "POST " . $path . " HTTP/1.0\r\n");
-				fputs ($fp, "Host: api.eve-online.com\r\n");
-				fputs ($fp, "Content-Type: application/x-www-form-urlencoded\r\n");
-				fputs ($fp, "User-Agent: PHPApi\r\n");
-				fputs ($fp, "Content-Length: 0\r\n");
-				fputs ($fp, "Connection: close\r\n\r\n");
-				fputs ($fp, "\r\n");
-				stream_set_timeout($fp, 10);
-
-				 // retrieve contents
-				$contents = "";
-				 while (!feof($fp))
-				{
-					$contents .= fgets($fp);
-				}
-
-				// close connection
-				fclose($fp);
-
-				$start = strpos($contents, "?>");
-				if ($start != false)
-				{
-					$contents = substr($contents, $start + strlen("\r\n\r\n"));
-				}
-
-				// Save the file if we're caching (0 = true in Thunks world)
-				if ( $UseCaching == 0 )
-				{
-					$file = fopen(KB_CACHEDIR.'/api/'.$configvalue.'.xml', 'w+');
-					fwrite($file, $contents);
-					fclose($file);
-					@chmod(KB_CACHEDIR.'/api/'.$configvalue.'.xml',0666);
-				}
+				$file = fopen(KB_CACHEDIR.'/api/'.$configvalue.'.xml', 'w+');
+				fwrite($file, $contents);
+				fclose($file);
+				@chmod(KB_CACHEDIR.'/api/'.$configvalue.'.xml',0666);
 			}
-		} else {
+		}
+		else
+		{
 			// re-use cached XML
 			if ($fp = @fopen(KB_CACHEDIR.'/api/'.$configvalue.'.xml', 'r')) {
 				$contents = fread($fp, filesize(KB_CACHEDIR.'/api/'.$configvalue.'.xml'));

@@ -35,7 +35,7 @@ class API_RefTypes
         xml_set_character_data_handler ( $xml_parser, 'characterData' );
 
         if (!xml_parse($xml_parser, $data, true))
-            return "<i>Error getting XML data from api.eve-online.com/eve/RefTypes.xml.aspx  </i><br><br>";
+            return "<i>Error getting XML data from ".API_SERVER."/eve/RefTypes.xml.aspx  </i><br><br>";
 
         xml_parser_free($xml_parser);
 

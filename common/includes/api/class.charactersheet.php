@@ -140,7 +140,7 @@ class API_CharacterSheet
         xml_set_character_data_handler ( $xml_parser, 'characterData' );
 
         if (!xml_parse($xml_parser, $data, true))
-            return "<i>Error getting XML data from api.eve-online.com/CharacterSheet.xml.aspx  </i><br><br>";
+            return "<i>Error getting XML data from ".API_SERVER."/CharacterSheet.xml.aspx  </i><br><br>";
 
         xml_parser_free($xml_parser);
 
@@ -287,7 +287,7 @@ class API_CharacterSheet
 		$CachedTime = ApiCache::get($configvalue);
 		$UseCaching = config::get('API_UseCache');
 
-        $url = "http://api.eve-online.com/char/CharacterSheet.xml.aspx" . $keystring;
+        $url = "http://".API_SERVER."/char/CharacterSheet.xml.aspx" . $keystring;
 
         $path = '/char/CharacterSheet.xml.aspx';
 
@@ -305,7 +305,7 @@ class API_CharacterSheet
 		// if API_UseCache = 1 (off) then don't use cache
 		if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($CachedTime) > 0) || ($UseCaching == 1)  || !$cacheexists )
     	{
-        	$fp = @fsockopen("api.eve-online.com", 80);
+        	$fp = @fsockopen("api.eveonline.com", 80);
 
         	if (!$fp)
         	{
@@ -313,7 +313,7 @@ class API_CharacterSheet
         	} else {
            	 	// request the xml
             	fputs ($fp, "POST " . $path . " HTTP/1.0\r\n");
-            	fputs ($fp, "Host: api.eve-online.com\r\n");
+            	fputs ($fp, "Host: ".API_SERVER."\r\n");
             	fputs ($fp, "Content-Type: application/x-www-form-urlencoded\r\n");
             	fputs ($fp, "User-Agent: PHPApi\r\n");
             	fputs ($fp, "Content-Length: " . strlen($keystring) . "\r\n");

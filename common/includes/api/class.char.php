@@ -46,7 +46,7 @@ class API_Char
 
 	private function loaddata($userID, $APIKey)
 	{
-        $url = "http://api.eve-online.com/account/Characters.xml.aspx";
+        $url = "http://".API_SERVER."/account/Characters.xml.aspx";
 
 		$http = new http_request($url, "POST");
 		$http->set_useragent("PHPApi");

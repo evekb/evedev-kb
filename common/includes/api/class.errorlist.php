@@ -30,68 +30,21 @@ class API_ErrorList
     {
         $data = API_Helpers::LoadGlobalData('/eve/ErrorList.xml.aspx');
 
-        $xml_parser = xml_parser_create();
-        xml_set_object ( $xml_parser, $this );
-        xml_set_element_handler($xml_parser, "startElement", "endElement");
-        xml_set_character_data_handler ( $xml_parser, 'characterData' );
+		if(!$data) return "Error fetching IDs";
 
-        if (!xml_parse($xml_parser, $data, true))
-            return "<i>Error getting XML data from api.eve-online.com/eve/ErrorList.xml.aspx </i><br><br>";
+		$sxe = @simplexml_load_string($data);
 
-        xml_parser_free($xml_parser);
-
-        return $this->html;
-    }
-
-    function startElement($parser, $name, $attribs)
-    {
-		global $ErrorData;
-
-        if ($name == "ROW")
-        {
-            if (count($attribs))
-            {
-                foreach ($attribs as $k => $v)
-                {
-                    switch ($k)
-                    {
-                        case "ERRORCODE":
-                            $ErrorData['errorCode'] = $v;
-                            break;
-                        case "ERRORTEXT":
-                            $ErrorData['errorText'] = $v;
-                            break;
-                    }
-                }
-            }
-        }
-    }
-
-    function endElement($parser, $name)
-    {
-		global $ErrorData;
-		global $tempvalue;
-
-		if ($name == "CURRENTTIME")
-			$this->CurrentTime_ = $tempvalue;
-		if ($name == "CACHEDUNTIL")
+		if(!$sxe || strval($sxe->error)) return strval("Error code ".$sxe->error['code'].": ".$sxe->error);
+		foreach($sxe->result->rowset->row as $a)
 		{
-			$this->CachedUntil_ = $tempvalue;
-			ApiCache::set('API_eve_ErrorList' , $tempvalue);
+			$error['errorCode'] = strval($a['errorCode']);
+			$error['errorText'] = strval($a['errorText']);
+			$this->Error_[] = $error;
 		}
 
-        if ($name == "ROW")
-		{
-			$this->Error_[] = $ErrorData;
-			$ErrorData = array();
-			unset($ErrorData);
-		}
-    }
+		$this->CurrentTime_ = strval($sxe->currentTime);
+		$this->CachedUntil_ = strval($sxe->cachedUntil);
 
-    function characterData($parser, $data)
-    {
-        global $tempvalue;
-
-		$tempvalue = $data;
+		return "";
     }
 }

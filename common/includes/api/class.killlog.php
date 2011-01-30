@@ -120,10 +120,10 @@ class API_KillLog
         xml_set_character_data_handler ( $xml_parser, 'characterData' );
 
         if (!xml_parse($xml_parser, $data, true))
-            return $this->Output_ .= "<i>Error getting XML data from api.eve-online.com</i><br><br>";
+            return $this->Output_ .= "<i>Error getting XML data from ".API_SERVER."</i><br><br>";
 
         if ( strlen($data) == 28 )
-            return $this->Output_ .= "<i>Error contacting api.eve-online.com</i><br><br>";
+            return $this->Output_ .= "<i>Error contacting ".API_SERVER."</i><br><br>";
 
         xml_parser_free($xml_parser);
 
@@ -500,7 +500,7 @@ class API_KillLog
                 break;
             case "MYXML":
                 // end of data xml, process cachedtime here
-                //$ApiCache->set('API_CachedUntil_' . $this->keyindex_, $this->cachetext_);
+                //$ApiCache->set('API_CachedUntil' . $this->keyindex_, $this->cachetext_);
                 break;
 			case "ERROR": //  Error Message
 				if ($this->errortext_ == "")
@@ -856,13 +856,13 @@ class API_KillLog
 
     function loaddata($refid, $keystring, $typestring)
     {
-        $url = "http://api.eve-online.com/" . $typestring . "/KillLog.xml.aspx";
+        $url = "http://".API_SERVER."/" . $typestring . "/KillLog.xml.aspx";
 
         if ($refid != 0)
             $keystring .= '&beforeKillID=' . $refid;
 
         $path = '/' . $typestring . '/Killlog.xml.aspx';
-        $fp = @fsockopen("api.eve-online.com", 80);
+        $fp = @fsockopen(API_SERVER, 80);
 
         if (!$fp)
         {
@@ -870,7 +870,7 @@ class API_KillLog
         } else {
             // request the xml
             fputs ($fp, "POST " . $path . " HTTP/1.0\r\n");
-            fputs ($fp, "Host: api.eve-online.com\r\n");
+            fputs ($fp, "Host: ".API_SERVER."\r\n");
             fputs ($fp, "Content-Type: application/x-www-form-urlencoded\r\n");
             fputs ($fp, "User-Agent: PHPApi\r\n");
             fputs ($fp, "Content-Length: " . strlen($keystring) . "\r\n");

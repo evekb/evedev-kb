@@ -290,7 +290,7 @@ class thumb
 		else $ext = 'png';
 
 		if($type != 'Character' & $type != 'Corporation' && $type != 'Alliance') return false;
-		$url = "http://image.eveonline.com/".$type."/".$this->id."_".$size.".".$ext;
+		$url = "http://".IMG_SERVER."/".$type."/".$this->id."_".$size.".".$ext;
 		if (function_exists('curl_init'))
 		{
 			// in case of a dead eve server we only want to wait 2 seconds

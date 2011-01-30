@@ -20,41 +20,41 @@ class API_ServerStatus
       return $this->CurrentTime_;
    }
 
-   function getserverOpen()
-   {
-      return $this->serverOpen_;
-   }
+	function getserverOpen()
+	{
+		return $this->serverOpen_;
+	}
 
-   function getonlinePlayers()
-   {
-      return $this->onlinePlayers_;
-   }
+	function getonlinePlayers()
+	{
+		return $this->onlinePlayers_;
+	}
 
-    function fetchXML()
-    {
+	function fetchXML()
+	{
         $data = API_Helpers::LoadGlobalData('/server/ServerStatus.xml.aspx');
 
-        $xml_parser = xml_parser_create();
+		$xml_parser = xml_parser_create();
         xml_set_object ( $xml_parser, $this );
-        xml_set_element_handler($xml_parser, "startElement", "endElement");
+		xml_set_element_handler($xml_parser, "startElement", "endElement");
         xml_set_character_data_handler ( $xml_parser, 'characterData' );
 
-        if (!xml_parse($xml_parser, $data, true))
-            return "<i>Error getting XML data from api.eve-online.com/server/ServerStatus.xml.aspx</i><br><br>";
+		if (!xml_parse($xml_parser, $data, true))
+				return "<i>Error getting XML data from " . API_SERVER . "/server/ServerStatus.xml.aspx</i><br><br>";
 
-        xml_parser_free($xml_parser);
+		xml_parser_free($xml_parser);
 
-        return $this->html;
-    }
+		return $this->html;
+	}
 
 	function startElement($parser, $name, $attribs)
-    {
-    // nothing to do here...
-    }
+	{
+		// nothing to do here...
+	}
 
-    function endElement($parser, $name)
-    {
-      global $tempvalue;
+	function endElement($parser, $name)
+	{
+		global $tempvalue;
 
       if ($name == "CURRENTTIME")
          $this->CurrentTime_ = $tempvalue;
@@ -63,16 +63,16 @@ class API_ServerStatus
       if ($name == "ONLINEPLAYERS")
          $this->onlinePlayers_ = $tempvalue;
       if ($name == "CACHEDUNTIL")
-      {
-         $this->CachedUntil_ = $tempvalue;
+		{
+			$this->CachedUntil_ = $tempvalue;
 		 ApiCache::set( 'API_server_ServerStatus' , $tempvalue);
-      }
-    }
+		}
+	}
 
 	function characterData($parser, $data)
-    {
-      global $tempvalue;
+	{
+		global $tempvalue;
 
-      $tempvalue = $data;
-    }
+		$tempvalue = $data;
+	}
 }
