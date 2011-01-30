@@ -96,9 +96,13 @@ class Pilot
 		$pos = strpos($this->name_, "#");
 		if ($pos === false)
 		{
+			// Hacky, hacky, hack hack
+			// TODO: Fix this and change old kills to suit.
 			$pos = strpos($this->name_, "- ");
 			if ($pos === false) return $this->name_;
-			else return substr($this->name_, $pos + 2);
+			else if(strpos($this->name_, "Moon")==false)
+				return substr($this->name_, $pos + 2);
+			else return $this->name_;
 		}
 		else
 		{
