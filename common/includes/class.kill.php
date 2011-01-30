@@ -1330,19 +1330,17 @@ class Kill
 			$qry->autocommit(true);
 			return false;
 		}
-		if($this->hash != false)
+
+		$sql = "INSERT INTO kb3_mails (  `kll_id`, `kll_timestamp`, `kll_external_id`, `kll_hash`, `kll_trust`, `kll_modified_time`)".
+			"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ";
+		if($this->externalid_) $sql .= $this->externalid_.", ";
+		else $sql .= "NULL, ";
+			$sql .= "'".$qry->escape($this->getHash(false, false))."', 0, UTC_TIMESTAMP())";
+		if(!$qry->execute($sql))
 		{
-			$sql = "INSERT INTO kb3_mails (  `kll_id`, `kll_timestamp`, `kll_external_id`, `kll_hash`, `kll_trust`, `kll_modified_time`)".
-				"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ";
-			if($this->externalid_) $sql .= $this->externalid_.", ";
-			else $sql .= "NULL, ";
-			$sql .= "'".$qry->escape($this->getHash())."', 0, UTC_TIMESTAMP())";
-			if(!$qry->execute($sql))
-			{
-				$qry->rollback();
-				$qry->autocommit(true);
-				return false;
-			}
+			$qry->rollback();
+			$qry->autocommit(true);
+			return false;
 		}
 
 		//Update cache tables.
@@ -1411,7 +1409,7 @@ class Kill
 	{
 		$this->hash = $hash;
 	}
-	function getHash($hex = false)
+	function getHash($hex = false, $update = true)
 	{
 		if($this->hash !== false)
 		{
@@ -1431,24 +1429,26 @@ class Kill
 		{
 			$this->hash = Parser::hashMail($this->getRawMail());
 			if($this->hash === false) return false;
-
-			if($this->id_ && $this->externalid_)
+			if($update)
 			{
-				$sql = "INSERT INTO kb3_mails (  `kll_id`, `kll_timestamp`, ".
-					"`kll_external_id`, `kll_hash`, `kll_trust`, `kll_modified_time`)".
-					"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ".
-					$this->externalid_.", '".$qry->escape($this->hash)."', ".
-					$this->trust.", UTC_TIMESTAMP())";
+				if($this->id_ && $this->externalid_)
+				{
+					$sql = "INSERT IGNORE INTO kb3_mails (  `kll_id`, `kll_timestamp`, ".
+						"`kll_external_id`, `kll_hash`, `kll_trust`, `kll_modified_time`)".
+						"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ".
+						$this->externalid_.", '".$qry->escape($this->hash)."', ".
+						$this->trust.", UTC_TIMESTAMP())";
+				}
+				else if($this->id_)
+				{
+					$sql = "INSERT IGNORE INTO kb3_mails (  `kll_id`, `kll_timestamp`, ".
+						"`kll_hash`, `kll_trust`, `kll_modified_time`)".
+						"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ".
+						"'".$qry->escape($this->hash)."', ".
+						$this->trust.", UTC_TIMESTAMP())";
+				}
+				$qry->execute($sql);
 			}
-			else if($this->id_)
-			{
-				$sql = "INSERT INTO kb3_mails (  `kll_id`, `kll_timestamp`, ".
-					"`kll_hash`, `kll_trust`, `kll_modified_time`)".
-					"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ".
-					"'".$qry->escape($this->hash)."', ".
-					$this->trust.", UTC_TIMESTAMP())";
-			}
-			$qry->execute($sql);
 		}
 		if($hex) return bin2hex($this->hash);
 		else return $this->hash;
