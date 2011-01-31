@@ -953,6 +953,10 @@ class pKillDetail extends pageAssembly
 		$smarty->assignByRef('fitting_ammo_mid', $midammo);
 		$smarty->assign('showammo', config::get('fp_showammo'));
 
+		if(file_exists("img/ships/256_256/".$this->kill->getVictimShip()->getExternalID().".png"))
+			$smarty->assign('victimShipBigImage', $this->kill->getVictimShip()->getImage(256));
+		else $smarty->assign('noBigImage', true);
+
 		if(config::get('kd_verify'))
 		{
 			$this->verification = false;
