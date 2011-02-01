@@ -73,6 +73,7 @@ class API_Helpers
 	// **********************************************************************************************************************************************
 	public static function gettypeIDname($id, $update = false)
 	{
+		$id = intval($id);
 		$sql = 'select inv.typeName from kb3_invtypes inv where inv.typeID = ' . $id;
 
 		$qry = DBFactory::getDBQuery();
@@ -93,7 +94,7 @@ class API_Helpers
 				$data = $info->getIDData();
 				if($update && $data[0]['characterID'] > 0 && $data[0]['name'])
 				{
-					$sql = "INSERT INTO kb3_invtypes (typeID, typeName, description) values(".$qry->escape($id).", ".$qry->escape($data[0]['name']).", '')";
+					$sql = "INSERT INTO kb3_invtypes (typeID, typeName, description) values($id, '".$qry->escape($data[0]['name'])."', '')";
 					$qry->execute($sql);
 				}
 				return $data[0]['name'];
