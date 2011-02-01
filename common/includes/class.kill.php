@@ -370,18 +370,20 @@ class Kill
 		$shipclass = $ship->getClass();
 
 		$mail .= substr(str_replace('-', '.' , $this->getTimeStamp()), 0, 16)."\r\n\r\n";
-		if ( $shipclass->getID() == 35 ) // Starbase (so this is a POS mail)
+		if ( in_array($shipclass->getID(), array(35, 36, 37, 38)) ) // Starbase (so this is a POS mail)
 		{
 			$mail .= "Corp: ".$this->getVictimCorpName()."\r\n";
-			if($this->getIsVictimFaction()) $mail .= "Alliance: NONE\r\n";
+			if($this->getIsVictimFaction()) $mail .= "Alliance: None\r\n";
 			else $mail .= "Alliance: ".$this->getVictimAllianceName()."\r\n";
 			$mail .= "Faction: ".$this->getVictimFactionName()."\r\n";
 			//$ship = $this->getVictimShip();
 			$mail .= "Destroyed: ".$ship->getName()."\r\n";
-			$mail .= "Moon: ".$this->getVictimName()."\r\n";
-			$system = $this->getSystem();
-			$mail .= "System: ".$system->getName()."\r\n";
-			$mail .= "Security: ".$system->getSecurity(true)."\r\n";
+			if($this->getVictimName() == $this->getSystem()->getName())
+				$mail .= "Moon: Unknown\r\n";
+			else
+				$mail .= "Moon: ".$this->getVictimName()."\r\n";
+			$mail .= "System: ".$this->getSystem()->getName()."\r\n";
+			$mail .= "Security: ".$this->getSystem()->getSecurity(true)."\r\n";
 			$mail .= "Damage Taken: ".$this->dmgtaken."\r\n\r\n";
 			$mail .= "Involved parties:\r\n\r\n";
 		}
@@ -389,7 +391,7 @@ class Kill
 		{
 			$mail .= "Victim: ".$this->getVictimName()."\r\n";
 			$mail .= "Corp: ".$this->getVictimCorpName()."\r\n";
-			if($this->getIsVictimFaction()) $mail .= "Alliance: NONE\r\n";
+			if($this->getIsVictimFaction()) $mail .= "Alliance: None\r\n";
 			else $mail .= "Alliance: ".$this->getVictimAllianceName()."\r\n";
 			$mail .= "Faction: ".$this->getVictimFactionName()."\r\n";
 			//$ship = $this->getVictimShip();
@@ -431,13 +433,13 @@ class Kill
 				$mail .= "Corp: ".$corp->getName()."\r\n";
 				if ($alliance->isFaction())
 				{
-					$mail .= "Alliance: NONE\r\n";
+					$mail .= "Alliance: None\r\n";
 					$mail .= "Faction: ".$alliance->getName()."\r\n";
 				}
 				else
 				{
 					$mail .= "Alliance: ".$alliance->getName()."\r\n";
-					$mail .= "Faction: NONE\r\n";
+					$mail .= "Faction: None\r\n";
 				}
 				$mail .= "Ship: ".$ship->getName()."\r\n";
 				$mail .= "Weapon: ".$weapon->getName()."\r\n";
