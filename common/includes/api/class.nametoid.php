@@ -58,7 +58,7 @@ class API_NametoID
 
 	private function loaddata($names)
     {
-        $url = "http://".API_SERVER."/eve/CharacterID.xml.aspx?names=".urlencode($names);
+        $url = "https://".API_SERVER."/eve/CharacterID.xml.aspx?names=".urlencode($names);
 
 		$http = new http_request($url);
 		$http->set_useragent("PHPApi");

@@ -385,11 +385,11 @@ class API_KillLog
 						$alliance->add($this->alliance_, $this->allianceID_);
 					else $alliance->add("None");
 
-					$corporation = new Corporation();
-					$corporation->add($this->corporation_, $alliance, $this->killtime_, $this->corporationID_);
-
-					$pilot = new Pilot();
-					$pilot->add($this->pname_, $corporation, $this->killtime_, $this->charid_);
+//					$corporation = new Corporation();
+//					$corporation->add($this->corporation_, $alliance, $this->killtime_, $this->corporationID_);
+//
+//					$pilot = new Pilot();
+//					$pilot->add($this->pname_, $corporation, $this->killtime_, $this->charid_);
                 }
 
                 // set victim corp and alliance for FF check
@@ -465,12 +465,12 @@ class API_KillLog
 						if ($this->allianceID_ != 0)
 							$alliance->add($this->alliance_, $this->allianceID_);
 						else $alliance->add("None");
-
-						$corporation = new Corporation();
-						$corporation->add($this->corporation_, $alliance, $this->killtime_, $this->corporationID_);
-
-						$pilot = new Pilot();
-						$pilot->add($this->pname_, $corporation, $this->killtime_, $this->charid_);
+// We don't know the time yet? Weird, yet somehow true.
+//						$corporation = new Corporation();
+//						$corporation->add($this->corporation_, $alliance, $this->killtime_, $this->corporationID_);
+//
+//						$pilot = new Pilot();
+//						$pilot->add($this->pname_, $corporation, $this->killtime_, $this->charid_);
                     }
 
                     $this->pname_ = "";
@@ -856,7 +856,7 @@ class API_KillLog
 
     function loaddata($refid, $keystring, $typestring)
     {
-        $url = "http://".API_SERVER."/" . $typestring . "/KillLog.xml.aspx";
+        $url = "https://".API_SERVER."/" . $typestring . "/KillLog.xml.aspx";
 
         if ($refid != 0)
             $keystring .= '&beforeKillID=' . $refid;

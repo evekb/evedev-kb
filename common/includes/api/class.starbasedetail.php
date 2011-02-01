@@ -297,7 +297,7 @@ class API_StarbaseDetail
 		$CachedTime = ApiCache::get($configvalue);
 		$UseCaching = config::get('API_UseCache');
 
-        $url = "http://".API_SERVER."/corp/StarbaseDetail.xml.aspx" . $keystring;
+        $url = "https://".API_SERVER."/corp/StarbaseDetail.xml.aspx" . $keystring;
 
         $path = '/corp/StarbaseDetail.xml.aspx';
 

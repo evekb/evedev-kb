@@ -60,7 +60,7 @@ class API_CharacterInfo
 
 	private function loaddata($id)
     {
-        $url = "http://".API_SERVER."/eve/CharacterInfo.xml.aspx?characterID=" . urlencode($id);
+        $url = "https://".API_SERVER."/eve/CharacterInfo.xml.aspx?characterID=" . urlencode($id);
 
 		$http = new http_request($url);
 		$http->set_useragent("PHPApi");

@@ -207,7 +207,7 @@ class API_SkillInTraining
 		$CachedTime = ApiCache::get($configvalue);
 		$UseCaching = config::get('API_UseCache');
 
-        $url = "http://".API_SERVER."/char/SkillInTraining.xml.aspx" . $keystring;
+        $url = "https://".API_SERVER."/char/SkillInTraining.xml.aspx" . $keystring;
 
         $path = '/char/SkillInTraining.xml.aspx';
 
