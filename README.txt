@@ -1,8 +1,11 @@
 -------------------------------------------
-Eve Development Network Killboard v3.1.7
+Eve Development Network Killboard v3.1.8
 -------------------------------------------
 
 VERSION HISTORY
+v3.1.8
+Refixed hyphenated name display
+-------------------------------------------
 v3.1.7
 Handles CCP's new default image system
 Incursion 1.1 DB
