@@ -14,6 +14,9 @@
  * 0.90 almost final - kills are returned in descending order which confuses
  * 'last kill returned' responses.
  * 0.91 final release version for 3.0 boards.
+ *
+ * 1.0.4 Involved party structures keep their name
+ *		Kills are logged with source board's id.
  */
 class IDFeed
 {
@@ -28,7 +31,7 @@ class IDFeed
 	private $time = '';
 	private $cachedTime = '';
 	private $errormsg = '';
-	const version = "1.03";
+	const version = "1.04";
 
 	//! Construct the Fetcher class and initialise variables.
 
@@ -272,7 +275,7 @@ class IDFeed
 
 			$kill = new Kill();
 			if(intval($row['trust']) >= $this->trust && intval($row['killID'])) $kill->setExternalID(intval($row['killID']));
-			if($row['hash']) $kill->setHash(decbin(hexdec(strval($row['hash']))));
+			if($row['hash']) $kill->setHash((strval($row['hash'])));
 			if($row['trust']) $kill->setTrust(intval($row['trust']));
 
 			$kill->setTimeStamp(strval($row['killTime']));
@@ -293,7 +296,10 @@ class IDFeed
 			if($id > 0)
 			{
 				$this->posted[] = $id;
-				logger::logKill($id, "ID:".$this->url);
+				$logaddress = "ID:".$this->url;
+				if($kill->getExternalID()) $logaddress .= "?a=kill_detail&kll_ext_id=".$kill->getExternalID();
+				else if($internalID) $logaddress .= "?a=kill_detail&kll_id=".$internalID;
+				logger::logKill($id, $logaddress);
 			}
 			//TODO should these be reversed?
 			else if($internalID) $this->skipped[$internalID] = $kill->getDupe();
@@ -350,15 +356,16 @@ class IDFeed
 		$corp->add(strval($inv['corporationName']), $alliance, $time, intval($inv['corporationID']));
 
 		$pilot = new Pilot();
+		$charname = strval($inv['characterName']);
 		// Allow for blank names for consistency with CCP API.
-		if(preg_match("/^(Mobile \w+ Warp|\w+ Control Tower( \w+)?)/", $inv['characterName']))
+		if(preg_match("/^(Mobile \w+ Warp|\w+ Control Tower( \w+)?)/", $charname))
 		{
-			$inv['characterName'] = $inv['corporationName'].' - '.$inv['characterName'];
+			$charname = $inv['corporationName'].' - '.$charname;
 		}
-		else if($inv['characterName'] == ""
+		else if($charname == ""
 			&&(preg_match("/^(Mobile \w+ Warp|\w+ Control Tower( \w+)?)/", $weapon->getName())))
 		{
-			$inv['characterName'] = $inv['corporationName'].' - '.$weapon->getName();
+			$charname = $inv['corporationName'].' - '.$weapon->getName();
 		}
 		$pilot->add(strval($inv['characterName']), $corp, $time, intval($inv['characterID']));
 
@@ -366,7 +373,7 @@ class IDFeed
 			$alliance->getID(), floatval($inv['securityStatus']), $ship, $weapon, intval($inv['damageDone']));
 
 		$kill->addInvolvedParty($iparty);
-		if($inv['finalBlow'] == 1) $kill->setFBPilotID($pilot->getID());
+		if(intval($inv['finalBlow']) == 1) $kill->setFBPilotID($pilot->getID());
 	}
 	private function processItem($item, &$kill)
 	{

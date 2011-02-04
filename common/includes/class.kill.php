@@ -1409,7 +1409,8 @@ class Kill
 	}
 	function setHash($hash)
 	{
-		$this->hash = $hash;
+		if(strlen($hash) > 16) $this->hash = pack("H*", $hash);
+		else $this->hash = $hash;
 	}
 	function getHash($hex = false, $update = true)
 	{
