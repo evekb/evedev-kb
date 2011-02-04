@@ -35,6 +35,7 @@ class pKillDetail extends pageAssembly
 		$this->queue("involvedSummary");
 		$this->queue("involved");
 		$this->queue("comments");
+		$this->queue("source");
 		$this->queue("middle");
 		$this->queue("victimShip");
 		$this->queue("fitting");
@@ -1222,6 +1223,40 @@ class pKillDetail extends pageAssembly
 			$qry->execute("UPDATE kb3_items_" . $table . " SET itd_itl_id ='" . $Val . "' WHERE itd_itm_id=" . $IID
 				. " AND itd_kll_id = " . $KID . " AND itd_itl_id = " . $old);
 		}
+	}
+	public function source()
+	{
+		global $smarty;
+		$qry = DBFactory::getDBQuery();
+		$sql = "SELECT log_ip_address, log_timestamp FROM kb3_log WHERE log_kll_id = ".$this->kll_id;
+		$qry->execute($sql);
+		if(!$row=$qry->getRow()) return "";
+		$source = $row['log_ip_address'];
+		$posteddate = $row['log_timestamp'];
+
+		if(preg_match("/^\d+/", $source))
+		{
+			$type = "IP";
+			// No posting IPs publicly.
+			if(!$this->page->isAdmin()) $source = "";
+		}
+		elseif(preg_match("/^API/", $source))
+		{
+			$type="API";
+			$source = $this->kill->getExternalID();
+		}
+		elseif(preg_match("/^http/", $source)) $type="URL";
+		elseif(preg_match("/^ID:http/", $source))
+		{
+			$type="URL";
+			$source = substr($source, 3);
+		}
+		else $type = "unknown";
+		
+		$smarty->assign("source", $source);
+		$smarty->assign("type", $type);
+		$smarty->assign("postedDate", $posteddate);
+		return $smarty->fetch(get_tpl("sourcedFrom"));
 	}
 }
 
