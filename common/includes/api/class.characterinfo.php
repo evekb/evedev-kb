@@ -5,15 +5,14 @@
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/includes/class.eveapi.php $
  */
 
-// **********************************************************************************************************************************************
-// ****************                                   API ID -> Name Conversion /eve/CharacterID.xml.aspx 	                     ****************
-// **********************************************************************************************************************************************
+//! Retrieve Character Info from CCP API
 class API_CharacterInfo
 {
 	private $CachedUntil = '';
 	private $CurrentTime = '';
 	private $API_ID = '';
 	private $data = array();
+	private $error = false;
 
 	public function getCachedUntil()
 	{
@@ -49,7 +48,17 @@ class API_CharacterInfo
 
 		$sxe = @simplexml_load_string($data);
 		
-		if(!$sxe || strval($sxe->error)) return strval("Error code ".$sxe->error['code'].": ".$sxe->error);
+		if(!$sxe || strval($sxe->error))
+		{
+			if($sxe->error)
+			{
+				$this->error = array();
+				$this->error['code'] = strval($sxe->error['code']);
+				$this->error['message'] = strval($sxe->error);
+				return strval("Error code ".$sxe->error['code'].": ".$sxe->error);
+			}
+			return "Error connecting to API.";
+		}
 		foreach($sxe->result->children() as $a => $b) $this->data[strval($a)] = strval($b);
 		
 		$this->CurrentTime = strval($sxe->currentTime);
@@ -66,5 +75,11 @@ class API_CharacterInfo
 		$http->set_useragent("PHPApi");
 
 		return $http->get_content();
+	}
+	//! Return any errors encountered or false if none.
+	function getError()
+	{
+		return $this->error;
+
 	}
 }

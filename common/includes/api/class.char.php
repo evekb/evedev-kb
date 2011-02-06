@@ -5,43 +5,40 @@
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/includes/class.eveapi.php $
 */
 
-// **********************************************************************************************************************************************
-// ****************                                   API Char list - /account/Characters.xml.aspx                               ****************
-// **********************************************************************************************************************************************
+//! Retrieve Character list from CCP API
 class API_Char
 {
-	//! Deprecated fetch function, user fetch(id, key) instead
-	function fetchChars($apistring)
-	{
-		trigger_error("fetchChars is deprecated. Use fetch(userID, APIKey) instead.", E_USER_NOTICE);
-		
-        $parts = explode("&", $apistring);
+	private $error = false;
+	private $chars = array();
 
-		foreach($parts as &$part)
-		{
-			$part = explode("=", $part);
-		}
-
-		return $this->fetch($parts[0][1], $parts[1][1]);
-	}
-
-	function fetch($userID, $APIKey)
+	public function fetch($userID, $APIKey)
 	{
 		$data = $this->loaddata($userID, $APIKey);
 
 		$sxe = simplexml_load_string($data);
 
-		foreach($sxe->result->rowset->row as $row)
+		if($sxe->error)
 		{
-			$this->chars_[] = array(
-				'Name'=>strval($row['name']),
-				'corpName'=>strval($row['corporationName']),
-				'charID'=>strval($row['characterID']),
-				'corpID'=>strval($row['corporationID']));
+			$this->error = array();
+			$this->error['code'] = strval($sxe->error['code']);
+			$this->error['message'] = strval($sxe->error);
+		}
+		else
+		{
+			foreach($sxe->result->rowset->row as $row)
+			{
+				$this->chars[] = array(
+					'Name'=>strval($row['name']),
+					'corpName'=>strval($row['corporationName']),
+					'charID'=>strval($row['characterID']),
+					'corpID'=>strval($row['corporationID']));
+			}
+
+			// add any characters not already in the kb
+			$this->updateChars();
 		}
 
-		// add any characters not already in the kb
-		return $this->updateChars();
+		return $this->chars;
 	}
 
 	private function loaddata($userID, $APIKey)
@@ -59,8 +56,8 @@ class API_Char
 
 	private function updateChars()
 	{
-		if(empty($this->chars_)) return $this->chars_;
-		foreach($this->chars_ as $char )
+		if(empty($this->chars)) return $this->chars;
+		foreach($this->chars as $char )
 		{
 			// check if chars eveid exists in kb
 			$sql = 'select plts.plt_id, plts.plt_externalid from kb3_pilots plts where plts.plt_name = "' . $char['Name'] . '"';
@@ -101,7 +98,13 @@ class API_Char
 			}
 		}
 
-		return $this->chars_;
+		return;
+	}
+	//! Return any errors encountered or false if none.
+	function getError()
+	{
+		return $this->error;
+
 	}
 }
 
