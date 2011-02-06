@@ -58,7 +58,7 @@ onmouseover="this.className='kb-table-row-hover';" onclick="window.location.href
 {if $k.loss}
 		<td style="width: {$width_victim}px" class="kb-table-cell"><a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$k.victimid}"><b>{$k.victim}</b></a><br /><a href="{$kb_host}/?a=corp_detail&amp;crp_id={$k.victimcorpid}">{$k.victimcorp|truncate:35}</a></td>
 {else}
-	{if $k.victimalliancename != "None"}
+	{if $k.victimalliancename != "None" && $k.victimalliancename != "NONE"}
 		<td style="width: {$width_victim}px" class="kb-table-cell"><a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$k.victimid}"><b>{$k.victim}</b></a><br /><a href="{$kb_host}/?a=alliance_detail&amp;all_id={$k.victimallianceid}">{$k.victimalliancename|truncate:35}</a></td>
 	{else}
 		<td style="width: {$width_victim}px" class="kb-table-cell"><a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$k.victimid}"><b>{$k.victim}</b></a><br /><a href="{$kb_host}/?a=corp_detail&amp;crp_id={$k.victimcorpid}">{$k.victimcorp|truncate:35}</a></td>
