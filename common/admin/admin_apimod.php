@@ -40,7 +40,6 @@ for ( $i = 1; $i <= $keycount; $i++ )
 {
     if (isset($_POST['select'.$i]))
     {
-        $html .= "Click the character you'd like to set:<br /><br />";
         $selectid = $i;
 
         $myCharSelect = new API_Char();
@@ -49,13 +48,15 @@ for ( $i = 1; $i <= $keycount; $i++ )
         $charcount = count($CharList);
         if ( $charcount > 0 ) 
         {
+	        $html .= "Click the character you'd like to set:<br /><br />";
             $isupdated = true;
             for ( $x = 0; $x < $charcount; $x++ )
             {
                 $html .= '<a href="?a=admin_apimod&CharID=' . $CharList[$x]['charID'] . '&SetNum=' . $selectid . '">'. $CharList[$x]['Name'] . '</a><br />';
             }
         } else {
-            $html .= "No characters found, check your details are correct and the Eve API is online";
+			if($error = $myCharSelect->getError()) $html .= "<b>Error ".$error['code'].": ".$error['message']."</b>";
+            else $html .= "<b>No characters found, check your details are correct and the Eve API is online</b>";
         } 
     }
 	
