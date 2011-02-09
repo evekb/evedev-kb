@@ -11,6 +11,7 @@ else
 }
 
 $cronStartTime = microtime(true);
+@error_reporting(E_ERROR);
 
 // Has to be run from the KB main directory for nested includes to work
 if(file_exists(getcwd().'/cron_idfeed.php'))
@@ -49,8 +50,8 @@ foreach($feeds as $key => &$val)
 	else $feedfetch->setAllKills(1);
 	$feedfetch->setTrust($val['trusted']);
 	if(!$val['lastkill']) $feedfetch->setStartDate(time() - 60*60*24*7);
-	else if($val['apikills']) $feedfetch->setStartKill($val['lastkill']);
-	else $feedfetch->setStartKill($val['lastkill'], true);
+	else if($val['apikills']) $feedfetch->setStartKill($val['lastkill'] + 1);
+	else $feedfetch->setStartKill($val['lastkill'] + 1, true);
 
 	if($feedfetch->read($val['url']) !== false)
 	{
