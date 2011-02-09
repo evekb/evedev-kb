@@ -275,8 +275,8 @@ class IDFeed
 
 			$kill = new Kill();
 			if(intval($row['trust']) >= $this->trust && intval($row['killID'])) $kill->setExternalID(intval($row['killID']));
-			if($row['hash']) $kill->setHash((strval($row['hash'])));
-			if($row['trust']) $kill->setTrust(intval($row['trust']));
+			if(strval($row['hash'])) $kill->setHash((strval($row['hash'])));
+			if(intval($row['trust'])) $kill->setTrust(intval($row['trust']));
 
 			$kill->setTimeStamp(strval($row['killTime']));
 
