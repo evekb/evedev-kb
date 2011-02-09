@@ -1414,7 +1414,7 @@ class Kill
 	}
 	function getHash($hex = false, $update = true)
 	{
-		if($this->hash !== false)
+		if($this->hash)
 		{
 			if($hex) return bin2hex($this->hash);
 			else return $this->hash;
