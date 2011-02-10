@@ -297,6 +297,7 @@ class IDFeed
 			{
 				$this->posted[] = $id;
 				$logaddress = "ID:".$this->url;
+				if(strpos($logaddress, "?")) $logaddress = substr($logaddress, 0, strpos($logaddress, "?"));
 				if($kill->getExternalID()) $logaddress .= "?a=kill_detail&kll_ext_id=".$kill->getExternalID();
 				else if($internalID) $logaddress .= "?a=kill_detail&kll_id=".$internalID;
 				logger::logKill($id, $logaddress);
