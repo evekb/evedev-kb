@@ -25,7 +25,7 @@
 								<table>
 									<tr>
 										<td align="center">
-											<textarea class="comment" name="comment" cols="55" rows="5" onkeyup="limitText(this.form.comment,document.getElementById('countdown'),500);" onkeypress="limitText(this.form.comment,document.getElementById('countdown'),500);"></textarea>
+											<textarea class="comment" name="comment" cols="55" rows="5" style="width:97%" onkeyup="limitText(this.form.comment,document.getElementById('countdown'),500);" onkeypress="limitText(this.form.comment,document.getElementById('countdown'),500);"></textarea>
 										</td>
 									</tr>
 									<tr>
