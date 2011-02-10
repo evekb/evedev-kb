@@ -82,13 +82,16 @@ if ($_POST['fetch'])
 			|| empty($val['url'])) continue;
         $feedfetch = new IDFeed();
 		$feedfetch->setID();
+		// It's possible to post a kill without CCP ID, not fetch it, then add
+		// an ID later, so only fetching API verified kills is problematic.
+		// Disabling until a solution is worked out.
 //		if($val['apikills']) $feedfetch->setAllKills(0);
 //		else $feedfetch->setAllKills(1);
 		$feedfetch->setAllKills(1);
 		$feedfetch->setTrust($val['trusted']);
 		if(!$val['lastkill']) $feedfetch->setStartDate(time() - 60*60*24*7);
-		else if($val['apikills']) $feedfetch->setStartKill($val['lastkill']);
-		else $feedfetch->setStartKill($val['lastkill'], true);
+		else if($val['apikills']) $feedfetch->setStartKill($val['lastkill'] + 1);
+		else $feedfetch->setStartKill($val['lastkill'] + 1, true);
 
 		$feedfetch->read($val['url']);
 
