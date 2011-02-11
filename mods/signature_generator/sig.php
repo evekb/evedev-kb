@@ -19,12 +19,21 @@ function errorPic($string)
 	exit;
 }
 
-if (!$plt_id = intval($_GET['i']))
+if ($plt_id = intval($_GET['i']))
+{
+	$pilot = new Pilot($plt_id);
+}
+else if ($plt_id = intval($_GET['ext']))
+{
+	$pilot = new Pilot(0, $plt_id);
+	$plt_id = $pilot->getID();
+}
+else
 {
 	errorPic('No pilot id specified.');
+	$pilot = new Pilot();
 }
 
-$pilot = new Pilot($plt_id);
 if (!$pilot->exists())
 {
 	errorPic('That pilot doesnt exist.');
@@ -33,14 +42,12 @@ if (!$pilot->exists())
 $corp = $pilot->getCorp();
 $alliance = $corp->getAlliance();
 
-// we dont generate pictures for non-member
-if (ALLIANCE_ID && $alliance->getID() != ALLIANCE_ID)
+// we dont generate pictures for non-members
+if (array_search($alliance->getID(), config::get('cfg_allianceid')) === false
+		&& !array_search($corp->getID(), config::get('cfg_corpid')) === false
+		&& !array_search($pilot->getID(), config::get('cfg_pilotid')) === false)
 {
-	errorPic('Wrong alliance.');
-}
-elseif (CORP_ID && $corp->getID() != CORP_ID)
-{
-	errorPic('Wrong corporation.');
+	errorPic('Invalid pilot');
 }
 
 $id = abs(crc32($sig_name));
