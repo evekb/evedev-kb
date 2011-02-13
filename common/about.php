@@ -15,6 +15,7 @@ class pAbout extends pageAssembly
 		$this->queue("top");
 		$this->queue("developers");
 		$this->queue("stats");
+		$this->queue("theme");
 		$this->queue("mods");
 		$this->queue("bottom");
 	}
@@ -89,7 +90,19 @@ class pAbout extends pageAssembly
 		$smarty->assign('alliances', $alliances);
 		return $smarty->fetch(get_tpl("about_stats"));
 	}
-	
+
+	function theme()
+	{
+		global $smarty, $themeInfo;
+		if(!isset($themeInfo))
+		{
+			global $themename;
+			$themeInfo['name'] = $themename;
+		}
+		$smarty->assignByRef("themeInfo", $themeInfo);
+		return $smarty->fetch(get_tpl("about_theme"));
+	}
+
 	function mods()
 	{
 		global $smarty, $modInfo;
