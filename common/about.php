@@ -12,10 +12,11 @@ class pAbout extends pageAssembly
 		parent::__construct();
 		
 		$this->queue("start");
+		$this->queue("top");
 		$this->queue("developers");
 		$this->queue("stats");
-		$this->queue("shipValues");
-		$this->queue("finish");
+		$this->queue("mods");
+		$this->queue("bottom");
 	}
 	
 	function start()
@@ -25,6 +26,7 @@ class pAbout extends pageAssembly
 	
 	function developers()
 	{
+		global $smarty;
 		// Current active developers
 		$currentDeveloper = array(
 			'Hon Kovell', // Various stuff (EDK2-3)
@@ -53,16 +55,19 @@ class pAbout extends pageAssembly
 		sort($developer);
 		sort($contributor);
 
-		$this->smarty->assignByRef('current_developer', $currentDeveloper);
-		$this->smarty->assignByRef('developer', $developer);
-		$this->smarty->assign('contributor', $contributor);
+		$smarty->assignByRef('current_developer', $currentDeveloper);
+		$smarty->assignByRef('developer', $developer);
+		$smarty->assign('contributor', $contributor);
 		if(SVN_REV != "") $svn_rev = " rev ".SVN_REV;
 		else $svn_rev = "";
-		$this->smarty->assign('version', KB_VERSION." ".KB_RELEASE.$svn_rev);
+		$smarty->assign('version', KB_VERSION." ".KB_RELEASE.$svn_rev);
+		return $smarty->fetch(get_tpl("about_developers"));
+
 	}
-	
+
 	function stats()
 	{
+		global $smarty;
 		$qry = DBFactory::getDBQuery();;
 		$qry->execute("SELECT COUNT(*) AS cnt FROM kb3_kills");
 		$row = $qry->getRow();
@@ -77,47 +82,36 @@ class pAbout extends pageAssembly
 		$row = $qry->getRow();
 		$alliances = $row['cnt'];
 
-		$this->smarty->assign('kills', $kills);
-		$this->smarty->assign('items', $items);
-		$this->smarty->assign('pilots', $pilots);
-		$this->smarty->assign('corps', $corps);
-		$this->smarty->assign('alliances', $alliances);
+		$smarty->assign('kills', $kills);
+		$smarty->assign('items', $items);
+		$smarty->assign('pilots', $pilots);
+		$smarty->assign('corps', $corps);
+		$smarty->assign('alliances', $alliances);
+		return $smarty->fetch(get_tpl("about_stats"));
 	}
 	
-	function shipValues()
+	function mods()
 	{
-		$sql = "select scl_id
-			from kb3_ship_classes
-			where scl_class not in ( 'Drone', 'Unknown' )
-			order by scl_value";
-
-		$qry = DBFactory::getDBQuery();;
-		$qry->execute($sql);
-
-		$shipcl = array();
-		while ($row = $qry->getRow())
-		{
-			$shipclass = new ShipClass($row['scl_id']);
-			$class = array();
-			$class['name'] = $shipclass->getName();
-			$class['value'] = number_format($shipclass->getValue() * 1000000,0,',','.');
-			$class['points'] = number_format($shipclass->getPoints(),0,',','.');
-			$class['valind'] = $shipclass->getValueIndicator();
-			$shipcl[] = $class;
-		}
-		$this->smarty->assign('shipclass', $shipcl);
+		global $smarty, $modInfo;
+		$smarty->assignByRef("mods", $modInfo);
+		return $smarty->fetch(get_tpl("about_mods"));
 	}
-	
-	function finish()
+
+	function top()
 	{
-		return $this->smarty->fetch(get_tpl('about'));
+		global $smarty;
+		return $smarty->fetch(get_tpl('about'));
+	}
+
+	function bottom()
+	{
+		global $smarty;
+		return $smarty->fetch(get_tpl('about_bottom'));
 	}
 }
 
 
 $about = new pAbout();
-global $smarty;
-$about->smarty = $smarty; //Because $smarty is a global we have to add it to the class as an instance variable and access it with $this.
 event::call("about_assembling", $about);
 $html = $about->assemble();
 $about->page->setContent($html);

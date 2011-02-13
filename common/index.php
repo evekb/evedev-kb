@@ -237,6 +237,8 @@ if(file_exists("themes/".$themename."/init.php"))
 $mods_active = explode(',', config::get('mods_active'));
 $modOverrides = false;
 $modconflicts = array();
+
+$modInfo = array();
 foreach ($mods_active as $mod)
 {
 	// load all active modules which need initialization
@@ -244,6 +246,10 @@ foreach ($mods_active as $mod)
 	{
 		include('mods/'.$mod.'/init.php');
 	}
+	if(!isset($modInfo[$mod]))
+		$modInfo[$mod] = array("name"=>$mod,
+			"abstract"=>"Purpose unknown",
+			"about"=>"");
 	if (file_exists('mods/'.$mod.'/'.$page.'.php'))
 	{
 		$modconflicts[] = $mod;
