@@ -800,3 +800,8 @@ a.kb-contract:visited {
 	padding: 5px;
 	text-align:center;
 }
+.mod_name
+{
+	margin-top: 5px;
+	font-weight: bold;
+}
