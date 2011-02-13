@@ -1,7 +1,7 @@
 <?php
 /*
- * $Date: 2010-07-10 22:11:02 +1000 (Sat, 10 Jul 2010) $
- * $Revision: 844 $
+ * $Date$
+ * $Revision$
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/about.php $
  */
 
