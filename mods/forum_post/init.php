@@ -1,4 +1,14 @@
 <?php
+/*
+ * $Date: 2010-07-10 22:11:02 +1000 (Sat, 10 Jul 2010) $
+ * $Revision: 844 $
+ * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/about.php $
+ */
+
+
+$modInfo['forum_post']['name'] = "Forum Post";
+$modInfo['forum_post']['abstract'] = "Adds a link to contracts and kill_related that gives a summary of the results.";
+$modInfo['forum_post']['about'] = "Core distribution mod.";
 
 event::register("contractDetail_context_assembling", "forumPost::addContractMenu");
 event::register("killRelated_assembling", "forumPost::addRelatedMenu");

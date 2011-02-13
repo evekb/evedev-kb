@@ -1,4 +1,15 @@
 <?php
+/*
+ * $Date: 2010-07-10 22:11:02 +1000 (Sat, 10 Jul 2010) $
+ * $Revision: 844 $
+ * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/about.php $
+ */
+
+
+$modInfo['known_members']['name'] = "Known Members";
+$modInfo['known_members']['abstract'] = "Add an option for a list of known members to the corp details page.";
+$modInfo['known_members']['about'] = "Core distribution mod.";
+
 event::register('corpDetail_assembling', 'known_members::addView');
 event::register('corpDetail_context_assembling', 'known_members::addMenu');
 

@@ -1,4 +1,15 @@
 <?php
+/*
+ * $Date: 2010-07-10 22:11:02 +1000 (Sat, 10 Jul 2010) $
+ * $Revision: 844 $
+ * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/about.php $
+ */
+
+
+$modInfo['mail_forward']['name'] = "Mail Forwarder";
+$modInfo['mail_forward']['abstract'] = "Forward all posted mails to another board.";
+$modInfo['mail_forward']['about'] = "Core distribution mod.";
+
 event::register('killmail_added', 'post_forward::handler');
 event::register('killmail_imported', 'import_forward::importhandler');
 
