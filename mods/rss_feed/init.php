@@ -2,7 +2,7 @@
 /*
  * $Date$
  * $Revision$
- * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/about.php $
+ * $HeadURL$
  */
 
 
