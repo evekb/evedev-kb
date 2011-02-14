@@ -239,7 +239,6 @@ class KillSummaryTable
 		$enddate = makeEndDate($this->weekno, $this->yearno, $this->monthno, $this->endDate);
 
 		$qry = DBFactory::getDBQuery();
-		;
 		$qry->execute($sql);
 		while ($row = $qry->getRow())
 		{
@@ -255,31 +254,10 @@ class KillSummaryTable
 
 
 		$sqlop = " WHERE ";
-		if ($this->inv_all)
-		{
-			$sql .= " INNER JOIN kb3_inv_all inv ON (inv.ina_kll_id = kll.kll_id)
-				".$sqlop."inv.ina_all_id in (".implode(',', $this->inv_all)." ) ";
-			if($startdate) $sql .=" AND inv.ina_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
-			if($enddate) $sql .=" AND inv.ina_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
-			$sqlop = " AND ";
-		}
-		elseif ($this->inv_crp)
-		{
-			$sql .= " INNER JOIN kb3_inv_crp inv ON (inv.inc_kll_id = kll.kll_id)
-				".$sqlop."inv.inc_crp_id in (".implode(',', $this->inv_crp)." ) ";
-			if($startdate) $sql .=" AND inv.inc_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
-			if($enddate) $sql .=" AND inv.inc_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
-			$sqlop = " AND ";
-		}
-		elseif ($this->inv_plt)
-		{
-			$sql .= " INNER JOIN kb3_inv_detail inv ON (inv.ind_kll_id = kll.kll_id)
-					".$sqlop."inv.ind_plt_id in (".implode(',', $this->inv_plt)." ) ";
-			if($startdate) $sql .=" AND inv.ind_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
-			if($enddate) $sql .=" AND inv.ind_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
-			$sqlop = " AND ";
-		}
-		else
+
+		$invcount = count($this->inv_all) + count($this->inv_crp) + count($this->inv_plt);
+
+		if($invcount == 0)
 		{
 			if($startdate)
 			{
@@ -292,6 +270,43 @@ class KillSummaryTable
 				$sqlop = " AND ";
 			}
 		}
+		else
+		{
+			$sql .= "INNER JOIN (";
+			$involved = array();
+			if ($this->inv_all)
+			{
+				$invsql = "SELECT ina_kll_id as kll_id FROM kb3_inv_all
+					WHERE ina_all_id in (".implode(',', $this->inv_all).") ";
+				if($startdate) $invsql .=" AND ina_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+				if($enddate) $invsql .=" AND ina_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+				$involved[] = $invsql;
+			}
+			if ($this->inv_crp)
+			{
+				$invsql = "SELECT inc_kll_id as kll_id FROM kb3_inv_crp
+					WHERE inc_crp_id in (".implode(',', $this->inv_crp).") ";
+				if($startdate) $invsql .=" AND inc_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+				if($enddate) $invsql .=" AND inc_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+				$involved[] = $invsql;
+			}
+			if ($this->inv_plt)
+			{
+				$invsql = "SELECT ind_kll_id as kll_id FROM kb3_inv_detail
+					WHERE ind_plt_id in (".implode(',', $this->inv_plt).") ";
+				if($startdate) $invsql .=" AND ind_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+				if($enddate) $invsql .=" AND ind_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+				$involved[] = $invsql;
+			}
+			$invtypecount = 0;
+			if($this->inv_all) $invtypecount++;
+			if($this->inv_crp) $invtypecount++;
+			if($this->inv_plt) $invtypecount++;
+
+			$sql .= "(".implode(") UNION (", $involved);
+			if($invtypecount == 1) $sql .= " GROUP BY kll_id";
+			$sql .= ") ) inv ON inv.kll_id = kll.kll_id ";
+		}
 		if($this->system)
 		{
 			$sql .= $sqlop." kll.kll_system_id = ".join(',', $this->system)." ";
@@ -301,7 +316,6 @@ class KillSummaryTable
 		$sql .= 'GROUP BY scl_class order by scl_class';
 
 		$qry = DBFactory::getDBQuery();
-		;
 		$qry->execute($sql);
 		while ($row = $qry->getRow())
 		{
