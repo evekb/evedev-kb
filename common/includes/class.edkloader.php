@@ -49,7 +49,7 @@ class edkloader
 			trigger_error("Class '".addslashes($name)."' file '".addslashes($file)."' not found", E_USER_WARNING);
 			return false;
 		}
-		elseif(isset(self::$classes[$name]))
+		elseif(isset(self::$classes[strtolower($name)]))
 		{
 			trigger_error("Class '".addslashes($name)."' already registered found", E_USER_WARNING);
 			return false;
