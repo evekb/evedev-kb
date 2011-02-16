@@ -1,4 +1,5 @@
 Options -Indexes
+Options +Multiviews
 
 <IfModule expires_module>
 ExpiresActive On
