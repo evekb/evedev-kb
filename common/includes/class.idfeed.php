@@ -31,7 +31,8 @@ class IDFeed
 	private $time = '';
 	private $cachedTime = '';
 	private $errormsg = '';
-	const version = "1.04";
+	private $errorcode = 0;
+	const version = "1.05";
 
 	//! Construct the Fetcher class and initialise variables.
 
@@ -82,30 +83,29 @@ class IDFeed
 	public function read($url = '')
 	{
 		$this->url = $url;
-		if(!$this->fetch())
+		if($this->xml) ;
+		else if(substr($url,0,4) != "http")
 		{
-			trigger_error("Error reading feed.", E_USER_NOTICE);
-			return false;
-		}
-		// Remove error messages at the top.
-		if(strpos($this->xml,"<?xml") !== 0) $this->xml = substr($this->xml, strpos($this->xml,"<?xml"));
-
-		libxml_use_internal_errors(true);
-		$sxe = simplexml_load_string($this->xml);
-		if(!$sxe)
-		{
-			$this->errormsg = "XML error:\n";
-			foreach(libxml_get_errors() as $error)
+			if(!$this->xml = file_get_contents($url))
 			{
-				$this->errormsg .= "\t".$error->message."\n";
+				trigger_error("Error reading file.", E_USER_WARNING);
+				return false;
 			}
-			return false;
 		}
-		if(!$sxe['edkapi'] || $sxe['edkapi'] < 0.91) return false;
-		$this->time = $sxe->currentTime;
-		$this->cachedTime = $sxe->cachedUntil;
-		if(!is_null($sxe->result)) foreach($sxe->result->rowset->row as $row) $this->processKill($row);
-		return count($this->posted) + count($this->skipped);
+		else
+		{
+			if(!$this->fetch())
+			{
+				trigger_error("Error reading feed.", E_USER_WARNING);
+				return false;
+			}
+		}
+		return $this->processFeed();
+	}
+	function setXML($xml)
+	{
+		$this->xml = $xml;
+		return;
 	}
 	function setID($type = '', $id = 0)
 	{
@@ -266,6 +266,42 @@ class IDFeed
 	function getXML()
 	{
 		return $this->xml;
+	}
+	function getErrorCode()
+	{
+		return $this->errorcode;
+	}
+	function getErrorMessage()
+	{
+		return $this->errormsg;
+	}
+	function processFeed()
+	{
+		// Remove error messages at the top.
+		if(strpos($this->xml,"<?xml") !== 0) $this->xml = substr($this->xml, strpos($this->xml,"<?xml"));
+
+		libxml_use_internal_errors(true);
+		$sxe = simplexml_load_string($this->xml);
+		if(!$sxe)
+		{
+			$this->errormsg = "XML error:\n";
+			foreach(libxml_get_errors() as $error)
+			{
+				$this->errormsg .= "\t".$error->message."\n";
+			}
+			return false;
+		}
+		if(floatval($sxe['edkapi']) && $sxe['edkapi'] < 0.91) return false;
+		$this->time = $sxe->currentTime;
+		$this->cachedTime = $sxe->cachedUntil;
+		if(isset($sxe->error))
+		{
+			$this->errorcode = intval($sxe->error['code']);
+			$this->errormsg = strval($sxe->error);
+			return 0;
+		}
+		if(!is_null($sxe->result)) foreach($sxe->result->rowset->row as $row) $this->processKill($row);
+		return count($this->posted) + count($this->skipped);
 	}
 	private function processKill($row)
 	{
