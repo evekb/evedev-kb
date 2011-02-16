@@ -43,7 +43,8 @@ echo "<br />Removed ".CacheHandler::removeByAge('SQL/', 7 * 24)." files from SQL
 echo "Removed ".CacheHandler::removeByAge('page/'.KB_SITE.'/', 7 * 24)." files from page/<br />";
 echo "Removed ".CacheHandler::removeByAge("templates_c/", 1 * 24)." files from templates_c/<br />";
 echo "Removed ".CacheHandler::removeByAge("mail/", 7 * 24)." files from mail/<br />";
-echo "Removed ".CacheHandler::removeByAge('img/', 90 * 24)." files from img/<br />";
+// Let's let people see their latest beautiful creation in the character creator.
+echo "Removed ".CacheHandler::removeByAge('img/', 30 * 24)." files from img/<br />";
 echo "Removed ".CacheHandler::removeByAge('store/', 7 * 24)." files from store/<br />";
 echo "Removed ".CacheHandler::removeByAge('/', 0 * 24, false)." files from entire cache<br />";
 
