@@ -59,9 +59,6 @@ class pAbout extends pageAssembly
 		$smarty->assignByRef('current_developer', $currentDeveloper);
 		$smarty->assignByRef('developer', $developer);
 		$smarty->assign('contributor', $contributor);
-		if(SVN_REV != "") $svn_rev = " rev ".SVN_REV;
-		else $svn_rev = "";
-		$smarty->assign('version', KB_VERSION." ".KB_RELEASE.$svn_rev);
 		return $smarty->fetch(get_tpl("about_developers"));
 
 	}
@@ -113,6 +110,9 @@ class pAbout extends pageAssembly
 	function top()
 	{
 		global $smarty;
+		if(SVN_REV != "") $svn_rev = " rev ".SVN_REV;
+		else $svn_rev = "";
+		$smarty->assign('version', KB_VERSION." ".KB_RELEASE.$svn_rev);
 		return $smarty->fetch(get_tpl('about'));
 	}
 
