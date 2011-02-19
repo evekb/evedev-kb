@@ -429,10 +429,10 @@ class pKillDetail extends pageAssembly
 
 				$this->involved[$i]['typeID'] = 2; //type number for corporations.
 
-				if(!file_exists("img/ships/64_64/".$weapon->getID().".png"))
+				if(!file_exists("img/types/64_64/".$weapon->getID().".png"))
 					$this->involved[$i]['shipImage'] = $this->involved[$i]['portrait'];
 				else
-					$this->involved[$i]['shipImage'] = IMG_URL."/ships/64_64/".$weapon->getID().".png";
+					$this->involved[$i]['shipImage'] = KB_HOST."/thumb.php?type=ship&amp;id=".$weapon->getID()."&amp;size=64";
 			}
 			else
 			{
