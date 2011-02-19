@@ -41,11 +41,6 @@ onmouseover="this.className='kb-table-row-hover';" onclick="window.location.href
 {/if}
         <td class="kb-table-imgcell">
 	    <img src='{$k.victimshipimage}' style="position: absolute; border: 0px; width: 32px; height: 32px;" alt="" />
-		{if $k.victimshiptechlevel > 1}
-		    <img src='{$img_url}/items/64_64/t{$k.victimshiptechlevel}.png' style="position: absolute; border: 0px; width: 12px; height: 12px;" alt="" />
-		{elseif $k.victimshipisfaction == 1}
-		    <img src='{$img_url}/items/64_64/fac.png' style="position: absolute; border: 0px; width: 12px; height: 12px;" alt="" />
-		{/if}
 		</td>
         <td style="width: {$width_ship}px; vertical-align: middle;"><div class="kb-shiptype"><b>{$k.victimshipname|truncate:21:"...":true}</b><br />{$k.victimshipclass|truncate:24:"...":true}</div>{if 0}<div class="kb-shipicon"><img src="{$k.victimshipindicator}" style="border-width: 0px; width: 6px; height: 6px;" alt="" /></div>{/if}</td>
         {if $config->get('killlist_alogo')}

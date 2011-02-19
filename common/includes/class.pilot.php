@@ -118,6 +118,8 @@ class Pilot
 	public function getPortraitURL($size = 64)
 	{
 		if(!$this->externalid_) $this->execQuery();
+		return KB_HOST."/thumb.php?type=pilot&amp;id=".$this->externalid_."&amp;size=$size";
+		
 		if (!$this->externalid_)
 		{
 			return '?a=thumb&amp;id='.$this->id_.'&amp;size='.$size.'&amp;int=1';

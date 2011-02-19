@@ -17,6 +17,7 @@ if(isset($_SERVER['HTTP_IF_NONE_MATCH'])
 	die;
 }
 
+// The exciting new thumb/blah/xxx
 if(strpos($_SERVER['REQUEST_URI'], '/thumb.php/') !== false
 		|| strpos($_SERVER['REQUEST_URI'], '/thumb/') !== false)
 {
@@ -49,6 +50,7 @@ if(strpos($_SERVER['REQUEST_URI'], '/thumb.php/') !== false
 		}
 	}
 }
+// Ye olde thumb.php?type=blah&id=xxx
 else
 {
 	if(!isset($_GET['size'])) $size = 64;
@@ -60,6 +62,40 @@ else
 	if(!isset($_GET['id'])) $id = 0;
 	else $id = @intval($_GET['id']);
 }
+
+$imghost = "http://".$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
+$imghost = substr($imghost, 0, strrpos($imghost, '/', 1)).'/';
+
+if(preg_match("/[^\w\d-_]/", $type))
+{
+	header("Location: {$imghost}img/portrait_0_{$size}.jpg");
+	die;
+}
+
+switch($type)
+{
+	case 'pilot':
+	case 'corp':
+	case 'alliance':
+		goPCA($type, $id, $size, $imghost);
+		break;
+
+	case 'region':
+	case 'map':
+	case 'cons':
+		goMap($type, $id, $size);
+		break;
+
+	case 'type':
+	case 'ship':
+		goType($type, $id, $size, $imghost);
+}
+
+
+header("Location: {$imghost}img/portrait_0_64.jpg");
+die;
+
+
 
 function goPCA($type, $id, $size = 64, $imghost = "")
 {
@@ -166,41 +202,7 @@ function expiryHeaders($type="png", $path = "")
 	header("Content-Type: image/".$type);
 	header("Expires: ".gmdate("D, d M Y H:i:s", time() + $year)." GMT");
 	header('Cache-Control: no-cache');
-	
+
 	if($path) header('Last-Modified: '.gmdate("D, d M Y H:i:s", filemtime($path))." GMT");
 	else header('Last-Modified: '.gmdate("D, d M Y H:i:s")." GMT");
 }
-
-$imghost = "http://".$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
-$imghost = substr($imghost, 0, strrpos($imghost, '/', 1)).'/';
-
-if(preg_match("/[^\w\d-_]/", $type))
-{
-	header("Location: {$imghost}img/portrait_0_{$size}.jpg");
-	die;
-}
-
-switch($type)
-{
-	case 'pilot':
-	case 'corp':
-	case 'alliance':
-		goPCA($type, $id, $size, $imghost);
-		break;
-
-	case 'region':
-	case 'map':
-	case 'cons':
-		goMap($type, $id, $size);
-		break;
-
-	case 'type':
-	case 'ship':
-		goType($type, $id, $size, $imghost);
-}
-
-
-header("Location: {$imghost}img/portrait_0_64.jpg");
-die;
-
-

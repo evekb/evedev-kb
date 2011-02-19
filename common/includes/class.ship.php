@@ -117,7 +117,7 @@ class Ship
 	{
 		if (is_null($this->externalid)) $this->execQuery();
 
-		return IMG_URL."/ships/".$size."_".$size."/".$this->externalid.".png";
+		return KB_HOST."/thumb.php?type=ship&amp;id=".$this->externalid."&amp;size=".$size;
 	}
 	//! Return the base price of this Ship.
 

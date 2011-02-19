@@ -49,31 +49,32 @@ class Item
 	{
 		$this->execQuery();
 		global $smarty;
+		$img = KB_HOST."/thumb.php?id=".$this->getID()."&amp;size=".$size;
 
-		// cat 18 are combat drones
-		if ($this->row_['itt_cat'] == 18)
-		{
-			$img = IMG_URL.'/drones/'.$size.'_'.$size.'/'.$this->row_['itm_externalid'].'.png';
-		}
-		// cat 6 are ships, 23 pos mods, 41 PI stuff (destroyed in cargo)
-		elseif ($this->row_['itt_cat'] == 6 || $this->row_['itt_cat'] == 23 || $this->row_['itt_cat'] == 41)
-		{
-			$img = IMG_URL.'/ships/'.$size.'_'.$size.'/'.$this->row_['itm_externalid'].'.png';
-		}
-		// cat 9 are blueprints
-		elseif ($this->row_['itt_cat'] == 9)
-		{
-			$img = IMG_URL.'/blueprints/'.$size.'_'.$size.'/'.$this->row_['itm_externalid'].'.png';
-		}
-		else
-		{
-			// fix for new db structure, just make sure old clients dont break
-			if (!strstr($this->row_['itm_icon'], 'icon'))
-			{
-				$this->row_['itm_icon'] = 'icon'.$this->row_['itm_icon'];
-			}
-			$img = IMG_URL.'/items/'.$size.'_'.$size.'/'.$this->row_['itm_icon'].'.png';
-		}
+//		// cat 18 are combat drones
+//		if ($this->row_['itt_cat'] == 18)
+//		{
+//			$img = IMG_URL.'/drones/'.$size.'_'.$size.'/'.$this->row_['typeID'].'.png';
+//		}
+//		// cat 6 are ships, 23 pos mods, 41 PI stuff (destroyed in cargo)
+//		elseif ($this->row_['itt_cat'] == 6 || $this->row_['itt_cat'] == 23 || $this->row_['itt_cat'] == 41)
+//		{
+//			$img = IMG_URL.'/ships/'.$size.'_'.$size.'/'.$this->row_['typeID'].'.png';
+//		}
+//		// cat 9 are blueprints
+//		elseif ($this->row_['itt_cat'] == 9)
+//		{
+//			$img = IMG_URL.'/blueprints/'.$size.'_'.$size.'/'.$this->row_['typeID'].'.png';
+//		}
+//		else
+//		{
+//			// fix for new db structure, just make sure old clients dont break
+//			if (!strstr($this->row_['itm_icon'], 'icon'))
+//			{
+//				$this->row_['itm_icon'] = 'icon'.$this->row_['itm_icon'];
+//			}
+//			$img = IMG_URL.'/items/'.$size.'_'.$size.'/'.$this->row_['itm_icon'].'.png';
+//		}
 
 
 		if ($size == 24)
@@ -103,6 +104,8 @@ class Item
 		}
 		if($show_style == "_none") $show_style = "";
 
+		if($show_style == "_tag" || $show_style == "") return "<img src='$img' alt=\"".$this->getName()."\" style='width:{$size}px; height:{$size}px; border:0px' />";
+		
 		$it_name = $this->getName();
 		if (($this->row_['itm_techlevel'] == 5) && $show_style) // is a T2?
 		{

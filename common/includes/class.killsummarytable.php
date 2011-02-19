@@ -497,6 +497,7 @@ class KillSummaryTable
 			{
 				$qrystring .= '&amp;view='.$this->view;
 			}
+			$qrystring = str_replace("?&amp;", "?", $qrystring);
 			$v['qry'] = $qrystring;
 			$v['kisk'] = round($v['kills_isk']/1000000, 2);
 			$v['lisk'] = round($v['losses_isk']/1000000, 2);

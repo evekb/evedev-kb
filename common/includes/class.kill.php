@@ -315,7 +315,7 @@ class Kill
 
 	function getVictimShipImage($size)
 	{
-		return IMG_URL."/ships/".$size."_".$size."/".$this->victimshipexternalid_.".png";
+		 return KB_HOST."/thumb.php?type=ship&amp;size=$size&amp;id=".$this->victimshipexternalid_;
 	}
 
 	function getVictimShipValueIndicator()

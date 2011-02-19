@@ -52,8 +52,6 @@ class Corporation
 	function getPortraitURL($size = 64)
 	{
 		$this->getExternalID();
-		if($this->externalid && CacheHandler::exists($this->externalid."_$size.png", 'img'))
-			return CacheHandler::getExternal($this->externalid."_$size.png", 'img');
 
 		if(!$this->getExternalID() && file_exists('img/corps/'.$this->getUnique().'.png'))
 		{
@@ -63,10 +61,11 @@ class Corporation
 				return CacheHandler::getExternal($this->getUnique()."_$size.png", 'img');
 			else return '?a=thumb&amp;type=npc&amp;id='.$this->getUnique().'&amp;size='.$size;
 		}
+
 		// NPC alliances can be recorded as corps on killmails.
 		if($this->externalid > 500000 && $this->externalid < 500021)
-			return '?a=thumb&amp;type=alliance&amp;id='.$this->externalid.'&amp;size='.$size;
-		return '?a=thumb&amp;type=corp&amp;id='.$this->externalid.'&amp;size='.$size;
+			return KB_HOST.'/thumb.php?type=alliance&amp;id='.$this->externalid.'&amp;size='.$size;
+		return KB_HOST.'/thumb.php?type=corp&amp;id='.$this->externalid.'&amp;size='.$size;
 	}
 
 	//! Return the corporation CCP ID.

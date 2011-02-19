@@ -214,10 +214,7 @@ class Alliance
 				return CacheHandler::getExternal($this->getUnique()."_$size.png", 'img');
 			return '?a=thumb&amp;type=alliance&amp;id='.$this->getUnique().'&amp;size='.$size;
 		}
-		else if(CacheHandler::exists($this->getExternalID()."_$size.png", 'img'))
-			return CacheHandler::getExternal($this->getExternalID()."_$size.png", 'img');
-
-		return '?a=thumb&amp;type=alliance&amp;id='.$this->getExternalID().'&amp;size='.$size;
+		return KB_HOST.'/thumb.php?type=alliance&amp;id='.$this->getExternalID().'&amp;size='.$size;
 	}
 
 	/*!
