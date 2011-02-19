@@ -15,6 +15,8 @@
 
 class http_request
 {
+	private $follow = false;
+
 	function http_request($url = '', $method = 'GET')
 	{
 		if ($url)
@@ -96,6 +98,11 @@ class http_request
 	function getError()
 	{
         return 'Error occured with fsockopen: '.$this->_errstr.' ('.$this->_errno.')<br/>'."\n";
+	}
+
+	function getURI()
+	{
+		return $this->url['scheme']."://".$this->url['host'].$this->url['path']."?".$this->url['query'];
 	}
 
 	function request()
@@ -193,6 +200,23 @@ class http_request
 		$this->status = socket_get_status($fp);
 		fclose($fp);
 		$this->header = $http_header;
+		if($this->follow)
+		{
+			$result = explode(" ", $this->header, 3);
+			if($result[1] >= 300 && $result[1] < 400)
+			{
+				$start = strpos($this->header, "Location: ");
+				$end = strpos($this->header, "\n", $start + 1);
+				if($start && $end)
+				{
+					$location = trim(substr($this->header, $start + 10, $end));
+					$this->url = parse_url($location);
+					$this->follow = false;
+					$this->fp = false;
+					return $this->get_content();
+				}
+			}
+		}
 		$this->content = $file;
 		$this->recv = strlen($http_header)+strlen($file);
 		$this->requested = true;
@@ -234,5 +258,10 @@ class http_request
 			return;
 		}
 		$this->headers[$headerstring] = $headerstring;
+	}
+
+	function set_follow($follow = true)
+	{
+		$this->follow = $follow;
 	}
 }
