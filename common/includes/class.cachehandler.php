@@ -14,6 +14,7 @@ class CacheHandler
 	protected static $externalroot = KB_CACHEDIR;
 	protected static $paths = array();
 	protected static $defaultLocation = "store";
+	protected static $depth = 2;
 
 	//! Add a file to the cache.
 
@@ -259,10 +260,10 @@ class CacheHandler
 		}
 
 		// Create subdirectories and left pad with 0s if length is too short.
-		$depth = 3;
+		$depth = self::$depth;
 		if(substr($newlocation, -1) != '/') $newlocation .= '/';
-		if(strrpos($filename, ".") === false) $length = 2 * $depth + 2;
-		else $length = 2 * $depth + 2 + strlen($filename) - strrpos($filename, ".");
+		if(strrpos($filename, ".") === false) $length = 8; //2 * $depth + 2
+		else $length = 8 + strlen($filename) - strrpos($filename, ".");
 		$newfilename = str_pad($newfilename, $length, "0", STR_PAD_LEFT);
 
 		$nameslice = $newfilename;
