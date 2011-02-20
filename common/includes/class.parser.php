@@ -32,10 +32,7 @@ class Parser
 	function Parser($killmail, $externalID = null, $loadExternals = true)
 	{
 		self::$loadExternals = $loadExternals;
-		if( phpversion() >= '5.0.0' )
-		{ //lousy but necessary
-			$canUnicode = true; //if this is unset, Russian will not parse, but English will atleast.
-		}
+
 		$this->killmail_ = trim(str_replace("\r", '', $killmail));
 
 		// Check the supplied external id is valid.
@@ -44,18 +41,12 @@ class Parser
 
 		$pos = 0;
 
-        if($canUnicode) {
-			$russian = $this->uchr(1042).$this->uchr(1086).$this->uchr(1074).$this->uchr(1083).$this->uchr(1077).$this->uchr(1095)
-				.$this->uchr(1077).$this->uchr(1085).$this->uchr(1086).' '.$this->uchr(1087).$this->uchr(1080).$this->uchr(1088)
-				.$this->uchr(1072).$this->uchr(1090).$this->uchr(1086).$this->uchr(1074).':'; //involved party
-		}
-
 		//Fraktion added for mails that originate from griefwatch / battle-clinic that do nothing with this info
 		if (strpos($this->killmail_, 'Beteiligte Parteien:') || (strpos($this->killmail_, 'Fraktion:')))
 		{
 			$this->preparse('german');
 		}
-		elseif (strpos($this->killmail_, $russian) && $canUnicode)
+		elseif (strpos($this->killmail_, "Корпорация") )
 		{
 			$this->preparse('russian');
 

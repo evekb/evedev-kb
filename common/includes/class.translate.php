@@ -51,42 +51,19 @@ class Translate
         }
         if ($this->language_ == 'russian')
         {
-            //translate the codespace to some terrible ascii equivalent. Heaven help us if CCP decide to allow unicode pilot names :(
-            $russian_codes = array($this->uchr(1040),$this->uchr(1072),$this->uchr(1041),$this->uchr(1073),$this->uchr(1042),$this->uchr(1074)
-                            ,$this->uchr(1043),$this->uchr(1075),$this->uchr(1044),$this->uchr(1076),$this->uchr(1045),$this->uchr(1077)
-                            ,$this->uchr(1046),$this->uchr(1078),$this->uchr(1047),$this->uchr(1079),$this->uchr(1048),$this->uchr(1080)
-                            ,$this->uchr(1049),$this->uchr(1081),$this->uchr(1050),$this->uchr(1082),$this->uchr(1051),$this->uchr(1083)
-                            ,$this->uchr(1052),$this->uchr(1084),$this->uchr(1053),$this->uchr(1085),$this->uchr(1054),$this->uchr(1086)
-                            ,$this->uchr(1055),$this->uchr(1087),$this->uchr(1056),$this->uchr(1088),$this->uchr(1057),$this->uchr(1089)
-                            ,$this->uchr(1058),$this->uchr(1090),$this->uchr(1059),$this->uchr(1091),$this->uchr(1060),$this->uchr(1092)
-                            ,$this->uchr(1061),$this->uchr(1093),$this->uchr(1062),$this->uchr(1094),$this->uchr(1063),$this->uchr(1095)
-                            ,$this->uchr(1064),$this->uchr(1096),$this->uchr(1065),$this->uchr(1097),$this->uchr(1066),$this->uchr(1098)
-                            ,$this->uchr(1067),$this->uchr(1099),$this->uchr(1068),$this->uchr(1100),$this->uchr(1069),$this->uchr(1101)
-                            ,$this->uchr(1070),$this->uchr(1102),$this->uchr(1071),$this->uchr(1103));
-
-            $roman_codes = array('A', 'a', 'B', 'b', 'C', 'c', 'D', 'd', 'E', 'e', 'F', 'f',
-                                 'G', 'g', 'H', 'h', 'I', 'i', 'J', 'j', 'K', 'k', 'J', 'j',
-                                 'L', 'l', 'M', 'm', 'N', 'n', 'O', 'o', 'P', 'p', 'Q', 'q',
-                                 'R', 'r', 'S', 's', 'T', 't', 'U', 'u', 'V', 'v', 'W', 'w',
-                                 'X', 'x', 'Y', 'y', 'Z', 'z', '!', '1', '@', '2', '#', '3',
-                                 '$', '4', '%', '5', '^', '6');
-
-            $this->killmail_ = str_replace($russian_codes, $roman_codes, $this->killmail_);
-
-            //utter gibberish ahoy! :)
-            $search = array('Gfprca:','Aj25mq: MFR','Aj25mq: mfr','Aj25mq: Mfr', 'Aj25mq:', 'Il5:',
-                            'Tpakvi5: MFR','Tpakvi5: mfr','Tpakvi5: Mfr', 'Tpakvi5:',
-                     'Smiwrngfmm1f nbzfkr1:', 'Smiwrngfmn:', 'Bfhnoaqmnqr2:', 'Qiqrfla:',
-                            'Cncjfwfmn oiparnc:','Anz:','Knponpavi5:','(Dpsh)', 'Knpabj2:','Cnnpsgfmi5:','(C knmrfjmfpf)',
-                            'Mamnqil1j spnm:','Syfpb:', '(mamfq pfxa4yij seap)',
-                            'Qbpnxfmm1f nbzfkr1:', 'K-cn:', 'Unbekannt', 'Nrqfk epnmnc');
+            $search = array('Жертва:','Альянс: НЕТ','Альянс: нет','Альянс: Нет', 'Альянс:', 'Имя:',
+                            'Фракция: Неизвестно','Фракция: НЕТ','Фракция: нет','Фракция: Нет', 'Фракция:',
+                     'Уничтоженные предметы:', 'Уничтожено:', 'Уровень безопасности:', 'Система:',
+                            'Участники:','кол-во:','Корпорация:','(Груз)', 'Корабль:','Оружие:','(В контейнере)',
+                            'Нанесенный ущерб:','Полученный ущерб:', '(нанес последний удар)',
+                            'Сброшенные предметы:', 'кол-во:', 'Неизвестно', 'Отсек дронов', 'Луна:');
 
             $replace = array('Victim:','Alliance: None','Alliance: None','Alliance: None','Alliance:', 'Name:',
-                            'Faction: None','Faction: None','Faction: None', 'Faction:',
+                            'Faction: None','Faction: None','Faction: None','Faction: None', 'Faction:',
                      'Destroyed items:','Destroyed:', 'Security:', 'System:',
                             'Involved parties:', 'Qty:', 'Corp:', '(Cargo)', 'Ship:', 'Weapon:','(In Container)',
                             'Damage Done:', 'Damage Taken:', '(laid the final blow)',
-                            'Dropped items:', 'Qty:', 'Unknown', 'Drone Bay');
+                            'Dropped items:', 'Qty:', 'Unknown', 'Drone Bay', 'Moon:');
 
             $this->killmail_ = str_replace($search, $replace, $this->killmail_);
 
