@@ -18,15 +18,9 @@ if(isset($_SERVER['HTTP_IF_NONE_MATCH'])
 }
 
 // The exciting new thumb/blah/xxx
-if(strpos($_SERVER['REQUEST_URI'], '/thumb.php/') !== false
-		|| strpos($_SERVER['REQUEST_URI'], '/thumb/') !== false)
+if(isset($_SERVER['PATH_INFO']))
 {
-	if(strpos($_SERVER['REQUEST_URI'], '/thumb.php/') !== false)
-			$url_args = substr($_SERVER['REQUEST_URI'], strpos($_SERVER['REQUEST_URI'], '/thumb.php/') + 11);
-	else
-			$url_args = substr($_SERVER['REQUEST_URI'], strpos($_SERVER['REQUEST_URI'], '/thumb/') + 7);
-
-	$args = explode('/', $url_args);
+	$args = explode('/', trim($_SERVER['PATH_INFO'],"/"));
 
 	$type = "type";
 	$size = 64;
@@ -76,6 +70,7 @@ switch($type)
 {
 	case 'pilot':
 	case 'corp':
+	case 'corporation':
 	case 'alliance':
 		goPCA($type, $id, $size, $imghost);
 		break;
@@ -99,6 +94,13 @@ die;
 
 function goPCA($type, $id, $size = 64, $imghost = "")
 {
+	//TODO integrate the existing common/includes/class.thumb.php
+	if($type == "corporation") $type = "corp";
+	header("Expires: ".gmdate("D, d M Y H:i:s", time() + $year)." GMT");
+	header('Cache-Control: no-cache');
+
+	header('Last-Modified: '.gmdate("D, d M Y H:i:s")." GMT");
+	
 	include_once('kbconfig.php');
 	require_once('common/includes/globals.php');
 	$config = new Config();
@@ -114,6 +116,7 @@ function goPCA($type, $id, $size = 64, $imghost = "")
 
 function goMap($type, $id, $size=200)
 {
+	//TODO integrate the existing common/includes/class.mapview.php
 	include_once('kbconfig.php');
 	require_once('common/includes/globals.php');
 	$config = new Config();
@@ -134,6 +137,7 @@ function goType($type, $id, $size = 64, $imghost = "")
 	}
 
 	require_once("common/includes/class.cachehandler.php");
+	//TODO: add an optional memcache backed by the filecache
 //	require_once("common/includes/class.cachehandlerhashed");
 //	require_once("kbconfig.php");
 //	if(defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE == true)
