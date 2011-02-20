@@ -72,9 +72,6 @@ class KillListTable
 			$kll['victimshipimage'] = $kill->getVictimShipImage(32);
 			// Still needs a db query for every row. Add to Killlist and add
 			// a get function in Kill?
-			$vic_ship = new Ship(0,$kill->getVictimShipExternalID());
-			$kll['victimshiptechlevel'] = $vic_ship->getTechLevel();
-			$kll['victimshipisfaction'] = $vic_ship->isFaction();
 			$kll['victimshipname'] = $kill->getVictimShipName();
 			$kll['victimshipclass'] = $kill->getVictimShipClassName();
 			$kll['victimshipindicator'] = $kill->getVictimShipValueIndicator();
