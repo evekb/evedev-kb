@@ -71,6 +71,11 @@ class IDFeed
 		$http->set_useragent("EDK IDFeedfetcher ".self::version);
 		$http->set_timeout(300);
 		$this->xml = $http->get_content();
+		if($http->get_http_code() != 200)
+		{
+			trigger_error("HTTP error ".$http->get_http_code(). " while fetching file.", E_USER_WARNING);
+			return false;
+		}
 		unset($http);
 		if($this->xml) return true;
 		else return false;
