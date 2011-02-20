@@ -39,14 +39,14 @@ if($qcache) config::set('cfg_qcache', 0);
 $pcache = config::get('cache_enabled');
 if($pcache) config::set('cache_enabled', 0);
 
-echo "<br />Removed ".CacheHandler::removeByAge('SQL/', 7 * 24)." files from SQL/<br />";
-echo "Removed ".CacheHandler::removeByAge('page/'.KB_SITE.'/', 7 * 24)." files from page/<br />";
-echo "Removed ".CacheHandler::removeByAge("templates_c/", 1 * 24)." files from templates_c/<br />";
-echo "Removed ".CacheHandler::removeByAge("mail/", 7 * 24)." files from mail/<br />";
+echo "<br />Removed ".CacheHandler::removeByAge('SQL/', 7 * 24)." files from SQL/<br />\n";
+echo "Removed ".CacheHandler::removeByAge('page/'.KB_SITE.'/', 7 * 24)." files from page/<br />\n";
+echo "Removed ".CacheHandler::removeByAge("templates_c/", 1 * 24)." files from templates_c/<br />\n";
+echo "Removed ".CacheHandler::removeByAge("mail/", 7 * 24)." files from mail/<br />\n";
 // Let's let people see their latest beautiful creation in the character creator.
-echo "Removed ".CacheHandler::removeByAge('img/', 30 * 24)." files from img/<br />";
-echo "Removed ".CacheHandler::removeByAge('store/', 7 * 24)." files from store/<br />";
-echo "Removed ".CacheHandler::removeByAge('/', 0 * 24, false)." files from entire cache<br />";
+echo "Removed ".CacheHandler::removeByAge('img/', 30 * 24)." files from img/<br />\n";
+echo "Removed ".CacheHandler::removeByAge('store/', 7 * 24)." files from store/<br />\n";
+echo "Removed ".CacheHandler::removeByAge('/', 30 * 24, false)." files from entire cache<br />\n";
 
 if($qcache) config::set('cfg_qcache', 1);
 if($pcache) config::set('cache_enabled', 1);
