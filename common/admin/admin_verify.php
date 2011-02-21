@@ -21,7 +21,17 @@ function ReadDirectory($dir, $ignoreimg = false)
 		{
 			if (is_file($dir . "/" . $file))
 			{
-				$sha1 = sha1_file($dir . "/" . $file);
+				if (strpos($file, ".php") !== false)
+				{
+					$contents = file_get_contents($dir . "/" . $file);
+					$contents = preg_replace('/\/\*\s+ \* \$Date$contents);
+					$contents = preg_replace('/\* \$Revision$contents);
+					$contents = preg_replace('/\* \$HeadURL$contents);
+					$contents = preg_replace('/<\?php\s+/', "<?php\n", $contents);
+					$sha1 = sha1($contents);
+				}
+				else
+					$sha1 = sha1_file($dir . "/" . $file);
 				$file = str_replace("\\", "/", $dir . "/" . $file);
 				$ret[$file] = $sha1;
 			}
