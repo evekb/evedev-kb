@@ -1,14 +1,35 @@
 -------------------------------------------
-Eve Development Network Killboard v3.2 beta
+Eve Development Network Killboard v3.2.0
 -------------------------------------------
 
 VERSION HISTORY
-v3.2 beta
+v3.2.0
 Mixed pilot/corp/alliance board owner
+- no limits on number or type of owners
 Code cleaning
-Speed optimisations
+DB speed optimisations
 Quicker install
 Moved everything to the left a bit.
+Images now use CCP's types directory structure
+Images are now accessed through thumb.php
+- simpler image handling
+- improved speed for large sites
+Russian mail parser fixes
+API over HTTPS
+kill_details has optional 256x256 ship background
+kill_details links to killmail source.
+-------------------------------------------
+v3.1.8
+Refixed hyphenated name display
+-------------------------------------------
+v3.1.7
+Handles CCP's new default image system
+Incursion 1.1 DB
+Campaign end dates are respected
+Cronjob feed fetches update last kill on first run
+Fixed hyphenated name display
+Structure names handled consistently
+Improved alliance clustering in related kills
 -------------------------------------------
 v3.1.6
 Incursion updates
