@@ -95,6 +95,8 @@ die;
 function goPCA($type, $id, $size = 64, $imghost = "")
 {
 	//TODO integrate the existing common/includes/class.thumb.php
+	$year = 31536000; // 365 * 24 * 60 * 60
+
 	if($type == "corporation") $type = "corp";
 	header("Expires: ".gmdate("D, d M Y H:i:s", time() + $year)." GMT");
 	header('Cache-Control: no-cache');
