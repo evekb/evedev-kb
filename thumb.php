@@ -102,7 +102,10 @@ function goPCA($type, $id, $size = 64, $imghost = "")
 	//TODO integrate the existing common/includes/class.thumb.php
 	$year = 31536000; // 365 * 24 * 60 * 60
 
-	header_remove();
+	// PHP5.3+ only
+	//header_remove();
+	// Instead:
+	header("Cache-Control: public");
 	header("Expires: ".gmdate("D, d M Y H:i:s", time() + $year)." GMT");
 
 	header('Last-Modified: '.gmdate("D, d M Y H:i:s")." GMT");
@@ -209,7 +212,10 @@ function expiryHeaders($type="png", $path = "")
 {
 	$year = 31536000; // 365 * 24 * 60 * 60
 
-	header_remove();
+	// PHP5.3+ only
+	//header_remove();
+	// Instead:
+	header("Cache-Control: public");
 	header("Content-Type: image/".$type);
 	header("Expires: ".gmdate("D, d M Y H:i:s", time() + $year)." GMT");
 
