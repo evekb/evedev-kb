@@ -8,7 +8,7 @@
 
 class DBDebug
 {
-	private static $qerrfile = "/tmp/EDKprofile.lst";
+	private static $qerrfile = "cache/EDKprofile.lst";
 	public static function recordError($text)
 	{
 		if($text) file_put_contents(self::$qerrfile, $text."\n", FILE_APPEND);
