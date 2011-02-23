@@ -20,7 +20,9 @@ if(isset($_SERVER['HTTP_IF_NONE_MATCH'])
 // The exciting new thumb/blah/xxx
 if(isset($_SERVER['PATH_INFO']))
 {
-	$args = explode('/', trim($_SERVER['PATH_INFO'],"/"));
+	// Split on /, _, or . => works with:
+	// thumb/Character/123456/32 as well as thumb/Character/123456_32.jpg
+	$args = preg_split('/[\/_.]/', trim($_SERVER['PATH_INFO'],"/"));
 
 	$type = "type";
 	$size = 64;
@@ -69,9 +71,12 @@ if(preg_match("/[^\w\d-_]/", $type))
 switch($type)
 {
 	case 'pilot':
+	case 'character':
 	case 'corp':
 	case 'corporation':
 	case 'alliance':
+		if($type == 'character') $type = 'pilot';
+		else if ($type == 'corporation') $type = 'corp';
 		goPCA($type, $id, $size, $imghost);
 		break;
 
@@ -97,9 +102,8 @@ function goPCA($type, $id, $size = 64, $imghost = "")
 	//TODO integrate the existing common/includes/class.thumb.php
 	$year = 31536000; // 365 * 24 * 60 * 60
 
-	if($type == "corporation") $type = "corp";
+	header_remove();
 	header("Expires: ".gmdate("D, d M Y H:i:s", time() + $year)." GMT");
-	header('Cache-Control: no-cache');
 
 	header('Last-Modified: '.gmdate("D, d M Y H:i:s")." GMT");
 	
@@ -205,9 +209,9 @@ function expiryHeaders($type="png", $path = "")
 {
 	$year = 31536000; // 365 * 24 * 60 * 60
 
+	header_remove();
 	header("Content-Type: image/".$type);
 	header("Expires: ".gmdate("D, d M Y H:i:s", time() + $year)." GMT");
-	header('Cache-Control: no-cache');
 
 	if($path) header('Last-Modified: '.gmdate("D, d M Y H:i:s", filemtime($path))." GMT");
 	else header('Last-Modified: '.gmdate("D, d M Y H:i:s")." GMT");
