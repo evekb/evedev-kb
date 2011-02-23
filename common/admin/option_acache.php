@@ -64,18 +64,18 @@ class admin_acache
     function getKillmails()
     {
 		$count = 0;
-		if (KB_MAILCACHEDIR)
+		if(defined('KB_MAILCACHEDIR'))
 		{
-			$dir   = KB_MAILCACHEDIR;
-			if(is_dir($dir))
+			if(is_dir(KB_MAILCACHEDIR))
 			{
-				if($handle = opendir($dir))
+				if($files = scandir(KB_MAILCACHEDIR))
 				{
-					while(($file = readdir($handle)) !== false)
+					foreach($files as $file)
 					{
-						if (!is_dir($file)) $count++;
+						if (substr($file, 0, 1) != '.'
+								&& !is_dir($dir."/".$file)) $count++;
 					}
-					closedir($handle);
+					
 				}
 			}
 		}
