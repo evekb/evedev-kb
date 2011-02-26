@@ -5,10 +5,7 @@
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/includes/class.eveapi.php $
 */
 
-// **********************************************************************************************************************************************
-// ****************                                 API Alliance list - /eve/AllianceList.xml.aspx                               ****************
-// **********************************************************************************************************************************************
-
+//! Retrieve Alliance list from CCP to find alliance details.
 class AllianceAPI
 {
 	protected $sxe = null;
@@ -26,7 +23,7 @@ class AllianceAPI
 	}
 
 
-	function initXML()
+	private function initXML()
 	{
 		$data = API_Helpers::LoadGlobalData('/eve/AllianceList.xml.aspx');
 
@@ -52,19 +49,24 @@ class AllianceAPI
 
 	function fetchalliances($overide=false)
 	{
-		if (!isset($this->alliances_))
-			$this->initXML($overide);
+		if (isset($this->alliances))
+				return $this->alliances;
 
-		$myalliancelist = array();
-		$myalliancelist['Name'] = array();
-		$myalliancelist['allianceID'] = array();
+		$this->initXML($overide);
+
+		if(!isset($this->sxe->result->rowset->row[0]))
+			return false;
+
+		$this->alliances = array();
+		$this->alliances['Name'] = array();
+		$this->alliances['allianceID'] = array();
 
 		foreach($this->sxe->result->rowset->row as $row)
 		{
-			$myalliancelist['Name'][] = $row['allianceName'];
-			$myalliancelist['allianceID'][] = $row['allianceID'];
+			$this->alliances['Name'][] = $row['allianceName'];
+			$this->alliances['allianceID'][] = $row['allianceID'];
 		}
-		return $myalliancelist;
+		return $this->alliances;
 	}
 
 	function updatealliancetable()
@@ -72,7 +74,7 @@ class AllianceAPI
 		if (!isset($this->sxe))
 			$this->initXML();
 
-		if (!isset($this->sxe))
+		if(!isset($this->sxe->result->rowset->row[0]))
 			return false;
 
 		$qry = DBFactory::getDBQuery();
@@ -100,7 +102,7 @@ class AllianceAPI
 		if (!isset($this->sxe))
 			$this->initXML();
 
-		if (!isset($this->sxe))
+		if(!isset($this->sxe->result->rowset->row[0]))
 			return false;
 
 		foreach($this->sxe->result->rowset->row as $row)
@@ -117,16 +119,6 @@ class AllianceAPI
 			return $res;
 		}
 		return false;
-
-		$alliances = $this->alliances_;
-
-		foreach ($alliances as $arraykey => $arrayvalue)
-		{
-			$tempally = $arrayvalue;
-			if($tempally['allianceName'] == $name) return $tempally;
-
-		}
-		return false;
 	}
 
 	function LocateAllianceID($id)
@@ -134,7 +126,7 @@ class AllianceAPI
 		if (!isset($this->sxe))
 			$this->initXML();
 
-		if (!isset($this->sxe))
+		if(!isset($this->sxe->result->rowset->row[0]))
 			return false;
 
 		foreach($this->sxe->result->rowset->row as $row)
@@ -158,8 +150,8 @@ class AllianceAPI
 		if (!isset($this->sxe))
 			$this->initXML();
 
-		if (!isset($this->sxe))
-			return false;
+		if(!isset($this->sxe->result->rowset->row[0]))
+			return array();
 
 		$alliance = new Alliance();
 		$tempMyCorp = new Corporation();
