@@ -23,7 +23,7 @@ class AllianceAPI
 	}
 
 
-	private function initXML()
+	function initXML()
 	{
 		$data = API_Helpers::LoadGlobalData('/eve/AllianceList.xml.aspx');
 
