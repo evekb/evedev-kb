@@ -6,7 +6,6 @@
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/thumb.php $
  */
 @error_reporting(E_ERROR);
-define('KB_CACHEDIR', 'cache');
 
 // We don't alter images often. Let's save time and leave it up to the
 // browser to force a refresh if they want to.
@@ -138,6 +137,7 @@ function goMap($type, $id, $size=200)
 
 function goType($type, $id, $size = 64, $imghost = "")
 {
+	define('KB_CACHEDIR', 'cache');
 	if($type == 'ship' && $size == 256 && file_exists("img/ships/256_256/{$id}.png"))
 	{
 		expiryHeaders("png", "img/ships/256_256/{$id}.png");
