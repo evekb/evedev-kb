@@ -289,7 +289,7 @@ class thumb
 		if($this->encoding == 'jpeg') $ext = 'jpg';
 		else $ext = 'png';
 
-		if($type != 'Character' & $type != 'Corporation' && $type != 'Alliance') return false;
+		if($type != 'Character' && $type != 'Corporation' && $type != 'Alliance') return false;
 		$url = "http://".IMG_SERVER."/".$type."/".$this->id."_".$size.".".$ext;
 		if (function_exists('curl_init'))
 		{
