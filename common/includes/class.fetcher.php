@@ -433,9 +433,9 @@ class Fetcher
 		$myID = new API_NametoID();
 		while($position < count($checklist))
 		{
-			$namestring = str_replace(" ", "%20", implode(',',array_slice($checklist,$position, 500, true)));
+			$namestring = str_replace(" ", "%20", implode(',',array_slice($checklist,$position, 100, true)));
 			$namestring = str_replace("\'", "'", $namestring);
-			$position +=500;
+			$position +=100;
 			$myID->setNames($namestring);
 			$myID->fetchXML();
 			$tempNames = $myID->getNameData();
@@ -475,9 +475,9 @@ class Fetcher
 		$myNames = array();
 		while($position < count($checklist))
 		{
-			$namestring = str_replace(" ", "%20", implode(',',array_slice($checklist,$position, 500, true)));
+			$namestring = str_replace(" ", "%20", implode(',',array_slice($checklist,$position, 100, true)));
 			$namestring = str_replace("\'", "'", $namestring);
-			$position +=500;
+			$position +=100;
 			$myID = new API_NametoID();
 			$myID->setNames($namestring);
 			$myID->fetchXML();
