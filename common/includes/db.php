@@ -49,7 +49,7 @@ else
 
 	if (!DB_USE_QCACHE && (bool)config::get('cfg_memcache'))
 	{
-		if(!method_exists(Memcache, 'pconnect'))
+		if(!method_exists('Memcache', 'pconnect'))
 		{
 			$boardMessage = "ERROR: Memcache extension not installed. memcaching disabled.";
 			define("DB_USE_MEMCACHE", false);
@@ -63,7 +63,7 @@ else
 				define("DB_USE_MEMCACHE", false);
 			}
 			else define("DB_USE_MEMCACHE", true);
-			if(method_exists(Memcache, 'setCompressThreshold')) $mc->setCompressThreshold(20000, 0.2);
+			if(method_exists('Memcache', 'setCompressThreshold')) $mc->setCompressThreshold(20000, 0.2);
 		}
 	} else
 	{
