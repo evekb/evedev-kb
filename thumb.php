@@ -129,10 +129,34 @@ function goMap($type, $id, $size=200)
 	include_once('kbconfig.php');
 	require_once('common/includes/globals.php');
 	$config = new Config();
-	$_GET['mode'] = $type;
-	$_GET['sys_id'] = $id;
-	$_GET['size'] = $size;
-	require_once('common/mapview.php');
+
+	$view = new MapView($type, $size);
+	$view->setSystemID($id);
+	switch ($type)
+	{
+		case "map":
+			$view->setTitle("Region");
+			$view->showLines(config::get('map_map_showlines'));
+			$view->paintSecurity(config::get('map_map_security'));
+			checkColors('map', $view);
+			break;
+		case "region":
+			$view->setTitle("Constellation");
+			$view->showLines(config::get('map_reg_showlines'));
+			$view->paintSecurity(config::get('map_reg_security'));
+			$view->setOffset(25);
+			checkColors('reg', $view);
+			break;
+		case "cons":
+			$view->showLines(config::get('map_con_showlines'));
+			$view->showSysNames(config::get('map_con_shownames'));
+			$view->paintSecurity(config::get('map_con_security'));
+			$view->setOffset(25);
+			checkColors('con', $view);
+			break;
+	}
+	$view->generate();
+
 	die;
 }
 
@@ -222,4 +246,18 @@ function expiryHeaders($type="png", $path = "")
 
 	if($path) header('Last-Modified: '.gmdate("D, d M Y H:i:s", filemtime($path))." GMT");
 	else header('Last-Modified: '.gmdate("D, d M Y H:i:s")." GMT");
+}
+
+function checkColors($context, $view)
+{
+	$a = array('line', 'bg', 'hl', 'normal', 'capt');
+	foreach ($a as $b)
+	{
+		if ($string = config::get('map_'.$context.'_cl_'.$b))
+		{
+			$tmp = explode(',', $string);
+			$function = 'set'.$b.'color';
+			$view->$function($tmp[0], $tmp[1], $tmp[2]);
+		}
+	}
 }
