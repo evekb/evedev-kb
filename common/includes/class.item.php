@@ -104,8 +104,8 @@ class Item
 		}
 		if($show_style == "_none") $show_style = "";
 
-		if($show_style == "_tag" || $show_style == "") return "<img src='$img' alt=\"".$this->getName()."\" style='width:{$size}px; height:{$size}px; border:0px' />";
-		
+		if($show_style == "_tag" || $show_style == "") return "<img src='$img' title=\"".$this->getName()."\" alt=\"".$this->getName()."\" style='width:{$size}px; height:{$size}px; border:0px' />";
+
 		$it_name = $this->getName();
 		if (($this->row_['itm_techlevel'] == 5) && $show_style) // is a T2?
 		{
@@ -123,8 +123,8 @@ class Item
 		{
 			$icon .= IMG_URL.'/items/'.$size.'_'.$size.'/d'.$show_style.'.png';
 		}
-		elseif ((
-			strstr($it_name,"Blood ")
+		elseif (
+			(strstr($it_name,"Blood ")
 				|| strstr($it_name,"Sansha")
 				|| strstr($it_name,"Arch")
 				|| strstr($it_name,"Domination")
@@ -133,14 +133,14 @@ class Item
 				|| strstr($it_name,"Guardian")
 				|| strstr($it_name,"Guristas")
 				|| strstr($it_name,"Shadow")
-		) && $show_style
+			) && $show_style
 		) // finally if it's a faction it should have its prefix
 		{
 			$icon = IMG_URL.'/items/'.$size.'_'.$size.'/f'.$show_style.'.png';
 		}
 		else // but maybe it was only a T1 item :P
 		{
-			$icon = IMG_URL.'/items/'.$size.'_'.$size.'/blank.gif';
+			return "<img src='$img' title=\"".$this->getName()."\" alt=\"".$this->getName()."\" style='width:{$size}px; height:{$size}px; border:0px' />";
 		}
 
 		if (($size == 32 || $size == 48 || true) && ($show_style == '_backglowing'))
@@ -165,10 +165,10 @@ class Item
 		{
 			$qry = DBFactory::getDBQuery();
 			$query = "select itt_slot from kb3_item_types
-                        inner join kb3_dgmtypeattributes d
-                        where itt_id = d.value
-                        and d.typeID = ".$this->row_['typeID']."
-                        and d.attributeID in (137,602);";
+						inner join kb3_dgmtypeattributes d
+						where itt_id = d.value
+						and d.typeID = ".$this->row_['typeID']."
+						and d.attributeID in (137,602);";
 			$qry->execute($query);
 			$row = $qry->getRow();
 
@@ -188,13 +188,13 @@ class Item
 			if (!isset($this->qry)) $this->qry = DBFactory::getDBQuery();
 
 			$sql = "select inv.*, kb3_item_types.*, dga.value as techlevel, itp.price, dc.value as usedcharge, dl.value as usedlauncher
-                               from kb3_invtypes inv
-                               left join kb3_dgmtypeattributes dga on dga.typeID=inv.typeID and dga.attributeID=633
-                               left join kb3_item_price itp on itp.typeID=inv.typeID
-                               left join kb3_item_types on groupID=itt_id
-                               left join kb3_dgmtypeattributes dc on dc.typeID = inv.typeID AND dc.attributeID IN (128)
-                               left join kb3_dgmtypeattributes dl on dl.typeID = inv.typeID AND dl.attributeID IN (137,602)
-          	                   where inv.typeID = '".$this->id."'";
+							   from kb3_invtypes inv
+							   left join kb3_dgmtypeattributes dga on dga.typeID=inv.typeID and dga.attributeID=633
+							   left join kb3_item_price itp on itp.typeID=inv.typeID
+							   left join kb3_item_types on groupID=itt_id
+							   left join kb3_dgmtypeattributes dc on dc.typeID = inv.typeID AND dc.attributeID IN (128)
+							   left join kb3_dgmtypeattributes dl on dl.typeID = inv.typeID AND dl.attributeID IN (137,602)
+							   where inv.typeID = '".$this->id."'";
 			$this->qry->execute($sql);
 			$this->row_ = $this->qry->getRow();
 			$this->row_['itm_icon'] = $this->row_['icon'];
@@ -211,7 +211,7 @@ class Item
 		$name = trim($name);
 		$qry = DBFactory::getDBQuery();
 		$query = "select typeID as itm_id from kb3_invtypes itm
-                  where typeName = '".$qry->escape(stripslashes($name))."'";
+				  where typeName = '".$qry->escape(stripslashes($name))."'";
 		$qry->execute($query);
 		$row = $qry->getRow();
 		if (!isset($row['itm_id']))
@@ -229,8 +229,8 @@ class Item
 	{
 		$qry = DBFactory::getDBQuery();
 		$query = "select typeID as itm_id
-                  from kb3_invtypes
-                  where typeName = '".$qry->escape($name)."'";
+				  from kb3_invtypes
+				  where typeName = '".$qry->escape($name)."'";
 		$qry->execute($query);
 
 		$row = $qry->getRow();
@@ -243,9 +243,9 @@ class Item
 		$qry  = DBFactory::getDBQuery();
 		// I dont think CCP will change this attribute in near future ;-)
 		$query = "SELECT value
-                     FROM kb3_dgmtypeattributes d
-                     INNER JOIN kb3_invtypes i ON i.typeID = d.typeID
-                     WHERE i.typeName = '".$qry->escape($name)."' AND d.attributeID IN (137,602);";
+					 FROM kb3_dgmtypeattributes d
+					 INNER JOIN kb3_invtypes i ON i.typeID = d.typeID
+					 WHERE i.typeName = '".$qry->escape($name)."' AND d.attributeID IN (137,602);";
 		$qry->execute($query);
 		$row = $qry->getRow();
 		return $row['value'];
@@ -258,14 +258,14 @@ class Item
 		// I dont think CCP will change this attribute in near future ;-)
 		if(is_null($name))
 			$query = "SELECT value
-                     FROM kb3_dgmtypeattributes d
-                     INNER JOIN kb3_invtypes i ON i.typeID = d.typeID
-             WHERE i.typeID = ".$this->row_['typeID']." AND d.attributeID IN (128);";
+					 FROM kb3_dgmtypeattributes d
+					 INNER JOIN kb3_invtypes i ON i.typeID = d.typeID
+			 WHERE i.typeID = ".$this->row_['typeID']." AND d.attributeID IN (128);";
 		else
 			$query = "SELECT value
-             FROM kb3_dgmtypeattributes d
-             INNER JOIN kb3_invtypes i ON i.typeID = d.typeID
-                     WHERE i.typeName = '".$qry->escape($name)."' AND d.attributeID IN (128);";
+			 FROM kb3_dgmtypeattributes d
+			 INNER JOIN kb3_invtypes i ON i.typeID = d.typeID
+					 WHERE i.typeName = '".$qry->escape($name)."' AND d.attributeID IN (128);";
 		$qry->execute($query);
 		$row = $qry->getRow();
 		return $row['value'];
@@ -308,12 +308,12 @@ class Item
 		$qry = DBFactory::getDBQuery();
 		if(is_null($name))
 			$query = "select groupID
-                        from kb3_invtypes
-                        where typeName = ".$this->row_['typeID'];
+						from kb3_invtypes
+						where typeName = ".$this->row_['typeID'];
 		else
 			$query = "select groupID
-                        from kb3_invtypes
-                       where typeName = '".$qry->escape($name)."'";
+						from kb3_invtypes
+					   where typeName = '".$qry->escape($name)."'";
 		$qry->execute($query);
 
 		$row = $qry->getRow();
