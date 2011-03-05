@@ -13,5 +13,5 @@
   UNIQUE KEY `time_hash` (`kll_timestamp`,`kll_hash`),
   UNIQUE KEY `external_id` (`kll_external_id`),
   KEY `kll_modified_time` (`kll_modified_time`)
-) Type=MyISAM;</structure>
+) Engine=MyISAM;</structure>
 </kb3>

@@ -9,5 +9,5 @@
   PRIMARY KEY  (`all_id`),
   UNIQUE KEY `all_name` (`all_name`),
   UNIQUE KEY `all_external_id` (`all_external_id`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

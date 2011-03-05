@@ -6,5 +6,5 @@
   `shp_id` int(11) NOT NULL,
   `shp_value` bigint(4) NOT NULL,
   PRIMARY KEY  (`shp_id`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

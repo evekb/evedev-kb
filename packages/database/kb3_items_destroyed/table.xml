@@ -9,5 +9,5 @@
   `itd_itl_id` smallint(11) NOT NULL default &#039;0&#039;,
   KEY `itd_kll_id` (`itd_kll_id`),
   KEY `itd_itl_id` (`itd_itl_id`,`itd_kll_id`,`itd_itm_id`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

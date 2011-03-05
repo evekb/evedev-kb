@@ -6,5 +6,5 @@
   `ttl_id` int(11) NOT NULL,
   `rol_id` int(11) NOT NULL,
   KEY `ttl_id` (`ttl_id`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

@@ -6,5 +6,5 @@
   `ust_usr_id` int(11) NOT NULL,
   `ust_ttl_id` int(11) NOT NULL,
   KEY `ust_usr_id` (`ust_usr_id`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

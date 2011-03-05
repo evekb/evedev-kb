@@ -14,6 +14,6 @@
   `hidden` tinyint(1) NOT NULL default &#039;0&#039;,
   `KBSITE` char(16) NOT NULL,
   PRIMARY KEY  (`ID`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>
 

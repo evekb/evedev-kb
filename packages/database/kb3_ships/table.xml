@@ -14,5 +14,5 @@
   PRIMARY KEY  (`shp_id`),
   UNIQUE KEY `shp_name` (`shp_name`),
   KEY `shp_class` (`shp_class`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

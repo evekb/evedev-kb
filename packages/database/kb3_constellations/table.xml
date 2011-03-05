@@ -8,5 +8,5 @@
   `con_reg_id` int(11) NOT NULL default &#039;0&#039;,
   PRIMARY KEY  (`con_id`),
   KEY `con_reg_id` (`con_reg_id`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

@@ -15,6 +15,6 @@
   KEY `sys_eve_id` (`sys_eve_id`),
   KEY `sys_con_id` (`sys_con_id`),
   KEY `sys_name` (`sys_name`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>
 

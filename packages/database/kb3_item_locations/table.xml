@@ -7,5 +7,5 @@
   `itl_location` char(24) NOT NULL,
   PRIMARY KEY  (`itl_id`),
   KEY `itl_id` (`itl_location`,`itl_id`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

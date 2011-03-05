@@ -11,5 +11,5 @@
   `usr_state` tinyint(1) NOT NULL default &#039;0&#039;,
   PRIMARY KEY  (`usr_id`),
   UNIQUE KEY `sitelogin` (`usr_site`,`usr_login`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

@@ -12,5 +12,5 @@
   `ip` varbinary(39) NOT NULL DEFAULT &#039;0:0:0:0&#039;,
   PRIMARY KEY  (`id`),
   KEY `kll_site_id` (`kll_id`,`site`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

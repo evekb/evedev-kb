@@ -8,5 +8,5 @@
   `value` double NOT NULL,
   KEY `typeID` (`typeID`),
   KEY `attributeID` (`attributeID`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

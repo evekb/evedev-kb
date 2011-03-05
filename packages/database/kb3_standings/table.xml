@@ -10,5 +10,5 @@
   `sta_value` float NOT NULL default &#039;0&#039;,
   `sta_comment` char(200) NOT NULL,
   KEY `sta_from` (`sta_from`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

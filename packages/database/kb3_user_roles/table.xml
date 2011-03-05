@@ -6,5 +6,5 @@
   `uro_usr_id` int(11) NOT NULL,
   `uro_rol_id` int(11) NOT NULL,
   KEY `uro_usr_id` (`uro_usr_id`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

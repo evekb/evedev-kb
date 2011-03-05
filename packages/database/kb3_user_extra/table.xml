@@ -7,5 +7,5 @@
   `use_key` char(60) NOT NULL,
   `use_value` char(200) NOT NULL,
   KEY `use_usr_id` (`use_usr_id`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

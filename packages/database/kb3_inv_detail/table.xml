@@ -19,5 +19,5 @@
   KEY `ind_all_id` (`ind_all_id`),
   KEY `ind_plt_time` (`ind_plt_id`,`ind_timestamp`),
   KEY `ind_kll_plt` (`ind_kll_id`,`ind_plt_id`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

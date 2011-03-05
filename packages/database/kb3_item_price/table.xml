@@ -6,6 +6,6 @@
   `typeID` int(11) NOT NULL,
   `price` bigint(11) NOT NULL,
   PRIMARY KEY  (`typeID`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>
 

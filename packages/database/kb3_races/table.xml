@@ -6,5 +6,5 @@
   `rce_id` int(11) NOT NULL auto_increment,
   `rce_race` char(30) NOT NULL,
   PRIMARY KEY  (`rce_id`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

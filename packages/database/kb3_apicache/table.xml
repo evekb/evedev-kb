@@ -7,6 +7,6 @@
     `cfg_key` varchar(32) NOT NULL default &#039;&#039;,
     `cfg_value` text NOT NULL,
     PRIMARY KEY  (`cfg_site`,`cfg_key`))
-    TYPE=MyISAM  DEFAULT CHARSET=utf8;</structure>
+    Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>
  

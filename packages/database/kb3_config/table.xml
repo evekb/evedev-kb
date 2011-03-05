@@ -7,5 +7,5 @@
   `cfg_key` char(32) NOT NULL,
   `cfg_value` text NOT NULL,
   PRIMARY KEY (`cfg_site`,`cfg_key`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

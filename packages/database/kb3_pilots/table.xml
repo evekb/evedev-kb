@@ -13,5 +13,5 @@
   PRIMARY KEY  (`plt_id`),
   UNIQUE KEY `plt_name` (`plt_name`),
   KEY `plt_externalid` (`plt_externalid`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

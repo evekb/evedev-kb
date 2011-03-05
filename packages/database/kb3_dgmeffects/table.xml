@@ -31,5 +31,5 @@
   `npcActivationChanceAttributeID` smallint(5) default NULL,
   `fittingUsageChanceAttributeID` smallint(5) default NULL,
   PRIMARY KEY  (`effectID`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

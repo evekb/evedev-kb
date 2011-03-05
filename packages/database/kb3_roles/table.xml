@@ -11,5 +11,5 @@
   KEY `rol_name` (`rol_name`),
   KEY `rol_site` (`rol_site`,`rol_name`,`rol_descr`),
   KEY `rol_id` (`rol_id`)
-) Type=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>
