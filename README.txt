@@ -2,6 +2,27 @@
 Eve Development Network Killboard v3.2.0
 -------------------------------------------
 
+// REQUIREMENTS
+-------------------------------------------
+- Webserver (Apache, IIS)
+- PHP 5.2+
+- Mysql 5+
+- GD 2 or higher
+
+
+// SETUP
+-------------------------------------------
+- Upload the whole package to a webhost
+- Point your webbrowser to /install inside the
+    EDK-Directory
+- Follow the instructions
+- Don't forget to delete the install folder after
+    installation or restrict the access to it!
+- Have fun ;)
+
+o/ EVE Development Network
+
+
 VERSION HISTORY
 v3.2.0
 Mixed pilot/corp/alliance board owner
@@ -10,10 +31,13 @@ Code cleaning
 DB speed optimisations
 Quicker install
 Moved everything to the left a bit.
+More separation of mods and core for easy modding and theming
 Images now use CCP's types directory structure
+API updated with CCP's latest changes.
 Images are now accessed through thumb.php
 - simpler image handling
 - improved speed for large sites
+- ready for CCP's planned item image server
 Russian mail parser fixes
 API over HTTPS
 kill_details has optional 256x256 ship background
@@ -219,31 +243,6 @@ v150.13Apoc.33.2622.0 - Updates for
 
 
 
-//  VERSION NOMENCLATURE
--------------------------------------------
-[Base Ver].[dB Ver].[API Ver].[Smarty Ver].[Change Release TB]
-v150.12Apoc.32.2622.0 is
-- Base 1.5.0
-- Database 1.2 for Apocrypha
-- API module is to 3.2
-- Smarty 2.6.2.2
-- Change release for undetailed fixes (missing class files etc)
-
-
-
-// BUILT FROM 1.4 CORE v368
--------------------------------------------
-
-
-// MODS INCLUDED IN THIS PACKAGE
--------------------------------------------
-API v3.3 ....................... Capt Thunk
-Corp Logo Generator ............ Capt Thunk
-Mail Editor 0.9.1 ........... FriedRoadKill
-Extended Fitting Mod .......... Unknown ATM
-Apoc Fitting Mod................. btcentral
-
-
 // SUPPORT
 -------------------------------------------
 Web:                http://eve-id.net/forum/
@@ -255,30 +254,3 @@ at http://www.eve-id.net
 Developers wanted!
 If you'd like to contribute to further version
 of this killboard, sign up for the EVE-Dev forums!
-
-// REQUIREMENTS
--------------------------------------------
-- Webserver (apache)
-- PHP 5+
-- Mysql 5+
-- GD 2 or higher
-
-
-// SETUP
--------------------------------------------
-- Upload the whole package to a webhost**
-- Point your webbrowser to /install inside the
-    EDK-Directory
-- Follow the instructions
-- Don't forget to delete the install folder after
-    installation or restrict the access to it!
-- Have fun ;)
-
-o/ EVE Development Network
-
-
-** Alvar recommends the use of FileZilla (free) to
-upload the files, as it has a built in easy to use
-error log, that allows you to upload files if they
-time out or error on the upload due to server
-settings.
