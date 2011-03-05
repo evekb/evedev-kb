@@ -12,7 +12,7 @@ function ReadDirectory($dir, $ignoreimg = false)
 	$ignore = array(".", "..", ".svn", "checksums.sha1", "kbconfig.php");
 	if ($ignoreimg)
 		$ignore[] = "img";
-	
+
 	$ret = array();
 	$dh = opendir($dir);
 	while (false !== ($file = readdir($dh)))
@@ -24,10 +24,8 @@ function ReadDirectory($dir, $ignoreimg = false)
 				if (strpos($file, ".php") !== false)
 				{
 					$contents = file_get_contents($dir . "/" . $file);
-					$contents = preg_replace('/\/\*\s+ \* \$Date$contents);
-					$contents = preg_replace('/\* \$Revision$contents);
-					$contents = preg_replace('/\* \$HeadURL$contents);
-					$contents = preg_replace('/<\?php\s+/', "<?php\n", $contents);
+					$contents = preg_replace('/\$(Date|Revision|HeadURL)[^$]*\$/', '', $contents);
+					$contents = preg_replace('/\r\n/', "\n", $contents);
 					$sha1 = sha1($contents);
 				}
 				else
@@ -58,7 +56,7 @@ else
 		$file = explode(":", $file);
 		$data[$file[0]] = trim($file[1]);
 	}
-	
+
 	$ignoreImages = ( $_POST['images'] == "on" ? false : true );
 	$localfiles = ReadDirectory(".", $ignoreImages);
 	$missing = array();
@@ -83,4 +81,3 @@ else
 $page->setContent($html);
 $page->addContext($menubox->generate());
 $page->generate();
-?>
