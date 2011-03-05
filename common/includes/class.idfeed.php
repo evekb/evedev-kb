@@ -32,7 +32,7 @@ class IDFeed
 	private $cachedTime = '';
 	private $errormsg = '';
 	private $errorcode = 0;
-	const version = "1.05";
+	const version = "1.06";
 
 	//! Construct the Fetcher class and initialise variables.
 
@@ -327,7 +327,12 @@ class IDFeed
 			$sys = new SolarSystem($qrow['sys_id']);
 			$kill->setSolarSystem($sys);
 
-			$this->processVictim($row->victim, $kill, strval($row['killTime']));
+			if(!$this->processVictim($row, $kill, strval($row['killTime'])))
+			{
+				if($internalID) $this->skipped[$internalID] = 0;
+				else  $this->skipped[intval($row['killID'])] = 0;
+				return;
+			}
 
 			foreach($row->rowset[0]->row as $inv) $this->processInvolved($inv, $kill, strval($row['killTime']));
 			if(isset($row->rowset[1]->row[0])) foreach($row->rowset[1]->row as $item) $this->processItem($item, $kill);
@@ -359,8 +364,17 @@ class IDFeed
 		if($this->lastInternalReturned < $internalID) $this->lastInternalReturned = $internalID;
 
 	}
-	private function processVictim($victim, &$kill, $time)
+	private function processVictim($row, &$kill, $time)
 	{
+		// If we have a character ID but no name then we give up - the needed info is gone.
+		// If we have no character ID and no name then it's a structure or NPC
+		//	- if we have a moonID (anchored at a moon) call it corpname - moonname
+		//	- if we don't have a moonID call it corpname - systemname
+		if(!strval($victim['characterName'])
+			&& intval($victim['characterID']))
+				return false;
+
+		$victim = $row->victim;
 		$alliance = new Alliance();
 		$corp = new Corporation();
 		if(intval($victim['allianceID']))
@@ -371,8 +385,30 @@ class IDFeed
 			$alliance->add("None");
 		$corp->add(strval($victim['corporationName']), $alliance, $time, intval($victim['corporationID']));
 
+		if(!strval($victim['characterName']))
+		{
+			if(intval($row['moonID']))
+			{
+				$name = API_Helpers::getMoonName(intval($row['moonID']));
+				if(!$name)
+				{
+					$idtoname = new API_IDtoName();
+					$idtoname->setIDs(intval($row['moonID']));
+
+					if($idtoname->fetchXML()) return false;
+
+					$namedata = $idtoname->getIDData();
+
+					$name = $namedata[0]['name'];
+				}
+				$name = strval($victim['corporationName'])." - ".$name;
+			}
+			else $name = strval($victim['corporationName'])." - ".$kill->getSystem()->getName();
+		}
+		else $name = strval($victim['characterName']);
+
 		$pilot = new Pilot();
-		$pilot->add(strval($victim['characterName']), $corp, $time, intval($victim['characterID']));
+		$pilot->add($name, $corp, $time, intval($victim['characterID']));
 		$ship = new Ship(0, intval($victim['shipTypeID']));
 
 		$kill->setVictim($pilot);
@@ -381,6 +417,7 @@ class IDFeed
 		$kill->setVictimAllianceID($alliance->getID());
 		$kill->setVictimShip($ship);
 		$kill->set('dmgtaken', intval($victim['damageTaken']));
+		return true;
 	}
 	private function processInvolved($inv, &$kill, $time)
 	{
@@ -409,6 +446,8 @@ class IDFeed
 		{
 			$charname = $inv['corporationName'].' - '.$weapon->getName();
 		}
+		else if($charname == "") $charname = $ship->getName();
+		
 		$pilot->add(strval($inv['characterName']), $corp, $time, intval($inv['characterID']));
 
 		$iparty = new InvolvedParty($pilot->getID(), $corp->getID(),
