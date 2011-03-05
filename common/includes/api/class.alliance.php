@@ -28,13 +28,22 @@ class AllianceAPI
 		$data = API_Helpers::LoadGlobalData('/eve/AllianceList.xml.aspx');
 
 		$this->sxe = simplexml_load_string($data);
-		if(!$this->sxe)
+		if(!$this->sxe || strval($sxe->error))
 		{
-			$this->errormsg = "XML error:\n";
-			foreach(libxml_get_errors() as $error)
+			if(strval($this->sxe->error))
 			{
-				$this->errormsg .= "\t".$error->message."\n";
+				$this->error = array();
+				$this->error['code'] = strval($this->sxe->error['code']);
+				$this->error['message'] = strval($this->sxe->error);
 			}
+			else
+			{
+				$this->errormsg = "XML error:\n";
+				foreach(libxml_get_errors() as $error)
+				{
+					$this->errormsg .= "\t".$error->message."\n";
+				}
+			}	
 			return false;
 		}
 		$this->CurrentTime_ = strval($this->sxe->currentTime);

@@ -48,19 +48,12 @@ class API_Helpers
 
 			// Save the file if we're caching (0 = true in Thunks world)
 			if ( $UseCaching == 0 )
-			{
-				$file = fopen(KB_CACHEDIR.'/api/'.$configvalue.'.xml', 'w+');
-				fwrite($file, $contents);
-				fclose($file);
-				@chmod(KB_CACHEDIR.'/api/'.$configvalue.'.xml',0666);
-			}
+				file_put_contents(KB_CACHEDIR.'/api/'.$configvalue.'.xml', $contents);
 		}
 		else
 		{
 			// re-use cached XML
-			if ($fp = @fopen(KB_CACHEDIR.'/api/'.$configvalue.'.xml', 'r')) {
-				$contents = fread($fp, filesize(KB_CACHEDIR.'/api/'.$configvalue.'.xml'));
-				fclose($fp);
+			if ($contents = file_get_contents(KB_CACHEDIR.'/api/'.$configvalue.'.xml')) {
 			} else {
 				return "<i>error loading cached file ".$configvalue.".xml</i><br><br>";
 			}
@@ -155,7 +148,7 @@ class API_Helpers
 			$qry = DBFactory::getDBQuery();
 			$sql = "SHOW TABLES LIKE 'kb3_moons'";
 			$qry->execute($sql);
-			if(!$qry->recordCount()) return "";
+			if(!$qry->recordCount()) return false;
 
 			$sql = 'select moon.itemID, moon.itemName from kb3_moons moon where moon.itemID = '.$id;
 
@@ -163,8 +156,9 @@ class API_Helpers
 			$row = $qry->getRow();
 
 			return $row['itemName'];
-		} else {
-			return "Unknown";
+		}
+		else {
+			return false;
 		}
 	}
 

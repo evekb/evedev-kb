@@ -17,7 +17,13 @@ class API_Char
 
 		$sxe = simplexml_load_string($data);
 
-		if($sxe->error)
+		if(!$sxe)
+		{
+			$this->error = array();
+			$this->error['code'] = 0;
+			$this->error['message'] = "Connection failed.";
+		}
+		else if($sxe->error)
 		{
 			$this->error = array();
 			$this->error['code'] = strval($sxe->error['code']);

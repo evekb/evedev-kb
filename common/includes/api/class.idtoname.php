@@ -48,8 +48,13 @@ class API_IDtoName
 		if(!$data) return "Error fetching IDs";
 
 		$sxe = @simplexml_load_string($data);
-		
-		if(!$sxe || strval($sxe->error)) return strval("Error code ".$sxe->error['code'].": ".$sxe->error);
+
+		if(!$sxe)
+		{
+			 trigger_error("Error retrieving API XML", E_USER_WARNING);
+			 return "Error retrieving API XML";
+		}
+		if(strval($sxe->error)) return strval("Error code ".$sxe->error['code'].": ".$sxe->error);
 
 		foreach($sxe->result->rowset->row as $row)
 			$this->NameData_[] = array('name'=>strval($row['name']),
@@ -63,9 +68,10 @@ class API_IDtoName
 
 	private function loaddata($ids)
     {
-        $url = "https://".API_SERVER."/eve/CharacterName.xml.aspx?ids=" . urlencode($ids);
+        $url = "https://".API_SERVER."/eve/CharacterName.xml.aspx";
 		$http = new http_request($url);
 		$http->set_useragent("PHPApi");
+		$http->set_postform("ids", $ids);
 
 		return $http->get_content();
 	}
