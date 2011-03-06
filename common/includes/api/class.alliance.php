@@ -28,7 +28,7 @@ class AllianceAPI
 		$data = API_Helpers::LoadGlobalData('/eve/AllianceList.xml.aspx');
 
 		$this->sxe = simplexml_load_string($data);
-		if(!$this->sxe || strval($sxe->error))
+		if(!$this->sxe || strval($this->sxe->error))
 		{
 			if(strval($this->sxe->error))
 			{
