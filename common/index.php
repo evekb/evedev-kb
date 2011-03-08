@@ -41,6 +41,15 @@ if(!defined('KB_SITE'))
 	$html .= "</body></html>";
 	die($html);
 }
+// Check the install folder is not accessible
+else if(file_exists("install") && !file_exists("install/install.lock"))
+{
+	$html = "<html><head><title>Installation in progress</title></head>";
+	$html .= "<body><p>Installation folder must be removed or locked to proceed.</p>";
+	$html .= "<p>Go to <a href='".$url."'>Install</a> to install a new killboard.</p>";
+	$html .= "</body></html>";
+	die($html);
+}
 require_once('common/includes/globals.php');
 if(isset($_GET['xajax'])) require_once('common/includes/xajax.functions.php');
 
