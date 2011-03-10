@@ -210,6 +210,9 @@ class thumb
 		if ($img)
 		{
 			$newimg = imagecreatetruecolor($this->size, $this->size);
+			$color = imagecolortransparent($newimg, imagecolorallocatealpha($newimg, 0, 0, 0, 127));
+			imagefill($newimg, 0, 0, $color);
+			imagesavealpha($newimg, true);
 			$oldx = imagesx($img);
 			$oldy = imagesy($img);
 			imagecopyresampled($newimg, $img, 0, 0, 0, 0, $this->size, $this->size, $oldx, $oldy);
