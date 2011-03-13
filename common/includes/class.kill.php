@@ -9,15 +9,15 @@
 class Kill
 {
 	private $id_ = 0;
-	private $externalid_ = 0;
+	private $externalid_ = null;
 	public $involvedparties_ = array();
 	public $destroyeditems_ = array();
 	public $droppeditems_ = array();
 	public $VictimDamageTaken = 0;
 	private $fullinvolved_ = false;
-	private $timestamp_ = false;
+	private $timestamp_ = null;
 	private $victim_ = null;
-	private $dmgtaken = 0;
+	private $dmgtaken = null;
 	private $iskloss_ = 0;
 	private $victimship_ = null;
 	private $dupeid_ = 0;
@@ -41,14 +41,14 @@ class Kill
 			}
 			else
 			{
-				$this->id_ = 0;
-				$this->external_id = 0;
+				$this->id_ = null;
+				$this->external_id = null;
 			}
 		}
 		else
 		{
 			$this->id_ = $id;
-			$this->externalid_ = 0;
+			$this->externalid_ = null;
 		}
 	}
 
@@ -79,8 +79,7 @@ class Kill
 	//! \return integer value for the external kill ID.
 	function getExternalID()
 	{
-		if($this->externalid_) return $this->externalid_;
-		if(!isset($this->externalid_)) $this->execQuery();
+		if(is_null($this->externalid_)) $this->execQuery();
 		return $this->externalid_;
 	}
 	//! Return the dropped items array for this kill.
@@ -95,7 +94,7 @@ class Kill
 	}
 	function getTimeStamp()
 	{
-		if(!isset($this->timestamp_)) $this->execQuery();
+		if(is_null($this->timestamp_)) $this->execQuery();
 		return $this->timestamp_;
 	}
 	//! Return the victim Pilot object.
@@ -104,13 +103,13 @@ class Kill
 	*/
 	function getVictim()
 	{
-		if(!isset($this->victim_)) $this->execQuery();
+		if(is_null($this->victim_)) $this->execQuery();
 		return $this->victim_;
 	}
 	//! Return the amount of damage taken by the victim.
 	function getDamageTaken()
 	{
-		if(!isset($this->dmgtaken)) $this->execQuery();
+		if(is_null($this->dmgtaken)) $this->execQuery();
 		return $this->dmgtaken;
 	}
 
@@ -1404,7 +1403,7 @@ class Kill
 	*/
 	function getInvolved()
 	{
-		if(!isset($this->involvedparties_)) $this->execQuery();
+		if(!$this->involvedparties_) $this->execQuery();
 		return $this->involvedparties_;
 	}
 	function setHash($hash)
