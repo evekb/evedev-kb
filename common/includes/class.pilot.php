@@ -118,18 +118,11 @@ class Pilot
 	public function getPortraitURL($size = 64)
 	{
 		if(!$this->externalid_) $this->execQuery();
-		return KB_HOST."/thumb.php?type=pilot&amp;id=".$this->externalid_."&amp;size=$size";
 		
 		if (!$this->externalid_)
-		{
-			return '?a=thumb&amp;id='.$this->id_.'&amp;size='.$size.'&amp;int=1';
-		}
+			return KB_HOST."/thumb.php?type=pilot&amp;id=".$this->id_."&amp;size=$size;&amp;int=1";
 		else
-		{
-			if(CacheHandler::exists($this->externalid_."_$size.jpg", 'img'))
-				return CacheHandler::getExternal($this->externalid_."_$size.jpg", 'img');
-			else return '?a=thumb&amp;id='.$this->externalid_.'&amp;size='.$size;
-		}
+			return KB_HOST."/thumb.php?type=pilot&amp;id=".$this->externalid_."&amp;size=$size";
 	}
 	//! Return the file path for the pilot's portrait.
 
