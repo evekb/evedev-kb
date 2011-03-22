@@ -6,7 +6,7 @@
 */
 
 //! Retrieve Alliance list from CCP to find alliance details.
-class AllianceAPI
+class API_Alliance
 {
 	protected $sxe = null;
 	protected $CachedUntil_ = null;
@@ -196,7 +196,7 @@ class AllianceAPI
 	}
 }
 
-class API_Alliance extends AllianceAPI
+class AllianceAPI extends API_Alliance
 {
 	
 }
