@@ -125,12 +125,12 @@ class pPilotDetail extends pageAssembly
 	//! Set up the stats used by stats and summaryTable functions.
 	function statSetup()
 	{
-			if(!isset($this->kill_summary))
-			{
-				$this->summary = new KillSummaryTable();
-				$this->summary->addInvolvedPilot($this->plt_id);
-				if ($this->view == "ships_weapons") $this->summary->setFilter(false);
-			}
+		if(!isset($this->kill_summary))
+		{
+			$this->summary = new KillSummaryTable();
+			$this->summary->addInvolvedPilot($this->plt_id);
+			if ($this->view == "ships_weapons") $this->summary->setFilter(false);
+		}
 	}
 	//! Build the summary table showing all kills and losses for this pilot.
 	function summaryTable()
@@ -187,6 +187,9 @@ class pPilotDetail extends pageAssembly
 
 		$smarty->assign('pilot_survival',$pilot_survival);
 		$smarty->assign('pilot_efficiency',$pilot_efficiency);
+
+		$this->lpoints = $this->summary->getTotalLossPoints();
+		$this->points = $this->summary->getTotalKillPoints();
 
 		return $smarty->fetch(get_tpl('pilot_detail_stats'));
 	}

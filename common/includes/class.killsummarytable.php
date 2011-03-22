@@ -226,6 +226,16 @@ class KillSummaryTable
 					
 					if(!in_array($key, array(-1,2,3,11) )) $this->trkcount += $row['killcount'];
 				}
+				$qry = DBFactory::getDBQuery();
+
+				$qry->execute("SELECT plt_lpoints, plt_kpoints FROM kb3_pilots");
+				if($qry->recordCount())
+				{
+					$row = $qry->getRow();
+					$this->tlpoints = $row['plt_lpoints'];
+					$this->tkpoints = $row['plt_kpoints'];
+				}
+
 				return;
 			}
 		}
