@@ -47,7 +47,7 @@ class API_Helpers
 			$contents = $http->get_content();
 
 			// Save the file if we're caching (0 = true in Thunks world)
-			if ( $UseCaching == 0 )
+			if ( $contents && $UseCaching == 0 )
 				file_put_contents(KB_CACHEDIR.'/api/'.$configvalue.'.xml', $contents);
 		}
 		else
