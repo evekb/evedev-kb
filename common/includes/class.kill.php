@@ -544,7 +544,15 @@ class Kill
 				return $kll_id;
 			}
 		}
-		return 0;
+		// And one final check in case we've had to change the structure of the mail to post it.
+		$sql = "SELECT kll_id FROM kb3_mails WHERE kll_hash = '"
+			.$qry->escape($this->getHash(false, false)).'"';
+		$qry->execute($sql);
+		if(!$qry->recordCount()) return 0;
+
+		$row = $qry->getRow();
+		$this->dupeid_ = $row['kll_id'];
+		return $row['kll_id'];
 	}
 
 	function execQuery()
