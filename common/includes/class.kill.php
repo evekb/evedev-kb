@@ -42,7 +42,7 @@ class Kill
 			else
 			{
 				$this->id_ = null;
-				$this->external_id = null;
+				$this->externalid = null;
 			}
 		}
 		else
@@ -487,7 +487,7 @@ class Kill
 			}
 		}
 
-		if (config::get('km_cache_enabled')) file_put_contents(KB_MAILCACHEDIR."/".$this->getID().".txt", $mail);
+		if ($this->id_ && config::get('km_cache_enabled')) file_put_contents(KB_MAILCACHEDIR."/".$this->getID().".txt", $mail);
 
 		$this->mail = $mail;
 
@@ -505,6 +505,30 @@ class Kill
 		$qry = DBFactory::getDBQuery(true);
 		if (!$this->getFBPilotID() || !$this->victimid_)
 			return 0;
+		if($this->externalid_)
+		{
+			$sql = "SELECT kll_id FROM kb3_kills WHERE kll_external_id = ".
+				$this->externalid_;
+			$qry->execute($sql);
+			if($qry->recordCount())
+			{
+				$row = $qry->getRow();
+				$this->dupeid_ = $row['kll_id'];
+				return $row['kll_id'];
+			}
+		}
+		if($this->hash)
+		{
+			$sql = "SELECT kll_id FROM kb3_mails WHERE kll_hash = 0x".
+				bin2hex($this->hash);
+			$qry->execute($sql);
+			if($qry->recordCount())
+			{
+				$row = $qry->getRow();
+				$this->dupeid_ = $row['kll_id'];
+				return $row['kll_id'];
+			}
+		}
 		$sql = "SELECT kll_id
                     FROM kb3_kills
                     WHERE kll_timestamp ='".$this->timestamp_."'
@@ -513,7 +537,6 @@ class Kill
                     AND kll_system_id = ".$this->solarsystem_->getID()."
                     AND kll_fb_plt_id = ".$this->getFBPilotID()."
                     AND kll_dmgtaken = ".intval($this->dmgtaken);
-		if($this->externalid_) $sql .= " AND (kll_external_id = ".$this->externalid_." OR kll_external_id IS NULL)";
 		$sql .= "             AND kll_id != ".$this->id_;
 		$qry->execute($sql);
 		$qryinv = DBFactory::getDBQuery(true);
@@ -544,15 +567,6 @@ class Kill
 				return $kll_id;
 			}
 		}
-		// And one final check in case we've had to change the structure of the mail to post it.
-		$sql = "SELECT kll_id FROM kb3_mails WHERE kll_hash = '"
-			.$qry->escape($this->getHash(false, false))."'";
-		$qry->execute($sql);
-		if(!$qry->recordCount()) return 0;
-
-		$row = $qry->getRow();
-		$this->dupeid_ = $row['kll_id'];
-		return $row['kll_id'];
 	}
 
 	function execQuery()
@@ -1140,6 +1154,13 @@ class Kill
 		// Start a transaction here to capture the duplicate check.
 		$qry = DBFactory::getDBQuery();
 		$qry->autocommit(false);
+		// Set these to make sure we don't try to load the kill from the db before it exists.
+		$this->executed = true;
+		$this->valid_ = true;
+		//Always recalculate the hash ourselves before posting.
+		$this->hash = false;
+		$this->getHash(false,false);
+
 		$this->getDupe(true);
 		if ($this->dupeid_ == 0)
 		{
@@ -1428,7 +1449,8 @@ class Kill
 		}
 		$qry = DBFactory::getDBQuery();
 		// Get the mail and trust as well since we're fetching the row anyway.
-		$qry->execute("SELECT kll_hash, kll_trust FROM kb3_mails WHERE kll_id = ".$this->id_);
+		if($this->id_)
+			$qry->execute("SELECT kll_hash, kll_trust FROM kb3_mails WHERE kll_id = ".$this->id_);
 		if($qry->recordCount())
 		{
 			$row = $qry->getRow();
@@ -1457,7 +1479,7 @@ class Kill
 						"'".$qry->escape($this->hash)."', ".
 						$this->trust.", UTC_TIMESTAMP())";
 				}
-				$qry->execute($sql);
+				if($this->id_) $qry->execute($sql);
 			}
 		}
 		if($hex) return bin2hex($this->hash);
