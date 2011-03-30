@@ -570,7 +570,7 @@ class TopScoreList extends TopList
 
 class TopLossesList extends TopList
 {
-	function TopScoreList()
+	function TopLossesList()
 	{
 		$this->TopList();
 	}
@@ -590,7 +590,7 @@ class TopLossesList extends TopList
 
 class TopCorpLossesList extends TopList
 {
-	function TopScoreList()
+	function TopCorpLossesList()
 	{
 		$this->TopList();
 	}
