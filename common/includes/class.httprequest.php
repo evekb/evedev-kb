@@ -182,7 +182,7 @@ class http_request
 		$http_header = '';
 		$file = '';
 		socket_set_timeout($fp, $this->socket_timeout);
-		while ($line = fgets($fp, 4096))
+		while ($line = @fgets($fp, 4096))
 		{
 			if ($header)
 			{
