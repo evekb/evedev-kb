@@ -97,6 +97,7 @@ class KillList
 		// other tables that add information are then added in the outer query.
 		if($this->comb_plt_ || $this->comb_crp_ || $this->comb_all_)
 		{
+			//TODO: FASTER! FASTER! And without letting mysql fall over.
 			$sql = "((SELECT kll.* FROM kb3_kills kll ";
 			// ship filter
 			if (count($this->exclude_scl_) || count($this->vic_scl_id_))
@@ -160,6 +161,9 @@ class KillList
 				$sql .= " AND shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
 			event::call('killlist_where_combined_kills', $this);
 
+			if(($this->comb_all_ || $this->comb_crp_)
+					&& count($this->comb_all_) + count($this->comb_crp_) + count($this->comb_plt_) > 1)
+							$sql .= " GROUP BY kll.kll_id";
 			if ($this->ordered_)
 			{
 				if (!$this->orderby_)
@@ -170,7 +174,7 @@ class KillList
 				}
 				else $sql .= " order by ".$this->orderby_;
 			}
-			if ($this->limit_) $sql .= " limit ".$this->limit_." OFFSET ".$this->offset_;
+			if ($this->limit_) $sql .= " limit ".($this->limit_ + $this->offset_);
 			$sql .= " )";
 			$sql .= " UNION ";
 			$sql .= "(SELECT kll.* FROM kb3_kills kll ";
@@ -232,8 +236,10 @@ class KillList
 					$sql .= " order by kll.kll_timestamp desc";
 				else $sql .= " order by ".$this->orderby_;
 			}
-			if ($this->limit_) $sql .= " limit ".$this->limit_." OFFSET ".$this->offset_;
-			$sql .= " ) ) kll ";
+			if ($this->limit_) $sql .= " limit ".($this->limit_ + $this->offset_);
+			$sql .= " ) ";
+			if ($this->limit_ && $this->offset) $sql .= " limit ".$this->limit_." OFFSET ".$this->offset_;
+			$sql .= ") kll ";
 		}
 		elseif ( $this->inv_plt_ || $this->inv_crp_ || $this->inv_all_)
 		{
@@ -280,7 +286,7 @@ class KillList
 			{
 				$this->sqloutertop_ = 'SELECT list.* ';
 				if($this->comments_) $this->sqloutertop_ .= ', count(distinct com.id) as comments';
-				if($this->involved_) $this->sqloutertop_ .= ', max(ind.ind_order) + 1 as inv';
+				if($this->involved_) $this->sqloutertop_ .= ', count(ind.ind_order) as inv';
 				$this->sqloutertop_ .= ' FROM (';
 			}
 			if (!count($this->groupby_))
