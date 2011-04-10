@@ -983,7 +983,10 @@ class Parser
 		$hashIn = substr($mail, 0, 16);
 		$hashIn = str_replace('.', '-', $hashIn);
 
-		$pos = strpos($mail, "Victim: ") + 8;
+		$pos = strpos($mail, "Victim: ");
+		if($pos ===false) $pos = strpos($mail, "Moon: ");
+		$pos += 8;
+
 		$posEnd = strpos($mail, "\n", $pos);
 		if($pos === false || $posEnd === false) return false;
 		$hashIn .= substr($mail, $pos, $posEnd - $pos);

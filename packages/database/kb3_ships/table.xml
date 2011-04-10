@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kb3>
   <name>kb3_ships</name>
-  <rows>636</rows>
+  <rows>600</rows>
   <structure>CREATE TABLE `kb3_ships` (
   `shp_id` int(11) NOT NULL auto_increment,
   `shp_name` char(64) NOT NULL,
@@ -13,6 +13,7 @@
   `shp_isfaction` tinyint(1) NOT NULL default &#039;0&#039;,
   PRIMARY KEY  (`shp_id`),
   UNIQUE KEY `shp_name` (`shp_name`),
+  UNIQUE KEY `shp_externalid` (`shp_externalid`),
   KEY `shp_class` (`shp_class`)
 ) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

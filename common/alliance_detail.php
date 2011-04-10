@@ -140,7 +140,7 @@ class pAllianceDetail extends pageAssembly
 		global $smarty;
 		$tempMyCorp = new Corporation();
 
-		$myAlliAPI = new AllianceAPI();
+		$myAlliAPI = new API_Alliance();
 		$myAlliAPI->fetchalliances();
 
 		// Use alliance ID if we have it

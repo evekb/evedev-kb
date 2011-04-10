@@ -15,21 +15,15 @@ class API_Char
 	{
 		$data = $this->loaddata($userID, $APIKey);
 
-		$sxe = simplexml_load_string($data);
+		$sxe = @simplexml_load_string($data);
 
-		if(!$sxe)
-		{
-			$this->error = array();
-			$this->error['code'] = 0;
-			$this->error['message'] = "Connection failed.";
-		}
-		else if($sxe->error)
+		if($sxe->error)
 		{
 			$this->error = array();
 			$this->error['code'] = strval($sxe->error['code']);
 			$this->error['message'] = strval($sxe->error);
 		}
-		else
+		else if($sxe)
 		{
 			foreach($sxe->result->rowset->row as $row)
 			{
@@ -57,7 +51,13 @@ class API_Char
 		$http->set_postform('userID', $userID);
 		$http->set_postform('APIKey', $APIKey);
 
-		return $http->get_content();
+		$result = $http->get_content();
+
+		$this->error = array();
+		$this->error['code'] = $http->get_http_code();
+		$this->error['message'] = "HTTP error";
+
+		return $result;
 	}
 
 	private function updateChars()

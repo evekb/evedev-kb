@@ -226,6 +226,16 @@ class KillSummaryTable
 					
 					if(!in_array($key, array(-1,2,3,11) )) $this->trkcount += $row['killcount'];
 				}
+				$qry = DBFactory::getDBQuery();
+
+				$qry->execute("SELECT plt_lpoints, plt_kpoints FROM kb3_pilots");
+				if($qry->recordCount())
+				{
+					$row = $qry->getRow();
+					$this->tlpoints = $row['plt_lpoints'];
+					$this->tkpoints = $row['plt_kpoints'];
+				}
+
 				return;
 			}
 		}
@@ -372,41 +382,43 @@ class KillSummaryTable
 			$sqlop = " AND ";
 		}
 
-		if ($this->inv_all && !($this->inv_crp || $this->inv_plt))
+		if($invcount)
 		{
-			$sql .= $sqlop.' ina.ina_kll_id IS NULL ';
-			$sqlop = " AND ";
-		}
-		else if ($this->inv_crp && !($this->inv_plt || $this->inv_all))
-		{
-			$sql .= $sqlop.' inc.inc_kll_id IS NULL ';
-			$sqlop = " AND ";
-		}
-		else if(!($this->inv_plt && !($this->inv_crp || $this->inv_all)))
-		{
-			$sql .= $sqlop.' ind.ind_kll_id IS NULL ';
-			$sqlop = " AND ";
-		}
+			if ($this->inv_all && !($this->inv_crp || $this->inv_plt))
+			{
+				$sql .= $sqlop.' ina.ina_kll_id IS NULL ';
+				$sqlop = " AND ";
+			}
+			else if ($this->inv_crp && !($this->inv_plt || $this->inv_all))
+			{
+				$sql .= $sqlop.' inc.inc_kll_id IS NULL ';
+				$sqlop = " AND ";
+			}
+			else if(!($this->inv_plt && !($this->inv_crp || $this->inv_all)))
+			{
+				$sql .= $sqlop.' ind.ind_kll_id IS NULL ';
+				$sqlop = " AND ";
+			}
 
-		$invP = array();
-		if ($this->inv_all)
-		{
-			$invP[] = 'kll.kll_all_id IN ( '.implode(',', $this->inv_all).' ) ';
+			$invP = array();
+			if ($this->inv_all)
+			{
+				$invP[] = 'kll.kll_all_id IN ( '.implode(',', $this->inv_all).' ) ';
+			}
+			if ($this->inv_crp)
+			{
+				$invP[] = 'kll.kll_crp_id IN ( '.implode(',', $this->inv_crp).' ) ';
+			}
+			if ($this->inv_plt)
+			{
+				$invP[] = 'kll.kll_victim_id IN ( '.implode(',', $this->inv_plt).' ) ';
+			}
+			if($invP)
+			{
+				$sql .= $sqlop." (".implode(' OR ', $invP).") ";
+				$sqlop = " AND ";
+			}
 		}
-		if ($this->inv_crp)
-		{
-			$invP[] = 'kll.kll_crp_id IN ( '.implode(',', $this->inv_crp).' ) ';
-		}
-		if ($this->inv_plt)
-		{
-			$invP[] = 'kll.kll_victim_id IN ( '.implode(',', $this->inv_plt).' ) ';
-		}
-		if($invP)
-		{
-			$sql .= $sqlop." (".implode(' OR ', $invP).") ";
-			$sqlop = " AND ";
-		}
-
 		if($this->system)
 		{
 			$sql .= $sqlop." kll.kll_system_id = ".join(',', $this->system)." ";

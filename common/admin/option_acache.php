@@ -72,8 +72,7 @@ class admin_acache
 				{
 					foreach($files as $file)
 					{
-						if (substr($file, 0, 1) != '.'
-								&& !is_dir($dir."/".$file)) $count++;
+						if (substr($file, 0, 1) != '.') $count++;
 					}
 					
 				}

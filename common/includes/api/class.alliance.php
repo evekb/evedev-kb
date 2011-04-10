@@ -6,7 +6,7 @@
 */
 
 //! Retrieve Alliance list from CCP to find alliance details.
-class AllianceAPI
+class API_Alliance
 {
 	protected $sxe = null;
 	protected $CachedUntil_ = null;
@@ -28,7 +28,7 @@ class AllianceAPI
 		$data = API_Helpers::LoadGlobalData('/eve/AllianceList.xml.aspx');
 
 		$this->sxe = simplexml_load_string($data);
-		if(!$this->sxe || strval($sxe->error))
+		if(!$this->sxe || strval($this->sxe->error))
 		{
 			if(strval($this->sxe->error))
 			{
@@ -196,7 +196,7 @@ class AllianceAPI
 	}
 }
 
-class API_Alliance extends AllianceAPI
+class AllianceAPI extends API_Alliance
 {
 	
 }

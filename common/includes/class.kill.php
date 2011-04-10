@@ -9,15 +9,15 @@
 class Kill
 {
 	private $id_ = 0;
-	private $externalid_ = 0;
+	private $externalid_ = null;
 	public $involvedparties_ = array();
 	public $destroyeditems_ = array();
 	public $droppeditems_ = array();
 	public $VictimDamageTaken = 0;
 	private $fullinvolved_ = false;
-	private $timestamp_ = false;
+	private $timestamp_ = null;
 	private $victim_ = null;
-	private $dmgtaken = 0;
+	private $dmgtaken = null;
 	private $iskloss_ = 0;
 	private $victimship_ = null;
 	private $dupeid_ = 0;
@@ -41,14 +41,14 @@ class Kill
 			}
 			else
 			{
-				$this->id_ = 0;
-				$this->external_id = 0;
+				$this->id_ = null;
+				$this->externalid = null;
 			}
 		}
 		else
 		{
 			$this->id_ = $id;
-			$this->externalid_ = 0;
+			$this->externalid_ = null;
 		}
 	}
 
@@ -79,8 +79,7 @@ class Kill
 	//! \return integer value for the external kill ID.
 	function getExternalID()
 	{
-		if($this->externalid_) return $this->externalid_;
-		if(!isset($this->externalid_)) $this->execQuery();
+		if(is_null($this->externalid_)) $this->execQuery();
 		return $this->externalid_;
 	}
 	//! Return the dropped items array for this kill.
@@ -95,7 +94,7 @@ class Kill
 	}
 	function getTimeStamp()
 	{
-		if(!isset($this->timestamp_)) $this->execQuery();
+		if(is_null($this->timestamp_)) $this->execQuery();
 		return $this->timestamp_;
 	}
 	//! Return the victim Pilot object.
@@ -104,13 +103,13 @@ class Kill
 	*/
 	function getVictim()
 	{
-		if(!isset($this->victim_)) $this->execQuery();
+		if(is_null($this->victim_)) $this->execQuery();
 		return $this->victim_;
 	}
 	//! Return the amount of damage taken by the victim.
 	function getDamageTaken()
 	{
-		if(!isset($this->dmgtaken)) $this->execQuery();
+		if(is_null($this->dmgtaken)) $this->execQuery();
 		return $this->dmgtaken;
 	}
 
@@ -488,7 +487,7 @@ class Kill
 			}
 		}
 
-		if (config::get('km_cache_enabled')) file_put_contents(KB_MAILCACHEDIR."/".$this->getID().".txt", $mail);
+		if ($this->id_ && config::get('km_cache_enabled')) file_put_contents(KB_MAILCACHEDIR."/".$this->getID().".txt", $mail);
 
 		$this->mail = $mail;
 
@@ -506,6 +505,30 @@ class Kill
 		$qry = DBFactory::getDBQuery(true);
 		if (!$this->getFBPilotID() || !$this->victimid_)
 			return 0;
+		if($this->externalid_)
+		{
+			$sql = "SELECT kll_id FROM kb3_kills WHERE kll_external_id = ".
+				$this->externalid_;
+			$qry->execute($sql);
+			if($qry->recordCount())
+			{
+				$row = $qry->getRow();
+				$this->dupeid_ = $row['kll_id'];
+				return $row['kll_id'];
+			}
+		}
+		if($this->hash)
+		{
+			$sql = "SELECT kll_id FROM kb3_mails WHERE kll_hash = 0x".
+				bin2hex($this->hash);
+			$qry->execute($sql);
+			if($qry->recordCount())
+			{
+				$row = $qry->getRow();
+				$this->dupeid_ = $row['kll_id'];
+				return $row['kll_id'];
+			}
+		}
 		$sql = "SELECT kll_id
                     FROM kb3_kills
                     WHERE kll_timestamp ='".$this->timestamp_."'
@@ -514,7 +537,6 @@ class Kill
                     AND kll_system_id = ".$this->solarsystem_->getID()."
                     AND kll_fb_plt_id = ".$this->getFBPilotID()."
                     AND kll_dmgtaken = ".intval($this->dmgtaken);
-		if($this->externalid_) $sql .= " AND (kll_external_id = ".$this->externalid_." OR kll_external_id IS NULL)";
 		$sql .= "             AND kll_id != ".$this->id_;
 		$qry->execute($sql);
 		$qryinv = DBFactory::getDBQuery(true);
@@ -545,7 +567,6 @@ class Kill
 				return $kll_id;
 			}
 		}
-		return 0;
 	}
 
 	function execQuery()
@@ -1133,6 +1154,13 @@ class Kill
 		// Start a transaction here to capture the duplicate check.
 		$qry = DBFactory::getDBQuery();
 		$qry->autocommit(false);
+		// Set these to make sure we don't try to load the kill from the db before it exists.
+		$this->executed = true;
+		$this->valid_ = true;
+		//Always recalculate the hash ourselves before posting.
+		$this->hash = false;
+		$this->getHash(false,false);
+
 		$this->getDupe(true);
 		if ($this->dupeid_ == 0)
 		{
@@ -1404,7 +1432,7 @@ class Kill
 	*/
 	function getInvolved()
 	{
-		if(!isset($this->involvedparties_)) $this->execQuery();
+		if(!$this->involvedparties_) $this->execQuery();
 		return $this->involvedparties_;
 	}
 	function setHash($hash)
@@ -1421,7 +1449,8 @@ class Kill
 		}
 		$qry = DBFactory::getDBQuery();
 		// Get the mail and trust as well since we're fetching the row anyway.
-		$qry->execute("SELECT kll_hash, kll_trust FROM kb3_mails WHERE kll_id = ".$this->id_);
+		if($this->id_)
+			$qry->execute("SELECT kll_hash, kll_trust FROM kb3_mails WHERE kll_id = ".$this->id_);
 		if($qry->recordCount())
 		{
 			$row = $qry->getRow();
@@ -1450,7 +1479,7 @@ class Kill
 						"'".$qry->escape($this->hash)."', ".
 						$this->trust.", UTC_TIMESTAMP())";
 				}
-				$qry->execute($sql);
+				if($this->id_) $qry->execute($sql);
 			}
 		}
 		if($hex) return bin2hex($this->hash);

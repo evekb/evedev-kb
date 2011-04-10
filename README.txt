@@ -24,6 +24,18 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
+v3.2.0+
+Corp logo transparency returns
+IIS bug avoided
+pilot points shown
+improved error messages
+thumbnail fixes for lighttpd
+summary tables on public boards work again
+improved duplicate checks
+improved toplist display for mixed boards
+ajcron admin panel display fix
+various other internal fixes
+-------------------------------------------
 v3.2.0
 Mixed pilot/corp/alliance board owner
 - no limits on number or type of owners

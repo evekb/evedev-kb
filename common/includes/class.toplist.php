@@ -298,6 +298,18 @@ class TopList
 		else
 		{
 			$mixedinv = array();
+			// All this to avoid plt OR crp OR all over kb3_inv_details
+			// which makes mysql unhappy - sometimes
+			if ($this->inv_plt)
+			{
+				$misql = "SELECT ind_kll_id as kll_id
+					FROM kb3_inv_detail
+					WHERE ";
+				if($this->getDateFilter())
+					$misql .= $this->getDateFilter("ind_timestamp")." AND ";
+				$misql .= "ind_plt_id IN (".implode(",", $this->inv_plt).")";
+				$mixedinv[] = $misql;
+			}
 			if ($this->inv_crp)
 			{
 				$misql = "SELECT inc_kll_id as kll_id
@@ -558,7 +570,7 @@ class TopScoreList extends TopList
 
 class TopLossesList extends TopList
 {
-	function TopScoreList()
+	function TopLossesList()
 	{
 		$this->TopList();
 	}
@@ -578,7 +590,7 @@ class TopLossesList extends TopList
 
 class TopCorpLossesList extends TopList
 {
-	function TopScoreList()
+	function TopCorpLossesList()
 	{
 		$this->TopList();
 	}

@@ -316,7 +316,8 @@ class IDFeed
 
 			$kill = new Kill();
 			if(intval($row['trust']) >= $this->trust && intval($row['killID'])) $kill->setExternalID(intval($row['killID']));
-			if(strval($row['hash'])) $kill->setHash((strval($row['hash'])));
+			//Don't trust foreign hashes
+			//if(strval($row['hash'])) $kill->setHash((strval($row['hash'])));
 			if(intval($row['trust'])) $kill->setTrust(intval($row['trust']));
 
 			$kill->setTimeStamp(strval($row['killTime']));
@@ -505,9 +506,9 @@ class IDFeed
 	private function killExists(&$row)
 	{
 		$qry = DBFactory::getDBQuery(true);
-		if(intval($row['killID']) > 0)
+		if(strlen($row['hash']) > 1)
 		{
-			$qry->execute("SELECT kll_id FROM kb3_kills WHERE kll_external_id = ".intval($row['killID']));
+			$qry->execute("SELECT kll_id FROM kb3_mails WHERE kll_hash = 0x".$qry->escape(strval($row['hash'])));
 			if($qry->recordCount())
 			{
 				$qrow = $qry->getRow();
@@ -515,9 +516,9 @@ class IDFeed
 				return $id;
 			}
 		}
-		if(strlen($row['hash']) > 1)
+		if(intval($row['killID']) > 0)
 		{
-			$qry->execute("SELECT kll_id FROM kb3_mails WHERE kll_hash = 0x".$qry->escape(strval($row['hash'])));
+			$qry->execute("SELECT kll_id FROM kb3_kills WHERE kll_external_id = ".intval($row['killID']));
 			if($qry->recordCount())
 			{
 				$qrow = $qry->getRow();

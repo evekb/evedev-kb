@@ -17,7 +17,8 @@ if(isset($_SERVER['HTTP_IF_NONE_MATCH'])
 }
 
 // The exciting new thumb/blah/xxx
-if(isset($_SERVER['PATH_INFO']))
+// Some servers set PATH_INFO when it's empty.
+if(isset($_SERVER['PATH_INFO']) && !isset($_GET['id']))
 {
 	// Split on /, _, or . => works with:
 	// thumb/Character/123456/32 as well as thumb/Character/123456_32.jpg
@@ -170,6 +171,8 @@ function goType($type, $id, $size = 64, $imghost = "")
 		die;
 	}
 
+	$typepath = "img/types/64_64/{$id}.png";
+
 	require_once("common/includes/class.cachehandler.php");
 	//TODO: add an optional memcache backed by the filecache
 //	require_once("common/includes/class.cachehandlerhashed");
@@ -194,14 +197,14 @@ function goType($type, $id, $size = 64, $imghost = "")
 //	}
 
 	// Read straight from the img folder if it's 64x64.
-	if($size == 64 && file_exists("img/types/64_64/{$id}.png"))
+	if($size == 64 && file_exists($typepath))
 	{
-		expiryHeaders("png", "img/types/64_64/{$id}.png");
-		readfile("img/types/64_64/{$id}.png");
+		expiryHeaders("png", $typepath);
+		readfile($typepath);
 		die;
 	}
 	// Give up if it doesn't exist.
-	else if(!file_exists("img/types/64_64/{$id}.png"))
+	else if(!file_exists($typepath))
 	{
 		header("Location: {$imghost}img/portrait_0_64.jpg");
 		die;
@@ -216,7 +219,7 @@ function goType($type, $id, $size = 64, $imghost = "")
 	// Make the size needed from the 64x64 image in the img directory
 	else
 	{
-		$img = imagecreatefrompng("img/types/64_64/{$id}.png");
+		$img = imagecreatefrompng($typepath);
 		$newimg = imagecreatetruecolor($size, $size);
 		$colour = imagecolortransparent($newimg, imagecolorallocatealpha($newimg, 0, 0, 0, 127));
 		imagefill($newimg, 0, 0, $colour);
