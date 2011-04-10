@@ -860,40 +860,30 @@ class API_KillLog
 
         if ($refid != 0)
             $keystring .= '&beforeKillID=' . $refid;
-
+		//TODO: change the all the $keystring chains to arrays
+		$keypairs = explode('&', $keystring);
+		$keys = array();
+		foreach($keypairs as $val)
+		{
+			$pair = explode("=", $val);
+			$keys[$pair[0]] = $pair[1];
+		}
         $path = '/' . $typestring . '/Killlog.xml.aspx';
         $fp = @fsockopen(API_SERVER, 80);
 
-        if (!$fp)
-        {
-            $this->Output_ .= "Could not connect to API URL";
-        } else {
-            // request the xml
-            fputs ($fp, "POST " . $path . " HTTP/1.0\r\n");
-            fputs ($fp, "Host: ".API_SERVER."\r\n");
-            fputs ($fp, "Content-Type: application/x-www-form-urlencoded\r\n");
-            fputs ($fp, "User-Agent: PHPApi\r\n");
-            fputs ($fp, "Content-Length: " . strlen($keystring) . "\r\n");
-            fputs ($fp, "Connection: close\r\n\r\n");
-            fputs ($fp, $keystring."\r\n");
-			stream_set_timeout($fp, 10);
-            // retrieve contents
-            $contents = "";
-            while (!feof($fp))
-            {
-                $contents .= fgets($fp);
-            }
+		$http = new http_request($url);
+		$http->set_useragent("PHPApi");
+		foreach($keys as $key => $val) $http->set_postform($key, $val);
+		
+		$contents = $http->get_content();
 
-            // close connection
-            fclose($fp);
+		$start = strpos($contents, "?>");
+		if ($start !== FALSE)
+		{
+			$contents = substr($contents, $start + strlen("\r\n\r\n"));
+		}
 
-            $start = strpos($contents, "?>");
-            if ($start !== FALSE)
-            {
-                $contents = substr($contents, $start + strlen("\r\n\r\n"));
-            }
-        }
-        return $contents;
+		return $contents;
     }
 
     function mystrripos($haystack, $needle, $offset=0)

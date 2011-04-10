@@ -32,47 +32,26 @@ class API_ServerStatus
 
 	function fetchXML()
 	{
-        $data = API_Helpers::LoadGlobalData('/server/ServerStatus.xml.aspx');
+		$data = API_Helpers::LoadGlobalData('/server/ServerStatus.xml.aspx');
 
-		$xml_parser = xml_parser_create();
-        xml_set_object ( $xml_parser, $this );
-		xml_set_element_handler($xml_parser, "startElement", "endElement");
-        xml_set_character_data_handler ( $xml_parser, 'characterData' );
+		if(!$data) return "Error fetching status";
 
-		if (!xml_parse($xml_parser, $data, true))
-				return "<i>Error getting XML data from " . API_SERVER . "/server/ServerStatus.xml.aspx</i><br><br>";
+		$sxe = @simplexml_load_string($data);
 
-		xml_parser_free($xml_parser);
-
-		return $this->html;
-	}
-
-	function startElement($parser, $name, $attribs)
-	{
-		// nothing to do here...
-	}
-
-	function endElement($parser, $name)
-	{
-		global $tempvalue;
-
-      if ($name == "CURRENTTIME")
-         $this->CurrentTime_ = $tempvalue;
-      if ($name == "SERVEROPEN")
-         $this->serverOpen_ = $tempvalue;
-      if ($name == "ONLINEPLAYERS")
-         $this->onlinePlayers_ = $tempvalue;
-      if ($name == "CACHEDUNTIL")
+		if(!$sxe)
 		{
-			$this->CachedUntil_ = $tempvalue;
-		 ApiCache::set( 'API_server_ServerStatus' , $tempvalue);
+			 trigger_error("Error retrieving API XML", E_USER_WARNING);
+			 return "Error retrieving API XML";
 		}
-	}
+		if(strval($sxe->error)) return strval("Error code ".$sxe->error['code'].": ".$sxe->error);
 
-	function characterData($parser, $data)
-	{
-		global $tempvalue;
+        $this->serverOpen_ = strval($sxe->serverOpen);
+        $this->onlinePlayers_ = strval($sxe->onlinePlayers);
 
-		$tempvalue = $data;
+		$this->CurrentTime_ = strval($sxe->currentTime);
+		$this->CachedUntil_ = strval($sxe->cachedUntil);
+		if($this->CachedUntil_) ApiCache::set( 'API_server_ServerStatus' , $this->CachedUntil_);
+
+		return "";
 	}
 }
