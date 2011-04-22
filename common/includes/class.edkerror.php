@@ -43,7 +43,7 @@ class EDKError
 		$trace = debug_backtrace();
 		foreach($trace as $row)
 		{
-			if(!$row["file"]) continue;
+			if(!isset($row["file"])) continue;
 			$output .= "File: ".$row["file"].", line: ".$row["line"];
 			if(isset($row["class"])) $output .= ", class: ".$row["class"];
 			$output .= ", function: ".$row["function"]."<br />\n";

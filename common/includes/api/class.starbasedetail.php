@@ -124,13 +124,22 @@ class API_StarbaseDetail
 			$API_userID = $userrow['userID'];
 			$API_apiKey = $userrow['apiKey'];
 
-			$myKeyString = "userID=" . $API_userID . "&apiKey=" . $API_apiKey . "&characterID=" . $API_charID . "&itemID=" . $this->API_itemID_;
+			$myKeyString = array();
+			$myKeyString["userID"] = $API_userID;
+			$myKeyString["apiKey"] = $API_apiKey;
+			$myKeyString["characterID"] = $API_charID;
+			$myKeyString["itemID"] = $this->API_itemID_;
 
 			$data = $this->loaddata($myKeyString);
 		} else {
 			if (($this->API_userID_ != "") && ($this->API_apiKey_ != "") && ($this->API_charID_ != "") && ($this->API_itemID_ != ""))
 			{
-				$myKeyString = "userID=" . $this->API_userID_ . "&apiKey=" . $this->API_apiKey_ . "&characterID=" . $this->API_charID_ . "&itemID=" . $this->API_itemID_;
+				$myKeyString = array();
+				$myKeyString["userID"] = $this->API_userID_;
+				$myKeyString["apiKey"] = $this->API_apiKey_;
+				$myKeyString["characterID"] = $this->API_charID_;
+				$myKeyString["itemID"] = $this->API_itemID_;
+				
 				$this->CharName_ = $this->API_charID_;
 				$data = $this->loaddata($myKeyString);
 			} else {
@@ -297,7 +306,7 @@ class API_StarbaseDetail
 		$CachedTime = ApiCache::get($configvalue);
 		$UseCaching = config::get('API_UseCache');
 
-        $url = "https://".API_SERVER."/corp/StarbaseDetail.xml.aspx" . $keystring;
+        $url = "https://".API_SERVER."/corp/StarbaseDetail.xml.aspx";
 
         $path = '/corp/StarbaseDetail.xml.aspx';
 
@@ -315,47 +324,26 @@ class API_StarbaseDetail
 		// if API_UseCache = 1 (off) then don't use cache
 		if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($CachedTime) > 0) || ($UseCaching == 1)  || !$cacheexists )
     	{
-        	$fp = @fsockopen(API_SERVER, 80);
+			$http = new http_request($url);
+			$http->set_useragent("PHPApi");
 
-        	if (!$fp)
-        	{
-            	$this->Output_ .= "Could not connect to API URL";
-        	} else {
-           	 	// request the xml
-            	fputs ($fp, "POST " . $path . " HTTP/1.0\r\n");
-            	fputs ($fp, "Host: ".API_SERVER."\r\n");
-            	fputs ($fp, "Content-Type: application/x-www-form-urlencoded\r\n");
-            	fputs ($fp, "User-Agent: PHPApi\r\n");
-            	fputs ($fp, "Content-Length: " . strlen($keystring) . "\r\n");
-            	fputs ($fp, "Connection: close\r\n\r\n");
-            	fputs ($fp, $keystring."\r\n");
-				stream_set_timeout($fp, 10);
+			foreach($keystring as $key => $val) $http->set_postform($key, $val);
+			$contents = $http->get_content();
 
-           	 	// retrieve contents
-            	$contents = "";
-            	while (!feof($fp))
-            	{
-                	$contents .= fgets($fp);
-            	}
+			$start = strpos($contents, "?>");
+			if ($start !== FALSE)
+			{
+				$contents = substr($contents, $start + strlen("\r\n\r\n"));
+			}
 
-            	// close connection
-            	fclose($fp);
-
-            	$start = strpos($contents, "?>");
-            	if ($start !== FALSE)
-            	{
-                	$contents = substr($contents, $start + strlen("\r\n\r\n"));
-            	}
-
-				// Save the file if we're caching (0 = true in Thunks world)
-				if ($UseCaching == 0)
-				{
-					$file = fopen(KB_CACHEDIR.'/api/'.$configvalue.'.xml', 'w+');
-        			fwrite($file, $contents);
-       				fclose($file);
-					@chmod(KB_CACHEDIR.'/api/'.$configvalue.'.xml',0666);
-				}
-        	}
+			// Save the file if we're caching (0 = true in Thunks world)
+			if ($UseCaching == 0)
+			{
+				$file = fopen(KB_CACHEDIR.'/api/'.$configvalue.'.xml', 'w+');
+				fwrite($file, $contents);
+				fclose($file);
+				@chmod(KB_CACHEDIR.'/api/'.$configvalue.'.xml',0666);
+			}
 		} else {
 			// re-use cached XML
 			if ($fp = @fopen(KB_CACHEDIR.'/api/'.$configvalue.'.xml', 'r')) {
