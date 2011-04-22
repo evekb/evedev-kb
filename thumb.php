@@ -206,7 +206,9 @@ function goType($type, $id, $size = 64, $imghost = "")
 	// Give up if it doesn't exist.
 	else if(!file_exists($typepath))
 	{
-		header("Location: {$imghost}img/portrait_0_64.jpg");
+		if($size == 32 || $size == 64 || $size == 128 || $size == 256)
+			header("Location: {$imghost}img/portrait_0_{$size}.jpg");
+		else header("Location: {$imghost}img/portrait_0_64.jpg");
 		die;
 	}
 	// If it's in the cache then read it from there.
