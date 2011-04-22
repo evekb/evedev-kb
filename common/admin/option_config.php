@@ -18,6 +18,7 @@ options::fadd('Allow Masterfeed', 'feed_allowmaster', 'checkbox');
 options::fadd('Compress pages', 'cfg_compress', 'checkbox', '', '', 'Enable unless you encounter errors');
 options::fadd('Display profiling information', 'cfg_profile', 'checkbox');
 options::fadd('Log errors', 'cfg_log', 'checkbox');
+options::fadd('Lock board', 'cfg_locked', 'checkbox');
 
 options::cat('Advanced', 'Configuration', 'Public-Mode');
 options::fadd('Only Kills in SummaryTables', 'public_summarytable', 'checkbox', '', '', 'No board owners should be set to work in public mode');

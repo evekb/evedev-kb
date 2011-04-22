@@ -73,10 +73,10 @@ if ($page == '' || $page == 'index')
 if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK Feedfetcher') !== false) $page = 'feed';
 
 // Serve idfeeds to idfeed fetchers.
-if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK IDFeedfetcher') !== false) $page = 'idfeed';
+else if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK IDFeedfetcher') !== false) $page = 'idfeed';
 
 // check for the igb
-if (strpos($_SERVER['HTTP_USER_AGENT'], 'EVE-IGB') !== FALSE)
+else if (strpos($_SERVER['HTTP_USER_AGENT'], 'EVE-IGB') !== FALSE)
 {
 	define('IS_IGB', true);
 }
@@ -87,9 +87,21 @@ else
 
 // load the config from the database
 $config = new Config();
+if(!config::get('cfg_kbhost'))
+{
+	config::put('cfg_kbhost',
+			"http://".$_SERVER['HTTP_HOST'].
+			substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'],"/")));
+}
+if(!config::get('cfg_img'))
+{
+	config::put('cfg_img',
+			config::get('cfg_kbhost')."/img");
+}
 define('KB_HOST', config::get('cfg_kbhost'));
 define('MAIN_SITE', config::get('cfg_mainsite'));
 define('IMG_URL', config::get('cfg_img'));
+define('IMG_HOST', substr(IMG_URL, 0, strpos(IMG_URL, "/img")));
 define('KB_TITLE', config::get('cfg_kbtitle'));
 
 // set up themes.
@@ -223,6 +235,12 @@ if(config::get('DBUpdate') < LATEST_DB_UPDATE)
 		$html .= "</body></html>";
 		die($html);
 	}
+}
+
+if(config::get('cfg_locked') && !session::isAdmin())
+{
+	$page = "login";
+	$boardMessage = "Board is closed. Administrator access only.";
 }
 
 // all admin files are now in the admin directory and preload the menu
