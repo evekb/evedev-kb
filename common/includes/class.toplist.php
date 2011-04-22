@@ -491,7 +491,7 @@ class TopKillsList extends TopList
 
 		$this->setSQLBottom($sqlB." group by ind.ind_plt_id order by 1 desc
                             limit ".$this->limit);
-		if (count($this->vic_scl_id))
+		if (count($this->inc_vic_scl))
 		{
 			$this->setPodsNoobShips(true);
 		}
@@ -520,7 +520,7 @@ class TopCorpKillsList extends TopList
 
 		$this->setSQLBottom("group by ind.ind_crp_id order by 1 desc
                             limit ".$this->limit);
-		if (count($this->vic_scl_id))
+		if (count($this->inc_vic_scl))
 		{
 			$this->setPodsNoobShips(true);
 		}
@@ -601,7 +601,7 @@ class TopCorpLossesList extends TopList
                            from kb3_kills kll");
 		$this->setSQLBottom("group by kll.kll_crp_id order by 1 desc
                             limit ".$this->limit);
-		if (count($this->vic_scl_id))
+		if (count($this->inc_vic_scl))
 		{
 			$this->setPodsNoobShips(true);
 		}
