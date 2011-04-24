@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v3.2.0
+Eve Development Network Killboard v3.2.1
 -------------------------------------------
 
 // REQUIREMENTS
@@ -24,12 +24,13 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
-v3.2.0+
+v3.2.1
 Corp logo transparency returns
 IIS bug avoided
 pilot points shown
 improved error messages
 thumbnail fixes for lighttpd
+more default thumbnail sizes
 summary tables on public boards work again
 improved duplicate checks
 improved toplist display for mixed boards
