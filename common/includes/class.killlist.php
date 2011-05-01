@@ -286,7 +286,7 @@ class KillList
 			{
 				$this->sqloutertop_ = 'SELECT list.* ';
 				if($this->comments_) $this->sqloutertop_ .= ', count(distinct com.id) as comments';
-				if($this->involved_) $this->sqloutertop_ .= ', count(ind.ind_order) as inv';
+				if($this->involved_) $this->sqloutertop_ .= ', count(distinct ind.ind_order) as inv';
 				$this->sqloutertop_ .= ' FROM (';
 			}
 			if (!count($this->groupby_))
