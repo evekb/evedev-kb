@@ -34,11 +34,6 @@ class KillSummaryTable
 		$this->klist = $klist;
 		$this->llist = $llist;
 	}
-	//! Stub to handle deprecated code.
-	function setBreak($break)
-	{
-	}
-
 	function setVerbose($verbose)
 	{
 		$this->verbose = $verbose;

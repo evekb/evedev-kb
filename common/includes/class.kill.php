@@ -1579,11 +1579,6 @@ class DestroyedItem
 		if ($this->quantity_ == "") $this->quantity = 1;
 		return $this->quantity_;
 	}
-	//! Deprecated function to support old mods.
-	function getFormatttedValue()
-	{
-		return $this->getFormattedValue();
-	}
 	//! Return value formatted into millions or thousands.
 	function getFormattedValue()
 	{
