@@ -8,8 +8,6 @@
 class pPilotDetail extends pageAssembly
 {
 	private $viewList = array();
-	private $klist = null;
-	private $llist = null;
 	private $menuOptions = array();
 
 	// TODO: Make these private and add access functions for mods to use.
