@@ -391,7 +391,7 @@ class pKillDetail extends pageAssembly
 
 			$this->involved[$i]['shipImage'] =$ship->getImage(64);
 			$this->involved[$i]['shipTechLevel'] = $ship->getTechLevel();
-			$this->involved[$i]['shipIsFaction'] = $ship->isFaction();		
+			$this->involved[$i]['shipIsFaction'] = $ship->isFaction();
 			$this->involved[$i]['pilotURL']  ="?a=pilot_detail&amp;plt_id=" . $pilot->getID();
 			$this->involved[$i]['pilotName'] =$pilot->getName();
 			$this->involved[$i]['corpURL']   ="?a=corp_detail&amp;crp_id=" . $corp->getID();
@@ -429,10 +429,7 @@ class pKillDetail extends pageAssembly
 
 				$this->involved[$i]['typeID'] = 2; //type number for corporations.
 
-				if(!file_exists("img/types/64_64/".$weapon->getID().".png"))
-					$this->involved[$i]['shipImage'] = $this->involved[$i]['portrait'];
-				else
-					$this->involved[$i]['shipImage'] = KB_HOST."/thumb.php?type=ship&amp;id=".$weapon->getID()."&amp;size=64";
+				$this->involved[$i]['shipImage'] = IMG_HOST."/thumb.php?type=ship&amp;id=".$weapon->getID()."&amp;size=64";
 			}
 			else
 			{
@@ -954,9 +951,7 @@ class pKillDetail extends pageAssembly
 		$smarty->assignByRef('fitting_ammo_mid', $midammo);
 		$smarty->assign('showammo', config::get('fp_showammo'));
 
-		if(file_exists("img/ships/256_256/".$this->kill->getVictimShip()->getExternalID().".png"))
-			$smarty->assign('victimShipBigImage', $this->kill->getVictimShip()->getImage(256));
-		else $smarty->assign('noBigImage', true);
+		$smarty->assign('victimShipBigImage', $this->kill->getVictimShip()->getImage(256));
 
 		if(config::get('kd_verify'))
 		{
@@ -1137,15 +1132,15 @@ class pKillDetail extends pageAssembly
 			$mapbox=new Box("Map");
 			if(IS_IGB)
 			{
-				$mapbox->addOption("img", KB_HOST."/thumb.php?type=map&amp;id=".$this->system->getID()."&amp;size=145", "javascript:CCPEVE.showInfo(3, ".$this->system->getRegionID().")");
-				$mapbox->addOption("img", KB_HOST."/thumb.php?type=region&amp;id=".$this->system->getID()."&amp;size=145", "javascript:CCPEVE.showInfo(4, ".$this->system->getConstellationID().")");
-				$mapbox->addOption("img", KB_HOST."/thumb.php?type=cons&amp;id=".$this->system->getID()."&amp;size=145", "javascript:CCPEVE.showInfo(5, ".$this->system->getExternalID().")");
+				$mapbox->addOption("img", IMG_HOST."/thumb.php?type=map&amp;id=".$this->system->getID()."&amp;size=145", "javascript:CCPEVE.showInfo(3, ".$this->system->getRegionID().")");
+				$mapbox->addOption("img", IMG_HOST."/thumb.php?type=region&amp;id=".$this->system->getID()."&amp;size=145", "javascript:CCPEVE.showInfo(4, ".$this->system->getConstellationID().")");
+				$mapbox->addOption("img", IMG_HOST."/thumb.php?type=cons&amp;id=".$this->system->getID()."&amp;size=145", "javascript:CCPEVE.showInfo(5, ".$this->system->getExternalID().")");
 			}
 			else
 			{
-				$mapbox->addOption("img", KB_HOST."/thumb.php?type=map&amp;id=".$this->system->getID()."&amp;size=145");
-				$mapbox->addOption("img", KB_HOST."/thumb.php?type=region&amp;id=".$this->system->getID()."&amp;size=145");
-				$mapbox->addOption("img", KB_HOST."/thumb.php?type=cons&amp;id=".$this->system->getID()."&amp;size=145");
+				$mapbox->addOption("img", IMG_HOST."/thumb.php?type=map&amp;id=".$this->system->getID()."&amp;size=145");
+				$mapbox->addOption("img", IMG_HOST."/thumb.php?type=region&amp;id=".$this->system->getID()."&amp;size=145");
+				$mapbox->addOption("img", IMG_HOST."/thumb.php?type=cons&amp;id=".$this->system->getID()."&amp;size=145");
 			}
 			return $mapbox->generate();
 		}
@@ -1252,7 +1247,7 @@ class pKillDetail extends pageAssembly
 			$source = substr($source, 3);
 		}
 		else $type = "unknown";
-		
+
 		$smarty->assign("source", htmlentities($source));
 		$smarty->assign("type", $type);
 		$smarty->assign("postedDate", $posteddate);
