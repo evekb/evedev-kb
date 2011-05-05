@@ -237,18 +237,14 @@ if(config::get('DBUpdate') < LATEST_DB_UPDATE)
 	}
 }
 
-if(config::get('cfg_locked') && !session::isAdmin())
-{
-	$page = "login";
-	$boardMessage = "Board is closed. Administrator access only.";
-}
-
 // all admin files are now in the admin directory and preload the menu
 if (substr($page, 0, 5) == 'admin')
 {
 	require_once('common/admin/admin_menu.php');
 	$page = 'admin/'.$page;
 }
+else if(config::get('cfg_locked') && $page != 'login' && !session::isAdmin())
+	$page = "locked";
 
 // old modcode for loading settings
 if (substr($page, 0, 9) == 'settings_')
