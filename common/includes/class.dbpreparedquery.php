@@ -231,25 +231,6 @@ class DBPreparedQuery
 	{
 		return call_user_func_array(array($this->stmt,'bind_result'),$results);
 	}
-	//! Execute the prepared command.
-	
-    /*
-     * If DB_HALTONERROR is set then this will exit on an error.
-     * \return false on error or true if successful.
-     */
-	public function execute_prepared()
-	{
-		trigger_error("execute_prepared is deprecated. Use execute()", E_USER_NOTICE);
-		return $this->execute();
-	}
-	//! Fetch the next results of the prepared statement into bound variables.
-
-	//! Deprecated in favour of fetch().
-	public function fetch_prepared()
-	{
-		trigger_error("fetch_prepared is deprecated. Use fetch()", E_USER_NOTICE);
-		return $this->fetch();
-	}
 	//! Fetch the next results of the prepared statement into bound variables.
 	public function fetch()
 	{
