@@ -223,7 +223,7 @@ class KillSummaryTable
 				}
 				$qry = DBFactory::getDBQuery();
 
-				$qry->execute("SELECT plt_lpoints, plt_kpoints FROM kb3_pilots");
+				$qry->execute("SELECT plt_lpoints, plt_kpoints FROM kb3_pilots WHERE plt_id=".$this->inv_plt[0]);
 				if($qry->recordCount())
 				{
 					$row = $qry->getRow();
