@@ -10,11 +10,24 @@ html, body
 {
   background: #000000;
 }
+
 div.bar
 {
   background: #750000;
   border-bottom: 1px #660a0a solid;
   border-right: 1px #660a0a solid;
+}
+
+div.bar-background
+{
+    background: #110000;
+}
+
+div.bar-red
+{
+	background: #550000;
+	border-bottom: 1px #220000 solid;
+	border-right: 1px #220000 solid;
 }
 
 #page-title, .block-header2
