@@ -1,8 +1,8 @@
 <?php
 /*
- * $Date: 2010-05-29 14:46:12 +1000 (Sat, 29 May 2010) $
- * $Revision: 699 $
- * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/login.php $
+ * $Date$
+ * $Revision$
+ * $HeadURL$
  */
 
 class pLocked extends pageAssembly
