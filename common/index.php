@@ -73,10 +73,10 @@ if ($page == '' || $page == 'index')
 if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK Feedfetcher') !== false) $page = 'feed';
 
 // Serve idfeeds to idfeed fetchers.
-if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK IDFeedfetcher') !== false) $page = 'idfeed';
+else if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK IDFeedfetcher') !== false) $page = 'idfeed';
 
 // check for the igb
-if (strpos($_SERVER['HTTP_USER_AGENT'], 'EVE-IGB') !== FALSE)
+else if (strpos($_SERVER['HTTP_USER_AGENT'], 'EVE-IGB') !== FALSE)
 {
 	define('IS_IGB', true);
 }
@@ -87,9 +87,21 @@ else
 
 // load the config from the database
 $config = new Config();
+if(!config::get('cfg_kbhost'))
+{
+	config::put('cfg_kbhost',
+			"http://".$_SERVER['HTTP_HOST'].
+			substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'],"/")));
+}
+if(!config::get('cfg_img'))
+{
+	config::put('cfg_img',
+			config::get('cfg_kbhost')."/img");
+}
 define('KB_HOST', config::get('cfg_kbhost'));
 define('MAIN_SITE', config::get('cfg_mainsite'));
 define('IMG_URL', config::get('cfg_img'));
+define('IMG_HOST', substr(IMG_URL, 0, strpos(IMG_URL, "/img")));
 define('KB_TITLE', config::get('cfg_kbtitle'));
 
 // set up themes.
@@ -231,6 +243,8 @@ if (substr($page, 0, 5) == 'admin')
 	require_once('common/admin/admin_menu.php');
 	$page = 'admin/'.$page;
 }
+else if(config::get('cfg_locked') && $page != 'login' && !session::isAdmin())
+	$page = "locked";
 
 // old modcode for loading settings
 if (substr($page, 0, 9) == 'settings_')
@@ -299,6 +313,7 @@ $smarty->cache_dir = KB_CACHEDIR.'/data';
 $smarty->assign('theme_url', THEME_URL);
 $smarty->assign('style', $stylename);
 $smarty->assign('img_url', IMG_URL);
+$smarty->assign('img_host', IMG_URL);
 $smarty->assign('kb_host', KB_HOST);
 $smarty->assignByRef('config', $config);
 $smarty->assign('is_IGB', IS_IGB);

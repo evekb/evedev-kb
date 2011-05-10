@@ -120,9 +120,9 @@ class Pilot
 		if(!$this->externalid_) $this->execQuery();
 		
 		if (!$this->externalid_)
-			return KB_HOST."/thumb.php?type=pilot&amp;id=".$this->id_."&amp;size=$size;&amp;int=1";
+			return IMG_HOST."/thumb.php?type=pilot&amp;id=".$this->id_."&amp;size=$size;&amp;int=1";
 		else
-			return KB_HOST."/thumb.php?type=pilot&amp;id=".$this->externalid_."&amp;size=$size";
+			return IMG_HOST."/thumb.php?type=pilot&amp;id=".$this->externalid_."&amp;size=$size";
 	}
 	//! Return the file path for the pilot's portrait.
 

@@ -49,7 +49,7 @@ class Item
 	{
 		$this->execQuery();
 		global $smarty;
-		$img = KB_HOST."/thumb.php?id=".$this->getID()."&amp;size=".$size;
+		$img = IMG_HOST."/thumb.php?id=".$this->getID()."&amp;size=".$size;
 
 //		// cat 18 are combat drones
 //		if ($this->row_['itt_cat'] == 18)

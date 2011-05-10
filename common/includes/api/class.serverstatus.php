@@ -45,8 +45,8 @@ class API_ServerStatus
 		}
 		if(strval($sxe->error)) return strval("Error code ".$sxe->error['code'].": ".$sxe->error);
 
-        $this->serverOpen_ = strval($sxe->serverOpen);
-        $this->onlinePlayers_ = strval($sxe->onlinePlayers);
+        $this->serverOpen_ = strval($sxe->result->serverOpen);
+        $this->onlinePlayers_ = strval($sxe->result->onlinePlayers);
 
 		$this->CurrentTime_ = strval($sxe->currentTime);
 		$this->CachedUntil_ = strval($sxe->cachedUntil);

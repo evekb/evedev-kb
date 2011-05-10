@@ -314,7 +314,7 @@ class Kill
 
 	function getVictimShipImage($size)
 	{
-		 return KB_HOST."/thumb.php?type=ship&amp;size=$size&amp;id=".$this->victimshipexternalid_;
+		 return IMG_HOST."/thumb.php?type=ship&amp;size=$size&amp;id=".$this->victimshipexternalid_;
 	}
 
 	function getVictimShipValueIndicator()
@@ -1578,11 +1578,6 @@ class DestroyedItem
 	{
 		if ($this->quantity_ == "") $this->quantity = 1;
 		return $this->quantity_;
-	}
-	//! Deprecated function to support old mods.
-	function getFormatttedValue()
-	{
-		return $this->getFormattedValue();
 	}
 	//! Return value formatted into millions or thousands.
 	function getFormattedValue()

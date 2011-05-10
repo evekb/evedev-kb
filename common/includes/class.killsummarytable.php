@@ -223,12 +223,12 @@ class KillSummaryTable
 					$this->tkisk += $row['killisk'];
 					$this->tlcount += $row['losscount'];
 					$this->tlisk += $row['lossisk'];
-					
+
 					if(!in_array($key, array(-1,2,3,11) )) $this->trkcount += $row['killcount'];
 				}
 				$qry = DBFactory::getDBQuery();
 
-				$qry->execute("SELECT plt_lpoints, plt_kpoints FROM kb3_pilots");
+				$qry->execute("SELECT plt_lpoints, plt_kpoints FROM kb3_pilots WHERE plt_id=".$this->inv_plt[0]);
 				if($qry->recordCount())
 				{
 					$row = $qry->getRow();

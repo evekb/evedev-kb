@@ -162,7 +162,7 @@ if(count($page_error) == 0)
 					{
 						if($file['filename'] == "cache/todelete.txt")
 						{
-							$tmp = $readingZip->extractFile($file['index']);
+							$tmp = $readingZip->extractFile($file['index'], PCLZIP_OPT_REPLACE_NEWER);
 							$deleteList = explode("\n",$tmp[0]["content"]);
 						}
 						else if(is_dir($file['filename']))
@@ -194,7 +194,7 @@ if(count($page_error) == 0)
 						$page_error[] = $writingZip->getErrors();
 				}
 
-				$readingZip->extractZip(getcwd());
+				$readingZip->extractZip(getcwd(),PCLZIP_OPT_REPLACE_NEWER);
 				if($deleteList)
 				{
 					foreach($deleteList as $curFile)

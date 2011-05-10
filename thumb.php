@@ -22,7 +22,7 @@ if(isset($_SERVER['PATH_INFO']) && !isset($_GET['id']))
 {
 	// Split on /, _, or . => works with:
 	// thumb/Character/123456/32 as well as thumb/Character/123456_32.jpg
-	$args = preg_split('/[\/_.]/', trim($_SERVER['PATH_INFO'],"/"));
+	$args = preg_split('/[\/_.]/', trim($_SERVER['PATH_INFO'], "/"));
 
 	$type = "type";
 	$size = 64;
@@ -76,7 +76,7 @@ switch($type)
 	case 'corporation':
 	case 'alliance':
 		if($type == 'character') $type = 'pilot';
-		else if ($type == 'corporation') $type = 'corp';
+		else if($type == 'corporation') $type = 'corp';
 		goPCA($type, $id, $size, $imghost);
 		break;
 
@@ -95,13 +95,13 @@ switch($type)
 header("Location: {$imghost}img/portrait_0_64.jpg");
 die;
 
-
-
 function goPCA($type, $id, $size = 64, $imghost = "")
 {
 	//TODO integrate the existing common/includes/class.thumb.php
-	$year = 31536000; // 365 * 24 * 60 * 60
 
+	if($size != 32 && $size != 64 && $size != 128 && $size != 256) show404();
+
+	$year = 31536000; // 365 * 24 * 60 * 60
 	// PHP5.3+ only
 	//header_remove();
 	// Instead:
@@ -133,7 +133,7 @@ function goMap($type, $id, $size=200)
 
 	$view = new MapView($type, $size);
 	$view->setSystemID($id);
-	switch ($type)
+	switch($type)
 	{
 		case "map":
 			$view->setTitle("Region");
@@ -163,85 +163,54 @@ function goMap($type, $id, $size=200)
 
 function goType($type, $id, $size = 64, $imghost = "")
 {
+	if($size != 32 && $size != 64 && $size != 24 && $size != 48 &&
+			!($type == "ship" && ($size == 256 || $size = 512))) show404();
+
 	define('KB_CACHEDIR', 'cache');
-	if($type == 'ship' && $size == 256 && file_exists("img/ships/256_256/{$id}.png"))
-	{
-		expiryHeaders("png", "img/ships/256_256/{$id}.png");
-		readfile("img/ships/256_256/{$id}.png");
-		die;
-	}
-
-	$typepath = "img/types/64_64/{$id}.png";
-
 	require_once("common/includes/class.cachehandler.php");
-	//TODO: add an optional memcache backed by the filecache
-//	require_once("common/includes/class.cachehandlerhashed");
-//	require_once("kbconfig.php");
-//	if(defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE == true)
-//	{
-//		if(!defined('DB_MEMCACHE_SERVER') || !defined('DB_MEMCACHE_PORT'))
-//			die("DB_MEMCACHE_SERVER and DB_MEMCACHE_PORT not defined. Memcache not started.");
-//
-//		$mc = new Memcache();
-//		if(!@$mc->pconnect(DB_MEMCACHE_SERVER, DB_MEMCACHE_PORT))
-//			die("ERROR: Unable to connect to memcached server, disabling
-//				memcached. Please check your settings (server, port) and make
-//				sure the memcached server is running");
-//		require_once("common/includes/class.cachehandlerhashedmem");
-//
-//		$cachehandler = new CacheHandlerHashedMem();
-//	}
-//	else
-//	{
-//		$cachehandler = new CacheHandlerHashed();
-//	}
 
-	// Read straight from the img folder if it's 64x64.
-	if($size == 64 && file_exists($typepath))
-	{
-		expiryHeaders("png", $typepath);
-		readfile($typepath);
-		die;
-	}
-	// Give up if it doesn't exist.
-	else if(!file_exists($typepath))
-	{
-		if($size == 32 || $size == 64 || $size == 128 || $size == 256)
-			header("Location: {$imghost}img/portrait_0_{$size}.jpg");
-		else header("Location: {$imghost}img/portrait_0_64.jpg");
-		die;
-	}
 	// If it's in the cache then read it from there.
-	else if(CacheHandler::exists("{$id}_{$size}.png", "img"))
+	if(CacheHandler::exists("{$id}_{$size}.png", "img"))
 	{
 		expiryHeaders("png", CacheHandler::getInternal("{$id}_{$size}.png", "img"));
 		readfile(CacheHandler::getInternal("{$id}_{$size}.png", "img"));
 		die;
 	}
-	// Make the size needed from the 64x64 image in the img directory
+
+	//TODO: add an optional memcache backed by the filecache
+
+	//Ships are available at 256 and 512
+	if($type == 'ship' && $size > 128)
+		$img = fetchImage($id, "Render", $size, "png");
+	// 48x48 & 64x64 images
+	else if($size > 32)
+	{
+		if(CacheHandler::exists("{$id}_64.png", "img"))
+				$img = imagecreatefrompng(CacheHandler::getInternal("{$id}_64.png", "img"));
+		else $img = fetchImage($id, "InventoryType", 64, "png");
+		if($img && $size != 64)
+				resize($size, 64, $img, CacheHandler::getInternal("{$id}_{$size}.png", "img"));
+	}
+	// 24x24 & 32x32 images
 	else
 	{
-		$img = imagecreatefrompng($typepath);
-		$newimg = imagecreatetruecolor($size, $size);
-		$colour = imagecolortransparent($newimg, imagecolorallocatealpha($newimg, 0, 0, 0, 127));
-		imagefill($newimg, 0, 0, $colour);
-		imagesavealpha($newimg, true);
-
-		imagecopyresampled($newimg, $img, 0, 0, 0, 0, $size, $size, 64, 64);
-
-		imagepng($newimg, CacheHandler::getInternal("{$id}_{$size}.png", "img"));
-		imagedestroy($newimg);
-
-		expiryHeaders("png", CacheHandler::getInternal("{$id}_{$size}.png", "img"));
-		readfile(CacheHandler::getInternal("{$id}_{$size}.png", "img"));
-		die;
+		if(CacheHandler::exists("{$id}_32.png", "img"))
+				$img = imagecreatefrompng(CacheHandler::getInternal("{$id}_32.png", "img"));
+		else $img = fetchImage($id, "InventoryType", 32, "png");
+		if($img && $size != 32)
+				resize($size, 32, $img, CacheHandler::getInternal("{$id}_{$size}.png", "img"));
 	}
+
+	if(!$img) show404();
+
+	expiryHeaders("png", CacheHandler::getInternal("{$id}_{$size}.png", "img"));
+	readfile(CacheHandler::getInternal("{$id}_{$size}.png", "img"));
+	die;
 }
 
 function expiryHeaders($type="png", $path = "")
 {
 	$year = 31536000; // 365 * 24 * 60 * 60
-
 	// PHP5.3+ only
 	//header_remove();
 	// Instead:
@@ -249,20 +218,117 @@ function expiryHeaders($type="png", $path = "")
 	header("Content-Type: image/".$type);
 	header("Expires: ".gmdate("D, d M Y H:i:s", time() + $year)." GMT");
 
-	if($path) header('Last-Modified: '.gmdate("D, d M Y H:i:s", filemtime($path))." GMT");
+	if($path)
+			header('Last-Modified: '.gmdate("D, d M Y H:i:s", filemtime($path))." GMT");
 	else header('Last-Modified: '.gmdate("D, d M Y H:i:s")." GMT");
 }
 
 function checkColors($context, $view)
 {
 	$a = array('line', 'bg', 'hl', 'normal', 'capt');
-	foreach ($a as $b)
+	foreach($a as $b)
 	{
-		if ($string = config::get('map_'.$context.'_cl_'.$b))
+		if($string = config::get('map_'.$context.'_cl_'.$b))
 		{
 			$tmp = explode(',', $string);
 			$function = 'set'.$b.'color';
 			$view->$function($tmp[0], $tmp[1], $tmp[2]);
 		}
 	}
+}
+
+function show404()
+{
+	//header("HTTP:/1.1 404 Not Found");
+	header("Status: 404 Not Found");
+	echo "Image not found";
+	die;
+}
+
+function fetchImage($id, $type = 'Character', $size = 128, $ext = "jpg")
+{
+	include_once('kbconfig.php');
+	require_once('common/includes/globals.php');
+	require_once("common/includes/class.cachehandler.php");
+
+	$url = IMG_SERVER."/".$type."/".$id."_".$size.".".$ext;
+	if(function_exists('curl_init'))
+	{
+		// in case of a dead eve server we only want to wait 2 seconds
+		@ini_set('default_socket_timeout', 2);
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+		// CURLOPT_FOLLOWLOCATION doesn't work if safe mode or open_basedir is set
+		// For pilots we should try from oldportraits.eveonline.com if the main server doesn't have them.
+		//if($type != 'Character') curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+		//curl_setopt($ch, CURLOPT_HEADER, true);
+		$file = curl_exec($ch);
+		//list($header, $file) = explode("\n\n", $file, 2);
+		$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+		if($http_code != 200)
+		{
+			if($type == 'Character')
+			{
+				$url = "http://oldportraits.eveonline.com/Character/".$id."_".$size.".".$ext;
+				curl_setopt($ch, CURLOPT_URL, $url);
+				curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+				$file = curl_exec($ch);
+				$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+				if($http_code != 200) $file = file_get_contents("img/1_$size.jpg");
+			}
+			else if($type == 'Alliance')
+				$file = file_get_contents("img/alliances/default.png");
+			else if($type == 'Corporation')
+				$file = file_get_contents("img/corps/default.png");
+			else show404();
+		}
+		curl_close($ch);
+	}
+	else
+	{
+		require_once('common/includes/http_request.php');
+
+		// in case of a dead eve server we only want to wait 2 seconds
+		@ini_set('default_socket_timeout', 2);
+		// try alternative access via fsockopen
+		// happens if allow_url_fopen wrapper is false
+		$http = new http_request($url);
+		$file = $http->get_content();
+		$http_code = $http->get_http_code();
+		if($http_code != 200)
+		{
+			if($type == 'Character')
+			{
+				$url = "http://oldportraits.eveonline.com/Character/".$id."_".$size.".".$ext;
+				$http = new http_request($url);
+				$file = $http->get_content();
+				$http_code = $http->get_http_code();
+				if($http_code != 200) $file = file_get_contents("img/1_$size.jpg");
+			}
+			else if($type == 'Alliance')
+				$file = file_get_contents("img/alliances/default.png");
+			else if($type == 'Corporation')
+				$file = file_get_contents("img/corps/default.png");
+			else show404();
+		}
+	}
+	if($img = @imagecreatefromstring($file))
+			CacheHandler::put($id.'_'.$size.'.'.$ext, $file, 'img');
+	return $img;
+}
+
+function resize($newsize, $oldsize, $img, $path)
+{
+	$newimg = imagecreatetruecolor($newsize, $newsize);
+	$colour = imagecolortransparent($newimg, imagecolorallocatealpha($newimg, 0, 0, 0, 127));
+	imagefill($newimg, 0, 0, $colour);
+	imagesavealpha($newimg, true);
+
+	imagecopyresampled($newimg, $img, 0, 0, 0, 0, $newsize, $newsize, $oldsize, $oldsize);
+
+	imagepng($newimg, $path);
+	imagedestroy($newimg);
 }
