@@ -289,7 +289,7 @@ function fetchImage($id, $type = 'Character', $size = 128, $ext = "jpg")
 	}
 	else
 	{
-		require_once('common/includes/http_request.php');
+		require_once('common/includes/class.http_request.php');
 
 		// in case of a dead eve server we only want to wait 2 seconds
 		@ini_set('default_socket_timeout', 2);
