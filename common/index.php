@@ -101,7 +101,8 @@ if(!config::get('cfg_img'))
 define('KB_HOST', config::get('cfg_kbhost'));
 define('MAIN_SITE', config::get('cfg_mainsite'));
 define('IMG_URL', config::get('cfg_img'));
-define('IMG_HOST', substr(IMG_URL, 0, strpos(IMG_URL, "/img")));
+if(substr(IMG_URL, -4) == '/img') define('IMG_HOST', substr(IMG_URL, 0, strpos(IMG_URL, "/img")));
+else  define('IMG_HOST', KB_HOST);
 define('KB_TITLE', config::get('cfg_kbtitle'));
 
 // set up themes.
@@ -313,6 +314,7 @@ $smarty->cache_dir = KB_CACHEDIR.'/data';
 $smarty->assign('theme_url', THEME_URL);
 $smarty->assign('style', $stylename);
 $smarty->assign('img_url', IMG_URL);
+$smarty->assign('img_host', IMG_URL);
 $smarty->assign('kb_host', KB_HOST);
 $smarty->assignByRef('config', $config);
 $smarty->assign('is_IGB', IS_IGB);
