@@ -150,21 +150,6 @@ class thumb
 		}
 		else
 		{
-			if ($this->id)
-			{
-				// check for a valid, known external id
-				$qry = DBFactory::getDBQuery();;
-				$qry->execute('SELECT plt_externalid FROM kb3_pilots WHERE plt_externalid = '.$this->id.' LIMIT 1');
-				if (!$qry->recordCount())
-				{
-					// there is no such id so set it to 0
-					$this->id = 0;
-					$this->thumbName = 'portrait_0_'.$this->size.'.jpg';
-					$this->thumbDir = 'img';
-					$this->thumb = CacheHandler::getInternal('portrait_0_'.$this->size.'.jpg', $this->thumbDir);
-					return true;
-				}
-			}
 			// Assume external id < 100,000 is NPC structure/ship
 			if($this->id < 100000 && file_exists("img/ships/64_64/".$this->id.".png"))
 				$img = imagecreatefrompng("img/ships/64_64/".$this->id.".png");
