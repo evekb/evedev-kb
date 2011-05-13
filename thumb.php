@@ -251,7 +251,7 @@ function fetchImage($id, $type = 'Character', $size = 128, $ext = "jpg")
 	require_once('common/includes/globals.php');
 	require_once("common/includes/class.cachehandler.php");
 
-	$url = IMG_SERVER."/".$type."/".$id."_".$size.".".$ext;
+	$url = 'http://'.IMG_SERVER."/".$type."/".$id."_".$size.".".$ext;
 	if(function_exists('curl_init'))
 	{
 		// in case of a dead eve server we only want to wait 2 seconds
@@ -289,7 +289,7 @@ function fetchImage($id, $type = 'Character', $size = 128, $ext = "jpg")
 	}
 	else
 	{
-		require_once('common/includes/class.http_request.php');
+		require_once('common/includes/class.httprequest.php');
 
 		// in case of a dead eve server we only want to wait 2 seconds
 		@ini_set('default_socket_timeout', 2);
