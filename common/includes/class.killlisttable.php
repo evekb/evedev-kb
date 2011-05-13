@@ -102,7 +102,7 @@ class KillListTable
 			{
 				// Need to return yet another value from killlists.
 				$all = new Alliance($kill->getVictimAllianceID());
-				if($all->getName()!="None")
+				if(strcasecmp($all->getName(), "None") != 0)
 				{
 					$kll['allianceexists'] = true;
 					$kll['victimallianceicon'] = $all->getPortraitURL(32);
