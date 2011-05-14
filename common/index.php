@@ -314,7 +314,7 @@ $smarty->cache_dir = KB_CACHEDIR.'/data';
 $smarty->assign('theme_url', THEME_URL);
 $smarty->assign('style', $stylename);
 $smarty->assign('img_url', IMG_URL);
-$smarty->assign('img_host', IMG_URL);
+$smarty->assign('img_host', IMG_HOST);
 $smarty->assign('kb_host', KB_HOST);
 $smarty->assignByRef('config', $config);
 $smarty->assign('is_IGB', IS_IGB);
