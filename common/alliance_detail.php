@@ -69,7 +69,7 @@ class pAllianceDetail extends pageAssembly
 		{
 			$this->alliance = new Alliance($this->all_external_id, true);
 			$this->all_id = $this->alliance->getID();
-			if($this->all_id)
+			if(!$this->all_id)
 			{
 				echo 'No valid alliance id specified.';
 				exit;
