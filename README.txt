@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v3.2.1
+Eve Development Network Killboard v3.2.2
 -------------------------------------------
 
 // REQUIREMENTS
@@ -24,6 +24,13 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
+v3.2.2
+Use CCP image server for images
+If using local cache of images, fetch Types from CCP
+Fix for pilot points and corp icons in killlists
+Increased contrast of red graphs in red theme
+Troubleshooting page checks SSL support.
+-------------------------------------------
 v3.2.1
 Corp logo transparency returns
 IIS bug avoided
