@@ -67,19 +67,23 @@ class pAllianceDetail extends pageAssembly
 
 		if(!$this->all_id && $this->all_external_id)
 		{
-			$qry = DBFactory::getDBQuery();
-			$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_external_id = ".$this->all_external_id);
-			if($qry->recordCount())
-			{
-				$row = $qry->getRow();
-				$this->all_id = $row['all_id'];
-			}
-			else
+			$this->alliance = new Alliance($this->all_external_id, true);
+			$this->all_id = $this->alliance->getID();
+			if($this->all_id)
 			{
 				echo 'No valid alliance id specified.';
 				exit;
 			}
+
 		}
+		else
+		{
+			$this->alliance = new Alliance($this->all_id);
+			$this->all_external_id = $this->alliance->getExternalID();
+		}
+
+		if($this->all_external_id) $this->page->addHeader("<link rel='canonical' href='".KB_HOST."/?a=alliance_detail&amp;all_ext_id=". $this->all_external_id."' />");
+		else $this->page->addHeader("<link rel='canonical' href='".KB_HOST."/?a=alliance_detail&amp;all_id=".$this->all_id."' />");
 
 		$this->month = intval($_GET['m']);
 		$this->year = intval($_GET['y']);
@@ -118,7 +122,6 @@ class pAllianceDetail extends pageAssembly
 		$smarty->assign('pyear', $this->pyear);
 		$smarty->assign('nmonth', $this->nmonth);
 		$smarty->assign('nyear', $this->nyear);
-		$this->alliance = new Alliance($this->all_id);
 		if($this->alliance->isFaction()) $this->page->setTitle('Faction details - '.$this->alliance->getName());
 		else $this->page->setTitle('Alliance details - '.$this->alliance->getName());
 

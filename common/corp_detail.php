@@ -73,7 +73,14 @@ class pCorpDetail extends pageAssembly
 				exit;
 			}
 		}
-		else $this->corp = new Corporation($this->crp_id);
+		else
+		{
+			$this->corp = new Corporation($this->crp_id);
+			$this->crp_external_id = $this->corp->getExternalID();
+		}
+
+		if($this->crp_external_id) $this->page->addHeader("<link rel='canonical' href='".KB_HOST."/?a=corp_detail&amp;crp_ext_id=". $this->crp_external_id."' />");
+		else $this->page->addHeader("<link rel='canonical' href='".KB_HOST."/?a=corp_detail&amp;crp_id=".$this->crp_id."' />");
 
 		$this->alliance = $this->corp->getAlliance();
 

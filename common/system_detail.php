@@ -11,13 +11,6 @@ class pSystemDetail extends pageAssembly
 	function __construct()
 	{
 		parent::__construct();
-		$this->sys_id = intval($_GET['sys_id']);
-		global $smarty;
-		$this->smarty = $smarty;
-		$this->view =  preg_replace('/[^a-zA-Z0-9_-]/','',$_GET['view']);
-		$this->viewList = array();
-		$this->menuOptions = array();
-		
 		$this->queue("start");
 		$this->queue("map");
 		$this->queue("statSetup");
@@ -32,6 +25,13 @@ class pSystemDetail extends pageAssembly
 	 */
 	function start()
 	{
+		$this->sys_id = intval($_GET['sys_id']);
+		global $smarty;
+		$this->smarty = $smarty;
+		$this->view =  preg_replace('/[^a-zA-Z0-9_-]/','',$_GET['view']);
+		$this->viewList = array();
+		$this->menuOptions = array();
+
 		$this->page = new Page();
 		$this->page->addHeader('<meta name="robots" content="noindex, nofollow" />');
 
@@ -40,6 +40,9 @@ class pSystemDetail extends pageAssembly
 			echo 'no valid id supplied<br/>';
 			exit;
 		}
+
+		$this->page->addHeader("<link rel='canonical' href='".KB_HOST."/?a=system_detail&amp;sys_id=". $this->sys_id."' />");
+
 		$this->system = new SolarSystem($this->sys_id);
 		$this->menuOptions = array();
 		$this->page->setTitle('System details - '.$this->system->getName());

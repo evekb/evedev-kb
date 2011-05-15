@@ -24,6 +24,7 @@ class pHome extends pageAssembly
 	function start()
 	{
 		$this->page = new Page();
+		$this->page->addHeader("<link rel='canonical' href='".KB_HOST."/' />");
 		if(isset($_GET['scl_id']) || isset($_GET['y'])) $this->page->addHeader('<meta name="robots" content="index, nofollow" />');
 		$this->menuOptions = array();
 
