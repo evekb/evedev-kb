@@ -214,7 +214,7 @@ class Alliance
 				return CacheHandler::getExternal($this->getUnique()."_$size.png", 'img');
 			return '?a=thumb&amp;type=alliance&amp;id='.$this->getUnique().'&amp;size='.$size;
 		}
-		return IMG_HOST.'/thumb.php?type=alliance&amp;id='.$this->getExternalID().'&amp;size='.$size;
+		return imageURL::getURL('Alliance', $this->externalid, $size);
 	}
 
 	/*!

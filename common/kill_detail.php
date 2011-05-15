@@ -19,16 +19,6 @@ class pKillDetail extends pageAssembly
 	function __construct()
 	{
 		parent::__construct();
-		if(isset($_GET['kll_id'])) $this->kll_id = intval($_GET['kll_id']);
-		else $this->kll_id = 0;
-		if(isset($_GET['kll_external_id'])) $this->kll_external_id = intval($_GET['kll_external_id']);
-		elseif(isset($_GET['kll_ext_id'])) $this->kll_external_id = intval($_GET['kll_ext_id']);
-		else $this->kll_external_id = 0;
-		if(isset($_GET['nolimit'])) $this->nolimit = true;
-		else $this->nolimit = false;
-
-		$this->menuOptions = array();
-
 		$this->queue("start");
 		$this->queue("top");
 		$this->queue("victim");
@@ -62,6 +52,16 @@ class pKillDetail extends pageAssembly
 	 */
 	function start()
 	{
+		if(isset($_GET['kll_id'])) $this->kll_id = intval($_GET['kll_id']);
+		else $this->kll_id = 0;
+		if(isset($_GET['kll_external_id'])) $this->kll_external_id = intval($_GET['kll_external_id']);
+		elseif(isset($_GET['kll_ext_id'])) $this->kll_external_id = intval($_GET['kll_ext_id']);
+		else $this->kll_external_id = 0;
+		if(isset($_GET['nolimit'])) $this->nolimit = true;
+		else $this->nolimit = false;
+
+		$this->menuOptions = array();
+
 		$this->page = new Page('Kill details');
 
 		if (!$this->kll_id && !$this->kll_external_id)
@@ -90,6 +90,10 @@ class pKillDetail extends pageAssembly
 			$this->page->generate($html);
 			exit;
 		}
+
+		if($this->kll_external_id) $this->page->addHeader("<link rel='canonical' href='".KB_HOST."/?a=kill_detail&amp;kll_ext_id=". $this->kll_external_id."' />");
+		else $this->page->addHeader("<link rel='canonical' href='".KB_HOST."/?a=kill_detail&amp;kll_id=".$this->kll_id."' />");
+
 		$this->system = $this->kill->getSystem();
 		$this->finalblow = false;
 
@@ -429,7 +433,7 @@ class pKillDetail extends pageAssembly
 
 				$this->involved[$i]['typeID'] = 2; //type number for corporations.
 
-				$this->involved[$i]['shipImage'] = IMG_HOST."/thumb.php?type=ship&amp;id=".$weapon->getID()."&amp;size=64";
+				$this->involved[$i]['shipImage'] = imageURL::getURL('Ship', $weapon->getID(), 64);
 			}
 			else
 			{

@@ -370,6 +370,13 @@ class thumbInt extends thumb
 				$pilot = new Pilot($int_id);
 				$this->id = $pilot->getExternalID();
 
+				if($this->id)
+				{
+					$url = imageURL::getURL('Pilot', $this->id, $size);
+					header("Location: $url");
+					die;
+				}
+
 				$this->type = 'pilot';
 				$this->encoding = 'jpeg';
 
@@ -384,6 +391,13 @@ class thumbInt extends thumb
 					$this->id = 0;
 				}
 				$this->id = $corp->getExternalID();
+				if($this->id)
+				{
+					$url = imageURL::getURL('Corporation', $this->id, $size);
+					header("Location: $url");
+					die;
+				}
+
 				$this->encoding = 'png';
 
 				if($this->type == 'npc')
