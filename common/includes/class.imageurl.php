@@ -55,8 +55,8 @@ class imageURL
 			{
 				case 'Character':
 				case 'Pilot':
-					$url .= "?type=$type&id=$id&size=$size";
-					if($internal) $url .= "&int=1";
+					$url .= "?type=$type&amp;id=$id&amp;size=$size";
+					if($internal) $url .= "&amp;int=1";
 					break;
 				case 'Corporation':
 				case 'Alliance':
@@ -64,7 +64,7 @@ class imageURL
 				case 'InventoryType':
 				case 'Ship':
 				case 'Render':
-					$url .= "?type=$type&id=$id&size=$size";
+					$url .= "?type=$type&amp;id=$id&amp;size=$size";
 					break;
 			}
 		}
