@@ -72,13 +72,15 @@ if(preg_match("/[^\w\d-_]/", $type))
 switch($type)
 {
 	case 'pilot':
-	case 'character':
 	case 'corp':
-	case 'corporation':
 	case 'alliance':
-		if($type == 'character') $type = 'pilot';
-		else if($type == 'corporation') $type = 'corp';
 		goPCA($type, $id, $size, $imghost);
+		break;
+	case 'character':
+		goPCA('pilot', $id, $size, $imghost);
+		break;
+	case 'corporation':
+		goPCA('corp', $id, $size, $imghost);
 		break;
 
 	case 'region':
@@ -88,10 +90,14 @@ switch($type)
 		break;
 
 	case 'type':
-	case 'inventorytype':
 	case 'ship':
-	case 'render':
 		goType($type, $id, $size, $imghost);
+		break;
+	case 'inventorytype':
+		goType('type', $id, $size, $imghost);
+		break;
+	case 'render':
+		goType('ship', $id, $size, $imghost);
 }
 
 
@@ -166,7 +172,6 @@ function goMap($type, $id, $size=200)
 
 function goType($type, $id, $size = 64, $imghost = "")
 {
-	if($type == 'render') $type = 'ship';
 	if($size != 32 && $size != 64 && $size != 24 && $size != 48 &&
 			!($type == "ship" && ($size == 256 || $size = 512))) show404();
 

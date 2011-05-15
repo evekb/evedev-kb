@@ -711,7 +711,6 @@ class pKillDetail extends pageAssembly
 		$smarty->assign('victimShipName', $ship->getName());
 		$smarty->assign('victimShipID', $ship->getExternalID());
 		$smarty->assign('victimShipClassName', $shipclass->getName());
-		$smarty->assignByRef('victimShipIcon', $smarty->fetch(get_tpl('ship_victim_64')));
 		if($this->page->isAdmin()) $smarty->assign('ship', $ship);
 
 		$ssc=new dogma($ship->getExternalID());
