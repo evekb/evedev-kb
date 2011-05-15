@@ -8,8 +8,6 @@
 class pPilotDetail extends pageAssembly
 {
 	private $viewList = array();
-	private $klist = null;
-	private $llist = null;
 	private $menuOptions = array();
 
 	// TODO: Make these private and add access functions for mods to use.
@@ -70,6 +68,7 @@ class pPilotDetail extends pageAssembly
 			{
 				$this->plt_id = PILOT_ID;
 				$this->pilot = new Pilot(PILOT_ID);
+				$this->plt_external_id = $this->pilot->getExternalID();
 			}
 			else
 			{
@@ -79,7 +78,12 @@ class pPilotDetail extends pageAssembly
 			}
 
 		}
-		else $this->pilot = new Pilot($this->plt_id);
+		else
+		{
+			$this->pilot = new Pilot($this->plt_id);
+			$this->plt_external_id = $this->pilot->getExternalID();
+
+		}
 		$this->page->setTitle('Pilot details - '.$this->pilot->getName());
 
 		if (!$this->pilot->exists())
@@ -88,6 +92,10 @@ class pPilotDetail extends pageAssembly
 			$this->page->generate($html);
 			exit;
 		}
+
+		if($this->plt_external_id) $this->page->addHeader("<link rel='canonical' href='".KB_HOST."/?a=pilot_detail&amp;plt_ext_id=". $this->plt_external_id."' />");
+		else $this->page->addHeader("<link rel='canonical' href='".KB_HOST."/?a=pilot_detail&amp;plt_id=".$this->plt_id."' />");
+
 		$this->corp = $this->pilot->getCorp();
 		$this->alliance = $this->corp->getAlliance();
 		

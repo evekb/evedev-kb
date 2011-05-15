@@ -29,6 +29,7 @@ class pAwards extends pageAssembly
 		$this->page = new Page("Awards");
 		$this->page->addHeader('<meta name="robots" content="index, follow" />');
 
+		$this->page->addHeader("<link rel='canonical' href='".KB_HOST."/?a=awards' />");
 
 		if(isset($_GET['m'])) $this->month = intval($_GET['m']);
 		else $this->month = kbdate('m') - 1;

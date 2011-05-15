@@ -64,8 +64,8 @@ class Corporation
 
 		// NPC alliances can be recorded as corps on killmails.
 		if($this->externalid > 500000 && $this->externalid < 500021)
-			return IMG_HOST.'/thumb.php?type=alliance&amp;id='.$this->externalid.'&amp;size='.$size;
-		return IMG_HOST.'/thumb.php?type=corp&amp;id='.$this->externalid.'&amp;size='.$size;
+			return imageURL::getURL('Alliance', $this->externalid, $size);
+		return imageURL::getURL('Corporation', $this->externalid, $size);
 	}
 
 	//! Return the corporation CCP ID.

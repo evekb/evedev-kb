@@ -49,7 +49,7 @@ class Item
 	{
 		$this->execQuery();
 		global $smarty;
-		$img = IMG_HOST."/thumb.php?id=".$this->getID()."&amp;size=".$size;
+		$img = imageURL::getURL('InventoryType', $this->id, $size);
 
 //		// cat 18 are combat drones
 //		if ($this->row_['itt_cat'] == 18)

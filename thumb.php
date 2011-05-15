@@ -54,6 +54,7 @@ else
 
 	if(!isset($_GET['type'])) $type = "type";
 	else $type = $_GET['type'];
+	$type = strtolower($type);
 
 	if(!isset($_GET['id'])) $id = 0;
 	else $id = @intval($_GET['id']);
@@ -71,13 +72,15 @@ if(preg_match("/[^\w\d-_]/", $type))
 switch($type)
 {
 	case 'pilot':
-	case 'character':
 	case 'corp':
-	case 'corporation':
 	case 'alliance':
-		if($type == 'character') $type = 'pilot';
-		else if($type == 'corporation') $type = 'corp';
 		goPCA($type, $id, $size, $imghost);
+		break;
+	case 'character':
+		goPCA('pilot', $id, $size, $imghost);
+		break;
+	case 'corporation':
+		goPCA('corp', $id, $size, $imghost);
 		break;
 
 	case 'region':
@@ -89,6 +92,12 @@ switch($type)
 	case 'type':
 	case 'ship':
 		goType($type, $id, $size, $imghost);
+		break;
+	case 'inventorytype':
+		goType('type', $id, $size, $imghost);
+		break;
+	case 'render':
+		goType('ship', $id, $size, $imghost);
 }
 
 
@@ -180,7 +189,7 @@ function goType($type, $id, $size = 64, $imghost = "")
 	//TODO: add an optional memcache backed by the filecache
 
 	//Ships are available at 256 and 512
-	if($type == 'ship' && $size > 128)
+	if($type == 'ship' && $size > 64)
 		$img = fetchImage($id, "Render", $size, "png");
 	// 48x48 & 64x64 images
 	else if($size > 32)
@@ -251,7 +260,7 @@ function fetchImage($id, $type = 'Character', $size = 128, $ext = "jpg")
 	require_once('common/includes/globals.php');
 	require_once("common/includes/class.cachehandler.php");
 
-	$url = IMG_SERVER."/".$type."/".$id."_".$size.".".$ext;
+	$url = 'http://'.IMG_SERVER."/".$type."/".$id."_".$size.".".$ext;
 	if(function_exists('curl_init'))
 	{
 		// in case of a dead eve server we only want to wait 2 seconds
@@ -289,7 +298,7 @@ function fetchImage($id, $type = 'Character', $size = 128, $ext = "jpg")
 	}
 	else
 	{
-		require_once('common/includes/http_request.php');
+		require_once('common/includes/class.httprequest.php');
 
 		// in case of a dead eve server we only want to wait 2 seconds
 		@ini_set('default_socket_timeout', 2);

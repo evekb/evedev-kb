@@ -563,7 +563,7 @@ class pKillRelated extends pageAssembly
 				}
 			}
 	 */
-			$shipimage = IMG_HOST.'/thumb.php?type=ship&amp;id='.$row['shp_externalid'].'&amp;size=32';
+			$shipimage = imageURL::getURL('Ship', $row['shp_externalid'], 32);
 			$this->pilots[$side][$row['ind_plt_id']][] = array('name' => $row['plt_name'], 'sid' => $row['ind_shp_id'],
 				   'spic' => $shipimage, 'aid' => $row['ind_all_id'], 'ts' => strtotime($kill->getTimeStamp()),
 				   'corp' =>$row['crp_name'], 'alliance' => $row['all_name'], 'scl' => $row['scl_points'],

@@ -96,26 +96,24 @@ if(count(config::get('cfg_allianceid'))
 else if(config::get('cfg_allianceid'))
 {
 	$alls = config::get('cfg_allianceid');
-	$_GET['all_id'] = $alls[0];
-	unset($alls);
-	include('alliance_detail.php');
+	header("Location: ".KB_HOST."?a=alliance_detail&all_id=".$alls[0]);
+	die;
 }
 elseif(config::get('cfg_corpid'))
 {
 	$corps = config::get('cfg_corpid');
-	$_GET['crp_id'] = $corps[0];
-	unset($corps);
-	include('corp_detail.php');
+	header("Location: ".KB_HOST."?a=corp_detail&crp_id=".$corps[0]);
+	die;
 }
 elseif(config::get('cfg_pilotid'))
 {
 	$pilots = config::get('cfg_pilotid');
-	$_GET['plt_id'] = $pilots[0];
-	unset($pilots);
-	include('pilot_detail.php');
+	header("Location: ".KB_HOST."?a=pilot_detail&plt_id=".$pilots[0]);
+	die;
 }
 else
 {
-	include("about.php");
+	header("Location: ".KB_HOST."?a=about");
+	die;
 }
 
