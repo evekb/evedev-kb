@@ -161,7 +161,6 @@ class pContractDetail extends pageAssembly
 					$ll = &$target->getLossList();
 					$summary = new KillSummaryTable($kl, $ll);
 					$summary->setVerbose(true);
-					$summary->setBreak($breaklen);
 					$summary->setView('combined');
 
 					$curtargets['type'] = $target->getType();
