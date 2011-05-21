@@ -175,6 +175,14 @@ function goType($type, $id, $size = 64, $imghost = "")
 	if($size != 32 && $size != 64 && $size != 24 && $size != 48 &&
 			!($type == "ship" && ($size == 256 || $size = 512))) show404();
 
+	if($id == 0)
+	{
+		if($size == 32 || $size == 64 || $size == 128 || $size == 256)
+			header("Location: {$imghost}img/portrait_0_{$size}.jpg");
+		else header("Location: {$imghost}img/portrait_0_64.jpg");
+		die;
+	}
+
 	define('KB_CACHEDIR', 'cache');
 	require_once("common/includes/class.cachehandler.php");
 

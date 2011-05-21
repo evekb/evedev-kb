@@ -21,6 +21,14 @@ class imageURL
 
 		$id = intval($id);
 		$size = intval($size);
+
+		if($id == 0)
+		{
+			if($size == 32 || $size == 64 || $size == 128 || $size == 256)
+				return KB_HOST."/img/portrait_0_{$size}.jpg";
+			else return KB_HOST."/img/portrait_0_64.jpg";
+		}
+
 		// We reduce ammo images to 24x24 on kill_details.
 		if($size < 32) $internal = true;
 		if($internal) $url = KB_HOST."/thumb.php";
@@ -82,8 +90,6 @@ class imageURL
 		{
 			self::$imageServer = KB_HOST."/thumb.php";
 			self::$queryType = self::QUERYSTRING;
-			//self::$queryType = config::get('cfg_imagequery');
-			//if(!self::$queryType) self::$queryType = 2;
 		}
 	}
 
