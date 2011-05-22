@@ -71,7 +71,11 @@ class http_request
 
 	function get_http_code()
 	{
-		if(!$this->header) return false;
+		if(!$this->header)
+		{
+			if($this->_errno) return $this->_errno;
+			return false;
+		}
 		$result = explode(" ", $this->header, 3);
 		return $result[1];
 	}
