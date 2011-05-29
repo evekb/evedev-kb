@@ -39,8 +39,6 @@ class Parser
 		if(!is_null($externalID))$this->externalID = intval($externalID);
 		else $this->externalID = 0;
 
-		$pos = 0;
-
 		//Fraktion added for mails that originate from griefwatch / battle-clinic that do nothing with this info
 		if (strpos($this->killmail_, 'Beteiligte Parteien:') || (strpos($this->killmail_, 'Fraktion:')))
 		{
@@ -49,7 +47,6 @@ class Parser
 		elseif (strpos($this->killmail_, "Корпорация") )
 		{
 			$this->preparse('russian');
-
 		}
 		elseif (strpos($this->killmail_, 'System Security Level:'))
 		{
@@ -61,35 +58,40 @@ class Parser
 		$timestamp = substr($this->killmail_, 0, 16);
 		$timestamp = str_replace('.', '-', $timestamp);
 
-		$dom11_release = '2010-01-21 12:00:00';
-		if(strtotime($timestamp) < strtotime($dom11_release))
+		/* If we are processing an old killmail and updating it to the new format, we should process
+		 * the oldest fixes first to update the killmail to the newest format. However, we'll look
+		 * to see if any fixes need to be done first to reduce the number of calls as most kills will
+		 * be current.
+		 * In addition, we always want to process strtotime in eve's time i.e. UTC/GMT.
+		 */
+		$timestamp_int = strtotime($timestamp . ' UTC');
+		$dom11_release = strtotime('2010-01-21 12:00:00 UTC');
+		if($timestamp_int < $dom11_release) {
+			$dom_release = strtotime('2009-12-03 12:00:00 UTC');
+			if($timestamp_int < $dom_release) {
+				$apoc_release = strtotime('2009-03-10 03:00:00 UTC');
+				if($timestamp_int < $apoc_release) {
+					$apoc15_release = strtotime('2009-08-20 12:00:00 UTC');
+					if($timestamp_int < $apoc15_release) {
+						$qr_release = strtotime('2008-11-11 00:00:00 UTC');
+						if($timestamp_int < $qr_release) {
+							$this->preparse('preqr');
+						}
+						$this->preparse('apoc15');
+					}
+					$this->preparse('apoc');
+				}
+				$this->preparse('dominion');
+			}
 			$this->preparse('dom11');
-
-		$dom_release = '2009-12-03 12:00:00';
-		if(strtotime($timestamp) < strtotime($dom_release))
-			$this->preparse('dominion');
-
-		$apoc_release = '2009-03-10 03:00:00';
-
-		if(strtotime($timestamp) < strtotime($apoc_release))
-			$this->preparse('apoc');
-
-		$apoc15_release = '2009-08-20 12:00:00';
-
-		if(strtotime($timestamp) < strtotime($apoc15_release))
-			$this->preparse('apoc15');
-
-		$qr_release = '2008-11-11 00:00:00';
-
-		if(strtotime($timestamp) < strtotime($qr_release))
-			$this->preparse('preqr');
+		}
 
 		if (strpos($this->killmail_, '**** Truncated - mail is too large ****') > 0)
 			$this->killmail_ = str_replace('**** Truncated - mail is too large ****', '', $this->killmail_);
 
 		// Parser fix, since some killmails don't have a final blow, they would break the KB.
 		//On mails without final blow info, the first name on the list becomes the final blow holder
-		if (strpos($this->killmail_, 'laid the final blow') < 1)
+		if (strpos($this->killmail_, 'laid the final blow') === false)
 			$this->needs_final_blow_ = 1;
 	}
 
