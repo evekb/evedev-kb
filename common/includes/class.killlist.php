@@ -159,7 +159,7 @@ class KillList
 			// included ship filter
 			if (count($this->vic_scl_id_))
 				$sql .= " AND shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
-			event::call('killlist_where_combined_kills', $this);
+			event::call('killlist_where_combined_kills', $sql);
 
 			if(($this->comb_all_ || $this->comb_crp_)
 					&& count($this->comb_all_) + count($this->comb_crp_) + count($this->comb_plt_) > 1)
@@ -229,7 +229,7 @@ class KillList
 			// included ship filter
 			if (count($this->vic_scl_id_))
 				$sql .= " AND shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
-			event::call('killlist_where_combined_losses', $this);
+			event::call('killlist_where_combined_losses', $sql);
 			if ($this->ordered_)
 			{
 				if (!$this->orderby_)
@@ -432,7 +432,7 @@ class KillList
 				// included ship filter
 				if (count($this->vic_scl_id_))
 					$this->sql_ .= " AND shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
-				event::call('killlist_where_kill', $this);
+				event::call('killlist_where_kill', $this->sql_);
 
 				if ($this->ordered_)
 				{
@@ -531,7 +531,7 @@ class KillList
 					$this->sql_ .= $sqlwhereop." shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
 					$sqlwhereop = ' AND ';
 				}
-				event::call('killlist_where_loss', $this);
+				event::call('killlist_where_loss', $this->sql_);
 				if ($this->ordered_)
 				{
 					if (!$this->orderby_)
