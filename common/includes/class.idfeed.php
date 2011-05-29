@@ -448,7 +448,7 @@ class IDFeed
 			$charname = $inv['corporationName'].' - '.$weapon->getName();
 		}
 		else if($charname == "") $charname = $ship->getName();
-		
+
 		$pilot->add(strval($inv['characterName']), $corp, $time, intval($inv['characterID']));
 
 		$iparty = new InvolvedParty($pilot->getID(), $corp->getID(),
@@ -474,6 +474,11 @@ class IDFeed
 		else
 		{
 			$kill->addDestroyedItem(new DestroyedItem(new Item(intval($item['typeID'])), intval($item['qtyDestroyed']), '', $location));
+		}
+		// Check for containers.
+		if(isset($item->rowset))
+		{
+			foreach($item->rowset->row as $subitem) $this->processItem($subitem, $kill);
 		}
 	}
 	//! Return the array of posted kill IDs.
@@ -513,6 +518,14 @@ class IDFeed
 			{
 				$qrow = $qry->getRow();
 				$id = $qrow['kll_id'];
+				if(intval($row['trust']) >= $this->trust && intval($row['killID']))
+				{
+					$qry->execute("UPDATE kb3_kills JOIN kb3_mails ON kb3_kills.kll_id = ".
+						"kb3_mails.kll_id SET kb3_mails.kll_external = ".
+						intval($row['killID']).", kb3_kills.kll_external = ".
+						intval($row['killID'])." WHERE kb3_mails.kll_id = $id AND ".
+						"kb3_mails.kll_external_id IS NULL");
+				}
 				return $id;
 			}
 		}
