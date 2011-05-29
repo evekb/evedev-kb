@@ -23,7 +23,7 @@ class DBNormalQuery extends DBBaseQuery
 	*/
 	function execute($sql)
 	{
-		$t1 = strtok(microtime(), ' ') + strtok('');
+		$t1 = microtime(true);
 
 		$this->resid = mysqli_query(self::$dbconn->id(),$sql);
 
@@ -48,7 +48,7 @@ class DBNormalQuery extends DBBaseQuery
 			}
 		}
 
-		$this->exectime = strtok(microtime(), ' ') + strtok('') - $t1;
+		$this->exectime = microtime(true) - $t1;
 		self::$totalexectime += $this->exectime;
 		$this->executed = true;
 

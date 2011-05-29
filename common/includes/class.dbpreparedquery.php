@@ -63,7 +63,7 @@ class DBPreparedQuery
      */
 	public function execute()
 	{
-		$t1 = strtok(microtime(), ' ') + strtok('');
+		$t1 = microtime(true);
 
 		//TODO redo this with hooks that cached classes can use.
 		if ( (DB_USE_MEMCACHE || DB_USE_QCACHE )
@@ -94,7 +94,7 @@ class DBPreparedQuery
 			}
 		}
 		$this->stmt->store_result();
-		$this->exectime = strtok(microtime(), ' ') + strtok('') - $t1;
+		$this->exectime = microtime(true) - $t1;
 		self::$totalexectime += $this->exectime;
 		$this->executed = true;
 		return true;

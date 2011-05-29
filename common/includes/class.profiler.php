@@ -13,12 +13,12 @@ class Profiler
 
     function start()
     {
-        $this->starttime_ = strtok(microtime(), ' ') + strtok('');
+        $this->starttime_ = microtime(true);
     }
 
     function stop()
     {
-        $this->stoptime_ = strtok(microtime(), ' ') + strtok('');
+        $this->stoptime_ = microtime(true);
     }
 
     function getTime()
@@ -26,4 +26,3 @@ class Profiler
         return $this->stoptime_ - $this->starttime_;
     }
 }
-?>
