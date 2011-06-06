@@ -291,9 +291,27 @@ class TopList
 		if(!$this->mixedinvolved)
 		{
 			if ($this->inv_crp)
-				$this->sql_ .= "\n\tINNER JOIN kb3_inv_crp inc ON (kll.kll_id = inc.inc_kll_id) ";
-			if ($this->inv_all)
-				$this->sql_ .= "\n\tINNER JOIN kb3_inv_all ina ON (kll.kll_id = ina.ina_kll_id) ";
+			{
+				$isql = "SELECT inc_kll_id as kll_id
+					FROM kb3_inv_crp
+					WHERE ";
+				if($this->getDateFilter())
+					$isql .= $this->getDateFilter("inc_timestamp")." AND ";
+				$isql .= "inc_crp_id IN (".implode(",", $this->inv_crp).")".
+					" GROUP BY kll_id";
+
+			}
+			else if ($this->inv_all)
+			{
+				$isql = "SELECT ina_kll_id as kll_id
+					FROM kb3_inv_all
+					WHERE ";
+				if($this->getDateFilter())
+					$isql .= $this->getDateFilter("ina_timestamp")." AND ";
+				$isql .= "ina_all_id IN (".implode(",", $this->inv_all).")".
+					" GROUP BY kll_id";
+			}
+			$this->sql_ .= "\n\tINNER JOIN (".$isql.") inv ON (inv.kll_id = ind.ind_kll_id)";
 		}
 		else
 		{
@@ -389,19 +407,6 @@ class TopList
 			$op = " AND ";
 		}
 
-		if(!$this->mixedinvolved)
-		{
-			if ($this->inv_crp)
-			{
-				$this->sql_ .= $op." inc.inc_crp_id IN ( ".implode(",", $this->inv_crp)." ) ";
-				$op = " AND ";
-			}
-			else if ($this->inv_all)
-			{
-				$this->sql_ .= $op." ina.ina_all_id IN ( ".implode(",", $this->inv_all)." ) ";
-				$op = " AND ";
-			}
-		}
 		$invP = array();
 		if ($this->inv_plt)
 			$invP[] = "ind.ind_plt_id IN (".implode(",", $this->inv_plt).")";
@@ -436,8 +441,6 @@ class TopList
 		{
 			$filter = "";
 			if($this->mixedinvolved) $filter = "ind.ind_timestamp";
-			else if($this->inv_all) $filter = "ina.ina_timestamp";
-			else if($this->inv_crp) $filter = "inc.inc_timestamp";
 			else if($this->inv_plt) $filter = "ind.ind_timestamp";
 			if($filter)
 			{
