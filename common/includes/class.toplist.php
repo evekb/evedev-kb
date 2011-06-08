@@ -292,26 +292,25 @@ class TopList
 		{
 			if ($this->inv_crp)
 			{
-				$isql = "SELECT inc_kll_id as kll_id
+				$this->sql_ .= "\n\tINNER JOIN(SELECT inc_kll_id as kll_id
 					FROM kb3_inv_crp
 					WHERE ";
 				if($this->getDateFilter())
-					$isql .= $this->getDateFilter("inc_timestamp")." AND ";
-				$isql .= "inc_crp_id IN (".implode(",", $this->inv_crp).")".
-					" GROUP BY kll_id";
+					$this->sql_ .= $this->getDateFilter("inc_timestamp")." AND ";
+				$this->sql_ .= "inc_crp_id IN (".implode(",", $this->inv_crp).")".
+					" GROUP BY kll_id) inv ON (inv.kll_id = ind.ind_kll_id)";
 
 			}
 			else if ($this->inv_all)
 			{
-				$isql = "SELECT ina_kll_id as kll_id
+				$this->sql_ .= "\n\tINNER JOIN (SELECT ina_kll_id as kll_id
 					FROM kb3_inv_all
 					WHERE ";
 				if($this->getDateFilter())
-					$isql .= $this->getDateFilter("ina_timestamp")." AND ";
-				$isql .= "ina_all_id IN (".implode(",", $this->inv_all).")".
-					" GROUP BY kll_id";
+					$this->sql_ .= $this->getDateFilter("ina_timestamp")." AND ";
+				$this->sql_ .= "ina_all_id IN (".implode(",", $this->inv_all).")".
+					" GROUP BY kll_id) inv ON (inv.kll_id = ind.ind_kll_id)";
 			}
-			$this->sql_ .= "\n\tINNER JOIN (".$isql.") inv ON (inv.kll_id = ind.ind_kll_id)";
 		}
 		else
 		{
