@@ -843,7 +843,7 @@ class Kill
 				ina_all_id in (".implode(",", config::get('cfg_allianceid')).") AND
 				ina_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
 				AND ina_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
-				AND kll_system_id = ".$this->solarsystem_->getID();
+				AND kll_system_id = ".$this->solarsystem_->getID()." GROUP BY ina_kll_id";
 		}
 		else if(config::get('cfg_corpid'))
 		{
@@ -852,7 +852,7 @@ class Kill
 				inc_crp_id in (".implode(",", config::get('cfg_corpid')).") AND
 				inc_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
 				AND inc_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
-				AND kll_system_id = ".$this->solarsystem_->getID();
+				AND kll_system_id = ".$this->solarsystem_->getID()." GROUP BY inc_kll_id";
 		}
 		else if(config::get('cfg_pilotid'))
 		{
@@ -861,7 +861,7 @@ class Kill
 				ind_plt_id in (".implode(",", config::get('cfg_pilotid')).") AND
 				ind_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
 				AND ind_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
-				AND kll_system_id = ".$this->solarsystem_->getID();
+				AND kll_system_id = ".$this->solarsystem_->getID()." GROUP BY ind_kll_id";
 		}
 		else
 		{
@@ -1136,9 +1136,12 @@ class Kill
 			$invpoints += $shipclassinv->getPoints();
 		}
 
-		$gankfactor = $vicpoints / ($vicpoints + $invpoints);
-		$points = ceil($vicpoints * ($gankfactor / 0.75));
-
+		if($vicpoints + $invpoints > 0)
+		{
+			$gankfactor = $vicpoints / ($vicpoints + $invpoints);
+			$points = ceil($vicpoints * ($gankfactor / 0.75));
+		}
+		else $points = 0;
 		if ($points > $maxpoints) $points = $maxpoints;
 
 		$points = round($points, 0);
@@ -1166,13 +1169,6 @@ class Kill
 		{
 			$this->realadd();
 		}
-//		elseif (config::get('readd_dupes'))
-//		{
-//			$this->id_ = $this->dupeid_;
-//			$this->remove(false);
-//			$this->realadd($this->dupeid_);
-//			$this->id_ = -1;
-//		}
 		else
 		{
 			$this->id_ = -1;
@@ -1216,13 +1212,7 @@ class Kill
 		else $sql .= "NULL, ";
 		$sql .= $this->getISKLoss()." )";
 		$qry->autocommit(false);
-		if(!$qry->execute($sql))
-		{
-			$qry->rollback();
-			$qry->autocommit(true);
-			//If the query is causing errors here there's no point going on
-			return false;
-		}
+		if(!$qry->execute($sql)) return $this->rollback($qry);
 
 		if ($id)
 		{
@@ -1232,12 +1222,7 @@ class Kill
 		{
 			$this->id_ = $qry->getInsertID();
 		}
-		if(!$this->id_)
-		{
-			$qry->rollback();
-			$qry->autocommit(true);
-			return false;
-		}
+		if(!$this->id_) return $this->rollback($qry);
 		// involved
 		$order = 0;
 		$invall = array();
@@ -1291,24 +1276,11 @@ class Kill
 
 		}
 		if($notfirstd && !$qry->execute($involveddsql))
-		{
-			$qry->rollback();
-			$qry->autocommit(true);
-			return false;
-		}
+			return $this->rollback($qry);
 		if($notfirsta && !$qry->execute($involvedasql))
-		{
-			$qry->rollback();
-			$qry->autocommit(true);
-			return false;
-		}
+			return $this->rollback($qry);
 		if($notfirstc && !$qry->execute($involvedcsql))
-		{
-			$qry->rollback();
-			$qry->autocommit(true);
-			return false;
-		}
-
+			return $this->rollback($qry);
 		// destroyed
 		$notfirstitd=false;
 		$itdsql = "insert into kb3_items_destroyed (itd_kll_id, itd_itm_id, itd_quantity, itd_itl_id) values ";
@@ -1329,11 +1301,7 @@ class Kill
 			$notfirstitd = true;
 		}
 		if($notfirstitd &&!$qry->execute($itdsql))
-		{
-			$qry->rollback();
-			$qry->autocommit(true);
-			return false;
-		}
+			return $this->rollback($qry);
 
 		// dropped
 		$notfirstitd=false;
@@ -1355,11 +1323,7 @@ class Kill
 			$notfirstitd = true;
 		}
 		if($notfirstitd &&!$qry->execute($itdsql))
-		{
-			$qry->rollback();
-			$qry->autocommit(true);
-			return false;
-		}
+			return $this->rollback($qry);
 
 		$sql = "INSERT INTO kb3_mails (  `kll_id`, `kll_timestamp`, `kll_external_id`, `kll_hash`, `kll_trust`, `kll_modified_time`)".
 			"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ";
@@ -1367,11 +1331,7 @@ class Kill
 		else $sql .= "NULL, ";
 			$sql .= "'".$qry->escape($this->getHash(false, false))."', 0, UTC_TIMESTAMP())";
 		if(!$qry->execute($sql))
-		{
-			$qry->rollback();
-			$qry->autocommit(true);
-			return false;
-		}
+			return $this->rollback($qry);
 
 		//Update cache tables.
 		summaryCache::addKill($this);
@@ -1499,6 +1459,13 @@ class Kill
 		if(!$this->getHash()) return $this->trust;
 		$this->trust = 0;
 		return $this->trust;
+	}
+	private function rollback(&$qry)
+	{
+		$qry->rollback();
+		$qry->autocommit(true);
+		$this->id_ = 0;
+		return false;
 	}
 }
 
