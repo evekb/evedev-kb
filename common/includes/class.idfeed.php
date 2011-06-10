@@ -17,6 +17,7 @@
  *
  * 1.0.4 Involved party structures keep their name
  *		Kills are logged with source board's id.
+ * 1.0.7 Better CCP API handling
  */
 class IDFeed
 {
@@ -32,19 +33,13 @@ class IDFeed
 	private $cachedTime = '';
 	private $errormsg = '';
 	private $errorcode = 0;
-	const version = "1.06";
+	const version = "1.07";
 
 	//! Construct the Fetcher class and initialise variables.
-
-	//! \param $trackerKey If set record progress of a read in the config.
 	function IDFeed()
 	{
 	}
 	//! Fetch a new feed.
-
-	/*! Use the input parameters to fetch a feed.
-	 * \param $url The base URL of the feed to fetch
-	 */
 	private function fetch()
 	{
 		if(!$this->url) return false;
@@ -310,12 +305,14 @@ class IDFeed
 	}
 	private function processKill($row)
 	{
+		$internalID = intval($row['killInternalID']);
+		$externalID = intval($row['killID']);
 		if(!$id = $this->killExists($row))
 		{
 			$qry = DBFactory::getDBQuery();
 
 			$kill = new Kill();
-			if(intval($row['trust']) >= $this->trust && intval($row['killID'])) $kill->setExternalID(intval($row['killID']));
+			if(intval($row['trust']) >= $this->trust && $externalID) $kill->setExternalID($externalID);
 			//Don't trust foreign hashes
 			//if(strval($row['hash'])) $kill->setHash((strval($row['hash'])));
 			if(intval($row['trust'])) $kill->setTrust(intval($row['trust']));
@@ -330,8 +327,10 @@ class IDFeed
 
 			if(!$this->processVictim($row, $kill, strval($row['killTime'])))
 			{
-				if($internalID) $this->skipped[$internalID] = 0;
-				else  $this->skipped[intval($row['killID'])] = 0;
+				$this->skipped[] = array($externalID, $internalID, 0);
+				if($this->lastReturned < $externalID) $this->lastReturned = $externalID;
+				if($this->lastInternalReturned < $internalID) $this->lastInternalReturned = $internalID;
+
 				return;
 			}
 
@@ -339,29 +338,20 @@ class IDFeed
 			if(isset($row->rowset[1]->row[0])) foreach($row->rowset[1]->row as $item) $this->processItem($item, $kill);
 			$id = $kill->add();
 
-			$internalID = intval($row['killInternalID']);
 			if($id > 0)
 			{
-				$this->posted[] = $id;
+				$this->posted[] = array($kill->getExternalID(), $internalID, $id);
 				$logaddress = "ID:".$this->url;
 				if(strpos($logaddress, "?")) $logaddress = substr($logaddress, 0, strpos($logaddress, "?"));
 				if($kill->getExternalID()) $logaddress .= "?a=kill_detail&kll_ext_id=".$kill->getExternalID();
 				else if($internalID) $logaddress .= "?a=kill_detail&kll_id=".$internalID;
 				logger::logKill($id, $logaddress);
 			}
-			//TODO should these be reversed?
-			else if($internalID) $this->skipped[$internalID] = $kill->getDupe();
-			else  $this->skipped[intval($row['killID'])] = $kill->getDupe();
+			else $this->skipped[] = array(intval($row['killID']), $internalID, $kill->getDupe());
 		}
-		else
-		{
-			$internalID = intval($row['killInternalID']);
-			//TODO should these be reversed?
-			if($internalID) $this->skipped[$internalID] = $id;
-			else $this->skipped[intval($row['killID'])] = $id;
-		}
+		else $this->skipped[] = array($externalID, $internalID, $id);
 
-		if($this->lastReturned < $row['killID']) $this->lastReturned = $row['killID'];
+		if($this->lastReturned < $externalID) $this->lastReturned = $externalID;
 		if($this->lastInternalReturned < $internalID) $this->lastInternalReturned = $internalID;
 
 	}
@@ -406,6 +396,7 @@ class IDFeed
 			}
 			else $name = strval($victim['corporationName'])." - ".$kill->getSystem()->getName();
 		}
+		else if(!intval($victim['shipTypeID'])) return false;
 		else $name = strval($victim['characterName']);
 
 		$pilot = new Pilot();
@@ -521,8 +512,8 @@ class IDFeed
 				if(intval($row['trust']) >= $this->trust && intval($row['killID']))
 				{
 					$qry->execute("UPDATE kb3_kills JOIN kb3_mails ON kb3_kills.kll_id = ".
-						"kb3_mails.kll_id SET kb3_mails.kll_external = ".
-						intval($row['killID']).", kb3_kills.kll_external = ".
+						"kb3_mails.kll_id SET kb3_mails.kll_external_id = ".
+						intval($row['killID']).", kb3_kills.kll_external_id = ".
 						intval($row['killID'])." WHERE kb3_mails.kll_id = $id AND ".
 						"kb3_mails.kll_external_id IS NULL");
 				}
