@@ -30,7 +30,7 @@
  */
 
 $starttime = microtime(true);
-$idfeedversion = "1.03";
+$idfeedversion = "1.04";
 
 $maxkillsreturned = 200;
 
@@ -168,8 +168,16 @@ while($kill = $list->getKill())
 	$victimCorp = objectCache::fetchCorp($kill->getVictimCorpID());
 	$victimAlliance = objectCache::fetchAlliance($kill->getVictimAllianceID());
 	$victimrow = $row->addChild('victim');
-	$victimrow->addAttribute('characterID', $victim->getExternalID());
-	$victimrow->addAttribute('characterName', $victim->getName());
+	if($victim->getName() == $kill->getVictimShipName())
+	{
+		$victimrow->addAttribute('characterID', "0");
+		$victimrow->addAttribute('characterName', "");
+	}
+	else
+	{
+		$victimrow->addAttribute('characterID', $victim->getExternalID());
+		$victimrow->addAttribute('characterName', $victim->getName());
+	}
 	$victimrow->addAttribute('corporationID', $victimCorp->getExternalID());
 	$victimrow->addAttribute('corporationName', $victimCorp->getName());
 	if($victimAlliance->isFaction())
@@ -194,18 +202,18 @@ while($kill = $list->getKill())
 
 	$sql = "SELECT ind_sec_status, ind_all_id, ind_crp_id,
 		ind_shp_id, ind_wep_id, ind_order, ind_dmgdone, plt_id, plt_name,
-		plt_externalid, crp_name, crp_external_id,
-		shp_externalid FROM kb3_inv_detail
+		plt_externalid, crp_name, crp_external_id, shp_name,
+		shp_externalid, typeName AS wep_name FROM kb3_inv_detail
 		JOIN kb3_pilots ON (plt_id = ind_plt_id) 
 		JOIN kb3_corps ON (crp_id = ind_crp_id) 
 		JOIN kb3_ships ON (shp_id = ind_shp_id)
+		JOIN kb3_invtypes ON (ind_wep_id = typeID)
 		WHERE ind_kll_id = ".$kill->getID();
 	$qry->execute($sql);
 
 	while ($inv = $qry->getRow())
 	{
 		$invrow = $involved->addChild('row');
-		$invrow->addAttribute('characterID', $inv['plt_externalid']);
 		if(strpos($inv['plt_name'], '- ') !== false)
 		{
 			$inv['plt_name'] = substr($inv['plt_name'], strpos($inv['plt_name'], '- ')+2);
@@ -215,7 +223,20 @@ while($kill = $list->getKill())
 			$name = explode("#", $inv['plt_name']);
 			$inv['plt_name'] = $name[3];
 		}
-		$invrow->addAttribute('characterName', $inv['plt_name']);
+		if($inv['plt_name'] == $inv['wep_name'])
+		{
+			$invrow->addAttribute('characterID', 0);
+			$invrow->addAttribute('characterName', "");
+			$invrow->addAttribute('weaponTypeID', 0);
+			$invrow->addAttribute('shipTypeID', $inv['ind_wep_id']);
+		}
+		else
+		{
+			$invrow->addAttribute('characterID', $inv['plt_externalid']);
+			$invrow->addAttribute('characterName', $inv['plt_name']);
+			$invrow->addAttribute('weaponTypeID', $inv['ind_wep_id']);
+			$invrow->addAttribute('shipTypeID', $inv['shp_externalid']);
+		}
 		$invrow->addAttribute('corporationID', $inv['crp_external_id']);
 		$invrow->addAttribute('corporationName', $inv['crp_name']);
 		$invAlliance = objectCache::fetchAlliance($inv['ind_all_id']);
@@ -228,8 +249,16 @@ while($kill = $list->getKill())
 		}
 		else
 		{
-			$invrow->addAttribute('allianceID', $invAlliance->getExternalID());
-			$invrow->addAttribute('allianceName', $invAlliance->getName());
+			if(strcasecmp($invAlliance->getName(), "None") == 0)
+			{
+				$invrow->addAttribute('allianceID', 0);
+				$invrow->addAttribute('allianceName', "");
+			}
+			else
+			{
+				$invrow->addAttribute('allianceID', $invAlliance->getExternalID());
+				$invrow->addAttribute('allianceName', $invAlliance->getName());
+			}
 			$invrow->addAttribute('factionID', 0);
 			$invrow->addAttribute('factionName', '');
 		}
@@ -238,8 +267,6 @@ while($kill = $list->getKill())
 		if($inv['plt_id'] == $kill->getFBPilotID()) $final = 1;
 		else $final = 0;
 		$invrow->addAttribute('finalBlow', $final);
-		$invrow->addAttribute('weaponTypeID', $inv['ind_wep_id']);
-		$invrow->addAttribute('shipTypeID', $inv['shp_externalid']);
 	}
 	$sql = "SELECT * FROM kb3_items_destroyed WHERE itd_kll_id = ".$kill->getID();
 	$qry->execute($sql);
