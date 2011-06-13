@@ -209,9 +209,9 @@ class Alliance
 		if(file_exists("img/alliances/".$this->getUnique().".png"))
 		{
 			if ($size == 128)
-				return "img/alliances/".$this->getUnique().".png";
+				return IMG_HOST."/img/alliances/".$this->getUnique().".png";
 			else if(CacheHandler::exists($this->getUnique()."_$size.png", 'img'))
-				return CacheHandler::getExternal($this->getUnique()."_$size.png", 'img');
+				return KB_HOST."/".CacheHandler::getExternal($this->getUnique()."_$size.png", 'img');
 			return '?a=thumb&amp;type=alliance&amp;id='.$this->getUnique().'&amp;size='.$size;
 		}
 		return imageURL::getURL('Alliance', $this->externalid, $size);

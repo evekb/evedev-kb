@@ -55,11 +55,11 @@ class Corporation
 
 		if(!$this->getExternalID() && file_exists('img/corps/'.$this->getUnique().'.png'))
 		{
-			if($size == 128) return 'img/corps/'.$this->getUnique().'.png';
+			if($size == 128) return IMG_HOST.'/img/corps/'.$this->getUnique().'.png';
 
 			else if(CacheHandler::exists($this->getUnique()."_$size.png", 'img'))
-				return CacheHandler::getExternal($this->getUnique()."_$size.png", 'img');
-			else return '?a=thumb&amp;type=npc&amp;id='.$this->getUnique().'&amp;size='.$size;
+				return KB_HOST."/".CacheHandler::getExternal($this->getUnique()."_$size.png", 'img');
+			else return KB_HOST.'/?a=thumb&amp;type=npc&amp;id='.$this->getUnique().'&amp;size='.$size;
 		}
 
 		// NPC alliances can be recorded as corps on killmails.
