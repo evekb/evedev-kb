@@ -188,7 +188,7 @@ select $plt_id as psm_plt_id, losses.psm_shp_id, ifnull(kills.knb,0), ifnull(kil
 				"psm_kill_count = psm_kill_count + 1, ".
 				"psm_kill_isk = psm_kill_isk + ".$kill->getISKLoss();
 			$qry->execute($sql);
-			$sql = "UPDATE kb3_pilots SET plt_kpoints = plt_kpoints + ".$kill->calculateKillPoints().
+			$sql = "UPDATE kb3_pilots SET plt_kpoints = plt_kpoints + ".$kill->getKillPoints().
 				" WHERE plt_id = ".$kill->getVictimID();
 			$qry->execute($sql);
 		}
