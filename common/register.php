@@ -5,17 +5,12 @@
  * $HeadURL$
  */
 
+//TODO: Make a useful registration mod
 $page = new Page('User - Registration');
 
 if (config::get('user_regdisabled'))
 {
     $page->error('Registration has been disabled.');
-    return;
-}
-
-if (!config::get('user_noigb') && !IS_IGB)
-{
-    $page->error('You have to use the IGB to register.');
     return;
 }
 
@@ -53,12 +48,6 @@ if (isset($_POST['submit']))
     {
         $pilot = null;
         $id = null;
-        if (IS_IGB)
-        {
-            $pilot = $_SERVER["HTTP_EVE_CHARNAME"];
-            $_POST['usrlogin'] = $pilot;
-            $id = $_SERVER["HTTP_EVE_CHARID"];
-        }
         user::register(slashfix($_POST['usrlogin']), slashfix($_POST['usrpass']), $pilot, $id);
         $page->setContent('Account registered.');
         $page->generate();
@@ -66,11 +55,6 @@ if (isset($_POST['submit']))
     }
 }
 
-if (IS_IGB)
-{
-    $smarty->assign('user_name', $_SERVER["HTTP_EVE_CHARNAME"]);
-}
 
 $page->setContent($smarty->fetch(get_tpl('user_register')));
 $page->generate();
-?>
