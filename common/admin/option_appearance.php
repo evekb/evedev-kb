@@ -14,11 +14,8 @@ options::fadd('Style', 'style_name', 'select', array('admin_appearance', 'create
 options::cat('Appearance', 'Global Options', 'Global Options');
 options::fadd('Display standings', 'show_standings', 'checkbox');
 options::fadd('Enable lost item values', 'item_values', 'checkbox');
-//options::fadd('Use custom shipvalues', 'ship_values', 'checkbox');
 options::fadd('Display a link instead of POD on Battlesummary', 'bs_podlink', 'checkbox');
 options::fadd('Include Capsules, Shuttles and Noobships in kills', 'podnoobs', 'checkbox');
-//options::fadd('Split up fitted items on Killmails', 'kill_splitfit', 'checkbox');
-options::fadd('Use gmdate instead of date', 'date_gmtime', 'checkbox');
 options::fadd('Classify kills for hours:', 'kill_classified', 'edit:size:4', '', '', '0 to disable, 1-24hrs');
 
 options::cat('Appearance', 'Global Options', 'User Registration');
@@ -29,12 +26,11 @@ options::fadd('Allow out-of-game registration', 'user_noigb', 'checkbox');
 
 options::cat('Appearance', 'Front Page', 'Front Page');
 options::fadd('Combine kills and losses', 'show_comb_home', 'checkbox');
-options::fadd('Fill home page', 'cfg_fillhome', 'checkbox','' , '', 'Include kills from previous week/months to fill home page');
+options::fadd('Fill home page', 'cfg_fillhome', 'checkbox', '', '', 'Include kills from previous week/months to fill home page');
 options::fadd('Display region names', 'killlist_regionnames', 'checkbox');
 options::fadd('Display comment count', 'comments_count', 'checkbox');
 options::fadd('Display involved count', 'killlist_involved', 'checkbox');
 options::fadd('Display alliance logos', 'killlist_alogo', 'checkbox');
-//options::fadd('Show Corp: / Alliance', 'corpalliance-name', 'checkbox');
 options::fadd('Display clock', 'show_clock', 'checkbox');
 options::fadd('Display Monthly stats', 'show_monthly', 'checkbox', '', '', 'Default is weekly');
 
@@ -79,111 +75,96 @@ class admin_appearance
 {
 	function createPanelTheme()
 	{
-/*	$sfp_themes =array("ArmyGreen" ,
-		"CoolGray" ,
-		"DarkOpaque" ,
-		"Desert" ,
-		"Revelations" ,
-		"RevelationsII" ,
-		"Silver" ,
-		"Stealth" ,
-		"SteelGray" ,
-		"Trinity" ,
-		"Black" ,
-		"Blue" ,
-		"Gold" ,
-		"Green" ,
-		"LightBlue" ,
-		"Red" ,
-		"Yellow" ,
-		"Vidar" ,
-		"Demonic" );*/
-		$sfp_themes=array("tyrannis", "tyrannis_blue", "tyrannis_darkred", "tyrannis_default", "tyrannis_revelations");
-	$option = array();
-	$selected = config::get('fp_theme');
-	foreach ($sfp_themes as $theme)
-	{
-		if ($theme == $selected)
+		$sfp_themes = array("tyrannis",
+			"tyrannis_blue",
+			"tyrannis_darkred",
+			"tyrannis_default",
+			"tyrannis_revelations");
+		$option = array();
+		$selected = config::get('fp_theme');
+		foreach($sfp_themes as $theme)
 		{
-		$state = 1;
-		}
-		else
-		{
-		$state = 0;
-		}
+			if($theme == $selected)
+			{
+				$state = 1;
+			}
+			else
+			{
+				$state = 0;
+			}
 			$options[] = array('value' => $theme, 'descr' => $theme, 'state' => $state);
-	}
-	return $options;
+		}
+		return $options;
 	}
 
 	function createPanelStyle()
 	{
-	$sfp_styles =array("Windowed" ,
-		"OldWindow" ,
-		"Border" ,
-		"Faded" );
-	$option = array();
-	$selected = config::get('fp_style');
-	foreach ($sfp_styles as $style)
-	{
-		if ($style == $selected)
+		$sfp_styles = array("Windowed",
+			"OldWindow",
+			"Border",
+			"Faded");
+		$option = array();
+		$selected = config::get('fp_style');
+		foreach($sfp_styles as $style)
 		{
-		$state = 1;
-		}
-		else
-		{
-		$state = 0;
-		}
+			if($style == $selected)
+			{
+				$state = 1;
+			}
+			else
+			{
+				$state = 0;
+			}
 			$options[] = array('value' => $style, 'descr' => $style, 'state' => $state);
-	}
-	return $options;
+		}
+		return $options;
 	}
 
 	function createHighStyle()
 	{
-	$sfp_highstyles =array("ring" ,
-		"square" ,
-		"round" ,
-		"backglowing",
-		"tag",
-		"none");
-	$option = array();
-	$selected = config::get('fp_highstyle');
-	foreach ($sfp_highstyles as $style)
-	{
-		if ($style == $selected)
+		$sfp_highstyles = array("ring",
+			"square",
+			"round",
+			"backglowing",
+			"tag",
+			"none");
+		$option = array();
+		$selected = config::get('fp_highstyle');
+		foreach($sfp_highstyles as $style)
 		{
-		$state = 1;
-		}
-		else
-		{
-		$state = 0;
-		}
+			if($style == $selected)
+			{
+				$state = 1;
+			}
+			else
+			{
+				$state = 0;
+			}
 			$options[] = array('value' => $style, 'descr' => $style, 'state' => $state);
-	}
-	return $options;
+		}
+		return $options;
 	}
 
 	function createAmmoStyle()
 	{
-	$sfp_ammostyles =array("solid" ,
-		"transparent",
-		"none");
-	$option = array();
-	$selected = config::get('fp_ammostyle');
-	foreach ($sfp_ammostyles as $style)
-	{
-		if ($style == $selected)
+		$sfp_ammostyles = array("solid",
+			"transparent",
+			"none");
+		$option = array();
+		$selected = config::get('fp_ammostyle');
+		foreach($sfp_ammostyles as $style)
 		{
-		$state = 1;
-		}
-		else
-		{
-		$state = 0;
-		}
+			if($style == $selected)
+			{
+				$state = 1;
+			}
+			else
+			{
+				$state = 0;
+			}
 			$options[] = array('value' => $style, 'descr' => $style, 'state' => $state);
-	}
-	return $options;
+		}
+		return $options;
 	}
 
 	//! Create the selection options for available banners
@@ -193,21 +174,21 @@ class admin_appearance
 	{
 		$options = array();
 
-		if (config::get('style_banner') == "0") $state = 1;
+		if(config::get('style_banner') == "0") $state = 1;
 		else $state = 0;
 		$options[] = array('value' => "0", 'descr' => "No banner", 'state' => $state);
 
 		$dir = "banner/";
-		if (is_dir($dir))
+		if(is_dir($dir))
 		{
-			if ($dh = scandir($dir))
+			if($dh = scandir($dir))
 			{
 				foreach($dh as $file)
 				{
 					$file = substr($file, 0);
-					if (!is_dir($dir.$file))
+					if(!is_dir($dir.$file))
 					{
-						if (config::get('style_banner') == $file) $state = 1;
+						if(config::get('style_banner') == $file) $state = 1;
 						else $state = 0;
 
 						$options[] = array('value' => $file, 'descr' => $file, 'state' => $state);
@@ -226,26 +207,27 @@ class admin_appearance
 		$options = array();
 		$dir = "themes/".config::get('theme_name')."/";
 
-		if (is_dir($dir))
+		if(is_dir($dir))
 		{
-			if ($dh = scandir($dir))
+			if($dh = scandir($dir))
 			{
 				foreach($dh as $file)
 				{
-					if (!is_dir($dir.$file))
+					if(!is_dir($dir.$file))
 					{
-						if (substr($file, -4) != ".css") continue;
+						if(substr($file, -4) != ".css") continue;
 
-						if (config::get('style_name').'.css' == $file) $state = 1;
+						if(config::get('style_name').'.css' == $file) $state = 1;
 						else $state = 0;
 
-						$options[] = array('value' => substr($file,0,-4), 'descr' => substr($file,0,-4), 'state' => $state);
+						$options[] = array('value' => substr($file, 0, -4), 'descr' => substr($file, 0, -4), 'state' => $state);
 					}
 				}
 			}
 		}
 		return $options;
 	}
+
 	//! Create the selection options for available themes.
 
 	//! \return HTML for the theme selection dropdown list.
@@ -254,17 +236,16 @@ class admin_appearance
 		$options = array();
 		$dir = "themes/";
 
-		if (is_dir($dir))
+		if(is_dir($dir))
 		{
-			if ($dh = scandir($dir))
+			if($dh = scandir($dir))
 			{
 				foreach($dh as $file)
 				{
-					if (is_dir($dir.$file))
+					if(is_dir($dir.$file))
 					{
-						if ($file == "." || $file == ".." || $file == ".svn")
-							continue;
-						if (config::get('theme_name') == $file) $state = 1;
+						if($file == "." || $file == ".." || $file == ".svn") continue;
+						if(config::get('theme_name') == $file) $state = 1;
 						else $state = 0;
 
 						$options[] = array('value' => $file, 'descr' => $file, 'state' => $state);
@@ -274,6 +255,7 @@ class admin_appearance
 		}
 		return $options;
 	}
+
 	//! Checks if theme has changed and updates page before display.
 	function changeTheme()
 	{
@@ -290,10 +272,11 @@ class admin_appearance
 		$smarty->assign('theme_url', config::get('cfg_kbhost').'/themes/'.$themename);
 		$smarty->template_dir = './themes/'.$themename.'/templates';
 		if(!file_exists(KB_CACHEDIR.'/templates_c/'.$themename.'/'))
-			mkdir(KB_CACHEDIR.'/templates_c/'.$themename.'/', 0755, true);
+				mkdir(KB_CACHEDIR.'/templates_c/'.$themename.'/', 0755, true);
 		$smarty->compile_dir = KB_CACHEDIR.'/templates_c/'.$themename.'/';
 		admin_appearance::removeOld(0, KB_CACHEDIR.'/templates_c', true);
 	}
+
 	//! Updates style before page is displayed.
 	function changeStyle()
 	{
@@ -315,56 +298,26 @@ class admin_appearance
 			$smarty->assign('style', preg_replace('/[^a-zA-Z0-9-_]/', '', $_POST['option_style_name']));
 		}
 	}
+
 	//! Checks if banner has changed, updates page before display and resets banner size.
 
-	/*! If the banner is changed the stored size is updated and used to display
+	/* ! If the banner is changed the stored size is updated and used to display
 	 *  the banner image. Smarty variables are updated so display is immediate.
 	 */
 	function changeBanner()
 	{
 		global $smarty;
-		if(options::getPrevious('style_banner') == $_POST['option_style_banner']) return;
+		if(options::getPrevious('style_banner') == $_POST['option_style_banner'])
+				return;
 		if($_POST['option_style_banner'] == 0) return;
 
 		$dimensions = getimagesize('banner/'.$_POST['option_style_banner']);
-		if(!$dimensions) $dimensions = array(0,0);
+		if(!$dimensions) $dimensions = array(0, 0);
 
 		config::set('style_banner_x', $dimensions[0]);
 		config::set('style_banner_y', $dimensions[1]);
 
 		$smarty->assign('banner_x', $dimensions[0]);
 		$smarty->assign('banner_y', $dimensions[1]);
-	}
-	//! Remove files in a directory older than a certain age.
-
-	/*! \param $hours Maximum age of files before deletion.
-	 *  \param $dir Directory to remove files from.
-	 *  \param $recurse If true then recurse into subdirectories.
-	 *  \return The number of files deleted.
-	 */
-	function removeOld($hours, $dir, $recurse = false)
-	{
-		$del = 0;
-		if(!session::isAdmin()) return false;
-		if(strpos($dir, '.') !== false) return false;
-		if(!is_dir($dir)) return false;
-		if(substr($dir,-1) != '/') $dir = $dir.'/';
-		$seconds = $hours*60*60;
-		$files = scandir($dir);
-
-		foreach ($files as $num => $fname)
-		{
-			if (file_exists("{$dir}{$fname}") && !is_dir("{$dir}{$fname}") && substr($fname,0,1) != "." && ((time() - filemtime("{$dir}{$fname}")) > $seconds))
-			{
-				$mod_time = filemtime("{$dir}{$fname}");
-				if (unlink("{$dir}{$fname}")) $del = $del + 1;
-			}
-			if ($recurse && file_exists("{$dir}{$fname}") && is_dir("{$dir}{$fname}")
-				 && substr($fname,0,1) != "." && $fname !== ".." )
-			{
-				$del = $del + admin_appearance::removeOld($hours, $dir.$fname."/");
-			}
-		}
-		return $del;
 	}
 }

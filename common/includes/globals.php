@@ -18,7 +18,8 @@ define('KB_PAGECACHEDIR', KB_CACHEDIR.'/page');
 define('KB_MAILCACHEDIR', KB_CACHEDIR.'/mails');
 define('KB_QUERYCACHEDIR', KB_CACHEDIR.'/SQL');
 define('KB_UPDATE_URL', 'http://evedev-kb.googlecode.com/files');
-define('API_SERVER', "api.eveonline.com");
+define('API_SERVER', "https://api.eveonline.com");
+//define('API_SERVER', "http://apitest.eveonline.com");
 define('IMG_SERVER', "image.eveonline.com");
 define ("APIVERSION", "V3.3");
 
@@ -33,31 +34,28 @@ require_once('common/includes/class.edkloader.php');
 edkloader::register('Smarty', 'common/smarty/Smarty.class.php');
 
 // Ugly hacks to make things work until other changes are made with the file structure
-edkloader::register('APIChar', 'common/includes/api/class.char.php');
-edkloader::register('AllianceAPI', 'common/includes/api/class.alliance.php');
-edkloader::register('BarGraph', 'common/includes/class.graph.php');
-edkloader::register('TopList', 'common/includes/class.toplist.php');
-edkloader::register('TopKillsList', 'common/includes/class.toplist.php');
-edkloader::register('TopCorpKillsList', 'common/includes/class.toplist.php');
-edkloader::register('TopScoreList', 'common/includes/class.toplist.php');
-edkloader::register('TopLossesList', 'common/includes/class.toplist.php');
-edkloader::register('TopCorpLossesList', 'common/includes/class.toplist.php');
-edkloader::register('TopFinalBlowList', 'common/includes/class.toplist.php');
-edkloader::register('TopDamageDealerList', 'common/includes/class.toplist.php');
-edkloader::register('TopSoloKillerList', 'common/includes/class.toplist.php');
-edkloader::register('TopPodKillerList', 'common/includes/class.toplist.php');
-edkloader::register('TopGrieferList', 'common/includes/class.toplist.php');
-edkloader::register('TopCapitalShipKillerList', 'common/includes/class.toplist.php');
-edkloader::register('TopContractKillsList', 'common/includes/class.toplist.php');
-edkloader::register('TopContractScoreList', 'common/includes/class.toplist.php');
-edkloader::register('TopPilotTable', 'common/includes/class.toplist.php');
-edkloader::register('TopCorpTable', 'common/includes/class.toplist.php');
-edkloader::register('TopShipList', 'common/includes/class.toplist.php');
-edkloader::register('TopShipListTable', 'common/includes/class.toplist.php');
-edkloader::register('TopWeaponList', 'common/includes/class.toplist.php');
-edkloader::register('TopWeaponListTable', 'common/includes/class.toplist.php');
+//edkloader::register('TopList', 'common/includes/class.toplist.php');
+//edkloader::register('TopKillsList', 'common/includes/class.toplist.php');
+//edkloader::register('TopCorpKillsList', 'common/includes/class.toplist.php');
+//edkloader::register('TopScoreList', 'common/includes/class.toplist.php');
+//edkloader::register('TopLossesList', 'common/includes/class.toplist.php');
+//edkloader::register('TopCorpLossesList', 'common/includes/class.toplist.php');
+//edkloader::register('TopFinalBlowList', 'common/includes/class.toplist.php');
+//edkloader::register('TopDamageDealerList', 'common/includes/class.toplist.php');
+//edkloader::register('TopSoloKillerList', 'common/includes/class.toplist.php');
+//edkloader::register('TopPodKillerList', 'common/includes/class.toplist.php');
+//edkloader::register('TopGrieferList', 'common/includes/class.toplist.php');
+//edkloader::register('TopCapitalShipKillerList', 'common/includes/class.toplist.php');
+//edkloader::register('TopContractKillsList', 'common/includes/class.toplist.php');
+//edkloader::register('TopContractScoreList', 'common/includes/class.toplist.php');
+//edkloader::register('TopPilotTable', 'common/includes/class.toplist.php');
+//edkloader::register('TopCorpTable', 'common/includes/class.toplist.php');
+//edkloader::register('TopShipList', 'common/includes/class.toplist.php');
+//edkloader::register('TopShipListTable', 'common/includes/class.toplist.php');
+//edkloader::register('TopWeaponList', 'common/includes/class.toplist.php');
+//edkloader::register('TopWeaponListTable', 'common/includes/class.toplist.php');
 edkloader::register('thumbInt', 'common/includes/class.thumb.php');
-
+URI::addPageParameters("home", array(array("y", "", URI::INT), array("m", "", URI::INT), array("w", "", URI::INT), array("view", "", URI::STRING),array("scl_id", "", URI::INT)));
 require_once('common/includes/db.php');
 
 /* ---------------------------------------------------------------- */
@@ -143,11 +141,7 @@ function kbdate($format, $timestamp = null)
 		$timestamp = time();
 	}
 
-	if (config::get('date_gmtime'))
-	{
-		return gmdate($format, $timestamp);
-	}
-	return date($format, $timestamp);
+	return gmdate($format, $timestamp);
 }
 
 function getYear()

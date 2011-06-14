@@ -12,13 +12,12 @@
 options::cat('Advanced', 'Cache', 'Page Cache');
 options::fadd('Enable Page Cache', 'cache_enabled', 'checkbox','', array('admin_acache', 'clearPCache'), "Cache created webpages");
 options::fadd('Global lifetime', 'cache_time', 'edit:size:4','','','minutes');
-//options::fadd('Cache directory', 'cache_dir', 'edit:size:40');
 options::fadd('Ignore pages', 'cache_ignore', 'edit:size:60','','','page1,page2 [no spaces]');
-options::fadd('Page specific times', 'cache_times', 'edit:size:60','','','page:time,page2:time [no spaces]');
+options::fadd('Page specific lifetime', 'cache_times', 'edit:size:60','','','page:time,page2:time [no spaces]');
 options::fadd('Pages updated every kill', 'cache_update', 'edit:size:60','','','* or page1,page2 [no spaces]');
 
 options::cat('Advanced', 'Cache', 'Query Cache');
-options::fadd('Enable SQL-Query File Cache', 'cfg_qcache', 'checkbox', '', array('admin_acache', 'clearQCache'),'Select only one of file cache or memcache');
+options::fadd('Enable SQL-Query File Cache', 'cfg_qcache', 'checkbox', '', '','Select only one of file cache or memcache');
 options::fadd('Enable SQL-Query MemCache', 'cfg_memcache', 'checkbox','','','Requires a separate memcached installation');
 options::fadd('Memcached server', 'cfg_memcache_server', 'edit:size:50');
 options::fadd('Memcached port', 'cfg_memcache_port', 'edit:size:8');
@@ -26,7 +25,6 @@ options::fadd('Halt on SQLError', 'cfg_sqlhalt', 'checkbox');
 
 options::cat('Advanced', 'Cache', 'Killmail Cache');
 options::fadd('Killmail Caching enabled','km_cache_enabled','checkbox');
-//options::fadd('Killmail Cache directory', 'km_cache_dir', 'edit:size:40');
 options::fadd('Cached Killmails', 'none', 'custom', array('admin_acache', 'getKillmails'));
 
 options::cat('Advanced', 'Cache', 'Reinforced Control');
@@ -38,12 +36,8 @@ options::fadd('Reinforcement chance', 'reinforced_prob', 'edit:size:4', '', '', 
 options::fadd('Reinforcement end chance', 'reinforced_rf_prob', 'edit:size:4','','','1/x chance each page view');
 
 options::cat('Advanced', 'Cache', 'Clear Caches');
-options::fadd('Page Cache', 'none', 'custom', array('admin_acache', 'optionClearPage'), array('admin_acache', 'clearCaches'));
-options::fadd('Template Cache', 'none', 'custom', array('admin_acache', 'optionClearTemplate'), array('admin_acache', 'clearCaches'));
-//options::fadd('Mail Cache', 'none', 'custom', array('admin_acache', 'optionClearMail'), array('admin_acache', 'clearCaches'));
-options::fadd('SQL Query Cache', 'none', 'custom', array('admin_acache', 'optionClearSQL'), array('admin_acache', 'clearCaches'));
+options::fadd('File Cache', 'none', 'custom', array('admin_acache', 'optionClearCaches'), array('admin_acache', 'clearCaches'));
 options::fadd('Kill Summary Cache', 'none', 'custom', array('admin_acache', 'optionClearSum'), array('admin_acache', 'clearCaches'));
-options::fadd('All Caches', 'none', 'custom', array('admin_acache', 'optionClearAll'), array('admin_acache', 'clearCaches'));
 
 class admin_acache
 {
@@ -82,56 +76,33 @@ class admin_acache
     }
     function clearPCache()
     {
-		CacheHandler::removeByAge(null,0);
-    }
-    function clearQCache()
-    {
-		CacheHandler::removeByAge('SQL',0);
+		CacheHandler::removeByAge('store', 0);
     }
     function setNotReinforced()
     {
             config::set('is_reinforced', '0');
     }
-	function optionClearPage()
+	function optionClearCaches()
 	{
-		return '<input type="checkbox" name="option_clear_page" />Clear cache ?';
-	}
-	function optionClearMail()
-	{
-		return '<input type="checkbox" name="option_clear_mail" />Clear cache ?';
+		return '<input type="checkbox" name="option_clear_caches" />Clear caches ?';
 	}
 	function optionClearSum()
 	{
 		return '<input type="checkbox" name="option_clear_sum" />Clear cache ?';
 	}
-	function optionClearSQL()
-	{
-		return '<input type="checkbox" name="option_clear_sql" />Clear cache ?';
-	}
-	function optionClearTemplate()
-	{
-		return '<input type="checkbox" name="option_clear_template" />Clear cache ?';
-	}
-	function optionClearAll()
-	{
-		return '<input type="checkbox" name="option_clear_all" />Clear cache ?';
-	}
 	function clearCaches()
 	{
-        if ($_POST['option_clear_page'] == 'on')
+        if ($_POST['option_clear_caches'] == 'on')
         {
-			admin_acache::clearPCache();
-			$_POST['option_clear_page'] = 'off';
-        }
-        if ($_POST['option_clear_template'] == 'on')
-        {//hardcoded in index.php
-			admin_acache::removeOld(0, KB_CACHEDIR.'/templates_c', false);
-			$_POST['option_clear_template'] == 'off';
-        }
-        if ($_POST['option_clear_mail'] == 'on')
-        {
-			admin_acache::removeOld(0, KB_MAILCACHEDIR, false);
-			$_POST['option_clear_mail'] == 'off';
+			CacheHandler::removeByAge('bob', 0, true);
+			CacheHandler::removeByAge('data', 0, true);
+			CacheHandler::removeByAge('api', 0, true);
+			CacheHandler::removeByAge('store', 0, true);
+			CacheHandler::removeByAge('mails', 0, true);
+			CacheHandler::removeByAge('img', 0, true);
+			CacheHandler::removeByAge('templates_c/'.KB_SITE, 0);
+			CacheHandler::removeByAge('SQL', 0, true);
+			$_POST['option_clear_caches'] = 'off';
         }
         if ($_POST['option_clear_sum'] == 'on')
         {
@@ -141,33 +112,9 @@ class admin_acache
 			$qry->execute("DELETE FROM kb3_sum_pilot");
 			// Clear page and query cache as well since they also contain the
 			// summaries.
-			admin_acache::clearQCache();
-			admin_acache::clearPCache();
+			CacheHandler::removeByAge('SQL', 0, true);
+			CacheHandler::removeByAge('store', 0, true);
 			$_POST['option_clear_sum'] == 'off';
-        }
-        if ($_POST['option_clear_sql'] == 'on')
-        {
-			admin_acache::clearQCache();
-			// Also clear the page cache since it will have cached the results
-			// of the file cache
-			admin_acache::clearPCache();
-			$_POST['option_clear_sql'] == 'off';
-        }
-        if ($_POST['option_clear_all'] == 'on')
-        {
-			// Specify each in case they have been moved.
-			admin_acache::clearPCache();
-			admin_acache::removeOld(0, KB_CACHEDIR.'/templates_c', false);
-			admin_acache::removeOld(0, KB_MAILCACHEDIR, false);
-			admin_acache::removeOld(0, KB_CACHEDIR.'/img', true);
-			admin_acache::removeOld(0, KB_CACHEDIR.'/data', false);
-			admin_acache::removeOld(0, KB_CACHEDIR.'/api', false);
-			$qry = DBFactory::getDBQuery(true);;
-			$qry->execute("DELETE FROM kb3_sum_alliance");
-			$qry->execute("DELETE FROM kb3_sum_corp");
-			$qry->execute("DELETE FROM kb3_sum_pilot");
-			admin_acache::clearQCache();
-			$_POST['option_clear_all'] == 'off';
         }
 		return;
 	}

@@ -367,6 +367,16 @@ class Kill
 
 		$ship = $this->getVictimShip();
 		$shipclass = $ship->getClass();
+		if(!$this->getVictimCorpName())
+		{
+			$corp = new Corporation($this->victimcorpid_);
+			$this->victimcorpname_ = $corp->getName();
+		}
+		if(!$this->getVictimAllianceName())
+		{
+			$all = new Alliance($this->victimallianceid_);
+			$this->victimalliancename_ = $all->getName();
+		}
 
 		$mail .= substr(str_replace('-', '.' , $this->getTimeStamp()), 0, 16)."\r\n\r\n";
 		if ( in_array($shipclass->getID(), array(35, 36, 37, 38)) ) // Starbase (so this is a POS mail)
@@ -740,47 +750,24 @@ class Kill
 	function isClassified()
 	{
 		if(!$this->timestamp_) $this->execQuery();
+
 		if (config::get('kill_classified'))
 		{
-			if (user::role('classified_see'))
-			{
-				return false;
-			}
+			if (user::role('classified_see')) return false;
 
-			$offset = config::get('kill_classified')*3600;
-			if (config::get('date_gmtime'))
-			{
-				$time = time()-date('Z');
-			}
-			else
-			{
-				$time = time();
-			}
-			if (strtotime($this->timestamp_) > $time-$offset)
-			{
-				return true;
-			}
+			if($this->getClassifiedTime() > 0) return true;
 		}
-		return false;
+		else return false;
 	}
 
 	function getClassifiedTime()
 	{
-		if (config::get('kill_classified'))
+		if (config::get('kill_classified') &&
+				strtotime($this->timestamp_." UTC") >
+				time() - config::get('kill_classified')*3600)
 		{
-			$offset = config::get('kill_classified')*3600;
-			if (config::get('date_gmtime'))
-			{
-				$time = time()-date('Z');
-			}
-			else
-			{
-				$time = time();
-			}
-			if (strtotime($this->timestamp_) > $time-$offset)
-			{
-				return ($offset-$time+strtotime($this->timestamp_));
-			}
+			return (config::get('kill_classified')*3600
+				- time() + strtotime($this->timestamp_." UTC"));
 		}
 		return 0;
 	}
