@@ -127,7 +127,7 @@ class CacheHandler
 			}
 		}
 		// Directories with files in are not deleted.
-		if($removeDir && $dir != '/') @rmdir(self::$internalroot.'/'.$dir);
+		if($removeDir && substr_count($dir, '/') > 1) @rmdir(self::$internalroot.'/'.$dir);
 		return $del;
 	}
 	//! Remove files in a cache directory to reduce total size to that given.
