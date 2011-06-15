@@ -210,7 +210,7 @@ class pHome extends pageAssembly
 	// Display the top pilot lists.
 		if($this->view != 'losses')
 		{
-			$tklist = new TopKillsList();
+			$tklist = new TopList_Kills();
 			$this->loadTime($tklist);
 			involved::load($tklist,'kill');
 
@@ -220,7 +220,7 @@ class pHome extends pageAssembly
 		}
 		if($this->view == 'losses')
 		{
-			$tllist = new TopLossesList();
+			$tllist = new TopList_Losses();
 			$this->loadTime($tllist);
 			involved::load($tllist,'loss');
 
@@ -230,7 +230,7 @@ class pHome extends pageAssembly
 		}
 		if ($this->view != 'losses')
 		{
-			$tklist = new TopScoreList();
+			$tklist = new TopList_Score();
 			$this->loadTime($tklist);
 			//$tklist->setWeek($this->week);
 			//$tklist->setYear($this->year);

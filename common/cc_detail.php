@@ -55,7 +55,7 @@ class pContractDetail extends pageAssembly
 		}
 
 		$title = 'Campaign details';
-		
+
 		$this->page->setTitle($title.' - '.$this->contract->getName());
 		$this->page->addHeader('<meta name="robots" content="index, nofollow" />');
 
@@ -64,7 +64,7 @@ class pContractDetail extends pageAssembly
 	//! Build the toplists to highlight efforts.
 	function topLists()
 	{
-		$tklist = new TopContractKillsList();
+		$tklist = new TopList_ContractKills();
 		$tklist->setContract(new Contract($this->ctr_id));
 		involved::load($tklist,'kill');
 
@@ -76,7 +76,7 @@ class pContractDetail extends pageAssembly
 
 		if (config::get('kill_points'))
 		{
-			$tklist = new TopContractScoreList();
+			$tklist = new TopList_ContractScore();
 			$tklist->setContract(new Contract($this->ctr_id));
 			involved::load($tklist,'kill');
 
@@ -115,20 +115,20 @@ class pContractDetail extends pageAssembly
 
 		return $smarty->fetch(get_tpl('cc_detail_stats'));
 	}
-	
+
 	//! Show the comment for this campaign, if there is one.
 	function comment()
 	{
 		global $smarty;
-		
+
 		$html = "";
-		
+
 		if ($this->contract->getComment())
 		{
 			$smarty->assign("contract_comment", $this->contract->getComment());
 			$html = $smarty->fetch(get_tpl("cc_detail_comment"));
 		}
-		
+
 		return $html;
 	}
 	//! Build the killlists that are needed for the options selected.

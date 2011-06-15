@@ -271,18 +271,18 @@ class pCorpDetail extends pageAssembly
 				$smarty->assign('url_previous', "?a=corp_detail&amp;view=pilot_kills&amp;crp_id=$this->crp_id&amp;m=$this->pmonth&amp;y=$this->pyear");
 				$smarty->assign('url_next', "?a=corp_detail&amp;view=pilot_kills&amp;crp_id=$this->crp_id&amp;m=$this->nmonth&amp;y=$this->nyear");
 
-				$list = new TopKillsList();
+				$list = new TopList_Kills();
 				$list->addInvolvedCorp($this->crp_id);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
-				$table = new TopPilotTable($list, "Kills");
+				$table = new TopTable_Pilot($list, "Kills");
 				$smarty->assign('monthly_stats', $table->generate());
 
-				$list = new TopKillsList();
+				$list = new TopList_Kills();
 				$list->addInvolvedCorp($this->crp_id);
 				$list->setPodsNoobShips(config::get('podnoobs'));
-				$table = new TopPilotTable($list, "Kills");
+				$table = new TopTable_Pilot($list, "Kills");
 				$smarty->assign('total_stats', $table->generate());
 
 				return $smarty->fetch(get_tpl('detail_kl_monthly'));
@@ -300,18 +300,18 @@ class pCorpDetail extends pageAssembly
 				$smarty->assign('url_previous', "?a=corp_detail&amp;view=pilot_scores&amp;crp_id=$this->crp_id&amp;m=$this->pmonth&amp;y=$this->pyear");
 				$smarty->assign('url_next', "?a=corp_detail&amp;view=pilot_scores&amp;crp_id=$this->crp_id&amp;m=$this->nmonth&amp;y=$this->nyear");
 
-				$list = new TopScoreList();
+				$list = new TopList_Score();
 				$list->addInvolvedCorp($this->crp_id);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
-				$table = new TopPilotTable($list, "Points");
+				$table = new TopTable_Pilot($list, "Points");
 				$smarty->assign('monthly_stats', $table->generate());
 
-				$list = new TopScoreList();
+				$list = new TopList_Score();
 				$list->addInvolvedCorp($this->crp_id);
 				$list->setPodsNoobShips(config::get('podnoobs'));
-				$table = new TopPilotTable($list, "Points");
+				$table = new TopTable_Pilot($list, "Points");
 				$smarty->assign('total_stats', $table->generate());
 
 				return $smarty->fetch(get_tpl('detail_kl_monthly'));
@@ -329,18 +329,18 @@ class pCorpDetail extends pageAssembly
 				$smarty->assign('url_previous', "?a=corp_detail&amp;view=pilot_solo&amp;crp_id=$this->crp_id&amp;m=$this->pmonth&amp;y=$this->pyear");
 				$smarty->assign('url_next', "?a=corp_detail&amp;view=pilot_solo&amp;crp_id=$this->crp_id&amp;m=$this->nmonth&amp;y=$this->nyear");
 
-				$list = new TopSoloKillerList();
+				$list = new TopList_SoloKiller();
 				$list->addInvolvedCorp($this->crp_id);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
-				$table = new TopPilotTable($list, "Solokills");
+				$table = new TopTable_Pilot($list, "Solokills");
 				$smarty->assign('monthly_stats', $table->generate());
 
-				$list = new TopSoloKillerList();
+				$list = new TopList_SoloKiller();
 				$list->addInvolvedCorp($this->crp_id);
 				$list->setPodsNoobShips(config::get('podnoobs'));
-				$table = new TopPilotTable($list, "Solokills");
+				$table = new TopTable_Pilot($list, "Solokills");
 				$smarty->assign('total_stats', $table->generate());
 
 				return $smarty->fetch(get_tpl('detail_kl_monthly'));
@@ -359,18 +359,18 @@ class pCorpDetail extends pageAssembly
 				$smarty->assign('url_previous', "?a=corp_detail&amp;view=pilot_damage&amp;crp_id=$this->crp_id&amp;m=$this->pmonth&amp;y=$this->pyear");
 				$smarty->assign('url_next', "?a=corp_detail&amp;view=pilot_damage&amp;crp_id=$this->crp_id&amp;m=$this->nmonth&amp;y=$this->nyear");
 
-				$list = new TopDamageDealerList();
+				$list = new TopList_DamageDealer();
 				$list->addInvolvedCorp($this->crp_id);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
-				$table = new TopPilotTable($list, "Kills");
+				$table = new TopTable_Pilot($list, "Kills");
 				$smarty->assign('monthly_stats', $table->generate());
 
-				$list = new TopDamageDealerList();
+				$list = new TopList_DamageDealer();
 				$list->addInvolvedCorp($this->crp_id);
 				$list->setPodsNoobShips(config::get('podnoobs'));
-				$table = new TopPilotTable($list, "Kills");
+				$table = new TopTable_Pilot($list, "Kills");
 				$smarty->assign('total_stats', $table->generate());
 
 				return $smarty->fetch(get_tpl('detail_kl_monthly'));
@@ -389,16 +389,27 @@ class pCorpDetail extends pageAssembly
 				$smarty->assign('url_previous', "?a=corp_detail&amp;view=pilot_griefer&amp;crp_id=$this->crp_id&amp;m=$this->pmonth&amp;y=$this->pyear");
 				$smarty->assign('url_next', "?a=corp_detail&amp;view=pilot_griefer&amp;crp_id=$this->crp_id&amp;m=$this->nmonth&amp;y=$this->nyear");
 
-				$list = new TopGrieferList();
+				$list = new TopList_Kills();
+				$list->addVictimShipClass(20); // freighter
+				$list->addVictimShipClass(22); // exhumer
+				$list->addVictimShipClass(7); // industrial
+				$list->addVictimShipClass(12); // barge
+				$list->addVictimShipClass(14); // transport
+
 				$list->addInvolvedCorp($this->crp_id);
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
-				$table = new TopPilotTable($list, "Kills");
+				$table = new TopTable_Pilot($list, "Kills");
 				$smarty->assign('monthly_stats', $table->generate());
 
-				$list = new TopGrieferList();
+				$list = new TopList_Kills();
+				$list->addVictimShipClass(20); // freighter
+				$list->addVictimShipClass(22); // exhumer
+				$list->addVictimShipClass(7); // industrial
+				$list->addVictimShipClass(12); // barge
+				$list->addVictimShipClass(14); // transport
 				$list->addInvolvedCorp($this->crp_id);
-				$table = new TopPilotTable($list, "Kills");
+				$table = new TopTable_Pilot($list, "Kills");
 				$smarty->assign('total_stats', $table->generate());
 
 				return $smarty->fetch(get_tpl('detail_kl_monthly'));
@@ -417,32 +428,32 @@ class pCorpDetail extends pageAssembly
 				$smarty->assign('url_previous', "?a=corp_detail&amp;view=pilot_losses&amp;crp_id=$this->crp_id&amp;m=$this->pmonth&amp;y=$this->pyear");
 				$smarty->assign('url_next', "?a=corp_detail&amp;view=pilot_losses&amp;crp_id=$this->crp_id&amp;m=$this->nmonth&amp;y=$this->nyear");
 
-				$list = new TopLossesList();
+				$list = new TopList_Losses();
 				$list->addVictimCorp($this->crp_id);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
-				$table = new TopPilotTable($list, "Losses");
+				$table = new TopTable_Pilot($list, "Losses");
 				$smarty->assign('monthly_stats', $table->generate());
 
-				$list = new TopLossesList();
+				$list = new TopList_Losses();
 				$list->addVictimCorp($this->crp_id);
 				$list->setPodsNoobShips(config::get('podnoobs'));
-				$table = new TopPilotTable($list, "Losses");
+				$table = new TopTable_Pilot($list, "Losses");
 				$smarty->assign('total_stats', $table->generate());
 
 				return $smarty->fetch(get_tpl('detail_kl_monthly'));
 
 				break;
 			case "ships_weapons":
-				$shiplist = new TopShipList();
+				$shiplist = new TopList_Ship();
 				$shiplist->addInvolvedCorp($this->crp_id);
-				$shiplisttable = new TopShipListTable($shiplist);
+				$shiplisttable = new TopTable_Ship($shiplist);
 				$smarty->assign('ships', $shiplisttable->generate());
 
-				$weaponlist = new TopWeaponList();
+				$weaponlist = new TopList_Weapon();
 				$weaponlist->addInvolvedCorp($this->crp_id);
-				$weaponlisttable = new TopWeaponListTable($weaponlist);
+				$weaponlisttable = new TopTable_Weapon($weaponlist);
 				$smarty->assign('weapons', $weaponlisttable->generate());
 				return $smarty->fetch(get_tpl('detail_kl_ships_weapons'));
 
@@ -510,7 +521,7 @@ class pCorpDetail extends pageAssembly
 							where kll.kll_system_id = sys.sys_id
 							and inc.inc_kll_id = kll.kll_id
 							and inc.inc_crp_id = ".$this->crp_id;
-				
+
 				$sql .= " group by sys.sys_id
 							order by kills desc, sys.sys_name asc
 							limit 25";

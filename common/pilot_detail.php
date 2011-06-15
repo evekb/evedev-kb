@@ -243,14 +243,14 @@ class pPilotDetail extends pageAssembly
 				
 				break;
 			case "ships_weapons":
-				$shiplist = new TopShipList();
+				$shiplist = new TopList_Ship();
 				$shiplist->addInvolvedPilot($this->pilot);
-				$shiplisttable = new TopShipListTable($shiplist);
+				$shiplisttable = new TopTable_Ship($shiplist);
 				$smarty->assign('ships', $shiplisttable->generate());
 
-				$weaponlist = new TopWeaponList();
+				$weaponlist = new TopList_Weapon();
 				$weaponlist->addInvolvedPilot($this->pilot);
-				$weaponlisttable = new TopWeaponListTable($weaponlist);
+				$weaponlisttable = new TopTable_Weapon($weaponlist);
 
 				$smarty->assign('weapons', $weaponlisttable->generate());
 				return $smarty->fetch(get_tpl('detail_kl_ships_weapons'));
