@@ -1,8 +1,8 @@
 <?php
 /*
- * $Date: $
- * $Revision: -1 $
- * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/includes/TopList/class.TopList.php $
+ * $Date$
+ * $Revision$
+ * $HeadURL$
  */
 
 class TopTable_Corp

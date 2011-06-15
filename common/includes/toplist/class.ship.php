@@ -1,8 +1,8 @@
 <?php
 /*
- * $Date: 2011-04-22 17:06:57 +1000 (Fri, 22 Apr 2011) $
- * $Revision: 1274 $
- * $HeadURL: https://evedev-kb.googlecode.com/svn/branches/3.2/common/includes/class.toplist.php $
+ * $Date$
+ * $Revision$
+ * $HeadURL$
  */
 
 // Create a box to display the top pilots at something. Subclasses of TopList
