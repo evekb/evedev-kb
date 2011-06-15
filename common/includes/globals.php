@@ -24,7 +24,7 @@ define ("APIVERSION", "V3.3");
 
 // current version: major.minor.sub
 // even numbers for minor = development version
-define('KB_VERSION', '3.2.0');
+define('KB_VERSION', '3.2+');
 define('KB_RELEASE', '(Incursion)');
 
 // Make sure the core functions are loaded.
@@ -33,6 +33,26 @@ require_once('common/includes/class.edkloader.php');
 edkloader::register('Smarty', 'common/smarty/Smarty.class.php');
 
 // Ugly hacks to make things work until other changes are made with the file structure
+edkloader::register('TopList', 'common/includes/class.toplist.php');
+edkloader::register('TopKillsList', 'common/includes/class.toplist.php');
+edkloader::register('TopCorpKillsList', 'common/includes/class.toplist.php');
+edkloader::register('TopScoreList', 'common/includes/class.toplist.php');
+edkloader::register('TopLossesList', 'common/includes/class.toplist.php');
+edkloader::register('TopCorpLossesList', 'common/includes/class.toplist.php');
+edkloader::register('TopFinalBlowList', 'common/includes/class.toplist.php');
+edkloader::register('TopDamageDealerList', 'common/includes/class.toplist.php');
+edkloader::register('TopSoloKillerList', 'common/includes/class.toplist.php');
+edkloader::register('TopPodKillerList', 'common/includes/class.toplist.php');
+edkloader::register('TopGrieferList', 'common/includes/class.toplist.php');
+edkloader::register('TopCapitalShipKillerList', 'common/includes/class.toplist.php');
+edkloader::register('TopContractKillsList', 'common/includes/class.toplist.php');
+edkloader::register('TopContractScoreList', 'common/includes/class.toplist.php');
+edkloader::register('TopPilotTable', 'common/includes/class.toplist.php');
+edkloader::register('TopCorpTable', 'common/includes/class.toplist.php');
+edkloader::register('TopShipList', 'common/includes/class.toplist.php');
+edkloader::register('TopShipListTable', 'common/includes/class.toplist.php');
+edkloader::register('TopWeaponList', 'common/includes/class.toplist.php');
+edkloader::register('TopWeaponListTable', 'common/includes/class.toplist.php');
 edkloader::register('thumbInt', 'common/includes/class.thumb.php');
 require_once('common/includes/db.php');
 
