@@ -538,7 +538,7 @@ class KillSummaryTable
 
 		if (!empty($_GET['scl_id']))
 		{
-			$qrystring = preg_replace("/&scl_id=([0-9]?[0-9])/", "", '?'.$_SERVER['QUERY_STRING']);
+			$qrystring = preg_replace("/&scl_id=([0-9]+)/", "", '?'.$_SERVER['QUERY_STRING']);
 			$qrystring = preg_replace("/&/", "&amp;", $qrystring);
 			$smarty->assign('clearfilter',$qrystring);
 		}
