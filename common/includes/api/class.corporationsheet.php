@@ -296,7 +296,7 @@ class API_CorporationSheet
 		$CachedTime = ApiCache::get($configvalue);
 		$UseCaching = config::get('API_UseCache');
 
-		$url = "https://".API_SERVER."/corp/CorporationSheet.xml.aspx";// . $keystring;
+		$url = API_SERVER."/corp/CorporationSheet.xml.aspx";// . $keystring;
 
         $path = '/corp/CorporationSheet.xml.aspx';
 

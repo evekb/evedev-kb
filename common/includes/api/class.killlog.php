@@ -57,106 +57,190 @@ class API_KillLog
 			$cacheexists = true;
 		else
 			$cacheexists = false;
-
-		$qry = DBFactory::getDBQuery();
-		$qry->execute("SELECT log_errorcode FROM kb3_apilog WHERE log_site = '"
-			.KB_SITE."' AND log_keyname = '".
-			addslashes(config::get('API_Name_'.$keyindex)).
-			"' ORDER BY log_timestamp DESC");
-		if($qry->recordCount())
+		if(defined('BETA') && BETA)
 		{
-			$row = $qry->getRow();
-			$errorcode = $row['log_errorcode'];
-		}
-		else $errorcode = 0;
-		// Don't let the cron keep checking jobs that have returned an
-		if(($errorcode >= 200 && $errorcode < 300|| $errorcode == 105) && $this->iscronjob_)
-		{
-			return "<div class=block-header2><i>".config::get('API_Name_'.$keyindex)." failed with error code ".$errorcode."</i></div><br><br>";
-		}
+			if($errorcode = $this->fetchErrors($keyindex))
+				return "<div class=block-header2><i>"
+					.config::get('API_Name_'.$keyindex)." failed with error code "
+					.$errorcode."</i></div><br><br>";
 
-		// if API_UseCache = 1 (off) then don't use cache
-        if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($this->API_CacheTime_) > 0) || ($this->API_UseCaching_ == 1)  || !$cacheexists )
-        {
-            // Load new XML
-			$logsource = "New XML";
-			$this->Output_ .= "<i>Downloading latest XML file for " . config::get('API_Name_'.$keyindex) . "</i><br><br>";
-			$data = '<myxml thunkage="1">';
-        	do {
-            	$data .= $this->loaddata($currentdatakillid, $keystring, $typestring);
-            	$lastdatakillid = $currentdatakillid;
-            	$currentdatakillid = $this->getlastkillid($data);
-        	} while ( $lastdatakillid != $currentdatakillid );
-        	$data .= '</myxml>';
-
-			if ( ( $this->API_UseCaching_ ) == 0 )//&& ( $this->iscronjob_ == false ) )
+			// if API_UseCache = 1 (off) then don't use cache
+			if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($this->API_CacheTime_) > 0) || ($this->API_UseCaching_ == 1)  || !$cacheexists )
 			{
-				// save the file if no errors have occurred
-				if ($this->errorcode_ == 0)
+				// Load new XML
+				$logsource = "New XML";
+				$this->Output_ .= "<i>Downloading latest XML file for " . config::get('API_Name_'.$keyindex) . "</i><br><br>";
+				$data = '';
+				$date2 = '';
+				do {
+					$tmp = $this->loaddata($currentdatakillid, $keystring, $typestring);
+					if(!$data || strpos($tmp, 'result') !== false)
+							$data .= $tmp;
+					$data = preg_replace('/\s*<\/rowset>\s*<\/result.*<result>\s*<rowset[^>]*>/s', '', $data);
+					$data2 .= $tmp;
+					$lastdatakillid = $currentdatakillid;
+					$currentdatakillid = $this->getlastkillid($data);
+				} while ( $lastdatakillid != $currentdatakillid );
+				if ( $this->API_UseCaching_ == 0 )
 				{
-					$file = fopen(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml', 'w+');
-        			fwrite($file, $data);
-       				fclose($file);
-					//chmod the file so it can be altered by cronjobs in future
-					@chmod(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml',0666);
+					// save the file if no errors have occurred
+					if ($this->errorcode_ == 0)
+					{
+						file_put_contents(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml', $data);
+						//chmod the file so it can be altered by cronjobs in future
+						@chmod(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml',0666);
+					}
+				}
+			} else {
+				// re-use cached XML
+				$this->Output_ .= "<i>Using cached XML file for " . config::get('API_Name_'.$keyindex) . "</i><br><br>";
+				$logsource = "Cache";
+
+				$data = file_get_contents(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml');
+				if(!$data) return "<i>error loading cached file ".config::get('API_Name_'.$keyindex)."_KillLog.xml</i><br><br>";
+			}
+
+			$feedfetch = new IDFeed();
+			if($data)
+			{
+				$feedfetch->setXML($data);
+				$feedfetch->setTrust(-1);
+				$feedfetch->read();
+				if($feedfetch->getCachedTime())
+				{
+					$this->CachedUntil_ = $feedfetch->getCachedTime();
+					ApiCache::set('API_CachedUntil_' . $this->keyindex_, $feedfetch->getCachedTime());
 				}
 			}
-        } else {
-            // re-use cached XML
-			$this->Output_ .= "<i>Using cached XML file for " . config::get('API_Name_'.$keyindex) . "</i><br><br>";
-			$logsource = "Cache";
 
-			if ($fp = @fopen(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml', 'r')) {
-    	    	$data = fread($fp, filesize(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml'));
-        		fclose($fp);
-    		} else {
-				return "<i>error loading cached file ".config::get('API_Name_'.$keyindex)."_KillLog.xml</i><br><br>";
-    		}
-        }
+			$posted = count($feedfetch->getPosted());
+			$skipped = count($feedfetch->getSkipped());
 
-        $xml_parser = xml_parser_create();
-        xml_set_object ( $xml_parser, $this );
-        xml_set_element_handler($xml_parser, "startElement", "endElement");
-        xml_set_character_data_handler ( $xml_parser, 'characterData' );
+			$this->Output_ .= "<div class=block-header2>" . $posted
+				." kills, ". $skipped . " skipped  from feed: " . config::get('API_Name_'.$keyindex) . ".<br></div>";
 
-        if (!xml_parse($xml_parser, $data, true))
-            return $this->Output_ .= "<i>Error getting XML data from ".API_SERVER."</i><br><br>";
+			// Write to kb3_apilog
+			$qry = DBFactory::getDBQuery();;
+			if ($this->iscronjob_)
+				$logtype = "Cron Job";
+			else
+				$logtype = "Manual";
 
-        if ( strlen($data) == 28 )
-            return $this->Output_ .= "<i>Error contacting ".API_SERVER."</i><br><br>";
+			$qry->execute( "insert into kb3_apilog	values( '" . KB_SITE . "', '"
+															. addslashes(config::get('API_Name_'.$keyindex)) . "',"
+															. $posted . ","
+															. "0 ,"
+															. $skipped . ","
+															. "0 ,"
+															. ($posted + $skipped) . ",'"
+															. $logsource . "','"
+															. $logtype . "','"
+															. $feedfetch->getErrorCode() . "', "
+															. "UTC_TIMESTAMP() )" );
 
-        xml_parser_free($xml_parser);
-
-        if ( ($this->hasdownloaded_ == false) && ($this->errortext_ != "") )
-		{
-            $this->Output_ .= "<font color = \"#FF0000\">".$this->errortext_ . "</font><br>";
-			$logsource = "Error";
 		}
-
-        if ($this->mailcount_)
-            $this->Output_ .= "<div class=block-header2>".$this->mailcount_." kills, " . $this->malformedmails_ . " malformed, " . $this->ignoredmails_ . " ignored and " . $this->verified_ . " verified from feed: " . config::get('API_Name_'.$keyindex) . " which contained ".$this->totalmails_." mails.<br></div>";
-        else
-            $this->Output_ .= "<div class=block-header2>No kills added, ". $this->malformedmails_ . " malformed, " . $this->ignoredmails_." ignored and " . $this->verified_ . " verified from feed: " . config::get('API_Name_'.$keyindex) . " which contained ".$this->totalmails_." mails.<br></div>";
-
-		// Write to kb3_apilog
-		$qry = DBFactory::getDBQuery();;
-		if ($this->iscronjob_)
-			$logtype = "Cron Job";
 		else
-			$logtype = "Manual";
+		{
+			$qry = DBFactory::getDBQuery();
+			$qry->execute("SELECT log_errorcode FROM kb3_apilog WHERE log_site = '"
+				.KB_SITE."' AND log_keyname = '".
+				addslashes(config::get('API_Name_'.$keyindex)).
+				"' ORDER BY log_timestamp DESC");
+			if($qry->recordCount())
+			{
+				$row = $qry->getRow();
+				$errorcode = $row['log_errorcode'];
+			}
+			else $errorcode = 0;
+			// Don't let the cron keep checking jobs that have returned an
+			if(($errorcode >= 200 && $errorcode < 300|| $errorcode == 105) && $this->iscronjob_)
+			{
+				return "<div class=block-header2><i>".config::get('API_Name_'.$keyindex)." failed with error code ".$errorcode."</i></div><br><br>";
+			}
 
-        $qry->execute( "insert into kb3_apilog	values( '" . KB_SITE . "', '"
-														. addslashes(config::get('API_Name_'.$keyindex)) . "',"
-														. $this->mailcount_ . ","
-														. $this->malformedmails_ . ","
-														. $this->ignoredmails_ . ","
-														. $this->verified_ . ","
-														. $this->totalmails_ . ",'"
-														. $logsource . "','"
-														. $logtype . "','"
-														. $this->errorcode_ . "', "
-														. "UTC_TIMESTAMP() )" );
+			// if API_UseCache = 1 (off) then don't use cache
+			if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($this->API_CacheTime_) > 0) || ($this->API_UseCaching_ == 1)  || !$cacheexists )
+			{
+				// Load new XML
+				$logsource = "New XML";
+				$this->Output_ .= "<i>Downloading latest XML file for " . config::get('API_Name_'.$keyindex) . "</i><br><br>";
+				$data = '<myxml thunkage="1">';
+				do {
+					$data .= $this->loaddata($currentdatakillid, $keystring, $typestring);
+					$lastdatakillid = $currentdatakillid;
+					$currentdatakillid = $this->getlastkillid($data);
+				} while ( $lastdatakillid != $currentdatakillid );
+				$data .= '</myxml>';
 
+				if ( ( $this->API_UseCaching_ ) == 0 )//&& ( $this->iscronjob_ == false ) )
+				{
+					// save the file if no errors have occurred
+					if ($this->errorcode_ == 0)
+					{
+						$file = fopen(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml', 'w+');
+						fwrite($file, $data);
+						fclose($file);
+						//chmod the file so it can be altered by cronjobs in future
+						@chmod(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml',0666);
+					}
+				}
+			} else {
+				// re-use cached XML
+				$this->Output_ .= "<i>Using cached XML file for " . config::get('API_Name_'.$keyindex) . "</i><br><br>";
+				$logsource = "Cache";
+
+				if ($fp = @fopen(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml', 'r')) {
+					$data = fread($fp, filesize(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml'));
+					fclose($fp);
+				} else {
+					return "<i>error loading cached file ".config::get('API_Name_'.$keyindex)."_KillLog.xml</i><br><br>";
+				}
+			}
+
+			$xml_parser = xml_parser_create();
+			xml_set_object ( $xml_parser, $this );
+			xml_set_element_handler($xml_parser, "startElement", "endElement");
+			xml_set_character_data_handler ( $xml_parser, 'characterData' );
+
+			if (!xml_parse($xml_parser, $data, true))
+				return $this->Output_ .= "<i>Error getting XML data from ".API_SERVER."</i><br><br>";
+
+			if ( strlen($data) == 28 )
+				return $this->Output_ .= "<i>Error contacting ".API_SERVER."</i><br><br>";
+
+			xml_parser_free($xml_parser);
+
+			if ( ($this->hasdownloaded_ == false) && ($this->errortext_ != "") )
+			{
+				$this->Output_ .= "<font color = \"#FF0000\">".$this->errortext_ . "</font><br>";
+				$logsource = "Error";
+			}
+
+			if ($this->mailcount_)
+				$this->Output_ .= "<div class=block-header2>".$this->mailcount_." kills, " . $this->malformedmails_ . " malformed, " . $this->ignoredmails_ . " ignored and " . $this->verified_ . " verified from feed: " . config::get('API_Name_'.$keyindex) . " which contained ".$this->totalmails_." mails.<br></div>";
+			else
+				$this->Output_ .= "<div class=block-header2>No kills added, ". $this->malformedmails_ . " malformed, " . $this->ignoredmails_." ignored and " . $this->verified_ . " verified from feed: " . config::get('API_Name_'.$keyindex) . " which contained ".$this->totalmails_." mails.<br></div>";
+
+			// Write to kb3_apilog
+			$qry = DBFactory::getDBQuery();;
+			if ($this->iscronjob_)
+				$logtype = "Cron Job";
+			else
+				$logtype = "Manual";
+
+			$qry->execute( "insert into kb3_apilog	values( '" . KB_SITE . "', '"
+															. addslashes(config::get('API_Name_'.$keyindex)) . "',"
+															. $this->mailcount_ . ","
+															. $this->malformedmails_ . ","
+															. $this->ignoredmails_ . ","
+															. $this->verified_ . ","
+															. $this->totalmails_ . ",'"
+															. $logsource . "','"
+															. $logtype . "','"
+															. $this->errorcode_ . "', "
+															. "UTC_TIMESTAMP() )" );
+		}
+		
         return $this->Output_;
 
     }
@@ -856,8 +940,7 @@ class API_KillLog
 
     function loaddata($refid, $keystring, $typestring)
     {
-        $url = "https://".API_SERVER."/" . $typestring . "/KillLog.xml.aspx";
-
+        $url = API_SERVER."/" . $typestring . "/KillLog.xml.aspx?keyID=176&vCode=Thisisaverificationcode&characterId=608056913";
         if ($refid != 0)
             $keystring .= '&beforeKillID=' . $refid;
 		//TODO: change the all the $keystring chains to arrays
@@ -870,11 +953,12 @@ class API_KillLog
 		}
         $path = '/' . $typestring . '/Killlog.xml.aspx';
         $fp = @fsockopen(API_SERVER, 80);
+$url .= "&".'&beforeKillID=' . $refid;
 
 		$http = new http_request($url);
 		$http->set_useragent("PHPApi");
-		foreach($keys as $key => $val) $http->set_postform($key, $val);
-		
+		//foreach($keys as $key => $val) $http->set_postform($key, $val);
+
 		$contents = $http->get_content();
 
 		$start = strpos($contents, "?>");
@@ -946,5 +1030,28 @@ class API_KillLog
         $qry->execute( "SELECT * FROM `kb3_kills` WHERE `kll_external_id` =" . $killid );
 		$row = $qry->getRow();
 		return $row['kll_external_id'];
+	}
+
+	//! Check if the previous fetches had errors
+	private function fetchErrors($keyindex)
+	{
+		$qry = DBFactory::getDBQuery();
+		$qry->execute("SELECT log_errorcode, log_timestamp FROM kb3_apilog WHERE log_site = '"
+			.KB_SITE."' AND log_keyname = '".
+			addslashes(config::get('API_Name_'.$keyindex)).
+			"' ORDER BY log_timestamp DESC LIMIT 1");
+		if($qry->recordCount())
+		{
+			$row = $qry->getRow();
+			if(strtotime($row['log_timestamp']) < time() - 7 * 24 * 60 * 60)
+				$errorcode = $row['log_errorcode'];
+			else $errorcode = 0;
+		}
+		else $errorcode = 0;
+		// Don't let the cron keep checking jobs that have returned an
+		if(($errorcode >= 200 && $errorcode < 300 || $errorcode == 105) &&
+				$this->iscronjob_)
+			return $errorcode;
+		else return false;
 	}
 }

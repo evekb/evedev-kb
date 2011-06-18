@@ -202,7 +202,7 @@ class API_StarbaseList
 		$CachedTime = ApiCache::get($configvalue);
 		$UseCaching = config::get('API_UseCache');
 
-        $url = "https://".API_SERVER."/corp/StarbaseList.xml.aspx" . $keystring;
+        $url = API_SERVER."/corp/StarbaseList.xml.aspx" . $keystring;
 
         $path = '/corp/StarbaseList.xml.aspx';
 

@@ -39,7 +39,7 @@ class API_Helpers
 
 		if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($CachedTime) > 0) || ($UseCaching == 1)  || !$cacheexists )// if API_UseCache = 1 (off) then don't use cache
 		{
-			$url = "https://".API_SERVER.$path;
+			$url = API_SERVER.$path;
 
 			$http = new http_request($url);
 			$http->set_useragent("PHPApi EDK".KB_VERSION);

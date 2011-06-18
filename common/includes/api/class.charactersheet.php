@@ -290,7 +290,7 @@ class API_CharacterSheet
 		$CachedTime = ApiCache::get($configvalue);
 		$UseCaching = config::get('API_UseCache');
 
-        $url = "https://".API_SERVER."/char/CharacterSheet.xml.aspx" . $keystring;
+        $url = API_SERVER."/char/CharacterSheet.xml.aspx" . $keystring;
 
         $path = '/char/CharacterSheet.xml.aspx';
 

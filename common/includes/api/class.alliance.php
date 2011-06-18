@@ -195,8 +195,3 @@ class API_Alliance
 
 	}
 }
-
-class AllianceAPI extends API_Alliance
-{
-	
-}

@@ -43,7 +43,7 @@ class API_Char
 
 	private function loaddata($userID, $APIKey)
 	{
-        $url = "https://".API_SERVER."/account/Characters.xml.aspx";
+        $url = API_SERVER."/account/Characters.xml.aspx";
 
 		$http = new http_request($url, "POST");
 		$http->set_useragent("PHPApi");
@@ -55,7 +55,7 @@ class API_Char
 
 		$this->error = array();
 		$this->error['code'] = $http->get_http_code();
-		$this->error['message'] = "HTTP error";
+		$this->error['message'] = $http->getError();
 
 		return $result;
 	}
@@ -112,10 +112,4 @@ class API_Char
 		return $this->error;
 
 	}
-}
-
-//! Legacy stub.
-class APIChar extends API_Char
-{
-	
 }

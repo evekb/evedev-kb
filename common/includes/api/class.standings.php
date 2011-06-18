@@ -368,7 +368,7 @@ class API_Standings
 		$CachedTime = ApiCache::get($configvalue);
 		$UseCaching = config::get('API_UseCache');
 
-        $url = "https://".API_SERVER."/" . $typestring . "/Standings.xml.aspx" . $keystring;
+        $url = API_SERVER."/" . $typestring . "/Standings.xml.aspx" . $keystring;
         $path = "/" . $typestring . "/Standings.xml.aspx";
 
 		// API Caching system, If we're still under cachetime reuse the last XML, if not download the new one. Helps with Bug hunting and just better all round.
