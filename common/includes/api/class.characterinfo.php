@@ -5,7 +5,9 @@
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/includes/class.eveapi.php $
  */
 
-//! Retrieve Character Info from CCP API
+/**
+ * Retrieve Character Info from CCP API
+ */
 class API_CharacterInfo
 {
 	private $CachedUntil = '';
@@ -76,7 +78,9 @@ class API_CharacterInfo
 
 		return $http->get_content();
 	}
-	//! Return any errors encountered or false if none.
+	/**
+	 * Return any errors encountered or false if none.
+	 */
 	function getError()
 	{
 		return $this->error;

@@ -6,8 +6,11 @@
  */
 
 
-//! mysqli connection class.
-//! Establishes the connection to the database.
+/**
+ * mysqli connection class.
+ * 
+ * Establishes the connection to the database.
+ */
 class DBConnection
 {
 	private static $conn_id = null;
@@ -17,7 +20,9 @@ class DBConnection
 		self::init();
 	}
 
-	//! Set up a mysqli DB connection.
+	/**
+	 * Set up a mysqli DB connection.
+	 */
 	private static function init()
 	{
 		if (isset(self::$conn_id))
@@ -39,18 +44,33 @@ class DBConnection
 		}
 		if(method_exists(self::$conn_id,'set_charset')) self::$conn_id->set_charset('utf8');
 	}
-	//! Return the connection id for this connection. Used for connection specific commands.
+	/**
+	 * Return the connection id for this connection.
+	 *
+	 * Used for connection specific commands.
+	 *
+	 * @return mysqli
+	 */
 	public static function id()
 	{
 		if(is_null(self::$conn_id)) self::init();
 		return self::$conn_id;
 	}
-	//! Return the number of rows affected by a query.
+	/**
+	 * Return the number of rows affected by a query.
+	 *
+	 * @return integer
+	 */
 	public static function affectedRows()
 	{
 		if(is_null(self::$conn_id)) self::init();
 		return mysqli_affected_rows(self::$conn_id);
 	}
+	/**
+	 * Close the connection if it exists.
+	 *
+	 * @return boolean TRUE on success or FALSE on failure.
+	 */
 	public static function close()
 	{
 		if(is_null(self::$conn_id)) return true;

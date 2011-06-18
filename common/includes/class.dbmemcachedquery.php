@@ -5,10 +5,14 @@
  * $HeadURL$
  */
 
-//! mysqli memcached query class. Manages SQL queries to a MySQL DB using mysqli.
+/**
+ * mysqli memcached query class. Manages SQL queries to a MySQL DB using mysqli.
+ */
 class DBMemcachedQuery extends DBCachedQuery
 {
-	//! Set up a mysqli cached query object with default values.
+	/**
+	 * Set up a mysqli cached query object with default values.
+	 */
 	function DBMemcachedQuery($nocache = false)
 	{
 		$this->nocache = $nocache;

@@ -5,7 +5,9 @@
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/includes/class.eveapi.php $
 */
 
-//! Retrieve Alliance list from CCP to find alliance details.
+/**
+ * Retrieve Alliance list from CCP to find alliance details.
+*/
 class API_Alliance
 {
 	protected $sxe = null;

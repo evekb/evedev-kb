@@ -6,7 +6,9 @@
  */
 
 
-//! Store summary statistics for Pilots.
+/**
+ * Store summary statistics for Pilots.
+ */
 class pilotSummary extends statSummary
 {
 	private $plt_id_ = null;
@@ -16,7 +18,9 @@ class pilotSummary extends statSummary
 		$this->plt_id_ = intval($plt_id);
 		$this->executed = false;
 	}
-	//! Fetch the summary information.
+	/**
+	 * Fetch the summary information.
+	 */
 	protected function execute()
 	{
 		if($this->executed) return;
@@ -47,7 +51,9 @@ class pilotSummary extends statSummary
 		}
 		$this->executed = true;
 	}
-	//! Build a new summary table for an pilot.
+	/**
+	 * Build a new summary table for an pilot.
+	 */
 	private static function buildSummary($plt_id)
 	{
 		$plt_id = intval($plt_id);
@@ -150,7 +156,9 @@ select $plt_id as psm_plt_id, losses.psm_shp_id, ifnull(kills.knb,0), ifnull(kil
 //
 //		$qry->autocommit(true);
 	}
-	//! Add a Kill and its value to the summary.
+	/**
+	 * Add a Kill and its value to the summary.
+	 */
 	public static function addKill($kill)
 	{
 		$alls = array();
@@ -193,7 +201,9 @@ select $plt_id as psm_plt_id, losses.psm_shp_id, ifnull(kills.knb,0), ifnull(kil
 			$qry->execute($sql);
 		}
 	}
-	//! Add a Kill and its value to the summary.
+	/**
+	 * Add a Kill and its value to the summary.
+	 */
 	public static function delKill($kill)
 	{
 		$alls = array();
@@ -235,7 +245,9 @@ select $plt_id as psm_plt_id, losses.psm_shp_id, ifnull(kills.knb,0), ifnull(kil
 			$qry->execute($sql);
 		}
 	}
-	//! Update the summary table when a kill value changes.
+	/**
+	 * Update the summary table when a kill value changes.
+	 */
 	public static function update($kill, $difference)
 	{
 		$alls = array();

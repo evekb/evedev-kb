@@ -52,10 +52,10 @@ class Kill
 		}
 	}
 
-	//! Set internal variables.
-
-	/*!
-	 * \param $arr Array of values indexed by internal variable name.
+	/**
+	 * Set internal variables.
+	 *
+	 * @param array $arr Array of values indexed by internal variable name.
 	 */
 	function setArray($arr)
 	{
@@ -66,53 +66,76 @@ class Kill
 	{
 		$this->$var = $value;
 	}
-	//! Get the internal ID of this kill.
-
-	//! \return integer value for the internal kill ID.
+	/**
+	 * Get the internal ID of this kill.
+	 *
+	 * @return integer integer value for the internal kill ID.
+	 */
 	function getID()
 	{
 		return $this->id_;
 	}
 
-	//! Get the external ID of this kill.
-
-	//! \return integer value for the external kill ID.
+	/**
+	 * Get the external ID of this kill.
+	 *
+	 * @return integer integer value for the external kill ID.
+	 */
 	function getExternalID()
 	{
 		if(is_null($this->externalid_)) $this->execQuery();
 		return $this->externalid_;
 	}
-	//! Return the dropped items array for this kill.
+	/**
+	 * Return the dropped items array for this kill.
+	 *
+	 * @return array dropped items array for this kill.
+	 */
 	public function getDroppedItems()
 	{
 		return $this->droppeditems_;
 	}
-	//! Return the destroyed items array for this kill.
+	/**
+	 * Return the destroyed items array for this kill.
+	 *
+	 * @return array destroyed items array for this kill.
+	 */
 	public function getDestroyedItems()
 	{
 		return $this->destroyeditems_;
 	}
+	/**
+	 * @return string
+	 */
 	function getTimeStamp()
 	{
 		if(is_null($this->timestamp_)) $this->execQuery();
 		return $this->timestamp_;
 	}
-	//! Return the victim Pilot object.
-	/*
-	 * \return Pilot
+	/**
+	 * Return the victim Pilot object.
+	 *
+	 * @return Pilot
 	*/
 	function getVictim()
 	{
 		if(is_null($this->victim_)) $this->execQuery();
 		return $this->victim_;
 	}
-	//! Return the amount of damage taken by the victim.
+	/**
+	 * Return the amount of damage taken by the victim.
+	 * @return integer
+	 */
 	function getDamageTaken()
 	{
 		if(is_null($this->dmgtaken)) $this->execQuery();
 		return $this->dmgtaken;
 	}
 
+	/**
+	 * Return the victim's name.
+	 * @return string
+	 */
 	function getVictimName()
 	{
 		if(!isset($this->victimname_)) $this->execQuery();
@@ -120,6 +143,9 @@ class Kill
 		return $this->victimname_;
 	}
 
+	/**
+	 * @return integer
+	 */
 	function getVictimID()
 	{
 		if(!isset($this->victimid_)) $this->execQuery();
@@ -127,6 +153,9 @@ class Kill
 		return $this->victimid_;
 	}
 
+	/**
+	 * @return integer
+	 */
 	function getVictimExternalID()
 	{
 		if(!isset($this->plt_ext_)) $this->execQuery();
@@ -142,6 +171,9 @@ class Kill
 		return $plt->getPortraitURL($size);
 	}
 
+	/**
+	 * @return integer
+	 */
 	function getVictimCorpID()
 	{
 		if(!isset($this->victimcorpid_)) $this->execQuery();
@@ -181,6 +213,9 @@ class Kill
 		else return "None";
 	}
 
+	/**
+	 * @return integer
+	 */
 	function getVictimAllianceID()
 	{
 		if(!isset($this->victimallianceid_)) $this->execQuery();
@@ -201,6 +236,9 @@ class Kill
 		return $this->solarsystem_;
 	}
 
+	/**
+	 * @return integer
+	 */
 	function getFBPilotID()
 	{
 		if(isset($this->fbpilotid_)) return $this->fbpilotid_;
@@ -217,6 +255,9 @@ class Kill
 		return $this->fbpilotname_;
 	}
 
+	/**
+	 * @return integer
+	 */
 	function getFBCorpID()
 	{
 		if(isset($this->fbcorpid_)) return $this->fbcorpid_;
@@ -233,6 +274,9 @@ class Kill
 		return $this->fbcorpname_;
 	}
 
+	/**
+	 * @return integer
+	 */
 	function getFBAllianceID()
 	{
 		if(isset($this->fballianceid_)) return $this->fballianceid_;
@@ -248,11 +292,18 @@ class Kill
 		return $this->fballiancename_;
 	}
 
+	/**
+	 * @return float
+	 */
 	function getISKLoss()
 	{
 		if(!isset($this->iskloss_)) $this->execQuery();
 		return $this->iskloss_;
 	}
+
+	/**
+	 * @return integer
+	 */
 	function getKillPoints()
 	{
 		if($this->killpoints_) return $this->killpoints_;
@@ -269,6 +320,9 @@ class Kill
 		return $this->solarsystem_->getName();
 	}
 
+	/**
+	 * @return float
+	 */
 	function getSolarSystemSecurity()
 	{
 		if(isset($this->solarsystemsecurity_))return $this->solarsystemsecurity_;
@@ -287,6 +341,9 @@ class Kill
 		return $this->victimshipname_;
 	}
 
+	/**
+	 * @return integer
+	 */
 	function getVictimShipExternalID()
 	{
 		if(!isset($this->victimshipexternalid_))
@@ -312,6 +369,11 @@ class Kill
 		return $this->victimshipvalue_;
 	}
 
+	/**
+	 *
+	 * @param integer $size
+	 * @return string
+	 */
 	function getVictimShipImage($size)
 	{
 		 return imageURL::getURL('Ship', $this->victimshipexternalid_, $size);
@@ -339,7 +401,11 @@ class Kill
 
 		return IMG_URL.'/ships/ship-'.$color.'.gif';
 	}
-	//! Check if the victim is in a Faction.
+	/**
+	 * Check if the victim is in a Faction.
+	 *
+	 * @return boolean
+	 */
 	function getIsVictimFaction()
 	{
 		$this->execQuery();
@@ -348,6 +414,11 @@ class Kill
 		return (in_array($this->victimalliancename_, $factions));
 	}
 
+	/**
+	 * Return the raw killmail for this kill.
+	 *
+	 * @return string
+	 */
 	function getRawMail()
 	{
 		if(!is_null($this->mail)) return $this->mail;
@@ -504,6 +575,12 @@ class Kill
 		return $mail;
 	}
 
+	/**
+	 * Check if this kill is a duplicate and return the id if so.
+	 * 
+	 * @param boolean $checkonly
+	 * @return integer
+	 */
 	function getDupe($checkonly = false)
 	{
 		if (!$checkonly)
@@ -747,6 +824,11 @@ class Kill
 		$this->executed = true;
 	}
 
+	/**
+	 * Check if this kill is still within the classified period.
+	 *
+	 * @return boolean
+	 */
 	function isClassified()
 	{
 		if(!$this->timestamp_) $this->execQuery();
@@ -760,6 +842,10 @@ class Kill
 		else return false;
 	}
 
+	/** Return the time left until this kill is not classified.
+	 *
+	 * @return integer
+	 */
 	function getClassifiedTime()
 	{
 		if (config::get('kill_classified') &&
@@ -772,6 +858,11 @@ class Kill
 		return 0;
 	}
 
+	/**
+	 * Return the count of pilots involved in this kill.
+	 *
+	 * @return integer
+	 */
 	function getInvolvedPartyCount()
 	{
 		if(isset($this->involvedcount_)) return $this->involvedcount_;
@@ -782,7 +873,10 @@ class Kill
 		return $result['inv'];
 	}
 
-	// Set the number of involved parties - used by killlist
+	/**
+	 * Set the number of involved parties - used by killlist
+	 * @param integer $invcount
+	 */
 	function setInvolvedPartyCount($invcount = 0)
 	{
 		$this->involvedcount_ = $invcount;
@@ -792,13 +886,22 @@ class Kill
 	{
 		$this->fullinvolved_ = true;
 	}
+
+	/**
+	 * Return true if this kill exists and is valid.
+	 * @return boolean
+	 */
 	function exists()
 	{
 		if(!isset($this->valid_)) $this->execQuery();
 		return $this->valid_;
 	}
 
-	//! Count all kills by board owner related to this kill
+	/**
+	 * Count all kills by board owner related to this kill
+	 *
+	 * @return integer
+	 */
 	function relatedKillCount()
 	{
 		// No details for classified kills.
@@ -865,7 +968,11 @@ class Kill
 		return $this->relatedkillcount_;
 	}
 
-	//! Count all losses by board owner related to this kill
+	/**
+	 * Count all losses by board owner related to this kill
+	 *
+	 * @return integer
+	 */
 	function relatedLossCount()
 	{
 		// No details for classified kills.
@@ -925,7 +1032,9 @@ class Kill
 		return $result['comments'];
 	}
 
-	//! Set the number of comments - used by killlist
+	/**
+	 * Set the number of comments - used by killlist
+	 */
 	function setCommentCount($comcount = 0)
 	{
 		$this->commentcount_ = $comcount;
@@ -1070,14 +1179,20 @@ class Kill
 	{
 		$this->killpoints_ = $killpoints;
 	}
-	//! Set the ISK loss value for this kill.
+	/**
+	 * Set the ISK loss value for this kill.
+	 */
 	function setISKLoss($isk)
 	{
 		$this->iskloss_ = $isk;
 	}
-	//! Calculate the current cost of a ship loss excluding blueprints.
+	/**
+	 * Calculate the current cost of a ship loss excluding blueprints.
+	 */
 
-	//! \param $update set true to update all-time summaries.
+	/**
+	 * @param boolean $update set true to update all-time summaries.
+	 */
 	function calculateISKLoss($update = true)
 	{
 		$value = 0;
@@ -1372,9 +1487,9 @@ class Kill
 		array_push($this->droppeditems_, $dropped);
 	}
 
-	/*! Return the array of involved parties.
+	/** Return the array of involved parties.
 	*
-	* \return InvolvedParty[].
+	* @return mixed InvolvedParty[].
 	*
 	*/
 	function getInvolved()
@@ -1533,7 +1648,9 @@ class DestroyedItem
 		if ($this->quantity_ == "") $this->quantity = 1;
 		return $this->quantity_;
 	}
-	//! Return value formatted into millions or thousands.
+	/**
+	 * Return value formatted into millions or thousands.
+	 */
 	function getFormattedValue()
 	{
 		if (!isset($this->value))

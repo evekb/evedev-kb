@@ -8,7 +8,9 @@
 // TODO Check if caching is enabled and flag tables as dirty even if we don't
 // cache prepared queries.
 
-//! mysqli uncached query class. Manages SQL queries to a MySQL DB using mysqli.
+/**
+ * mysqli uncached query class. Manages SQL queries to a MySQL DB using mysqli.
+ */
 class DBPreparedQuery
 {
 	static protected $totalexectime = 0;
@@ -19,16 +21,18 @@ class DBPreparedQuery
 	static protected $queryCachedCount = 0;
 	protected $stmt = null;
 	
-//! Prepare a connection for a new mysqli query.
+/**
+ * Prepare a connection for a new mysqli query.
+ */
 	function DBPreparedQuery()
 	{
 		self::$dbconn = new DBConnection();
 	}
-    //! Return the count of queries performed.
-
-    /*!
-     * \param $increase if true then increment the count.
-     * \return the count of queries so far.
+    /**
+     * Return the count of queries performed.
+     *
+     * @param boolean $increase if true then increment the count.
+     * @return mixed the count of queries so far.
      */
     public static function queryCount($increase = false)
     {
@@ -40,11 +44,11 @@ class DBPreparedQuery
         return self::$queryCount;
     }
 
-    //! Return the count of cached queries performed.
-
-    /*!
-     * \param $increase if true then increment the count.
-     * \return the count of queries so far.
+    /**
+     * Return the count of cached queries performed.
+     *
+     * @param boolean $increase if true then increment the count.
+     * @return mixed the count of queries so far.
      */
     public static function queryCachedCount($increase = false)
     {
@@ -55,11 +59,13 @@ class DBPreparedQuery
 
         return self::$queryCachedCount;
     }
-	//! Execute the prepared command.
+	/**
+	 * Execute the prepared command.
+	 */
 
     /*
      * If DB_HALTONERROR is set then this will exit on an error.
-     * \return false on error or true if successful.
+     * @return mixed false on error or true if successful.
      */
 	public function execute()
 	{
@@ -99,18 +105,24 @@ class DBPreparedQuery
 		$this->executed = true;
 		return true;
 	}
-	//! Return the number of rows returned by the last query.
+	/**
+	 * Return the number of rows returned by the last query.
+	 */
 	public function recordCount()
 	{
 		if($this->stmt) return $this->stmt->num_rows;
 		return false;
 	}
-	//! Return the auto-increment ID from the last insert operation.
+	/**
+	 * Return the auto-increment ID from the last insert operation.
+	 */
 	public function getInsertID()
 	{
 		return $this->stmt->insert_id;
 	}
-	//! Return the most recent error message for the DB connection.
+	/**
+	 * Return the most recent error message for the DB connection.
+	 */
 	public function getErrorMsg()
 	{
 		if($this->stmt)
@@ -122,27 +134,31 @@ class DBPreparedQuery
 
 		return $msg;
 	}
-	//! Set the autocommit status.
-
-    /*! The default of true commits after every query.
+	/**
+	 * Set the autocommit status.
+	 * The default of true commits after every query.
      * If set to false the queries will not be commited until autocommit is set
      * to true.
-     *  \param $commit The new autocommit status.
-     *  \return true on success and false on failure.
+     *  @param boolean $commit The new autocommit status.
+     *  @return mixed true on success and false on failure.
      */
 	public function autocommit($commit = true)
 	{
 		return self::$dbconn->id()->autocommit($commit);
 	}
-	//! Rollback all queries in the current transaction.
+	/**
+	 * Rollback all queries in the current transaction.
+	 */
 	public function rollback()
 	{
 		return mysqli_rollback(self::$dbconn->id());
 	}
-	//! Prepare a statement.
+	/**
+	 * Prepare a statement.
+	 */
 
-	/* \param $sql String containing a prepared statement.
-	 * \return true on success and false on failure.
+	/* @param string $sql String containing a prepared statement.
+	 * @return mixed true on success and false on failure.
 	 */
 	public function prepare($sql)
 	{
@@ -169,9 +185,9 @@ class DBPreparedQuery
 		}
 		return true;
 	}
-	//! Bind the prepared query parameters to the given variables.
-
-	/*! bound parameters can not be changed. While this can be changed as per
+	/**
+	 * Bind the prepared query parameters to the given variables.
+	 * bound parameters can not be changed. While this can be changed as per
 	 * bind_results it would break future caching. For now it stays unbound.
 	 */
 	public function bind_param()
@@ -183,18 +199,18 @@ class DBPreparedQuery
 		array_unshift($Args,$this->stmt);
 		return call_user_func_array('mysqli_stmt_bind_param',$Args);
 	}
-	//! Bind the prepared query parameters to the variables in the given array.
-
-	/*!
-	 * \param params An array of variables to bind as query parameters.
+	/**
+	 * Bind the prepared query parameters to the variables in the given array.
+	 *
+	 * @param array params An array of variables to bind as query parameters.
 	 */
 	public function bind_params(&$params)
 	{
 		return call_user_func_array(array($this->stmt,'bind_param'),$params);
 	}
-	//! Bind the prepared query results to the given variables.
-
-	/*! The hideous argument list is there as func_get_args only returns a copy
+	/**
+	 * Bind the prepared query results to the given variables.
+	 * The hideous argument list is there as func_get_args only returns a copy
 	 * of the arguments rather than a reference so references to the original
 	 * arguments do not reach the prepared statement.
 	 */
@@ -225,13 +241,21 @@ class DBPreparedQuery
 		}
 		return call_user_func_array(array($this->stmt,'bind_result'),$args);
 	}
-	//! Bind the prepared query results to the variables in the given array.
-
+	/**
+	 * Bind the prepared query results to the variables in the given array.
+	 *
+	 * @param array $results
+	 * @return boolean
+	 */
 	public function bind_results(&$results)
 	{
 		return call_user_func_array(array($this->stmt,'bind_result'),$results);
 	}
-	//! Fetch the next results of the prepared statement into bound variables.
+	/**
+	 * Fetch the next results of the prepared statement into bound variables.
+	 *
+	 * @return mixed
+	 */
 	public function fetch()
 	{
 		return $this->stmt->fetch();

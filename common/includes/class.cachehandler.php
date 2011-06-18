@@ -5,9 +5,13 @@
  * $HeadURL$
  */
 
-//! Cache handling methods.
+/**
+ * Cache handling methods.
+ */
 
-//! Contains methods to handle the killboard's cache directory.
+/**
+ * Contains methods to handle the killboard's cache directory.
+ */
 class CacheHandler
 {
 	protected static $internalroot = KB_CACHEDIR;
@@ -16,14 +20,14 @@ class CacheHandler
 	protected static $defaultLocation = "store";
 	protected static $depth = 2;
 
-	//! Add a file to the cache.
-
-	/*!
-	 * \param $filename String filename, starting from below cache dir.
-	 * \param $data String containing the data to store in the cache.
-	 * \param $location set a specific subdirectory of the cache to use.
+	/**
+	 * Add a file to the cache.
 	 *
-	 * \return Boolean true if successful, false if an error occurred.
+	 * @param string $filename String filename, starting from below cache dir.
+	 * @param string $data String containing the data to store in the cache.
+	 * @param string $location set a specific subdirectory of the cache to use.
+	 *
+	 * @return boolean true if successful, false if an error occurred.
 	 */
 	public static function put($filename, $data, $location = null)
 	{
@@ -31,13 +35,13 @@ class CacheHandler
 
 		return file_put_contents(self::$internalroot."/".$path, $data);
 	}
-	//! Get a file from the cache.
-
-	/*!
-	 * \param $filename String filename, starting from below cache dir.
-	 * \param $location set a specific subdirectory of the cache to use.
+	/**
+	 * Get a file from the cache.
 	 *
-	 * \return Boolean true if successful, false if an error occurred.
+	 * @param string $filename String filename, starting from below cache dir.
+	 * @param string $location set a specific subdirectory of the cache to use.
+	 *
+	 * @return boolean true if successful, false if an error occurred.
 	 */
 	public static function get($filename, $location = null)
 	{
@@ -46,7 +50,9 @@ class CacheHandler
 		return @file_get_contents(self::$internalroot."/".$path);
 	}
 
-	//! Remove a cached file
+	/**
+	 * Remove a cached file
+	 */
 	public static function remove($filename, $location = null)
 	{
 		if(!self::exists($filename, $location)) return true;
@@ -59,11 +65,11 @@ class CacheHandler
 		self::removeDir($dir);
 		return true;
 	}
-	//! Remove a cache directory if empty.
-
-	/*!
-	 * \param $dir String The directory to remove.
-	 * \param $parents Boolean Remove empty parent directory if true.
+	/**
+	 * Remove a cache directory if empty.
+	 *
+	 * @param string $dir String The directory to remove.
+	 * @param boolean $parents Remove empty parent directory if true.
 	 */
 	protected static function removeDir($dir, $parents = true)
 	{
@@ -93,13 +99,13 @@ class CacheHandler
 		if(empty($pdir)) return true;
 		else return self::removeDir($pdir);
 	}
-	//! Remove all files in a cache directory older than the given time.
-
-	/*!
-	 * \param $dir String The directory to remove files from.
-	 * \param $hours int The minimum age in hours of files to remove.
+	/**
+	 * Remove all files in a cache directory older than the given time.
 	 *
-	 * \return int The count of files removed.
+	 * @param string $dir The directory to remove files from.
+	 * @param integer $hours The minimum age in hours of files to remove.
+	 *
+	 * @return integer The count of files removed.
 	 */
 	public static function removeByAge($dir = null, $hours = 24, $removeDir = true)
 	{
@@ -130,13 +136,13 @@ class CacheHandler
 		if($removeDir && substr_count($dir, '/') > 1) @rmdir(self::$internalroot.'/'.$dir);
 		return $del;
 	}
-	//! Remove files in a cache directory to reduce total size to that given.
-
-	/*!
-	 * \param $dir String The directory to remove files from.
-	 * \param $hours int The minimum age in hours of files to remove.
+	/**
+	 * Remove files in a cache directory to reduce total size to that given.
 	 *
-	 * \return int The count of files removed.
+	 * @param string $dir String The directory to remove files from.
+	 * @param integer $hours int The minimum age in hours of files to remove.
+	 *
+	 * @return integer The count of files removed.
 	 */
 	public static function removeBySize($dir, $maxsize = 0, $bysize = false)
 	{
@@ -182,12 +188,12 @@ class CacheHandler
 		return $delcount;
 
 	}
-	//! Return an array of all files under the given dir.
-
-	/*!
-	 * \param $dir String Root directory to search in.
+	/**
+	 * Return an array of all files under the given dir.
 	 *
-	 * \return Array (age, name, size)
+	 * @param string $dir String Root directory to search in.
+	 *
+	 * @return array (age, name, size)
 	 */
 	private static function &getFiles($dir)
 	{
@@ -216,19 +222,25 @@ class CacheHandler
 		}
 		return $result;
 	}
-	//! Age comparison function for use with file array returned by getFiles.
+	/**
+	 * Age comparison function for use with file array returned by getFiles.
+	 */
 	private static function compareAge($a, $b)
 	{
 		if($a[0] == $b[0]) return 0;
 		return ($a[0] < $b[0]) ? -1 : 1;
 	}
-	//! Size comparison function for use with file array returned by getFiles.
+	/**
+	 * Size comparison function for use with file array returned by getFiles.
+	 */
 	private static function compareSize($a, $b)
 	{
 		if($a[2] == $b[2]) return 0;
 		return ($a[2] > $b[2]) ? -1 : 1;
 	}
-	//! Add subdirectories to the given depth and return the full cachefile path.
+	/**
+	 * Add subdirectories to the given depth and return the full cachefile path.
+	 */
 	protected static function getPath($filename, $location = null, $create = false)
 	{
 		if(is_null($location)) $location = self::$defaultLocation;
@@ -282,38 +294,49 @@ class CacheHandler
 
 		return $newlocation.$newfilename;
 	}
-	//! Return true if the file is in the cache.
-
-	//! \return true if the file exists, false otherwise.
+	/**
+	 * Return true if the file is in the cache.
+	 * @return boolean true if the file exists, false otherwise.
+	 */
 	public static function exists($filename, $location = null)
 	{
 		$path = self::getPath($filename, $location, false);
 
 		return file_exists(self::$internalroot.'/'.$path);
 	}
-	//! Return the age of the given cache file.
+	/**
+	 * Return the age of the given cache file.
+	 */
 	public static function age($filename, $location = null)
 	{
 		if(!file_exists(self::getPath($filename, $location, false))) return false;
 
 		return time() - filemtime(self::getPath($filename, $location, false));
 	}
-	//! Get the internally accessible address of the cached file.
+	/**
+	 * Get the internally accessible address of the cached file.
+	 */
 	public static function getInternal($filename, $location = null)
 	{
 		return self::$internalroot.'/'.self::getPath($filename, $location, true);
 	}
-	//! Get the externally accessible address of the cached file.
+	/**
+	 * Get the externally accessible address of the cached file.
+	 */
 	public static function getExternal($filename, $location = null)
 	{
 		return self::$externalroot.'/'.self::getPath($filename, $location, false);
 	}
-	//! Get the externally accessible address of the cached file.
+	/**
+	 * Get the externally accessible address of the cached file.
+	 */
 	public static function setExternalPath($filename)
 	{
 		return self::$externalroot.'/'.$filename;
 	}
-	//! Change the default cache root directory
+	/**
+	 * Change the default cache root directory
+	 */
 	public static function setInternalPath($dir)
 	{
 		if(substr($dir, 0, 1) == '/'

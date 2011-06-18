@@ -14,7 +14,8 @@ class Zip
     private $errors;
     private $fileList;
 
-    /*! Basic zip file parser. It allows you to extract zip files, create
+    /**
+	 * Basic zip file parser. It allows you to extract zip files, create
      * zips, but not expand existing zips.
      */
     function Zip($fileName)
@@ -22,14 +23,16 @@ class Zip
 	$this->filename = $fileName;
     }
 
-    /* Adds but one file to a zip's internal list
+    /*
+	 * Adds but one file to a zip's internal list
      */
     function addFile($fileName)
     {
 	$this->fileList[] = $fileName;
     }
 
-    /*! Adds a list of files to the zip's index
+    /**
+	 * Adds a list of files to the zip's index
      */
     function addFileArray($fileNames)
     {
@@ -62,7 +65,8 @@ class Zip
 	return $this->archive->extractByIndex($index, PCLZIP_OPT_EXTRACT_AS_STRING);
     }
 
-    /*! Errors are returned as textual messages.
+    /**
+	 * Errors are returned as textual messages.
      * This may get upgradedd to make use of proper codes.
      */
     function getErrors() {
@@ -71,7 +75,8 @@ class Zip
 	else return false;
     }
 
-    /*! Gets the file list from an existing zip.
+    /**
+	 * Gets the file list from an existing zip.
      */
     function getFileList() {
 	if(!isset($this->archive)) $this->archive = new PclZip($this->filename);

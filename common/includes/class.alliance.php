@@ -5,7 +5,9 @@
  * $HeadURL$
  */
 
-//! Creates a new Alliance or fetches an existing one from the database.
+/**
+ * Creates a new Alliance or fetches an existing one from the database.
+ */
 class Alliance
 {
 	private $id = false;
@@ -13,11 +15,12 @@ class Alliance
 	private $executed = false;
 	private $name = null;
 
-    //! Create a new Alliance object from the given $id.
-    
-    /*!
-     * \param $id The alliance ID.
-	 * \param $external true/false. Whether the given id is internal or external
+    /**
+     * Create a new Alliance object from the given $id.
+	 *
+	 * @param integer $id The alliance ID.
+	 * @param boolean $external true/false. Whether the given id is internal or external
+	 *
      */
     function Alliance($id = 0, $external = false)
 	{
@@ -25,7 +28,11 @@ class Alliance
 		else $this->id = intval($id);
     }
 
-	//! Return the alliance CCP ID.
+	/**
+	 * Return the alliance CCP ID.
+	 *
+	 * @return integer
+	 */
 	function getExternalID()
 	{
 		if($this->externalid) return $this->externalid;
@@ -41,7 +48,11 @@ class Alliance
 		else return 0;
 	}
 
-	//! Return the alliance ID.
+	/**
+	 * Return the alliance ID.
+	 *
+	 * @return integer
+	 */
 	function getID()
     {
 		if($this->id) return $this->id;
@@ -52,21 +63,29 @@ class Alliance
 		}
 		else return 0;
     }
-    //! Return the alliance name stripped of all non-ASCII non-alphanumeric characters.
+    /**
+     * Return the alliance name stripped of all non-ASCII non-alphanumeric characters.
+	 *
+	 * @return string
+	 */
     function getUnique()
     {
 		if(is_null($this->name)) $this->execQuery();
         return preg_replace('/[^a-zA-Z0-9]/', '', $this->name);
     }
-    //! Return the alliance name.
+    /**
+     * Return the alliance name.
+	 *
+	 * @return string
+	 */
     function getName()
     {
         if(is_null($this->name)) $this->execQuery();
         return $this->name;
     }
-    //! Fetch the alliance details from the database using the id given on construction.
-
-	/*!
+    /**
+     * Fetch the alliance details from the database using the id given on construction.
+	 *
 	 * If no record is found but we have an external ID then the result
 	 * will be fetched from CCP.
 	 */
@@ -91,10 +110,10 @@ class Alliance
 			$this->executed = true;
         }
     }
-    //! Add a new alliance to the database or update the details of an existing one.
-    
-    /*!
-     * \param $name An alliance name for this object.
+    /**
+     * Add a new alliance to the database or update the details of an existing one.
+	 *
+	 * @param string $name An alliance name for this object.
      */
     function add($name, $externalid = false)
     {
@@ -147,7 +166,14 @@ class Alliance
 			$this->externalid = intval($row['all_external_id']);
         }
     }
-	//! Set the CCP external ID for this alliance.
+	/**
+	 * Set the CCP external ID for this alliance.
+	 *
+	 * @param integer $externalid
+	 * @param boolean $update If true and the ID exists, update the existing entry.
+	 *
+	 * @return integer
+	 */
 	function setExternalID($externalid, $update = true)
 	{
 		$externalid = intval($externalid);
@@ -186,23 +212,32 @@ class Alliance
 		}
 		return false;
 	}
-	//! Check if this is a Faction.
+	/**
+	 * Check if this is a Faction.
+	 *
+	 * @return boolean
+	 */
 	function isFaction()
 	{
 		$factions = array("Amarr Empire", "Minmatar Republic", "Caldari State", "Gallente Federation");
 		return (in_array($this->getName(), $factions));
 	}
 
+	/**
+	 * Return the faction ID.
+	 *
+	 * @return integer The faction ID or 0 if this is not a faction.
+	 */
 	function getFactionID()
 	{
 		if(!$this->isFaction()) return 0;
 		return $this->getExternalID();
 	}
-	//! Return the URL for the alliance's portrait.
-
-    /*!
-     * \param $size The desired portrait size.
-	 * \return URL for a portrait.
+	/**
+	 * Return the URL for the alliance's portrait.
+	 *
+     * @param integer $size The desired portrait size.
+	 * @return string URL for a portrait.
      */
 	function getPortraitURL($size = 128)
 	{
@@ -217,7 +252,7 @@ class Alliance
 		return imageURL::getURL('Alliance', $this->externalid, $size);
 	}
 
-	/*!
+	/**
 	 * Fetch the alliance name from CCP using the stored external ID.
 	 */
 	private function fetchAlliance()

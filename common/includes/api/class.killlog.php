@@ -1032,7 +1032,9 @@ $url .= "&".'&beforeKillID=' . $refid;
 		return $row['kll_external_id'];
 	}
 
-	//! Check if the previous fetches had errors
+	/**
+	 * Check if the previous fetches had errors
+	 */
 	private function fetchErrors($keyindex)
 	{
 		$qry = DBFactory::getDBQuery();

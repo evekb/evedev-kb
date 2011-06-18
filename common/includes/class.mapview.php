@@ -403,7 +403,11 @@ class MapView
 		header("Content-type: image/png");
 		imagepng($img);
 	}
-	//! Generate filename to use for the cache file.
+	/**
+	 * Generate filename to use for the cache file.
+	 *
+	 * @return string 
+	 */
 	function getCacheFileName()
 	{
 		if ($this->mode_ == "map")
@@ -426,6 +430,11 @@ class MapView
 		}
 		return $cache;
 	}
+
+	/**
+	 * If the map is cached then output cached image and terminate. Else set
+	 * headers and return.
+	 */
 	private function checkCache()
 	{
 		if (file_exists($this->cachefile))

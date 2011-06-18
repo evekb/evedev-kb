@@ -14,15 +14,15 @@ class Item
 	public $row_ = null;
 	private $qry = null;
 
-	//! Construct a new Item.
-
-	/*!
+	/**
+	 * Construct a new Item.
+	 *
 	 * If $row is set then it will be used as an array of item attributes for
 	 * this Item. Otherwise the attributes will be fetched from the db using
 	 * the given ID.
 	 *
-	 * \param $id Item ID
-	 * \param $row Array of attributes.
+	 * @param integer $id Item ID
+	 * @param array $row Array of attributes.
 	*/
 	function Item($id = 0, $row = null)
 	{
@@ -302,6 +302,11 @@ class Item
 		return $a_size;
 	}
 
+	/**
+	 * Return the group ID for this item, or a given typeName
+	 * @param string $name
+	 * @return string
+	 */
 	public function get_group_id($name = null)
 	{
 		if(is_null($name) && $this->executed) return $this->row_['groupID'];
@@ -319,7 +324,12 @@ class Item
 		$row = $qry->getRow();
 		if ($row['groupID']) return $row['groupID'];
 	}
-	//! Return an attribute of this item.
+	/**
+	 * Return an attribute of this item.
+	 *
+	 * @param string $key
+	 * @return string
+	 */
 	public function getAttribute($key)
 	{
 		if (!$this->executed) $this->execQuery();

@@ -5,9 +5,9 @@
  * $HeadURL$
  */
 
-//! EDK IDFeed Syndication reader class.
-
-/*! This class is used to fetch and read the feed from another EDK board. It
+/**
+ * EDK IDFeed Syndication reader class.
+ * This class is used to fetch and read the feed from another EDK board. It
  *  adds all fetched kills to the board and returns the id of the highest kill
  *  fetched.
  *
@@ -35,11 +35,15 @@ class IDFeed
 	private $errorcode = 0;
 	const version = "1.07";
 
-	//! Construct the Fetcher class and initialise variables.
+	/**
+	 * Construct the Fetcher class and initialise variables.
+	 */
 	function IDFeed()
 	{
 	}
-	//! Fetch a new feed.
+	/**
+	 * Fetch a new feed.
+	 */
 	private function fetch()
 	{
 		if(!$this->url) return false;
@@ -75,10 +79,10 @@ class IDFeed
 		if($this->xml) return true;
 		else return false;
 	}
-	//! Fetch a new feed and parse it.
-
-	/*! Use the input parameters to fetch a feed.
-	 * \param $url The base URL of the feed to fetch
+	/**
+	 * Fetch a new feed and parse it.
+	 * Use the input parameters to fetch a feed.
+	 * @param string $url The base URL of the feed to fetch
 	 */
 	public function read($url = '')
 	{
@@ -180,13 +184,13 @@ class IDFeed
 		}
 		return false;
 	}
-	//! Set the lowest kill ID you want returned.
-
-	/*!
-	 * \param $id The minimum kill ID
-	 * \param $internal Set true to use internal kill IDs instead of CCP IDs.
+	/**
+	 * Set the lowest kill ID you want returned.
 	 *
-	 * \return False on error, True on success.
+	 * @param integer $id The minimum kill ID
+	 * @param boolean $internal Set true to use internal kill IDs instead of CCP IDs.
+	 *
+	 * @return mixed False on error, True on success.
 	 */
 	function setStartKill($id = 0, $internal = false)
 	{
@@ -203,26 +207,30 @@ class IDFeed
 		$this->options['range'] = $range;
 		return true;
 	}
-	//! Set a starting date in unix timestamp format.
+	/**
+	 * Set a starting date in unix timestamp format.
+	 */
 	function setStartDate($date = 0)
 	{
 		if(!$date = intval($date)) return false;
 		$this->options['startdate'] = $date;
 		return true;
 	}
-	//! Set an ending date in unix timestamp format.
+	/**
+	 * Set an ending date in unix timestamp format.
+	 */
 	function setEndDate($date = 0)
 	{
 		if(!$date = intval($date)) return false;
 		$this->options['enddate'] = $date;
 		return true;
 	}
-	//! Set the system to filter by.
-
-	/*!
-	 * \param $systemID Eve system ID.
+	/**
+	 * Set the system to filter by.
 	 *
-	 * \return False on error, True on success.
+	 * @param integer $systemID Eve system ID.
+	 *
+	 * @return mixed False on error, True on success.
 	 */
 	function setSystem($systemID = 0)
 	{
@@ -230,12 +238,12 @@ class IDFeed
 		$this->options['system'] = $systemID;
 		return true;
 	}
-	//! Set the region to filter by.
-
-	/*!
-	 * \param $regionID Eve region ID.
+	/**
+	 * Set the region to filter by.
 	 *
-	 * \return False on error, True on success.
+	 * @param integer $regionID Eve region ID.
+	 *
+	 * @return mixed False on error, True on success.
 	 */
 	function setRegion($regionID = 0)
 	{
@@ -243,7 +251,9 @@ class IDFeed
 		$this->options['region'] = $regionID;
 		return true;
 	}
-	//! Set true to include kills with no external ID;
+	/**
+	 * Set true to include kills with no external ID;
+	 */
 	function setAllKills($allkills = false)
 	{
 		if($allkills) $this->options['allkills'] = 1;
@@ -472,12 +482,18 @@ class IDFeed
 			foreach($item->rowset->row as $subitem) $this->processItem($subitem, $kill);
 		}
 	}
-	//! Return the array of posted kill IDs.
+	/**
+	 * Return the array of posted kill IDs.
+	 */
 	function getPosted()
 	{
 		return $this->posted;
 	}
-	//! Return an array of skipped kill IDs
+	/**
+	 * Return an array of skipped kill IDs
+	 *
+	 * @return array
+	 */
 	function getSkipped()
 	{
 		return $this->skipped;
@@ -490,14 +506,14 @@ class IDFeed
 	{
 		return $this->cachedTime;
 	}
-	//! Returns the id of a matching existing kill if found.
-
-	/*! This does not guarantee non-existence as it only checks external id and
+	/**
+	 * Returns the id of a matching existing kill if found.
+	 * This does not guarantee non-existence as it only checks external id and
 	 * hash
 	 *
-	 * \param $row A SimpleXML object containing the kill.
+	 * @param SimpleXML $row A SimpleXML object containing the kill.
 	 *
-	 * \return 0 if no match found, the kll_id if found.
+	 * @return integer 0 if no match found, the kll_id if found.
 	 */
 	private function killExists(&$row)
 	{

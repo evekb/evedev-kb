@@ -85,13 +85,13 @@ function roundsec($sec)
 
 	return number_format(round($s, 1), 1);
 }
-//! Check if a version of this template exists in this theme or for the igb.
-
-/*! If client is igb check if theme has an igb version. If not check in default
+/**
+ * Check if a version of this template exists in this theme or for the igb.
+ * If client is igb check if theme has an igb version. If not check in default
  *  theme for one. If client is not igb check if the theme has the template.
  *  If not then again return the default template.
  *
- *  \param $name string containing the name of the template.
+ *  @param string $name containing the name of the template.
  */
 function get_tpl($name)
 {
@@ -131,8 +131,14 @@ function get_tpl($name)
 	return $name.'.tpl';
 }
 
-// this is currently only a wrapper but might get
-// timestamp adjustment options in the future
+/**
+ * this is currently only a wrapper but might get
+ * timestamp adjustment options in the future
+ *
+ * @param string $format
+ * @param string $timestamp
+ * @return string
+ */
 function kbdate($format, $timestamp = null)
 {
 	if ($timestamp === null)
@@ -143,6 +149,10 @@ function kbdate($format, $timestamp = null)
 	return gmdate($format, $timestamp);
 }
 
+/**
+ *
+ * @return string
+ */
 function getYear()
 {
 	$test = kbdate('o');
@@ -153,10 +163,10 @@ function getYear()
 	return $test;
 }
 
-//! Return the number of weeks in the given year.
-
-/*! \param $year the year to count weeks for. Default is the current year.
- *  \return the number of weeks in the given year.
+/**
+ * Return the number of weeks in the given year.
+ * @param integer $year the year to count weeks for. Default is the current year.
+ * @return integer the number of weeks in the given year.
  */
 function getWeeks($year = null)
 {
@@ -164,13 +174,20 @@ function getWeeks($year = null)
 	$weeks = date('W', mktime(1, 0, 0, 12, 31, $year));
 	return $weeks == 1 ? 52 : $weeks;
 }
-//! Return start date for the given week, month, year or date.
-
-/*!
+/**
+ * Return start date for the given week, month, year or date.
+ *
  * weekno > monthno > startWeek > yearno
  * weekno > monthno > yearno
  * startDate and endDate are used if they restrict the date range further
  * monthno, weekno and startweek are not used if no year is set
+ *
+ * @param integer $week
+ * @param integer $year
+ * @param integer $month
+ * @param integer $startweek
+ * @param integer $startdate
+ * @return integer 
  */
 function makeStartDate($week = 0, $year = 0, $month = 0, $startweek = 0, $startdate = 0)
 {
@@ -196,14 +213,20 @@ function makeStartDate($week = 0, $year = 0, $month = 0, $startweek = 0, $startd
 	return $qstartdate;
 }
 
-//! Return end date for the given week, month, year or date.
-
-/*!
+/**
+ * Return end date for the given week, month, year or date.
+ *
  *  Priority order of date filters:
  * weekno > monthno > startWeek > yearno
  * weekno > monthno > yearno
  * startDate and endDate are used if they restrict the date range further
  * monthno, weekno and startweek are not used if no year is set
+ *
+ * @param integer $week
+ * @param integer $year
+ * @param integer $month
+ * @param integer $enddate
+ * @return integer
  */
 function makeEndDate($week = 0, $year = 0, $month = 0, $enddate = 0)
 {

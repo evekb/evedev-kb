@@ -6,7 +6,9 @@
  */
 
 
-//! Contains the attributes of a Ship Class.
+/**
+ * Contains the attributes of a Ship Class.
+ */
 class ShipClass
 {
 	private $executed = false;
@@ -21,55 +23,67 @@ class ShipClass
 		$this->id = intval($id);
 	}
 
-	//! Return the ID of this ship class object.
+	/**
+	 * Return the ID of this ship class object.
+	 */
 	public function getID()
 	{
 		return $this->id;
 	}
-	//! Return the name of this ship class object.
+	/**
+	 * Return the name of this ship class object.
+	 */
 	public function getName()
 	{
 		if (!$this->name) $this->execQuery();
 		return $this->name;
 	}
 
-	//! Get value for this ship class object in millions of ISK.
+	/**
+	 * Get value for this ship class object in millions of ISK.
+	 */
 	public function getValue()
 	{
 		if (is_null($this->value)) $this->execQuery();
 		return round($this->value / 1000000, 2);
 	}
-	//! Get value for this ship class object in ISK.
+	/**
+	 * Get value for this ship class object in ISK.
+	 */
 	public function getActualValue()
 	{
 		if (is_null($this->value)) $this->execQuery();
 		return $this->value;
 	}
-	//! Get the point value of this ship class.
+	/**
+	 * Get the point value of this ship class.
+	 */
 	public function getPoints()
 	{
 		if (is_null($this->points)) $this->execQuery();
 		return $this->points;
 	}
-	//! Set the name of this ship class object.
-
-	/*!
-	 * \param $name The new name for this object.
+	/**
+	 * Set the name of this ship class object.
+	 *
+	 * @param string $name The new name for this object.
 	 */
 	public function setName($name)
 	{
 		$this->name = $name;
 	}
-	//! Set the value of this ship class object.
-
-	/*!
-	 * \param $name The new value for this object.
+	/**
+	 * Set the value of this ship class object.
+	 *
+	 * @param string $name The new value for this object.
 	 */
 	public function setValue($value)
 	{
 		$this->value = $value;
 	}
-	//! Return the URL to a colour coded value indicator image.
+	/**
+	 * Return the URL to a colour coded value indicator image.
+	 */
 	public function getValueIndicator()
 	{
 		$value = $this->getValue();

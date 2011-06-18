@@ -3,22 +3,22 @@
  * $Date: 2010-06-04 23:26:29 +1000 (Fri, 04 Jun 2010) $
  * $Revision: 774 $
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/admin/feed_fetcher.php $
-*/
+ */
 
 /*
  * EDK Feed Syndication v1.9
  * based on liq's feed syndication mod v1.5
  *
-*/
+ */
 
 @set_time_limit(0);
 $feedversion = "v1.9";
 
-//! EDK Feed Syndication fetcher class.
-
-/*! This class is used to fetch the feed from another EDK board. It adds all
+/**
+ * EDK Feed Syndication fetcher class.
+ * This class is used to fetch the feed from another EDK board. It adds all
  * fetched kills to the board and returns the id of the highest kill fetched.
-*/
+ */
 class Fetcher
 {
 	public $lastkllid_ = 0;
@@ -31,25 +31,29 @@ class Fetcher
 	private $title = "";
 	private $description = "";
 	private $link = "";
-	private $killsAdded=0;
-	private $killsSkipped=0;
+	private $killsAdded = 0;
+	private $killsSkipped = 0;
 	private $hash = "";
 	private $time = "";
 	private $trust = "";
-//! Construct the Fetcher class and initialise variables.
+
+	/**
+	 * Construct the Fetcher class and initialise variables.
+	 */
 	function Fetcher()
 	{
+		
 	}
-//! Fetch a new feed.
 
-	/*! Use the input parameters to fetch a feed, parse it and add new kills
+	/**
+	 * Fetch a new feed.
+	 * Use the input parameters to fetch a feed, parse it and add new kills
 	 * to the db.
-	 * \param $url The base URL of the feed to fetch
-	 * \param $str The query string to add to the base URL.
-	 * \param $trusted Defines the level of trust of a feed.
-	 * \return HTML output summarising the results of the fetch.
-	*/
-
+	 * @param string $url The base URL of the feed to fetch
+	 * @param string $str The query string to add to the base URL.
+	 * @param integer $trusted Defines the level of trust of a feed.
+	 * @return string HTML output summarising the results of the fetch.
+	 */
 	function grab($url, $str, $accepttrust = 0)
 	{
 		global $feedversion;
@@ -60,22 +64,22 @@ class Fetcher
 		$fetchurl = $url.$str."&board=".urlencode(KB_TITLE);
 		if(strpos($fetchurl, 'apikills=1')) $this->apikills = true;
 		else $this->apikills = false;
-		if(strpos($fetchurl,'?') === false)
-			$fetchurl = substr_replace($fetchurl,'?', strpos($fetchurl,'&'),1);
+		if(strpos($fetchurl, '?') === false)
+				$fetchurl = substr_replace($fetchurl, '?', strpos($fetchurl, '&'), 1);
 		$this->uurl = $url;
-// only lists fetched with lastkllid are ordered by id.
+		// only lists fetched with lastkllid are ordered by id.
 		if(strpos($fetchurl, 'lastkllid')) $this->idordered = true;
 		else $this->idordered = false;
 		$this->feedfilename = KB_CACHEDIR.'/data/feed'.md5($this->uurl).'.xml';
 		$xml_parser = xml_parser_create("UTF-8");
-		xml_set_object ( $xml_parser, $this );
+		xml_set_object($xml_parser, $this);
 		xml_set_element_handler($xml_parser, "startElement", "endElement");
-		xml_set_character_data_handler ( $xml_parser, 'characterData' );
+		xml_set_character_data_handler($xml_parser, 'characterData');
 
 		if(file_exists($this->feedfilename))
 		{
-// Give up trying to parse the cached file after a day.
-			if (time() - filemtime($this->feedfilename) > 24 * 60 * 60 )
+			// Give up trying to parse the cached file after a day.
+			if(time() - filemtime($this->feedfilename) > 24 * 60 * 60)
 			{
 				unlink($this->feedfilename);
 				@unlink($this->feedfilename.'.stat');
@@ -89,27 +93,27 @@ class Fetcher
 			$http->set_timeout(60);
 			$http->set_header("Accept-Encoding: gzip");
 			$data = $http->get_content();
-			if($data == '') return "<i>Error getting XML data from ".$fetchurl."</i><br />".$http->getError()."<br />";
+			if($data == '')
+					return "<i>Error getting XML data from ".$fetchurl."</i><br />".$http->getError()."<br />";
 
-			if(strpos($http->get_header(),"Content-Encoding: gzip")
-				&& gzinflate(substr($data,10)))
-				$data = gzinflate(substr($data,10));
+			if(strpos($http->get_header(), "Content-Encoding: gzip")
+					&& gzinflate(substr($data, 10))) $data = gzinflate(substr($data, 10));
 
-			if(strpos($data,"<?xml") != 0) $data = substr($data, strpos($data,"<?xml"));
+			if(strpos($data, "<?xml") != 0) $data = substr($data, strpos($data, "<?xml"));
 			$data = trim($data); // helps with broken sites that add extra white space.
 
 			file_put_contents($this->feedfilename, $data);
 
-// Process all new pilots and corps
-// First check any are present.
-			if(strpos($data,"Corp: "))
+			// Process all new pilots and corps
+			// First check any are present.
+			if(strpos($data, "Corp: "))
 			{
 				$pos = 0;
 				$namelist = array();
 				$newcorp = new Corporation();
 				$newall = new Alliance();
 				$newall->add("None");
-// Corps
+				// Corps
 				while($pos = strpos($data, 'Corp: ', $pos + 1))
 				{
 					$endpos = strpos($data, "\n", $pos);
@@ -123,16 +127,16 @@ class Fetcher
 
 				$pos = 0;
 				$namelist = array();
-// Corps will repeat a lot so store the ones we find for reuse.
+				// Corps will repeat a lot so store the ones we find for reuse.
 				$corps = array();
-// Victims
+				// Victims
 				while($pos = strpos($data, 'Victim: ', $pos))
 				{
 					$endpos = strpos($data, "\n", $pos);
 					$name = substr($data, $pos + 8, $endpos - ($pos + 8));
 					$name = trim(str_replace("\r", '', $name));
 
-					$pos = strpos($data, "Corp: ",$pos);
+					$pos = strpos($data, "Corp: ", $pos);
 					if(!$pos) break;
 					if(strpos($name, "/")) continue;
 					$endpos = strpos($data, "\n", $pos);
@@ -146,7 +150,7 @@ class Fetcher
 					}
 					$namelist[slashfix($name)] = $corps[$cname];
 				}
-// Involved parties
+				// Involved parties
 				$pos = 0;
 				while($pos = strpos($data, 'Name: ', $pos))
 				{
@@ -155,9 +159,9 @@ class Fetcher
 					$name = trim(str_replace("\r", '', $name));
 					$name = preg_replace("/ \(laid the final blow\)/", "", $name);
 
-					$pos = strpos($data, "Corp: ",$pos);
+					$pos = strpos($data, "Corp: ", $pos);
 					if(!$pos) break;
-// Skip NPC names with a '/' in them.
+					// Skip NPC names with a '/' in them.
 					if(strpos($name, "/")) continue;
 					$endpos = strpos($data, "\n", $pos);
 					$cname = substr($data, $pos + 6, $endpos - ($pos + 6));
@@ -171,8 +175,8 @@ class Fetcher
 					$namelist[slashfix($name)] = $corps[$cname];
 				}
 				Fetcher::addPilotNames($namelist);
-				unset ($corps);
-				unset ($namelist);
+				unset($corps);
+				unset($namelist);
 			}
 		}
 		else
@@ -194,13 +198,13 @@ class Fetcher
 				$this->tracktime_ = 0;
 			}
 		}
-		if (!xml_parse($xml_parser, $data, true))
+		if(!xml_parse($xml_parser, $data, true))
 		{
 			unlink($this->feedfilename);
 			@unlink($this->feedfilename.'.stat');
 			@unlink($this->feedfilename.'.tstat');
 			return "<i>Error parsing XML data from ".$fetchurl."</i><br />".
-				xml_error_string(xml_get_error_code($xml_parser))."<br />\n";
+			xml_error_string(xml_get_error_code($xml_parser))."<br />\n";
 		}
 
 		xml_parser_free($xml_parser);
@@ -208,7 +212,7 @@ class Fetcher
 		@unlink($this->feedfilename.'.stat');
 		@unlink($this->feedfilename.'.tstat');
 
-		if (config::get('fetch_verbose') )
+		if(config::get('fetch_verbose'))
 		{
 			if($this->killsAdded == 1) $suffixA = '';
 			else $suffixA = 's';
@@ -227,13 +231,16 @@ class Fetcher
 
 		return $this->html;
 	}
-//! XML start of element parser.
+
+	/**
+	 * XML start of element parser.
+	 */
 	function startElement($parser, $name, $attrs)
 	{
-//	if ($this->insideitem)
+		//	if ($this->insideitem)
 		$this->tag = $name;
-//else
-		if ($name == "ITEM")
+		//else
+		if($name == "ITEM")
 		{
 			$this->insideitem = true;
 			$this->description = '';
@@ -242,14 +249,14 @@ class Fetcher
 		}
 	}
 
-//! XML end of element parser.
+	/**
+	 * XML end of element parser.
+	 */
 	function endElement($parser, $name)
 	{
-//global $this->html;
-
-		if ($name == "ITEM")
+		if($name == "ITEM")
 		{
-			if ( $this->description !="")
+			if($this->description != "")
 			{
 				$this->description = trim(str_replace("\r", '', $this->description));
 				$this->hash = trim($this->hash);
@@ -258,20 +265,20 @@ class Fetcher
 				$month = substr($this->description, 5, 2);
 				$day = substr($this->description, 8, 2);
 				$killstamp = mktime(0, 0, 0, $month, $day, $year);
-// Not working as intended so removing for now.
-				if ( 0 && $this->idordered && $this->tracklast_ > intval($this->title))
+				// Not working as intended so removing for now.
+				if(0 && $this->idordered && $this->tracklast_ > intval($this->title))
 				{
 					$this->html .= "Killmail ID ".intval($this->title)." already processed <br />";
 				}
-				elseif (0 && !$this->idordered && $this->tracktime_ > $killstamp)
+				elseif(0 && !$this->idordered && $this->tracktime_ > $killstamp)
 				{
 					$this->html .= "Killmail date ".intval($this->title)." already processed. <br />";
 				}
 				else
 				{
-//Check age of mail
+					//Check age of mail
 					if(config::get('filter_apply')
-						&& $killstamp < config::get('filter_date'))
+							&& $killstamp < config::get('filter_date'))
 					{
 						$killid = -4;
 					}
@@ -286,15 +293,15 @@ class Fetcher
 							// but don't store the ID
 							if($this->trust > 0)
 							{
-								$this->trust ++;
-								$parser = new Parser( $this->description, $this->apiID);
+								$this->trust++;
+								$parser = new Parser($this->description, $this->apiID);
 								$parser->setTrust($this->trust);
 							}
 							else
 							{
-								$parser = new Parser( $this->description);
+								$parser = new Parser($this->description);
 							}
-							$killid = $parser->parse( true );
+							$killid = $parser->parse(true);
 						}
 						else $killid = -3;
 					}
@@ -302,13 +309,13 @@ class Fetcher
 					{
 						$qry = DBFactory::getDBQuery();
 						$sql = "SELECT kll_trust FROM kb3_mails WHERE kll_timestamp = '".
-							$qry->escape($this->time)."' AND kll_hash = 0x".
-							$qry->escape($this->hash);
+								$qry->escape($this->time)."' AND kll_hash = 0x".
+								$qry->escape($this->hash);
 						$qry->execute($sql);
 						if(!$qry->recordCount())
 						{
-							$parser = new Parser( $this->description );
-							$killid = $parser->parse( true );
+							$parser = new Parser($this->description);
+							$killid = $parser->parse(true);
 						}
 						else
 						{
@@ -319,53 +326,55 @@ class Fetcher
 					}
 					elseif(!$this->apikills)
 					{
-						$parser = new Parser( $this->description );
-						$killid = $parser->parse( true );
+						$parser = new Parser($this->description);
+						$killid = $parser->parse(true);
 					}
-					if ( $killid <= 0 )
+					if($killid <= 0)
 					{
-						if ( $killid == 0 && config::get('fetch_verbose') )
-							$this->html .= "Killmail ".intval($this->title)." is malformed. ".$this->uurl." Kill ID = ".$this->title." <br />\n";
-						if ( $killid == -1 && config::get('fetch_verbose') )
-							$this->html .= "Killmail ".intval($this->title)." already posted <a href=\"?a=kill_detail&amp;kll_id=".$parser->getDupeID()."\">here</a>.<br />\n";
-						if ( $killid == -2 && config::get('fetch_verbose') )
-							$this->html .= "Killmail ".intval($this->title)." is not related to ".KB_TITLE.".<br />\n";
-						if ( $killid == -3 && config::get('fetch_verbose') )
-							$this->html .= "Killmail ".intval($this->title)." already posted <a href=\"?a=kill_detail&amp;kll_external_id=".$this->apiID."\">here</a>.<br />\n";
-						if ( $killid == -4 && config::get('fetch_verbose') )
-							$this->html .= "Killmail ".intval($this->title)." too old to post with current settings.<br />\n";
-						if ( $killid == -5 && config::get('fetch_verbose') )
-							$this->html .= "Killmail ".intval($this->title)." has already been deleted.<br />\n";
+						if($killid == 0 && config::get('fetch_verbose'))
+								$this->html .= "Killmail ".intval($this->title)." is malformed. ".$this->uurl." Kill ID = ".$this->title." <br />\n";
+						if($killid == -1 && config::get('fetch_verbose'))
+								$this->html .= "Killmail ".intval($this->title)." already posted <a href=\"?a=kill_detail&amp;kll_id=".$parser->getDupeID()."\">here</a>.<br />\n";
+						if($killid == -2 && config::get('fetch_verbose'))
+								$this->html .= "Killmail ".intval($this->title)." is not related to ".KB_TITLE.".<br />\n";
+						if($killid == -3 && config::get('fetch_verbose'))
+								$this->html .= "Killmail ".intval($this->title)." already posted <a href=\"?a=kill_detail&amp;kll_external_id=".$this->apiID."\">here</a>.<br />\n";
+						if($killid == -4 && config::get('fetch_verbose'))
+								$this->html .= "Killmail ".intval($this->title)." too old to post with current settings.<br />\n";
+						if($killid == -5 && config::get('fetch_verbose'))
+								$this->html .= "Killmail ".intval($this->title)." has already been deleted.<br />\n";
 						$this->killsSkipped++;
 					}
 					else
 					{
-						if(strpos($this->uurl, '?')) $logurl = substr($this->uurl,0,strpos($this->uurl, '?')).'?a=kill_detail&kll_id='.intval($this->title);
+						if(strpos($this->uurl, '?'))
+								$logurl = substr($this->uurl, 0, strpos($this->uurl, '?')).'?a=kill_detail&kll_id='.intval($this->title);
 						else $logurl = $this->uurl.'?a=kill_detail&kll_id='.intval($this->title);
 						logger::logKill($killid, $logurl);
 
 						$this->html .= "Killmail ".intval($this->title)." successfully posted <a href=\"?a=kill_detail&kll_id=".$killid."\">here</a>.<br />";
 
-						if (config::get('fetch_comment'))
+						if(config::get('fetch_comment'))
 						{
 							$comments = new Comments($killid);
 							$comments->addComment("Feed Syndication ", config::get('fetch_comment')." mail fetched from: ".$this->uurl);
 						}
 						$this->killsAdded++;
 					}
-					if( $this->idordered && intval($this->title) > 0)
+					if($this->idordered && intval($this->title) > 0)
 					{
 						$this->tracklast_ = intval($this->title);
 						file_put_contents($this->feedfilename.'.stat', strval(intval($this->title)));
 					}
-					elseif( !$this->idordered && $killstamp > 0)
+					elseif(!$this->idordered && $killstamp > 0)
 					{
 						$this->tracktime_ = $killstamp;
 						file_put_contents($this->feedfilename.'.tstat', strval($killstamp));
 					}
 				}
 			}
-			if($this->title && intval($this->title) > $this->lastkllid_) $this->lastkllid_ = intval($this->title);
+			if($this->title && intval($this->title) > $this->lastkllid_)
+					$this->lastkllid_ = intval($this->title);
 			$this->title = "";
 			$this->description = "";
 			$this->link = "";
@@ -376,12 +385,15 @@ class Fetcher
 			$this->trust = "";
 		}
 	}
-//! XML character data parser.
+
+	/**
+	 * XML character data parser.
+	 */
 	function characterData($parser, $data)
 	{
-		if ($this->insideitem)
+		if($this->insideitem)
 		{
-			switch ($this->tag)
+			switch($this->tag)
 			{
 				case "TITLE":
 					$this->title .= $data;
@@ -406,23 +418,25 @@ class Fetcher
 					break;
 			}
 		}
-		elseif($this->tag=="FINALKILL")
+		elseif($this->tag == "FINALKILL")
 		{
 			if(!($this->finalkllid_ > intval($data))) $this->finalkllid_ = intval($data);
 		}
-		elseif($this->tag=="COMBINED")
+		elseif($this->tag == "COMBINED")
 		{
 			$this->combined_ = true;
 		}
 	}
-//! Add an array of pilots to be checked.
 
-//! \param $names array of corp names indexed by pilot name.
+	/**
+	 * Add an array of pilots to be checked.
+	 * @param array $names array of corp names indexed by pilot name.
+	 */
 	function addPilotNames($names)
 	{
 		$qry = DBFactory::getDBQuery(true);
 		$checklist = array();
-		foreach($names as $pilot =>$corp)
+		foreach($names as $pilot => $corp)
 		{
 			$qry->execute("SELECT 1 FROM kb3_pilots WHERE plt_name = '".$pilot."'");
 			if(!$qry->recordCount()) $checklist[] = $pilot;
@@ -433,7 +447,7 @@ class Fetcher
 		$myID = new API_NametoID();
 		while($position < count($checklist))
 		{
-			$namestring = str_replace(" ", "%20", implode(',',array_slice($checklist,$position, 100, true)));
+			$namestring = str_replace(" ", "%20", implode(',', array_slice($checklist, $position, 100, true)));
 			$namestring = str_replace("\'", "'", $namestring);
 			$position +=100;
 			$myID->setNames($namestring);
@@ -444,7 +458,6 @@ class Fetcher
 			$myNames = array_merge($myNames, $tempNames);
 		}
 		$newpilot = new Pilot();
-//$sql = '';
 		if(!is_array($myNames)) die("Name fetch error : ".$myNames);
 		foreach($myNames as $name)
 		{
@@ -458,14 +471,16 @@ class Fetcher
 		}
 		if($sql) $qry->execute($sql);
 	}
-//! Add an array of pilots to be checked.
 
-//! \param $names array of corp names indexed by pilot name.
+	/**
+	 * Add an array of pilots to be checked.
+	 * @param array $names array of corp names indexed by pilot name.
+	 */
 	function addCorpNames($names)
 	{
 		$qry = DBFactory::getDBQuery(true);
 		$checklist = array();
-		foreach($names as $corp =>$all)
+		foreach($names as $corp => $all)
 		{
 			$qry->execute("SELECT 1 FROM kb3_corps WHERE crp_name = '".$corp."'");
 			if(!$qry->recordCount()) $checklist[] = $corp;
@@ -475,7 +490,7 @@ class Fetcher
 		$myNames = array();
 		while($position < count($checklist))
 		{
-			$namestring = str_replace(" ", "%20", implode(',',array_slice($checklist,$position, 100, true)));
+			$namestring = str_replace(" ", "%20", implode(',', array_slice($checklist, $position, 100, true)));
 			$namestring = str_replace("\'", "'", $namestring);
 			$position +=100;
 			$myID = new API_NametoID();
@@ -486,7 +501,6 @@ class Fetcher
 			$myNames = array_merge($myNames, $tempNames);
 		}
 		$newcorp = new Corporation();
-//$sql = '';
 		foreach($myNames as $name)
 		{
 			if(isset($names[slashfix($name['name'])]) && $name['characterID'])

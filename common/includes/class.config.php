@@ -13,10 +13,10 @@ class Config
 	private static $configCacheGlobal = array();
 	private static $qry = null;
 	private static $initialised = false;
-	//! Set up the config for the given site.
-	
-	/*!
-	 *  \param $site The site to configure for. Default is KB_SITE define.
+	/**
+	 * Set up the config for the given site.
+	 *
+	 * @param string $site The site to configure for. Default is KB_SITE define.
 	 */
 	function Config($site = KB_SITE)
 	{
@@ -24,6 +24,11 @@ class Config
 		self::init();
 	}
 
+	/**
+	 *
+	 * @param string $name
+	 * @return boolean
+	 */
 	public static function checkCheckbox($name)
 	{
 		if (!self::$initialised) self::init();
@@ -37,6 +42,9 @@ class Config
 		return false;
 	}
 
+	/**
+	 * @return boolean
+	 */
 	public static function init()
 	{
 		if (self::$initialised) return;
@@ -80,7 +88,12 @@ class Config
 		self::$initialised = true;
 	}
 
-
+	/**
+	 *
+	 * @param string $key
+	 * @param mixed $data
+	 * @return boolean
+	 */
 	public static function put($key, $data)
 	{
 		if (!self::$initialised) self::init();
@@ -91,6 +104,11 @@ class Config
 		self::$configCache[$key] = $data;
 	}
 
+	/**
+	 * @param string $key
+	 * @param boolean $global Whether to delete this from all configs
+	 * @return boolean
+	 */
 	public static function del($key, $global = false)
 	{
 		if (!self::$initialised) self::init();
@@ -112,6 +130,13 @@ class Config
                        AND cfg_site = '".self::$configSite."'");
 	}
 
+	/**
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 * @param boolean $global Whether to set this in all configs
+	 * @return boolean
+	 */
 	public static function set($key, $value, $global = false)
 	{
 		if (!self::$initialised) self::init();
@@ -168,6 +193,10 @@ class Config
 
 	}
 
+	/**
+	 * @param string $key
+	 * @return mixed
+	 */
 	public static function get($key)
 	{
 		if (!self::$initialised) self::init();

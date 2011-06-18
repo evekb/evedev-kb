@@ -6,23 +6,23 @@
  */
 
 
-//! Hashed object caching class backed by memcache
-
-/*! Extends the cache handler to handle any type of object. Instead of
+/**
+ * Hashed object caching class backed by memcache
+ * Extends the cache handler to handle any type of object. Instead of
  * using the given filename a key is used to create a hashed name.
  */
 class CacheHandlerHashedMem extends CacheHandler
 {
 	private static $maxage = 0;
 	
-	//! Add a file to the cache.
-
-	/*!
-	 * \param $key The key for the required object.
-	 * \param $object The object to store.
-	 * \param $location Fetch from a particular location if needed. (identical to $key.$location)
+	/**
+	 * Add a file to the cache.
 	 *
-	 * \return Boolean true if successful, false if an error occurred.
+	 * @param string $key The key for the required object.
+	 * @param mixed$object The object to store.
+	 * @param string $location Fetch from a particular location if needed. (identical to $key.$location)
+	 *
+	 * @return boolean true if successful, false if an error occurred.
 	 */
 	public static function put($key, $data, $location = '', $age = null)
 	{
@@ -42,13 +42,13 @@ class CacheHandlerHashedMem extends CacheHandler
 
 		return $result;
 	}
-	//! Get a file from the cache
-
-	/*!
-	 * \param $key The key for the required object.
-	 * \param $location Fetch from a particular location if needed.
+	/**
+	 * Get a file from the cache
 	 *
-	 * \return A copy of the stored object.
+	 * @param string $key The key for the required object.
+	 * @param string $location Fetch from a particular location if needed.
+	 *
+	 * @return mixed A copy of the stored object.
 	 */
 	public static function get($key, $location = '')
 	{
@@ -57,13 +57,13 @@ class CacheHandlerHashedMem extends CacheHandler
 		$hash = self::hash($key.$location);
 		return unserialize($mc->get($hash));
 	}
-	//! Return true if the file is in the cache.
-
-	/*!
-	 * \param $key The key for the required object.
-	 * \param $location Fetch from a particular location if needed.
+	/**
+	 * Return true if the file is in the cache.
 	 *
-	 * \return true if the stored object exists, false otherwise.
+	 * @param string $key The key for the required object.
+	 * @param string $location Fetch from a particular location if needed.
+	 *
+	 * @return boolean true if the stored object exists, false otherwise.
 	 */
 	public static function exists($key, $location = '')
 	{
@@ -72,36 +72,42 @@ class CacheHandlerHashedMem extends CacheHandler
 		$hash = self::hash($key,$location);
 		return $mc->get($hash) !== false;
 	}
-	//! Get the externally accessible address of the cached file.
-
-	/*!
-	 * \return false. There is no valid path to a memcached object.
+	/**
+	 * Get the externally accessible address of the cached file.
+	 *
+	 * @return boolean false. There is no valid path to a memcached object.
 	 */
 	public static function getExternal()
 	{
 		return false;
 	}
-	//! Get the internally accessible address of the cached file.
-
-	/*!
-	 * \return false. There is no valid path to a memcached object.
+	/**
+	 * Get the internally accessible address of the cached file.
+	 *
+	 * @return boolean false. There is no valid path to a memcached object.
 	 */
 	public static function getInternal()
 	{
 		return false;
 	}
-	//! Get the hash of the given $key.$location.
+	/**
+	 * Get the hash of the given $key.$location.
+	 *
+	 * @param string $key
+	 * @param string $location
+	 * @return string
+	 */
 	private static function hash($key, $location = '')
 	{
 		return md5($key.$location);
 	}
-	//! Remove a cached object
-
-	/*!
-	 * \param $key The key for the required object.
-	 * \param $location Fetch from a particular location if needed.
+	/**
+	 * Remove a cached object
 	 *
-	 * \return true if removed or not in the cache, false on failure.
+	 * @param string $key The key for the required object.
+	 * @param string $location Fetch from a particular location if needed.
+	 *
+	 * @return boolean true if removed or not in the cache, false on failure.
 	 */
 	public static function remove($key, $location = '')
 	{
@@ -110,13 +116,13 @@ class CacheHandlerHashedMem extends CacheHandler
 		$hash = self::hash($key.$location);
 		return $mc->delete($hash);
 	}
-	//! Return the age of the given cache file.
-
-	/*!
-	 * \param $key The key for the required object.
-	 * \param $location Fetch from a particular location if needed.
+	/**
+	 * Return the age of the given cache file.
 	 *
-	 * \return The age in seconds of the stored object.
+	 * @param string $key The key for the required object.
+	 * @param string $location Fetch from a particular location if needed.
+	 *
+	 * @return integerThe age in seconds of the stored object.
 	 */
 	public static function age($key, $location = '')
 	{
@@ -127,10 +133,10 @@ class CacheHandlerHashedMem extends CacheHandler
 		if($age === false) return false;
 		return time() - (int)$age;
 	}
-	//! Set the default maximum age.
-
-	/*!
-	 * \param $age The new default maximum age
+	/**
+	 * Set the default maximum age.
+	 *
+	 * @param integer $age The new default maximum age
 	 */
 	public static function setMaxAge($age = 0)
 	{

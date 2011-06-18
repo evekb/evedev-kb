@@ -6,10 +6,11 @@
  */
 
 
-//! Fetches a information for each item in a list.
-
-/*! The list is based on dropped items for given kill ids, dropped items for
- *  given kill ids or a list of itemIDs
+/**
+ * Fetches a information for each item in a list.
+ *
+ * The list is based on dropped items for given kill ids, dropped items for
+ * given kill ids or a list of itemIDs
  */
 class ItemList
 {
@@ -27,19 +28,30 @@ class ItemList
 		$this->qry = DBFactory::getDBQuery();
 	}
 
-	// Add an itemID to the list of items to check.
+	/**
+	 * Add an itemID to the list of items.
+	 * @param integer $itemID
+	 */
 	function addItem($itemID)
 	{
 		if($this->executed) return false;
 		$this->itemarray[] = $itemID;
 	}
 
+	/**
+	 * Add an killID to the list of kills to check for destroyed items.
+	 * @param integer $killID
+	 */
 	function addKillDestroyed($killID)
 	{
 		if($this->executed) return false;
 		$this->destroyedIDarray[] = $killID;
 	}
 
+	/**
+	 * Add an killID to the list of kills to check for dropped items.
+	 * @param integer $killID
+	 */
 	function addKillDropped($killID)
 	{
 		if($this->executed) return false;
@@ -82,7 +94,11 @@ class ItemList
 		$this->executed = true;
 	}
 
-	//! Iterate through the list of items returned, returning one for each call
+	/**
+	 * Iterate through the list of items returned, returning one for each call
+	 *
+	 * @return Item
+	 */
 	function getItem()
 	{
 		if (!$this->executed) $this->execute();
@@ -95,7 +111,9 @@ class ItemList
 		return null;
 	}
 
-	//! Rewind the list of items to the start.
+	/**
+	 * Rewind the list of items to the start.
+	 */
 	function rewind()
 	{
 		$this->qry->rewind();

@@ -6,9 +6,18 @@
  */
 
 
-//! Factory class to create
+/**
+ * Factory class to create dbquery objects.
+ */
 class DBFactory
 {
+	/**
+	 * Create and return a db query object.
+	 *
+	 * @param boolean $forceNormal true to disable cached queries
+	 * 
+	 * @return DBBaseQuery
+	 */
 	public static function getDBQuery($forceNormal = false)
 	{
 		if (defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE == true)

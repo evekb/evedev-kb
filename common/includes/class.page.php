@@ -7,7 +7,9 @@
 
 
 
-//! Construct an output page.
+/**
+ * Construct an output page.
+ */
 class Page
 {
 	private $title = "";
@@ -21,9 +23,11 @@ class Page
 	private $contenthtml = "";
 	private $contexthtml = array();
 
-	//! Construct a Page class with the given title.
-
-	//! Page generation timer is started on Page creation.
+	/**
+	 * Construct a Page class with the given title.
+	 *
+	 * Page generation timer is started on Page creation.
+	 */
 	function Page($title = '', $cachable = true)
 	{
 		global $timeStarted;
@@ -37,17 +41,23 @@ class Page
 		$this->title = htmlspecialchars($title);
 		$this->cachable = $cachable;
 	}
-	//! Set the content html that is displayed in the main body panel.
+	/**
+	 * Set the content html that is displayed in the main body panel.
+	 */
 	public function setContent($html)
 	{
 		$this->contenthtml = $html;
 	}
-	//! Set the context html that is displayed in the sidebar.
+	/**
+	 * Set the context html that is displayed in the sidebar.
+	 */
 	public function addContext($html)
 	{
 		$this->contexthtml[] = $html;
 	}
-	//! Create and display an error message.
+	/**
+	 * Create and display an error message.
+	 */
 	public function error($message)
 	{
 		global $smarty;
@@ -56,20 +66,26 @@ class Page
 		$this->setContent($smarty->fetch(get_tpl('error')));
 		$this->generate();
 	}
-	//! Add a line to the header html.
+	/**
+	 * Add a line to the header html.
+	 */
 	public function addHeader($line)
 	{
 		$this->headlines[] = $line;
 	}
-	//! Add a line to the body html.
+	/**
+	 * Add a line to the body html.
+	 */
 	public function addBody($line)
 	{
 		$this->bodylines[] = $line;
 	}
-	//! Generate the output html.
-
-	//! Output is constructed from the variables passed in through the
-	//! add methods and the index.tpl.
+	/**
+	 * Generate the output html.
+	 *
+	 * Output is constructed from the variables passed in through the
+	 * add methods and the index.tpl.
+	 */
 	public function generate()
 	{
 		global $smarty;
@@ -134,14 +150,38 @@ class Page
 		$smarty->assign('context_html', implode($this->contexthtml));
 		$smarty->assignByRef('context_divs', $this->contexthtml);
 		event::call('smarty_displayindex', $smarty);
-		$smarty->display(get_tpl('index'));
+
+		$html = $smarty->fetch(get_tpl('index'));
+		if(defined('BETA') && BETA)
+		{
+			$len = 0;
+			$pos = 0;
+			while($pos = strpos($html, '/?a=', $pos))
+			{
+				$pos = $pos + 4;
+				$len = 0;
+				while(!in_array(substr($html, $pos + ++$len, 1), array('"', "'", '&') ));
+				$newpage = substr($html, $pos, $len);
+				$prepos = strrpos($html, $newpage, $pos);
+				if($prepos + strlen($newpage) < $pos) continue;
+				$html = str_replace("/$newpage/?a=$newpage", "/$newpage/?", $html);
+			}
+			
+			$html = preg_replace('/(["\'])\?a=(\w*)/', '\1'.KB_HOST.'/index/\2/?', $html);
+			$html = preg_replace('/'.str_replace('/', '\/', KB_HOST).'\/\?a=(\w*)/', KB_HOST.'/index/\1/?', $html);
+		}
+		echo $html;
 	}
-	//! Return whether this will display as an igb page.
+	/**
+	 * Return whether this will display as an igb page.
+	 */
 	public function igb()
 	{
 		return $this->igb;
 	}
-	//! Set the onload variable for Smarty.
+	/**
+	 * Set the onload variable for Smarty.
+	 */
 	public function setOnLoad($onload)
 	{
 		$this->onload = $onload;
@@ -156,7 +196,9 @@ class Page
 	{
 		return $this->title;
 	}
-	//! If this is not an admin session redirect to the login page.
+	/**
+	 * If this is not an admin session redirect to the login page.
+	 */
 	public function setAdmin()
 	{
 		if (!Session::isAdmin())
@@ -166,49 +208,67 @@ class Page
 			exit;
 		}
 	}
-	//! Return whether this is an admin session.
+	/**
+	 * Return whether this is an admin session.
+	 */
 	public function isAdmin()
 	{
 		return Session::isAdmin();
 	}
-	//! Return whether this is a superadmin session.
+	/**
+	 * Return whether this is a superadmin session.
+	 */
 	public function isSuperAdmin()
 	{
 		return Session::isSuperAdmin();
 	}
-	//! If this is not a superadmin session redirect to the login page.
+	/**
+	 * If this is not a superadmin session redirect to the login page.
+	 */
 	public function setSuperAdmin()
 	{
 		if (!Session::isSuperAdmin())
 			Header("Location: ?a=login");
 	}
-	//! Set whether this page is cacheable.
+	/**
+	 * Set whether this page is cacheable.
+	 */
 	public function setCachable($cachable)
 	{
 		$this->cachable = $cachable;
 	}
-	//! Set how long to cache this page.
+	/**
+	 * Set how long to cache this page.
+	 */
 	public function setCacheTime($cachetime)
 	{
 		$this->cachetime = $cachetime;
 	}
 }
-//! Construct a menu.
-
-//! A Menu is a wrapper around an array of links and matching text.
+/**
+ * Construct a menu.
+ * 
+ * A Menu is a wrapper around an array of links and matching text.
+ */
 class Menu
 {
 	private $menu = array();
-	//! Construct a blank side menu.
+	/**
+	 * Construct a blank side menu.
+	 */
 	function Menu()
 	{
 	}
-	//! Return the array of menu options.
+	/**
+	 * Return the array of menu options.
+	 */
 	public function get()
 	{
 		return $this->menu;
 	}
-	//! Add a link and text to the array of menu options.
+	/**
+	 * Add a link and text to the array of menu options.
+	 */
 	public function add($link, $text)
 	{
 		$this->menu[] = array('link' => $link, 'text' => $text);

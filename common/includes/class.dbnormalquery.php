@@ -5,21 +5,27 @@
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/includes/class.db.php $
  */
 
-//! mysqli uncached query class. Manages SQL queries to a MySQL DB using mysqli.
+/**
+ * mysqli uncached query class. Manages SQL queries to a MySQL DB using mysqli.
+ */
 class DBNormalQuery extends DBBaseQuery
 {
 	private $resid;
-	//! Prepare a connection for a new mysqli query.
+	/**
+	 * Prepare a connection for a new mysqli query.
+	 */
 	function DBNormalQuery()
 	{
 		self::$dbconn = new DBConnection();
 	}
 
-	//! Execute an SQL string.
+	/**
+	 * Execute an SQL string.
+	 */
 
 	/*
      * If DB_HALTONERROR is set then this will exit on an error.
-     * \return false on error or true if successful.
+     * @return boolean false on error or true if successful.
 	*/
 	function execute($sql)
 	{
@@ -58,7 +64,11 @@ class DBNormalQuery extends DBBaseQuery
 
 		return true;
 	}
-	//! Return the number of rows returned by the last query.
+	/**
+	 * Return the number of rows returned by the last query.
+	 *
+	 * @return boolean
+	 */
 	function recordCount()
 	{
 		if ($this->resid)
@@ -67,7 +77,11 @@ class DBNormalQuery extends DBBaseQuery
 		}
 		return false;
 	}
-	//! Return the next row of results from the last query.
+	/**
+	 * Return the next row of results from the last query.
+	 *
+	 * @return array
+	 */
 	function getRow()
 	{
 		if ($this->resid)
@@ -76,30 +90,36 @@ class DBNormalQuery extends DBBaseQuery
 		}
 		return false;
 	}
-	//! Reset list of results to return the first row from the last query.
+	/**
+	 * Reset list of results to return the first row from the last query.
+	 */
 	function rewind()
 	{
 		if(!is_null($this->resid)) @mysqli_data_seek($this->resid, 0);
 	}
-	//! Return the auto-increment ID from the last insert operation.
+	/**
+	 * Return the auto-increment ID from the last insert operation.
+	 */
 	function getInsertID()
 	{
 		return self::$dbconn->id()->insert_id;
 	}
-	//! Return the most recent error message for the DB connection.
+	/**
+	 * Return the most recent error message for the DB connection.
+	 */
 	function getErrorMsg()
 	{
 		$msg .= "<br>Query failed. " . mysqli_error(self::$dbconn->id());
 
 		return $msg;
 	}
-	//! Set the autocommit status.
-
-	/*! The default of true commits after every query.
+	/**
+	 * Set the autocommit status.
+	 * The default of true commits after every query.
      * If set to false the queries will not be commited until autocommit is set
      * to true.
-     *  \param $commit The new autocommit status.
-     *  \return true on success and false on failure.
+     *  @param boolean $commit The new autocommit status.
+     *  @return mixed true on success and false on failure.
 	*/
 	function autocommit($commit = true)
 	{
@@ -111,7 +131,11 @@ class DBNormalQuery extends DBBaseQuery
 		
 		return self::$dbconn->id()->autocommit($commit);
 	}
-	//! Rollback all queries in the current transaction.
+	/**
+	 * Rollback all queries in the current transaction.
+	 *
+	 * @return boolean
+	 */
 	function rollback()
 	{
 		return mysqli_rollback(self::$dbconn->id());

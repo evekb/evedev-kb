@@ -5,13 +5,19 @@
  * $HeadURL$
  */
 
-//! Page caching class
+/**
+ * Page caching class
+ */
 
-//! Contains methods to create and retrieve a complete cache of the current page.
+/**
+ * Contains methods to create and retrieve a complete cache of the current page.
+ */
 class cache
 {
 	private static $cacheName = null;
-	//! Check the server load using /proc/loadavg.
+	/**
+	 * Check the server load using /proc/loadavg.
+	 */
 	public static function checkLoad()
 	{
 		if (PHP_OS != 'Linux')
@@ -40,7 +46,9 @@ class cache
 			config::set('is_reinforced', 0);
 		}
 	}
-	//! Check if the current page should be cached.
+	/**
+	 * Check if the current page should be cached.
+	 */
 	private static function shouldCache($page = '')
 	{
 		// never cache for admins
@@ -64,7 +72,9 @@ class cache
 		}
 		return false;
 	}
-	//! Check if the current page is cached and valid then send it if so.
+	/**
+	 * Check if the current page is cached and valid then send it if so.
+	 */
 	public static function check($page)
 	{
 		// Set an old expiry date to discourage the browser from trying to
@@ -163,7 +173,9 @@ class cache
 		// If the page cache is off we still compress pages if asked.
 		elseif($usegz) ob_start("ob_gzhandler");
 	}
-	//! Generate the cache for the current page.
+	/**
+	 * Generate the cache for the current page.
+	 */
 	public static function generate()
 	{
 		if (cache::shouldCache())
@@ -175,18 +187,6 @@ class cache
 			if(DB_USE_MEMCACHE) $cachehandler = new CacheHandlerHashedMem();
 			else $cachehandler = new CacheHandlerHashed();
 			$cachehandler->put($cachefile, preg_replace('/profile -->.*<!-- \/profile/','profile -->Cached '.gmdate("d M Y H:i:s").'<!-- /profile',ob_get_contents()));
-//			// Create directories if needed.
-//			if (!file_exists(KB_PAGECACHEDIR.'/'.KB_SITE.'/'.cache::genCacheName(true)))
-//			{
-//				mkdir(KB_PAGECACHEDIR.'/'.KB_SITE.'/'.cache::genCacheName(true),0755, true);
-//			}
-//			// Use the minimum compression. The size difference is minor for our usage.
-//			$fp = @gzopen($cachefile, 'wb1');
-//
-//			@gzwrite($fp, preg_replace('/profile -->.*<!-- \/profile/','profile -->Cached '.gmdate("d M Y H:i:s").'<!-- /profile',ob_get_contents()));
-//			@gzclose($fp);
-//			// Set the headers to match the new cache file.
-//			$timestamp = @filemtime($cachefile);
 			$timestamp = time() - $cachehandler->age($cachefile);
 			$etag = md5($cachefile.$timestamp );
 			if($usegz && strpos($_SERVER['HTTP_ACCEPT_ENCODING'],"gzip") !== false)
@@ -197,28 +197,30 @@ class cache
 			ob_end_flush();
 		}
 	}
-	//! Generate the cache filename.
-
-	/*!
+	/**
+	 * Generate the cache filename.
+	 *
 	 * Security modification could change this function to generate access
 	 * level specific cache files.
 	 *
-	 *  \return string of path and filename for the current page's cachefile.
+	 *  @return string string of path and filename for the current page's cachefile.
 	*/
 	private static function genCacheName()
 	{
 		if(isset(self::$cacheName)) return self::$cacheName;
 
 		global $themename, $stylename;
-		$basename = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].IS_IGB.$themename.$stylename;
+		if(defined('BETA') && BETA)
+			$basename = $_SERVER['HTTP_HOST'].serialize(URI::parseQuery()).IS_IGB.$themename.$stylename;
+		else
+			$basename = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].IS_IGB.$themename.$stylename;
 		event::call('cacheNaming', $basename);
-//		$filename = md5($basename).'.cache';
-//		if($subdir) return substr($filename,0,2);
-//		self::$cacheName = substr($filename,0,2).'/'.$filename;
 		self::$cacheName = KB_SITE.$basename;
 		return self::$cacheName;
 	}
-	//! Remove the cache of the current page.
+	/**
+	 * Remove the cache of the current page.
+	 */
 	public static function deleteCache()
 	{
 		$cachefile = cache::genCacheName();
@@ -227,7 +229,9 @@ class cache
 		else $cachehandler = new CacheHandlerHashed();
 		$cachehandler->remove($cachefile);
 	}
-	//! Mark the cached page as still current without rebuilding it.
+	/**
+	 * Mark the cached page as still current without rebuilding it.
+	 */
 	public static function touchCache()
 	{
 		if(! config::get('cache_enabled') ) return;
@@ -235,7 +239,9 @@ class cache
 			mkdir(KB_PAGECACHEDIR.'/'.KB_SITE);
 		touch(cache::genCacheName());
 	}
-	//! Notify the cache that a kill has been added.
+	/**
+	 * Notify the cache that a kill has been added.
+	 */
 	public static function notifyKillAdded()
 	{
 		if(! config::get('cache_enabled') ) return;

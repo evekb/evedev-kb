@@ -6,7 +6,9 @@
  */
 
 
-//! Store summary statistics for Alliances.
+/**
+ * Store summary statistics for Alliances.
+ */
 class allianceSummary extends statSummary
 {
 	private $all_id_ = null;
@@ -15,7 +17,9 @@ class allianceSummary extends statSummary
 	{
 		$this->all_id_ = intval($all_id);
 	}
-	//! Fetch the summary information.
+	/**
+	 * Fetch the summary information.
+	 */
 	protected function execute()
 	{
 		if($this->executed) return;
@@ -46,7 +50,9 @@ class allianceSummary extends statSummary
 		}
 		$this->executed = true;
 	}
-	//! Build a new summary table for an alliance.
+	/**
+	 * Build a new summary table for an alliance.
+	 */
 	private static function buildSummary($all_id)
 	{
 		$all_id = intval($all_id);
@@ -135,7 +141,9 @@ class allianceSummary extends statSummary
 //		$qry->execute("DROP TEMPORARY TABLE tmp_all_summary");
 //		$qry->autocommit(true);
 	}
-	//! Add a Kill and its value to the summary.
+	/**
+	 * Add a Kill and its value to the summary.
+	 */
 	public static function addKill($kill)
 	{
 		$alls = array();
@@ -171,7 +179,9 @@ class allianceSummary extends statSummary
 			$qry->execute($sql);
 		}
 	}
-	//! Add a Kill and its value to the summary.
+	/**
+	 * Add a Kill and its value to the summary.
+	 */
 	public static function delKill($kill)
 	{
 		$alls = array();
@@ -205,7 +215,9 @@ class allianceSummary extends statSummary
 			$qry->execute($sql);
 		}
 	}
-	//! Update the summary table when a kill value changes.
+	/**
+	 * Update the summary table when a kill value changes.
+	 */
 	public static function update($kill, $difference)
 	{
 		$alls = array();

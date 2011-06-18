@@ -5,7 +5,9 @@
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/includes/class.eveapi.php $
 */
 
-//! Retrieve Character list from CCP API
+/**
+ * Retrieve Character list from CCP API
+ */
 class API_Char
 {
 	private $error = false;
@@ -106,7 +108,9 @@ class API_Char
 
 		return;
 	}
-	//! Return any errors encountered or false if none.
+	/**
+	 * Return any errors encountered or false if none.
+	 */
 	function getError()
 	{
 		return $this->error;

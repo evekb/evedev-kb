@@ -6,21 +6,21 @@
  */
 
 
-//! Hashed object caching class
-
-/*! Extends the cache handler to handle any type of object. Instead of
+/**
+ * Hashed object caching class
+ * Extends the cache handler to handle any type of object. Instead of
  * using the given filename a key is used to create a hashed name.
  */
 class CacheHandlerHashed extends CacheHandler
 {
-	//! Add a file to the cache.
-
-	/*!
-	 * \param $key The key for the required object.
-	 * \param $object The object to store.
-	 * \param $location Fetch from a particular location if needed.
+	/**
+	 * Add a file to the cache.
 	 *
-	 * \return Boolean true if successful, false if an error occurred.
+	 * @param string $key The key for the required object.
+	 * @param mixed $object The object to store.
+	 * @param string $location Fetch from a particular location if needed.
+	 *
+	 * @return boolean true if successful, false if an error occurred.
 	 */
 	public static function put($key, $object, $location = null)
 	{
@@ -30,13 +30,13 @@ class CacheHandlerHashed extends CacheHandler
 		gzwrite($zp, serialize($object));
 		return gzclose($zp);
 	}
-	//! Get a file from the cache
-
-	/*!
-	 * \param $key The key for the required object.
-	 * \param $location Fetch from a particular location if needed.
+	/**
+	 * Get a file from the cache
 	 *
-	 * \return A copy of the stored object.
+	 * @param string $key The key for the required object.
+	 * @param string $location Fetch from a particular location if needed.
+	 *
+	 * @return mixed A copy of the stored object.
 	 */
 	public static function get($key, $location = null)
 	{
@@ -51,13 +51,13 @@ class CacheHandlerHashed extends CacheHandler
 		if(!$result) return $result;
 		return unserialize($result);
 	}
-	//! Return true if the file is in the cache.
-
-	/*!
-	 * \param $key The key for the required object.
-	 * \param $location Fetch from a particular location if needed.
+	/**
+	 * Return true if the file is in the cache.
 	 *
-	 * \return true if the stored object exists, false otherwise.
+	 * @param string $key The key for the required object.
+	 * @param string $location Fetch from a particular location if needed.
+	 *
+	 * @return boolean true if the stored object exists, false otherwise.
 	 */
 	public static function exists($key, $location = null)
 	{
@@ -65,39 +65,39 @@ class CacheHandlerHashed extends CacheHandler
 
 		return file_exists(self::$internalroot.'/'.$path);
 	}
-	//! Get the externally accessible address of the cached file.
-
-	/*!
-	 * \param $key The key for the required object.
-	 * \param $location Fetch from a particular location if needed.
+	/**
+	 * Get the externally accessible address of the cached file.
 	 *
-	 * \return false. Valid URLs to an internal serialised object are not
+	 * @param string $key The key for the required object.
+	 * @param string $location Fetch from a particular location if needed.
+	 *
+	 * @return boolean false. Valid URLs to an internal serialised object are not
 	 * necessary.
 	 */
 	public static function getExternal($key, $location = null)
 	{
 		return false;
 	}
-	//! Get the internally accessible address of the cached file.
-
-	/*!
-	 * \param $key The key for the required object.
-	 * \param $location Fetch from a particular location if needed.
+	/**
+	 * Get the internally accessible address of the cached file.
 	 *
-	 * \return The filesystem path to the serialised object.
+	 * @param string $key The key for the required object.
+	 * @param string $location Fetch from a particular location if needed.
+	 *
+	 * @return string The filesystem path to the serialised object.
 	 */
 	public static function getInternal($key, $location = null)
 	{
 		return self::$internalroot.'/'.self::getPathHashed($key, $location, false);
 	}
-	//! Get the path of the cached file.
-
-	/*!
-	 * \param $key The key for the required object.
-	 * \param $location Fetch from a particular location if needed.
-	 * \param $create Set false to not create the path if it does not exist.
+	/**
+	 * Get the path of the cached file.
 	 *
-	 * \return The path to the serialised object.
+	 * @param string $key The key for the required object.
+	 * @param string $location Fetch from a particular location if needed.
+	 * @return boolean $create Set false to not create the path if it does not exist.
+	 *
+	 * @return string The path to the serialised object.
 	 */
 	private static function getPathHashed($key, $location = null, $create = true)
 	{
@@ -105,13 +105,13 @@ class CacheHandlerHashed extends CacheHandler
 
 		return parent::getPath($key, $location, $create);
 	}
-	//! Remove a cached file
-
-	/*!
-	 * \param $key The key for the required object.
-	 * \param $location Fetch from a particular location if needed.
+	/**
+	 * Remove a cached file
 	 *
-	 * \return true if removed or not in the cache, false on failure.
+	 * @param string $key The key for the required object.
+	 * @param string $location Fetch from a particular location if needed.
+	 *
+	 * @return boolean true if removed or not in the cache, false on failure.
 	 */
 	public static function remove($key, $location = null)
 	{
@@ -124,13 +124,13 @@ class CacheHandlerHashed extends CacheHandler
 
 		return true;
 	}
-	//! Return the age of the given cache object.
-
-	/*!
-	 * \param $key The key for the required object.
-	 * \param $location Fetch from a particular location if needed.
+	/**
+	 * Return the age of the given cache object.
 	 *
-	 * \return The age in seconds of the stored object.
+	 * @param string $key The key for the required object.
+	 * @param string $location Fetch from a particular location if needed.
+	 *
+	 *@return integer The age in seconds of the stored object.
 	 */
 	public static function age($key, $location = null)
 	{

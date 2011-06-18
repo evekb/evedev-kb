@@ -6,7 +6,9 @@
  */
 
 
-//! Store summary statistics for Corporations.
+/**
+ * Store summary statistics for Corporations.
+ */
 class corpSummary extends statSummary
 {
 	private $crp_id_ = null;
@@ -16,7 +18,9 @@ class corpSummary extends statSummary
 		$this->crp_id_ = intval($crp_id);
 		$this->executed = false;
 	}
-	//! Fetch the summary information.
+	/**
+	 * Fetch the summary information.
+	 */
 	protected function execute()
 	{
 		if($this->executed) return;
@@ -47,7 +51,9 @@ class corpSummary extends statSummary
 		}
 		$this->executed = true;
 	}
-	//! Build a new summary table for an corp.
+	/**
+	 * Build a new summary table for an corp.
+	 */
 	private static function buildSummary($crp_id)
 	{
 		$crp_id = intval($crp_id);
@@ -138,7 +144,9 @@ class corpSummary extends statSummary
 //		$qry->execute("DROP TEMPORARY TABLE tmp_sum_corp");
 //		$qry->autocommit(true);
 	}
-	//! Add a Kill and its value to the summary.
+	/**
+	 * Add a Kill and its value to the summary.
+	 */
 	public static function addKill($kill)
 	{
 		$alls = array();
@@ -174,7 +182,9 @@ class corpSummary extends statSummary
 			$qry->execute($sql);
 		}
 	}
-	//! Add a Kill and its value to the summary.
+	/**
+	 * Add a Kill and its value to the summary.
+	 */
 	public static function delKill($kill)
 	{
 		$alls = array();
@@ -208,7 +218,9 @@ class corpSummary extends statSummary
 			$qry->execute($sql);
 		}
 	}
-	//! Update the summary table when a kill value changes.
+	/**
+	 * Update the summary table when a kill value changes.
+	 */
 	public static function update($kill, $difference)
 	{
 		$alls = array();

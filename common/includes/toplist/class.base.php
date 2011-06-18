@@ -41,22 +41,22 @@ class TopList_Base
 	protected $finalStartDate = null;
 	protected $finalEndDate = null;
 
-	//! Set the maximum number of results to show in the TopList.
-
-	/*!
-	 *  \param $limit Maximum number of kills to show.
+	/**
+	 * Set the maximum number of results to show in the TopList.
 	 *
-	 *  \returns value TopList was set to.
+	 *  @param integer $limit Maximum number of kills to show.
+	 *
+	 *  @return integer value TopList was set to.
 	 */
 	function setLimit($limit = 10)
 	{
 		$this->limit = intval($limit);
 		return $this->limit;
 	}
-	//! Include or exclude pods/noob ships/shuttles.
-
-	/*!
-	 *  \param $flag true to show P/N/S, false to remove.
+	/**
+	 * Include or exclude pods/noob ships/shuttles.
+	 *
+	 *  @param boolean $flag true to show P/N/S, false to remove.
 	 */
 	function setPodsNoobShips($flag)
 	{
@@ -68,10 +68,10 @@ class TopList_Base
 		}
 	}
 
-	//! Remove structures.
-
-	/*!
-	 *  Note that these class types are hard coded so will need modification
+	/**
+	 * Remove structures.
+	 *
+	 * Note that these class types are hard coded so will need modification
 	 * if the classes are changed in future.
 	 */
 	function setNoStructures()
@@ -124,12 +124,12 @@ class TopList_Base
 		involved::add($this->vic_all,$alliance);
 	}
 
-	/*!
+	/**
 	 * Set a victim ship class to include.
 	 *
 	 * If this is set then only ship classes set will be in the output.
 	 *
-	 * \param $shipclass ID of a ship class.
+	 * @param integer $shipclass ID of a ship class.
 	 */
 	function addVictimShipClass($shipclass)
 	{
@@ -139,12 +139,12 @@ class TopList_Base
 		unset ($this->exc_vic_scl[$scl_id]);
 	}
 
-	/*!
+	/**
 	 * Set a victim ship class to exclude.
 	 *
 	 * If this is set then only ship classes not set will be in the output.
 	 *
-	 * \param $shipclass ID of a ship class
+	 * @param integer $shipclass ID of a ship class
 	 */
 	function excludeVictimShipClass($shipclass)
 	{
@@ -154,12 +154,12 @@ class TopList_Base
 		unset ($this->inc_vic_scl[$scl_id]);
 	}
 
-	/*!
+	/**
 	 * Set a victim ship type to include.
 	 *
 	 * If this is set then only ship types set will be in the output.
 	 *
-	 * \param $ship ID of a shiptype
+	 * @param integer $ship ID of a shiptype
 	 */
 	function addVictimShip($ship)
 	{
@@ -168,12 +168,12 @@ class TopList_Base
 		unset ($this->exc_vic_shp[$ship]);
 	}
 
-	/*!
+	/**
 	 * Set a victim ship type to exclude.
 	 *
 	 * If this is set then only ship types not set will be in the output.
 	 *
-	 * \param $ship ID of a shiptype
+	 * @param integer $ship ID of a shiptype
 	 */
 	function excludeVictimShip($ship)
 	{
@@ -182,12 +182,18 @@ class TopList_Base
 		unset ($this->inc_vic_shp[$ship]);
 	}
 
+	/**
+	 * @param integer|Region $region
+	 */
 	function addRegion($region)
 	{
 		if(is_numeric($region)) array_push($this->regions_, $region);
 		else array_push($this->regions_, $region->getID());
 	}
 
+	/**
+	 * @param integer|SolarSystem $system
+	 */
 	function addSystem($system)
 	{
 		if(is_numeric($system)) array_push($this->systems_, $system);
@@ -199,6 +205,9 @@ class TopList_Base
 		array_push($this->groupby_, $groupby);
 	}
 
+	/**
+	 * @param PageSplitter $pagesplitter
+	 */
 	function setPageSplitter($pagesplitter)
 	{
 		if (isset($_GET['page'])) $page = $_GET['page'];
@@ -207,6 +216,9 @@ class TopList_Base
 		$this->poffset_ = ($page * $this->plimit_) - $this->plimit_;
 	}
 
+	/**
+	 * @param integer $weekno
+	 */
 	function setWeek($weekno)
 	{
 		$weekno=intval($weekno);
@@ -215,6 +227,9 @@ class TopList_Base
 		else $this->weekno_ = $weekno;
 	}
 
+	/**
+	 * @param integer $monthno
+	 */
 	function setMonth($monthno)
 	{
 		$monthno = intval($monthno);
@@ -223,6 +238,9 @@ class TopList_Base
 		else $this->monthno_ = $monthno;
 	}
 
+	/**
+	 * @param integer $yearno
+	 */
 	function setYear($yearno)
 	{
 	// 1970-2038 is the allowable range for the timestamp code used
@@ -233,6 +251,9 @@ class TopList_Base
 		else $this->yearno_ = $yearno;
 	}
 
+	/**
+	 * @param integer $weekno
+	 */
 	function setStartWeek($weekno)
 	{
 		$weekno=intval($weekno);
@@ -241,12 +262,18 @@ class TopList_Base
 		else $this->startweekno_ = $weekno;
 	}
 
+	/**
+	 * @param string $timestamp
+	 */
 	function setStartDate($timestamp)
 	{
 	// Check timestamp is valid before adding
 		if(strtotime($timestamp)) $this->startDate_ = $timestamp;
 	}
 
+	/**
+	 * @param string $timestamp
+	 */
 	function setEndDate($timestamp)
 	{
 	// Check timestamp is valid before adding

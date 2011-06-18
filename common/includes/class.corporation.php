@@ -6,7 +6,9 @@
  */
 
 
-//! Creates a new Corporation or fetches an existing one from the database.
+/**
+ * Creates a new Corporation or fetches an existing one from the database.
+ */
 class Corporation
 {
 	private $id;
@@ -15,18 +17,20 @@ class Corporation
 	private $alliance;
 	private $updated;
 
-	//! Create a new Corporation object from the given $id.
-
-	/*!
-     * \param $id The corporation ID.
-	 * \param $externalIDFlag true if the id is the external id.
+	/**
+	 * Create a new Corporation object from the given $id.
+	 *
+     * @param integer $id The corporation ID.
+	 * @param boolean $externalIDFlag true if the id is the external id.
 	*/
 	function Corporation($id = 0, $externalIDFlag = false)
 	{
 		if($externalIDFlag) $this->externalid=intval($id);
 		else $this->id = intval($id);
 	}
-	//! Return true if this corporation is an NPC corporation.
+	/**
+	 * Return true if this corporation is an NPC corporation.
+	 */
 	function isNPCCorp()
 	{
 		if($this->externalid > 1000001 && $this->externalid < 1000183)
@@ -36,18 +40,20 @@ class Corporation
 			return true;
 	}
 
-	//! Return the corporation name stripped of all non-ASCII non-alphanumeric characters.
+	/**
+	 * Return the corporation name stripped of all non-ASCII non-alphanumeric characters.
+	 */
 	function getUnique()
 	{
 		if(!$this->name) $this->execQuery();
 		return preg_replace('/[^a-z0-9]/', '', strtolower($this->getName()));
 	}
-	//! Return a URL for the icon of this corporation.
-
-	/*! If a cached image exists then return the direct url. Otherwise return
+	/**
+	 * Return a URL for the icon of this corporation.
+	 * If a cached image exists then return the direct url. Otherwise return
 	 *  a link to the thumbnail page.
 	 *
-	 * \param $size The size in pixels of the image needed.
+	 * @param integer $size The size in pixels of the image needed.
 	*/
 	function getPortraitURL($size = 64)
 	{
@@ -68,9 +74,9 @@ class Corporation
 		return imageURL::getURL('Corporation', $this->externalid, $size);
 	}
 
-	//! Return the corporation CCP ID.
-
-	/*! When populateList is true, the lookup will return 0 in favour of getting the
+	/**
+	 * Return the corporation CCP ID.
+	 * When populateList is true, the lookup will return 0 in favour of getting the
 	 *  external ID from CCP. This helps the kill_detail page load times.
 	*/
 	function getExternalID($populateList = false)
@@ -92,7 +98,9 @@ class Corporation
 		else return 0;
 	}
 
-	//! Return the corporation ID.
+	/**
+	 * Return the corporation ID.
+	 */
 	function getID()
 	{
 		if($this->id) return $this->id;
@@ -103,23 +111,27 @@ class Corporation
 		}
 		else return 0;
 	}
-	//! Return the corporation name.
+	/**
+	 * Return the corporation name.
+	 */
 	function getName()
 	{
 		if(!$this->name) $this->execQuery();
 		return $this->name;
 	}
 
-	//! Return an alliance object for the alliance this corporation belongs to.
+	/**
+	 * Return an alliance object for the alliance this corporation belongs to.
+	 */
 	function getAlliance()
 	{
 		if(!$this->alliance) $this->execQuery();
 		return new Alliance($this->alliance);
 	}
-	//! Lookup a corporation name and set this object to use the details found.
-
-	/*!
-     * \param $name The corporation name to look up.
+	/**
+	 * Lookup a corporation name and set this object to use the details found.
+	 *
+     * @param string $name The corporation name to look up.
 	*/
 	function lookup($name)
 	{
@@ -132,9 +144,9 @@ class Corporation
 		$this->externalid = intval($row['crp_external_id']);
 		$this->alliance = $row['crp_all_id'];
 	}
-	//! Search the database for the corporation details for this object.
-
-	/*!
+	/**
+	 * Search the database for the corporation details for this object.
+	 *
 	 * If no record is found but we have an external ID then the result
 	 * will be fetched from CCP.
 	*/
@@ -156,13 +168,13 @@ class Corporation
 			$this->alliance = $row['crp_all_id'];
 		}
 	}
-	//! Add a new corporation to the database or update the details of an existing one.
-
-	/*!
-     * \param $name The name of the new corporation.
-     * \param $alliance The alliance this corporation belongs to.
-     * \param $timestamp The timestamp the corporation's details were updated.
-     * \param $externalid The external CCP ID for the corporation.
+	/**
+	 * Add a new corporation to the database or update the details of an existing one.
+	 *
+     * @param string $name The name of the new corporation.
+     * @param Alliance $alliance The alliance this corporation belongs to.
+     * @param string $timestamp The timestamp the corporation's details were updated.
+     * @param integer $externalid The external CCP ID for the corporation.
 	*/
 	function add($name, $alliance, $timestamp, $externalid = 0, $loadExternals = true)
 	{
@@ -259,10 +271,10 @@ class Corporation
 
 		return $this->id;
 	}
-	//! Return whether this corporation was updated before the given timestamp.
-
-	/*!
-     * \param $timestamp A timestamp to compare this corporation's details with.
+	/**
+	 * Return whether this corporation was updated before the given timestamp.
+	 *
+     * @param string $timestamp A timestamp to compare this corporation's details with.
 	*/
 	function isUpdatable($timestamp)
 	{
@@ -278,11 +290,15 @@ class Corporation
 		return $qry->recordCount() == 1;
 	}
 
-	//! Set the CCP external ID for this corporation.
-
-	//! \param $externalid The new external id to set for this corp.
-	//! If the same externalid already exists then that corp name is changed to
-	//! the new one.
+	/**
+	 * Set the CCP external ID for this corporation.
+	 *
+	 * If the same externalid already exists then that corp name is changed to
+	 * the new one.
+	 *
+	 * @param integer $externalid The new external id to set for this corp.
+	 * @return boolean
+	 */
 	function setExternalID($externalid)
 	{
 		$externalid = intval($externalid);
@@ -317,7 +333,9 @@ class Corporation
 		return false;
 	}
 
-	//! Returns an array of pilots we know to be in this corp.
+	/**
+	 * Returns an array of pilots we know to be in this corp.
+	 */
 	function getMemberList()
 	{
 		$qry = DBFactory::getDBQuery();
@@ -338,7 +356,9 @@ class Corporation
 		return $list;
 	}
 
-	//! Fetch corporation name and alliance from CCP using the stored external ID.
+	/**
+	 * Fetch corporation name and alliance from CCP using the stored external ID.
+	 */
 	public function fetchCorp()
 	{
 		if(!$this->externalid) $this->execQuery();

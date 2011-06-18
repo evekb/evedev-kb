@@ -12,7 +12,7 @@ class user
 		trigger_error('The class "user" may only be invoked statically.', E_USER_ERROR);
 	}
 	
-	/*!
+	/**
 	 * Checks to see if the given username and password are valid for this site,
 	 * and if they are, log the user in.
 	 * Roles, roles by title and extra user data are all stored in the user's session once
@@ -89,7 +89,10 @@ class user
 		return $state;
 	}
 
-	// generates the menu for the user
+	/**
+	 * Generates the menu for the user
+	 * @return string
+	 */
 	public static function menu()
 	{
 		$box = new Box('User');

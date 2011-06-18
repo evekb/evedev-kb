@@ -8,11 +8,11 @@
 
 class PageSplitter
 {
-	//! Create a PageSplitter
-
-	/*!
-	 * \param $max Total count
-	 * \param $split Number of lines to show on each page
+	/**
+	 * Create a PageSplitter
+	 *
+	 * @param integer $max Total count
+	 * @param integer $split Number of lines to show on each page
 	 */
 	function PageSplitter($max, $split)
 	{

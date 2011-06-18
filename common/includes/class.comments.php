@@ -6,15 +6,17 @@
  */
 
 
-//! Store and retrieve comments for each killmail.
-
-//! This class is used when the details of a kill are viewed.
+/**
+ * Store and retrieve comments for each killmail.
+ * 
+ * This class is used when the details of a kill are viewed.
+ */
 class Comments 
 { 
-    //! Create a Comments object for a particular kill.
-    
-    /*
-     * \param $kll_id The kill id to attach comments to or retrieve for.
+    /**
+     * Create a Comments object for a particular kill.
+	 *
+     * @param integer $kll_id The kill id to attach comments to or retrieve for.
      */
     function Comments($kll_id) 
     {
@@ -23,10 +25,16 @@ class Comments
 
         $this->comments_ = array(); 
     } 
-    //! Retrieve comments for a kill.
-    
-    //! The kill id is set when the Comments object is constructed.
-    function getComments() 
+    /**
+     * Retrieve comments for a kill.
+	 *
+     * The kill id is set when the Comments object is constructed.
+	 *
+	 * @global Smarty $smarty
+	 * @param boolean $commentsOnly
+	 * @return string
+	 */
+    function getComments($commentsOnly = false)
     { 
         global $smarty;
         
@@ -51,14 +59,15 @@ class Comments
         } 
         $smarty->assignByRef('comments', $this->comments_);
 		$smarty->assign('norep', time()%3700);
-        return $smarty->fetch(get_tpl('block_comments')); 
+        if($commentsOnly) return $smarty->fetch(get_tpl('comments_comments'));
+        else return $smarty->fetch(get_tpl('block_comments'));
     } 
-    //! Add a comment to a kill.
-    
-    /*!
+    /**
+     * Add a comment to a kill.
+     *
      * The kill id is set when the Comments object is constructed.
-     * \param $name The name of the comment poster.
-     * \param $text The text of the comment to post.
+     * @param string $name The name of the comment poster.
+     * @param string $text The text of the comment to post.
      */
     function addComment($name, $text) 
     { 
@@ -83,24 +92,31 @@ class Comments
         // create comment_added event 
         event::call('comment_added', $this); 
     } 
-    //! Delete a comment.
-    
-    /*
-     * \param $c_id The id of the comment to delete.
+    /**
+     * Delete a comment.
+	 * @param integer $c_id The id of the comment to delete.
      */
     function delComment($c_id) 
     { 
         $qry = DBFactory::getDBQuery();
         $qry->execute("DELETE FROM kb3_comments WHERE id='".$c_id); 
     } 
-    //! Set whether to post the raw comment text or bbencode it.
+    /**
+     * Set whether to post the raw comment text or bbencode it.
+	 *
+	 * @param integer $bool
+	 */
     function postRaw($bool) 
     { 
         $this->raw_ = $bool; 
     } 
-    //! bbencode a string.
-    
-    //! Used before posting a comment.
+    /**
+     * bbencode a string.
+     * Used before posting a comment.
+	 *
+	 * @param string $string
+	 * @return string
+	 */
     function bbencode($string) 
     { 
         if (!$this->raw_) 

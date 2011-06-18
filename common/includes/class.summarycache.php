@@ -6,7 +6,9 @@
  */
 
 
-//! Convenience class to call summary caches for alliance, corp and pilots.
+/**
+ * Convenience class to call summary caches for alliance, corp and pilots.
+ */
 class summaryCache
 {
 	static public function addKill($kill)

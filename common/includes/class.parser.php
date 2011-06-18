@@ -856,10 +856,11 @@ class Parser
 		$translate = new Translate($set);
 		$this->killmail_ = $translate->getTranslation($this->killmail_);
 	}
-	//! Return alliance from cached list or look up a new name.
-
-	//! \param $alliancename Alliance name to look up.
-	//! \return Alliance object matching input name.
+	/**
+	 * Return alliance from cached list or look up a new name.
+	 * @param string $alliancename Alliance name to look up.
+	 * @return mixed Alliance object matching input name.
+	 */
 	private static function fetchAlliance($alliancename)
 	{
 		if(isset(self::$alliances[$alliancename]))
@@ -872,10 +873,12 @@ class Parser
 		}
 		return $alliance;
 	}
-	//! Return corporation from cached list or look up a new name.
-
-	//! \param $corpname Alliance name to look up.
-	//! \return Corporation object matching input name.
+	/**
+	 * Return corporation from cached list or look up a new name.
+	 *
+	 * @param string $corpname Alliance name to look up.
+	 * @return mixed Corporation object matching input name.
+	 */
 	private static function fetchCorp($corpname, $alliance = null, $timestamp = null)
 	{
 		if(isset(self::$corps[$corpname]))
@@ -896,10 +899,12 @@ class Parser
 		}
 		return $corp;
 	}
-	//! Return pilot from cached list or look up a new name.
-
-	//! \param $pilotname Pilot name to look up.
-	//! \return Pilot object matching input name.
+	/**
+	 * Return pilot from cached list or look up a new name.
+	 *
+	 * @param string $pilotname Pilot name to look up.
+	 * @return mixed Pilot object matching input name.
+	 */
 	private static function fetchPilot($pilotname, $corp, $timestamp)
 	{
 		if(isset(self::$pilots[$pilotname]))
@@ -916,10 +921,12 @@ class Parser
 		}
 		return $pilot;
 	}
-	//! Return ship from cached list or look up a new name.
-
-	//! \param $shipname Ship name to look up.
-	//! \return Ship object matching input name.
+	/**
+	 * Return ship from cached list or look up a new name.
+	 *
+	 * @param string $shipname Ship name to look up.
+	 * @return mixed Ship object matching input name.
+	 */
 	private static function fetchShip($shipname)
 	{
 		if(isset(self::$ships[$shipname]))
@@ -932,10 +939,12 @@ class Parser
 		}
 		return $ship;
 	}
-	//! Return item from cached list or look up a new name.
-
-	//! \param $itemname Item name to look up.
-	//! \return Item object matching input name.
+	/**
+	 * Return item from cached list or look up a new name.
+	 *
+	 * @param string $itemname Item name to look up.
+	 * @return mixed Item object matching input name.
+	 */
 	private static function fetchItem($itemname)
 	{
 		if(isset(self::$items[$itemname]))

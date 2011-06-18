@@ -705,13 +705,13 @@ class KillList
 		$this->rewind();
 	}
 
-	//! Add an expression to the SQL query.
-
-	/*
+	/**
+	 * Add an expression to the SQL query.
+	 *
 	 * This function can be used if an expression needs to be added to the
 	 * query, e.g. ship name
 	 *
-	 * \param $expr The expression to add
+	 * @param string $expr The expression to add
 	 */
 	public function addExpression($expr)
 	{
@@ -719,13 +719,16 @@ class KillList
 		return count($this->expr);
 	}
 
-	//! Add an expression to the SQL query.
-
-	/*
+	/**
+	 * Add an expression to the SQL query.
+	 * 
 	 * This function can be used to remove an expression. If $expr is true, or
 	 * omitted, all expressions will be removed.
 	 *
-	 * \param $expr The expression to remove
+	 * @param string $expr The expression to remove
+	 *
+	 * @param string $expr
+	 * @return integer The number of expressions remaining.
 	 */
 	public function delExpression($expr = true)
 	{
@@ -848,7 +851,9 @@ class KillList
 		$this->poffset_ = ($page * $this->plimit_) - $this->plimit_;
 	}
 
-	//! Filter results by week. Requires the year to also be set.
+	/**
+	 * Filter results by week. Requires the year to also be set.
+	 */
 	public function setWeek($weekno)
 	{
 		$weekno=intval($weekno);
@@ -857,7 +862,9 @@ class KillList
 		else $this->weekno_ = $weekno;
 	}
 
-	//! Filter results by year.
+	/**
+	 * Filter results by year.
+	 */
 	public function setYear($yearno)
 	{
 	// 1970-2038 is the allowable range for the timestamp code used
@@ -868,7 +875,9 @@ class KillList
 		else $this->yearno_ = $yearno;
 	}
 
-	//! Filter results by starting week. Requires the year to also be set.
+	/**
+	 * Filter results by starting week. Requires the year to also be set.
+	 */
 	public function setStartWeek($weekno)
 	{
 		$weekno=intval($weekno);
@@ -877,23 +886,28 @@ class KillList
 		else $this->startweekno_ = $weekno;
 	}
 
-	//! Filter results by starting date/time.
+	/**
+	 * Filter results by starting date/time.
+	 */
 	public function setStartDate($timestamp)
 	{
 	// Check timestamp is valid before adding
 		if(strtotime($timestamp)) $this->startDate_ = $timestamp;
 	}
 
-	//! Filter results by ending date/time.
+	/**
+	 * Filter results by ending date/time.
+	 */
 	public function setEndDate($timestamp)
 	{
 	// Check timestamp is valid before adding
 		if(strtotime($timestamp)) $this->endDate_ = $timestamp;
 	}
 
-	//! Convert given date ranges to SQL date range.
-
-	//! \return string containing SQL date filter.
+	/**
+	 * Convert given date ranges to SQL date range.
+	 * @return mixed string containing SQL date filter.
+	 */
 	public function getDateFilter()
 	{
 		$sql = '';
@@ -920,7 +934,9 @@ class KillList
 	{
 		$this->limit_ = $limit;
 	}
-	//! Only return kills with an external id set.
+	/**
+	 * Only return kills with an external id set.
+	 */
 	public function setAPIKill($hasid = true)
 	{
 		$this->apikill_ = $hasid;

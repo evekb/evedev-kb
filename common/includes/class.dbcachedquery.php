@@ -5,7 +5,9 @@
  * $HeadURL$
  */
 
-//! mysqli file-cached query class. Manages SQL queries to a MySQL DB using mysqli.
+/**
+ * mysqli file-cached query class. Manages SQL queries to a MySQL DB using mysqli.
+ */
 class DBCachedQuery extends DBBaseQuery
 {
 	// this is the minimum runtime a query has to run to be
@@ -28,7 +30,9 @@ class DBCachedQuery extends DBBaseQuery
 	protected static $cachehandler = null;
 	protected static $baseTables = null;
 
-	//! Set up a mysqli cached query object with default values.
+	/**
+	 * Set up a mysqli cached query object with default values.
+	 */
 	function DBCachedQuery($nocache = false)
 	{
 		$this->nocache = $nocache;
@@ -43,10 +47,10 @@ class DBCachedQuery extends DBBaseQuery
 			if(!self::$maxmem) self::$maxmem = 128000000;
 		}
 	}
-	//! Check if this query has been cached and the cache valid.
-
-	/*
-     * \return true if this query has been cached and the cache is valid.
+	/**
+	 * Check if this query has been cached and the cache valid.
+	 *
+     * @return boolean true if this query has been cached and the cache is valid.
 	*/
 	protected function checkCache()
 	{
@@ -70,9 +74,9 @@ class DBCachedQuery extends DBBaseQuery
 		return false;
 	}
 
-	//! Extract all tables affected by a database modification.
-
-	//! The resulting list is set internally to this object.
+	/**
+	 * Extract all tables affected by a database modification.
+	 */
 	protected function parseSQL($sql)
 	{
 		// Check list of tables daily.
@@ -139,80 +143,15 @@ class DBCachedQuery extends DBBaseQuery
 		else $this->usedtables = $matches[0];
 
 		return '';
-//		// check inside brackets first.
-//		$pos = 0;
-//		$from = 0;
-//		$bracketpos1 = -1;
-//		$bracketpos2 = -1;
-//		$countbr = 0;
-//		$count = 1;
-//
-//		while($pos < strlen($sql))
-//		{
-//			if($sql[$pos] == '(') $bracketpos1 = $pos;
-//			elseif($sql[$pos] == ')')
-//			{
-//				if($bracketpos1 == -1) break;
-//				$bracketpos2 = $pos;
-//				$from = strpos($sql, "from", $bracketpos1);
-//				if($from > $bracketpos1 && $from < $bracketpos2)
-//					$sql = substr_replace($sql, $this->parseSQL(substr($sql,$bracketpos1+1, $bracketpos2 - $bracketpos1 - 1)), $bracketpos1, $bracketpos2 - $bracketpos1 + 1);
-//				else $sql = substr_replace($sql, '', $bracketpos1, $bracketpos2 - $bracketpos1 + 1);
-//
-//				$pos = 0;
-//				$from = 0;
-//				$bracketpos1 = -1;
-//				$bracketpos2 = -1;
-//				continue;
-//			}
-//			$pos++;
-//		}
-//
-//		// we try to get the text from 'from' to 'where' because all involved
-//		// tables are declared in that part
-//		$from = strpos($sql, 'from')+5;
-//		if($from > strlen($sql)) return '';
-//		// if there is a subquery then recurse into the string between the next
-//		// from and first unclosed ) or where
-//		$from2 = strpos($sql, 'from', $from);
-//		if($from2) $sql = substr_replace($sql, $this->parseSQL(substr($sql,$from2 - 1)), $from2);
-//
-//		if (!$to = strpos($sql, 'where'))
-//		{
-//			$to = strlen($sql);
-//		}
-//
-//		$parse = substr($sql, $from, $to-$from);
-//		$parse = str_replace('`', ' ', $parse);
-//		$parse = trim($parse);
-//		if(!$parse) return '';
-//
-//		$tables = array();
-//		if (strpos($parse, ',') !== false)
-//		{
-//			// , is a synonym for join so we'll replace them
-//			$parse = str_replace(',', ' join ', $parse);
-//		}
-//
-//		if (strpos($parse, 'join'))
-//		{
-//			// if this query is a join we parse it with regexp to get all tables
-//			$parse = 'join '.$parse;
-//			preg_match_all('/join\s+([^ ]+)\s/', $parse, $match);
-//			$this->usedtables = $this->usedtables + $match[1];
-//		}
-//		else
-//		{
-//			// no join so it is hopefully a simple table select
-//			$this->usedtables[] = preg_replace('/\s.*/', '', $parse);
-//		}
-//		return substr_replace($sql, '', $from, $to-$from);
 	}
-	//! Check if the cached query is valid.
-
-	/*! Determines whether the tables used by a query have been modified
-     * since the query was cached
-	*/
+	/**
+	 * Check if the cached query is valid.
+	 *
+	 * Determines whether the tables used by a query have been modified
+     * since the query was cached.
+	 *
+	 * @return boolean
+	 */
 	protected function isCacheValid()
 	{
 		// check if cachefiles are still valid
@@ -234,7 +173,9 @@ class DBCachedQuery extends DBBaseQuery
 		}
 		return true;
 	}
-	//! Marks all tables affected by a database modification
+	/**
+	 * Marks all tables affected by a database modification
+	 */
 	public static function markAffectedTables($sql = null)
 	{
 		if(is_null($sql)) return true;
@@ -302,9 +243,13 @@ class DBCachedQuery extends DBBaseQuery
 			self::$cachehandler->put('qcache_tbl_'.$table, time(), self::$location, 0);
 		}
 	}
-	//! Generate the query cache.
-
-	//! Serialise a query and write to file.
+	/**
+	 * Generate the query cache.
+	 *
+	 * Serialise a query and write to file.
+	 *
+	 * @return boolean
+	 */
 	protected function genCache()
 	{
 
@@ -342,7 +287,9 @@ class DBCachedQuery extends DBBaseQuery
 		$this->currrow = 0;
 		$this->executed = true;
 	}
-	//! Read a cached query from file.
+	/**
+	 * Read a cached query from file.
+	 */
 	protected function loadCache()
 	{
 		// loads the cachefile into the memory
@@ -353,12 +300,14 @@ class DBCachedQuery extends DBBaseQuery
 		$this->executed = true;
 	}
 
-	//! Execute an SQL string.
-
-	/*
+	/**
+	 * Execute an SQL string.
+	 *
      * If DB_HALTONERROR is set then this will exit on an error.
-     * \return false on error or true if successful.
-	*/
+	 *
+	 * @param string $sql
+	 * @return boolean false on error or true if successful.
+	 */
 	function execute($sql)
 	{
 		$t1 = microtime(true);
@@ -421,7 +370,9 @@ class DBCachedQuery extends DBBaseQuery
 		return true;
 	}
 
-	//! Return the number of rows returned by the last query.
+	/**
+	 * Return the number of rows returned by the last query.
+	 */
 	function recordCount()
 	{
 		if ($this->cached)
@@ -435,7 +386,9 @@ class DBCachedQuery extends DBBaseQuery
 		return false;
 	}
 
-	//! Return the next row of results from the last query.
+	/**
+	 * Return the next row of results from the last query.
+	 */
 	function getRow()
 	{
 		if ($this->cached)
@@ -454,7 +407,9 @@ class DBCachedQuery extends DBBaseQuery
 		return false;
 	}
 
-	//! Reset list of results to return the first row from the last query.
+	/**
+	 * Reset list of results to return the first row from the last query.
+	 */
 	function rewind()
 	{
 		if ($this->cached)
@@ -464,7 +419,9 @@ class DBCachedQuery extends DBBaseQuery
 		if(!is_null($this->resid)) @mysqli_data_seek($this->resid, 0);
 	}
 
-	//! Return the most recent error message for the DB connection.
+	/**
+	 * Return the most recent error message for the DB connection.
+	 */
 	function getErrorMsg()
 	{
 		$msg = $this->sql."<br>";
@@ -473,13 +430,14 @@ class DBCachedQuery extends DBBaseQuery
 		return $msg;
 	}
 
-	//! Set the autocommit status.
-
-	/*! The default of true commits after every query.
+	/**
+	 * Set the autocommit status.
+	 *
+	 * The default of true commits after every query.
      * If set to false the queries will not be commited until autocommit is set
      * to true.
-     *  \param $commit The new autocommit status.
-     *  \return true on success and false on failure.
+     *  @param boolean$commit The new autocommit status.
+     *  @return boolean true on success and false on failure.
 	*/
 	function autocommit($commit = true)
 	{
@@ -493,7 +451,9 @@ class DBCachedQuery extends DBBaseQuery
 		return self::$dbconn->id()->autocommit($commit);
 	}
 
-	//! Rollback all queries in the current transaction.
+	/**
+	 * Rollback all queries in the current transaction.
+	 */
 	function rollback()
 	{
 		// if there's no connection to the db then there's nothing to roll back

@@ -5,7 +5,9 @@
  * $HeadURL$
  */
 
-//! Generate the correct URL for an image.
+/**
+ * Generate the correct URL for an image.
+ */
 class imageURL
 {
 	const QUERYSTRING = 1;
