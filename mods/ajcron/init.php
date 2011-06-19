@@ -25,7 +25,8 @@ class ajcron
             if (get_class($xajax) == 'xajax')
             {
                 // we're good to go, set up our asynchronous callback
-                $xajax->registerFunction(array('ajcron', 'ajcron', 'xajax_req'));
+				$xuf = new xajaxUserFunction(array('ajcron', 'ajcron', 'xajax_req'), null);
+				$xajax->register(XAJAX_FUNCTION, $xuf);
 
                 // fastest way to check wether we have to run or not
                 if (config::get('ajcron_nextrun') < time())
@@ -136,7 +137,7 @@ class ajcron
             }
             else
             {
-                $running = 'not running';
+                $running = 'waiting';
             }
 
             if (empty($job['name']))
@@ -147,8 +148,8 @@ class ajcron
             {
                 $name = $job['name'];
             }
-            $output .= '<b>Name:</b> '.$name.' <b>URL:</b> '.$job['url'].' <b>Nextrun:</b> '.date('Y-m-d H:i:s', $job['nextrun']).'<br/>';
-            $output .= '&nbsp;&nbsp;&nbsp;<b>State:</b> '.$running.' <b>ID: </b>'.$job['id'].'<br/><br/>';
+            $output .= '<div class="mod-ajcron-job"><b>Name:</b> '.$name.' <b>URL:</b> '.$job['url'].' <b>Nextrun:</b> '.date('Y-m-d H:i:s', $job['nextrun']).'<br/>';
+            $output .= '&nbsp;&nbsp;&nbsp;<b>State:</b> '.$running /*.' <b>ID: </b>'.$job['id']*/ .'</div>';
         }
 
         return $output;
@@ -262,7 +263,7 @@ class ajcron
     }
 	public static function helpFormat()
 	{
-		return "<div id='ajcron_help'>/65 http://yoursite.com/cron/cron_fetcher.php [FeedSync]<br />
-01:00 http://yoursite.com/cron/cron_clearup.php [CleanUp]<br /></div>";
+		return "<div id='ajcron_help'>/65 ".KB_HOST."/cron/cron_fetcher.php [FeedSync]<br />
+01:00 ".KB_HOST."/cron/cron_clearup.php [CleanUp]<br /></div>";
 	}
 }
