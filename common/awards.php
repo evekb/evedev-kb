@@ -7,9 +7,9 @@
 
 class pAwards extends pageAssembly
 {
-	//! Construct the Alliance Details object.
-
-	/** Set up the basic variables of the class and add the functions to the
+	/**
+	 * Construct the Alliance Details object.
+	 * Set up the basic variables of the class and add the functions to the
 	 *  build queue.
 	 */
 	function __construct()
@@ -19,9 +19,9 @@ class pAwards extends pageAssembly
 		$this->queue("start");
 		$this->queue("awards");
 	}
-	//! Start constructing the page.
-
-	/*! Prepare all the shared variables.
+	/**
+	 * Start constructing the page.
+	 * Prepare all the shared variables.
 	 *
 	 */
 	function start()
@@ -187,7 +187,9 @@ class pAwards extends pageAssembly
 
 		return $smarty->fetch(get_tpl('awards'));
 	}
-	//! Reset the assembly object to prepare for creating the context.
+	/**
+	 *  Reset the assembly object to prepare for creating the context.
+	 */
 	function context()
 	{
 		parent::__construct();
@@ -195,9 +197,10 @@ class pAwards extends pageAssembly
 		$this->queue("menu");
 	}
 
-	//! Build the menu.
-
-	//! Additional options that have been set are added to the menu.
+	/**
+	 * Build the menu.
+	 *  Additional options that have been set are added to the menu.
+	 */
 	function menu()
 	{
 		$menubox = new Box("Menu");
@@ -211,9 +214,11 @@ class pAwards extends pageAssembly
 		}
 		return $menubox->generate();
 	}
-	//! Set up the menu.
-
-	//! Additional options that have been set are added to the menu.
+	/**
+	 * Set up the menu.
+	 *
+	 * Additional options that have been set are added to the menu.
+	 */
 	function menuSetup()
 	{
 		$this->addMenuItem("caption", "Navigation");
@@ -221,24 +226,24 @@ class pAwards extends pageAssembly
 		if (! ($this->month == kbdate("m") - 1 && $this->year == kbdate("Y")))
 			$this->addMenuItem("link", "Next month", "?a=awards&amp;m=".$this->nmonth."&amp;y=".$this->nyear);
 	}
-	//! Add an item to the menu in standard box format.
-
-	/*!
+	/**
+	 * Add an item to the menu in standard box format.
+	 *
 	 *  Only links need all 3 attributes
-	 * \param type Types can be caption, img, link, points.
-	 * \param name The name to display.
-	 * \param url Only needed for URLs.
+	 * @param string $type Types can be caption, img, link, points.
+	 * @param string $name The name to display.
+	 * @param string $url Only needed for URLs.
 	 */
 	function addMenuItem($type, $name, $url = '')
 	{
 		$this->menuOptions[] = array($type, $name, $url);
 	}
 
-	//! Add a type of view to the options.
-
-	/*!
-	 * \param view The name of the view to recognise.
-	 * \param callback The method to call when this view is used.
+	/**
+	 * Add a type of view to the options.
+	 *
+	 * @param string $view The name of the view to recognise.
+	 * @param mixed $callback The method to call when this view is used.
 	 */
 	function addView($view, $callback)
 	{

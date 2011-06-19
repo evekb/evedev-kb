@@ -16,9 +16,9 @@ class pCorpDetail extends pageAssembly
 		public $alliance = 0;
 		public $kill_summary = null;
 
-	//! Construct the Pilot Details object.
-
-	/** Set up the basic variables of the class and add the functions to the
+	/**
+	 * Construct the Pilot Details object.
+	 * Set up the basic variables of the class and add the functions to the
 	 *  build queue.
 	 */
 	function __construct()
@@ -33,7 +33,9 @@ class pCorpDetail extends pageAssembly
 
 	}
 
-	//! Reset the assembly object to prepare for creating the context.
+	/**
+	 *  Reset the assembly object to prepare for creating the context.
+	 */
 	function context()
 	{
 		parent::__construct();
@@ -41,9 +43,11 @@ class pCorpDetail extends pageAssembly
 		$this->queue("menu");
 	}
 
-	//! Start constructing the page.
+	/**
 
-	/*! Prepare all the shared variables such as dates and check alliance ID.
+	 * Start constructing the page.
+
+	 * Prepare all the shared variables such as dates and check alliance ID.
 	 *
 	 */
 	function start()
@@ -115,14 +119,18 @@ class pCorpDetail extends pageAssembly
 		}
 		$this->monthname = kbdate("F", strtotime("2000-".$this->month."-2"));
 	}
-	//! Set up the stats used by the stats and summary table functions
+	/**
+	 *  Set up the stats used by the stats and summary table functions
+	 */
 	function statSetup()
 	{
 		$this->kill_summary = new KillSummaryTable();
 		$this->kill_summary->addInvolvedCorp($this->crp_id);
 		$this->kill_summary->generate();
 	}
-	//! Build the summary table showing all kills and losses for this corporation.
+	/**
+	 *  Build the summary table showing all kills and losses for this corporation.
+	 */
 	function summaryTable()
 	{
 		if($this->view != '' && $this->view != 'kills'
@@ -131,7 +139,9 @@ class pCorpDetail extends pageAssembly
 		// first generates the table.
 		return $this->kill_summary->generate();
 	}
-	//! Show the overall statistics for this corporation.
+	/**
+	 *  Show the overall statistics for this corporation.
+	 */
 	function stats()
 	{
 		global $smarty;
@@ -189,7 +199,9 @@ class pCorpDetail extends pageAssembly
 		return $smarty->fetch(get_tpl('corp_detail_stats'));
 	}
 
-	//! Build the killlists that are needed for the options selected.
+	/**
+	 *  Build the killlists that are needed for the options selected.
+	 */
 	function killList()
 	{
 		global $smarty;
@@ -560,9 +572,11 @@ class pCorpDetail extends pageAssembly
 		}
 		return $html;
 	}
-	//! Set up the menu.
-
-	//! Prepare all the base menu options.
+	/**
+	 * Set up the menu.
+	 *
+	 *  Prepare all the base menu options.
+	 */
 	function menuSetup()
 	{
 		$this->addMenuItem("caption","Kills &amp; losses");
@@ -583,9 +597,11 @@ class pCorpDetail extends pageAssembly
 		$this->addMenuItem("link","Most violent systems", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=violent_systems");
 		return "";
 	}
-	//! Build the menu.
-
-	//! Add all preset options to the menu.
+	/**
+	 * Build the menu.
+	 *
+	 *  Add all preset options to the menu.
+	 */
 	function menu()
 	{
 		$menubox = new box("Menu");
@@ -599,24 +615,26 @@ class pCorpDetail extends pageAssembly
 		}
 		return $menubox->generate();
 	}
-	//! Add an item to the menu in standard box format.
-
-	/*!
+	/**
+	 * Add an item to the menu in standard box format.
+	 *
 	 *  Only links need all 3 attributes
-	 * \param type Types can be caption, img, link, points.
-	 * \param name The name to display.
-	 * \param url Only needed for URLs.
+	 * @param string $type Types can be caption, img, link, points.
+	 * @param string $name The name to display.
+	 * @param string $url Only needed for URLs.
 	 */
 	function addMenuItem($type, $name, $url = '')
 	{
 		$this->menuOptions[] = array($type, $name, $url);
 	}
 
-	//! Add a type of view to the options.
+	/**
 
-	/*!
-	 * \param view The name of the view to recognise.
-	 * \param callback The method to call when this view is used.
+	 * Add a type of view to the options.
+
+	 *
+	 * @param string $view The name of the view to recognise.
+	 * @param mixed $callback The method to call when this view is used.
 	 */
 	function addView($view, $callback)
 	{

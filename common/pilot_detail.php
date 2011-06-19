@@ -15,9 +15,11 @@ class pPilotDetail extends pageAssembly
 	public $plt_id = false;
 	public $page = null;
 
-	//! Construct the Pilot Details object.
+	/**
 
-	/** Set up the basic variables of the class and add the functions to the
+	 * Construct the Pilot Details object.
+
+	 * Set up the basic variables of the class and add the functions to the
 	 *  build queue.
 	 */
 	function __construct()
@@ -31,7 +33,9 @@ class pPilotDetail extends pageAssembly
 		$this->queue("killList");
 	}
 
-	//! Reset the assembly object to prepare for creating the context.
+	/**
+	 *  Reset the assembly object to prepare for creating the context.
+	 */
 	function context()
 	{
 		parent::__construct();
@@ -40,9 +44,11 @@ class pPilotDetail extends pageAssembly
 		$this->queue("points");
 	}
 
-	//! Start constructing the page.
+	/**
 
-	/*! Prepare all the shared variables such as dates and check alliance ID.
+	 * Start constructing the page.
+
+	 * Prepare all the shared variables such as dates and check alliance ID.
 	 *
 	 */
 	function start()
@@ -130,7 +136,9 @@ class pPilotDetail extends pageAssembly
 		}
 		$this->monthname = kbdate("F", strtotime("2000-".$this->month."-2"));
 	}
-	//! Set up the stats used by stats and summaryTable functions.
+	/**
+	 *  Set up the stats used by stats and summaryTable functions.
+	 */
 	function statSetup()
 	{
 		if(!isset($this->kill_summary))
@@ -140,13 +148,17 @@ class pPilotDetail extends pageAssembly
 			if ($this->view == "ships_weapons") $this->summary->setFilter(false);
 		}
 	}
-	//! Build the summary table showing all kills and losses for this pilot.
+	/**
+	 *  Build the summary table showing all kills and losses for this pilot.
+	 */
 	function summaryTable()
 	{
 		return $this->summary->generate();
 	}
 
-	//! Show the overall statistics for this alliance.
+	/**
+	 *  Show the overall statistics for this alliance.
+	 */
 	function stats()
 	{
 		$this->summary->generate();
@@ -202,7 +214,9 @@ class pPilotDetail extends pageAssembly
 		return $smarty->fetch(get_tpl('pilot_detail_stats'));
 	}
 
-	//! Build the killlists that are needed for the options selected.
+	/**
+	 *  Build the killlists that are needed for the options selected.
+	 */
 	function killList()
 	{
 		global $smarty;
@@ -289,9 +303,11 @@ class pPilotDetail extends pageAssembly
 		}
 		return $html;
 	}
-	//! Set up the menu.
-
-	//! Prepare all the base menu options.
+	/**
+	 * Set up the menu.
+	 *
+	 *  Prepare all the base menu options.
+	 */
 	function menuSetup()
 	{
 		$this->addMenuItem("caption","Kills &amp; losses");
@@ -302,9 +318,11 @@ class pPilotDetail extends pageAssembly
 		$this->addMenuItem("link","Ships &amp; weapons", "?a=pilot_detail&amp;plt_id=".$this->pilot->getID()."&amp;view=ships_weapons");
 		return "";
 	}
-	//! Build the menu.
-
-	//! Add all preset options to the menu.
+	/**
+	 * Build the menu.
+	 *
+	 *  Add all preset options to the menu.
+	 */
 	function menu()
 	{
 		$menubox = new box("Menu");
@@ -343,24 +361,28 @@ class pPilotDetail extends pageAssembly
 		return $html;
 	}
 
-	//! Add an item to the menu in standard box format.
+	/**
 
-	/*!
+	 * Add an item to the menu in standard box format.
+
+	 *
 	 *  Only links need all 3 attributes
-	 * \param type Types can be caption, img, link, points.
-	 * \param name The name to display.
-	 * \param url Only needed for URLs.
+	 * @param string $type Types can be caption, img, link, points.
+	 * @param string $name The name to display.
+	 * @param string $url Only needed for URLs.
 	 */
 	function addMenuItem($type, $name, $url = '')
 	{
 		$this->menuOptions[] = array($type, $name, $url);
 	}
 
-	//! Add a type of view to the options.
+	/**
 
-	/*!
-	 * \param view The name of the view to recognise.
-	 * \param callback The method to call when this view is used.
+	 * Add a type of view to the options.
+
+	 *
+	 * @param string $view The name of the view to recognise.
+	 * @param mixed $callback The method to call when this view is used.
 	 */
 	function addView($view, $callback)
 	{

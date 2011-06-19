@@ -47,7 +47,11 @@ class pHome extends pageAssembly
 		elseif($this->view == 'losses') $this->page->setTitle('Losses - '.$this->getCurrentPeriod());
 		else $this->page->setTitle($this->getCurrentPeriod());
 	}
-	//! Check if summary tables are enabled and if so return a table for this week.
+	/**
+	 *  Check if summary tables are enabled and if so return a table for this week.
+	 *
+	 * @return string HTML string for a summary table.
+	 */
 	function summaryTable()
 	{
 	// Display the summary table.
@@ -71,6 +75,10 @@ class pHome extends pageAssembly
 		}
 	}
 
+	/**
+	 * Returns HTML string for campaigns, if any.
+	 * @return string HTML string for campaigns, if any
+	 */
 	function campaigns()
 	{
 	// Display campaigns, if any.
@@ -87,6 +95,10 @@ class pHome extends pageAssembly
 		}
 	}
 
+	/**
+	 * Returns HTML string for contracts, if any.
+	 * @return string HTML string for contracts, if any
+	 */
 	function contracts()
 	{
 	// Display contracts, if any.
@@ -103,6 +115,11 @@ class pHome extends pageAssembly
 		}
 	}
 
+	/**
+	 * Return the main killlists
+	 * @global Smarty $smarty
+	 * @return string HTML string for killlist tables
+	 */
 	function killList()
 	{
 		if(isset($this->viewList[$this->view])) return call_user_func_array($this->viewList[$this->view], array(&$this));
@@ -150,9 +167,11 @@ class pHome extends pageAssembly
 		}
 		return $html;
 	}
-	//! Set up the menu.
-
-	//! Prepare all the base menu options.
+	/**
+	 * Set up the menu.
+	 *
+	 *  Prepare all the base menu options.
+	 */
 	function menuSetup()
 	{
 		// Display the menu for previous and next weeks.
@@ -178,9 +197,13 @@ class pHome extends pageAssembly
 				"?a=home&amp;" . $this->getCurrentPeriodLink() . $suffixscl);
 		return "";
 	}
-	//! Build the menu.
-
-	//! Add all preset options to the menu.
+	/**
+	 * Build the menu.
+	 *
+	 *  Add all preset options to the menu.
+	 *
+	 * @return string
+	 */
 	function menu()
 	{
 		$menubox = new box("Menu");
@@ -195,6 +218,10 @@ class pHome extends pageAssembly
 		return $menubox->generate();
 	}
 
+	/**
+	 *
+	 * @return string HTML string for a clock
+	 */
 	function clock()
 	{
 	// Show the Eve time.
@@ -205,6 +232,10 @@ class pHome extends pageAssembly
 		}
 	}
 
+	/**
+	 *
+	 * @return string HTML string for toplists
+	 */
 	function topLists()
 	{
 	// Display the top pilot lists.
@@ -252,20 +283,38 @@ class pHome extends pageAssembly
 		$this->queue('topLists');
 	}
 
+	/**
+	 * Return the set week.
+	 * @return integer
+	 */
 	function getWeek()
 	{
 		return $this->week;
 	}
 
+	/**
+	 * Return the set month.
+	 * @return integer
+	 */
 	function getMonth()
 	{
 		return $this->month;
 	}
 
+	/**
+	 * Return the set year.
+	 * @return integer
+	 */
 	function getYear()
 	{
 		return $this->year;
 	}
+
+	/**
+	 *
+	 * @param integer $week
+	 * @param integer $year
+	 */
 	function setWeek($week, $year)
 	{
 		$week = intval($week);
@@ -310,6 +359,11 @@ class pHome extends pageAssembly
 		$this->currentPeriodLink = 'w='.$this->week.'&amp;y='.$this->year;
 	}
 
+	/**
+	 *
+	 * @param integer $month
+	 * @param integer $year
+	 */
 	function setMonth($month, $year)
 	{
 		$month = (int)$month;
@@ -350,9 +404,9 @@ class pHome extends pageAssembly
 		$this->nextPeriodLink = 'm='.$this->nmonth.'&amp;y='.$this->nyear;
 		$this->currentPeriodLink = 'm='.$this->month.'&amp;y='.$this->year;
 	}
-	//! Returns true if the board is showing the current time period.
-
-	/*! \return True if the board is showing the current time period, false
+	/**
+	 * Returns true if the board is showing the current time period.
+	 * @return boolean true if the board is showing the current time period, false
 	 *  otherwise.
 	 */
 	function isCurrentPeriod()
@@ -360,30 +414,48 @@ class pHome extends pageAssembly
 		return $this->currentTime;
 	}
 
-	//! Return the text name of the current time period type.
+	/**
+	 *  Return the text name of the current time period type.
+	 *
+	 * @return string
+	 */
 	function getPeriodName()
 	{
 		return $this->periodName;
 	}
-	//! Return the text name of the current time period.
+	/**
+	 *  Return the text name of the current time period.
+	 */
 	function getCurrentPeriod()
 	{
 		return $this->period;
 	}
 
-	//! Return a string to add to a url to generate the current time period.
+	/**
+	 *  Return a string to add to a url to generate the current time period.
+	 *
+	 * @return string
+	 */
 	function getCurrentPeriodLink()
 	{
 		return $this->currentPeriodLink;
 	}
 
-	//! Return a string to add to a url to generate the next time period.
+	/**
+	 *  Return a string to add to a url to generate the next time period.
+	 *
+	 * @return string
+	 */
 	function getNextPeriodLink()
 	{
 		return $this->nextPeriodLink;
 	}
 
-	//! Return a string to add to a url to generate the previous time period.
+	/**
+	 *  Return a string to add to a url to generate the previous time period.
+	 *
+	 * @return string
+	 */
 	function getPreviousPeriodLink()
 	{
 		return $this->previousPeriodLink;
@@ -406,7 +478,15 @@ class pHome extends pageAssembly
 
 		}
 	}
-	//! Set the current time to use for this page.
+	/**
+	 *  Set the current time to use for this page.
+	 *
+	 * @param integer $week
+	 * @param integer $year
+	 * @param integer $month
+	 * @param integer $start
+	 * @param integer $end
+	 */
 	function setTime($week = 0, $year = 0, $month = 0, $start = 0, $end = 0)
 	{
 		// Set week.
@@ -433,24 +513,24 @@ class pHome extends pageAssembly
 		}
 	}
 
-	//! Add an item to the menu in standard box format.
-
-	/*!
+	/**
+	 * Add an item to the menu in standard box format.
+	 *
 	 *  Only links need all 3 attributes
-	 * \param type Types can be caption, img, link, points.
-	 * \param name The name to display.
-	 * \param url Only needed for URLs.
+	 * @param string $type Types can be caption, img, link, points.
+	 * @param string $name The name to display.
+	 * @param string $url Only needed for URLs.
 	 */
 	function addMenuItem($type, $name, $url = '')
 	{
 		$this->menuOptions[] = array($type, $name, $url);
 	}
 
-	//! Add a type of view to the options.
-
-	/*!
-	 * \param view The name of the view to recognise.
-	 * \param callback The method to call when this view is used.
+	/**
+	 * Add a type of view to the options.
+	 *
+	 * @param string $view The name of the view to recognise.
+	 * @param mixed $callback The method to call when this view is used.
 	 */
 	function addView($view, $callback)
 	{

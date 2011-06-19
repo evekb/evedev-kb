@@ -7,9 +7,9 @@
 
 class pContractDetail extends pageAssembly
 {
-	//! Construct the Contract Details object.
-
-	/** Set up the basic variables of the class and add the functions to the
+	/**
+	 * Construct the Contract Details object.
+	 * Set up the basic variables of the class and add the functions to the
 	 *  build queue.
 	 */
 	function __construct()
@@ -30,7 +30,9 @@ class pContractDetail extends pageAssembly
 		$this->queue("killList");
 
 	}
-	//! Reset the assembly object to prepare for creating the context.
+	/**
+	 *  Reset the assembly object to prepare for creating the context.
+	 */
 	function context()
 	{
 		parent::__construct();
@@ -38,9 +40,9 @@ class pContractDetail extends pageAssembly
 		$this->queue("menu");
 		$this->queue("topLists");
 	}
-	//! Start constructing the page.
-
-	/*! Prepare all the shared variables such as dates and check alliance ID.
+	/**
+	 * Start constructing the page.
+	 * Prepare all the shared variables such as dates and check alliance ID.
 	 *
 	 */
 	function start()
@@ -61,7 +63,9 @@ class pContractDetail extends pageAssembly
 
 	}
 
-	//! Build the toplists to highlight efforts.
+	/**
+	 *  Build the toplists to highlight efforts.
+	 */
 	function topLists()
 	{
 		$tklist = new TopList_ContractKills();
@@ -86,7 +90,9 @@ class pContractDetail extends pageAssembly
 		}
 		return $html;
 	}
-	//! Build the summary table showing all kills and losses for the contract.
+	/**
+	 *  Build the summary table showing all kills and losses for the contract.
+	 */
 	function summaryTable()
 	{
 		$klist = $this->contract->getKillList();
@@ -96,7 +102,9 @@ class pContractDetail extends pageAssembly
 
 		return $killsummary->generate();
 	}
-	//! Show the overall statistics of the contract.
+	/**
+	 *  Show the overall statistics of the contract.
+	 */
 	function stats()
 	{
 		global $smarty;
@@ -116,7 +124,9 @@ class pContractDetail extends pageAssembly
 		return $smarty->fetch(get_tpl('cc_detail_stats'));
 	}
 
-	//! Show the comment for this campaign, if there is one.
+	/**
+	 *  Show the comment for this campaign, if there is one.
+	 */
 	function comment()
 	{
 		global $smarty;
@@ -131,7 +141,9 @@ class pContractDetail extends pageAssembly
 
 		return $html;
 	}
-	//! Build the killlists that are needed for the options selected.
+	/**
+	 *  Build the killlists that are needed for the options selected.
+	 */
 	function killList()
 	{
 		if(isset($this->viewList[$this->view])) return call_user_func_array($this->viewList[$this->view], array(&$this));
@@ -247,9 +259,11 @@ class pContractDetail extends pageAssembly
 		}
 		return $html;
 	}
-	//! Set up the menu.
-
-	//! Prepare all the base menu options.
+	/**
+	 * Set up the menu.
+	 *
+	 *  Prepare all the base menu options.
+	 */
 	function menuSetup()
 	{
 		$this->addMenuItem("caption","Overview");
@@ -260,9 +274,11 @@ class pContractDetail extends pageAssembly
 		$this->addMenuItem("link","All losses", "?a=cc_detail&amp;ctr_id=".$this->ctr_id."&amp;view=losses");
 		return "";
 	}
-	//! Build the menu.
-
-	//! Add all preset options to the menu.
+	/**
+	 * Build the menu.
+	 *
+	 *  Add all preset options to the menu.
+	 */
 	function menu()
 	{
 		$menubox = new box("Menu");
@@ -276,24 +292,26 @@ class pContractDetail extends pageAssembly
 		}
 		return $menubox->generate();
 	}
-	//! Add an item to the menu in standard box format.
-
-	/*!
+	/**
+	 * Add an item to the menu in standard box format.
+	 *
 	 *  Only links need all 3 attributes
-	 * \param type Types can be caption, img, link, points.
-	 * \param name The name to display.
-	 * \param url Only needed for URLs.
+	 * @param string $type Types can be caption, img, link, points.
+	 * @param string $name The name to display.
+	 * @param string $url Only needed for URLs.
 	 */
 	function addMenuItem($type, $name, $url = '')
 	{
 		$this->menuOptions[] = array($type, $name, $url);
 	}
 
-	//! Add a type of view to the options.
+	/**
 
-	/*!
-	 * \param view The name of the view to recognise.
-	 * \param callback The method to call when this view is used.
+	 * Add a type of view to the options.
+
+	 *
+	 * @param string $view The name of the view to recognise.
+	 * @param mixed $callback The method to call when this view is used.
 	 */
 	function addView($view, $callback)
 	{

@@ -7,9 +7,9 @@
 
 class pSelf extends pageAssembly
 {
-    //! Construct the Alliance Details object.
-
-    /** Set up the basic variables of the class and add the functions to the
+    /**
+     * Construct the Alliance Details object.
+     * Set up the basic variables of the class and add the functions to the
      *  build queue.
      */
     function __construct()

@@ -11,15 +11,14 @@ require_once('common/includes/xajax.functions.php');
 
 class pSearch extends pageAssembly
 {
-    //! Construct the Alliance Details object.
-
-    /** Set up the basic variables of the class and add the functions to the
+    /**
+     * Construct the Alliance Details object.
+     *
+     *  Set up the basic variables of the class and add the functions to the
      *  build queue.
      */
     function __construct()
     {
-        $this->page = new Page();
-
         parent::__construct();
 
         $this->queue("start");
@@ -28,7 +27,7 @@ class pSearch extends pageAssembly
     }
     function start()
     {
-        $this->page->setTitle('Search');
+        $this->page = new Page('Search');
         $this->searchphrase = is_null($_POST['searchphrase']) ? slashfix($_GET['searchphrase']) : slashfix($_POST['searchphrase']);
         $this->searchphrase = preg_replace('/\*/', '%', $this->searchphrase);
         $this->searchphrase = trim($this->searchphrase);

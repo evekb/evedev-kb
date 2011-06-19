@@ -329,10 +329,12 @@ class objectCache
 	private static $alliances = array();
 	private static $ships = array();
 	private static $items = array();
-	//! Return Alliance from cached list or look up a new id.
-
-	//! \param $id Alliance ID to look up.
-	//! \return Alliance object matching input id.
+	/**
+	 * Return Alliance from cached list or look up a new id.
+	 *
+	 *  @param integer $id Alliance ID to look up.
+	 *  @return Alliance object matching input id.
+	 */
 	public static function fetchAlliance($id)
 	{
 		if(isset(self::$alliances[$id]))
@@ -344,10 +346,12 @@ class objectCache
 		}
 		return $alliance;
 	}
-	//! Return Corporation from cached list or look up a new id.
-
-	//! \param $id Corporation ID.
-	//! \return Corporation object matching input id.
+	/**
+	 * Return Corporation from cached list or look up a new id.
+	 *
+	 *  @param integer $id Corporation ID.
+	 *  @return Corporation object matching input id.
+	 */
 	public static function fetchCorp($id)
 	{
 		if(isset(self::$corps[$id]))
@@ -361,10 +365,12 @@ class objectCache
 		}
 		return $corp;
 	}
-	//! Return Pilot from cached list or look up a new id.
-
-	//! \param $id Pilot ID to look up.
-	//! \return Pilot object matching input id.
+	/**
+	 * Return Pilot from cached list or look up a new id.
+	 *
+	 *  @param integer $id Pilot ID to look up.
+	 *  @return Pilot object matching input id.
+	 */
 	public static function fetchPilot($id)
 	{
 		if(isset(self::$pilots[$id]))
@@ -378,10 +384,12 @@ class objectCache
 		}
 		return $pilot;
 	}
-	//! Return ship from cached list or look up a new id.
-
-	//! \param $id Ship id to look up.
-	//! \return Ship object matching input id.
+	/**
+	 * Return ship from cached list or look up a new id.
+	 *
+	 *  @param integer $id Ship id to look up.
+	 *  @return Ship object matching input id.
+	 */
 	public static function fetchShip($id)
 	{
 		if(isset(self::$ships[$id]))
@@ -393,10 +401,12 @@ class objectCache
 		}
 		return $ship;
 	}
-	//! Return item from cached list or look up a new name.
-
-	//! \param $itemname Item name to look up.
-	//! \return Item object matching input name.
+	/**
+	 * Return item from cached list or look up a new name.
+	 *
+	 *  @param string $itemname Item name to look up.
+	 *  @return Item object matching input name.
+	 */
 	public static function fetchItem($id)
 	{
 		if(isset(self::$items[$id]))
@@ -410,7 +420,12 @@ class objectCache
 	}
 
 }
-
+/**
+ * Recursively add a SimpleXMLElement to another.
+ *
+ * @param SimpleXMLElement $dest
+ * @param SimpleXMLElement $source
+ */
 function AddXMLElement($dest, $source)
 {
 	$new_dest = $dest->addChild($source->getName(), $source[0]);
@@ -425,6 +440,11 @@ function AddXMLElement($dest, $source)
 		AddXMLElement($new_dest, $child);
 	}
 }
+/**
+ * Output generated XML and terminate.
+ * 
+ * @param SimpleXMLElement $sxe
+ */
 function show($sxe)
 {
 	header("Content-Type: text/xml");

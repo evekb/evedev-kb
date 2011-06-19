@@ -18,9 +18,11 @@ class pSystemDetail extends pageAssembly
 		$this->queue("killList");
 	}
 	
-	//! Start constructing the page.
-
-	/*! Prepare all the shared variables such as dates and check alliance ID.
+	/**
+	
+	 * Start constructing the page.
+	
+	 * Prepare all the shared variables such as dates and check alliance ID.
 	 *
 	 */
 	function start()
@@ -53,7 +55,9 @@ class pSystemDetail extends pageAssembly
 	{
 		return $this->smarty->fetch(get_tpl("system_detail_map"));
 	}
-	//! Set up the stats used by the stats and summary table functions
+	/**
+	 *  Set up the stats used by the stats and summary table functions
+	 */
 	function statSetup()
 	{
 		$this->kill_summary = new KillSummaryTable();
@@ -63,7 +67,9 @@ class pSystemDetail extends pageAssembly
 		$this->kill_summary->generate();
 		return "";
 	}
-	//! Build the summary table showing all kills and losses for this corporation.
+	/**
+	 *  Build the summary table showing all kills and losses for this corporation.
+	 */
 	function summaryTable()
 	{
 		if($this->view != '' && $this->view != 'kills'
@@ -71,7 +77,9 @@ class pSystemDetail extends pageAssembly
 		return $this->kill_summary->generate();
 	}
 
-	//! Build the killlists that are needed for the options selected.
+	/**
+	 *  Build the killlists that are needed for the options selected.
+	 */
 	function killList()
 	{
 		global $smarty;
@@ -112,7 +120,9 @@ class pSystemDetail extends pageAssembly
 		return $html;
 	}
 	
-	//! Reset the assembly object to prepare for creating the context.
+	/**
+	 *  Reset the assembly object to prepare for creating the context.
+	 */
 	function context()
 	{
 		parent::__construct();
@@ -120,9 +130,11 @@ class pSystemDetail extends pageAssembly
 		$this->queue("menu");
 	}
 	
-	//! Set up the menu.
-
-	//! Prepare all the base menu options.
+	/**
+	 * Set up the menu.
+	 *
+	 *  Prepare all the base menu options.
+	 */
 	function menuSetup()
 	{
 		$this->addMenuItem("caption","Navigation");
@@ -131,9 +143,11 @@ class pSystemDetail extends pageAssembly
 		$this->addMenuItem("link","Recent Activity", "?a=system_detail&amp;sys_id=".$this->sys_id."&amp;view=recent");
 		return "";
 	}
-	//! Build the menu.
-
-	//! Add all preset options to the menu.
+	/**
+	 * Build the menu.
+	 *
+	 *  Add all preset options to the menu.
+	 */
 	function menu()
 	{
 		$menubox = new box("Menu");
@@ -147,24 +161,26 @@ class pSystemDetail extends pageAssembly
 		}
 		return $menubox->generate();
 	}
-	//! Add an item to the menu in standard box format.
-
-	/*!
+	/**
+	 * Add an item to the menu in standard box format.
+	 *
 	 *  Only links need all 3 attributes
-	 * \param type Types can be caption, img, link, points.
-	 * \param name The name to display.
-	 * \param url Only needed for URLs.
+	 * @param string $type Types can be caption, img, link, points.
+	 * @param string $name The name to display.
+	 * @param string $url Only needed for URLs.
 	 */
 	function addMenuItem($type, $name, $url = '')
 	{
 		$this->menuOptions[] = array($type, $name, $url);
 	}
 
-	//! Add a type of view to the options.
+	/**
 
-	/*!
-	 * \param view The name of the view to recognise.
-	 * \param callback The method to call when this view is used.
+	 * Add a type of view to the options.
+
+	 *
+	 * @param string $view The name of the view to recognise.
+	 * @param mixed $callback The method to call when this view is used.
 	 */
 	function addView($view, $callback)
 	{

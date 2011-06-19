@@ -27,7 +27,9 @@ class pKillRelated extends pageAssembly
 		$this->queue("killList");
 	}
 
-	//! Reset the assembly object to prepare for creating the context.
+	/**
+	 *  Reset the assembly object to prepare for creating the context.
+	 */
 	function context()
 	{
 		parent::__construct();
@@ -35,9 +37,11 @@ class pKillRelated extends pageAssembly
 		$this->queue("menu");
 	}
 
-	//! Start constructing the page.
+	/**
 
-	/*! Prepare all the shared variables such as dates and check alliance ID.
+	 * Start constructing the page.
+
+	 * Prepare all the shared variables such as dates and check alliance ID.
 	 *
 	 */
 	function start()
@@ -642,13 +646,13 @@ class pKillRelated extends pageAssembly
 
 		return $menubox->generate();
 	}
-	//! Add an item to the menu in standard box format.
-
-	/*!
+	/**
+	 * Add an item to the menu in standard box format.
+	 *
 	 *  Only links need all 3 attributes
-	 * \param type Types can be caption, img, link, points.
-	 * \param name The name to display.
-	 * \param url Only needed for URLs.
+	 * @param string $type Types can be caption, img, link, points.
+	 * @param string $name The name to display.
+	 * @param string $url Only needed for URLs.
 	 */
 	function addMenuItem($type, $name, $url = '')
 	{
