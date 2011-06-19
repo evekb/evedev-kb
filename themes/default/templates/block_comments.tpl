@@ -4,21 +4,24 @@
 		<tr>
 			<td style="width:100%; text-align:left; vertical-align:top">
 				<table width="100%" border="0" cellspacing="0">
-{cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}{section name=i loop=$comments}
-					<tr class="{cycle name=ccl}">
+					<tr>
 						<td>
-							<div style="position: relative;"><a href="?a=search&amp;searchtype=pilot&amp;searchphrase={$comments[i].encoded_name}">{$comments[i].name}</a>:
-{if $comments[i].time}
-								<span style="position:absolute; right: 0px;">{$comments[i].time}</span>
-{/if}
-								<p>{$comments[i].comment}</p>
-{if $page->isAdmin()}
-								<a href='?a=admin_comments_delete&amp;c_id={$comments[i].id}' onclick="openWindow('?a=admin_comments_delete&amp;c_id={$comments[i].id}', null, 480, 350, '' ); return false;">Delete Comment</a>
-								<span style="position:absolute; right: 0px;">Posters IP:{$comments[i].ip}</span>
-{/if}
-							</div></td>
+							<div id="kl-detail-comment-list">
+								{section name=i loop=$comments}
+								<div class="comment-posted"><a href="?a=search&amp;searchtype=pilot&amp;searchphrase={$comments[i].encoded_name}">{$comments[i].name}</a>:
+						{if $comments[i].time}
+									<span class="comment-time">{$comments[i].time}</span>
+						{/if}
+									<p>{$comments[i].comment}</p>
+						{if $page->isAdmin()}
+									<a href='?a=admin_comments_delete&amp;c_id={$comments[i].id}' onclick="openWindow('?a=admin_comments_delete&amp;c_id={$comments[i].id}', null, 480, 350, '' ); return false;">Delete Comment</a>
+									<span class="comment-IP">Posters IP:{$comments[i].ip}</span>
+						{/if}
+								</div>
+								{/section}
+							</div>
+						</td>
 					</tr>
-{/section}
 					<tr>
 						<td>
 							<form id="postform" method="post" action="">

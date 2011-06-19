@@ -8,12 +8,13 @@
 /*
  * Based on work by unknown, Sapyx, Rostik, Tribalize, Ben Thomas, KE and Kovell
  */
+require_once('common/includes/xajax.functions.php');
 
 class pKillDetail extends pageAssembly
 {
-//! Construct the Pilot Details object.
-
-/** Set up the basic variables of the class and add the functions to the
+/**
+ * Construct the Pilot Details object.
+ * Set up the basic variables of the class and add the functions to the
  *  build queue.
  */
 	function __construct()
@@ -34,7 +35,9 @@ class pKillDetail extends pageAssembly
 
 	}
 
-	//! Reset the assembly object to prepare for creating the context.
+	/**
+	 *  Reset the assembly object to prepare for creating the context.
+	 */
 	function context()
 	{
 		parent::__construct();
@@ -45,10 +48,10 @@ class pKillDetail extends pageAssembly
 		$this->queue("map");
 	}
 
-	//! Start constructing the page.
-
-	/*! Prepare all the shared variables such as dates and check alliance ID.
+	/**
+	 * Start constructing the page.
 	 *
+	 * Prepare all the shared variables such as dates and check alliance ID.
 	 */
 	function start()
 	{
@@ -398,6 +401,7 @@ class pKillDetail extends pageAssembly
 			$this->involved[$i]['shipIsFaction'] = $ship->isFaction();
 			$this->involved[$i]['pilotURL']  ="?a=pilot_detail&amp;plt_id=" . $pilot->getID();
 			$this->involved[$i]['pilotName'] =$pilot->getName();
+			$this->involved[$i]['secStatus'] = $inv->getSecStatus();
 			$this->involved[$i]['corpURL']   ="?a=corp_detail&amp;crp_id=" . $corp->getID();
 			$this->involved[$i]['corpName']  =$corp->getName();
 			$this->involved[$i]['alliURL']   ="?a=alliance_detail&amp;all_id=" . $alliance->getID();
@@ -526,6 +530,11 @@ class pKillDetail extends pageAssembly
 			}
 		}
 	}
+	/**
+	 * Return HTML for the summary of involved parties.
+	 * @global Smarty $smarty
+	 * @return string HTML for the summary of involved parties.
+	 */
 	function involvedSummary()
 	{
 		global $smarty;
@@ -539,6 +548,11 @@ class pKillDetail extends pageAssembly
 
 		return $smarty->fetch(get_tpl('kill_detail_inv_sum'));
 	}
+	/**
+	 * Return HTML for the list of involved parties.
+	 * @global Smarty $smarty
+	 * @return string HTML for the list of involved parties.
+	 */
 	function involved()
 	{
 		global $smarty;
@@ -546,24 +560,57 @@ class pKillDetail extends pageAssembly
 		return $smarty->fetch(get_tpl('kill_detail_inv'));
 	}
 
+	/**
+	 * Return HTML for the top of the kill details page.
+	 *
+	 * Used to provide a two column layout.
+	 *
+	 * @global Smarty $smarty
+	 * @return string HTML for the top of the kill details page.
+	 */
 	function top()
 	{
 		global $smarty;
 		$smarty->assign('kd_col', 'start');
 		return $smarty->fetch(get_tpl('kill_detail_layout'));
 	}
+
+	/**
+	 * Return HTML for the middle of the kill details page.
+	 *
+	 * Used to provide a two column layout.
+	 *
+	 * @global Smarty $smarty
+	 * @return string HTML for the middle of the kill details page.
+	 */
 	function middle()
 	{
 		global $smarty;
 		$smarty->assign('kd_col', 'middle');
 		return $smarty->fetch(get_tpl('kill_detail_layout'));
 	}
+
+	/**
+	 * Return HTML for the bottom of the kill details page.
+	 *
+	 * Used to provide a two column layout.
+	 *
+	 * @global Smarty $smarty
+	 * @return string HTML for the bottom of the kill details page.
+	 */
 	function bottom()
 	{
 		global $smarty;
 		$smarty->assign('kd_col', 'bottom');
 		return $smarty->fetch(get_tpl('kill_detail_layout'));
 	}
+
+	/**
+	 * Return HTML to describe the victim
+	 *
+	 * @global Smarty $smarty
+	 * @return string HTML to describe the victim
+	 */
 	function victim()
 	{
 		global $smarty;
@@ -592,20 +639,31 @@ class pKillDetail extends pageAssembly
 
 		return $smarty->fetch(get_tpl('kill_detail_victim'));
 	}
+	/**
+	 * Return HTML for comments on this kill.
+	 *
+	 * @global Smarty $smarty
+	 * @return string HTML for comments on this kill
+	 */
 	function comments()
 	{
 		if (config::get('comments'))
 		{
+			$this->page->setOnLoad("xajax_getComments({$this->kll_id});");
+			$comments = new Comments(0);
+
 			global $smarty;
-
-			$comments = new Comments($this->kll_id);
-
 			$smarty->assignByRef('page', $this->page);
+			$smarty->assign("kll_id", $this->kll_id);
 
 			return $this->commenthtml.$comments->getComments();
 		}
-		else return '';
 	}
+	/**
+	 * Returns HTML for items dropped or destroyed.
+	 * @global Smarty $smarty
+	 * @return string HTML for items dropped or destroyed.
+	 */
 	function itemsLost()
 	{
 		global $smarty;
@@ -696,6 +754,13 @@ class pKillDetail extends pageAssembly
 		return $smarty->fetch(get_tpl('kill_detail_items_lost'));
 
 	}
+
+	/**
+	 * Return HTML to describe the victim's ship
+	 *
+	 * @global Smarty $smarty
+	 * @return string HTML to describe the victim's ship
+	 */
 	function victimShip()
 	{
 		global $smarty;
@@ -748,6 +813,13 @@ class pKillDetail extends pageAssembly
 		$smarty->assign('totalLoss', number_format($this->kill->getISKLoss()));
 		return $smarty->fetch(get_tpl('kill_detail_victim_ship'));
 	}
+
+	/**
+	 * Return HTML to describe the victim's fitting
+	 *
+	 * @global Smarty $smarty
+	 * @return string HTML to describe the victim's fitting
+	 */
 	function fitting()
 	{
 		global $smarty;
@@ -1028,6 +1100,13 @@ class pKillDetail extends pageAssembly
 
 		return $smarty->fetch(get_tpl('kill_detail_fitting'));
 	}
+
+	/**
+	 * Return HTML to describe the final blow and top damage dealers
+	 *
+	 * @global Smarty $smarty
+	 * @return string HTML to describe the final blow and top damage dealers
+	 */
 	function damageBox()
 	{
 		global $smarty;
@@ -1099,9 +1178,13 @@ class pKillDetail extends pageAssembly
 		}
 		return "";
 	}
-	//! Build the menu.
-
-	//! Add all preset options to the menu.
+	/**
+	 * Build the menu.
+	 *
+	 *  Add all preset options to the menu.
+	 *
+	 * @return string HTML for the menus
+	 */
 	function menu()
 	{
 		$menubox=new Box("Menu");
@@ -1118,6 +1201,11 @@ class pKillDetail extends pageAssembly
 		return $menubox->generate();
 	}
 
+	/**
+	 * Returns HTML for the points for this kill
+	 *
+	 * @return string HTML for the points for this kill
+	 */
 	function points()
 	{
 		if (!config::get('kill_points')) return '';
@@ -1127,6 +1215,11 @@ class pKillDetail extends pageAssembly
 		return $scorebox->generate();
 	}
 
+	/**
+	 * Returns HTML for the map where this kill took place
+	 *
+	 * @return string HTML for the map where this kill took place
+	 */
 	function map()
 	{
 	//Admin is able to see classsified systems
@@ -1149,24 +1242,25 @@ class pKillDetail extends pageAssembly
 		}
 		return '';
 	}
-	//! Add an item to the menu in standard box format.
-
-	/*!
+	/**
+	 * Add an item to the menu in standard box format.
+	 *
 	 *  Only links need all 3 attributes
-	 * \param type Types can be caption, img, link, points.
-	 * \param name The name to display.
-	 * \param url Only needed for URLs.
+	 * @param string $type Types can be caption, img, link, points.
+	 * @param string $name The name to display.
+	 * @param string $url Only needed for URLs.
 	 */
 	function addMenuItem($type, $name, $url = '')
 	{
 		$this->menuOptions[] = func_get_args();
 	}
-	//! Update the stored value of an item and the total value of this kill.
-
-	//! Input values are taken from the query string.
+	/**
+	 * Update the stored value of an item and the total value of this kill.
+	 *
+	 *  Input values are taken from the query string.
+	 */
 	private function updatePrices()
 	{
-		global $smarty;
 		if (config::get('item_values'))
 		{
 			if (isset($_POST['submit']) && $_POST['submit'] == 'UpdateValue')
@@ -1222,6 +1316,12 @@ class pKillDetail extends pageAssembly
 				. " AND itd_kll_id = " . $KID . " AND itd_itl_id = " . $old);
 		}
 	}
+
+	/**
+	 * Returns HTML describing where this killmail was sourced from.
+	 * @global Smarty $smarty
+	 * @return string HTML describing where this killmail was sourced from.
+	 */
 	public function source()
 	{
 		global $smarty;

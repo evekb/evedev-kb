@@ -3,22 +3,30 @@
  * $Date$
  * $Revision$
  * $HeadURL$
- */
-
-/*! Core ajax functions are included in this page. Registered functions are
+ * Core ajax functions are included in this page. Registered functions are
  * called once all mods are initialised.
  */
 
 require_once('common/xajax/xajax.php');
 
 $xajax->register(XAJAX_FUNCTION, "doAjaxSearch");
+$xajax->register(XAJAX_FUNCTION, "getComments");
+$xajax->register(XAJAX_FUNCTION, "postComments");
 
 edk_xajax::xajax();
 
-//! Search function for the search.php page.
-function doAjaxSearch($searchphrase='', $type='pilot')
+/**
+ * Search function for the search.php page.
+ *
+ * @param string $searchphrase
+ * @param string $type
+ * @param integer $limit
+ * @return xajaxResponse
+ */
+function doAjaxSearch($searchphrase='', $type='pilot', $limit = 10)
 {
 	$qry = new DBPreparedQuery();
+
 	switch($type)
 	{
 		case "pilot":
@@ -26,31 +34,31 @@ function doAjaxSearch($searchphrase='', $type='pilot')
 				  from kb3_pilots plt, kb3_corps crp
 				 where plt.plt_name  like ?
 				   and plt.plt_crp_id = crp.crp_id
-				 order by plt.plt_name LIMIT 10";
+				 order by plt.plt_name LIMIT $limit";
 			break;
 		case "corp":
 			$sql = "select crp.crp_name as name1, ali.all_name as name2, crp.crp_id as id
 				  from kb3_corps crp, kb3_alliances ali
 				 where crp.crp_name like  ?
 				   and crp.crp_all_id = ali.all_id
-				 order by crp.crp_name LIMIT 10";
+				 order by crp.crp_name LIMIT $limit";
 			break;
 		case "alliance":
 			$sql = "select ali.all_name as name1, '' as name2, ali.all_id as id
 				  from kb3_alliances ali
 				 where ali.all_name like  ?
-				 order by ali.all_name LIMIT 10";
+				 order by ali.all_name LIMIT $limit";
 			break;
 		case "system":
 			$sql = "select sys.sys_name as name1, reg.reg_name as name2, sys.sys_id as id
 				  from kb3_systems sys, kb3_constellations con, kb3_regions reg
 				 where sys.sys_name like  ?
 					and con.con_id = sys.sys_con_id and reg.reg_id = con.con_reg_id
-				 order by sys.sys_name LIMIT 10";
+				 order by sys.sys_name LIMIT $limit";
 			break;
 		case "item":
 			$sql = "select typeName as name1, '' as name2, typeID as id
-				from kb3_invtypes where typeName like ? LIMIT 10";
+				from kb3_invtypes where typeName like ? LIMIT $limit";
 			break;
 		default:
 			$objResponse = new xajaxResponse();
@@ -127,3 +135,101 @@ function doAjaxSearch($searchphrase='', $type='pilot')
 	return $objResponse;
 }
 
+/**
+ * Return all comments for a given kill
+ *
+ * @global Smarty $smarty
+ * @param integer $kll_id
+ * @param string $message
+ * @return xajaxResponse
+ */
+function getComments($kll_id, $message = '')
+{
+	if (config::get('comments'))
+	{
+		$kll_id = intval($kll_id);
+		$comments = new Comments($kll_id);
+		global $smarty;
+		$config = new Config();
+		if(!$smarty)
+		{
+			$smarty = new Smarty();
+			if(is_dir('./themes/'.$themename.'/templates'))
+				$smarty->template_dir = './themes/'.$themename.'/templates';
+			else $smarty->template_dir = './themes/default/templates';
+
+			if(!is_dir(KB_CACHEDIR.'/templates_c/'.$themename))
+				mkdir(KB_CACHEDIR.'/templates_c/'.$themename);
+			$smarty->compile_dir = KB_CACHEDIR.'/templates_c/'.$themename;
+
+			$smarty->cache_dir = KB_CACHEDIR.'/data';
+			$smarty->assign('theme_url', THEME_URL);
+			$smarty->assign('style', $stylename);
+			$smarty->assign('img_url', IMG_URL);
+			$smarty->assign('img_host', IMG_HOST);
+			$smarty->assign('kb_host', KB_HOST);
+			$smarty->assignByRef('config', $config);
+			$smarty->assign('is_IGB', IS_IGB);
+			$smarty->assign('kll_id', $kll_id);
+		}
+		$smarty->assignByRef('page', new Page("Comments"));
+		$message = $message.$comments->getComments(true);
+	}
+	else $message = '';
+
+	$objResponse = new xajaxResponse();
+	$objResponse->assign('kl-detail-comment-list', "innerHTML", $message);
+	return $objResponse;
+
+}
+
+/**
+ * Post a new comment.
+ * 
+ * @global Smarty $smarty
+ * @param integer $kll_id
+ * @param string $author
+ * @param string $comment
+ * @param string $password
+ * @return xajaxResponse
+ */
+function postComments($kll_id, $author, $comment, $password = '')
+{
+	if (config::get('comments'))
+	{
+		$kll_id = intval($kll_id);
+		$comments = new Comments($kll_id);
+		global $smarty;
+		$config = new Config();
+		$page = new Page("Comments");
+
+		$comments = new Comments($kll_id);
+		$pw = false;
+		if (!config::get('comments_pw') || $page->isAdmin())
+		{
+			$pw = true;
+		}
+		if ($pw || crypt($password, config::get("comment_password")) == config::get("comment_password"))
+		{
+			if ($comment == '')
+			{
+				return getComments($kll_id, 'Error: The silent type, hey? Good for you, bad for a comment.');
+			}
+			else
+			{
+				if (!$author)
+				{
+					$author = 'Anonymous';
+				}
+				$comments->addComment($author, $comment);
+				return getComments($kll_id);
+			}
+		}
+		else
+		{
+			// Password is wrong
+			return getComments($kll_id, 'Error: Wrong Password');
+		}
+	}
+	else return false;
+}
