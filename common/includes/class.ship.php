@@ -3,6 +3,8 @@
  * $Date$
  * $Revision$
  * $HeadURL$
+ *
+ * @package EDK
  */
 
 
@@ -11,13 +13,14 @@
  */
 class Ship
 {
+	static private $cache = array();
+
 	private $executed = false;
 	private $id = 0;
 	private $externalid = null;
 	private $shipname = null;
 	private $shipclass = null;
 	private $shiptechlevel = null;
-	private $shipisofficer = null;
 	private $shipisfaction = null;
 	private $value = 0;
 
@@ -62,7 +65,7 @@ class Ship
 	/**
 	 * Return the external id for this Ship.
 	 *
-	 * @return mixed integer external id for this Ship.
+	 * @return integer external id for this Ship.
 	 */
 	function getExternalID()
 	{
@@ -72,7 +75,7 @@ class Ship
 	/**
 	 * Return the name of this Ship.
 	 *
-	 * @return mixed string name of this Ship.
+	 * @return string name of this Ship.
 	 */
 	function getName()
 	{
@@ -82,7 +85,7 @@ class Ship
 	/**
 	 * Return the ShipClass for this Ship.
 	 *
-	 * @return mixed ShipClass object for this Ship.
+	 * @return ShipClass object for this Ship.
 	 */
 	function getClass()
 	{
@@ -92,7 +95,7 @@ class Ship
 	/**
 	 * Return the tech level of this Ship.
 	 *
-	 * @return mixed integer tech level for this Ship.
+	 * @return integer tech level for this Ship.
 	 */
 	function getTechLevel()
 	{
@@ -102,7 +105,7 @@ class Ship
 	/**
 	 * Return if this Ship is faction.
 	 *
-	 * @return mixed boolean factionality for this Ship.
+	 * @return boolean factionality for this Ship.
 	 */
 	function isFaction()
 	{
@@ -113,7 +116,7 @@ class Ship
 	 * Return the URL for a portrait of this Ship.
 	 *
 	 * @param integer $size the size of the image to return.
-	 * @return mixed string containing valid URL for a portrait of this Ship.
+	 * @return string containing valid URL for a portrait of this Ship.
 	 */
 	function getImage($size)
 	{
@@ -124,7 +127,7 @@ class Ship
 	/**
 	 * Return the base price of this Ship.
 	 *
-	 * @return mixed a number representing the baseprice of this Ship.
+	 * @return float a number representing the baseprice of this Ship.
 	 */
 	function getPrice()
 	{
@@ -155,6 +158,18 @@ class Ship
 	{
 		if (!$this->executed)
 		{
+			if (isset(self::$cache[$this->id])){
+				$this->shipname = self::$cache[$this->id]->shipname;
+				$this->shipclass = self::$cache[$this->id]->shipclass;
+				$this->shiptechlevel = self::$cache[$this->id]->shiptechlevel;
+				$this->shipisfaction = self::$cache[$this->id]->shipisfaction;
+				$this->externalid = self::$cache[$this->id]->externalid;
+				$this->id = self::$cache[$this->id]->id;
+				$this->value = self::$cache[$this->id]->value;
+				$this->executed = true;
+				return;
+			}
+
 			$qry = DBFactory::getDBQuery();
 
 			$sql = "select * from kb3_ships shp
@@ -176,6 +191,8 @@ class Ship
 			{
 				$this->value = $row['shp_baseprice'];
 			}
+
+			self::$cache[$this->id] = $this;
 		}
 		$this->executed = true;
 	}
@@ -202,6 +219,7 @@ class Ship
 		{
 			$this->value = $baseprice;
 		}
+
+		self::$cache[$this->id] = $this;
 	}
 }
-

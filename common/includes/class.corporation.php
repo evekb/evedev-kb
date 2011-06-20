@@ -3,6 +3,8 @@
  * $Date$
  * $Revision$
  * $HeadURL$
+ *
+ * @package EDK
  */
 
 
@@ -11,6 +13,8 @@
  */
 class Corporation
 {
+	static private $cache = array();
+
 	private $id;
 	private $externalid;
 	private $name;
@@ -143,6 +147,8 @@ class Corporation
 		$this->name = $row['crp_name'];
 		$this->externalid = intval($row['crp_external_id']);
 		$this->alliance = $row['crp_all_id'];
+
+		self::$cache[ (int)$this->id ] = $this;
 	}
 	/**
 	 * Search the database for the corporation details for this object.
@@ -152,20 +158,28 @@ class Corporation
 	*/
 	function execQuery()
 	{
-		$qry = DBFactory::getDBQuery();
-		$sql = "select * from kb3_corps where ";
-		if($this->externalid) $sql .= "crp_external_id = ".$this->externalid;
-		else $sql .= "crp_id = ".$this->id;
-		$qry->execute($sql);
-		// If we have an external ID but no local record then fetch from CCP.
-		if($this->externalid && !$qry->recordCount()) $this->fetchCorp();
-		else if($qry->recordCount())
-		{
-			$row = $qry->getRow();
-			$this->id = intval($row['crp_id']);
-			$this->name = $row['crp_name'];
-			$this->externalid = intval($row['crp_external_id']);
-			$this->alliance = $row['crp_all_id'];
+		if( isset( self::$cache[ (int)$this->id ] ) ) {
+			$this->id = self::$cache[ (int)$this->id ]->id;
+			$this->externalid = self::$cache[ (int)$this->id ]->externalid;
+			$this->name = self::$cache[ (int)$this->id ]->name;
+			$this->alliance = self::$cache[ (int)$this->id ]->alliance;
+		} else {
+			$qry = DBFactory::getDBQuery();
+			$sql = "select * from kb3_corps where ";
+			if($this->externalid) $sql .= "crp_external_id = ".$this->externalid;
+			else $sql .= "crp_id = ".$this->id;
+			$qry->execute($sql);
+			// If we have an external ID but no local record then fetch from CCP.
+			if($this->externalid && !$qry->recordCount()) $this->fetchCorp();
+			else if($qry->recordCount())
+			{
+				$row = $qry->getRow();
+				$this->id = intval($row['crp_id']);
+				$this->name = $row['crp_name'];
+				$this->externalid = intval($row['crp_external_id']);
+				$this->alliance = $row['crp_all_id'];
+				self::$cache[ (int)$this->id ] = $this;
+			}
 		}
 	}
 	/**
@@ -225,6 +239,7 @@ class Corporation
 						$qry->execute($sql);
 						$this->alliance = $alliance;
 					}
+					self::$cache[ (int)$this->id ] = $this;
 					return $this->id;
 				}
 			}
@@ -268,7 +283,7 @@ class Corporation
 				$this->setExternalID(intval($externalid));
 			}
 		}
-
+		self::$cache[ (int)$this->id ] = $this;
 		return $this->id;
 	}
 	/**
@@ -322,11 +337,13 @@ class Corporation
 				$qry->execute("UPDATE kb3_corps SET crp_name = '".$qry->escape($this->name)."' where crp_id = ".$old_id);
 				$qry->autocommit(true);
 				$this->id = $old_id;
+				self::$cache[ (int)$this->id ] = $this;
 				return true;
 			}
 			if($qry->execute("UPDATE kb3_corps SET crp_external_id = ".$externalid." where crp_id = ".$this->id))
 			{
 				$this->externalid = $externalid;
+				self::$cache[ (int)$this->id ] = $this;
 				return true;
 			}
 		}
@@ -363,7 +380,7 @@ class Corporation
 	{
 		if(!$this->externalid) $this->execQuery();
 		if(!$this->externalid) return false;
-		
+
 		$myID = new API_IDtoName();
 		$myID->setIDs($this->externalid);
 		$myID->fetchXML();

@@ -3,13 +3,18 @@
  * $Date$
  * $Revision$
  * $HeadURL$
+ *
+ * @package EDK
  */
+
 
 /**
  * Creates a new Alliance or fetches an existing one from the database.
  */
 class Alliance
 {
+	static private $cache = array();
+
 	private $id = false;
 	private $externalid = false;
 	private $executed = false;
@@ -24,8 +29,10 @@ class Alliance
      */
     function Alliance($id = 0, $external = false)
 	{
-		if($external) $this->externalid = intval($id);
-		else $this->id = intval($id);
+		if($external)
+			$this->externalid = intval($id);
+		else
+			$this->id = intval($id);
     }
 
 	/**
@@ -35,9 +42,13 @@ class Alliance
 	 */
 	function getExternalID()
 	{
-		if($this->externalid) return $this->externalid;
+		if($this->externalid)
+			return $this->externalid;
+
 		$this->execQuery();
-		if($this->externalid) return $this->externalid;
+
+		if($this->externalid)
+			return $this->externalid;
 
 		$myID = new API_NametoID();
 		$myID->setNames($this->getName());
@@ -93,18 +104,27 @@ class Alliance
     {
         if (!$this->executed)
         {
-			$qry = DBFactory::getDBQuery();
-			$sql = "select * from kb3_alliances where ";
-			if($this->externalid) $sql .= "all_external_id = ".$this->externalid;
-			else $sql .= "all_id = ".$this->id;
-			$qry->execute($sql);
-			if($this->externalid && !$qry->recordCount()) $this->fetchAlliance();
-			else if($qry->recordCount())
-			{
-				$row = $qry->getRow();
-				$this->id = $row['all_id'];
-				$this->name = $row['all_name'];
-				$this->externalid = intval($row['all_external_id']);
+			if( isset( self::$cache[ (int)$this->id ] ) ) {
+				$this->id = self::$cache[ (int)$this->id ]->id;
+				$this->externalid = self::$cache[ (int)$this->id ]->externalid;
+				$this->executed = self::$cache[ (int)$this->id ]->executed;
+				$this->name = self::$cache[ (int)$this->id ]->name;
+			} else {
+				$qry = DBFactory::getDBQuery();
+				$sql = "select * from kb3_alliances where ";
+				if($this->externalid) $sql .= "all_external_id = ".$this->externalid;
+				else $sql .= "all_id = ".$this->id;
+				$qry->execute($sql);
+				if($this->externalid && !$qry->recordCount()) $this->fetchAlliance();
+				else if($qry->recordCount())
+				{
+					$row = $qry->getRow();
+					$this->id = $row['all_id'];
+					$this->name = $row['all_name'];
+					$this->externalid = intval($row['all_external_id']);
+
+					self::$cache[ (int)$this->id ] = $this;
+				}
 			}
 
 			$this->executed = true;
@@ -147,6 +167,9 @@ class Alliance
 					$this->id = $row['all_id'];
 					$this->name = $name;
 					$this->externalid = $row['all_external_id'];
+
+					self::$cache[ (int)$this->id ] = $this;
+
 					return $this->id;
 				}
 				$qry->execute("insert into kb3_alliances ".
@@ -165,6 +188,7 @@ class Alliance
 			$this->name = $row['all_name'];
 			$this->externalid = intval($row['all_external_id']);
         }
+		self::$cache[ (int)$this->id ] = $this;
     }
 	/**
 	 * Set the CCP external ID for this alliance.
@@ -202,11 +226,13 @@ class Alliance
 
 				$this->id = $newid;
 				$this->externalid = $externalid;
+				self::$cache[ (int)$this->id ] = $this;
 				return $this->id;
 			}
 			else if($qry->execute("UPDATE kb3_alliances SET all_external_id = ".$externalid." WHERE all_id = ".$this->id))
 			{
 				$this->externalid = $externalid;
+				self::$cache[ (int)$this->id ] = $this;
 				return $this->id;
 			}
 		}

@@ -3,12 +3,18 @@
  * $Date$
  * $Revision$
  * $HeadURL$
+ *
+ * @package EDK
  */
 
-define('DGM_TECHLEVEL', 422);
 
+/**
+ * Contains the details about an Item.
+ */
 class Item
 {
+	static private $cache = array();
+
 	private $executed = false;
 	private $id = 0;
 	public $row_ = null;
@@ -26,10 +32,13 @@ class Item
 	*/
 	function Item($id = 0, $row = null)
 	{
-		$this->id = $id;
+		$this->id = (int)$id;
 		if(isset($row))
 		{
 			$this->row_ = $row;
+			$this->executed = true;
+		} elseif (isset(self::$cache[$this->id])){
+			$this->row_ = self::$cache[$this->id];
 			$this->executed = true;
 		}
 	}
@@ -50,32 +59,6 @@ class Item
 		$this->execQuery();
 		global $smarty;
 		$img = imageURL::getURL('InventoryType', $this->id, $size);
-
-//		// cat 18 are combat drones
-//		if ($this->row_['itt_cat'] == 18)
-//		{
-//			$img = IMG_URL.'/drones/'.$size.'_'.$size.'/'.$this->row_['typeID'].'.png';
-//		}
-//		// cat 6 are ships, 23 pos mods, 41 PI stuff (destroyed in cargo)
-//		elseif ($this->row_['itt_cat'] == 6 || $this->row_['itt_cat'] == 23 || $this->row_['itt_cat'] == 41)
-//		{
-//			$img = IMG_URL.'/ships/'.$size.'_'.$size.'/'.$this->row_['typeID'].'.png';
-//		}
-//		// cat 9 are blueprints
-//		elseif ($this->row_['itt_cat'] == 9)
-//		{
-//			$img = IMG_URL.'/blueprints/'.$size.'_'.$size.'/'.$this->row_['typeID'].'.png';
-//		}
-//		else
-//		{
-//			// fix for new db structure, just make sure old clients dont break
-//			if (!strstr($this->row_['itm_icon'], 'icon'))
-//			{
-//				$this->row_['itm_icon'] = 'icon'.$this->row_['itm_icon'];
-//			}
-//			$img = IMG_URL.'/items/'.$size.'_'.$size.'/'.$this->row_['itm_icon'].'.png';
-//		}
-
 
 		if ($size == 24)
 		{
@@ -184,6 +167,12 @@ class Item
 	{
 		if (!$this->executed)
 		{
+			if (isset(self::$cache[$this->id])){
+				$this->row_ = self::$cache[$this->id];
+				$this->executed = true;
+				return;
+			}
+
 			if (!$this->id)return false;
 			if (!isset($this->qry)) $this->qry = DBFactory::getDBQuery();
 
@@ -202,13 +191,30 @@ class Item
 			$this->row_['itm_externalid'] = $this->row_['typeID'];
 			$this->row_['itm_value'] = $this->row_['price'];
 			$this->executed = true;
+
+			self::$cache[$this->id] = $this->row_;
 		}
 	}
 
-	// loads $this->id  by name
+	/**
+	 * Load this Item by name
+	 * @param string $name
+	 * @return boolean
+	 */
 	public function lookup($name)
 	{
 		$name = trim($name);
+		$this->executed = false;
+
+		static $cache_name;
+		if( isset( $cache_name[ $name] ) ) {
+			if( $cache_name[ $name] === false ) {
+				return false;
+			}
+			$this->id = $cache_name[ $name];
+			return true;
+		}
+
 		$qry = DBFactory::getDBQuery();
 		$query = "select typeID as itm_id from kb3_invtypes itm
 				  where typeName = '".$qry->escape(stripslashes($name))."'";
@@ -216,15 +222,20 @@ class Item
 		$row = $qry->getRow();
 		if (!isset($row['itm_id']))
 		{
+			$cache_name[$name] = false;
 			return false;
 		}
 		$this->id = $row['itm_id'];
+		$cache_name[$name] = $this->id;
 		unset($this->row);
-		$this->executed = false;
 		return true;
 	}
 
-	// return typeID by name, dont change $this->id
+	/**
+	 * Return typeID by name.
+	 * @param string $name
+	 * @return integer return typeID by name, dont change $this->id
+	 */
 	public function get_item_id($name)
 	{
 		$qry = DBFactory::getDBQuery();
