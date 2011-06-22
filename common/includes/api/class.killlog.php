@@ -940,7 +940,8 @@ class API_KillLog
 
     function loaddata($refid, $keystring, $typestring)
     {
-        $url = API_SERVER."/" . $typestring . "/KillLog.xml.aspx?keyID=176&vCode=Thisisaverificationcode&characterId=608056913";
+        $url = API_SERVER."/" . $typestring . "/KillLog.xml.aspx";
+
         if ($refid != 0)
             $keystring .= '&beforeKillID=' . $refid;
 		//TODO: change the all the $keystring chains to arrays
@@ -953,11 +954,10 @@ class API_KillLog
 		}
         $path = '/' . $typestring . '/Killlog.xml.aspx';
         $fp = @fsockopen(API_SERVER, 80);
-$url .= "&".'&beforeKillID=' . $refid;
 
 		$http = new http_request($url);
 		$http->set_useragent("PHPApi");
-		//foreach($keys as $key => $val) $http->set_postform($key, $val);
+		foreach($keys as $key => $val) $http->set_postform($key, $val);
 
 		$contents = $http->get_content();
 
