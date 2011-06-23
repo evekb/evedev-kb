@@ -1,5 +1,5 @@
 <?php
-/*
+/**
 	File: xajax_lang_nl.inc.php
 
 	Contains the debug and error messages output by xajax translated to Dutch.

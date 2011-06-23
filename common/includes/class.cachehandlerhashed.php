@@ -1,8 +1,9 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 
@@ -10,6 +11,7 @@
  * Hashed object caching class
  * Extends the cache handler to handle any type of object. Instead of
  * using the given filename a key is used to create a hashed name.
+ * @package EDK
  */
 class CacheHandlerHashed extends CacheHandler
 {

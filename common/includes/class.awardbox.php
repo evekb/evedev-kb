@@ -1,13 +1,14 @@
 <?php
-
-/*
+/**
  * $Date: 2010-09-04 13:00:51 +1000 (Sat, 04 Sep 2010) $
  * $Revision: 926 $
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/includes/class.box.php $
+ * @package EDK
  */
 
 /**
  * Create a box to display TopList awards.
+ * @package EDK
  */
 class AwardBox
 {

@@ -1,4 +1,8 @@
 <?php
+/**
+ * @package EDK
+ */
+
 define('MPATH', dirname(__FILE__)."/");
 $im = imagecreatefrompng(MPATH.'default.png');
 

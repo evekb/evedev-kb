@@ -1,13 +1,15 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 
 /**
  * Convenience class to call summary caches for alliance, corp and pilots.
+ * @package EDK
  */
 class summaryCache
 {

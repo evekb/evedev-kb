@@ -1,8 +1,9 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 // include all admin modules
@@ -35,7 +36,10 @@ foreach ($mods_active as $mod)
     }
 }
 
-// overload the box object to force every admin page to use the new options menu
+/**
+ * Overload the box object to force every admin page to use the new options menu
+ * @package EDK
+ */
 class Box2 extends Box
 {
     function generate()

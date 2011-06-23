@@ -1,4 +1,8 @@
 <?php
+/**
+ * @package EDK
+ */
+
 if(!$installrunning)
 {
 	header('Location: index.php');
@@ -233,6 +237,10 @@ if (!empty($_REQUEST['sub']) && $_REQUEST['sub'] == 'data')
 <div class="block-header2">MySQL Data Import</div>
 Found <?php echo $structc; ?> table structures and <?php echo $dcnt; ?> data files for <?php echo count($opt)+count($data); ?> tables.<br/><br/>
 <?php
+/**
+ * @package EDK
+ */
+
 
 $structadd = 0;
 $failed = 0;
@@ -298,16 +306,28 @@ if (isset($_REQUEST['sub']) && $_REQUEST['sub'] == 'datasel')
 <input type="hidden" name="sub" value="data">
 <table class="kb-subtable">
 <?php
+/**
+ * @package EDK
+ */
+
     foreach ($opt as $table => $files)
     {
 ?>
 <tr><td width="120"><b><?php echo $table; ?></b></td><td><input type="checkbox" name="opt[<?php echo $table; ?>]"></td></tr>
 <?php
+/**
+ * @package EDK
+ */
+
     }
     ?>
 <tr><td width="120"></td><td><input type=submit name=submit value="Ok"></td></tr>
 </table></form>
 <?php
+/**
+ * @package EDK
+ */
+
 }
 ?>
 <?php if ($stoppage)

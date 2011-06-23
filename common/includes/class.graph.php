@@ -3,6 +3,7 @@
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 
@@ -25,13 +26,13 @@ class BarGraph
             $width = $this->width_ / ($this->max_ / $this->value_);
         else
             $width = 0;
-        
+
         global $smarty;
         $smarty->assign('class', $this->class_);
         $smarty->assign('width', $width);
         $smarty->assign('maxwidth', $this->width_);
         $smarty->assign('text', $this->text_);
-        
+
         return $smarty->fetch(get_tpl("bargraph"));
     }
 

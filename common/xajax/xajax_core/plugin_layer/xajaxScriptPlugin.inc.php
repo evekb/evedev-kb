@@ -1,5 +1,5 @@
 <?php
-/*
+/**
 	File: xajaxScriptPlugin.inc.php
 
 	Contains the xajaxScriptPlugin class declaration.

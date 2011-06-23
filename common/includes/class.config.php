@@ -1,11 +1,14 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
-
+/*
+ * @package EDK
+ */
 class Config
 {
 	private static $configSite = KB_SITE;
@@ -89,22 +92,25 @@ class Config
 	}
 
 	/**
+	 * Put an object in the config.
 	 *
 	 * @param string $key
-	 * @param mixed $data
+	 * @param mixed $value
 	 * @return boolean
 	 */
-	public static function put($key, $data)
+	public static function put($key, $value)
 	{
 		if (!self::$initialised) self::init();
 
 		if(defined('SUPERKB_SITE') && isset(self::$configCacheGlobal[$key])) 
 			return false;
 
-		self::$configCache[$key] = $data;
+		self::$configCache[$key] = $value;
 	}
 
 	/**
+	 * Delete an object from the config.
+	 * 
 	 * @param string $key
 	 * @param boolean $global Whether to delete this from all configs
 	 * @return boolean
@@ -131,6 +137,7 @@ class Config
 	}
 
 	/**
+	 * Set an entry in the config.
 	 *
 	 * @param string $key
 	 * @param mixed $value
@@ -194,6 +201,8 @@ class Config
 	}
 
 	/**
+	 * Get an entry from the config.
+	 * 
 	 * @param string $key
 	 * @return mixed
 	 */
@@ -210,6 +219,9 @@ class Config
 		return self::$configCache[$key];
 	}
 
+	/**
+	 * Set default config values.
+	 */
 	private static function setDefaults()
 	{
 		$sql = "INSERT INTO kb3_config (cfg_site, cfg_key, cfg_value) SELECT '".self::$configSite."', cfg_key, cfg_value FROM kb3_config where cfg_site = ''";

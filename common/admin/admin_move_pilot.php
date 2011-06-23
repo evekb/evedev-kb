@@ -1,8 +1,9 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 $pilot = new Pilot(intval($_GET['plt_id']));

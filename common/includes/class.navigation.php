@@ -1,11 +1,14 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
-
+/**
+ * @package EDK
+ */
 class Navigation
 {
 	private $type = 'top';

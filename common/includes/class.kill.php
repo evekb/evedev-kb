@@ -1,11 +1,14 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
-
+/**
+ * @package EDK
+ */
 class Kill
 {
 	private $id_ = 0;

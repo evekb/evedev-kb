@@ -1,14 +1,17 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 // An ajax search function for this page is in common/includes/xajax.functions.php
 require_once('common/includes/xajax.functions.php');
 
-
+/*
+ * @package EDK
+ */
 class pSearch extends pageAssembly
 {
     /**

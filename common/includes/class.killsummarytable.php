@@ -1,11 +1,15 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
-*/
+ * @package EDK
+ */
 
 
+/**
+ * @package EDK
+ */
 class KillSummaryTable
 {
 	protected $klist = null;

@@ -1,8 +1,9 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 
@@ -11,6 +12,7 @@
  *
  * The list is based on dropped items for given kill ids, dropped items for
  * given kill ids or a list of itemIDs
+ * @package EDK
  */
 class ItemList
 {

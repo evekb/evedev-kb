@@ -3,6 +3,7 @@
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 
@@ -13,6 +14,9 @@ $modInfo['mail_forward']['about'] = "Core distribution mod.";
 event::register('killmail_added', 'post_forward::handler');
 event::register('killmail_imported', 'import_forward::importhandler');
 
+/**
+ * @package EDK
+ */
 class post_forward
 {
     public static function handler($object)

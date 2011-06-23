@@ -1,11 +1,13 @@
 <?php
-
 /**
 * Author: Doctor Z
 * eMail:  east4now11@hotmail.com
-*
+* @package EDK
 */
 
+/**
+ * @package EDK
+ */
 class RSSTable extends KillListTable
 {
     function RSSTable($kill_list)

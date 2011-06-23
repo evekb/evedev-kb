@@ -1,11 +1,14 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
-
+/**
+ * @package EDK
+ */
 class DBDebug
 {
 	private static $qerrfile = "cache/EDKprofile.lst";

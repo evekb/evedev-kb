@@ -1,11 +1,14 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
- *
- * Class containing utility functions to log a kill as added and find the IP
+ * @package EDK
+ */
+
+ /* Class containing utility functions to log a kill as added and find the IP
  * to log a kill as added from.
+ * @package EDK
  */
 class logger
 {

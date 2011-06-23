@@ -1,8 +1,9 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 // cached query class will be loaded additionally once we received the config

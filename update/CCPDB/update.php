@@ -1,4 +1,12 @@
 <?php
+/**
+ * @package EDK
+ */
+
+/**
+ * @package EDK
+ */
+
 require_once('kbconfig.php');
 require_once('common/includes/db.php');
 require_once('common/includes/class.config.php');

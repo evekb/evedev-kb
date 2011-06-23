@@ -1,4 +1,8 @@
 <?php
+/**
+ * @package EDK
+ */
+
 ob_start();
 if (!$sig_name = $_GET['s'])
 {

@@ -1,10 +1,14 @@
 <?php
-/*
+/**
  * $Date: 2010-05-30 03:57:50 +1000 (Sun, 30 May 2010) $
  * $Revision: 711 $
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/includes/class.contract.php $
+ * @package EDK
  */
 
+/**
+ * @package EDK
+ */
 class ContractTarget
 {
 	function ContractTarget($contract, $crp_id, $all_id, $reg_id , $sys_id)

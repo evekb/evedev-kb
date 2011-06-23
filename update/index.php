@@ -1,11 +1,13 @@
 <?php
-// Update an existing installation.
-
-/*
-Each update is placed in a subfolder and subfolder/update.php is included then
-function [subfoldername] is called. Official updates are numbered sequentially.
-e.g. update/012/
+/**
+ * Update an existing installation.
+ * @package EDK
+ *
+ * Each update is placed in a subfolder and subfolder/update.php is included
+ * then function [subfoldername] is called. Official updates are numbered
+ * sequentially. e.g. update/012/
 */
+
 if(function_exists("set_time_limit"))
 	@set_time_limit(0);
 @error_reporting(E_ALL ^ E_NOTICE);

@@ -1,8 +1,9 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 
@@ -10,8 +11,9 @@
  * Hashed object caching class backed by memcache
  * Extends the cache handler to handle any type of object. Instead of
  * using the given filename a key is used to create a hashed name.
+ * @package EDK
  */
-class CacheHandlerHashedMem extends CacheHandler
+class CacheHandlerHashedMem extends CacheHandlerHashed
 {
 	private static $maxage = 0;
 	

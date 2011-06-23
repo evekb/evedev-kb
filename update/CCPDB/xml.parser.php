@@ -1,7 +1,14 @@
 <?php
+/**
+ * @package EDK
+ */
+
 
 include_once('file.cacher.php');
 
+/**
+ * @package EDK
+ */
 class UpdateXMLParser
 {
 	private $dom = null;

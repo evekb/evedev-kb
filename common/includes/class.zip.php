@@ -1,12 +1,16 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 require_once('common/pclzip/pclzip.lib.php');
 
+/**
+ * @package EDK
+ */
 class Zip
 {
     private $archive;

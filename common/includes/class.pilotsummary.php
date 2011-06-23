@@ -1,13 +1,15 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 
 /**
  * Store summary statistics for Pilots.
+ * @package EDK
  */
 class pilotSummary extends statSummary
 {

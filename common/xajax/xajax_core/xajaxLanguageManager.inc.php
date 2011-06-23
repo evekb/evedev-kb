@@ -1,5 +1,5 @@
 <?php
-/*
+/**
 	File: xajaxLanguageManager.inc.php
 
 	Contains the code that manages the inclusion of alternate language support

@@ -1,10 +1,14 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
+/**
+ * @package EDK
+ */
 class Translate
 {
     function uchr($codes) { //converts characterset code-pages to ascii-compatible types

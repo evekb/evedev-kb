@@ -1,15 +1,15 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
- *
  * @package EDK
  */
 
 
 /**
  * Creates a new Alliance or fetches an existing one from the database.
+ * @package EDK
  */
 class Alliance
 {

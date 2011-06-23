@@ -1,8 +1,11 @@
 <?php
-/* This file contains all the gunky SQL statements necessary to update kill details
+/**
+ *  This file contains all the gunky SQL statements necessary to update kill details
  * by bypassing the Items class and updating the SQL manually. Urgh. Anyway, these
  * functions could have been part of the settings file, but this makes both files
- * look a bit neater. - FriedRoadKill*/
+ * look a bit neater. - FriedRoadKill
+ * @package
+ */
 
 require_once( "common/admin/admin_menu.php" );
 

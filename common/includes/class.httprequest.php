@@ -1,8 +1,9 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 /*
@@ -10,9 +11,8 @@
  *
  * useful to avoid allow_url_fopen_wrapper issues
  * and to get or post data from anywhere we want
- *
+ * @package EDK
  */
-
 class http_request
 {
 	private $follow = false;

@@ -1,5 +1,5 @@
 <?php
-/*
+/**
 	File: xajaxCallableObject.inc.php
 
 	Contains the xajaxCallableObject class

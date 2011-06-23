@@ -1,4 +1,8 @@
 <?php
+/**
+ * @package EDK
+ */
+
 //Fix a few issues with the kb3_ships table in one fowl swoop.
 //I put this here because these update packages force the structure to be fixed. - FRK
 function update022()

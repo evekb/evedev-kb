@@ -3,6 +3,7 @@
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 
@@ -13,6 +14,9 @@ $modInfo['forum_post']['about'] = "Core distribution mod.";
 event::register("contractDetail_context_assembling", "forumPost::addContractMenu");
 event::register("killRelated_assembling", "forumPost::addRelatedMenu");
 
+/**
+ * @package EDK
+ */
 class forumPost
 {
 	public static function addContractMenu($object)

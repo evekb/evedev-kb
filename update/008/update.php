@@ -1,4 +1,8 @@
 <?php
+/**
+ * @package EDK
+ */
+
 // Add unique name indices to alliance, corp and pilot
 // Check kb3_inv_detail has correct indices
 function update008()

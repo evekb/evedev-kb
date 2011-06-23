@@ -1,10 +1,14 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
+/*
+ * @package EDK
+ */
 class pAbout extends pageAssembly
 {
 	function __construct()

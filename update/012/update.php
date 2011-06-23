@@ -1,4 +1,8 @@
 <?php
+/**
+ * @package EDK
+ */
+
 // Add timestamp to kb3_inv_detail
 // Create kb3_inv_all, kb3_inv_crp with timestamps
 function update012()

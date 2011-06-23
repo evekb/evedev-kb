@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
 	Function: xajaxCompressFile
 	
 	<xajax> will call this function internally to compress the javascript code for 

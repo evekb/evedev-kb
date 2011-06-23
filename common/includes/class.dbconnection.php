@@ -1,8 +1,9 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 
@@ -10,6 +11,7 @@
  * mysqli connection class.
  * 
  * Establishes the connection to the database.
+ * @package EDK
  */
 class DBConnection
 {

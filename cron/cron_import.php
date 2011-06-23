@@ -1,5 +1,9 @@
 #!/usr/bin/php
 <?php
+/**
+ * @package EDK
+ */
+
 // check your php folder is correct as defined by the first line of this file
 
 @error_reporting(E_ERROR);

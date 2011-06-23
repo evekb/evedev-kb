@@ -1,13 +1,20 @@
 <?php 
+/**
+ * @package EDK
+ */
 class FileCacher
 {
-    /*! Caches a file to a selected folder/filename pair ($cacheFileName) from
+    /** Caches a file to a selected folder/filename pair ($cacheFileName) from
      * a given source url ($hostFileName).
      * $updateXML specifies that if the file we want to cache is our update definition file
      * then it must make sure that the entire file is read during cache to ensure
      * consistency.
-     */
-
+	 *
+	 * @param string $hostFileName
+	 * @param string $cacheFileName
+	 * @param boolean $updateXML
+	 * @return integer 
+	 */
     function FileCacher($hostFileName, $cacheFileName, $updateXML = false)
     {	
 	//check if cURL exists, else use fsocket open
@@ -46,4 +53,3 @@ class FileCacher
 	fclose($xmlFile);		
     }
 }
-?>

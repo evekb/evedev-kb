@@ -1,4 +1,8 @@
 <?php
+/**
+ * @package EDK
+ */
+
 if(!$installrunning) {header('Location: index.php'); die(); }
 $stoppage = true;
 $smarty->assign('conflict', false);

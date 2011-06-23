@@ -1,8 +1,9 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 
@@ -17,7 +18,7 @@
 * However, users also got the ability to create roles which are then stored
 * inside the database.
 * Both types of roles can be assigned to either titles or to users directly.
-*
+* @package EDK
 */
 
 class role

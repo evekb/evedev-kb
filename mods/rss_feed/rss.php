@@ -1,9 +1,8 @@
 <?php
-
 /**
 * Author: Doctor Z
 * eMail:  east4now11@hotmail.com
-*
+* @package EDK
 */
 
 require_once("class.rss.php");

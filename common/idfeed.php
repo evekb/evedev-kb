@@ -1,8 +1,9 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 /*
@@ -321,7 +322,9 @@ header("Content-Type: text/xml");
 echo $sxe->asXML();
 //echo "<!-- ".$timing."\n -->";
 //echo "<!-- Finished: ".(microtime(true)-$starttime)." -->";
-
+/*
+ * @package EDK
+ */
 class objectCache
 {
 	private static $pilots = array();

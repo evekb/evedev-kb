@@ -1,5 +1,8 @@
 #!/usr/bin/php
 <?php
+/**
+ * @package EDK
+ */
 
 if (!substr_compare(PHP_OS, 'win', 0, 3, true))
 {

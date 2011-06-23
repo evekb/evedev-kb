@@ -1,11 +1,14 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
-
+/**
+ * @package EDK
+ */
 class EDKError
 {
 	public static $errors = array();

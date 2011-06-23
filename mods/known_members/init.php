@@ -3,6 +3,7 @@
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 
@@ -13,6 +14,9 @@ $modInfo['known_members']['about'] = "Core distribution mod.";
 event::register('corpDetail_assembling', 'known_members::addView');
 event::register('corpDetail_context_assembling', 'known_members::addMenu');
 
+/**
+ * @package EDK
+ */
 class known_members
 {
 	public static function addView($home)

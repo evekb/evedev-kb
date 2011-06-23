@@ -1,11 +1,14 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
-
+/**
+ * @package EDK
+ */
 class KillList
 {
 	private $qry_ = null;

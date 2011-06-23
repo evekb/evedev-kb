@@ -1,4 +1,8 @@
 <?php
+/**
+ * @package EDK
+ */
+
 function update017()
 {
 	global $url, $smarty;

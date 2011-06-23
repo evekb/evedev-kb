@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package EDK
+ */
 
 require_once('common/xajax/xajax_core/xajax.inc.php');
 $xajax = new xajax();
@@ -15,6 +18,9 @@ if(strpos($uri, "?") === false) $uri .= "?xajax=1";
 else $uri .= "&xajax=1";
 $xajax->setRequestURI($uri);
 
+/**
+ * @package EDK
+ */
 class edk_xajax
 {
 	public static function xajax()
@@ -49,7 +55,10 @@ class edk_xajax
 	}
 }
 
-// Catch calls from old mods.
+/**
+ * Catch calls from old mods.
+ * @package EDK
+ */
 class mod_xajax
 {
 	public static function xajax()

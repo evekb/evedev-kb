@@ -1,5 +1,5 @@
 <?php
-/*
+/**
 	File: xajaxUserFunction.inc.php
 
 	Contains the xajaxUserFunction class

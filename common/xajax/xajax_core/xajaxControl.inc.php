@@ -1,5 +1,5 @@
 <?php
-/*
+/**
 	File: xajaxControl.inc.php
 
 	Contains the base class for all controls.

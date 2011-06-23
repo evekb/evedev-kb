@@ -1,4 +1,8 @@
 <?php
+/**
+ * @package EDK
+ */
+
 // Add faction column to ship table
 function update021()
 {

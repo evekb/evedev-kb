@@ -1,13 +1,15 @@
 <?php
-/*
+/**
  * $Date: 2010-05-30 19:38:00 +1000 (Sun, 30 May 2010) $
  * $Revision: 732 $
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/includes/class.eveapi.php $
-*/
+ * @package EDK
+ */
 
 /**
  * Retrieve Alliance list from CCP to find alliance details.
-*/
+ * @package EDK
+ */
 class API_Alliance
 {
 	protected $sxe = null;

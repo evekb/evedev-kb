@@ -1,10 +1,11 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
  * Core ajax functions are included in this page. Registered functions are
  * called once all mods are initialised.
+ * @package EDK
  */
 
 require_once('common/xajax/xajax.php');

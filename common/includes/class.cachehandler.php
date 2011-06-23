@@ -1,16 +1,16 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 /**
  * Cache handling methods.
- */
-
-/**
+ * 
  * Contains methods to handle the killboard's cache directory.
+ * @package EDK
  */
 class CacheHandler
 {

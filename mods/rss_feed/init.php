@@ -3,6 +3,7 @@
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 
@@ -12,6 +13,9 @@ $modInfo['rss_feed']['about'] = "Core distribution mod.";
 
 event::register('home_assembling', 'rss_feed::handler');
 
+/**
+ * @package EDK
+ */
 class rss_feed
 {
 	public static function handler(&$home)

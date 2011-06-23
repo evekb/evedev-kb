@@ -1,5 +1,5 @@
 <?php
-/*
+/**
 	File: xajax_lang_de.inc.php
 
 	Contains the debug and error messages output by xajax translated to German.

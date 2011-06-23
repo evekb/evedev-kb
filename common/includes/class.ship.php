@@ -1,15 +1,15 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
- *
  * @package EDK
  */
 
 
 /**
  * Contains the attributes of a Ship and standard methods to manipulate Ships.
+ * @package EDK
  */
 class Ship
 {

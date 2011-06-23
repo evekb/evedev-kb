@@ -1,8 +1,9 @@
 <?php
-/*
+/**
  * $Date: 2010-06-04 23:26:29 +1000 (Fri, 04 Jun 2010) $
  * $Revision: 774 $
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/admin/admin_feedsyndication.php $
+ * @package EDK
  */
 
 /*

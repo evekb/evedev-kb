@@ -1,13 +1,15 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 
 /**
  * Base class for storing summary statistics.
+ * @package EDK
  */
 abstract class statSummary
 {

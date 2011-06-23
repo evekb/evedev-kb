@@ -1,5 +1,9 @@
 #!/usr/bin/php
 <?php
+/**
+ * @package EDK
+ */
+
 /********************************************
 * Cron script for value fetcher by Beansman
 * Made for the www.eve-id.net killboard.

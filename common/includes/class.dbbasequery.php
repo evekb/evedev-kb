@@ -1,12 +1,14 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 /**
  * Base DB query class.
+ * @package EDK
  */
 abstract class DBBaseQuery
 {

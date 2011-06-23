@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package EDK
+ */
 
 @error_reporting(E_ALL ^ E_NOTICE);
 @ini_set('display_errors', 1);
@@ -47,6 +50,10 @@ if(!cacheWriteable)
     </body>
 </html>
 <?php
+/**
+ * @package EDK
+ */
+
 die;
 }
 $installrunning = true;

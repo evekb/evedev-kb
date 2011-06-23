@@ -1,14 +1,14 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 /**
-*	Verify that the EVE central tracking table exists.
-*/
-
+ *	Verify that the EVE central tracking table exists.
+ */
 function verify_sync_table() {
 	$query = DBFactory::getDBQuery();;
 
@@ -28,8 +28,8 @@ function verify_sync_table() {
 }
 
 /**
-*	Retrieve the item value from EVE Central
-*/
+ *	Retrieve the item value from EVE Central
+ */
 function ec_get_value($item_id) {
     $query = DBFactory::getDBQuery();;
 
@@ -51,8 +51,8 @@ function ec_get_value($item_id) {
 }
 
 /**
-*	Query EVE Central's XML feed.
-*/
+ *	Query EVE Central's XML feed.
+ */
 function ask_eve_central($item_id) {
 	file_put_contents(KB_CACHEDIR.'/evecentral/activity.log', "Handling from live.\n", FILE_APPEND);
 	$query = DBFactory::getDBQuery();;
@@ -99,8 +99,8 @@ function ask_eve_central($item_id) {
 }
 
 /**
-*	Wrapper to do all to work.  Updates the items table based on the cached or live data.
-*/
+ *	Wrapper to do all to work.  Updates the items table based on the cached or live data.
+ */
 function ec_update_value($item_id) {
     $query = DBFactory::getDBQuery();;
 
@@ -136,6 +136,9 @@ function ec_update_value($item_id) {
     return false;
 }
 
+/**
+ * @package EDK
+ */
 class XMLParser {
     private $allKinds = 0;
     private $data = array();
@@ -192,4 +195,3 @@ class XMLParser {
         return $this->data;
     }
 }
-?>

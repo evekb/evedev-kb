@@ -1,8 +1,9 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 /*
@@ -10,6 +11,9 @@
  */
 require_once('common/includes/xajax.functions.php');
 
+/**
+ * @package EDK
+ */
 class pKillDetail extends pageAssembly
 {
 /**

@@ -1,4 +1,8 @@
 <?php
+/**
+ * @package EDK
+ */
+
 // Add alliance and corp summary tables.
 function update009()
 {

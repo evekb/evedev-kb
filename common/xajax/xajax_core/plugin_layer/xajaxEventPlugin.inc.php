@@ -1,5 +1,5 @@
 <?php
-/*
+/**
 	File: xajaxEventPlugin.inc.php
 
 	Contains the xajaxEventPlugin class

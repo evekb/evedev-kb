@@ -1,14 +1,17 @@
 <?php
-/*
+/**
  * $Date: 2010-05-30 13:44:06 +1000 (Sun, 30 May 2010) $
  * $Revision: 721 $
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/includes/class.eveapi.php $
+ * @package EDK
  */
 
-// **********************************************************************************************************************************************
-// ****************                                   API Corporation Sheet - /corp/CorporationSheet.xml.aspx                    ****************
-// **********************************************************************************************************************************************
-// INCOMPLETE - MISSING CORP DIVISIONS AND WALLET DIVISIONS
+/**
+ * API Corporation Sheet - /corp/CorporationSheet.xml.aspx
+ *
+ * INCOMPLETE - MISSING CORP DIVISIONS AND WALLET DIVISIONS
+ * @package EDK
+ */
 class API_CorporationSheet
 {
 	function getCachedUntil()

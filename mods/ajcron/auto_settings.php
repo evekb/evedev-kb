@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package EDK
+ */
 
 if (!class_exists('options'))
 {

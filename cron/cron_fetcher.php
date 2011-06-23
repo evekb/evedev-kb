@@ -1,9 +1,10 @@
 #!/usr/bin/php
 <?php
-/*
+/**
  * EDK Feed Syndication v1.7
  * based on liq's feed syndication mod v1.5
  *
+ * @package EDK
  */
 
 // set this to 1 if you are running a master killboard and want

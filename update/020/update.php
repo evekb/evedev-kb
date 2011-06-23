@@ -1,4 +1,8 @@
 <?php
+/**
+ * @package EDK
+ */
+
 //! It keeps coming up as old db are updated, new owners added, and the way people keep trying to do a new install over an existing board.
 function update020()
 {

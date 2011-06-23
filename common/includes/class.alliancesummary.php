@@ -1,13 +1,15 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 
 /**
  * Store summary statistics for Alliances.
+ * @package EDK
  */
 class allianceSummary extends statSummary
 {

@@ -1,4 +1,8 @@
 <?php
+/**
+ * @package EDK
+ */
+
 define('MFONT', dirname(__FILE__).'/evesansmm.ttf');
 define('FSIZE', 12);
 

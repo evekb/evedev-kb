@@ -1,5 +1,5 @@
 <?php
-/*
+/**
 	File: xajaxResponseManager.inc.php
 
 	Contains the xajaxResponseManager class

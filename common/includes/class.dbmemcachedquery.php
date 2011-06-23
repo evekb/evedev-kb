@@ -1,12 +1,14 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 /**
  * mysqli memcached query class. Manages SQL queries to a MySQL DB using mysqli.
+ * @package EDK
  */
 class DBMemcachedQuery extends DBCachedQuery
 {

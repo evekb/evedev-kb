@@ -1,5 +1,5 @@
 <?php
-/*
+/**
 	File: xajaxRequest.inc.php
 
 	Contains the xajaxRequest class

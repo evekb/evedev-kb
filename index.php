@@ -1,8 +1,9 @@
 <?php
 
-/*
-* Request forwarder, look at common/index.php for the action and license
-*/
+/**
+ * Request forwarder, look at common/index.php for the action and license
+ * @package EDK
+ */
 
 // Enable custom error handling.
 require_once ('common/includes/class.edkerror.php');

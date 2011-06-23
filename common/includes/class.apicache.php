@@ -1,22 +1,34 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
+/**
+ * Class to cache API information.
+ * @package EDK
+ */
 class ApiCache
 {
 	private static $cache = array();
 	private static $configSite = KB_SITE;
 	private static $initialised = false;
 
+	/**
+	 * @param string $site ID for the site.
+	 */
 	function ApiCache($site = KB_SITE)
 	{
 		self::$configSite = $site;
 		ApiCache::init();
 	}
 
+	/**
+	 * @param string $name
+	 * @return boolean
+	 */
 	public static function checkCheckbox($name)
 	{
 		if($_POST[$name] == 'on')
@@ -28,6 +40,9 @@ class ApiCache
 		return false;
 	}
 
+	/**
+	 * Initialise the object and connect to the db
+	 */
 	public static function init()
 	{
 		if(self::$initialised) return;
@@ -45,13 +60,26 @@ class ApiCache
 		self::$initialised = true;
 	}
 
-	public static function put($key, $data)
+	/**
+	 * Store an object temporarily.
+	 *
+	 * Will not save the object to the db.
+	 *
+	 * @param string $key
+	 * @param string $value
+	 */
+	public static function put($key, $value)
 	{
 		if(!self::$initialised) self::init();
 
-		self::$cache[$key] = $data;
+		self::$cache[$key] = $value;
 	}
 
+	/**
+	 * Remove an object from the API cache.
+	 *
+	 * @param string $key
+	 */
 	public static function del($key)
 	{
 		if(!self::$initialised) self::init();
@@ -66,6 +94,14 @@ class ApiCache
         		       and cfg_site = '" . self::$configSite . "'");
 	}
 
+	/**
+	 * Store an object in the db.
+	 *
+	 * Will save the object to the db.
+	 *
+	 * @param string $key
+	 * @param string $data
+	 */
 	public static function set($key, $value)
 	{
 		if(!self::$initialised) self::init();
@@ -97,6 +133,12 @@ class ApiCache
 		$qry->execute($sql);
 	}
 
+	/**
+	 * Return a cached string.
+	 *
+	 * @param string $key
+	 * @return string
+	 */
 	public static function &get($key)
 	{
 		if(!self::$initialised) self::init();

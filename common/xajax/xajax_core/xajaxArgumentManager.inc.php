@@ -1,5 +1,5 @@
 <?php
-/*
+/**
 	File: xajaxArgumentManager.inc.php
 
 	Contains the xajaxArgumentManager class

@@ -1,10 +1,14 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
+/**
+ * @package EDK
+ */
 class registry
 {
 	private static $registryCache = array();

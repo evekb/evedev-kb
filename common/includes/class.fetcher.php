@@ -1,23 +1,21 @@
 <?php
-/*
+/**
  * $Date: 2010-06-04 23:26:29 +1000 (Fri, 04 Jun 2010) $
  * $Revision: 774 $
  * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/admin/feed_fetcher.php $
- */
-
-/*
+ * @package EDK
+ *
+ *
  * EDK Feed Syndication v1.9
  * based on liq's feed syndication mod v1.5
- *
  */
-
-@set_time_limit(0);
 $feedversion = "v1.9";
 
 /**
  * EDK Feed Syndication fetcher class.
  * This class is used to fetch the feed from another EDK board. It adds all
  * fetched kills to the board and returns the id of the highest kill fetched.
+ * @package EDK
  */
 class Fetcher
 {

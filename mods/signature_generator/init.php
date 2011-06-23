@@ -3,6 +3,7 @@
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 
@@ -12,6 +13,9 @@ $modInfo['signature_generator']['about'] = "Core distribution mod.";
 
 event::register("pilotDetail_context_assembling", "signature::addSig");
 
+/**
+ * @package EDK
+ */
 class signature
 {
 	public static function addSig($home)

@@ -1,15 +1,15 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
- *
  * @package EDK
  */
 
 
 /**
  * Creates a new Corporation or fetches an existing one from the database.
+ * @package EDK
  */
 class Corporation
 {

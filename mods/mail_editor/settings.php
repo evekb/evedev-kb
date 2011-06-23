@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package EDK
+ */
 require_once( "common/admin/admin_menu.php" );
 require_once( "helper_functions.php");
 

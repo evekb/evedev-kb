@@ -1,12 +1,15 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 $page = new Page('Campaigns');
-
+/*
+ * @package EDK
+ */
 class pCampaignList extends pageAssembly
 {
 	/**

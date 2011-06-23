@@ -1,13 +1,15 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 
 /**
  * A simple clock implementation
+ * @package EDK
  */
 class Clock
 {
@@ -15,7 +17,7 @@ class Clock
 	 * Generate html for a clock from the template file.
 	 *
 	 * @global Smarty $smarty
-	 * @return mixed html generated frm the clock template.
+	 * @return string html generated frm the clock template.
 	 */
 	function generate()
     {

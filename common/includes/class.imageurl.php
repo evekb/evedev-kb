@@ -1,12 +1,14 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 /**
  * Generate the correct URL for an image.
+ * @package EDK
  */
 class imageURL
 {

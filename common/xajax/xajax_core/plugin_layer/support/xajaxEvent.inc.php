@@ -1,5 +1,5 @@
 <?php
-/*
+/**
 	File: xajaxEvent.inc.php
 
 	Definition of the xajax Event object.

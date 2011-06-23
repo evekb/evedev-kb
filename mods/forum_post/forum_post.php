@@ -1,4 +1,7 @@
 popup| <?php	
+/**
+ * @package EDK
+ */
 require_once('mods/forum_post/class.killsummarytable.php');
 
 if(isset($_GET['ctr_id'])){

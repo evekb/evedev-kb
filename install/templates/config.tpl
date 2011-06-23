@@ -6,7 +6,7 @@
  * This program may be distributed under the terms of this General Public License.
  * the whole license can be seen in gpl.txt or at http://www.gnu.org/copyleft/gpl.html
  *
-*/
+ */
 
 // configuration key
 define('KB_SITE', '{$site}');

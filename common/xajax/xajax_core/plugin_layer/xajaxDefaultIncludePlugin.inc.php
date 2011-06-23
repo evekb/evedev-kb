@@ -1,5 +1,5 @@
 <?php
-/*
+/**
 	File: xajaxDefaultIncludePlugin.inc.php
 
 	Contains the default script include plugin class.

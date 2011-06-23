@@ -1,4 +1,8 @@
 <?php
+/**
+ * @package EDK
+ */
+
 if(!$installrunning) {header('Location: index.php');die();}
 $stoppage = true;
 $pass_img = '../img/sta_alliance.png';

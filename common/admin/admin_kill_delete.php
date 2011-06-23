@@ -1,9 +1,10 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
-*/
+ * @package EDK
+ */
 
 $page = new Page('Administration - Deletion of Kill ID "'.intval($_GET['kll_id']).'"');
 $page->setAdmin();

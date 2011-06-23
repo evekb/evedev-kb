@@ -1,8 +1,9 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 /**
@@ -18,6 +19,7 @@
  * 1.0.4 Involved party structures keep their name
  *		Kills are logged with source board's id.
  * 1.0.7 Better CCP API handling
+ * @package EDK
  */
 class IDFeed
 {

@@ -1,4 +1,8 @@
 <?php
+/**
+ * @package EDK
+ */
+
 $serverAddress = '';
 $databaseUsername = '';
 $databasePassword = '';

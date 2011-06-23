@@ -1,14 +1,14 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
-
-
 
 /**
  * Construct an output page.
+ * @package EDK
  */
 class Page
 {
@@ -249,6 +249,7 @@ class Page
  * Construct a menu.
  * 
  * A Menu is a wrapper around an array of links and matching text.
+ * @package EDK
  */
 class Menu
 {

@@ -1,4 +1,8 @@
 <?php
+/**
+ * @package EDK
+ */
+
 // Add site id to kb3_comments
 function update014()
 {

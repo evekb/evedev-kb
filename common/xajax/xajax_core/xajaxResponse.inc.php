@@ -1,5 +1,5 @@
 <?php
-/*
+/**
 	File: xajaxResponse.inc.php
 
 	Contains the response class.

@@ -1,8 +1,9 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 // TODO Check if caching is enabled and flag tables as dirty even if we don't
@@ -10,6 +11,7 @@
 
 /**
  * mysqli uncached query class. Manages SQL queries to a MySQL DB using mysqli.
+ * @package EDK
  */
 class DBPreparedQuery
 {

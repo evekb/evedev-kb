@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * @package EDK
+ */
 class KillSummaryTable
 {
     function KillSummaryTable($klist = null, $llist = null)
@@ -471,4 +473,3 @@ class KillSummaryTable
         return $html;
     }
 }
-?>

@@ -1,8 +1,9 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
 if(isset($_GET['c_id'])) $_GET['c_id'] = intval($_GET['c_id']);

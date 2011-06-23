@@ -1,5 +1,5 @@
 <?php
-/*
+/**
 	File: xajaxPluginManager.inc.php
 
 	Contains the xajax plugin manager.

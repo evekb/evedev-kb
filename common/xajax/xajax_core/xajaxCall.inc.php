@@ -1,5 +1,5 @@
 <?php
-/*
+/**
 	File: xajaxCall.inc.php
 
 	Contains the xajaxCall class

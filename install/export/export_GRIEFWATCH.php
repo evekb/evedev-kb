@@ -1,4 +1,8 @@
 <?php
+/**
+ * @package EDK
+ */
+
 $host = 'http://guard.griefwatch.net/';
 $num_kills = 3480;
 $saveto = './mails';

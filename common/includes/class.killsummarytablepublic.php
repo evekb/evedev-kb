@@ -1,11 +1,14 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
-
+/**
+ * @package EDK
+ */
 class KillSummaryTablePublic extends KillSummaryTable
 {
     function KillSummaryTablePublic($klist = null)

@@ -1,4 +1,8 @@
 <?php
+/**
+ * @package EDK
+ */
+
 $page = new Page('Signature Listing');
 
 $signatures = array();

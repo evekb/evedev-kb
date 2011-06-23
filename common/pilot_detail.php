@@ -1,10 +1,14 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$
+ * @package EDK
  */
 
+/*
+ * @package EDK
+ */
 class pPilotDetail extends pageAssembly
 {
 	private $viewList = array();

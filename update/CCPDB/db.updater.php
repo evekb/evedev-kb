@@ -1,6 +1,9 @@
 <?php 
-//This is a very basic sql parser, akin to the kind used in the installer. It
-//takes a gzipped sql file, and feeds the queries to the db functions.
+/**
+ * This is a very basic sql parser, akin to the kind used in the installer. It
+ * takes a gzipped sql file, and feeds the queries to the db functions.
+ * @package EDK
+ */
 class DBUpdater
 {
     private $fileName = '';
