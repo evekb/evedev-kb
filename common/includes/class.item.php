@@ -85,7 +85,7 @@ class Item
 			$o_s = config::get('kd_otag');
 
 		}
-		if($show_style == "_none") $show_style = "";
+		if($show_style == "_none" || $show_style == "_") $show_style = "";
 
 		if($show_style == "_tag" || $show_style == "") return "<img src='$img' title=\"".$this->getName()."\" alt=\"".$this->getName()."\" style='width:{$size}px; height:{$size}px; border:0px' />";
 
