@@ -25,7 +25,7 @@ function update014()
   PRIMARY KEY  (`kll_id`),
   UNIQUE KEY `external_id` (`kll_external_id`),
   UNIQUE KEY `time_hash` (`kll_timestamp`,`kll_hash`)
-) Type=InnoDB';
+) Engine=InnoDB';
 			$qry->execute($sql);
 		}
 

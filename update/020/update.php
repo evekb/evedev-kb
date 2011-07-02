@@ -12,10 +12,12 @@ function update020()
 	{
 		$qry = DBFactory::getDBQuery(true);
 		//Some DBs require auto-increment rol_id to be the first column in an index
-		$sql = "ALTER IGNORE TABLE `kb3_roles` ADD INDEX `rol_id` (  `rol_id` )";
+		$sql = "ALTER IGNORE TABLE `kb3_roles` ADD INDEX `rol_id_tmp` (  `rol_id` )";
 		$qry->execute($sql);
 		$sql = "ALTER TABLE `kb3_roles` DROP PRIMARY KEY , ADD PRIMARY KEY ( `rol_site` , `rol_id` ) ";
 		$qry->execute($sql);
+		$sql = "ALTER IGNORE TABLE `kb3_roles` DROP INDEX `rol_id_tmp`";
+		@$qry->execute($sql);
 
 		config::set("DBUpdate", "020");
 		$qry->execute("INSERT INTO kb3_config (cfg_site, cfg_key, cfg_value) SELECT cfg_site, 'DBUpdate', '020' FROM kb3_config GROUP BY cfg_site ON DUPLICATE KEY UPDATE cfg_value = '020'");
