@@ -108,35 +108,18 @@ define('KB_TITLE', config::get('cfg_kbtitle'));
 
 // set up themes.
 if(isset($_GET['theme']))
-{
 	$themename = preg_replace('/[^0-9a-zA-Z-_]/','',$_GET['theme']);
-	if(!is_dir("themes/".$themename))
-	{
-		$themename = config::get('theme_name');
-		$stylename = config::get('style_name');
-	}
-	else
-	{
-		if(isset($_GET['style']))
-		{
-			$stylename = preg_replace('/[^0-9a-zA-Z-_]/','',$_GET['style']);
-			if(!file_exists("themes/".$themename."/".$stylename.".css"))
-				$stylename = config::get('style_name');
-		}
-		else $stylename = $themename;
-	}
-}
-else
-{
-	$themename = config::get('theme_name');
-	if(isset($_GET['style']))
-	{
-		$stylename = preg_replace('/[^0-9a-zA-Z-_]/','',$_GET['style']);
-		if(!file_exists("themes/".$themename."/".$stylename.".css"))
-			$stylename = config::get('style_name');
-	}
-	else $stylename = config::get('style_name');
-}
+else $themename = config::get('theme_name');
+
+if(isset($_GET['style']))
+	$stylename = preg_replace('/[^0-9a-zA-Z-_]/','',$_GET['style']);
+else $stylename = config::get('style_name');
+
+if(!is_dir("themes/".$themename)) $themename = 'default';
+
+if(!file_exists("themes/".$themename."/".$stylename.".css"))
+	$stylename = 'default';
+
 define('THEME_URL', config::get('cfg_kbhost').'/themes/'.$themename);
 
 // Ensure board owner is stored appropriately in the config.
