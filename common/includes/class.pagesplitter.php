@@ -31,7 +31,7 @@ class PageSplitter
 	function generate()
 	{
 		global $smarty;
-		if ($this->max_ / $this->split_ <= 1)
+		if (!$this->split_ || $this->max_ / $this->split_ <= 1)
 			return;
 
 		$endpage = ceil($this->max_ / $this->split_);
