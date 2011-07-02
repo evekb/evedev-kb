@@ -73,7 +73,10 @@ class Config
 			}
 		}
 		self::$qry->execute("SELECT * FROM kb3_config WHERE cfg_site='".self::$configSite."'");
-		if(!self::$qry->recordCount()) self::setDefaults();
+		if (!self::$qry->recordCount()) {
+			self::setDefaults();
+			self::$qry->execute("SELECT * FROM kb3_config WHERE cfg_site='".self::$configSite."'");
+		}
 		while ($row = self::$qry->getRow())
 		{
 			// If this board is set up with a super admin then restrict global changes.
