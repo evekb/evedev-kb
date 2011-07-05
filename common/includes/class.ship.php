@@ -11,10 +11,8 @@
  * Contains the attributes of a Ship and standard methods to manipulate Ships.
  * @package EDK
  */
-class Ship
+class Ship extends Cacheable
 {
-	static private $cache = array();
-
 	private $executed = false;
 	private $id = 0;
 	private $externalid = null;
@@ -50,7 +48,7 @@ class Ship
 	/**
 	 * Return the id for this Ship.
 	 *
-	 * @return mixed integer id for this Ship.
+	 * @return integer id for this Ship.
 	 */
 	function getID()
 	{
@@ -158,14 +156,15 @@ class Ship
 	{
 		if (!$this->executed)
 		{
-			if (isset(self::$cache[$this->id])){
-				$this->shipname = self::$cache[$this->id]->shipname;
-				$this->shipclass = self::$cache[$this->id]->shipclass;
-				$this->shiptechlevel = self::$cache[$this->id]->shiptechlevel;
-				$this->shipisfaction = self::$cache[$this->id]->shipisfaction;
-				$this->externalid = self::$cache[$this->id]->externalid;
-				$this->id = self::$cache[$this->id]->id;
-				$this->value = self::$cache[$this->id]->value;
+			if ($this->id && $this->isCached()) {
+				$cache = $this->getCache();
+				$this->shipname = $cache->shipname;
+				$this->shipclass = $cache->shipclass;
+				$this->shiptechlevel = $cache->shiptechlevel;
+				$this->shipisfaction = $cache->shipisfaction;
+				$this->externalid = $cache->externalid;
+				$this->id = $cache->id;
+				$this->value = $cache->value;
 				$this->executed = true;
 				return;
 			}
@@ -192,7 +191,7 @@ class Ship
 				$this->value = $row['shp_baseprice'];
 			}
 
-			self::$cache[$this->id] = $this;
+			$this->putCache();
 		}
 		$this->executed = true;
 	}

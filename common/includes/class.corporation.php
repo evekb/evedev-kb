@@ -11,15 +11,18 @@
  * Creates a new Corporation or fetches an existing one from the database.
  * @package EDK
  */
-class Corporation
+class Corporation extends Entity
 {
-	static private $cache = array();
-
-	private $id;
-	private $externalid;
-	private $name;
-	private $alliance;
-	private $updated;
+	/** @var integer */
+	protected $id = null;
+	/** @var integer */
+	protected $externalid = null;
+	/** @var string */
+	protected $name = null;
+	/** @var Alliance */
+	private $alliance = null;
+	/** @var integer */
+	private $updated = null;
 
 	/**
 	 * Create a new Corporation object from the given $id.
@@ -34,55 +37,47 @@ class Corporation
 	}
 	/**
 	 * Return true if this corporation is an NPC corporation.
+	 *
+	 * @return boolean True if this corporation is an NPC corporation.
 	 */
 	function isNPCCorp()
 	{
 		if($this->externalid > 1000001 && $this->externalid < 1000183)
 			return true;
 		// These are NPC alliances but they may show up as corps on mails.
-		if($this->externalid > 500000 && $this->externalid < 500021)
+		else if($this->externalid > 500000 && $this->externalid < 500021)
 			return true;
+		else return false;
 	}
 
-	/**
-	 * Return the corporation name stripped of all non-ASCII non-alphanumeric characters.
-	 */
-	function getUnique()
-	{
-		if(!$this->name) $this->execQuery();
-		return preg_replace('/[^a-z0-9]/', '', strtolower($this->getName()));
-	}
 	/**
 	 * Return a URL for the icon of this corporation.
+	 *
 	 * If a cached image exists then return the direct url. Otherwise return
-	 *  a link to the thumbnail page.
+	 * a link to the thumbnail page.
 	 *
 	 * @param integer $size The size in pixels of the image needed.
-	*/
+	 * @return string The URL for this corporation's logo.
+	 */
 	function getPortraitURL($size = 64)
 	{
-		$this->getExternalID();
-
-		if(!$this->getExternalID() && file_exists('img/corps/'.$this->getUnique().'.png'))
-		{
-			if($size == 128) return IMG_HOST.'/img/corps/'.$this->getUnique().'.png';
-
-			else if(CacheHandler::exists($this->getUnique()."_$size.png", 'img'))
-				return KB_HOST."/".CacheHandler::getExternal($this->getUnique()."_$size.png", 'img');
-			else return KB_HOST.'/?a=thumb&amp;type=npc&amp;id='.$this->getUnique().'&amp;size='.$size;
-		}
+		if(!$this->externalid) $this->getExternalID();
 
 		// NPC alliances can be recorded as corps on killmails.
 		if($this->externalid > 500000 && $this->externalid < 500021)
 			return imageURL::getURL('Alliance', $this->externalid, $size);
+
 		return imageURL::getURL('Corporation', $this->externalid, $size);
 	}
 
 	/**
 	 * Return the corporation CCP ID.
-	 * When populateList is true, the lookup will return 0 in favour of getting the
-	 *  external ID from CCP. This helps the kill_detail page load times.
-	*/
+	 * When populateList is true, the lookup will return 0 in favour of getting
+	 * the external ID from CCP. This helps the kill_detail page load times.
+	 *
+	 * @param boolean $populateList
+	 * @return integer
+	 */
 	function getExternalID($populateList = false)
 	{
 		if($this->externalid) return $this->externalid;
@@ -103,29 +98,9 @@ class Corporation
 	}
 
 	/**
-	 * Return the corporation ID.
-	 */
-	function getID()
-	{
-		if($this->id) return $this->id;
-		elseif($this->externalid)
-		{
-			$this->execQuery();
-			return $this->id;
-		}
-		else return 0;
-	}
-	/**
-	 * Return the corporation name.
-	 */
-	function getName()
-	{
-		if(!$this->name) $this->execQuery();
-		return $this->name;
-	}
-
-	/**
-	 * Return an alliance object for the alliance this corporation belongs to.
+	 * Return an Alliance object for the alliance this corporation belongs to.
+	 *
+	 * @return Alliance
 	 */
 	function getAlliance()
 	{
@@ -148,7 +123,7 @@ class Corporation
 		$this->externalid = intval($row['crp_external_id']);
 		$this->alliance = $row['crp_all_id'];
 
-		self::$cache[ (int)$this->id ] = $this;
+		$this->putCache();
 	}
 	/**
 	 * Search the database for the corporation details for this object.
@@ -158,11 +133,16 @@ class Corporation
 	*/
 	function execQuery()
 	{
-		if( isset( self::$cache[ (int)$this->id ] ) ) {
-			$this->id = self::$cache[ (int)$this->id ]->id;
-			$this->externalid = self::$cache[ (int)$this->id ]->externalid;
-			$this->name = self::$cache[ (int)$this->id ]->name;
-			$this->alliance = self::$cache[ (int)$this->id ]->alliance;
+		// TODO: Should we double the size and record by external id as well?
+		// We can't rely on having an external id but if it was used more
+		// extensively in EDK then we could cache by external id if we have it
+		// and internal id only when we do not.
+		if( $this->id && $this->isCached() ) {
+			$cache = $this->getCache();
+			$this->id = $cache->id;
+			$this->externalid = $cache->externalid;
+			$this->name = $cache->name;
+			$this->alliance = $cache->alliance;
 		} else {
 			$qry = DBFactory::getDBQuery();
 			$sql = "select * from kb3_corps where ";
@@ -178,7 +158,7 @@ class Corporation
 				$this->name = $row['crp_name'];
 				$this->externalid = intval($row['crp_external_id']);
 				$this->alliance = $row['crp_all_id'];
-				self::$cache[ (int)$this->id ] = $this;
+				$this->putCache();
 			}
 		}
 	}
@@ -189,7 +169,8 @@ class Corporation
      * @param Alliance $alliance The alliance this corporation belongs to.
      * @param string $timestamp The timestamp the corporation's details were updated.
      * @param integer $externalid The external CCP ID for the corporation.
-	*/
+	 * @return integer
+	 */
 	function add($name, $alliance, $timestamp, $externalid = 0, $loadExternals = true)
 	{
 		$name = slashfix($name);
@@ -239,7 +220,7 @@ class Corporation
 						$qry->execute($sql);
 						$this->alliance = $alliance;
 					}
-					self::$cache[ (int)$this->id ] = $this;
+					$this->putCache();
 					return $this->id;
 				}
 			}
@@ -283,7 +264,7 @@ class Corporation
 				$this->setExternalID(intval($externalid));
 			}
 		}
-		self::$cache[ (int)$this->id ] = $this;
+		$this->putCache();
 		return $this->id;
 	}
 	/**
@@ -337,13 +318,13 @@ class Corporation
 				$qry->execute("UPDATE kb3_corps SET crp_name = '".$qry->escape($this->name)."' where crp_id = ".$old_id);
 				$qry->autocommit(true);
 				$this->id = $old_id;
-				self::$cache[ (int)$this->id ] = $this;
+				$this->putCache();
 				return true;
 			}
 			if($qry->execute("UPDATE kb3_corps SET crp_external_id = ".$externalid." where crp_id = ".$this->id))
 			{
 				$this->externalid = $externalid;
-				self::$cache[ (int)$this->id ] = $this;
+				$this->putCache();
 				return true;
 			}
 		}
@@ -352,6 +333,8 @@ class Corporation
 
 	/**
 	 * Returns an array of pilots we know to be in this corp.
+	 *
+	 * @return Pilot
 	 */
 	function getMemberList()
 	{
@@ -375,6 +358,8 @@ class Corporation
 
 	/**
 	 * Fetch corporation name and alliance from CCP using the stored external ID.
+	 *
+	 * @return boolean TRUE on success, FALSE on failure.
 	 */
 	public function fetchCorp()
 	{

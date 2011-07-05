@@ -9,35 +9,50 @@
 /**
  * @package EDK
  */
-class SolarSystem
+class SolarSystem extends Cacheable
 {
+	/**
+	 * Whether the constructor has been executed.
+	 * @var boolean
+	 */
+	private $executed = false;
+	/**
+	 * The sys_id for this system.
+	 * @var integer
+	 */
+	private $id = 0;
+	/**
+	 * The data for this system.
+	 * @var array
+	 */
+	private $row = array();
+
     function SolarSystem($id = 0)
     {
-        $this->id_ = $id;
-        $this->qry_ = DBFactory::getDBQuery();
+        $this->id = (int)$id;
     }
 
     function getID()
     {
-        return $this->id_;
+        return $this->id;
     }
 
     function getExternalID()
     {
         $this->execQuery();
-        return $this->row_['sys_eve_id'];
+        return $this->row['sys_eve_id'];
     }
 
     function getName()
     {
         $this->execQuery();
-        return $this->row_['sys_name'];
+        return $this->row['sys_name'];
     }
 
     function getSecurity($rounded = false)
     {
         $this->execQuery();
-        $sec = $this->row_['sys_sec'];
+        $sec = $this->row['sys_sec'];
 
         if ($rounded)
         {
@@ -52,40 +67,48 @@ class SolarSystem
     function getConstellationID()
     {
         $this->execQuery();
-        return $this->row_['con_id'];
+        return $this->row['con_id'];
     }
 
     function getConstellationName()
     {
         $this->execQuery();
-        return $this->row_['con_name'];
+        return $this->row['con_name'];
     }
 
     function getRegionID()
     {
         $this->execQuery();
-        return $this->row_['reg_id'];
+        return $this->row['reg_id'];
     }
 
     function getRegionName()
     {
         $this->execQuery();
-        return $this->row_['reg_name'];
+        return $this->row['reg_name'];
     }
 
-    function execQuery()
+    private function execQuery()
     {
-        if (!$this->executed_)
+        if (!$this->executed)
         {
-        $sql = "select *
-                       from kb3_systems sys, kb3_constellations con,
-		               kb3_regions reg
-          		       where sys.sys_id = ".$this->id_."
-        		       and con.con_id = sys.sys_con_id
-        			   and reg.reg_id = con.con_reg_id";
-            $this->qry_->execute($sql);
-            $this->row_ = $this->qry_->getRow();
-            $this->executed_ = true;
+			if ($this->isCached()) {
+				$cache = $this->getCache();
+				$this->row = $cache->row_;
+				$this->executed = true;
+			} else {
+		        $qry = DBFactory::getDBQuery();
+				$sql = "select *
+						   from kb3_systems sys, kb3_constellations con,
+						   kb3_regions reg
+						   where sys.sys_id = ".$this->id."
+						   and con.con_id = sys.sys_con_id
+						   and reg.reg_id = con.con_reg_id";
+				$qry->execute($sql);
+				$this->row = $qry->getRow();
+				$this->executed = true;
+				$this->putCache();
+			}
         }
     }
 
@@ -101,7 +124,7 @@ class SolarSystem
         {
             return null;
         }
-        $this->id_ = $row['sys_id'];
-        $this->executed_ = false;
+        $this->id = $row['sys_id'];
+        $this->executed = false;
     }
 }

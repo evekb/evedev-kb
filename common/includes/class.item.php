@@ -11,10 +11,8 @@
  * Contains the details about an Item.
  * @package EDK
  */
-class Item
+class Item extends Cacheable
 {
-	static private $cache = array();
-
 	private $executed = false;
 	private $id = 0;
 	public $row_ = null;
@@ -37,8 +35,9 @@ class Item
 		{
 			$this->row_ = $row;
 			$this->executed = true;
-		} elseif (isset(self::$cache[$this->id])){
-			$this->row_ = self::$cache[$this->id];
+		} else if( $this->isCached() ) {
+			$cache = $this->getCache();
+			$this->row_ = $cache->row_;
 			$this->executed = true;
 		}
 	}
@@ -47,6 +46,11 @@ class Item
 	{
 		return $this->id;
 	}
+	
+	public function getExternalID()
+	{
+		return $this->getID();
+	}
 
 	public function getName()
 	{
@@ -54,12 +58,19 @@ class Item
 		return $this->row_['typeName'];
 	}
 
-	public function getIcon($size)
+	/**
+	 * Return the URL for an icon for this item.
+	 * @param integer $size
+	 * @param boolean $full Whether to return a full image tag.
+	 * @return string
+	 */
+	public function getIcon($size, $full = true)
 	{
 		$this->execQuery();
 		global $smarty;
 		$img = imageURL::getURL('InventoryType', $this->id, $size);
 
+		if (!$full) return $img;
 		if ($size == 24)
 		{
 			$show_style .= '_'.config::get('fp_ammostyle');
@@ -167,13 +178,13 @@ class Item
 	{
 		if (!$this->executed)
 		{
-			if (isset(self::$cache[$this->id])){
-				$this->row_ = self::$cache[$this->id];
+			if (!$this->id)return false;
+			if ($this->id && $this->isCached()) {
+				$this->row_ = $this->getCache()->row_;
 				$this->executed = true;
 				return;
 			}
 
-			if (!$this->id)return false;
 			if (!isset($this->qry)) $this->qry = DBFactory::getDBQuery();
 
 			$sql = "select inv.*, kb3_item_types.*, dga.value as techlevel, itp.price, dc.value as usedcharge, dl.value as usedlauncher
@@ -191,8 +202,8 @@ class Item
 			$this->row_['itm_externalid'] = $this->row_['typeID'];
 			$this->row_['itm_value'] = $this->row_['price'];
 			$this->executed = true;
-
-			self::$cache[$this->id] = $this->row_;
+			
+			$this->putCache();
 		}
 	}
 
@@ -236,7 +247,7 @@ class Item
 	 * @param string $name
 	 * @return integer return typeID by name, dont change $this->id
 	 */
-	public function get_item_id($name)
+	public static function get_item_id($name)
 	{
 		$qry = DBFactory::getDBQuery();
 		$query = "select typeID as itm_id
@@ -282,7 +293,7 @@ class Item
 		return $row['value'];
 	}
 
-	public function get_ammo_size($name)
+	public static function get_ammo_size($name)
 	{
 		$temp = substr($name, strlen($name) - 2, 2);
 		if (strstr($name,'Mining'))

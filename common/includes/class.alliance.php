@@ -11,10 +11,8 @@
  * Creates a new Alliance or fetches an existing one from the database.
  * @package EDK
  */
-class Alliance
+class Alliance extends Entity
 {
-	static private $cache = array();
-
 	private $id = false;
 	private $externalid = false;
 	private $executed = false;
@@ -104,11 +102,11 @@ class Alliance
     {
         if (!$this->executed)
         {
-			if( isset( self::$cache[ (int)$this->id ] ) ) {
-				$this->id = self::$cache[ (int)$this->id ]->id;
-				$this->externalid = self::$cache[ (int)$this->id ]->externalid;
-				$this->executed = self::$cache[ (int)$this->id ]->executed;
-				$this->name = self::$cache[ (int)$this->id ]->name;
+			if ($this->id && $this->isCached()) {
+				$cache = $this->getCache($this->id);
+				$this->externalid = $cache->externalid;
+				$this->executed = $cache->executed;
+				$this->name = $cache->name;
 			} else {
 				$qry = DBFactory::getDBQuery();
 				$sql = "select * from kb3_alliances where ";
@@ -123,7 +121,7 @@ class Alliance
 					$this->name = $row['all_name'];
 					$this->externalid = intval($row['all_external_id']);
 
-					self::$cache[ (int)$this->id ] = $this;
+					$this->putCache();
 				}
 			}
 
@@ -168,7 +166,7 @@ class Alliance
 					$this->name = $name;
 					$this->externalid = $row['all_external_id'];
 
-					self::$cache[ (int)$this->id ] = $this;
+					$this->putCache();
 
 					return $this->id;
 				}
@@ -188,7 +186,7 @@ class Alliance
 			$this->name = $row['all_name'];
 			$this->externalid = intval($row['all_external_id']);
         }
-		self::$cache[ (int)$this->id ] = $this;
+		$this->putCache();
     }
 	/**
 	 * Set the CCP external ID for this alliance.
@@ -226,13 +224,13 @@ class Alliance
 
 				$this->id = $newid;
 				$this->externalid = $externalid;
-				self::$cache[ (int)$this->id ] = $this;
+				$this->putCache();
 				return $this->id;
 			}
 			else if($qry->execute("UPDATE kb3_alliances SET all_external_id = ".$externalid." WHERE all_id = ".$this->id))
 			{
 				$this->externalid = $externalid;
-				self::$cache[ (int)$this->id ] = $this;
+				$this->putCache();
 				return $this->id;
 			}
 		}

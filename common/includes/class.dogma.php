@@ -9,7 +9,7 @@
 /**
  * @package EDK
  */
-class dogma
+class dogma extends Cacheable
 {
 	private $valid = false;
 	private $id = 0;
@@ -17,6 +17,9 @@ class dogma
 	public $attrib = array();
 	public $effects = array();
 
+	/**
+	 * @param integer $itemID
+	 */
 	public function dogma($itemID)
 	{
 		$itemID = intval($itemID);
@@ -25,59 +28,72 @@ class dogma
 			$this->valid = false;
 			return;
 		}
-		$qry = DBFactory::getDBQuery();
-		$query = 'select * from kb3_invtypes
-                    left join kb3_item_types on itt_id = groupID
-                    where typeID = '.$itemID;
-		$qry->execute($query);
+		if ($this->isCached()) {
+			$cache = $this->getCache();
+			$this->item = $cache->item;
+			$this->attrib = $cache->attrib;
+			$this->effects = $cache->effects;
+			$this->valid = true;
+		} else {
+			$qry = DBFactory::getDBQuery();
+			$query = 'select * from kb3_invtypes
+						left join kb3_item_types on itt_id = groupID
+						where typeID = '.$itemID;
+			$qry->execute($query);
 
-		if(!$row = $qry->getRow())
-		{
-			$this->valid = false;
-			return;
-		}
-		$this->valid = true;
-		$this->id = $row['typeID'];
-		$this->item = $row;
-
-		$this->attrib = array();
-		$query = 'select kb3_dgmtypeattributes.*,kb3_dgmattributetypes.*,kb3_eveunits.displayName as unit
-          from kb3_dgmtypeattributes
-          inner join kb3_dgmattributetypes on kb3_dgmtypeattributes.attributeID = kb3_dgmattributetypes.attributeID
-          left join kb3_eveunits on kb3_dgmattributetypes.unitID = kb3_eveunits.unitID
-          where typeID = '.$itemID;
-
-		$qry->execute($query);
-		while($row = $qry->getRow())
-		{
-			if($row['displayName'] == '')
+			if(!$row = $qry->getRow())
 			{
-				$row['displayName'] = $row['attributeName'];
+				$this->valid = false;
+				return;
 			}
-			$this->attrib[$row['attributeName']] = $row;
-		}
+			$this->valid = true;
+			$this->id = $row['typeID'];
+			$this->item = $row;
 
-		$this->effects = array();
-		$query = 'select * from kb3_dgmtypeeffects
-          inner join kb3_dgmeffects on kb3_dgmtypeeffects.effectID = kb3_dgmeffects.effectID
-          where typeID = '.$itemID;
+			$this->attrib = array();
+			$query = 'select kb3_dgmtypeattributes.*,kb3_dgmattributetypes.*,kb3_eveunits.displayName as unit
+			  from kb3_dgmtypeattributes
+			  inner join kb3_dgmattributetypes on kb3_dgmtypeattributes.attributeID = kb3_dgmattributetypes.attributeID
+			  left join kb3_eveunits on kb3_dgmattributetypes.unitID = kb3_eveunits.unitID
+			  where typeID = '.$itemID;
 
-		$qry->execute($query);
-		while($row = $qry->getRow())
-		{
-			if(!$row['effectName'])
+			$qry->execute($query);
+			while($row = $qry->getRow())
 			{
-				var_export($row);
-				continue;
+				if($row['displayName'] == '')
+				{
+					$row['displayName'] = $row['attributeName'];
+				}
+				$this->attrib[$row['attributeName']] = $row;
 			}
-			if($row['displayName'] == '')
+
+			$this->effects = array();
+			$query = 'select * from kb3_dgmtypeeffects
+			  inner join kb3_dgmeffects on kb3_dgmtypeeffects.effectID = kb3_dgmeffects.effectID
+			  where typeID = '.$itemID;
+
+			$qry->execute($query);
+			while($row = $qry->getRow())
 			{
-				$row['displayName'] = $row['effectName'];
+				if(!$row['effectName'])
+				{
+					var_export($row);
+					continue;
+				}
+				if($row['displayName'] == '')
+				{
+					$row['displayName'] = $row['effectName'];
+				}
+				$this->effects[$row['effectName']] = $row;
 			}
-			$this->effects[$row['effectName']] = $row;
 		}
 	}
 
+	/**
+	 *
+	 * @param string $string
+	 * @return boolean|string
+	 */
 	public function get($string)
 	{
 		if(isset($this->item[$string]))
@@ -88,11 +104,20 @@ class dogma
 		return false;
 	}
 
+	/**
+	 * @return boolean
+	 */
 	public function isValid()
 	{
 		return $this->valid;
 	}
 
+	/**
+	 * Return the typeName for the given typeID
+	 * 
+	 * @param integer $id
+	 * @return string
+	 */
 	public static function resolveTypeID($id)
 	{
 		$id = intval($id);
@@ -102,6 +127,12 @@ class dogma
 		return $row['typeName'];
 	}
 
+	/**
+	 * Return group name for the given ID
+	 *
+	 * @param integer $id
+	 * @return string
+	 */
 	public static function resolveGroupID($id)
 	{
 		$id = intval($id);
@@ -111,6 +142,12 @@ class dogma
 		return $row['itt_name'];
 	}
 
+	/**
+	 * Return Attribute name for the given attributeID
+	 *
+	 * @param integer $id
+	 * @return string
+	 */
 	public static function resolveAttributeID($id)
 	{
 		$id = intval($id);
@@ -118,5 +155,10 @@ class dogma
 		$qry->execute('select displayName from kb3_dgmattributetypes where attributeID='.$id);
 		$row = $qry->getRow();
 		return $row['displayName'];
+	}
+
+	public function getID()
+	{
+		return $this->id;
 	}
 }
