@@ -38,7 +38,7 @@ class TopTable_Corp
 		$smarty->assign('tl_type', $this->entity_);
 		$smarty->assignByRef('tl_rows', $rows);
 
-		return $smarty->fetch(get_tpl('TopListtable'));
+		return $smarty->fetch(get_tpl('toplisttable'));
 	}
 }
 

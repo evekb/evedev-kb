@@ -37,7 +37,7 @@ class TopTable_Ship
 		$smarty->assign('tl_type', 'Kills');
 		$smarty->assignByRef('tl_rows', $rows);
 
-		return $smarty->fetch(get_tpl('TopListtable'));
+		return $smarty->fetch(get_tpl('toplisttable'));
 	}
 }
 
