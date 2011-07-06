@@ -6,7 +6,7 @@
             <table class="kb-table" width="360" cellpadding="0" cellspacing="1" border="0">
                 <tr class="kb-table-row-even">
                     <td>
-						<img style="float: left; margin-right: 10px;" src="{$kb_host}/thumb.php?type=type&amp;id={$item->item.typeID}" alt="{$item->item.typeName}"/>
+						<img style="float: left; margin-right: 10px;" src="{$itemImage}" alt="{$item->item.typeName}"/>
 						{$item->item.description|nl2br}
 					</td>
                 </tr>
@@ -38,6 +38,7 @@
             </td>
         <td width="50">&nbsp;</td>
         <td align="left" valign="top" width="360">
+			{if $item->attrib}
             <div class="block-header">Attributes</div>
             <table class="kb-table" width="360" border="0" cellspacing="1">
             {foreach from=$item->attrib key=i item=key}
@@ -51,8 +52,7 @@
                 </tr>
             {/foreach}
             </table>
-
+			{/if}
         </td>
     </tr>
 </table>
-{*<pre>{$dump}</pre>*}

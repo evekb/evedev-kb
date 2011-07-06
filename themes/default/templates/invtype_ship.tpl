@@ -6,7 +6,7 @@
 			<table class="kb-table" width="360" cellpadding="0" cellspacing="1" border="0">
 				<tr class="kb-table-row-even">
 				    <td style="vertical-align: top; width:64px; height:64px">
-					    <img style="float: left; margin-right: 10px;" src="{$kb_host}/thumb.php?type=ship&amp;id={$item->item.typeID}&amp;size=64" alt="{$item->item.typeName}" />
+					    <img style="float: left; margin-right: 10px;" src="{$shipImage}" alt="{$item->item.typeName}" />
 					    {$item->item.description|nl2br}
 				    </td>
 				</tr>
@@ -66,6 +66,7 @@
 			</td>
 		<td width="50">&nbsp;</td>
 		<td align="left" valign="top" width="360">
+			{if $item->attrib.hiSlots.displayName}
 			<div class="block-header">Fitting</div>
 			<table class="kb-table" width="360" border="0" cellspacing="1">
 			{foreach from=$fitting key=i item=key}{if $item->attrib.$key.displayName}
@@ -76,16 +77,20 @@
 				</tr>
 			{/if}{/foreach}
 			</table>
+			{/if}
+			{if $item->attrib.maxTargetRange.displayName}
 			<div class="block-header">Combat</div>
 			<table class="kb-table" width="360" border="0" cellspacing="1">
-			{foreach from=$targetting key=i item=key}
+			{foreach from=$targetting key=i item=key}{if $item->attrib.$key.displayName}
 				<tr class="{cycle name=ccl}">
 					<td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon{$item->attrib.$key.icon}.png" border="0" alt="" /></td>
 					<td class="kb-table-cell"><b>{$item->attrib.$key.displayName}</b></td>
 					<td class="kb-table-cell" align="right">{$item->attrib.$key.value} {$item->attrib.$key.unit}</td>
 				</tr>
-			{/foreach}
+			{/if}{/foreach}
 			</table>
+			{/if}
+			{if $item->attrib.techLevel.displayName}
 			<div class="block-header">Misc</div>
 			<table class="kb-table" width="360" border="0" cellspacing="1">
 			{foreach from=$miscellaneous key=i item=key}{if $item->attrib.$key.displayName}
@@ -96,6 +101,7 @@
 				</tr>
 			{/if}{/foreach}
 			</table>
+			{/if}
 		</td>
 	</tr>
 </table>
