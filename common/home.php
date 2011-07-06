@@ -16,7 +16,6 @@ class pHome extends pageAssembly
 		$this->queue('start');
 		$this->queue('summaryTable');
 		$this->queue('campaigns');
-		$this->queue('contracts');
 		$this->queue('killList');
 		$this->view = preg_replace('/[^a-zA-Z0-9_-]/','',$_GET['view']);
 		$this->viewList = array();
@@ -97,27 +96,6 @@ class pHome extends pageAssembly
 			return $html;
 		}
 	}
-
-	/**
-	 * Returns HTML string for contracts, if any.
-	 * @return string HTML string for contracts, if any
-	 */
-	function contracts()
-	{
-	// Display contracts, if any.
-		if (Killboard::hasContracts(true) &&
-			$this->isCurrentPeriod())
-		{
-			$html .= "<div class=\"kb-campaigns-header\">Active contracts</div>";
-			$list = new ContractList();
-			$list->setActive("yes");
-			$list->setCampaigns(false);
-			$table = new ContractListTable($list);
-			$html .= $table->generate();
-			return $html;
-		}
-	}
-
 	/**
 	 * Return the main killlists
 	 * @global Smarty $smarty

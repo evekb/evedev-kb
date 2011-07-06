@@ -19,13 +19,6 @@ if ($_GET['op'] == 'view')
 		$page->setTitle('Administration - Campaigns');
 		$campaign = 1;
 	}
-	/*
-    elseif ($type == 'contract')
-    {
-        $page->setTitle('Administration - Contracts');
-        $campaign = 0;
-    }
-	*/
 	$list = new ContractList();
 	if ($type == 'campaign') $list->setCampaigns(true);
 	$html = "[<a href=\"?a=admin_cc&amp;op=add&amp;type=".$type."\">Add ".$type."</a>]<br />";
