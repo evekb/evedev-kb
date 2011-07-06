@@ -1286,7 +1286,7 @@ class Kill
 	{
 		if ( $this->timestamp_ == "" || !$this->getVictim()->getID() || !$this->victimship_->getID() || !$this->solarsystem_->getID() ||
 			!$this->victimallianceid_ || !$this->victimcorpid_ || !$this->getFBAllianceID() || !$this->getFBCorpID() ||
-			!$this->getFBPilotID() ) return 0;
+			!$this->getFBPilotID() || !$this->getHash(false, false)) return 0;
 		if ($id == null)
 		{
 			$qid = 'null';
@@ -1435,7 +1435,7 @@ class Kill
 		if($this->externalid_) $sql .= $this->externalid_.", ";
 		else $sql .= "NULL, ";
 			$sql .= "'".$qry->escape($this->getHash(false, false))."', 0, UTC_TIMESTAMP())";
-		if(!$qry->execute($sql))
+		if(!@$qry->execute($sql))
 			return $this->rollback($qry);
 
 		//Update cache tables.
