@@ -25,11 +25,11 @@ abstract class Cacheable {
 	 */
 	protected function isCached()
 	{
-		if(self::$cache[get_called_class().(int)$this->getID()])
+		if(isset(self::$cache[get_class($this).(int)$this->getID()]))
 			return true;
 		else if(!self::$cachehandler) self::init();
 
-		return self::$cachehandler->exists(get_called_class().(int)$this->getID());
+		return self::$cachehandler->exists(get_class($this).(int)$this->getID());
 	}
 
 	/**
@@ -40,11 +40,11 @@ abstract class Cacheable {
 	 */
 	protected function getCache()
 	{
-		if(self::$cache[get_called_class().(int)$this->getID()])
-			return self::$cache[get_called_class().(int)$this->getID()];
+		if(isset(self::$cache[get_class($this).(int)$this->getID()]))
+			return self::$cache[get_class($this).(int)$this->getID()];
 		else if(!self::$cachehandler) self::init();
 
-		return self::$cachehandler->get(get_called_class().(int)$this->getID());
+		return self::$cachehandler->get(get_class($this).(int)$this->getID());
 	}
 
 	/**
@@ -56,10 +56,10 @@ abstract class Cacheable {
 	protected function putCache()
 	{
 		if(!self::$cachehandler) self::init();
-		self::$cache[get_called_class().(int)$this->getID()] = unserialize(serialize($this));
+		self::$cache[get_class($this).(int)$this->getID()] = unserialize(serialize($this));
 
 		return self::$cachehandler->put(
-				get_called_class().(int)$this->getID(), $this);
+				get_class($this).(int)$this->getID(), $this);
 	}
 
 	/**
