@@ -7,22 +7,16 @@
  */
 
 options::cat('Maintenance', 'Database', 'Table Checks');
-//options::fadd('This checks automatically your database', 'none', 'custom', array('admin_db', 'checkDatabase'), array('admin_db', 'none'));
 options::fadd('Current SQL cache size', 'none', 'custom', array('admin_db', 'checkCache'), array('admin_db', 'killCache'));
 options::fadd('Reinstall CCP DB', 'none', 'custom', array('admin_db', 'CCPDBlink'));
 
 class admin_db
 {
-	function checkDatabase()
-	{
-	// nothing to do atm
-	}
-
-	function none()
-	{
-	// do nothing on submit
-	}
-	//! Check the size of the query cache and create a clear cache option.
+	/**
+	 * Check the size of the query cache and create a clear cache option.
+	 *
+	 * @return float
+	 */
 	function checkCache()
 	{
 		$size = self::size(KB_QUERYCACHEDIR);
@@ -40,16 +34,19 @@ class admin_db
 			return round($size/1024, 2).' KB <input type="checkbox" name="option_sql_clearcache" />Clear cache ?';
 		}
 	}
-	//! Delete the contents of the query cache.
+	/**
+	 * Delete the contents of the query cache.
+	 */
 	function killCache()
 	{
-		if ($_POST['option_sql_clearcache'] != 'on')
-		{
-			return;
+		if ($_POST['option_sql_clearcache'] == 'on') {
+			CacheHandler::removeBySize("SQL", 1);
 		}
-		CacheHandler::removeBySize("SQL", 1);
 	}
-	//! Create an option to link to the database upgrade page.
+	/**
+	 * Create an option to link to the database upgrade page.
+	 * @return string HTML link to the database upgrade page.
+	 */
 	function CCPDBlink()
 	{
 		if(!file_exists("update/CCPDB/update.php"))
@@ -60,6 +57,13 @@ class admin_db
 		return "<a href='".KB_HOST."/update/index.php?package=CCPDB&amp;do=reset'>".
 			"Reinstall</a>";
 	}
+
+	/**
+	 * Return the size of a directory and it's subdirectories.
+	 * 
+	 * @param string $dir Directory to check
+	 * @return integer size in bytes of the directory.
+	 */
 	private static function size($dir = null)
 	{
 		if(is_null($dir)) return 0;

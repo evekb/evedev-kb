@@ -168,9 +168,9 @@ class admin_appearance
 		return $options;
 	}
 
-	//! Create the selection options for available banners
-
-	//! \return HTML for the banner selection dropdown list.
+	/* Create the selection options for available banners
+	 * @return stringHTML for the banner selection dropdown list.
+	 */
 	function createSelectBanner()
 	{
 		$options = array();
@@ -200,9 +200,10 @@ class admin_appearance
 		return $options;
 	}
 
-	//! Create the selection options for available styles in the current theme.
-
-	//! \return HTML for the style selection dropdown list.
+	/** Create the selection options for available styles in the current theme.
+	 *
+	 * @return string HTML for the style selection dropdown list.
+	 */
 	function createSelectStyle()
 	{
 		$options = array();
@@ -229,9 +230,10 @@ class admin_appearance
 		return $options;
 	}
 
-	//! Create the selection options for available themes.
-
-	//! \return HTML for the theme selection dropdown list.
+	/** Create the selection options for available themes.
+	 *
+	 * @return string HTML for the theme selection dropdown list.
+	 */
 	function createSelectTheme()
 	{
 		$options = array();
@@ -257,7 +259,9 @@ class admin_appearance
 		return $options;
 	}
 
-	//! Checks if theme has changed and updates page before display.
+	/**
+	 * Checks if theme has changed and updates page before display.
+	 */
 	function changeTheme()
 	{
 		global $themename;
@@ -278,7 +282,9 @@ class admin_appearance
 		admin_appearance::removeOld(0, KB_CACHEDIR.'/templates_c', true);
 	}
 
-	//! Updates style before page is displayed.
+	/**
+	 * Updates style before page is displayed.
+	 */
 	function changeStyle()
 	{
 		global $smarty;
@@ -300,9 +306,10 @@ class admin_appearance
 		}
 	}
 
-	//! Checks if banner has changed, updates page before display and resets banner size.
-
-	/* ! If the banner is changed the stored size is updated and used to display
+	/**
+	 * Checks if banner has changed, updates page before display and resets banner size.
+	 *
+	 * If the banner is changed the stored size is updated and used to display
 	 *  the banner image. Smarty variables are updated so display is immediate.
 	 */
 	function changeBanner()

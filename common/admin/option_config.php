@@ -339,7 +339,9 @@ class admin_config
 		}
 	}
 
-	//! Remove selected pilots then return an array of pilots remaining.
+	/**
+	 * Remove selected pilots then return an array of pilots remaining.
+	 */
 	public static function removePilot()
 	{
 		if(isset($_POST['option_rem_pilotid']) && $_POST['option_rem_pilotid'])
@@ -362,7 +364,9 @@ class admin_config
 		array_unshift($options, array('value' => '0', 'descr' => '-', 'state' => 1));
 		return $options;
 	}
-	//! Remove selected corps then return an array of corps remaining.
+	/**
+	 * Remove selected corps then return an array of corps remaining.
+	 */
 	public static function removeCorp()
 	{
 		if(isset($_POST['option_rem_corpid']) && $_POST['option_rem_corpid'])
@@ -386,7 +390,9 @@ class admin_config
 		return $options;
 
 	}
-	//! Remove selected alliances then return an array of alliances remaining.
+	/**
+	 * Remove selected alliances then return an array of alliances remaining.
+	 */
 	public static function removeAlliance()
 	{
 		if(isset($_POST['option_rem_allianceid']) && $_POST['option_rem_allianceid'])
@@ -498,10 +504,9 @@ class update
 	private static $codeVersion;
 	private static $dbVersion;
 
-	//! Check if board is at latest update
-
-	/*
-	 * Display a link to update or show that no update is needed.
+	/** Check if board is at latest update
+	 *
+	 * @return string HTML link to update or show that no update is needed.
 	 */
 	public static function codeCheck()
 	{
@@ -515,10 +520,10 @@ class update
 		return "<div>No updates available</div>";
 	}
 
-	//! Check if database is at latest update
-
-	/*
-	 * Display a link to update or show that no update is needed.
+	/**
+	 * Check if database is at latest update
+	 *
+	 * @return string HTML link to update or show that no update is needed.
 	 */
 	public static function dbCheck()
 	{
@@ -532,7 +537,9 @@ class update
 		return "<div>No updates available</div>";
 	}
 
-	//! Updates status xml if necessary.
+	/**
+	 * Updates status xml if necessary.
+	 */
 	public static function checkStatus()
 	{
 		require_once('update/CCPDB/xml.parser.php');
