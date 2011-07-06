@@ -210,10 +210,7 @@ class cache
 		if(isset(self::$cacheName)) return self::$cacheName;
 
 		global $themename, $stylename;
-		if(defined('BETA') && BETA)
-			$basename = $_SERVER['HTTP_HOST'].serialize(URI::parseQuery()).IS_IGB.$themename.$stylename;
-		else
-			$basename = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].IS_IGB.$themename.$stylename;
+		$basename = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].IS_IGB.$themename.$stylename;
 		event::call('cacheNaming', $basename);
 		self::$cacheName = KB_SITE.$basename;
 		return self::$cacheName;

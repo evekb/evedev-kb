@@ -152,24 +152,7 @@ class Page
 		event::call('smarty_displayindex', $smarty);
 
 		$html = $smarty->fetch(get_tpl('index'));
-		if(defined('BETA') && BETA)
-		{
-			$len = 0;
-			$pos = 0;
-			while($pos = strpos($html, '/?a=', $pos))
-			{
-				$pos = $pos + 4;
-				$len = 0;
-				while(!in_array(substr($html, $pos + ++$len, 1), array('"', "'", '&') ));
-				$newpage = substr($html, $pos, $len);
-				$prepos = strrpos($html, $newpage, $pos);
-				if($prepos + strlen($newpage) < $pos) continue;
-				$html = str_replace("/$newpage/?a=$newpage", "/$newpage/?", $html);
-			}
-			
-			$html = preg_replace('/(["\'])\?a=(\w*)/', '\1'.KB_HOST.'/index/\2/?', $html);
-			$html = preg_replace('/'.str_replace('/', '\/', KB_HOST).'\/\?a=(\w*)/', KB_HOST.'/index/\1/?', $html);
-		}
+		event::call('final_content', $html);
 		echo $html;
 	}
 	/**
