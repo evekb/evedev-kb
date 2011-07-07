@@ -94,7 +94,7 @@ class SolarSystem extends Cacheable
         {
 			if ($this->isCached()) {
 				$cache = $this->getCache();
-				$this->row = $cache->row_;
+				$this->row = $cache->row;
 				$this->executed = true;
 			} else {
 		        $qry = DBFactory::getDBQuery();
