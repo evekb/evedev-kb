@@ -219,6 +219,6 @@ class Ship extends Cacheable
 			$this->value = $baseprice;
 		}
 
-		self::$cache[$this->id] = $this;
+		$this->putCache();
 	}
 }
