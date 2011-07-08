@@ -16,6 +16,8 @@ class pHome extends pageAssembly
 		$this->queue('start');
 		$this->queue('summaryTable');
 		$this->queue('campaigns');
+		// Legacy support for mods placing themselves after it.
+		$this->queue('contracts');
 		$this->queue('killList');
 		$this->view = preg_replace('/[^a-zA-Z0-9_-]/','',$_GET['view']);
 		$this->viewList = array();
@@ -516,6 +518,15 @@ class pHome extends pageAssembly
 	function addView($view, $callback)
 	{
 		$this->viewList[$view] = $callback;
+	}
+
+	/**
+	 * Legacy stub for old mods to position after.
+	 *
+	 * New mods should not use this because it may go away and then you will cry
+	 */
+	function contracts()
+	{
 	}
 }
 
