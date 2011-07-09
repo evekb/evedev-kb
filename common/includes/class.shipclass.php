@@ -11,7 +11,7 @@
  * Contains the attributes of a Ship Class.
  * @package EDK
  */
-class ShipClass
+class ShipClass extends Cacheable
 {
 	private $executed = false;
 	private $id = 0;
@@ -27,6 +27,8 @@ class ShipClass
 
 	/**
 	 * Return the ID of this ship class object.
+	 *
+	 * @return integer The ID of this ship class.
 	 */
 	public function getID()
 	{
@@ -34,6 +36,8 @@ class ShipClass
 	}
 	/**
 	 * Return the name of this ship class object.
+	 *
+	 * @return string The name of this ship class.
 	 */
 	public function getName()
 	{
@@ -43,6 +47,8 @@ class ShipClass
 
 	/**
 	 * Get value for this ship class object in millions of ISK.
+	 *
+	 * @return float The M ISK value of this ship class
 	 */
 	public function getValue()
 	{
@@ -51,6 +57,8 @@ class ShipClass
 	}
 	/**
 	 * Get value for this ship class object in ISK.
+	 *
+	 * @return float The ISK value of this ship class.
 	 */
 	public function getActualValue()
 	{
@@ -59,6 +67,8 @@ class ShipClass
 	}
 	/**
 	 * Get the point value of this ship class.
+	 *
+	 * @return integer
 	 */
 	public function getPoints()
 	{
@@ -68,7 +78,7 @@ class ShipClass
 	/**
 	 * Set the name of this ship class object.
 	 *
-	 * @param string $name The new name for this object.
+	 * @param string $name The new name for this class.
 	 */
 	public function setName($name)
 	{
@@ -85,6 +95,8 @@ class ShipClass
 	}
 	/**
 	 * Return the URL to a colour coded value indicator image.
+	 *
+	 * @return string
 	 */
 	public function getValueIndicator()
 	{
@@ -112,9 +124,16 @@ class ShipClass
 	{
 		if (!$this->executed)
 		{
-			$sql = "select *
-                  from kb3_ship_classes
-  	         where scl_id = ".$this->id;
+			if ($this->isCached()) {
+				$cache = $this->getCache();
+				$this->name = $cache->name;
+				$this->value = $cache->value;
+				$this->points = $cache->points;
+				$this->executed = true;
+				return;
+			}
+			$sql = "SELECT * FROM kb3_ship_classes ".
+  	         "WHERE scl_id = ".$this->id;
 
 			$qry = DBFactory::getDBQuery();
 
@@ -125,6 +144,7 @@ class ShipClass
 			$this->value = $row['scl_value'];
 			$this->points = $row['scl_points'];
 			$this->executed = true;
+			$this->putCache();
 		}
 	}
 }
