@@ -18,7 +18,6 @@ class Page
 	private $igb = IS_IGB;
 	private $timestart = 0;
 	private $cachable = true;
-	private $cachetime = 60;
 	private $onload = null;
 	private $contenthtml = "";
 	private $contexthtml = array();
@@ -43,6 +42,8 @@ class Page
 	}
 	/**
 	 * Set the content html that is displayed in the main body panel.
+	 *
+	 * @param string $html
 	 */
 	public function setContent($html)
 	{
@@ -50,6 +51,8 @@ class Page
 	}
 	/**
 	 * Set the context html that is displayed in the sidebar.
+	 *
+	 * @param string $html
 	 */
 	public function addContext($html)
 	{
@@ -57,6 +60,8 @@ class Page
 	}
 	/**
 	 * Create and display an error message.
+	 *
+	 * @param string $message
 	 */
 	public function error($message)
 	{
@@ -68,13 +73,17 @@ class Page
 	}
 	/**
 	 * Add a line to the header html.
+	 *
+	 * @param string $line Valid header HTML.
 	 */
 	public function addHeader($line)
 	{
 		$this->headlines[] = $line;
 	}
 	/**
-	 * Add a line to the body html.
+	 * Add a line to the start of the body html.
+	 *
+	 * @param string $line Valid body HTML.
 	 */
 	public function addBody($line)
 	{
@@ -152,11 +161,14 @@ class Page
 		event::call('smarty_displayindex', $smarty);
 
 		$html = $smarty->fetch(get_tpl('index'));
+		if (!$this->cachable) config::put('cache_enabled', false);
 		event::call('final_content', $html);
 		echo $html;
 	}
 	/**
 	 * Return whether this will display as an igb page.
+	 *
+	 * @return boolean
 	 */
 	public function igb()
 	{
@@ -169,12 +181,18 @@ class Page
 	{
 		$this->onload = $onload;
 	}
-	// Set the page title.
+	/**
+	 * Set the page title.
+	 * @param string $title  The page title.
+	 */
 	public function setTitle($title)
 	{
 		$this->title = htmlspecialchars($title);
 	}
-	// Get the page title.
+	/**
+	 * Get the page title.
+	 * @return <type>  The page title.
+	 */
 	public function getTitle()
 	{
 		return $this->title;
@@ -193,6 +211,8 @@ class Page
 	}
 	/**
 	 * Return whether this is an admin session.
+	 *
+	 * @return boolean
 	 */
 	public function isAdmin()
 	{
@@ -200,6 +220,8 @@ class Page
 	}
 	/**
 	 * Return whether this is a superadmin session.
+	 *
+	 * @return boolean
 	 */
 	public function isSuperAdmin()
 	{
@@ -215,46 +237,11 @@ class Page
 	}
 	/**
 	 * Set whether this page is cacheable.
+	 *
+	 * @param boolean $cachable
 	 */
 	public function setCachable($cachable)
 	{
 		$this->cachable = $cachable;
-	}
-	/**
-	 * Set how long to cache this page.
-	 */
-	public function setCacheTime($cachetime)
-	{
-		$this->cachetime = $cachetime;
-	}
-}
-/**
- * Construct a menu.
- * 
- * A Menu is a wrapper around an array of links and matching text.
- * @package EDK
- */
-class Menu
-{
-	private $menu = array();
-	/**
-	 * Construct a blank side menu.
-	 */
-	function Menu()
-	{
-	}
-	/**
-	 * Return the array of menu options.
-	 */
-	public function get()
-	{
-		return $this->menu;
-	}
-	/**
-	 * Add a link and text to the array of menu options.
-	 */
-	public function add($link, $text)
-	{
-		$this->menu[] = array('link' => $link, 'text' => $text);
 	}
 }
