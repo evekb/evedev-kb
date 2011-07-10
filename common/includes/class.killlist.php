@@ -627,52 +627,41 @@ class KillList
 			$this->killcounter_++;
 			if ($row['scl_id'] != 2 && $row['scl_id'] != 3 && $row['scl_id'] != 11)
 				$this->realkillcounter_++;
-/*
-			// Should this be total value, ship value or class value?
-			// Leaving as class value for now.
-			if (config::get('ship_values'))
-			{
-				if ($row['shp_value'])
-				{
-					$row['scl_value'] = $row['shp_value'];
-				}
-			}
-*/
 			if ($this->walked == false)
 			{
 				$this->killisk_ += $row['kll_isk_loss'];
 				$this->killpoints_ += $row['kll_points'];
 			}
 
-			$kill = new Kill($row['kll_id']);
-			$kill->setTimeStamp($row['kll_timestamp']);
-			$kill->setSolarSystem(new SolarSystem($row['sys_id']));
-			$kill->setSolarSystemName($row['sys_name']);
-			$kill->setSolarSystemSecurity($row['sys_sec']);
-			$kill->setVictimName($row['plt_name']);
-			$kill->setVictimCorpName($row['crp_name']);
-			$kill->setVictimCorpID($row['crp_id']);
-			$kill->setVictimAllianceName($row['all_name']);
-			$kill->setVictimAllianceID($row['all_id']);
-			$kill->setVictimShipName($row['shp_name']);
-			$kill->setVictimShipExternalID($row['shp_externalid']);
-			$kill->setVictimShipClassName($row['scl_class']);
-			$kill->setVictimShipValue($row['scl_value']);
-			$kill->setVictimID($row['kll_victim_id']);
-			$kill->setFBPilotName($row['fbplt_name']);
-			$kill->setFBCorpName($row['fbcrp_name']);
-			$kill->setFBAllianceName($row['fball_name']);
-			$kill->setFBPilotID($row['fbplt_id']);
-			$kill->setFBCorpID($row['fbcrp_id']);
-			$kill->setFBAllianceID($row['fball_id']);
-			$kill->setKillPoints($row['kll_points']);
-			$kill->setExternalID($row['kll_external_id']);
-			$kill->setISKLoss($row['kll_isk_loss']);
-			$arr = array('plt_ext_' => $row['plt_externalid'],
-				'fbplt_ext_' => $row['fbplt_externalid'],
-				'_sclid' => $row['scl_id'],
-				'_shpid' => $row['shp_id'],
-				'dmgtaken' => $row['kll_dmgtaken']);
+			$kill = new KillWrapper($row['kll_id']);
+			$arr = array('victimexternalid' => $row['plt_externalid'],
+				'victimname' => $row['plt_name'],
+				'victimid' => $row['kll_victim_id'],
+				'victimcorpid' => $row['crp_id'],
+				'victimcorpname' => $row['crp_name'],
+				'victimallianceid' => $row['all_id'],
+				'victimalliancename' => $row['all_name'],
+				'victimshipexternalid' => $row['shp_externalid'],
+				'victimshipname' => $row['shp_name'],
+				'victimshipclassname' => $row['scl_class'],
+				'victimshipvalue' => $row['scl_value'],
+				'fbpilotid' => $row['fbplt_id'],
+				'fbpilotexternalid' => $row['fbplt_externalid'],
+				'fbcorpid' => $row['fbcrp_id'],
+				'fballianceid' => $row['fball_id'],
+				'fbpilotname' => $row['fbplt_name'],
+				'fbcorpname' => $row['fbcrp_name'],
+				'fballiancename' => $row['fball_name'],
+				'victimshipid' => $row['shp_id'],
+				'dmgtaken' => $row['kll_dmgtaken'],
+				'timestamp' => $row['kll_timestamp'],
+				'solarsystemid' => $row['sys_id'],
+				'solarsystemname', $row['sys_name'],
+				'solarsystemsecurity', $row['sys_sec'],
+				'externalid' => $row['kll_external_id'],
+				'killpoints' => $row['kll_points'],
+				'iskloss' => $row['kll_isk_loss']
+				);
 			$kill->setArray($arr);
 			//Set the involved party count if it is known
 			if($this->involved_) $kill->setInvolvedPartyCount($row['inv']);
@@ -682,15 +671,6 @@ class KillList
 			{
 				$kill->_tag = $this->_tag;
 			}
-			if (config::get('kill_classified'))
-			{
-				if ($kill->isClassified())
-				{
-					$kill->setSolarSystemName('Classified');
-					$kill->setSolarSystemSecurity('0.0');
-				}
-			}
-
 			return $kill;
 		}
 		else
@@ -724,7 +704,7 @@ class KillList
 
 	/**
 	 * Add an expression to the SQL query.
-	 * 
+	 *
 	 * This function can be used to remove an expression. If $expr is true, or
 	 * omitted, all expressions will be removed.
 	 *

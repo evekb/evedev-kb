@@ -9,49 +9,64 @@
 /**
  * @package EDK
  */
-class Kill
+class Kill extends Cacheable
 {
-	private $id_ = 0;
-	private $externalid_ = null;
+	/**
+	 * The ID for this kill
+	 * @var integer
+	 */
+	private $id = 0;
+	/**
+	 * The external ID from CCP for this kill
+	 * @var integer
+	 */
+	private $externalid = null;
 	public $involvedparties_ = array();
 	public $destroyeditems_ = array();
 	public $droppeditems_ = array();
 	public $VictimDamageTaken = 0;
-	private $fullinvolved_ = false;
-	private $timestamp_ = null;
-	private $victim_ = null;
+	private $fullinvolved = false;
+	private $timestamp = null;
 	private $dmgtaken = null;
-	private $iskloss_ = 0;
-	private $victimship_ = null;
-	private $dupeid_ = 0;
+	private $iskloss = 0;
+	private $killpoints = null;
+	private $victimid = null;
+	private $victimcorpid = null;
+	private $victimallianceid = null;
+	private $victimshipid = null;
+	private $fbpilotid = null;
+	private $fbcorpid = null;
+	private $fballianceid = null;
+	private $solarsystemid = null;
+	private $dupeid = 0;
 	private $hash = false;
 	private $mail = null;
 	private $trust = 0;
 	private $executed = false;
+	private $involvedcount = null;
+	private $valid = null;
 
+	/**
+	 * @param integer $id The ID for this kill
+	 * @param boolean $external If true then $id is treated as an external ID.
+	 */
 	function Kill($id = 0, $external = false)
 	{
 		$id = intval($id);
-		if($id && $external)
-		{
+		if($id && $external) {
 			$qry = DBFactory::getDBQuery();
 			$qry->execute("SELECT kll_id FROM kb3_kills WHERE kll_external_id = ".$id);
-			if($qry->recordCount())
-			{
+			if($qry->recordCount()) {
 				$result = $qry->getRow();
-				$this->id_ = $result['kll_id'];
-				$this->externalid_ = $id;
-			}
-			else
-			{
-				$this->id_ = null;
+				$this->id = $result['kll_id'];
+				$this->externalid = $id;
+			} else {
+				$this->id = null;
 				$this->externalid = null;
 			}
-		}
-		else
-		{
-			$this->id_ = $id;
-			$this->externalid_ = null;
+		} else {
+			$this->id = $id;
+			$this->externalid = null;
 		}
 	}
 
@@ -62,7 +77,9 @@ class Kill
 	 */
 	function setArray($arr)
 	{
-		foreach($arr as $key=>$val) $this->$key = $val;
+		foreach($arr as $key=>$val) {
+			$this->$key = $val;
+		}
 	}
 
 	function set($var, $value)
@@ -76,7 +93,7 @@ class Kill
 	 */
 	function getID()
 	{
-		return $this->id_;
+		return $this->id;
 	}
 
 	/**
@@ -86,8 +103,10 @@ class Kill
 	 */
 	function getExternalID()
 	{
-		if(is_null($this->externalid_)) $this->execQuery();
-		return $this->externalid_;
+		if(is_null($this->externalid)) {
+			$this->execQuery();
+		}
+		return $this->externalid;
 	}
 	/**
 	 * Return the dropped items array for this kill.
@@ -112,8 +131,10 @@ class Kill
 	 */
 	function getTimeStamp()
 	{
-		if(is_null($this->timestamp_)) $this->execQuery();
-		return $this->timestamp_;
+		if(is_null($this->timestamp)) {
+			$this->execQuery();
+		}
+		return $this->timestamp;
 	}
 	/**
 	 * Return the victim Pilot object.
@@ -122,8 +143,49 @@ class Kill
 	*/
 	function getVictim()
 	{
-		if(is_null($this->victim_)) $this->execQuery();
-		return $this->victim_;
+		if(!is_null($this->victim)) {
+			return $this->victim;
+		}
+		if(is_null($this->victimid)) {
+			$this->execQuery();
+		}
+
+		$this->victim = Cacheable::factory('Pilot', $this->victimid);
+		return $this->victim;
+	}
+	/**
+	 * Return the victim Corporation.
+	 *
+	 * @return Corporation
+	*/
+	function getVictimCorp()
+	{
+		if(!is_null($this->victimcorp)) {
+			return $this->victimcorp;
+		}
+		if(is_null($this->victimcorpid)) {
+			$this->execQuery();
+		}
+
+		$this->victimcorp = Cacheable::factory('Corporation', $this->victimcorpid);
+		return $this->victimcorp;
+	}
+	/**
+	 * Return the victim Alliance.
+	 *
+	 * @return Alliance
+	*/
+	function getVictimAlliance()
+	{
+		if(!is_null($this->victimalliance)) {
+			return $this->victimalliance;
+		}
+		if(is_null($this->victimallianceid)) {
+			$this->execQuery();
+		}
+
+		$this->victimalliance = Cacheable::factory('Alliance', $this->victimallianceid);
+		return $this->victimalliance;
 	}
 	/**
 	 * Return the amount of damage taken by the victim.
@@ -141,102 +203,107 @@ class Kill
 	 */
 	function getVictimName()
 	{
-		if(!isset($this->victimname_)) $this->execQuery();
-		if(isset($this->victim_)) return $this->victim_->getName();
-		return $this->victimname_;
+		if(isset($this->victimname)) return $this->victimname;
+		return $this->getVictim()->getName();
 	}
 
 	/**
+	 * Return victim Pilot's ID.
 	 * @return integer
 	 */
 	function getVictimID()
 	{
-		if(!isset($this->victimid_)) $this->execQuery();
-		if(isset($this->victim_)) return $this->victim_->getID();
-		return $this->victimid_;
+		if(!isset($this->victimid)) $this->execQuery();
+		return $this->victimid;
 	}
 
 	/**
+	 * Return victim Pilot's external ID.
 	 * @return integer
 	 */
 	function getVictimExternalID()
 	{
-		if(!isset($this->plt_ext_)) $this->execQuery();
-		if(isset($this->victim_)) return $this->victim_->getExternalID();
-		return $this->plt_ext_;
-	}
-
-	function getVictimPortrait($size = 32)
-	{
-		$this->execQuery();
-		if(isset($this->victim_)) return $this->victim_->getPortraitURL();
-		$plt = new Pilot($this->victimid_);
-		return $plt->getPortraitURL($size);
+		return $this->getVictim()->getExternalID();
 	}
 
 	/**
+	 * Return victim Pilot's portrait.
+	 * @return string
+	 */
+	function getVictimPortrait($size = 32)
+	{
+		return $this->getVictim()->getPortraitURL($size);
+	}
+
+	/**
+	 * Return victim Corporation's ID
 	 * @return integer
 	 */
 	function getVictimCorpID()
 	{
-		if(!isset($this->victimcorpid_)) $this->execQuery();
-// Removing this until the victim set is the victim status at the time of the kill
-//		if(isset($this->victim_)) return $this->victim_->getCorp()->getID();
-		return $this->victimcorpid_;
-	}
-
-	function getVictimCorpName()
-	{
-		if(!isset($this->victimcorpname_)) $this->execQuery();
-// Removing this until the victim set is the victim status at the time of the kill
-//		if(isset($this->victim_)) return $this->victim_->getCorp()->getName();
-		return $this->victimcorpname_;
-	}
-
-	function getVictimAllianceName()
-	{
-		if(!isset($this->victimalliancename_)) $this->execQuery();
-// Removing this until the victim set is the victim status at the time of the kill
-//		if(isset($this->victim_)) return $this->victim_->getCorp()->getAlliance()->getName();
-		return $this->victimalliancename_;
-	}
-
-	function getVictimFactionName()
-	{
-		$this->execQuery();
-//		if(isset($this->victim_))
-//		{
-//			if($this->victim_->getCorp()->getAlliance()->isFaction())
-//				return $this->victim_->getCorp()->getAlliance()->getName();
-//			else return "None";
-//		}
-		$alliance = new Alliance($this->victimallianceid_);
-		if($alliance->isFaction())
-			return $alliance->getName();
-		else return "None";
+		if(!isset($this->victimcorpid)) {
+			$this->execQuery();
+		}
+		return $this->victimcorpid;
 	}
 
 	/**
+	 * Return victim Corporation's name
+	 * @return string
+	 */
+	function getVictimCorpName()
+	{
+		return $this->getVictimCorp()->getName();
+	}
+
+	/**
+	 * Return victim Alliance's name
+	 * @return string
+	 */
+	function getVictimAllianceName()
+	{
+		return $this->getVictimAlliance()->getName();
+	}
+
+	/**
+	 * Return victim Faction's name
+	 * @return string
+	 */
+	function getVictimFactionName()
+	{
+		if($this->getVictimAlliance()->isFaction()) {
+			return $this->getVictimAlliance()->getName();
+		} else {
+			return "None";
+		}
+	}
+
+	/**
+	 * Return victim Alliance's ID
 	 * @return integer
 	 */
 	function getVictimAllianceID()
 	{
-		if(!isset($this->victimallianceid_)) $this->execQuery();
-// Removing this until the victim set is the victim status at the time of the kill
-//		if(isset($this->victim_)) return $this->victim_->getCorp()->getAlliance()->getID();
-		return $this->victimallianceid_;
+		if(!isset($this->victimallianceid)) {
+			$this->execQuery();
+		}
+		return $this->victimallianceid;
 	}
 
-	function getVictimShip()
-	{
-		if(!isset($this->victimship_)) $this->execQuery();
-		return $this->victimship_;
-	}
-
+	/**
+	 * Return the SolarSystem this kill took place in.
+	 * @return SolarSystem
+	 */
 	function getSystem()
 	{
-		if(!isset($this->solarsystem_)) $this->execQuery();
-		return $this->solarsystem_;
+		if(isset($this->solarsystem)) {
+			return $this->solarsystem;
+		}
+		if(!isset($this->solarsystemid)) {
+			$this->execQuery();
+		}
+		$this->solarsystem = Cacheable::factory('SolarSystem', $this->solarsystemid);
+		return $this->solarsystem;
 	}
 
 	/**
@@ -244,55 +311,64 @@ class Kill
 	 */
 	function getFBPilotID()
 	{
-		if(isset($this->fbpilotid_)) return $this->fbpilotid_;
-		$this->execQuery();
-		if(isset($this->fbpilot_)) return $this->fbpilot_->getID();
-		if (!$this->fbpilotid_) return "null";
-		else return $this->fbpilotid_;
-	}
-
-	function getFBPilotName()
-	{
-		if(!isset($this->fbpilotname_)) $this->execQuery();
-		if(isset($this->fbpilot_)) return $this->fbpilot_->getName();
-		return $this->fbpilotname_;
+		if(!isset($this->fbpilotid)) {
+			$this->execQuery();
+		}
+		return $this->fbpilotid;
 	}
 
 	/**
+	 * Return the Final Blow dealer's name.
+	 * @return string
+	 */
+	function getFBPilotName()
+	{
+		$fbpilot = Cacheable::factory('Pilot', $this->getFBPilotID());
+		return $fbpilot->getName();
+	}
+
+	/**
+	 * Return the Final Blow dealer's Corporation ID.
 	 * @return integer
 	 */
 	function getFBCorpID()
 	{
-		if(isset($this->fbcorpid_)) return $this->fbcorpid_;
-		$this->execQuery();
-		if(isset($this->fbpilot_)) return $this->fbpilot_->getCorp()->getID();
-		if (!$this->fbcorpid_) return "null";
-		else return $this->fbcorpid_;
-	}
-
-	function getFBCorpName()
-	{
-		if(!isset($this->fbcorpname_)) $this->execQuery();
-		if(isset($this->fbpilot_)) return $this->fbpilot_->getCorp()->getName();
-		return $this->fbcorpname_;
+		if(!isset($this->fbcorpid)) {
+			$this->execQuery();
+		}
+		return $this->fbcorpid;
 	}
 
 	/**
+	 * Return the Final Blow dealer's Corporation Name.
+	 * @return string
+	 */
+	function getFBCorpName()
+	{
+		$fbcorp = Cacheable::factory('Corporation', $this->getFBCorpID());
+		return $fbcorp->getName();
+	}
+
+	/**
+	 * Return the Final Blow dealer's Alliance ID.
 	 * @return integer
 	 */
 	function getFBAllianceID()
 	{
-		if(isset($this->fballianceid_)) return $this->fballianceid_;
-		$this->execQuery();
-		if(isset($this->fbpilot_)) return $this->fbpilot_->getCorp()->getAlliance()->getID();
-		if (!$this->fballianceid_) return "null";
-		else return $this->fballianceid_;
+		if(!isset($this->fballianceid)) {
+			$this->execQuery();
+		}
+		return $this->fballianceid;
 	}
 
+	/**
+	 * Return the Final Blow dealer's Alliance ID.
+	 * @return integer
+	 */
 	function getFBAllianceName()
 	{
-		if(!isset($this->fballiancename_)) $this->execQuery();
-		return $this->fballiancename_;
+		$alliance = Cacheable::factory('Alliance', $this->getFBAllianceID());
+		return $alliance->getName();
 	}
 
 	/**
@@ -300,8 +376,10 @@ class Kill
 	 */
 	function getISKLoss()
 	{
-		if(!isset($this->iskloss_)) $this->execQuery();
-		return $this->iskloss_;
+		if(!isset($this->iskloss)) {
+			$this->execQuery();
+		}
+		return $this->iskloss;
 	}
 
 	/**
@@ -309,101 +387,105 @@ class Kill
 	 */
 	function getKillPoints()
 	{
-		if($this->killpoints_) return $this->killpoints_;
-		$this->execQuery();
-		$this->killpoints_ = $this->calculateKillPoints();
-		return $this->killpoints_;
-	}
-
-	function getSolarSystemName()
-	{
-		if(isset($this->solarsystemname_)) return $this->solarsystemname_;
-		if(isset($this->solarsystem_)) return $this->solarsystem_->getName();
-		$this->execQuery();
-		return $this->solarsystem_->getName();
+		if(!isset($this->killpoints)) {
+			$this->execQuery();
+		}
+		$this->killpoints = $this->calculateKillPoints();
+		return $this->killpoints;
 	}
 
 	/**
+	 * Get name for this Kill's SolarSystem.
+	 * @return string
+	 */
+	function getSolarSystemName()
+	{
+		return $this->getSystem()->getName();
+	}
+
+	/**
+	 * Get Security level for this Kill's SolarSystem.
 	 * @return float
 	 */
 	function getSolarSystemSecurity()
 	{
-		if(isset($this->solarsystemsecurity_))return $this->solarsystemsecurity_;
-		if(isset($this->solarsystem_)) return $this->solarsystem_->getSecurity();
-		$this->execQuery();
-		return $this->solarsystem_->getSecurity();
-	}
-
-	function getVictimShipName()
-	{
-		if(!isset($this->victimshipname_))
-		{
-			$this->execQuery();
-			$this->victimshipname_ = $this->victimship_->getName();
-		}
-		return $this->victimshipname_;
+		return $this->getSystem()->getSecurity();
 	}
 
 	/**
+	 * Return the victim's Ship.
+	 * @return Ship
+	 */
+	function getVictimShip()
+	{
+		if(isset($this->victimship)) {
+			return $this->victimship;
+		}
+		if(!isset($this->victimshipid)) {
+			$this->execQuery();
+		}
+		$this->victimship = Cacheable::factory('Ship', $this->victimshipid);
+		return $this->victimship;
+	}
+
+	/**
+	 * Return the victim's Ship.
+	 * @return Ship
+	 */
+	function getVictimShipID()
+	{
+		if(!isset($this->victimshipid)) {
+			$this->execQuery();
+		}
+		return $this->victimshipid;
+	}
+
+	/**
+	 * Return the name of the victim's Ship type.
+	 * @return string
+	 */
+	function getVictimShipName()
+	{
+		return $this->getVictimShip()->getName();
+	}
+
+	/**
+	 * Return the external ID of the victim's Ship type.
 	 * @return integer
 	 */
 	function getVictimShipExternalID()
 	{
-		if(!isset($this->victimshipexternalid_))
-		{
-			$this->execQuery();
-			$this->victimshipexternalid_ = $this->victimship_->getExternalID();
-		}
-		return $this->victimshipexternalid_;
-	}
-
-	function getVictimShipClassName()
-	{
-		if(!isset($this->victimshipclassname_))
-		{
-			$this->execQuery();
-			$this->victimshipclassname_ = $this->victimship_->getClass()->getName();
-		}
-		return $this->victimshipclassname_;
-	}
-
-	function getVictimShipValue()
-	{
-		return $this->victimshipvalue_;
+		return $this->getVictimShip()->getExternalID();
 	}
 
 	/**
-	 *
+	 * Return the name of the victim's Shipclass name.
+	 * @return string
+	 */
+	function getVictimShipClassName()
+	{
+		return $this->getVictimShip()->getClass()->getName();
+	}
+
+	/**
+	 * Return the current value of the victim's ship
+	 * @return float
+	 */
+	function getVictimShipValue()
+	{
+		return $this->getVictimShip()->getPrice();
+	}
+
+	/**
+	 * Return an image for the victim's ship.
 	 * @param integer $size
 	 * @return string
 	 */
 	function getVictimShipImage($size)
 	{
-		 return imageURL::getURL('Ship', $this->victimshipexternalid_, $size);
+		 return $this->getVictimShip()->getImage($size);
 	}
 
-	function getVictimShipValueIndicator()
-	{
-		// value is now raw
-		$value = $this->getVictimShipValue()/1000000;
-
-		if ($value >= 0 && $value <= 1)
-			$color = 'gray';
-		elseif ($value > 1 && $value <= 15)
-			$color = 'blue';
-		elseif ($value > 15 && $value <= 25)
-			$color = 'green';
-		elseif ($value > 25 && $value <= 40)
-			$color = 'yellow';
-		elseif ($value > 40 && $value <= 80)
-			$color = 'red';
-		elseif ($value > 80 && $value <= 250)
-			$color = 'orange';
-		elseif ($value > 250)
-			$color = 'purple';
-
-		return IMG_URL.'/ships/ship-'.$color.'.gif';
-	}
 	/**
 	 * Check if the victim is in a Faction.
 	 *
@@ -411,10 +493,7 @@ class Kill
 	 */
 	function getIsVictimFaction()
 	{
-		$this->execQuery();
-		$factions = array("Amarr Empire", "Minmatar Republic", "Caldari State", "Gallente Federation");
-
-		return (in_array($this->victimalliancename_, $factions));
+		return $this->getVictimAlliance()->isFaction();
 	}
 
 	/**
@@ -426,35 +505,36 @@ class Kill
 	{
 		if(!is_null($this->mail)) return $this->mail;
 
-		if (config::get('km_cache_enabled') && file_exists(KB_PAGECACHEDIR."/".$this->getID().".txt"))
-		{
-			$this->mail = file_get_contents(KB_PAGECACHEDIR."/".$this->getID().".txt");
+		if (config::get('km_cache_enabled')
+				&& file_exists(KB_PAGECACHEDIR."/".$this->getID().".txt")) {
+			$this->mail = file_get_contents(
+					KB_PAGECACHEDIR."/".$this->getID().".txt");
 			return $this->mail;
 		}
 
 		$this->execQuery();
-		if(!$this->valid_) return "The specified kill ID is not valid.";
-		if ($this->isClassified())
-		{
-			return 'Killmail not yet available, try again in '.round($this->getClassifiedTime()/3600, 2).' hrs.';
+		if(!$this->valid) {
+			return "The specified kill ID is not valid.";
+		}
+		if ($this->isClassified()) {
+			return 'Killmail not yet available, try again in '
+					.round($this->getClassifiedTime()/3600, 2).' hrs.';
 		}
 
 		$ship = $this->getVictimShip();
 		$shipclass = $ship->getClass();
-		if(!$this->getVictimCorpName())
-		{
-			$corp = new Corporation($this->victimcorpid_);
-			$this->victimcorpname_ = $corp->getName();
+		if(!$this->getVictimCorpName()) {
+			$corp = new Corporation($this->victimcorpid);
+			$this->victimcorpname = $corp->getName();
 		}
-		if(!$this->getVictimAllianceName())
-		{
-			$all = new Alliance($this->victimallianceid_);
-			$this->victimalliancename_ = $all->getName();
+		if(!$this->getVictimAllianceName()) {
+			$all = new Alliance($this->victimallianceid);
+			$this->victimalliancename = $all->getName();
 		}
 
 		$mail .= substr(str_replace('-', '.' , $this->getTimeStamp()), 0, 16)."\r\n\r\n";
-		if ( in_array($shipclass->getID(), array(35, 36, 37, 38)) ) // Starbase (so this is a POS mail)
-		{
+		// Starbase (so this is a POS mail)
+		if ( in_array($shipclass->getID(), array(35, 36, 37, 38)) ) {
 			$mail .= "Corp: ".$this->getVictimCorpName()."\r\n";
 			if($this->getIsVictimFaction()) $mail .= "Alliance: None\r\n";
 			else $mail .= "Alliance: ".$this->getVictimAllianceName()."\r\n";
@@ -469,9 +549,7 @@ class Kill
 			$mail .= "Security: ".$this->getSystem()->getSecurity(true)."\r\n";
 			$mail .= "Damage Taken: ".$this->dmgtaken."\r\n\r\n";
 			$mail .= "Involved parties:\r\n\r\n";
-		}
-		else
-		{
+		} else {
 			$mail .= "Victim: ".$this->getVictimName()."\r\n";
 			$mail .= "Corp: ".$this->getVictimCorpName()."\r\n";
 			if($this->getIsVictimFaction()) $mail .= "Alliance: None\r\n";
@@ -486,8 +564,7 @@ class Kill
 			$mail .= "Involved parties:\r\n\r\n";
 		}
 
-		foreach ($this->involvedparties_ as $inv)
-		{
+		foreach ($this->involvedparties_ as $inv) {
 			$pilot = new Pilot($inv->getPilotID());
 			$corp = new Corporation($inv->getCorpID());
 			$alliance = new Alliance($inv->getAllianceID());
@@ -497,21 +574,17 @@ class Kill
 			if ($pilot->getName() == $weapon->getName())
 			{
 				$name = $pilot->getName()." / ".$corp->getName();
-			}
-			else
-			{
+			} else {
 				$name = $pilot->getName();
 			}
 
 			$mail .= "Name: ".$name;
-			if ($pilot->getID() == $this->getFBPilotID())
-			{
+			if ($pilot->getID() == $this->getFBPilotID()) {
 				$mail .= " (laid the final blow)";
 			}
 			$mail .= "\r\n";
 
-			if ($pilot->getName() != $weapon->getName())
-			{
+			if ($pilot->getName() != $weapon->getName()) {
 				$mail .= "Security: ".$inv->getSecStatus()."\r\n";
 				$mail .= "Corp: ".$corp->getName()."\r\n";
 				if ($alliance->isFaction())
@@ -527,20 +600,16 @@ class Kill
 				$mail .= "Ship: ".$ship->getName()."\r\n";
 				$mail .= "Weapon: ".$weapon->getName()."\r\n";
 				$mail .= "Damage Done: ".$inv->dmgdone_."\r\n";
-			}
-			else
-			{
+			} else {
 				$mail .= "Damage Done: ".$inv->dmgdone_."\r\n";
 			}
 			$mail .= "\r\n";
 		}
 
-		if (count($this->destroyeditems_) > 0)
-		{
+		if (count($this->destroyeditems_) > 0) {
 			$mail .= "\r\nDestroyed items:\r\n\r\n";
 
-			foreach($this->destroyeditems_ as $destroyed)
-			{
+			foreach($this->destroyeditems_ as $destroyed) {
 				$item = $destroyed->getItem();
 				$mail .= $item->getName();
 				if ($destroyed->getQuantity() > 1)
@@ -557,21 +626,24 @@ class Kill
 		{
 			$mail .= "\r\nDropped items:\r\n\r\n";
 
-			foreach($this->droppeditems_ as $dropped)
-			{
+			foreach($this->droppeditems_ as $dropped) {
 				$item = $dropped->getItem();
 				$mail .= $item->getName();
-				if ($dropped->getQuantity() > 1)
+				if ($dropped->getQuantity() > 1) {
 					$mail .= ", Qty: ".$dropped->getQuantity();
-				if ($dropped->getLocationID() == 4) // cargo
+				}
+				if ($dropped->getLocationID() == 4) {
 					$mail .= " (Cargo)";
-				if ($dropped->getLocationID() == 6) // drone
+				} else if ($dropped->getLocationID() == 6) {
 					$mail .= " (Drone Bay)";
+				}
 				$mail .= "\r\n";
 			}
 		}
 
-		if ($this->id_ && config::get('km_cache_enabled')) file_put_contents(KB_MAILCACHEDIR."/".$this->getID().".txt", $mail);
+		if ($this->id && config::get('km_cache_enabled')) {
+			file_put_contents(KB_MAILCACHEDIR."/".$this->getID().".txt", $mail);
+		}
 
 		$this->mail = $mail;
 
@@ -586,58 +658,54 @@ class Kill
 	 */
 	function getDupe($checkonly = false)
 	{
-		if (!$checkonly)
-		{
-			if($this->dupeid_ != 0) return $this->dupeid_;
+		if (!$checkonly) {
+			if($this->dupeid != 0) {
+				return $this->dupeid;
+			}
 			$this->execQuery();
 		}
-		$this->dupeid_ = 0;
+		$this->dupeid = 0;
 		$qry = DBFactory::getDBQuery(true);
-		if (!$this->getFBPilotID() || !$this->victimid_)
+		if (!$this->getFBPilotID() || !$this->victimid) {
 			return 0;
-		if($this->externalid_)
-		{
+		}
+		if($this->externalid) {
 			$sql = "SELECT kll_id FROM kb3_kills WHERE kll_external_id = ".
-				$this->externalid_;
+				$this->externalid;
 			$qry->execute($sql);
-			if($qry->recordCount())
-			{
+			if($qry->recordCount()) {
 				$row = $qry->getRow();
-				$this->dupeid_ = $row['kll_id'];
+				$this->dupeid = $row['kll_id'];
 				return $row['kll_id'];
 			}
 		}
-		if($this->hash)
-		{
+		if($this->hash) {
 			$sql = "SELECT kll_id FROM kb3_mails WHERE kll_hash = 0x".
 				bin2hex($this->hash);
 			$qry->execute($sql);
-			if($qry->recordCount())
-			{
+			if($qry->recordCount()) {
 				$row = $qry->getRow();
-				$this->dupeid_ = $row['kll_id'];
+				$this->dupeid = $row['kll_id'];
 				return $row['kll_id'];
 			}
 		}
 		$sql = "SELECT kll_id
                     FROM kb3_kills
-                    WHERE kll_timestamp ='".$this->timestamp_."'
-                    AND kll_victim_id = ".$this->victimid_."
-                    AND kll_ship_id = ".$this->victimship_->getID()."
-                    AND kll_system_id = ".$this->solarsystem_->getID()."
+                    WHERE kll_timestamp ='".$this->timestamp."'
+                    AND kll_victim_id = ".$this->victimid."
+                    AND kll_ship_id = ".$this->victimship->getID()."
+                    AND kll_system_id = ".$this->solarsystem->getID()."
                     AND kll_fb_plt_id = ".$this->getFBPilotID()."
                     AND kll_dmgtaken = ".intval($this->dmgtaken);
-		$sql .= "             AND kll_id != ".$this->id_;
+		$sql .= "             AND kll_id != ".$this->id;
 		$qry->execute($sql);
 		$qryinv = DBFactory::getDBQuery(true);
 
-		while ($row = $qry->getRow())
-		{
+		while ($row = $qry->getRow()) {
 			$kll_id = $row['kll_id'];
 			// No involved parties found to differentiate kills
-			if(empty($this->involvedparties_))
-			{
-				$this->dupeid_ = $kll_id;
+			if(empty($this->involvedparties_)) {
+				$this->dupeid = $kll_id;
 				return $kll_id;
 			}
 
@@ -651,37 +719,63 @@ class Kill
 
 			$qryinv->execute($sql);
 			$row = $qryinv->getRow();
-			if($row['count'] == count($this->involvedparties_))
-			{
-				$this->dupeid_ = $kll_id;
+			if($row['count'] == count($this->involvedparties_)) {
+				$this->dupeid = $kll_id;
 				return $kll_id;
 			}
 		}
 	}
 
-	function execQuery()
+	private function execQuery()
 	{
-		if (!$this->executed)
-		{
+		if (!$this->executed) {
+			if ($this->isCached()) {
+				$cache = $this->getCache();
+				if ($cache->valid) {
+					$this->id = $cache->id;
+					$this->externalid = $cache->externalid;
+					$this->involvedparties_ = $cache->involvedparties_;
+					$this->destroyeditems_ = $cache->destroyeditems_;
+					$this->droppeditems_ = $cache->droppeditems_;
+					$this->VictimDamageTaken = $cache->VictimDamageTaken;
+					$this->fullinvolved = $cache->fullinvolved;
+					$this->timestamp = $cache->timestamp;
+					$this->victimid = $cache->victimid;
+					$this->dmgtaken = $cache->dmgtaken;
+					$this->iskloss = $cache->iskloss;
+					$this->killpoints = $cache->killpoints;
+					$this->victimcorpid = $cache->victimcorpid;
+					$this->victimallianceid = $cache->victimallianceid;
+					$this->victimshipid = $cache->victimshipid;
+					$this->fbpilotid = $cache->fbpilotid;
+					$this->fbcorpid = $cache->fbcorpid;
+					$this->fballianceid = $cache->fballianceid;
+					$this->solarsystemid = $cache->solarsystemid;
+					$this->dupeid = $cache->dupeid;
+					$this->hash = $cache->hash;
+					$this->mail = $cache->mail;
+					$this->trust = $cache->trust;
+					$this->executed = $cache->executed;
+					$this->involvedcount = $cache->involvedcount;
+					$this->valid = $cache->valid;
+					return $this->valid;
+				}
+			}
 			$qry = DBFactory::getDBQuery();
 
-			$sql = "select kll.kll_id, kll.kll_timestamp, plt.plt_name,
-                          crp.crp_name, ali.all_name, ali.all_id, kll.kll_ship_id,
+			$sql = "select kll.kll_id, kll.kll_timestamp, 
+                          ali.all_id, kll.kll_ship_id,
                           kll.kll_system_id, kll.kll_ship_id, kll.kll_external_id,
                           kll.kll_victim_id, plt.plt_externalid, kll.kll_isk_loss,
                           kll.kll_crp_id, kll.kll_points, kll.kll_isk_loss,
                           fbplt.plt_id as fbplt_id,
-                          fbplt.plt_externalid as fbplt_externalid,
                           fbcrp.crp_id as fbcrp_id,
                           fbali.all_id as fbali_id,
-                          fbplt.plt_name as fbplt_name,
-                          fbcrp.crp_name as fbcrp_name,
-                          fbali.all_name as fbali_name,
                           kll_dmgtaken
                      from kb3_kills kll, kb3_pilots plt, kb3_corps crp,
                           kb3_alliances ali, kb3_alliances fbali, kb3_corps fbcrp,
                           kb3_pilots fbplt, kb3_inv_detail fb
-                    where kll.kll_id = '".$this->id_."'
+                    where kll.kll_id = '".$this->id."'
                       and plt.plt_id = kll.kll_victim_id
                       and crp.crp_id = kll.kll_crp_id
                       and ali.all_id = kll.kll_all_id
@@ -693,120 +787,77 @@ class Kill
 
 			$qry->execute($sql);
 			$row = $qry->getRow();
-			if (!$row)
-			{
-				$this->valid_ = false;
+			if (!$row) {
+				$this->valid = false;
 				return false;
-			}
-			else
-			{
-				$this->valid_ = true;
+			} else {
+				$this->valid = true;
 			}
 
-			$this->timestamp_ = $row['kll_timestamp'];
-			$this->setSolarSystem(new SolarSystem($row['kll_system_id']));
-			$this->setVictim(new Pilot($row['kll_victim_id'], $row['plt_externalid'], $row['plt_name'], $row['kll_crp_id']));
-			$this->setVictimID($row['kll_victim_id']);
-			$this->setVictimName($row['plt_name']);
-			$this->setVictimCorpID($row['kll_crp_id']);
-			$this->setVictimCorpName($row['crp_name']);
-			$this->setVictimAllianceID($row['all_id']);
-			$this->setVictimAllianceName($row['all_name']);
-			$this->setVictimShip(new Ship($row['kll_ship_id']));
-			$this->setFBPilot(new Pilot($row['fbplt_id'], $row['fbplt_externalid'], $row['fbplt_name'], $row['fbcrp_id']));
-			$this->setFBPilotID($row['fbplt_id']);
-			$this->setFBPilotName($row['fbplt_name']);
-			$this->setFBCorpID($row['fbcrp_id']);
-			$this->setFBCorpName($row['fbcrp_name']);
-			$this->setFBAllianceID($row['fbali_id']);
-			$this->setFBAllianceName($row['fbali_name']);
-			$this->setKillPoints($row['kll_points']);
-			$this->setExternalID($row['kll_external_id']);
-			$this->setISKLoss($row['kll_isk_loss']);
-			//$this->plt_ext_ = $row['plt_externalid'];
-			$this->fbplt_ext_ = $row['fbplt_externalid'];
+			$this->timestamp = $row['kll_timestamp'];
+			$this->solarsystemid = $row['kll_system_id'];
+			$this->victimid = $row['kll_victim_id'];
+			$this->victimcorpid = $row['kll_crp_id'];
+			$this->victimallianceid = $row['all_id'];
+			$this->victimshipid = $row['kll_ship_id'];
+			$this->fbpilotid = $row['fbplt_id'];
+			$this->fbcorpid = $row['fbcrp_id'];
+			$this->fballianceid = $row['fbali_id'];
+			$this->externalid = $row['kll_external_id'];
+			$this->iskloss = $row['kll_isk_loss'];
+			$this->fbplt_ext = $row['fbplt_externalid'];
 			$this->VictimDamageTaken = $row['kll_dmgtaken'];
 			$this->dmgtaken = $row['kll_dmgtaken'];
+			$this->killpoints = $row['kll_points'];
 
-			// involved
-			if($this->fullinvolved_)
+			$this->setVictimName($row['plt_name']);
+			$this->setVictimCorpName($row['crp_name']);
+			$this->setVictimAllianceName($row['all_name']);
+			$this->setFBPilot(new Pilot($row['fbplt_id'], $row['fbplt_externalid'], $row['fbplt_name'], $row['fbcrp_id']));
+			$this->setFBPilotName($row['fbplt_name']);
+			$this->setFBCorpName($row['fbcrp_name']);
+			$this->setFBAllianceName($row['fbali_name']);
+
+			$sql = "select ind_plt_id, ind_crp_id, ind_all_id, ind_sec_status,
+				ind_shp_id, ind_wep_id, ind_dmgdone,
+				shp_id, shp_class,
+				plt_name, plt_externalid, crp_name, crp_external_id
+				from kb3_inv_detail
+				join kb3_pilots on ind_plt_id = plt_id
+				join kb3_corps on ind_crp_id = crp_id
+				join kb3_alliances on ind_all_id = all_id
+				join kb3_ships on ind_shp_id = shp_id
+				join kb3_ship_classes on shp_class = scl_id
+				join kb3_invtypes on ind_wep_id = typeID
+				where ind_kll_id = ".$this->getID()."
+				order by ind_order";
+
+			$qry->execute($sql) or die($qry->getErrorMsg());
+			while ($row = $qry->getRow())
 			{
-				$sql = "select ind_plt_id, ind_crp_id, ind_all_id, ind_sec_status,
-					ind_shp_id, ind_wep_id, typeName, ind_dmgdone,
-					shp_id, shp_name, shp_externalid, shp_class, scl_class,
-					plt_name, plt_externalid, crp_name, crp_external_id, all_name, all_external_id
-					from kb3_inv_detail
-					join kb3_pilots on ind_plt_id = plt_id
-					join kb3_corps on ind_crp_id = crp_id
-					join kb3_alliances on ind_all_id = all_id
-					join kb3_ships on ind_shp_id = shp_id
-					join kb3_ship_classes on shp_class = scl_id
-					join kb3_invtypes on ind_wep_id = typeID
-					where ind_kll_id = ".$this->getID()."
-					order by ind_order";
+				$pilot = new Pilot($row['ind_plt_id'], $row['plt_externalid'], $row['plt_name'], $row['ind_crp_id']);
 
-				$qry->execute($sql) or die($qry->getErrorMsg());
-				while ($row = $qry->getRow())
-				{
-					$pilot = new Pilot($row['ind_plt_id'], $row['plt_externalid'], $row['plt_name'], $row['ind_crp_id']);
+				$corp = new Corporation($row['ind_crp_id']);
 
-					$corp = new Corporation($row['ind_crp_id']);
-					$corp->name_ = $row['crp_name'];
-					$corp->alliance_ = $row['ind_all_id'];
-					$corp->externalid_ = $row['crp_external_id'];
-
-					$alliance = new Alliance($row['ind_all_id']);
-					$alliance->name_ = $row['all_name'];
-					$alliance->externalid_ = $row['all_external_id'];
+				$alliance = new Alliance($row['ind_all_id']);
 
 
-					$ship->shipclass_ = new ShipClass($row['shp_class'], $row['scl_class']);
-					$ship->shipclass_->setName($row['scl_class']);
+				$ship = new Ship($row['shp_id']);
 
-					$ship = new Ship($row['shp_id'], $row['shp_externalid'], $row['shp_name'], $ship->shipclass_);
-					//$ship->externalid_ = $row['shp_externalid'];
-					//$ship->shipname_ = $row['shp_name'];
+				$weapon = new Item($row['ind_wep_id']);
 
-					$weapon = new Item($row['ind_wep_id']);
-					$weapon->row_['typeName'] = $row['typeName'];
-					$weapon->row_['typeID'] = $row['ind_wep_id'];
-					$weapon->row_['itm_externalid'] = $row['ind_wep_id'];
-
-					$involved = new DetailedInv($pilot,
-						$row['ind_sec_status'],
-						$corp,
-						$alliance,
-						$ship,
-						$weapon,
-						$row['ind_dmgdone']);
-					array_push($this->involvedparties_, $involved);
-				}
-			}
-			else
-			{
-				$sql = "select ind_plt_id, ind_crp_id, ind_all_id, ind_sec_status,
-					ind_shp_id, ind_wep_id, ind_dmgdone
-					from kb3_inv_detail
-					where ind_kll_id = ".$this->getID()."
-					order by ind_order";
-
-				$qry->execute($sql) or die($qry->getErrorMsg());
-				while ($row = $qry->getRow())
-				{
-					$involved = new InvolvedParty($row['ind_plt_id'],
-						$row['ind_crp_id'],
-						$row['ind_all_id'],
-						$row['ind_sec_status'],
-						new Ship($row['ind_shp_id']),
-						new Item($row['ind_wep_id']),
-						$row['ind_dmgdone']);
-					array_push($this->involvedparties_, $involved);
-				}
+				$involved = new DetailedInv($pilot,
+					$row['ind_sec_status'],
+					$corp,
+					$alliance,
+					$ship,
+					$weapon,
+					$row['ind_dmgdone']);
+				array_push($this->involvedparties_, $involved);
 			}
 			$destroyedlist = new ItemList(null, true);
-			$destroyedlist->addKillDestroyed($this->id_);
-			while($item = $destroyedlist->getItem())
-			{
+			$destroyedlist->addKillDestroyed($this->id);
+			while($item = $destroyedlist->getItem()) {
 				$destroyed = new DestroyedItem($item,
 					$item->row_['itd_quantity'],
 					$item->row_['itl_location'],
@@ -814,9 +865,8 @@ class Kill
 				array_push($this->destroyeditems_, $destroyed);
 			}
 			$droppedlist = new ItemList(null, true);
-			$droppedlist->addKillDropped($this->id_);
-			while($item = $droppedlist->getItem())
-			{
+			$droppedlist->addKillDropped($this->id);
+			while($item = $droppedlist->getItem()) {
 				$dropped = new DroppedItem($item,
 					$item->row_['itd_quantity'],
 					$item->row_['itl_location'],
@@ -825,6 +875,7 @@ class Kill
 			}
 		}
 		$this->executed = true;
+		$this->putCache();
 	}
 
 	/**
@@ -834,13 +885,12 @@ class Kill
 	 */
 	function isClassified()
 	{
-		if(!$this->timestamp_) $this->execQuery();
-
-		if (config::get('kill_classified'))
-		{
-			if (user::role('classified_see')) return false;
-
-			if($this->getClassifiedTime() > 0) return true;
+		if (config::get('kill_classified')) {
+			if (user::role('classified_see')) {
+				return false;
+			} else if($this->getClassifiedTime() > 0) {
+				return true;
+			}
 		}
 		else return false;
 	}
@@ -852,11 +902,10 @@ class Kill
 	function getClassifiedTime()
 	{
 		if (config::get('kill_classified') &&
-				strtotime($this->timestamp_." UTC") >
-				time() - config::get('kill_classified')*3600)
-		{
-			return (config::get('kill_classified')*3600
-				- time() + strtotime($this->timestamp_." UTC"));
+				strtotime($this->getTimeStamp()." UTC") >
+				time() - config::get('kill_classified') * 3600) {
+			return (config::get('kill_classified') * 3600
+				- time() + strtotime($this->getTimeStamp()." UTC"));
 		}
 		return 0;
 	}
@@ -868,11 +917,15 @@ class Kill
 	 */
 	function getInvolvedPartyCount()
 	{
-		if(isset($this->involvedcount_)) return $this->involvedcount_;
+		if(isset($this->involvedcount)) {
+			return $this->involvedcount;
+		}
 		$qry = DBFactory::getDBQuery();
-		$qry->execute("select count(*) inv from kb3_inv_detail where ind_kll_id = ". $this->id_);
+		$qry->execute(
+				"select count(*) inv from kb3_inv_detail where ind_kll_id = "
+				.$this->getID());
 		$result = $qry->getRow();
-		$this->involvedcount_ = $result['inv'];
+		$this->involvedcount = (int)$result['inv'];
 		return $result['inv'];
 	}
 
@@ -882,12 +935,12 @@ class Kill
 	 */
 	function setInvolvedPartyCount($invcount = 0)
 	{
-		$this->involvedcount_ = $invcount;
+		$this->involvedcount = $invcount;
 	}
 
 	function setDetailedInvolved()
 	{
-		$this->fullinvolved_ = true;
+		$this->fullinvolved = true;
 	}
 
 	/**
@@ -896,8 +949,10 @@ class Kill
 	 */
 	function exists()
 	{
-		if(!isset($this->valid_)) $this->execQuery();
-		return $this->valid_;
+		if(!isset($this->valid)) {
+			$this->execQuery();
+		}
+		return $this->valid;
 	}
 
 	/**
@@ -908,18 +963,21 @@ class Kill
 	function relatedKillCount()
 	{
 		// No details for classified kills.
-		if($this->isClassified()) return 0;
-		if($this->relatedkillcount_) return $this->relatedkillcount_;
+		if($this->isClassified()) {
+			return 0;
+		}
+		if($this->relatedkillcount) {
+			return $this->relatedkillcount;
+		}
 
 		if(config::get('cfg_pilotid') && config::get('cfg_allianceid')
 			|| config::get('cfg_pilotid') && config::get('cfg_corpid')
-			|| config::get('cfg_corpid') && config::get('cfg_allianceid'))
-		{
+			|| config::get('cfg_corpid') && config::get('cfg_allianceid')) {
 			$sql ="SELECT COUNT(DISTINCT ind_kll_id) AS kills FROM kb3_inv_detail INNER JOIN
 				kb3_kills ON (kll_id = ind_kll_id) WHERE
-				ind_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
-				AND ind_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
-				AND kll_system_id = ".$this->solarsystem_->getID();
+				ind_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) + 60 * 60))."'
+				AND ind_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) - 60 * 60))."'
+				AND kll_system_id = ".$this->getSystem()->getID();
 			$sqlinv = array();
 			if(config::get('cfg_allianceid'))
 				$sqlinv[] = "ind_all_id in (".implode(",", config::get('cfg_allianceid')).")";
@@ -928,47 +986,42 @@ class Kill
 			if(config::get('cfg_pilotid'))
 				$sqlinv[] = "ind_plt_id in (".implode(",", config::get('cfg_pilotid')).")";
 			$sql .= " AND (".implode(" OR ", $sqlinv).")";
-		}
-		else if(config::get('cfg_allianceid'))
-		{
+		} else if(config::get('cfg_allianceid')) {
 			$sql ="SELECT COUNT(DISTINCT ina_kll_id) AS kills FROM kb3_inv_all INNER JOIN
 				kb3_kills ON (kll_id = ina_kll_id) WHERE 
 				ina_all_id in (".implode(",", config::get('cfg_allianceid')).") AND
-				ina_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
-				AND ina_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
-				AND kll_system_id = ".$this->solarsystem_->getID();
-		}
-		else if(config::get('cfg_corpid'))
-		{
+				ina_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) + 60 * 60))."'
+				AND ina_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) - 60 * 60))."'
+				AND kll_system_id = ".$this->getSystem()->getID();
+		} else if(config::get('cfg_corpid')) {
 			$sql ="SELECT COUNT(DISTINCT inc_kll_id) AS kills FROM kb3_inv_crp INNER JOIN
 				kb3_kills ON (kll_id = inc_kll_id) WHERE 
 				inc_crp_id in (".implode(",", config::get('cfg_corpid')).") AND
-				inc_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
-				AND inc_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
-				AND kll_system_id = ".$this->solarsystem_->getID();
-		}
-		else if(config::get('cfg_pilotid'))
-		{
+				inc_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) + 60 * 60))."'
+				AND inc_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) - 60 * 60))."'
+				AND kll_system_id = ".$this->getSystem()->getID();
+		} else if(config::get('cfg_pilotid')) {
 			$sql ="SELECT COUNT(DISTINCT ind_kll_id) AS kills FROM kb3_inv_detail INNER JOIN
 				kb3_kills ON (kll_id = ind_kll_id) WHERE 
 				ind_plt_id in (".implode(",", config::get('cfg_pilotid')).") AND
-				ind_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
-				AND ind_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
-				AND kll_system_id = ".$this->solarsystem_->getID();
-		}
-		else
-		{
+				ind_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) + 60 * 60))."'
+				AND ind_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) - 60 * 60))."'
+				AND kll_system_id = ".$this->getSystem()->getID();
+		} else {
 			$sql ="SELECT COUNT(kll_id) AS kills FROM kb3_kills WHERE
-				kll_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
-				AND kll_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
-				AND kll_system_id = ".$this->solarsystem_->getID();
+				kll_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) + 60 * 60))."'
+				AND kll_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) - 60 * 60))."'
+				AND kll_system_id = ".$this->getSystem()->getID();
 		}
 		$sql .= " /* related kill count */ ";
 		$qry = DBFactory::getDBQuery();
-		if(!$qry->execute($sql)) return 0;
+		if(!$qry->execute($sql)) {
+			return 0;
+		}
 		$res=$qry->getRow();
-		$this->relatedkillcount_ = $res['kills'];
-		return $this->relatedkillcount_;
+		$this->relatedkillcount = $res['kills'];
+		// Do not cache between page loads.
+		return $this->relatedkillcount;
 	}
 
 	/**
@@ -979,59 +1032,69 @@ class Kill
 	function relatedLossCount()
 	{
 		// No details for classified kills.
-		if($this->isClassified()) return 0;
-		if($this->relatedlosscount_) return $this->relatedlosscount_;
+		if($this->isClassified()) {
+			return 0;
+		}
+		if($this->relatedlosscount) {
+			return $this->relatedlosscount;
+		}
 		$sql="SELECT count(kll.kll_id) AS losses FROM kb3_kills kll ";
-		$sql.="WHERE kll.kll_system_id = ".$this->solarsystem_->getID().
+		$sql.="WHERE kll.kll_system_id = ".$this->getSystem()->getID().
 			" AND kll.kll_timestamp <= '".
-			(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60)).
+			(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) + 60 * 60)).
 			"' AND kll.kll_timestamp >= '".
-			(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'";
+			(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) - 60 * 60))."'";
 		$sqlInv = array();
 		$sqlVic = array();
 		$inv = false;
-		if(config::get('cfg_allianceid'))
-		{
+		if(config::get('cfg_allianceid')) {
 			$sqlInv[] = "EXISTS (SELECT * FROM kb3_inv_detail WHERE ind_kll_id = kll.kll_id".
 				" AND ind_all_id NOT IN (".implode(",", config::get('cfg_allianceid')).") LIMIT 1)";
 			$sqlVic[] = "kll.kll_all_id IN (".implode(",", config::get('cfg_allianceid')).")";
 			$inv = true;
 		}
-		if(config::get('cfg_corpid'))
-		{
+		if(config::get('cfg_corpid')) {
 			$sqlInv[] = "EXISTS (SELECT * FROM kb3_inv_detail WHERE ind_kll_id = kll.kll_id".
 				" AND ind_crp_id NOT IN (".implode(",", config::get('cfg_corpid')).") LIMIT 1)";
 			$sqlVic[] .= "kll.kll_crp_id IN (".implode(",", config::get('cfg_corpid')).")";
 			$inv = true;
 		}
-		if(config::get('cfg_pilotid'))
-		{
+		if(config::get('cfg_pilotid')) {
 			$sqlInv[] = "EXISTS (SELECT * FROM kb3_inv_detail WHERE ind_kll_id = kll.kll_id".
 				" AND ind_plt_id NOT IN (".implode(",", config::get('cfg_pilotid')).") LIMIT 1)";
 			$sqlVic[] .= "kll.kll_victim_id IN (".implode(",", config::get('cfg_pilotid')).")";
 			$inv = true;
 		}
-		if($inv)
-		{
+		if($inv) {
 			$sql .= " AND (".implode(' OR ', $sqlInv).") AND (".implode(' OR ', $sqlVic).") ";
 		}
 		$sql .= "/* related loss count */";
 		$qry = DBFactory::getDBQuery();
-		if(!$qry->execute($sql)) return 0;
+		if(!$qry->execute($sql)) {
+			return 0;
+		}
 		$res=$qry->getRow();
-		$this->relatedlosscount_ = $res['losses'];
-		return $this->relatedlosscount_;
+		$this->relatedlosscount = $res['losses'];
+		// Do not cache between page loads.
+		return $this->relatedlosscount;
 	}
 
-	function countComment($kll_id)
+	function countComment()
 	{
-		if(isset($this->commentcount_)) return $this->commentcount_;
+		if(isset($this->commentcount)) {
+			return $this->commentcount;
+		}
 		$qry = DBFactory::getDBQuery();
-		$sql = "SELECT count(id) as comments FROM kb3_comments WHERE kll_id = '$kll_id' AND (site = '".KB_SITE."' OR site IS NULL)";
+		$sql = "SELECT count(id) as comments FROM kb3_comments "
+				."WHERE kll_id = '$kll_id' AND (site = '".KB_SITE
+				."' OR site IS NULL)";
 		// return 0 if query fails. May be incorrect but is harmless here
-		if(!$qry->execute($sql)) return 0;
+		if(!$qry->execute($sql)) {
+			return 0;
+		}
 		$result = $qry->getRow();
-		$this->commentcount_ = $result['comments'];
+		$this->commentcount = $result['comments'];
+		// Do not cache between page loads.
 		return $result['comments'];
 	}
 
@@ -1040,214 +1103,213 @@ class Kill
 	 */
 	function setCommentCount($comcount = 0)
 	{
-		$this->commentcount_ = $comcount;
+		$this->commentcount = $comcount;
 	}
 
 	function setID($id)
 	{
-		$this->id_ = $id;
+		$this->id = $id;
 	}
 
 	function setTimeStamp($timestamp)
 	{
-		$this->timestamp_ = $timestamp;
+		$this->timestamp = $timestamp;
 	}
 
 	function setSolarSystem($solarsystem)
 	{
-		$this->solarsystem_ = $solarsystem;
+		$this->solarsystem = $solarsystem;
 	}
 
 	function setSolarSystemName($solarsystemname)
 	{
-		$this->solarsystemname_ = $solarsystemname;
+		$this->solarsystemname = $solarsystemname;
 	}
 
 	function setSolarSystemSecurity($solarsystemsecurity)
 	{
-		$this->solarsystemsecurity_ = $solarsystemsecurity;
+		$this->solarsystemsecurity = $solarsystemsecurity;
 	}
 
 	function setExternalID($externalid)
 	{
-		if($externalid) $this->externalid_ = $externalid;
-		else $this->externalid_ = 0;
+		if($externalid) $this->externalid = $externalid;
+		else $this->externalid = 0;
 	}
 
 	function setVictim($victim)
 	{
-		$this->victim_ = $victim;
+		$this->victim = $victim;
 	}
 
 	function setVictimID($victimid)
 	{
-		$this->victimid_ = $victimid;
+		$this->victimid = $victimid;
 	}
 
 	function setVictimName($victimname)
 	{
-		$this->victimname_ = $victimname;
+		$this->victimname = $victimname;
 	}
 
 	function setVictimCorpID($victimcorpid)
 	{
-		$this->victimcorpid_ = $victimcorpid;
+		$this->victimcorpid = $victimcorpid;
 	}
 
 	function setVictimCorpName($victimcorpname)
 	{
-		$this->victimcorpname_ = $victimcorpname;
+		$this->victimcorpname = $victimcorpname;
 	}
 
 	function setVictimAllianceID($victimallianceid)
 	{
-		$this->victimallianceid_ = $victimallianceid;
+		$this->victimallianceid = $victimallianceid;
 	}
 
 	function setVictimAllianceName($victimalliancename)
 	{
-		$this->victimalliancename_ = $victimalliancename;
+		$this->victimalliancename = $victimalliancename;
 	}
 
 	function setVictimShip($victimship)
 	{
-		$this->victimship_ = $victimship;
+		$this->victimship = $victimship;
 	}
 
 	function setVictimShipName($victimshipname)
 	{
-		$this->victimshipname_ = $victimshipname;
+		$this->victimshipname = $victimshipname;
 	}
 
 	function setVictimShipExternalID($victimshipexternalid)
 	{
-		$this->victimshipexternalid_ = $victimshipexternalid;
+		$this->victimshipexternalid = $victimshipexternalid;
 	}
 
 	function setVictimShipClassName($victimshipclassname)
 	{
-		$this->victimshipclassname_ = $victimshipclassname;
+		$this->victimshipclassname = $victimshipclassname;
 	}
 
 	function setVictimShipValue($victimshipvalue)
 	{
-		$this->victimshipvalue_ = $victimshipvalue;
+		$this->victimshipvalue = $victimshipvalue;
 	}
 
 	function setFBPilot($fbpilot)
 	{
-		$this->fbpilot_ = $fbpilot;
+		$this->fbpilot = $fbpilot;
 	}
 
 	function setFBPilotID($fbpilotid)
 	{
-		$this->fbpilotid_ = $fbpilotid;
+		$this->fbpilotid = $fbpilotid;
 	}
 
 	function setFBPilotName($fbpilotname)
 	{
 		$npc = strpos($fbpilotname, "#");
-		if ($npc === false)
-		{
-			$this->fbpilotname_ = $fbpilotname;
-		}
-		else
-		{
+		if ($npc === false) {
+			$this->fbpilotname = $fbpilotname;
+		} else {
 			$name = explode("#", $fbpilotname);
 			$plt = new Item($name[2]);
-			$this->fbpilotname_ = $plt->getName();
+			$this->fbpilotname = $plt->getName();
 		}
 	}
 
 	function setFBCorpID($fbcorpid)
 	{
-		$this->fbcorpid_ = $fbcorpid;
+		$this->fbcorpid = $fbcorpid;
 	}
 
 	function setFBCorpName($fbcorpname)
 	{
-		$this->fbcorpname_ = $fbcorpname;
+		$this->fbcorpname = $fbcorpname;
 	}
 
 	function setFBAllianceID($fballianceid)
 	{
-		$this->fballianceid_ = $fballianceid;
+		$this->fballianceid = $fballianceid;
 	}
 
 	function setFBAllianceName($fballiancename)
 	{
-		$this->fballiancename_ = $fballiancename;
+		$this->fballiancename = $fballiancename;
 	}
 	function setKillPoints($killpoints)
 	{
-		$this->killpoints_ = $killpoints;
+		$this->killpoints = $killpoints;
 	}
 	/**
 	 * Set the ISK loss value for this kill.
 	 */
 	function setISKLoss($isk)
 	{
-		$this->iskloss_ = $isk;
+		$this->iskloss = $isk;
 	}
 	/**
 	 * Calculate the current cost of a ship loss excluding blueprints.
-	 */
-
-	/**
 	 * @param boolean $update set true to update all-time summaries.
+	 * @return float
 	 */
 	function calculateISKLoss($update = true)
 	{
 		$value = 0;
-		foreach($this->destroyeditems_ as $itd)
-		{
+		foreach($this->destroyeditems_ as $itd) {
 			$item = $itd->getItem();
 			if(strpos($item->getName(), "Blueprint") === FALSE) $value += $itd->getValue() * $itd->getQuantity();
 		}
-		if(config::get('kd_droptototal'))
-		{
-			foreach($this->droppeditems_ as $itd)
-			{
+		if(config::get('kd_droptototal')) {
+			foreach($this->droppeditems_ as $itd) {
 				$item = $itd->getItem();
 				if(strpos($item->getName(), "Blueprint") === FALSE) $value += $itd->getValue() * $itd->getQuantity();
 			}
 		}
-		$value += $this->victimship_->getPrice();
-		if($update)
-		{
+		$value += $this->victimship->getPrice();
+		if($update) {
 			$qry = DBFactory::getDBQuery();
 			$qry->execute("UPDATE kb3_kills SET kll_isk_loss = '$value' WHERE
-				kll_id = '".$this->id_."'");
-			if($this->iskloss_)
-			{
-				summaryCache::update($this, $value - $this->iskloss_);
+				kll_id = '".$this->id."'");
+			if($this->iskloss) {
+				summaryCache::update($this, $value - $this->iskloss);
 			}
 		}
-		$this->iskloss_ = $value;
+		$this->iskloss = $value;
 		return $value;
 	}
 
+	/**
+	 * Return the killpoints for this kill.
+	 * @return integer
+	 */
 	function calculateKillPoints()
 	{
+		if (!$this->involvedparties_) {
+			$this->execQuery();
+		}
+
 		$ship = $this->getVictimShip();
 		$shipclass = $ship->getClass();
 		$vicpoints = $shipclass->getPoints();
 		$maxpoints = round($vicpoints * 1.2);
 
-		foreach ($this->involvedparties_ as $inv)
-		{
+		foreach ($this->involvedparties_ as $inv) {
 			$shipinv = $inv->getShip();
 			$shipclassinv = $shipinv->getClass();
 			$invpoints += $shipclassinv->getPoints();
 		}
 
-		if($vicpoints + $invpoints > 0)
-		{
+		if($vicpoints + $invpoints > 0) {
 			$gankfactor = $vicpoints / ($vicpoints + $invpoints);
 			$points = ceil($vicpoints * ($gankfactor / 0.75));
+		} else {
+			$points = 0;
 		}
-		else $points = 0;
-		if ($points > $maxpoints) $points = $maxpoints;
+		if ($points > $maxpoints) {
+			$points = $maxpoints;
+		}
 
 		$points = round($points, 0);
 		return $points;
@@ -1257,46 +1319,45 @@ class Kill
 	{
 		// If value isn't already calculated then do so now. Don't update the
 		// stored value since at this point it does not exist.
-		if(!$this->iskloss_) $this->calculateISKLoss(false);
+		if(!$this->iskloss) {
+			$this->calculateISKLoss(false);
+		}
 
 		// Start a transaction here to capture the duplicate check.
 		$qry = DBFactory::getDBQuery();
 		$qry->autocommit(false);
 		// Set these to make sure we don't try to load the kill from the db before it exists.
 		$this->executed = true;
-		$this->valid_ = true;
+		$this->valid = true;
 		//Always recalculate the hash ourselves before posting.
 		$this->hash = false;
 		$this->getHash(false,false);
 
 		$this->getDupe(true);
-		if ($this->dupeid_ == 0)
-		{
+		if ($this->dupeid == 0) {
 			$this->realadd();
-		}
-		else
-		{
-			$this->id_ = -1;
+		} else {
+			$this->id = -1;
 		}
 		$qry->autocommit(true);
-		return $this->id_;
+		return $this->id;
 	}
 
 	function realadd($id = null)
 	{
-		if ( $this->timestamp_ == "" || !$this->getVictim()->getID() || !$this->victimship_->getID() || !$this->solarsystem_->getID() ||
-			!$this->victimallianceid_ || !$this->victimcorpid_ || !$this->getFBAllianceID() || !$this->getFBCorpID() ||
-			!$this->getFBPilotID() || !$this->getHash(false, false)) return 0;
-		if ($id == null)
-		{
-			$qid = 'null';
+		if ( $this->timestamp == "" || !$this->getVictim()->getID()
+				|| !$this->victimship->getID() || !$this->solarsystem->getID()
+				|| !$this->victimallianceid || !$this->victimcorpid
+				|| !$this->getFBAllianceID() || !$this->getFBCorpID()
+				|| !$this->getFBPilotID() || !$this->getHash(false, false)) {
+			return 0;
 		}
-		else
-		{
+		if ($id == null) {
+			$qid = 'null';
+		} else {
 			$qid = $id;
 		}
-		if (!$this->dmgtaken)
-		{
+		if (!$this->dmgtaken) {
 			$this->dmgtaken = 0;
 		}
 
@@ -1304,30 +1365,31 @@ class Kill
 		$sql = "INSERT INTO kb3_kills
             (kll_id , kll_timestamp , kll_victim_id , kll_all_id , kll_crp_id , kll_ship_id , kll_system_id , kll_fb_plt_id , kll_points , kll_dmgtaken, kll_external_id, kll_isk_loss)
             VALUES (".$qid.",
-                    date_format('".$this->timestamp_."', '%Y.%m.%d %H:%i:%s'),
-            ".$this->victimid_.",
-            ".$this->victimallianceid_.",
-            ".$this->victimcorpid_.",
-            ".$this->victimship_->getID().",
-            ".$this->solarsystem_->getID().",
+                    date_format('".$this->timestamp."', '%Y.%m.%d %H:%i:%s'),
+            ".$this->victimid.",
+            ".$this->victimallianceid.",
+            ".$this->victimcorpid.",
+            ".$this->victimship->getID().",
+            ".$this->solarsystem->getID().",
             ".$this->getFBPilotID().",
             ".$this->calculateKillPoints().",
             ".$this->dmgtaken.", ";
-		if($this->externalid_) $sql .= $this->externalid_.", ";
+		if($this->externalid) $sql .= $this->externalid.", ";
 		else $sql .= "NULL, ";
 		$sql .= $this->getISKLoss()." )";
 		$qry->autocommit(false);
-		if(!$qry->execute($sql)) return $this->rollback($qry);
+		if(!$qry->execute($sql)) {
+			return $this->rollback($qry);
+		}
 
-		if ($id)
-		{
-			$this->id_ = $id;
+		if ($id) {
+			$this->id = $id;
+		} else {
+			$this->id = $qry->getInsertID();
 		}
-		else
-		{
-			$this->id_ = $qry->getInsertID();
+		if(!$this->id) {
+			return $this->rollback($qry);
 		}
-		if(!$this->id_) return $this->rollback($qry);
 		// involved
 		$order = 0;
 		$invall = array();
@@ -1342,39 +1404,36 @@ class Kill
 		$notfirstd = false;
 		$notfirsta = false;
 		$notfirstc = false;
-		foreach ($this->involvedparties_ as $inv)
-		{
+		foreach ($this->involvedparties_ as $inv) {
 			$ship = $inv->getShip();
 			$weapon = $inv->getWeapon();
-			if (!$inv->getPilotID() || $inv->getSecStatus() == "" || !$inv->getAllianceID() || !$inv->getCorpID() || !$ship->getID() || !$weapon->getID())
-			{
+			if (!$inv->getPilotID() || $inv->getSecStatus() == ""
+					|| !$inv->getAllianceID() || !$inv->getCorpID()
+					|| !$ship->getID() || !$weapon->getID()) {
 				$this->remove();
 				return 0;
 			}
 
-			if (!$inv->dmgdone_)
-			{
+			if (!$inv->dmgdone_) {
 				$inv->dmgdone_ = 0;
 			}
 			if($notfirstd) $involveddsql .= ", ";
-			$involveddsql .= "( ".$this->getID().", date_format('".$this->timestamp_."', '%Y.%m.%d %H:%i:%s'), "
+			$involveddsql .= "( ".$this->getID().", date_format('".$this->timestamp."', '%Y.%m.%d %H:%i:%s'), "
 				.$inv->getPilotID().", '".$inv->getSecStatus()."', "
 				.$inv->getAllianceID().", ".$inv->getCorpID().", ".$ship->getID().", "
 				.$weapon->getID().", ".$order++.", ".$inv->dmgdone_.")";
 			$notfirstd = true;
-			if(!in_array($inv->getAllianceID(), $invall))
-			{
+			if(!in_array($inv->getAllianceID(), $invall)) {
 				if($notfirsta) $involvedasql .= ", ";
 				$involvedasql .= "( ".$this->getID().", ".$inv->getAllianceID()
-					.", date_format('".$this->timestamp_."', '%Y.%m.%d %H:%i:%s'))";
+					.", date_format('".$this->timestamp."', '%Y.%m.%d %H:%i:%s'))";
 				$notfirsta = true;
 				$invall[] = $inv->getAllianceID();
 			}
-			if(!in_array($inv->getCorpID(), $invcrp))
-			{
+			if(!in_array($inv->getCorpID(), $invcrp)) {
 				if($notfirstc) $involvedcsql .= ", ";
 				$involvedcsql .= "( ".$this->getID().", ".$inv->getCorpID()
-					.", date_format('".$this->timestamp_."', '%Y.%m.%d %H:%i:%s'))";
+					.", date_format('".$this->timestamp."', '%Y.%m.%d %H:%i:%s'))";
 				$notfirstc = true;
 				$invcrp[] = $inv->getCorpID();
 			}
@@ -1432,7 +1491,7 @@ class Kill
 
 		$sql = "INSERT INTO kb3_mails (  `kll_id`, `kll_timestamp`, `kll_external_id`, `kll_hash`, `kll_trust`, `kll_modified_time`)".
 			"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ";
-		if($this->externalid_) $sql .= $this->externalid_.", ";
+		if($this->externalid) $sql .= $this->externalid.", ";
 		else $sql .= "NULL, ";
 			$sql .= "'".$qry->escape($this->getHash(false, false))."', 0, UTC_TIMESTAMP())";
 		if(!@$qry->execute($sql))
@@ -1444,12 +1503,12 @@ class Kill
 		// call the event that we added this mail
 		event::call('killmail_added', $this);
 		cache::notifyKillAdded();
-		return $this->id_;
+		return $this->id;
 	}
 
 	function remove($delcomments = true, $permanent = true)
 	{
-		if (!$this->id_)
+		if (!$this->id)
 			return;
 		$qry = DBFactory::getDBQuery();
 		$qry->autocommit(false);
@@ -1457,22 +1516,25 @@ class Kill
 
 		event::call('killmail_delete', $this);
 
-		$qry->execute("delete from kb3_kills where kll_id = ".$this->id_);
-		$qry->execute("delete from kb3_inv_detail where ind_kll_id = ".$this->id_);
-		$qry->execute("delete from kb3_inv_all where ina_kll_id = ".$this->id_);
-		$qry->execute("delete from kb3_inv_crp where inc_kll_id = ".$this->id_);
-		$qry->execute("delete from kb3_items_destroyed where itd_kll_id = ".$this->id_);
-		$qry->execute("delete from kb3_items_dropped where itd_kll_id = ".$this->id_);
+		$qry->execute("delete from kb3_kills where kll_id = ".$this->id);
+		$qry->execute("delete from kb3_inv_detail where ind_kll_id = ".$this->id);
+		$qry->execute("delete from kb3_inv_all where ina_kll_id = ".$this->id);
+		$qry->execute("delete from kb3_inv_crp where inc_kll_id = ".$this->id);
+		$qry->execute("delete from kb3_items_destroyed where itd_kll_id = ".$this->id);
+		$qry->execute("delete from kb3_items_dropped where itd_kll_id = ".$this->id);
 		// Don't remove comments when readding a kill
 		if ($delcomments)
 		{
-			$qry->execute("delete from kb3_comments where kll_id = ".$this->id_);
+			$qry->execute("delete from kb3_comments where kll_id = ".$this->id);
 			if ($permanent)
-				$qry->execute("UPDATE kb3_mails SET kll_trust = -1, kll_modified_time = UTC_TIMESTAMP() WHERE kll_id = ".$this->id_);
+				$qry->execute("UPDATE kb3_mails SET kll_trust = -1, kll_modified_time = UTC_TIMESTAMP() WHERE kll_id = ".$this->id);
 			else
-				$qry->execute("DELETE FROM kb3_mails WHERE kll_id = ".$this->id_);
+				$qry->execute("DELETE FROM kb3_mails WHERE kll_id = ".$this->id);
 		}
 		$qry->autocommit(true);
+
+		$this->valid = false;
+		if ($this->isCached()) $this->putCache();
 	}
 
 	function addInvolvedParty($involved)
@@ -1514,8 +1576,8 @@ class Kill
 		}
 		$qry = DBFactory::getDBQuery();
 		// Get the mail and trust as well since we're fetching the row anyway.
-		if($this->id_)
-			$qry->execute("SELECT kll_hash, kll_trust FROM kb3_mails WHERE kll_id = ".$this->id_);
+		if($this->id)
+			$qry->execute("SELECT kll_hash, kll_trust FROM kb3_mails WHERE kll_id = ".$this->id);
 		if($qry->recordCount())
 		{
 			$row = $qry->getRow();
@@ -1528,15 +1590,15 @@ class Kill
 			if($this->hash === false) return false;
 			if($update)
 			{
-				if($this->id_ && $this->externalid_)
+				if($this->id && $this->externalid)
 				{
 					$sql = "INSERT IGNORE INTO kb3_mails (  `kll_id`, `kll_timestamp`, ".
 						"`kll_external_id`, `kll_hash`, `kll_trust`, `kll_modified_time`)".
 						"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ".
-						$this->externalid_.", '".$qry->escape($this->hash)."', ".
+						$this->externalid.", '".$qry->escape($this->hash)."', ".
 						$this->trust.", UTC_TIMESTAMP())";
 				}
-				else if($this->id_)
+				else if($this->id)
 				{
 					$sql = "INSERT IGNORE INTO kb3_mails (  `kll_id`, `kll_timestamp`, ".
 						"`kll_hash`, `kll_trust`, `kll_modified_time`)".
@@ -1544,7 +1606,7 @@ class Kill
 						"'".$qry->escape($this->hash)."', ".
 						$this->trust.", UTC_TIMESTAMP())";
 				}
-				if($this->id_) $qry->execute($sql);
+				if($this->id) $qry->execute($sql);
 			}
 		}
 		if($hex) return bin2hex($this->hash);
@@ -1569,7 +1631,28 @@ class Kill
 	{
 		$qry->rollback();
 		$qry->autocommit(true);
-		$this->id_ = 0;
+		$this->id = 0;
 		return false;
+	}
+
+	/**
+	 * Update this kill's external ID.
+	 * @param integer $extID
+	 */
+	public function updateExternalID($extID)
+	{
+		$this->execQuery();
+
+		$qry = DBFactory::getDBQuery();
+		if(@$qry->execute("UPDATE kb3_kills SET kll_external_id = ".
+				$this->externalid." WHERE kll_id = ".$this->id)) {
+			$qry->execute("UPDATE kb3_mails SET kll_external_id = ".
+					$this->externalid.", kll_modified_time = UTC_TIMESTAMP()".
+					" WHERE kll_id = ".$this->id.
+					" AND kll_external_id IS NULL");
+
+				$this->externalid = $extID;
+				$this->putCache();
+			}
 	}
 }

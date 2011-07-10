@@ -11,6 +11,18 @@
  */
 class KillListTable
 {
+	/** @var KillList */
+	private $kill_list_;
+	/** @var integer */
+	private $limit;
+	/** @var integer */
+	private $offset;
+	/** @var boolean */
+	private $daybreak_;
+
+	/**
+	 * @param KillList $kill_list
+	 */
 	function KillListTable($kill_list)
 	{
 		$this->limit = 0;
@@ -50,7 +62,7 @@ class KillListTable
 		}
 
 		$c = 0;
-		while ($kill = $this->kill_list_->getKill())
+		while ($kill  = $this->kill_list_->getKill())
 		{
 			if ($this->limit_ && $c >= $this->limit_)
 			{
@@ -74,11 +86,8 @@ class KillListTable
 			$kll = array();
 			$kll['id'] = $kill->getID();
 			$kll['victimshipimage'] = $kill->getVictimShipImage(32);
-			// Still needs a db query for every row. Add to Killlist and add
-			// a get function in Kill?
 			$kll['victimshipname'] = $kill->getVictimShipName();
 			$kll['victimshipclass'] = $kill->getVictimShipClassName();
-			$kll['victimshipindicator'] = $kill->getVictimShipValueIndicator();
 			$kll['victim'] = $kill->getVictimName();
 			$kll['victimcorp'] = $kill->getVictimCorpName();
 			$kll['victimalliancename'] = $kill->getVictimAllianceName();
@@ -117,19 +126,6 @@ class KillListTable
 					$crp = new Corporation($kill->getVictimCorpID());
 					$kll['victimallianceicon'] = $crp->getPortraitURL(32);
 				}
-
-//				$kll['victimallianceicon'] = preg_replace('/[^a-zA-Z0-9]/', '', $kll['victimalliancename']);
-//				if(CacheHandler::exists($kll['victimallianceicon']."_32.png", 'img'))
-//				{
-//					$kll['allianceexists'] = true;
-//					$kll['victimallianceicon'] = CacheHandler::getExternal($kll['victimallianceicon']."_32.png", 'img');
-//				}
-//				elseif(file_exists('img/alliances/'.$kll['victimallianceicon'].'.png'))
-//				{
-//					$kll['allianceexists'] = true;
-//					$kll['victimallianceicon'] = '?a=thumb&amp;type=alliance&amp;id='.$kll['victimallianceicon'];
-//				}
-//				else $kll['allianceexists'] = false;
 			}
 
 			if (isset($kill->_tag))
@@ -137,25 +133,11 @@ class KillListTable
 				$kll['tag'] = $kill->_tag;
 			}
 
-			if ($kill->fbplt_ext_)
-			{
-				$kll['fbplext'] = $kill->fbplt_ext_;
-			}
-			else
-			{
-				$kll['fbplext'] = null;
-			}
-			if ($kill->plt_ext_)
-			{
-				$kll['plext'] = $kill->plt_ext_;
-			}
-			else
-			{
-				$kll['plext'] = null;
-			}
+			$kll['fbplext'] = $kill->getFBPilotExternalID();
+			$kll['plext'] = $kill->getFBPilotExternalID();
 			if (config::get('comments_count'))
 			{
-				$kll['commentcount'] = $kill->countComment($kill->getID());
+				$kll['commentcount'] = $kill->countComment();
 			}
 			if ($this->combined_)
 			{
