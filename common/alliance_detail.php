@@ -6,7 +6,8 @@
  * @package EDK
  */
 
-/*
+/**
+ * Display alliance details.
  * @package EDK
  */
 class pAllianceDetail extends pageAssembly
