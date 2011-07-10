@@ -86,6 +86,7 @@ class dogma extends Cacheable
 				}
 				$this->effects[$row['effectName']] = $row;
 			}
+			$this->putCache();
 		}
 	}
 
