@@ -8,7 +8,7 @@
  * $Revision$
  * $HeadURL$
  * @package EDK
- *
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -173,29 +173,6 @@ role::init();
 // start session management
 session::init();
 
-// reinforced management
-if (config::get('auto_reinforced'))
-{
-	// first check if we are in reinforced
-	if (config::get('is_reinforced'))
-	{
-		// every 1/x request we check for disabling RF
-		if (rand(1, config::get('reinforced_rf_prob')) == 1)
-		{
-			cache::checkLoad();
-		}
-	}
-	else
-	{
-		// reinforced not active
-		// check for load and activate reinforced if needed
-		if (rand(1, config::get('reinforced_prob')) == 1)
-		{
-			cache::checkLoad();
-		}
-	}
-}
-
 // Check if the database structure needs updating
 if(config::get('DBUpdate') < LATEST_DB_UPDATE)
 {
@@ -284,7 +261,11 @@ if (!$settingsPage && !file_exists('common/'.$page.'.php') && !$modOverrides)
 
 cache::check($page);
 
-// setting up smarty and feed it with some config
+/**
+ * Smarty templating.
+ * 
+ * @global Smarty $smarty
+ */
 $smarty = new Smarty();
 if(is_dir('./themes/'.$themename.'/templates'))
 	$smarty->template_dir = './themes/'.$themename.'/templates';

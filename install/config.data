@@ -32,10 +32,6 @@ public_losses	0
 public_stats	do nothing
 public_summarytable	0
 readd_dupes	0
-reinforced_disable_threshold	5
-reinforced_prob	20
-reinforced_rf_prob	20
-reinforced_threshold	5
 ship_values	0
 show_standing	1
 show_standings	0
@@ -61,3 +57,4 @@ upd_dbVersion	1.0.8
 upd_codeVersion	3.2.0
 cfg_log	1
 cfg_sqlhalt	1
+cfg_objcache 1

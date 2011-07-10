@@ -24,17 +24,9 @@ options::fadd('Memcached server', 'cfg_memcache_server', 'edit:size:50');
 options::fadd('Memcached port', 'cfg_memcache_port', 'edit:size:8');
 options::fadd('Halt on SQLError', 'cfg_sqlhalt', 'checkbox');
 
-options::cat('Advanced', 'Cache', 'Killmail Cache');
+options::cat('Advanced', 'Cache', 'Even More Caching');
 options::fadd('Killmail Caching enabled','km_cache_enabled','checkbox');
-options::fadd('Cached Killmails', 'none', 'custom', array('admin_acache', 'getKillmails'));
-
-options::cat('Advanced', 'Cache', 'Reinforced Control');
-options::fadd('Enable Reinforced Management', 'auto_reinforced', 'checkbox', '', array('admin_acache', 'setNotReinforced'));
-options::fadd('Current Load', 'none', 'custom', array('admin_acache', 'showLoad'));
-options::fadd('Reinforcement threshold', 'reinforced_threshold', 'edit:size:4', '', '', 'load above this threshold triggers reinforced mode');
-options::fadd('Disabling threshold', 'reinforced_disable_threshold', 'edit:size:4', '', '', 'load below this threshold exits reinforced mode');
-options::fadd('Reinforcement chance', 'reinforced_prob', 'edit:size:4', '', '', '1/x chance each page view');
-options::fadd('Reinforcement end chance', 'reinforced_rf_prob', 'edit:size:4','','','1/x chance each page view');
+options::fadd('Object Caching enabled','cfg_objcache','checkbox');
 
 options::cat('Advanced', 'Cache', 'Clear Caches');
 options::fadd('File Cache', 'none', 'custom', array('admin_acache', 'optionClearCaches'), array('admin_acache', 'clearCaches'));

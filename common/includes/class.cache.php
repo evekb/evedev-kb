@@ -15,39 +15,43 @@
 class cache
 {
 	private static $cacheName = null;
+	private static $reinforced_enable_threshold = 10;
+	private static $reinforced_disable_threshold = 5;
+	private static $reinforced_prob	= 20;
+
 	/**
 	 * Check the server load using /proc/loadavg.
+	 * 
+	 * Changes reinforced statust depending on load where supported.
 	 */
 	public static function checkLoad()
 	{
-		if (PHP_OS != 'Linux')
-		{
-			return false;
+		if (PHP_OS != 'Linux') {
+			return;
 		}
 
 		$load = @file_get_contents('/proc/loadavg');
-		if (false === $load)
-		{
-			return false;
+		if (false === $load) {
+			return;
 		}
 		$array = explode(' ', $load);
-		if ((float)$array[0] > (float)config::get('reinforced_threshold'))
-		{
-			// put killboard into RF
-			config::set('is_reinforced', 1);
+		// If load is high put killboard into RF
+		if ((float)$array[0] > self::$reinforced_enable_threshold) {
+			config::set('is_reinforced', true);
 		}
-		elseif ((float)$array[0] > (float)config::get('reinforced_disable_threshold') && config::get('is_reinforced'))
-		{
-			// do nothing, we are in RF, load is dropping but stil over disabling threshold
+		// If load is consistently low cancel reinforced
+		else if (config::get('is_reinforced')
+				&& (float)$array[0] < self::$reinforced_disable_threshold
+				&& rand(1, self::$reinforced_prob) == 1) {
+			config::set('is_reinforced', false);
 		}
-		else
-		{
-			// load low, dont enter reinforced
-			config::set('is_reinforced', 0);
-		}
+		return true;
 	}
 	/**
 	 * Check if the current page should be cached.
+	 *
+	 * @param string $page The current page
+	 * @return boolean
 	 */
 	private static function shouldCache($page = '')
 	{
@@ -60,20 +64,24 @@ class cache
 		if ($page == 'thumb' ||
 				$page == 'mapview' ||
 				$page == 'sig') return false;
-		if (config::get('auto_reinforced') && config::get('is_reinforced') && count($_POST) == 0)
+		self::checkLoad();
+		if (config::get('is_reinforced') && count($_POST) == 0)
 		{
 			return true;
 		}
 
 		$cacheignore = explode(',', config::get('cache_ignore'));
-		if (config::get('cache_enabled') && count($_POST) == 0 && !($page != '' && in_array($page, $cacheignore)))
-		{
+		if (config::get('cache_enabled')
+				&& count($_POST) == 0
+				&& !($page != '' && in_array($page, $cacheignore))) {
 			return true;
 		}
 		return false;
 	}
 	/**
 	 * Check if the current page is cached and valid then send it if so.
+	 *
+	 * @param string $page The current page.
 	 */
 	public static function check($page)
 	{
@@ -203,8 +211,8 @@ class cache
 	 * Security modification could change this function to generate access
 	 * level specific cache files.
 	 *
-	 *  @return string string of path and filename for the current page's cachefile.
-	*/
+	 * @return string string of path and filename for the current page's cachefile.
+	 */
 	private static function genCacheName()
 	{
 		if(isset(self::$cacheName)) return self::$cacheName;
