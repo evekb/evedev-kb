@@ -11,6 +11,12 @@
  */
 class DestroyedItem
 {
+	/**
+	 * @param Item $item
+	 * @param integer $quantity
+	 * @param string|integer $location
+	 * @param integer $locationID
+	 */
 	function DestroyedItem($item, $quantity, $location, $locationID = null)
 	{
 		$this->item_ = $item;
@@ -19,11 +25,17 @@ class DestroyedItem
 		$this->locationID_ = $locationID;
 	}
 
+	/**
+	 * @return Item
+	 */
 	function getItem()
 	{
 		return $this->item_;
 	}
 
+	/**
+	 * @return integer
+	 */
 	function getQuantity()
 	{
 		if ($this->quantity_ == "") $this->quantity = 1;
@@ -31,6 +43,8 @@ class DestroyedItem
 	}
 	/**
 	 * Return value formatted into millions or thousands.
+	 *
+	 * @return string
 	 */
 	function getFormattedValue()
 	{
@@ -68,6 +82,9 @@ class DestroyedItem
 		return $formatted;
 	}
 
+	/**
+	 * @return integer
+	 */
 	function getValue()
 	{
 		if (isset($this->value))
@@ -117,6 +134,9 @@ class DestroyedItem
 		return $value;
 	}
 
+	/**
+	 * @return integer
+	 */
 	function getLocationID()
 	{
 		if(!is_null($this->locationID_)) return $this->locationID_;

@@ -11,6 +11,12 @@
  */
 class DroppedItem extends DestroyedItem
 {
+	/**
+	 * @param Item $item
+	 * @param integer $quantity
+	 * @param string|integer $location
+	 * @param integer $locationID
+	 */
 	function DroppedItem($item, $quantity, $location, $locationID = null)
 	{
 		$this->item_ = $item;
