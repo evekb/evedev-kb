@@ -33,11 +33,20 @@ class KillSummaryTable
 	protected $view = "";
 	protected $system = array();
 
+	/**
+	 * @param KillList $klist
+	 * @param KillList $llist
+	 */
 	function KillSummaryTable($klist = null, $llist = null)
 	{
 		$this->klist = $klist;
 		$this->llist = $llist;
 	}
+
+	/**
+	 * Set the level of detail to show in the summary
+	 * @param boolean $verbose Set true to show more details.
+	 */
 	function setVerbose($verbose)
 	{
 		$this->verbose = $verbose;
@@ -48,6 +57,9 @@ class KillSummaryTable
 		$this->filter = $filter;
 	}
 
+	/**
+	 * @param integer $weekno The week of the year to show.
+	 */
 	function setWeek($weekno)
 	{
 		$weekno=intval($weekno);
@@ -56,6 +68,9 @@ class KillSummaryTable
 		else $this->weekno = $weekno;
 	}
 
+	/**
+	 * @param integer $monthno The month of the year to show.
+	 */
 	function setMonth($monthno)
 	{
 		$monthno = intval($monthno);
@@ -64,6 +79,9 @@ class KillSummaryTable
 		else $this->monthno = $monthno;
 	}
 
+	/**
+	 * @param integer $yearno The year to show.
+	 */
 	function setYear($yearno)
 	{
 		// 1970-2038 is the allowable range for the timestamp code used
@@ -74,6 +92,10 @@ class KillSummaryTable
 		else $this->yearno = $yearno;
 	}
 
+	/**
+	 * Set a starting week. Show all kills since then.
+	 * @param integer $weekno The first week to show.
+	 */
 	function setStartWeek($weekno)
 	{
 		$weekno=intval($weekno);
@@ -82,19 +104,30 @@ class KillSummaryTable
 		else $this->startweekno = $weekno;
 	}
 
+	/**
+	 * Set a starting date. Show all kills since then.
+	 * @param string $timestamp The earliest date to show.
+	 */
 	function setStartDate($timestamp)
 	{
 		// Check timestamp is valid before adding
 		if(strtotime($timestamp)) $this->startDate = $timestamp;
 	}
 
+	/**
+	 * Set an ending date. Show all kills before then.
+	 * @param string $timestamp The firlatest date to show.
+	 */
 	function setEndDate($timestamp)
 	{
 		// Check timestamp is valid before adding
 		if(strtotime($timestamp)) $this->endDate = $timestamp;
 	}
 
-	// Return SQL for date filter using currently set date limits
+	/**
+	 * Return SQL for date filter using currently set date limits
+	 * @return string SQL date filter.
+	 */
 	function setDateFilter()
 	{
 		$sql = '';
@@ -106,36 +139,57 @@ class KillSummaryTable
 		return $sql;
 	}
 
+	/**
+	 * @return integer
+	 */
 	function getTotalKills()
 	{
 		return $this->tkcount;
 	}
 
+	/**
+	 * @return integer
+	 */
 	function getTotalRealKills()
 	{
 		return $this->trkcount;
 	}
 
+	/**
+	 * @return integer
+	 */
 	function getTotalLosses()
 	{
 		return $this->tlcount;
 	}
 
+	/**
+	 * @return integer
+	 */
 	function getTotalKillPoints()
 	{
 		return $this->tkpoints;
 	}
 
+	/**
+	 * @return integer
+	 */
 	function getTotalLossPoints()
 	{
 		return $this->tlpoints;
 	}
 
+	/**
+	 * @return float
+	 */
 	function getTotalKillISK()
 	{
 		return $this->tkisk;
 	}
 
+	/**
+	 * @return float
+	 */
 	function getTotalLossISK()
 	{
 		return $this->tlisk;
@@ -146,28 +200,46 @@ class KillSummaryTable
 		$this->view = $string;
 	}
 
+	/**
+	 * Add a Pilot ID as an involved party.
+	 * @param integer $pilot
+	 */
 	function addInvolvedPilot($pilot)
 	{
 		involved::add($this->inv_plt, $pilot);
 	}
 
+	/**
+	 * Add a Corporation ID as an involved party.
+	 * @param integer $corp
+	 */
 	function addInvolvedCorp($corp)
 	{
 		involved::add($this->inv_crp, $corp);
 	}
 
+	/**
+	 * Add an Alliance ID as an involved party.
+	 * @param integer $alliance
+	 */
 	function addInvolvedAlliance($alliance)
 	{
 		involved::add($this->inv_all, $alliance);
 	}
 
+	/**
+	 * Add a SolarSystem or SolarSystem ID as an involved party.
+	 * @param integer|SolarSystem $system
+	 */
 	function setSystem($system)
 	{
 		if(is_numeric($system)) $this->system[] = $system;
 		else $this->system[] = $system->getID();
 	}
 
-	// do it faster, baby!
+	/**
+	 * Fetch all kills.
+	 */
 	function getkills()
 	{
 		if($this->setDateFilter() == "" && empty($this->system))
@@ -436,6 +508,10 @@ class KillSummaryTable
 		}
 	}
 
+	/**
+	 * Generate the HTML for this summary table.
+	 * @return string Valid HTML representing this summary table.
+	 */
 	function generate()
 	{
 		if($this->html != '') return $this->html;
@@ -464,10 +540,17 @@ class KillSummaryTable
 				$entry[$shipclass->getName()]['losses'] = 0;
 				$entry[$shipclass->getName()]['losses_isk'] = 0;
 			}
+			$sql = "SELECT shp_id, scl_class, scl_class FROM kb3_ships ".
+					"INNER JOIN kb3_ship_classes ON scl_id = shp_class";
+			$qry->execute($sql);
+			$shipscl = array();
+			while($row = $qry->getRow()) {
+				$shipscl[$row['shp_id']] = $row['scl_class'];
+			}
 			// kills
 			while ($kill = $this->klist->getKill())
 			{
-				$classname = $kill->getVictimShipClassName();
+				$classname = $shipscl[$kill->getVictimShipID()];
 				$entry[$classname]['kills']++;
 				$entry[$classname]['kills_isk'] += $kill->getISKLoss();
 				$this->tkcount++;
@@ -476,7 +559,7 @@ class KillSummaryTable
 			// losses
 			while ($kill = $this->llist->getKill())
 			{
-				$classname = $kill->getVictimShipClassName();
+				$classname = $shipscl[$kill->getVictimShipID()];
 				$entry[$classname]['losses']++;
 				$entry[$classname]['losses_isk'] += $kill->getISKLoss();
 				$this->tlcount++;
