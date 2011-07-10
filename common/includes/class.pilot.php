@@ -11,14 +11,17 @@
  * Creates a new Pilot or fetches an existing one from the database.
  * @package EDK
  */
-class Pilot
+class Pilot extends Entity
 {
 	private $executed = false;
-	private $id_ = 0;
-	private $externalid_ = 0;
-	private $corpid_ = null;
-	private $valid_ = false;
+	private $id = 0;
+	private $externalid = 0;
+	private $corpid = null;
+	private $valid = false;
 	private $corp = null;
+	private $name = null;
+	private $updated = null;
+
 
 	/**
 	 * Create a new Pilot object from the given ID.
@@ -30,58 +33,67 @@ class Pilot
      */
 	function Pilot($id = 0, $externalID = 0, $name = null, $corp = null)
 	{
-		$this->id_ = intval($id);
-		$this->externalid_ = intval($externalID);
-		if(isset($name)) $this->name_ = $name;
-		if(isset($corp))
-		{
-			if(is_numeric($corp)) $this->corpid_ = $corp;
-			else
-			{
+		$this->id = intval($id);
+		$this->externalid = intval($externalID);
+		if(isset($name)) {
+			$this->name = $name;
+		}
+		if(isset($corp)) {
+			if(is_numeric($corp)) {
+				$this->corpid = $corp;
+			} else {
 				$this->corp = $corp;
-				$this->corpid_ = $corp->getID();
+				$this->corpid = $corp->getID();
 			}
 		}
 	}
 	/**
-	 * Return the alliance ID.
+	 * Return the pilot ID.
+	 *
+	 * @return integer
 	 */
-	public function getID()
+	function getID()
 	{
-		if($this->id_) return $this->id_;
-		elseif($this->externalid_)
-		{
+		if($this->id) {
+			return $this->id;
+		} else if($this->externalid) {
 			$this->execQuery();
-			return $this->id_;
+			return $this->id;
+		} else {
+			return 0;
 		}
-		else return 0;
 	}
 	/**
 	 * Return the pilot's CCP ID.
 	 * When populateList is true, the lookup will return 0 in favour of getting the
-         *  external ID from CCP. This helps the kill_detail page load times.
-         */
+	 *  external ID from CCP. This helps the kill_detail page load times.
+	 *
+	 * @param boolean $populateList
+	 * @return integer
+	 */
 	public function getExternalID($populateList = false)
 	{
-		if($this->externalid_) return $this->externalid_;
-		if(!$populateList)
-		{
+		if($this->externalid) {
+			return $this->externalid;
+		}
+		if(!$populateList) {
 			$this->execQuery();
-			if($this->externalid_) return $this->externalid_;
+			if($this->externalid) {
+				return $this->externalid;
+			}
 
 			$pqry = new DBPreparedQuery();
 			$sql = "SELECT typeID FROM kb3_invtypes, kb3_pilots WHERE typeName = plt_name AND plt_id = ?";
 			$id = "";
 			$pqry->prepare($sql);
-			$pqry->bind_param('i', $this->id_);
+			$pqry->bind_param('i', $this->id);
 			$pqry->bind_result($id);
-			if($pqry->execute())
-			{
+			if($pqry->execute()) {
 				if($pqry->recordCount())
 				{
 					$pqry->fetch();
 					$this->setCharacterID($id);
-					return $this->externalid_;
+					return $this->externalid;
 				}
 			}
 			$myID = new API_NametoID();
@@ -89,49 +101,55 @@ class Pilot
 			$myID->fetchXML();
 			$myNames = $myID->getNameData();
 
-			if($this->setCharacterID($myNames[0]['characterID']))
-				return $this->externalid_;
-			else return 0;
+			if($this->setCharacterID($myNames[0]['characterID'])) {
+				return $this->externalid;
+			} else {
+				return 0;
+			}
 		}
 		else return 0;
 	}
 	/**
 	 * Return the pilot name.
+	 *
+	 * @return string
 	 */
 	public function getName()
 	{
-		if(!$this->name_) $this->execQuery();
-		$pos = strpos($this->name_, "#");
-		if ($pos === false)
-		{
+		if(!$this->name) {
+			$this->execQuery();
+		}
+		$pos = strpos($this->name, "#");
+		if ($pos === false) {
 			// Hacky, hacky, hack hack
 			// TODO: Fix this and change old kills to suit.
-			$pos = strpos($this->name_, "- ");
-			if ($pos === false) return $this->name_;
-			else if(strpos($this->name_, "Moon")==false)
-				return substr($this->name_, $pos + 2);
-			else return $this->name_;
-		}
-		else
-		{
-			$name = explode("#", $this->name_);
+			$pos = strpos($this->name, "- ");
+			if ($pos === false) return $this->name;
+			else if(strpos($this->name, "Moon")==false)
+				return substr($this->name, $pos + 2);
+			else return $this->name;
+		} else {
+			$name = explode("#", $this->name);
 			return $name[3];
 		}
 	}
+
 	/**
 	 * Return the URL for the pilot's portrait.
 	 *
      * @param integer $size The desired portrait size.
-	 * @return mixed URL for a portrait.
+	 * @return string URL for a portrait.
      */
 	public function getPortraitURL($size = 64)
 	{
-		if(!$this->externalid_) $this->execQuery();
-		
-		if (!$this->externalid_)
-			return KB_HOST."/thumb.php?type=pilot&amp;id=".$this->id_."&amp;size=$size&amp;int=1";
-		else
-			return imageURL::getURL('Pilot', $this->externalid_, $size);
+		if(!$this->externalid) {
+			$this->execQuery();
+		}
+		if (!$this->externalid) {
+			return KB_HOST."/thumb.php?type=pilot&amp;id=".$this->id."&amp;size=$size&amp;int=1";
+		} else {
+			return imageURL::getURL('Pilot', $this->externalid, $size);
+		}
 	}
 	/**
 	 * Return the file path for the pilot's portrait.
@@ -141,13 +159,15 @@ class Pilot
 	 * @param integer $size The desired portrait size.
 	 * @param integer $id The pilot ID to use. If not given and this is instantiated
 	 * use the ID for this pilot.
-	 * @return mixed path for a portrait.
+	 * @return string path for a portrait.
      */
 	public function getPortraitPath($size = 64, $id = 0)
 	{
 		$size = intval($size);
 		$id = intval($id);
-		if(!$id) $id = $this->getExternalID();
+		if (!$id) {
+			$id = $this->getExternalID();
+		}
 		return CacheHandler::getInternal($id."_".$size.".jpg", "img");
 	}
 	/**
@@ -155,65 +175,76 @@ class Pilot
 	 */
 	private function execQuery()
 	{
-		if (!$this->executed)
-		{
-			if(!$this->externalid_ && !$this->id_)
-			{
-				$this->valid_ = false;
+		if (!$this->executed) {
+			if(!$this->externalid && !$this->id) {
+				$this->valid = false;
+				return;
+			}
+			if ($this->id && $this->isCached()) {
+				$cache = $this->getCache();
+				$this->valid = $cache->valid;
+				$this->id = $cache->id;
+				$this->name = $cache->name;
+				$this->corpid = $cache->corpid;
+				$this->externalid = $cache->externalid;
+
+				$this->executed = true;
 				return;
 			}
 			$qry = DBFactory::getDBQuery();
-			$this->sql_ = 'select * from kb3_pilots plt, kb3_corps crp, kb3_alliances ali
+			$sql = 'select * from kb3_pilots plt, kb3_corps crp, kb3_alliances ali
             	  	       where crp.crp_id = plt.plt_crp_id
             		       and ali.all_id = crp.crp_all_id ';
-			if($this->externalid_) $this->sql_ .= 'and plt.plt_externalid = '.$this->externalid_;
-			else $this->sql_ .= 'and plt.plt_id = '.$this->id_;
-			$qry->execute($this->sql_) or die($qry->getErrorMsg());
-			if($this->externalid_ && !$qry->recordCount())
-			{
+			if($this->externalid) {
+				$sql .= 'and plt.plt_externalid = '.$this->externalid;
+			} else {
+				$sql .= 'and plt.plt_id = '.$this->id;
+			}
+			$qry->execute($sql) or die($qry->getErrorMsg());
+			if($this->externalid && !$qry->recordCount()) {
 				$this->fetchPilot();
-				$this->valid_ = false;
-			}
-			else
-			if (!$qry->recordCount())
-			{
-				$this->valid_ = false;
-			}
-			else
-			{
+				$this->valid = false;
+			} else if (!$qry->recordCount()) {
+				$this->valid = false;
+			} else {
 				$row = $qry->getRow();
-				$this->valid_ = true;
-				$this->id_ = $row['plt_id'];
-				$this->name_ = $row['plt_name'];
-				$this->corpid_ = $row['plt_crp_id'];
-				$this->externalid_ = intval($row['plt_externalid']);
+				$this->valid = true;
+				$this->id = $row['plt_id'];
+				$this->name = $row['plt_name'];
+				$this->corpid = $row['plt_crp_id'];
+				$this->externalid = intval($row['plt_externalid']);
+				$this->putCache();
 
 			}
 			$this->executed = true;
 		}
 	}
 	/**
-	 * Return the corporation this pilot is a member of.
+	 * Return the most recently recorded Corporation this pilot is a member of.
 	 *
-	 * @return mixed Corporation object
+	 * @return Corporation Corporation object
      */
 	public function getCorp()
 	{
-		if(isset($this->corp)) return $this->corp;
-		if(!isset($this->corpid_)) $this->execQuery();
+		if(isset($this->corp)) {
+			return $this->corp;
+		}
+		if(!isset($this->corpid)) {
+			$this->execQuery();
+		}
 
-		$this->corp = new Corporation($this->corpid_);
+		$this->corp = new Corporation($this->corpid);
 		return $this->corp;
 	}
 	/**
 	 * Check if the id given on construction is valid.
 	 *
-	 * @return mixed boolean - true for exists.
+	 * @return boolean true if this pilot exists.
      */
 	public function exists()
 	{
 		$this->execQuery();
-		return $this->valid_;
+		return $this->valid;
 	}
 	/**
 	 * Add a new pilot to the database or update the details of an existing one.
@@ -258,12 +289,12 @@ class Pilot
 					$row = $qry->getRow();
 					$qryI->execute("UPDATE kb3_pilots SET plt_name = '".$name."' WHERE plt_externalid = ".$externalID);
 
-					$this->id_ = $row['plt_id'];
-					$this->name_ = $name;
-					$this->externalid_ = $row['plt_externalid'];
-					$this->corpid_ = $row['plt_crp_id'];
-					if(!is_null($row['plt_updated'])) $this->updated_ = strtotime($row['plt_updated']." UTC");
-					else $this->updated_ = null;
+					$this->id = $row['plt_id'];
+					$this->name = $name;
+					$this->externalid = $row['plt_externalid'];
+					$this->corpid = $row['plt_crp_id'];
+					if(!is_null($row['plt_updated'])) $this->updated = strtotime($row['plt_updated']." UTC");
+					else $this->updated = null;
 
 					// Now check if the corp needs to be updated.
 					if ($row['plt_crp_id'] != $corp->getID() && $this->isUpdatable($timestamp))
@@ -272,7 +303,8 @@ class Pilot
 									 set plt_crp_id = ".$corp->getID().",
 										 plt_updated = date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s') WHERE plt_externalid = ".$externalID);
 					}
-					return $this->id_;
+					$this->putCache();
+					return $this->id;
 				}
 			}
 			$qry->execute("insert into kb3_pilots (plt_name, plt_crp_id, plt_externalid, plt_updated) values (
@@ -283,47 +315,56 @@ class Pilot
 														ON DUPLICATE KEY UPDATE plt_crp_id=".$corp->getID().",
                                                         plt_externalid=".$externalID.",
                                                         plt_updated=date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s')");
-			$this->id_ = $qry->getInsertID();
-			$this->name_ = $name;
-			$this->corpid_ = $corp->getID();
-			$this->updated_ = strtotime(preg_replace("/\./","-",$timestamp)." UTC");
+			$this->id = $qry->getInsertID();
+			$this->name = $name;
+			$this->corpid = $corp->getID();
+			$this->updated = strtotime(preg_replace("/\./","-",$timestamp)." UTC");
 		}
 		else
 		{
 			$row = $qry->getRow();
-			$this->id_ = $row['plt_id'];
-			if(!is_null($row['plt_updated'])) $this->updated_ = strtotime($row['plt_updated']." UTC");
-			else $this->updated_ = null;
-			if ($this->isUpdatable($timestamp) && $row['plt_crp_id'] != $corp->getID())
-			{
+			$this->id = $row['plt_id'];
+			if(!is_null($row['plt_updated'])) {
+				$this->updated = strtotime($row['plt_updated']." UTC");
+			} else {
+				$this->updated = null;
+			}
+			if ($this->isUpdatable($timestamp) && $row['plt_crp_id'] != $corp->getID()) {
 				$qryI->execute("update kb3_pilots
                              set plt_crp_id = ".$corp->getID().",
-                                 plt_updated = date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s') where plt_id = ".$this->id_);
+                                 plt_updated = date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s') where plt_id = ".$this->id);
 			}
-			if (!$row['plt_externalid'] && $externalID) $this->setCharacterID($externalID);
+			if (!$row['plt_externalid'] && $externalID) {
+				$this->setCharacterID($externalID);
+			}
 			$this->corp = $corp;
-			$this->name_ = $name;
-			$this->corpid_ = $corp->getID();
+			$this->name = $name;
+			$this->corpid = $corp->getID();
 		}
-
-		return $this->id_;
+		$this->putCache();
+		return $this->id;
 	}
 	/**
 	 * Return whether this pilot was updated before the given timestamp.
 	 *
      * @param string $timestamp A timestamp to compare this pilot's details with.
-	 * @return mixed boolean - true if update time was before the given timestamp.
+	 * @return boolean - true if update time was before the given timestamp.
      */
 	public function isUpdatable($timestamp)
 	{
 		$timestamp = preg_replace("/\./","-",$timestamp);
-		if(isset($this->updated_))
-			if(is_null($this->updated_) || strtotime($timestamp." UTC") > $this->updated_) return true;
-			else return false;
+		if(isset($this->updated)) {
+			if(is_null($this->updated)
+					|| strtotime($timestamp." UTC") > $this->updated) {
+				return true;
+			} else {
+				return false;
+			}
+		}
 		$qry = DBFactory::getDBQuery();
 		$qry->execute("select plt_id
                         from kb3_pilots
-                       where plt_id = ".$this->id_."
+                       where plt_id = ".$this->id."
                          and ( plt_updated < date_format( '".$timestamp."', '%Y-%m-%d %H:%i')
                                or plt_updated is null )");
 
@@ -332,37 +373,38 @@ class Pilot
 	/**
 	 * Set the CCP external ID for this pilot.
 	 *
-     * @param integer $externalID CCP external ID for this pilot.
 	 * If a character already exists with this id then a name change is assumed
 	 * and the old pilot is updated.
+     * @param integer $externalID CCP external ID for this pilot.
      */
 	public function setCharacterID($externalID)
 	{
-		if (!intval($externalID))
-		{
+		if (!intval($externalID)) {
 			return false;
 		}
-		$this->externalid_ = intval($externalID);
+		$this->externalid = intval($externalID);
 		$qry = DBFactory::getDBQuery(true);
-		$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_externalid = ".$this->externalid_." AND plt_id <> ".$this->id_);
-		if($qry->recordCount())
-		{
+		$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_externalid = ".$this->externalid." AND plt_id <> ".$this->id);
+		if($qry->recordCount()) {
 			$result = $qry->getRow();
 			$qry->autocommit(false);
 			$old_id = $result['plt_id'];
-			$qry->execute("UPDATE kb3_kills SET kll_victim_id = ".$old_id." WHERE kll_victim_id = ".$this->id_);
-			$qry->execute("UPDATE kb3_kills SET kll_fb_plt_id = ".$old_id." WHERE kll_fb_plt_id = ".$this->id_);
-			$qry->execute("UPDATE kb3_inv_detail SET ind_plt_id = ".$old_id." WHERE ind_plt_id = ".$this->id_);
-			$qry->execute("DELETE FROM kb3_sum_pilot WHERE psm_plt_id = ".$this->id_);
+			$qry->execute("UPDATE kb3_kills SET kll_victim_id = ".$old_id." WHERE kll_victim_id = ".$this->id);
+			$qry->execute("UPDATE kb3_kills SET kll_fb_plt_id = ".$old_id." WHERE kll_fb_plt_id = ".$this->id);
+			$qry->execute("UPDATE kb3_inv_detail SET ind_plt_id = ".$old_id." WHERE ind_plt_id = ".$this->id);
+			$qry->execute("DELETE FROM kb3_sum_pilot WHERE psm_plt_id = ".$this->id);
 			$qry->execute("DELETE FROM kb3_sum_pilot WHERE psm_plt_id = ".$old_id);
-			$qry->execute("DELETE FROM kb3_pilots WHERE plt_id = ".$this->id_);
-			$qry->execute("UPDATE kb3_pilots SET plt_name = '".$qry->escape($this->name_)."' where plt_id = ".$old_id);
-			$this->id_ = $old_id;
+			$qry->execute("DELETE FROM kb3_pilots WHERE plt_id = ".$this->id);
+			$qry->execute("UPDATE kb3_pilots SET plt_name = '".$qry->escape($this->name)."' where plt_id = ".$old_id);
+			$this->id = $old_id;
 			$qry->autocommit(true);
+
+			$this->putCache();
 			return true;
 		}
-		$qry->execute("update kb3_pilots set plt_externalid = ".$this->externalid_."
-                       where plt_id = ".$this->id_);
+		$qry->execute("update kb3_pilots set plt_externalid = ".$this->externalid."
+                       where plt_id = ".$this->id);
+		$this->putCache();
 		return true;
 	}
     /**
@@ -376,12 +418,15 @@ class Pilot
         $qry->execute("select * from kb3_pilots
                        where plt_name = '".$qry->escape(stripslashes($name))."'");
         $row = $qry->getRow();
-        if ($row['plt_id']) $this->id_ = $row['plt_id'];
-		$this->name_ = $row['plt_name'];
-		$this->externalid_ = intval($row['plt_externalid']);
-		$this->corpid_ = $row['plt_crp_id'];
-		$this->updated_ = strtotime($row['plt_updated']." UTC");
-    }
+        if ($row['plt_id']) {
+			$this->id = $row['plt_id'];
+		}
+		$this->name = $row['plt_name'];
+		$this->externalid = intval($row['plt_externalid']);
+		$this->corpid = $row['plt_crp_id'];
+		$this->updated = strtotime($row['plt_updated']." UTC");
+
+}
 	
 	/**
 	 * Fetch the pilot name from CCP using the stored external ID.
@@ -390,10 +435,10 @@ class Pilot
 	 */
 	private function fetchPilot()
 	{
-		if(!$this->externalid_) return false;
+		if(!$this->externalid) return false;
 
 		$myID = new API_IDtoName();
-		$myID->setIDs($this->externalid_);
+		$myID->setIDs($this->externalid);
 		$myID->fetchXML();
 		$myNames = $myID->getIDData();
 		
