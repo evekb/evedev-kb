@@ -16,11 +16,10 @@ require_once('common/includes/xajax.functions.php');
  */
 class pKillDetail extends pageAssembly
 {
-/**
- * Construct the Pilot Details object.
- * Set up the basic variables of the class and add the functions to the
- *  build queue.
- */
+	/**
+	 * Construct the Pilot Details object.
+	 * Add the functions to the build queue.
+	 */
 	function __construct()
 	{
 		parent::__construct();
@@ -81,7 +80,7 @@ class pKillDetail extends pageAssembly
 
 		if($this->kll_id)
 		{
-			$this->kill = new Kill($this->kll_id);
+			$this->kill = Cacheable::factory('Kill', $this->kll_id);
 		}
 		else
 		{
@@ -226,7 +225,10 @@ class pKillDetail extends pageAssembly
 					}
 					else
 					{
-						for ($count=0; $count < $i_qty; $count++)
+						// Use a max of 8 as a sanity check.
+						// Avoids timeouts on badly faked mails.
+						// TODO: Refuse to show fitting and display an invalid message.
+						for ($count=0; $count < min($i_qty, 8); $count++)
 						{
 							if ($i_location == 1)
 							{
@@ -328,7 +330,9 @@ class pKillDetail extends pageAssembly
 					}
 					else
 					{
-						for ($count=0; $count < $i_qty; $count++)
+						// Use a max of 8 as a sanity check.
+						// Avoids timeouts on badly faked mails.
+						for ($count=0; $count < min($i_qty, 8); $count++)
 						{
 							if ($i_location == 1)
 							{
@@ -367,7 +371,7 @@ class pKillDetail extends pageAssembly
 		$this->ownKill= false;
 		$invlimit = config::get('kd_involvedlimit');
 		if(!is_numeric($invlimit)) $this->nolimit = 1;
-		foreach ($this->kill->involvedparties_ as $inv)
+		foreach ($this->kill->getInvolved() as $inv)
 		{
 			$pilot                     =$inv->getPilot();
 			$corp                      =$inv->getCorp();
@@ -1044,33 +1048,12 @@ class pKillDetail extends pageAssembly
 		}
 		$smarty->assign('showverify', config::get('kd_verify'));
 
-		//$hicount =count($this->fitting_array[1]);
-		//$medcount=count($this->fitting_array[2]);
-		//$lowcount=count($this->fitting_array[3]);
-		//$rigcount=count($this->fitting_array[5]);
-
-		$hicount = 0; //zero the values;
-		$medcount = 0;
-		$lowcount = 0;
-		$rigcount = 0;
-
-
 		//get the actual slot count for each vessel - for the fitting panel
-		$ship = $this->kill->getVictimShip();
-		$sql = 'SELECT `attributeID`, `value` FROM `kb3_dgmtypeattributes` WHERE '.
-			    '`attributeID` IN ( 12, 13, 14, 1137) AND `typeID` = '. $ship->getExternalID(). ';';
-		$qry = DBFactory::getDBQuery();
-		$qry->execute($sql);
-		while($row = $qry->getRow())
-		{
-		    switch($row["attributeID"])
-		    {
-			case '12': { $lowcount = $row["value"]; break; }
-			case '13': { $medcount = $row["value"]; break; }
-			case '14': { $hicount = $row["value"]; break; }
-			case '1137': { $rigcount = $row["value"]; break; }
-		    }
-		}
+		$dogma = Cacheable::factory('dogma', $this->kill->getVictimShipExternalID());
+		$lowcount = (int)$dogma->attrib['lowSlots']['value'];
+		$medcount = (int)$dogma->attrib['medSlots']['value'];
+		$hicount = (int)$dogma->attrib['hiSlots']['value'];
+		$rigcount = (int)$dogma->attrib['rigSlots']['value'];
 
 		$subcount = count($this->fitting_array[7]);
 
