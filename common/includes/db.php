@@ -21,9 +21,6 @@ if ($value < 5)
 	die("EDK 3 requires MySQL version 5.0+. Your version is ".$value);
 }
 
-// DB_HALTONERROR may have been defined externally for sensitive operations.
-if(!defined('DB_HALTONERROR')) define('DB_HALTONERROR', (bool)config::get('cfg_sqlhalt'));
-
 // Check if caching has been configured already.
 if(defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE == true)
 {
@@ -71,3 +68,6 @@ else
 		define("DB_USE_MEMCACHE", false);
 	}
 }
+
+// DB_HALTONERROR may have been defined externally for sensitive operations.
+if(!defined('DB_HALTONERROR')) define('DB_HALTONERROR', (bool)config::get('cfg_sqlhalt'));
