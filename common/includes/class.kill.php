@@ -815,18 +815,21 @@ class Kill
 	function relatedKillCount()
 	{
 		// No details for classified kills.
-		if($this->isClassified()) return 0;
-		if($this->relatedkillcount_) return $this->relatedkillcount_;
+		if($this->isClassified()) {
+			return 0;
+		}
+		if($this->relatedkillcount_) {
+			return $this->relatedkillcount_;
+		}
 
 		if(config::get('cfg_pilotid') && config::get('cfg_allianceid')
 			|| config::get('cfg_pilotid') && config::get('cfg_corpid')
-			|| config::get('cfg_corpid') && config::get('cfg_allianceid'))
-		{
-			$sql ="SELECT COUNT(ind_kll_id) AS kills FROM kb3_inv_detail INNER JOIN
+			|| config::get('cfg_corpid') && config::get('cfg_allianceid')) {
+			$sql ="SELECT COUNT(DISTINCT ind_kll_id) AS kills FROM kb3_inv_detail INNER JOIN
 				kb3_kills ON (kll_id = ind_kll_id) WHERE
-				ind_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
-				AND ind_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
-				AND kll_system_id = ".$this->solarsystem_->getID();
+				ind_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) + 60 * 60))."'
+				AND ind_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) - 60 * 60))."'
+				AND kll_system_id = ".$this->getSystem()->getID();
 			$sqlinv = array();
 			if(config::get('cfg_allianceid'))
 				$sqlinv[] = "ind_all_id in (".implode(",", config::get('cfg_allianceid')).")";
@@ -834,93 +837,94 @@ class Kill
 				$sqlinv[] = "ind_crp_id in (".implode(",", config::get('cfg_corpid')).")";
 			if(config::get('cfg_pilotid'))
 				$sqlinv[] = "ind_plt_id in (".implode(",", config::get('cfg_pilotid')).")";
-			$sql .= " AND (".implode(" OR ", $sqlinv).") GROUP BY ind_kll_id";
-		}
-		else if(config::get('cfg_allianceid'))
-		{
-			$sql ="SELECT COUNT(ina_kll_id) AS kills FROM kb3_inv_all INNER JOIN
-				kb3_kills ON (kll_id = ina_kll_id) WHERE 
+			$sql .= " AND (".implode(" OR ", $sqlinv).")";
+		} else if(config::get('cfg_allianceid')) {
+			$sql ="SELECT COUNT(DISTINCT ina_kll_id) AS kills FROM kb3_inv_all INNER JOIN
+				kb3_kills ON (kll_id = ina_kll_id) WHERE
 				ina_all_id in (".implode(",", config::get('cfg_allianceid')).") AND
-				ina_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
-				AND ina_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
-				AND kll_system_id = ".$this->solarsystem_->getID();
-		}
-		else if(config::get('cfg_corpid'))
-		{
-			$sql ="SELECT COUNT(inc_kll_id) AS kills FROM kb3_inv_crp INNER JOIN
-				kb3_kills ON (kll_id = inc_kll_id) WHERE 
+				ina_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) + 60 * 60))."'
+				AND ina_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) - 60 * 60))."'
+				AND kll_system_id = ".$this->getSystem()->getID();
+		} else if(config::get('cfg_corpid')) {
+			$sql ="SELECT COUNT(DISTINCT inc_kll_id) AS kills FROM kb3_inv_crp INNER JOIN
+				kb3_kills ON (kll_id = inc_kll_id) WHERE
 				inc_crp_id in (".implode(",", config::get('cfg_corpid')).") AND
-				inc_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
-				AND inc_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
-				AND kll_system_id = ".$this->solarsystem_->getID();
-		}
-		else if(config::get('cfg_pilotid'))
-		{
-			$sql ="SELECT COUNT(ind_kll_id) AS kills FROM kb3_inv_detail INNER JOIN
-				kb3_kills ON (kll_id = ind_kll_id) WHERE 
+				inc_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) + 60 * 60))."'
+				AND inc_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) - 60 * 60))."'
+				AND kll_system_id = ".$this->getSystem()->getID();
+		} else if(config::get('cfg_pilotid')) {
+			$sql ="SELECT COUNT(DISTINCT ind_kll_id) AS kills FROM kb3_inv_detail INNER JOIN
+				kb3_kills ON (kll_id = ind_kll_id) WHERE
 				ind_plt_id in (".implode(",", config::get('cfg_pilotid')).") AND
-				ind_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
-				AND ind_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
-				AND kll_system_id = ".$this->solarsystem_->getID();
-		}
-		else
-		{
+				ind_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) + 60 * 60))."'
+				AND ind_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) - 60 * 60))."'
+				AND kll_system_id = ".$this->getSystem()->getID();
+		} else {
 			$sql ="SELECT COUNT(kll_id) AS kills FROM kb3_kills WHERE
-				kll_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60))."'
-				AND kll_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'
-				AND kll_system_id = ".$this->solarsystem_->getID();
+				kll_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) + 60 * 60))."'
+				AND kll_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) - 60 * 60))."'
+				AND kll_system_id = ".$this->getSystem()->getID();
 		}
 		$sql .= " /* related kill count */ ";
 		$qry = DBFactory::getDBQuery();
-		if(!$qry->execute($sql)) return 0;
+		if(!$qry->execute($sql)) {
+			return 0;
+		}
 		$res=$qry->getRow();
 		$this->relatedkillcount_ = $res['kills'];
+		// Do not cache between page loads.
 		return $this->relatedkillcount_;
 	}
 
-	//! Count all losses by board owner related to this kill
+	/**
+	 * Count all losses by board owner related to this kill
+	 *
+	 * @return integer
+	 */
 	function relatedLossCount()
 	{
 		// No details for classified kills.
-		if($this->isClassified()) return 0;
-		if($this->relatedlosscount_) return $this->relatedlosscount_;
+		if($this->isClassified()) {
+			return 0;
+		}
+		if($this->relatedlosscount_) {
+			return $this->relatedlosscount_;
+		}
 		$sql="SELECT count(kll.kll_id) AS losses FROM kb3_kills kll ";
-		$sql.="WHERE kll.kll_system_id = ".$this->solarsystem_->getID().
+		$sql.="WHERE kll.kll_system_id = ".$this->getSystem()->getID().
 			" AND kll.kll_timestamp <= '".
-			(date('Y-m-d H:i:s',strtotime($this->timestamp_) + 60 * 60)).
+			(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) + 60 * 60)).
 			"' AND kll.kll_timestamp >= '".
-			(date('Y-m-d H:i:s',strtotime($this->timestamp_) - 60 * 60))."'";
+			(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) - 60 * 60))."'";
 		$sqlInv = array();
 		$sqlVic = array();
 		$inv = false;
-		if(config::get('cfg_allianceid'))
-		{
+		if(config::get('cfg_allianceid')) {
 			$sqlInv[] = "EXISTS (SELECT * FROM kb3_inv_detail WHERE ind_kll_id = kll.kll_id".
 				" AND ind_all_id NOT IN (".implode(",", config::get('cfg_allianceid')).") LIMIT 1)";
 			$sqlVic[] = "kll.kll_all_id IN (".implode(",", config::get('cfg_allianceid')).")";
 			$inv = true;
 		}
-		if(config::get('cfg_corpid'))
-		{
+		if(config::get('cfg_corpid')) {
 			$sqlInv[] = "EXISTS (SELECT * FROM kb3_inv_detail WHERE ind_kll_id = kll.kll_id".
 				" AND ind_crp_id NOT IN (".implode(",", config::get('cfg_corpid')).") LIMIT 1)";
 			$sqlVic[] .= "kll.kll_crp_id IN (".implode(",", config::get('cfg_corpid')).")";
 			$inv = true;
 		}
-		if(config::get('cfg_pilotid'))
-		{
+		if(config::get('cfg_pilotid')) {
 			$sqlInv[] = "EXISTS (SELECT * FROM kb3_inv_detail WHERE ind_kll_id = kll.kll_id".
 				" AND ind_plt_id NOT IN (".implode(",", config::get('cfg_pilotid')).") LIMIT 1)";
 			$sqlVic[] .= "kll.kll_victim_id IN (".implode(",", config::get('cfg_pilotid')).")";
 			$inv = true;
 		}
-		if($inv)
-		{
+		if($inv) {
 			$sql .= " AND (".implode(' OR ', $sqlInv).") AND (".implode(' OR ', $sqlVic).") ";
 		}
 		$sql .= "/* related loss count */";
 		$qry = DBFactory::getDBQuery();
-		if(!$qry->execute($sql)) return 0;
+		if(!$qry->execute($sql)) {
+			return 0;
+		}
 		$res=$qry->getRow();
 		$this->relatedlosscount_ = $res['losses'];
 		return $this->relatedlosscount_;
