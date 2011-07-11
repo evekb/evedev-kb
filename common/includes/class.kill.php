@@ -565,14 +565,22 @@ class Kill extends Cacheable
 		}
 
 		foreach ($this->involvedparties_ as $inv) {
+			/* @var $inv InvolvedParty */
 			$pilot = new Pilot($inv->getPilotID());
 			$corp = new Corporation($inv->getCorpID());
 			$alliance = new Alliance($inv->getAllianceID());
 
 			$weapon = $inv->getWeapon();
 			$ship = $inv->getShip();
-			if ($pilot->getName() == $weapon->getName())
-			{
+			if (!$pilot->getName()
+					|| !$corp->getName()
+					|| !$alliance->getName()
+					|| !$weapon->getName()
+					|| !$ship->getName()) {
+				trigger_error("Invalid mail", E_USER_ERROR);
+				return "";
+			}
+			if ($pilot->getName() == $weapon->getName()) {
 				$name = $pilot->getName()." / ".$corp->getName();
 			} else {
 				$name = $pilot->getName();
