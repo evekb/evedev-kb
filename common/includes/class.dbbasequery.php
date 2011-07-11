@@ -19,14 +19,15 @@ abstract class DBBaseQuery
 	static protected $queryCount = 0;
 	static protected $queryCachedCount = 0;
 
-	/** Return the count of queries performed.
+	/**
+	 * Return the count of queries performed.
+	 * 
 	 * @param boolean $increase if true then increment the count.
-	 * @return mixed the count of queries so far.
+	 * @return integer the count of queries so far.
 	 */
 	public static function queryCount($increase = false)
 	{
-		if($increase)
-		{
+		if($increase) {
 			self::$queryCount++;
 		}
 
@@ -36,12 +37,11 @@ abstract class DBBaseQuery
 	/** Return the count of cached queries performed.
 	 *
 	 * @param boolean $increase if true then increment the count.
-	 * @return integer the count of queries so far.
+	 * @return integer the count of cached queries so far.
 	 */
 	public static function queryCachedCount($increase = false)
 	{
-		if($increase)
-		{
+		if($increase) {
 			self::$queryCachedCount++;
 		}
 
@@ -57,7 +57,9 @@ abstract class DBBaseQuery
 	 */
 	public static function affectedRows()
 	{
-		if(is_null(self::$dbconn)) return 0;
+		if(is_null(self::$dbconn)) {
+			return 0;
+		}
 		return self::$dbconn->affectedRows();
 	}
 
@@ -70,12 +72,14 @@ abstract class DBBaseQuery
 
 	/**
 	 * Return the number of rows returned by the last query.
+	 * 
 	 * @return integer
 	 */
 	abstract public function recordCount();
 
 	/**
 	 * Return the next row of results from the last query.
+	 * 
 	 * @return array
 	 */
 	abstract public function getRow();
@@ -87,16 +91,20 @@ abstract class DBBaseQuery
 
 	/**
 	 * Return the auto-increment ID from the last insert operation.
+	 * 
 	 * @return integer
 	 */
 	public function getInsertID()
 	{
-		if(is_null(self::$dbconn)) return null;
+		if(is_null(self::$dbconn)) {
+			return null;
+		}
 		return self::$dbconn->id()->insert_id;
 	}
 
 	/**
-	 * Return the execution time of the last query.
+	 * Return the execution time of all queries so far.
+	 * 
 	 * @return integer
 	 */
 	static function getTotalTime()
@@ -124,7 +132,8 @@ abstract class DBBaseQuery
 		return $this->executed;
 	}
 
-	/** Return an escaped string for use in a query.
+	/**
+	 * Return an escaped string for use in a query.
 	 *
 	 * @param string $string The string to escape.
 	 * @param boolean $escapeall Set true to also escape _ and % for LIKE queries.
@@ -132,14 +141,21 @@ abstract class DBBaseQuery
 	 */
 	public static function escape($string, $escapeall = false)
 	{
-		if(is_null(self::$dbconn)) self::$dbconn = new DBConnection();
-		if($escapeall)
-				return addcslashes(self::$dbconn->id()->real_escape_string($string), '%_');
-		else return self::$dbconn->id()->real_escape_string($string);
+		if(is_null(self::$dbconn)) {
+			self::$dbconn = new DBConnection();
+		}
+
+		if($escapeall) {
+			return addcslashes(
+					self::$dbconn->id()->real_escape_string($string), '%_');
+		} else {
+			return self::$dbconn->id()->real_escape_string($string);
+		}
 	}
 
 	/**
 	 * Return the most recent error message for the DB connection.
+	 * 
 	 * @return string
 	 */
 	abstract public function getErrorMsg();
