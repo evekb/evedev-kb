@@ -35,6 +35,9 @@ class EDKError
 			case E_USER_DEPRECATED:
 				$output .= "<b>DEPRECATED</b> [$errno] $errstr<br />\n";
 				break;
+			case E_STRICT:
+				$output .= "<b>STRICT</b> [$errno] $errstr<br />\n";
+				break;
 			default:
 				$output .= "Unknown error type: [$errno] $errstr<br />\n";
 				break;
