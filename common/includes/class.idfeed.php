@@ -106,6 +106,10 @@ class IDFeed
 				return false;
 			}
 		}
+		if (strpos($this->xml, '<eveapi') === false) {
+				trigger_error("Not a valid EVEAPI feed.", E_USER_WARNING);
+				return false;
+		}
 		return $this->processFeed();
 	}
 	function setXML($xml)
@@ -312,7 +316,7 @@ class IDFeed
 			$this->errormsg = strval($sxe->error);
 			return 0;
 		}
-		if(!is_null($sxe->result)) foreach($sxe->result->rowset->row as $row) $this->processKill($row);
+		if(!is_null($sxe->result->row)) foreach($sxe->result->rowset->row as $row) $this->processKill($row);
 		return count($this->posted) + count($this->skipped);
 	}
 	private function processKill($row)
