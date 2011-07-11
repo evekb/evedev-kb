@@ -83,7 +83,7 @@ class pAllianceDetail extends pageAssembly
 		}
 		else
 		{
-			$this->alliance = new Alliance($this->all_id);
+			$this->alliance = Cacheable::factory('Alliance', $this->all_id);
 			$this->all_external_id = $this->alliance->getExternalID();
 		}
 
@@ -127,8 +127,8 @@ class pAllianceDetail extends pageAssembly
 		$smarty->assign('pyear', $this->pyear);
 		$smarty->assign('nmonth', $this->nmonth);
 		$smarty->assign('nyear', $this->nyear);
-		if($this->alliance->isFaction()) $this->page->setTitle('Faction details - '.$this->alliance->getName());
-		else $this->page->setTitle('Alliance details - '.$this->alliance->getName());
+		if($this->alliance->isFaction()) $this->page->setTitle(Language::get('page_faction_det').' - '.$this->alliance->getName());
+		else $this->page->setTitle(Language::get('page_all_det').' - '.$this->alliance->getName());
 
 		$smarty->assign('all_name', $this->alliance->getName());
 		$smarty->assign('all_id', $this->alliance->getID());
@@ -164,8 +164,8 @@ class pAllianceDetail extends pageAssembly
 		if($this->alliance->getExternalID()) $myAlliance = $myAlliAPI->LocateAllianceID( $this->alliance->getExternalID() );
 		else $myAlliance = $myAlliAPI->LocateAlliance( $this->alliance->getName() );
 
-		if($this->alliance->isFaction()) $this->page->setTitle('Faction details - '.$this->alliance->getName() . " [" . $myAlliance["shortName"] . "]");
-		else $this->page->setTitle('Alliance details - '.$this->alliance->getName() . " [" . $myAlliance["shortName"] . "]");
+		if($this->alliance->isFaction()) $this->page->setTitle(Language::get('page_faction_det').' - '.$this->alliance->getName() . " [" . $myAlliance["shortName"] . "]");
+		else $this->page->setTitle(Language::get('page_all_det').' - '.$this->alliance->getName() . " [" . $myAlliance["shortName"] . "]");
 
 		$myCorpAPI = new API_CorporationSheet();
 
@@ -281,7 +281,7 @@ class pAllianceDetail extends pageAssembly
 	{
 		global $smarty;
 		if($this->view == '')
-			$smarty->assign('view', 'recent_activity');
+			$smarty->assign('view', Language::get('recent'));
 		else
 			$smarty->assign('view', $this->view);
 
@@ -359,7 +359,7 @@ class pAllianceDetail extends pageAssembly
 
 				break;
 			case "corp_kills":
-				$smarty->assign('title', 'Top Killers');
+				$smarty->assign('title', Language::get('topkillers'));
 				$smarty->assign('month', $this->monthname);
 				$smarty->assign('year', $this->year);
 				$smarty->assign('pmonth', $this->pmonth);
@@ -375,20 +375,20 @@ class pAllianceDetail extends pageAssembly
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
-				$table = new TopTable_Corp($list, "Kills");
+				$table = new TopTable_Corp($list, Language::get('kills'));
 				$smarty->assign('monthly_stats', $table->generate());
 
 				$list = new TopList_CorpKills();
 				$list->addInvolvedAlliance($this->alliance);
 				$list->setPodsNoobShips(config::get('podnoobs'));
-				$table = new TopTable_Corp($list, "Kills");
+				$table = new TopTable_Corp($list, Language::get('kills'));
 				$smarty->assign('total_stats', $table->generate());
 
 				return $smarty->fetch(get_tpl('detail_kl_monthly'));
 
 				break;
 			case "corp_kills_class":
-				$smarty->assign('title', 'Destroyed Ships');
+				$smarty->assign('title', Language::get('topdestroyedships'));
 
 				// Get all ShipClasses
 				$sql = "select scl_id, scl_class from kb3_ship_classes
@@ -408,7 +408,7 @@ class pAllianceDetail extends pageAssembly
 					$list = new TopList_CorpKills();
 					$list->addInvolvedAlliance($this->alliance);
 					$list->addVictimShipClass($shp);
-					$table = new TopTable_Corp($list, "Kills");
+					$table = new TopTable_Corp($list, Language::get('kills'));
 					$content = $table->generate();
 					$ships[] = array('name'=>$shp->getName(), 'table'=>$content);
 				}
@@ -418,7 +418,7 @@ class pAllianceDetail extends pageAssembly
 
 				break;
 			case "kills_class":
-				$smarty->assign('title', 'Destroyed Ships');
+				$smarty->assign('title', Language::get('topdestroyedships'));
 
 				// Get all ShipClasses
 				$sql = "select scl_id, scl_class from kb3_ship_classes
@@ -435,7 +435,7 @@ class pAllianceDetail extends pageAssembly
 					$list = new TopList_Kills();
 					$list->addInvolvedAlliance($this->alliance);
 					$list->addVictimShipClass($shp);
-					$table = new TopTable_Pilot($list, "Kills");
+					$table = new TopTable_Pilot($list, Language::get('kills'));
 					$content = $table->generate();
 					$ships[] = array('name'=>$shp->getName(), 'table'=>$content);
 				}
@@ -444,7 +444,7 @@ class pAllianceDetail extends pageAssembly
 
 				break;
 			case "corp_losses_class":
-				$smarty->assign('title', 'Lost Ships');
+				$smarty->assign('title', Language::get('toplostships'));
 
 				// Get all ShipClasses
 				$sql = "select scl_id, scl_class from kb3_ship_classes
@@ -461,7 +461,7 @@ class pAllianceDetail extends pageAssembly
 					$list = new TopList_CorpLosses();
 						$list->addVictimAlliance($this->alliance);
 					$list->addVictimShipClass($shp);
-					$table = new TopTable_Corp($list, "Losses");
+					$table = new TopTable_Corp($list, Language::get('losses'));
 					$content = $table->generate();
 					$ships[] = array('name'=>$shp->getName(), 'table'=>$content);
 				}
@@ -470,7 +470,7 @@ class pAllianceDetail extends pageAssembly
 
 				break;
 			case "losses_class":
-				$smarty->assign('title', 'Lost Ships');
+				$smarty->assign('title', Language::get('toplostships'));
 
 
 					// Get all ShipClasses
@@ -488,7 +488,7 @@ class pAllianceDetail extends pageAssembly
 					$list = new TopList_Losses();
 					$list->addVictimAlliance($this->alliance);
 					$list->addVictimShipClass($shp);
-					$table = new TopTable_Pilot($list, "Losses");
+					$table = new TopTable_Pilot($list, Language::get('losses'));
 					$content = $table->generate();
 					$ships[] = array('name'=>$shp->getName(), 'table'=>$content);
 				}
@@ -497,7 +497,7 @@ class pAllianceDetail extends pageAssembly
 
 				break;
 			case "corp_losses":
-				$smarty->assign('title', 'Top Losers');
+				$smarty->assign('title', Language::get('toplosers'));
 				$smarty->assign('month', $this->monthname);
 				$smarty->assign('year', $this->year);
 				$smarty->assign('pmonth', $this->pmonth);
@@ -513,20 +513,20 @@ class pAllianceDetail extends pageAssembly
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
-				$table = new TopTable_Corp($list, "Losses");
+				$table = new TopTable_Corp($list, Language::get('losses'));
 				$smarty->assign('monthly_stats', $table->generate());
 
 				$list = new TopList_CorpLosses();
 				$list->addVictimAlliance($this->alliance);
 				$list->setPodsNoobShips(config::get('podnoobs'));
-				$table = new TopTable_Corp($list, "Losses");
+				$table = new TopTable_Corp($list, Language::get('losses'));
 				$smarty->assign('total_stats', $table->generate());
 
 				return $smarty->fetch(get_tpl('detail_kl_monthly'));
 
 				break;
 			case "pilot_kills":
-				$smarty->assign('title', 'Top Killers');
+				$smarty->assign('title', Language::get('topkillers'));
 				$smarty->assign('month', $this->monthname);
 				$smarty->assign('year', $this->year);
 				$smarty->assign('pmonth', $this->pmonth);
@@ -542,20 +542,20 @@ class pAllianceDetail extends pageAssembly
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
-				$table = new TopTable_Pilot($list, "Kills");
+				$table = new TopTable_Pilot($list, Language::get('kills'));
 				$smarty->assign('monthly_stats', $table->generate());
 
 				$list = new TopList_Kills();
 				$list->addInvolvedAlliance($this->alliance);
 				$list->setPodsNoobShips(config::get('podnoobs'));
-				$table = new TopTable_Pilot($list, "Kills");
+				$table = new TopTable_Pilot($list, Language::get('kills'));
 				$smarty->assign('total_stats', $table->generate());
 
 				return $smarty->fetch(get_tpl('detail_kl_monthly'));
 
 				break;
 			case "pilot_scores":
-				$smarty->assign('title', 'Top Scorers');
+				$smarty->assign('title', Language::get('topscorers'));
 				$smarty->assign('month', $this->monthname);
 				$smarty->assign('year', $this->year);
 				$smarty->assign('pmonth', $this->pmonth);
@@ -570,19 +570,19 @@ class pAllianceDetail extends pageAssembly
 				$list->addInvolvedAlliance($this->alliance);
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
-				$table = new TopTable_Pilot($list, "Points");
+				$table = new TopTable_Pilot($list, Language::get('top_points'));
 				$smarty->assign('monthly_stats', $table->generate());
 
 				$list = new TopList_Score();
 				$list->addInvolvedAlliance($this->alliance);
-				$table = new TopTable_Pilot($list, "Points");
+				$table = new TopTable_Pilot($list, Language::get('top_points'));
 				$smarty->assign('total_stats', $table->generate());
 
 				return $smarty->fetch(get_tpl('detail_kl_monthly'));
 
 				break;
 			case "pilot_losses":
-				$smarty->assign('title', 'Top Losers');
+				$smarty->assign('title', Language::get('toplosers'));
 				$smarty->assign('month', $this->monthname);
 				$smarty->assign('year', $this->year);
 				$smarty->assign('pmonth', $this->pmonth);
@@ -598,13 +598,13 @@ class pAllianceDetail extends pageAssembly
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
 				$list->setYear($this->year);
-				$table = new TopTable_Pilot($list, "Losses");
+				$table = new TopTable_Pilot($list, Language::get('losses'));
 				$smarty->assign('monthly_stats', $table->generate());
 
 				$list = new TopList_Losses();
 				$list->addVictimAlliance($this->alliance);
 				$list->setPodsNoobShips(config::get('podnoobs'));
-				$table = new TopTable_Pilot($list, "Losses");
+				$table = new TopTable_Pilot($list, Language::get('losses'));
 				$smarty->assign('total_stats', $table->generate());
 
 				return $smarty->fetch(get_tpl('detail_kl_monthly'));
@@ -620,12 +620,13 @@ class pAllianceDetail extends pageAssembly
 				$weaponlist = new TopList_Weapon();
 				$weaponlist->addInvolvedAlliance($this->alliance);
 				$weaponlisttable = new TopTable_Weapon($weaponlist);
+				$smarty->assign('title', Language::get('ships_weapons'));
 				$smarty->assign('weapons', $weaponlisttable->generate());
 				return $smarty->fetch(get_tpl('detail_kl_ships_weapons'));
 
 				break;
 			case 'violent_systems':
-				$smarty->assign('title', 'Most violent systems');
+				$smarty->assign('title', Language::get('topmostviolentsys'));
 				$smarty->assign('month', $this->monthname);
 				$smarty->assign('year', $this->year);
 				$smarty->assign('pmonth', $this->pmonth);

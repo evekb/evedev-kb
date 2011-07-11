@@ -26,12 +26,7 @@ class pAbout extends pageAssembly
 	
 	function start()
 	{
-		if(defined('EDK_LANGUAGE') && EDK_LANGUAGE)
-		{
-			include("common/language/".config::get("cfg_language").".php");
-			$this->page = new Page($language[config::get("cfg_language")]['page_about']);
-		}
-		else $this->page = new Page("About");
+		$this->page = new Page(language::get('page_about'));
 	}
 	
 	function developers()

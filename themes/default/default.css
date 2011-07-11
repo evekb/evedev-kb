@@ -1,82 +1,82 @@
 html, body
 {
-  margin: 0px;
-  color: #dfdfdf;
-  padding: 0px;
-  height: 100%;
-  background-color: #222222;
+	margin: 0px;
+	color: #dfdfdf;
+	padding: 0px;
+	height: 100%;
+	background-color: #222222;
 }
 
 .navigation
 {
-  background: #111111;
-  padding: 0px;
-  border-collapse: separate;
-  border-spacing: 1px;
+	background: #111111;
+	padding: 0px;
+	border-collapse: separate;
+	border-spacing: 1px;
 }
 
 font,th,td,p,a,div
 {
-  font-family: Verdana, "Bitstream Vera Sans", Arial, Helvetica;
+	font-family: Verdana, "Bitstream Vera Sans", Arial, Helvetica;
 }
 
 td
 {
-  padding: 1px;
+	padding: 1px;
 }
 
 .main-table
 {
-  width: 950px;
-  height: 100%;
+	width: 950px;
+	height: 100%;
 
-  border-left: 1px solid #555555;
-  border-right: 1px solid #555555;
-  border-top: 0px solid #555555;
-  border-bottom: 0px solid #555555;
-  padding: 0px;
-  border-collapse: separate;
-  border-spacing: 0px;
+	border-left: 1px solid #555555;
+	border-right: 1px solid #555555;
+	border-top: 0px solid #555555;
+	border-bottom: 0px solid #555555;
+	padding: 0px;
+	border-collapse: separate;
+	border-spacing: 0px;
 }
 
 .kill-points
 {
-  font-weight: bold;
-  font-size: 18px;
-  text-align: center;
+	font-weight: bold;
+	font-size: 18px;
+	text-align: center;
 }
 
 input, button, select
 {
-  border: 1px solid #eeeeee;
-  font-size: 9px;
+	border: 1px solid #eeeeee;
+	font-size: 9px;
 }
 
 #content
 {
-  margin-top: 10px;
-  padding: 10px;
-  width: 760px;
+	margin-top: 10px;
+	padding: 10px;
+	width: 760px;
 
-  background: #111111;
+	background: #111111;
 
-  font-size: 11px;
+	font-size: 11px;
 }
 
 #context, .context_element
 {
-  margin-top: 10px;
-  padding: 10px;
-  width: 145px;
+	margin-top: 10px;
+	padding: 10px;
+	width: 145px;
 }
 
 div.bar
 {
-  height: 6px;
-  background: #ffa500;
-  border-bottom: 1px #ac7000 solid;
-  border-right: 1px #ac7000 solid;
-  font-size: 4px;
+	height: 6px;
+	background: #ffa500;
+	border-bottom: 1px #ac7000 solid;
+	border-right: 1px #ac7000 solid;
+	font-size: 4px;
 }
 
 div.bar-background
@@ -88,165 +88,167 @@ div.bar-background
 
 div.bar-red
 {
-  height: 8px;
-  background: #330000;
-  border-bottom: 1px #220000 solid;
-  border-right: 1px #220000 solid;
+	height: 8px;
+	background: #330000;
+	border-bottom: 1px #220000 solid;
+	border-right: 1px #220000 solid;
 }
 
 .box-title
 {
-  background: #333333;
-  text-align: center;
-  font-size: 12px;
-  font-weight: bold;
-  height: 20px;
+	background: #333333;
+	text-align: center;
+	font-size: 12px;
+	font-weight: bold;
+	height: 20px;
 }
 
 .box-content
 {
-  padding: 10px;
-  margin-bottom: 20px;
-  width: 150px;
+	padding: 10px;
+	margin-bottom: 20px;
+	width: 150px;
 }
 
 .menu-wrapper
 {
-  padding-top: 5px;
-  padding-bottom: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
 
 .menu-caption
 {
-  margin-top: 5px;
-  margin-bottom: 5px;
-  font-weight: bold;
-  padding-left: 5px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	font-weight: bold;
+	padding-left: 5px;
 }
 
 .menu-item
 {
-  font-weight: bold;
-  padding-left: 15px;
+	font-weight: bold;
+	padding-left: 15px;
 }
 
 #page-title
 {
-  margin-left: 5px;
-  margin-right: 5px;
-  margin-top: 10px;
-  padding-top: 3px;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-top: 10px;
+	padding-top: 3px;
 
-  height: 25px;
-  color: #cccccc;
-  border-bottom: 1px solid #777777;
+	height: 25px;
+	color: #cccccc;
+	border-bottom: 1px solid #777777;
 
-  font-size: 16px;
-  font-weight: bold;
+	font-size: 16px;
+	font-weight: bold;
 }
 /* caption over boxes - Involved parties */
 .block-header
 {
-  margin-top: 10px;
-  margin-bottom: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 
-  color: #cccccc;
+	color: #cccccc;
 
-  font-size: 12px;
-  font-weight: bold;
+	font-size: 12px;
+	font-weight: bold;
 }
 /* for exampe Awards for April 2007 */
 .block-header2
 {
-  margin-top: 10px;
-  margin-bottom: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 
-  color: #cccccc;
+	color: #cccccc;
 
-  font-size: 12px;
-  font-weight: bold;
-  padding-bottom: 5px;
-  border-bottom: 1px solid #777777;
+	font-size: 12px;
+	font-weight: bold;
+	padding-bottom: 5px;
+	border-bottom: 1px solid #777777;
 }
 
 .f_killmail
 {
-  font-size: 10px;
+	font-size: 10px;
 }
 
 textarea.killmail
 {
-  font-size: 11px;
+	font-size: 11px;
 }
 
 .link
 {
-  padding-right: 5px;
+	padding-right: 5px;
 }
 
 .kb-table, .kb-subtable
 {
-  font-size: 10px;
-  color: #e0e0e0;
-  padding: 0px;
+	font-size: 10px;
+	color: #e0e0e0;
+	padding: 0px;
 }
 
 .kb-table
 {
-  border: 1px solid #444444;
-  border-collapse: separate;
-  border-spacing: 1px;
+	border: 1px solid #444444;
+	border-collapse: separate;
+	border-spacing: 1px;
 }
 
 .kb-table-title
 {
-  height: 10px;
+	height: 10px;
 }
 /* Ship type */
 .kb-table-header
 {
-  height: 15px;
-  background: #555555;
-  font-size: 10px;
-  font-weight: bold;
-  padding: 4px;
+	height: 15px;
+	background: #555555;
+	font-size: 10px;
+	font-weight: bold;
+	padding: 4px;
 }
 
 .kb-table-row-odd
 {
-  background: #292929;
+	background: #292929;
 }
 
 .kb-table-row-even
 {
-  background: #222222;
+	background: #222222;
 }
 
 .kb-table-row-slot
 {
-  background: #292929;
+	background: #292929;
 }
 
-.kb-table-row-destroyed 
-{ 
-  background: #222222; 
-} 
- 
-.kb-table-row-dropped 
-{ 
-  background: green; 
-}
-/* over Kill in hom */
-.kb-table-row-hover
+.kb-table-row-destroyed
 {
-  color: #222222;
-  background: #DD9300;
-  cursor: pointer;
+	background: #222222;
+}
+
+.kb-table-row-dropped
+{
+	background: green;
+}
+/* over Kill in home */
+.kb-table-row-hover,
+.kb-kl-table .kb-table-row-even:hover,
+.kb-kl-table .kb-table-row-odd:hover
+{
+	color: #222222;
+	background: #DD9300;
+	cursor: pointer;
 }
 
 img.finalblow
 {
-  border: 1px solid #FFA500;
+	border: 1px solid #FFA500;
 }
 
 img.avatar
@@ -582,7 +584,7 @@ a:hover {
 .popup-table
 {
 filter: alpha(opacity=90);
--moz-opacity: 0.9; 
+-moz-opacity: 0.9;
 background-color:#333333;
 }
 .killcount
@@ -804,4 +806,15 @@ a.kb-contract:visited {
 {
 	margin-top: 5px;
 	font-weight: bold;
+}
+
+.award_box
+{
+	vertical-align:top;
+	text-align:center;
+	float:left;
+	width:150px;
+	height:460px;
+	margin-left:20px;
+	margin-right:20px;
 }

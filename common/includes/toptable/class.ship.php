@@ -33,8 +33,8 @@ class TopTable_Ship
 				'count' => $row['cnt']);
 		}
 
-		$smarty->assign('tl_name', 'Ship');
-		$smarty->assign('tl_type', 'Kills');
+		$smarty->assign('tl_name', Language::get('ship'));
+		$smarty->assign('tl_type', Language::get('kills'));
 		$smarty->assignByRef('tl_rows', $rows);
 
 		return $smarty->fetch(get_tpl('toplisttable'));

@@ -30,7 +30,7 @@ class pAwards extends pageAssembly
 	 */
 	function start()
 	{
-		$this->page = new Page("Awards");
+		$this->page = new Page(Language::get('page_awards'));
 		$this->page->addHeader('<meta name="robots" content="index, follow" />');
 
 		$this->page->addHeader("<link rel='canonical' href='".KB_HOST."/?a=awards' />");
@@ -95,7 +95,7 @@ class pAwards extends pageAssembly
 		involved::load($tklist,'kill');
 
 		$tklist->generate();
-		$tkbox = new AwardBox($tklist, "Top killers", "kills", "kills", "eagle");
+		$tkbox = new AwardBox($tklist, Language::get('topkillers'), Language::get('kills'), "kills", "eagle");
 		$awardboxes[] = $tkbox->generate();
 		// top scorers
 		if (config::get('kill_points'))
@@ -106,7 +106,7 @@ class pAwards extends pageAssembly
 			involved::load($tklist,'kill');
 
 			$tklist->generate();
-			$tkbox = new AwardBox($tklist, "Top scorers", "points", "points", "redcross");
+			$tkbox = new AwardBox($tklist, Language::get('topscorers'), Language::get('top_points'), "points", "redcross");
 			$awardboxes[] = $tkbox->generate();
 		}
 		// top solo killers
@@ -116,7 +116,7 @@ class pAwards extends pageAssembly
 		involved::load($tklist,'kill');
 
 		$tklist->generate();
-		$tkbox = new AwardBox($tklist, "Top solokillers", "solo kills", "kills", "cross");
+		$tkbox = new AwardBox($tklist, Language::get('top_solo'), Language::get('top_solo_desc'), "kills", "cross");
 		$awardboxes[] = $tkbox->generate();
 		// top damage dealers
 		$tklist = new TopList_DamageDealer();
@@ -125,7 +125,7 @@ class pAwards extends pageAssembly
 		involved::load($tklist,'kill');
 
 		$tklist->generate();
-		$tkbox = new AwardBox($tklist, "Top damagedealers", "kills w/ most damage", "kills", "wing1");
+		$tkbox = new AwardBox($tklist, Language::get('top_damage'), Language::get('top_damage_desc'), "kills", "wing1");
 		$awardboxes[] = $tkbox->generate();
 
 		// top final blows
@@ -135,7 +135,7 @@ class pAwards extends pageAssembly
 		involved::load($tklist,'kill');
 
 		$tklist->generate();
-		$tkbox = new AwardBox($tklist, "Top finalblows", "final blows", "kills", "skull");
+		$tkbox = new AwardBox($tklist, Language::get('top_final'), Language::get('top_final_desc'), "kills", "skull");
 		$awardboxes[] = $tkbox->generate();
 		// top podkillers
 		$tklist = new TopList_Kills();
@@ -146,7 +146,7 @@ class pAwards extends pageAssembly
 		$tklist->addVictimShipClass(2); // pod
 
 		$tklist->generate();
-		$tkbox = new AwardBox($tklist, "Top podkillers", "podkills", "kills", "globe");
+		$tkbox = new AwardBox($tklist, Language::get('top_podkill'), Language::get('top_podkill_desc'), "kills", "globe");
 		$awardboxes[] = $tkbox->generate();
 		// top griefers
 		$tklist = new TopList_Kills();
@@ -165,7 +165,7 @@ class pAwards extends pageAssembly
 
 
 		$tklist->generate();
-		$tkbox = new AwardBox($tklist, "Top griefers", "carebear kills", "kills", "star");
+		$tkbox = new AwardBox($tklist, Language::get('top_griefer'), Language::get('top_griefer_desc'), "kills", "star");
 		$awardboxes[] = $tkbox->generate();
 		// top capital killers
 		$tklist = new TopList_Kills();
@@ -181,7 +181,7 @@ class pAwards extends pageAssembly
 		$tklist->addVictimShipClass(29); // cap. industrial
 
 		$tklist->generate();
-		$tkbox = new AwardBox($tklist, "Top ISK killers", "capital shipkills", "kills", "wing2");
+		$tkbox = new AwardBox($tklist, Language::get('top_isk_kill'), Language::get('top_isk_kill_desc'), "kills", "wing2");
 		$awardboxes[] = $tkbox->generate();
 
 		$smarty->assignByRef('awardboxes', $awardboxes);
@@ -189,6 +189,7 @@ class pAwards extends pageAssembly
 		$smarty->assign('year', $this->year);
 		$smarty->assign('boxcount', count($awardboxes));
 
+		$smarty->assign('page_title', Language::get('page_awards_for')." ".$this->monthname." ".$this->year);
 		return $smarty->fetch(get_tpl('awards'));
 	}
 	/**
