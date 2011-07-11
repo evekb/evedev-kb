@@ -7,106 +7,138 @@
  */
 
 /**
+ * Generate a list of campaigns.
  * @package EDK
  */
 class ContractList
 {
-	public $qry_ = null;
-	private $active_ = "both";
-	private $contractcounter_ = 1;
+	/** @var string */
+	private $active = 'both';
+	/** @var integer */
+	private $contractcounter = 1;
+	/** @var boolean */
+	private $executed = false;
+	/** @var DBBaseQuery */
+	private $qry;
+	/** @var integer */
+	private $offset;
+	/** @var integer */
+	private $limit;
 
 	function ContractList()
 	{
-		$this->qry_ = DBFactory::getDBQuery();
 	}
 
-	function execQuery()
+	private function execQuery()
 	{
-		if ($this->qry_->executed())
+		if ($this->executed) {
 			return;
-
+		}
 		$sql = "select ctr.ctr_id, ctr.ctr_started, ctr.ctr_ended, ctr.ctr_name
                 from kb3_contracts ctr
                where ctr.ctr_site = '".KB_SITE."'";
-		if ($this->active_ == "yes")
+		if ($this->active && !$this->inactive)
 			$sql .= " and ( ctr_ended is null or now() <= ctr_ended )";
-		elseif ($this->active_ == "no")
+		elseif ($this->inactive && !$this->active)
 			$sql .= " and ( now() >= ctr_ended )";
-/*
-		if ($this->campaigns_)
-			$sql .= " and ctr.ctr_campaign = 1";
-		else
-			$sql .= " and ctr.ctr_campaign = 0";
-*/
 		$sql .= " order by ctr_ended, ctr_started desc";
-		// if ( $this->limit_ )
-		// $sql .= " limit ".( $this->page_ / $this->limit_ ).", ".$this->limit_;
-		$this->qry_ = DBFactory::getDBQuery();
-		$this->qry_->execute($sql) or die($this->qry_->getErrorMsg());
+		$this->qry = DBFactory::getDBQuery();
+		$this->qry->execute($sql);
+		$this->executed = true;
 	}
 
+	/**
+	 * Set whether to list active, inactive, or both types of campaigns.
+	 * @param string $active 'yes', 'no', 'both'
+	 */
 	function setActive($active)
 	{
-		$this->active_ = $active;
+		if ($active != 'yes' && $active != 'no') {
+			$this->active = 'both';
+		} else {
+			$this->active = $active;
+		}
 	}
 
-	function setCampaigns($campaigns)
+	/**
+	 * Legacy stub
+	 * @deprecated
+	 */
+	function setCampaigns()
 	{
-		$this->campaigns_ = $campaigns;
 	}
 
+	/**
+	 * Set a limit of campaigns to show on each page.
+	 * @param integer $limit
+	 */
 	function setLimit($limit)
 	{
-		$this->limit_ = $limit;
+		$this->limit = $limit;
 	}
 
+	/**
+	 * Which page to show in a list.
+	 * @param integer $page Which page to show in a list
+	 */
 	function setPage($page)
 	{
 		$this->page_ = $page;
-		$this->offset_ = ($page * $this->limit_) - $this->limit_;
+		$this->offset = ($page * $this->limit) - $this->limit;
 	}
 
+	/**
+	 * Get the next Contract found.
+	 * @return Contract|null
+	 */
 	function getContract()
 	{
-	// echo "off: ".$this->offset_."<br>";
-	// echo "cnt: ".$this->contractcounter_."<br>";
-	// echo "limit: ".$this->limit_."<br>";
 		$this->execQuery();
-		if ($this->offset_ && $this->contractcounter_ < $this->offset_)
-		{
-			for ($i = 0; $i < $this->offset_; $i++)
-			{
-				$row = $this->qry_->getRow();
-				$this->contractcounter_++;
+		if ($this->offset && $this->contractcounter < $this->offset) {
+			for ($i = 0; $i < $this->offset; $i++) {
+				$row = $this->qry->getRow();
+				$this->contractcounter++;
 			}
 		}
-		if ($this->limit_ && ($this->contractcounter_ - $this->offset_) > $this->limit_)
+		if ($this->limit 
+				&& ($this->contractcounter - $this->offset) > $this->limit) {
 			return null;
-
-		$row = $this->qry_->getRow();
-		if ($row)
-		{
-			$this->contractcounter_++;
-			return new Contract($row['ctr_id']);
 		}
-		else
+
+		$row = $this->qry->getRow();
+		if ($row) {
+			$this->contractcounter++;
+			return new Contract($row['ctr_id']);
+		} else {
 			return null;
+		}
 	}
 
+	/**
+	 * Return how many campaigns were found.
+	 * @return integer
+	 */
 	function getCount()
 	{
 		$this->execQuery();
-		return $this->qry_->recordCount();
+		return $this->qry->recordCount();
 	}
 
+	/**
+	 * Whether active campaigns are shown
+	 * @return boolean
+	 */
 	function getActive()
 	{
-		return $this->active_;
+		return $this->active;
 	}
 
+	/**
+	 * Rewind to the first contract in the list.
+	 */
 	public function rewind()
 	{
-		$this->contractcounter_ = 1;
-		$this->qry_->rewind();
+		$this->contractcounter = 1;
+		$this->qry->rewind();
 	}
 }
