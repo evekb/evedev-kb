@@ -157,6 +157,7 @@ while($kill = $list->getKill())
 
 	$count++;
 	if($kill->isClassified()) continue;
+	$kill = Cacheable::factory('Kill', $kill->getID());
 	$row = $kills->addChild('row');
 	$row->addAttribute('killID', intval($kill->getExternalID()));
 	$row->addAttribute('killInternalID', intval($kill->getID()));
