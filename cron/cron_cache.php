@@ -1,6 +1,9 @@
 #!/usr/bin/php
 <?php
 /**
+ * $Date$
+ * $Revision$
+ * $HeadURL$
  * @package EDK
  */
 
@@ -44,6 +47,9 @@ require_once('kbconfig.php');
 require_once('common/includes/class.edkloader.php');
 require_once('common/includes/globals.php');
 require_once('common/includes/db.php');
+require_once ('common/includes/class.edkerror.php');
+
+set_error_handler(array('EDKError', 'handler'), E_ERROR );
 
 $config = new Config(KB_SITE);
 $ApiCache = new ApiCache(KB_SITE);

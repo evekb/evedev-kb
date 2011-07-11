@@ -1,6 +1,9 @@
 #!/usr/bin/php
 <?php
 /**
+ * $Date$
+ * $Revision$
+ * $HeadURL$
  * @package EDK
  */
 
@@ -37,6 +40,9 @@ chdir($KB_HOME);
 
 require_once('kbconfig.php');
 require_once('globals.php');
+require_once ('common/includes/class.edkerror.php');
+
+set_error_handler(array('EDKError', 'handler'), E_ERROR );
 $config = new Config(KB_SITE);
 getID();
 

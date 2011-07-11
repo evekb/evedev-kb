@@ -49,7 +49,7 @@ require_once('common/includes/globals.php');
 require_once('common/includes/db.php');
 require_once ('common/includes/class.edkerror.php');
 
-set_error_handler(array('EDKError', 'handler'), E_ALL & ~(E_NOTICE) );
+set_error_handler(array('EDKError', 'handler'), E_ERROR );
 
 $config = new Config(KB_SITE);
 
