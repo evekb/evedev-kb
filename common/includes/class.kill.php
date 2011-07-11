@@ -1351,12 +1351,16 @@ class Kill extends Cacheable
 		return $this->id;
 	}
 
-	function realadd($id = null)
+	/**
+	 * Really add the kill.
+	 * @param integer $id If set, use the given id to post this kill.
+	 * @return integer
+	 */
+	protected function realadd($id = null)
 	{
 		if ( $this->timestamp == "" || !$this->getVictim()->getID()
 				|| !$this->victimship->getID() || !$this->solarsystem->getID()
 				|| !$this->victimallianceid || !$this->victimcorpid
-				|| !$this->getFBAllianceID() || !$this->getFBCorpID()
 				|| !$this->getFBPilotID() || !$this->getHash(false, false)) {
 			return 0;
 		}
