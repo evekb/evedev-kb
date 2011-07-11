@@ -81,30 +81,12 @@ if ($_POST['fetch'])
     {
 		if(!($_POST['fetch_feed'] && in_array (md5($val['url']), $_POST['fetch_feed']))
 			|| empty($val['url'])) continue;
-        $feedfetch = new IDFeed();
-		$feedfetch->setID();
-		// It's possible to post a kill without CCP ID, not fetch it, then add
-		// an ID later, so only fetching API verified kills is problematic.
-		// Disabling until a solution is worked out.
-//		if($val['apikills']) $feedfetch->setAllKills(0);
-//		else $feedfetch->setAllKills(1);
-		$feedfetch->setAllKills(1);
-		$feedfetch->setTrust($val['trusted']);
-		if(!$val['lastkill']) $feedfetch->setStartDate(time() - 60*60*24*7);
-		else if($val['apikills']) $feedfetch->setStartKill($val['lastkill'] + 1);
-		else $feedfetch->setStartKill($val['lastkill'] + 1, true);
 
-		$feedfetch->read($val['url']);
-
-		if($val['apikills'] && intval($feedfetch->getLastReturned()) > $val['lastkill'])
-			$val['lastkill'] = intval($feedfetch->getLastReturned());
-		else if(!$val['apikills'] && intval($feedfetch->getLastInternalReturned()) > $val['lastkill'])
-			$val['lastkill'] = intval($feedfetch->getLastInternalReturned());
-		$html .= "Feed: ".$val['url']."<br />\n";
-		if(count($feedfetch->getPosted()) == 1) $html .= count($feedfetch->getPosted())." kills was posted and ";
-		else $html .= count($feedfetch->getPosted())." kills were posted and ";
-		if(count($feedfetch->getSkipped()) == 1) $html .= count($feedfetch->getSkipped())." was skipped.<br />\n";
-		else $html .= count($feedfetch->getSkipped())." were skipped.<br />\n";
+		if (isIDFeed($val['url'])) {
+			$html .= getIDFeed($key, $val);
+		} else {
+			$html .= getOldFeed($key, $val);
+		}
 		config::set("fetch_idfeeds", $feeds);
 	}
 }
@@ -119,44 +101,180 @@ foreach($feeds as $key => &$val)
 }
 $smarty->assignByRef('rows', $rows);
 
-//$html .= "<table><tr><td height='20px' width='150px'><b>First week:</b></td>";
-//$html .= '<td><select name="range1">';
-//$now = gmdate("W");
-//for ($i = 1; $i <= 53; $i++)
-//{
-//    if ($now == $i)
-//        $html .= '<option selected="selected "value="' . $i . '">' . $i . '</option>';
-//    else
-//        $html .= '<option value="' . $i . '">' . $i . '</option>';
-//}
-//$html .= '</select>';
-//$html .= "<i></i></td></tr>";
-//$html .= "<tr><td height='20px' width='150px'><b>Last week:</b></td>";
-//$html .= '<td><select name="range2">';
-//for ($i = 1; $i <= 53; $i++)
-//{
-//    if ($now == $i)
-//        $html .= '<option selected="selected "value="' . $i . '">' . $i . '</option>';
-//    else
-//        $html .= '<option value="' . $i . '">' . $i . '</option>';
-//}
-//$html .= '</select>';
-//$html .= "<i></i></td></tr>";
-//
-//$html .= "<tr><td height='20px' width='150px'><b>Year:</b></td>";
-//$html .= '<td><select name="year">';
-//for($dateit = 2005; $dateit <= gmdate('Y'); $dateit++)
-//{
-//        $html .='<option ';
-//        if($dateit == gmdate('o')) $html .= 'selected="selected"';
-//        $html .=' value="'.$dateit.'">'.$dateit.'</option> ';
-//}
-//$html .= '</select>';
-//$html .= "</td></tr>";
-//$html .= "</table><br /><br />";
 if (config::get('fetch_comment'))
     $smarty->assign('comment', config::get('fetch_comment'));
 $smarty->assign('results', $html);
 $page->addContext($menubox->generate());
 $page->setContent($smarty->fetch(get_tpl('admin_idfeed')));
 $page->generate();
+
+/**
+ * Fetch the board owners.
+ * @return array Array of id strings to add to URLS
+ */
+function getOwners()
+{
+	$myids = array();
+	if(!defined('MASTER') || !MASTER) {
+		foreach(config::get('cfg_pilotid') as $entity) {
+			$pilot = new Pilot($entity);
+			$myids[] = '&pilot=' . urlencode($pilot->getName());
+		}
+
+		foreach(config::get('cfg_corpid') as $entity) {
+			$corp = new Corporation($entity);
+			$myids[] = '&corp=' . urlencode($corp->getName());
+		}
+		foreach(config::get('cfg_allianceid') as $entity) {
+			$alli = new Alliance($entity);
+			$myids[] = '&alli=' . urlencode($alli->getName());
+		}
+	}
+	return $myids;
+}
+
+function getIDFeed(&$key, &$val)
+{
+	$html = '';
+	// Just in case, check for empty urls.
+	if(empty($val['url'])) {
+		return 'No URL given<br />';
+	}
+	$feedfetch = new IDFeed();
+	$feedfetch->setID();
+	$feedfetch->setAllKills(1);
+	$feedfetch->setTrust($val['trusted']);
+	if(!$val['lastkill']) {
+		$feedfetch->setStartDate(time() - 60*60*24*7);
+	} else if($val['apikills']) {
+		$feedfetch->setStartKill($val['lastkill'] + 1);
+	} else {
+		$feedfetch->setStartKill($val['lastkill'] + 1, true);
+	}
+
+	if($feedfetch->read($val['url']) !== false) {
+		if($val['apikills']
+				&& intval($feedfetch->getLastReturned()) > $val['lastkill']) {
+			$val['lastkill'] = intval($feedfetch->getLastReturned());
+		} else if(!$val['apikills']
+				&& intval($feedfetch->getLastInternalReturned())
+						> $val['lastkill']) {
+			$val['lastkill'] = intval($feedfetch->getLastInternalReturned());
+		}
+		$html .= "IDFeed: ".$val['url']."<br />\n";
+		$html .= count($feedfetch->getPosted())." kills were posted and ".
+			count($feedfetch->getSkipped())." were skipped.<br />\n";
+	} else {
+		$html .= "Error reading feed: ".$val['url'];
+		if(!$val['lastkill']) $html .= ", Start time = ".(time() - 60*60*24*7);
+		else if($val['apikills']) $html .= ", Start kill = ".($val['lastkill']);
+		$val['url'] = preg_replace('/a=idfeed/', 'a=feed', $val['url']);
+		$html .= $feedfetch->errormsg();
+	}
+	return $html;
+}
+
+/**
+ * Check if this is an IDFeed.
+ * The url parameter is modified if needed to refer directly to the IDFeed.
+ * @param string $url
+ * @return string HTML describing the fetch result.
+ */
+function isIDFeed(&$url)
+{
+	// Believe the user ...
+	if (strpos($url, 'idfeed')) return true;
+
+	if(strpos($url, '?')) {
+		$urltest = preg_replace('/\?.*/', '?a=idfeed&kll_id=-1', $url);
+	} else if (substr($url, -1) == '/') {
+		$urltest = $url."?a=idfeed&kll_id=-1";
+	} else {
+		$urltest = $url."/?a=idfeed&kll_id=-1";
+	}
+	$http = new http_request($urltest);
+	$http->set_useragent("EDK IDFeedfetcher Check");
+	$http->set_timeout(10);
+	$res = $http->get_content();
+	if ($res && strpos($res, 'edkapi')) {
+		if(strpos($url, '?a=feed')) {
+			$url = preg_replace('/\?a=feed/', '?a=idfeed', $url);
+		} else if(strpos($url, '?')) {
+			$url = preg_replace('/\?/', 'a=idfeed&', $url);
+		} else if (substr($url, -1) == '/') {
+			$url = $url."?a=idfeed";
+		} else {
+			$url = $url."/?a=idfeed";
+		}
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function getOldFeed(&$key, &$val)
+{
+	$html = 'RSS Feed: ';
+	// Just in case, check for empty urls.
+	if(empty($val['url'])) return 'No URL given<br />';
+
+	$url = $val['url'];
+	if (!strpos($url, 'a=feed')) {
+		if (strpos($url, '?')) {
+			$url = str_replace('?', '?a=feed&', $url);
+		} else {
+			$url .= "?a=feed";
+		}
+	}
+	$feedfetch = new Fetcher();
+
+	$myids = getOwners();
+	$lastkill = 0;
+	foreach($myids as $myid) {
+		// If a last kill id is specified fetch all kills since then
+		if($val['lastkill'] > 0) {
+			$urltmp = $url.'&combined=1&lastkllid='.$val['lastkill'];
+			//TODO: Put some methods into the fetcher to get this more neatly.
+			$html .= preg_replace('/(<div class=\'block-header2\'>|<\/div>)/',
+				'', $feedfetch->grab($urltmp, $myid, $val['trust']))."\n";
+			if(intval($feedfetch->lastkllid_) < $lastkill || !$lastkill)
+					$lastkill = intval($feedfetch->lastkllid_);
+			// Check if feed used combined list. get losses if not
+			if(!$feedfetch->combined_) {
+				$html .= preg_replace('/(<div class=\'block-header2\'>|<\/div>)/',
+					'', $feedfetch->grab($urltmp, $myid."&losses=1", $val['trust']))."\n";
+				if(intval($feedfetch->lastkllid_) < $lastkill || !$lastkill)
+						$lastkill = intval($feedfetch->lastkllid_);
+			}
+			// Store most recent kill id fetched
+			if($lastkill > $val['lastkill']) {
+				$val['lastkill'] = $lastkill;
+			}
+		} else {
+			// If no last kill is specified then fetch by week
+			// Fetch for current and previous weeks, both kills and losses
+			for($l = $week - 1; $l <= $week; $l++)
+			{
+				$html .= preg_replace('/(<div class=\'block-header2\'>|<\/div>)/',
+					'', $feedfetch->grab($url . "&year=" . $year . "&week=" . $l,
+						$myid, $val['trust'])) . "\n";
+				if(intval($feedfetch->lastkllid_) < $lastkill
+						|| !$lastkill) {
+					$lastkill = intval($feedfetch->lastkllid_);
+				}
+				$html .= preg_replace('/(<div class=\'block-header2\'>|<\/div>)/',
+					'', $feedfetch->grab($url . "&year=" . $year . "&week=" . $l,
+						$myid . "&losses=1", $val['trust'])) . "\n";
+				if(intval($feedfetch->lastkllid_) < $lastkill
+						|| !$lastkill) {
+					$lastkill = intval($feedfetch->lastkllid_);
+				}
+			}
+			// Store most recent kill id fetched
+			if($lastkill > $val['lastkill']) {
+				$val['lastkill'] = $lastkill;
+			}
+		}
+	}
+	return $html;
+}
