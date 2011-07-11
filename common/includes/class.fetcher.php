@@ -59,7 +59,7 @@ class Fetcher
 		$this->accepttrust = $accepttrust;
 		$this->killsAdded = 0;
 		$this->killsSkipped = 0;
-		$fetchurl = $url.$str."&board=".urlencode(KB_TITLE);
+		$fetchurl = $url.$str."&board=".urlencode(config::get('cfg_kbtitle'));
 		if(strpos($fetchurl, 'apikills=1')) $this->apikills = true;
 		else $this->apikills = false;
 		if(strpos($fetchurl, '?') === false)
@@ -334,7 +334,7 @@ class Fetcher
 						if($killid == -1 && config::get('fetch_verbose'))
 								$this->html .= "Killmail ".intval($this->title)." already posted <a href=\"?a=kill_detail&amp;kll_id=".$parser->getDupeID()."\">here</a>.<br />\n";
 						if($killid == -2 && config::get('fetch_verbose'))
-								$this->html .= "Killmail ".intval($this->title)." is not related to ".KB_TITLE.".<br />\n";
+								$this->html .= "Killmail ".intval($this->title)." is not related to ".config::get('cfg_kbtitle').".<br />\n";
 						if($killid == -3 && config::get('fetch_verbose'))
 								$this->html .= "Killmail ".intval($this->title)." already posted <a href=\"?a=kill_detail&amp;kll_external_id=".$this->apiID."\">here</a>.<br />\n";
 						if($killid == -4 && config::get('fetch_verbose'))
