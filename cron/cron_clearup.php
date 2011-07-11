@@ -38,9 +38,15 @@ require_once('common/includes/db.php');
 
 // disable query caching while the script is running.
 $qcache = config::get('cfg_qcache');
-if($qcache) config::set('cfg_qcache', 0);
+if($qcache) {
+	echo "<br />\n File query cache disabled <br />\n";
+	config::set('cfg_qcache', 0);
+}
 $pcache = config::get('cache_enabled');
-if($pcache) config::set('cache_enabled', 0);
+if($pcache) {
+	echo "Page cache disabled <br />\n";
+	config::set('cache_enabled', 0);
+}
 
 echo "<br />Removed ".CacheHandler::removeByAge('SQL/', 7 * 24)." files from SQL/<br />\n";
 echo "Removed ".CacheHandler::removeByAge('page/'.KB_SITE.'/', 7 * 24)." files from page/<br />\n";
@@ -51,42 +57,11 @@ echo "Removed ".CacheHandler::removeByAge('img/', 30 * 24)." files from img/<br 
 echo "Removed ".CacheHandler::removeByAge('store/', 7 * 24)." files from store/<br />\n";
 echo "Removed ".CacheHandler::removeByAge('/', 30 * 24, false)." files from entire cache<br />\n";
 
-if($qcache) config::set('cfg_qcache', 1);
-if($pcache) config::set('cache_enabled', 1);
-////! Remove old files from the given directory.
-//
-///*! \param $hours The oldest a file can be before being removed.
-// *  \param $dir The directory to remove files from.
-// *  \param $recurse Whether to clear subdirectories.
-// */
-//function remove_old($hours, $dir, $recurse = false)
-//{
-//	if(!is_dir($dir)) return 0;
-//	$seconds = $hours*60*60;
-//	$del = 0;
-//	$files = scandir($dir);
-//	if(!$files)
-//	{
-//		echo "Directory invalid: ".$dir."<br>\n";
-//		return 0;
-//	}
-//	echo $dir."<br>".$hours." hours<br>\n";
-//	foreach ($files as $num => $fname)
-//	{
-//		if (file_exists("{$dir}{$fname}") && !is_dir("{$dir}{$fname}") && substr($fname,0,1) != "." && ((time() - filemtime("{$dir}{$fname}")) > $seconds))
-//		{
-//			$mod_time = filemtime("{$dir}{$fname}");
-//			if (unlink("{$dir}{$fname}"))
-//			{
-//				$del = $del + 1;
-//				echo "Deleted: {$del} - {$fname} --- ".(round((time()-$mod_time)/3600))." hours old<br>\n";
-//			}
-//		}
-//		// Clear subdirectories if $recurse is true.
-//		if ($recurse && file_exists("{$dir}{$fname}") && is_dir("{$dir}{$fname}")
-//			 && substr($fname,0,1) != "." && $fname != "..")
-//		{
-//			remove_old($hours, $dir.$fname."/", $recurse);
-//		}
-//	}
-//}
+if($qcache) {
+	echo "<br />\n File query cache re-enabled <br />\n";
+	config::set('cfg_qcache', 1);
+}
+if($pcache) {
+	echo "Page cache re-enabled <br />\n";
+	config::set('cache_enabled', 1);
+}
