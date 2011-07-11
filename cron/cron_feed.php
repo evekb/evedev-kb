@@ -184,14 +184,15 @@ function getOldFeed(&$key, &$val)
 	foreach($myids as $myid) {
 		// If a last kill id is specified fetch all kills since then
 		if($val['lastkill'] > 0) {
+			$urltmp = $url.'&combined=1&lastkllid='.$val['lastkill'];
 			$html .= preg_replace('/<div.+No kills added from feed.+<\/div>/',
-				'', $feedfetch->grab($url, $myid, $val['trust']))."\n";
+				'', $feedfetch->grab($urltmp, $myid, $val['trust']))."\n";
 			if(intval($feedfetch->lastkllid_) < $lastkill || !$lastkill)
 					$lastkill = intval($feedfetch->lastkllid_);
 			// Check if feed used combined list. get losses if not
 			if(!$feedfetch->combined_) {
 				$html .= preg_replace('/<div.+No kills added from feed.+<\/div>/',
-					'', $feedfetch->grab($url, $url."&losses=1", $val['trust']))."\n";
+					'', $feedfetch->grab($urltmp, $myid."&losses=1", $val['trust']))."\n";
 				if(intval($feedfetch->lastkllid_) < $lastkill || !$lastkill)
 						$lastkill = intval($feedfetch->lastkllid_);
 			}
@@ -201,7 +202,6 @@ function getOldFeed(&$key, &$val)
 			}
 		} else {
 			// If no last kill is specified then fetch by week
-			$url .= '&combined=1&lastkllid='.$val['lastkllid'];
 			// Fetch for current and previous weeks, both kills and losses
 			for($l = $week - 1; $l <= $week; $l++)
 			{
