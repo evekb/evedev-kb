@@ -41,14 +41,19 @@ $feeds = config::get("fetch_idfeeds");
 $html = '';
 
 foreach($feeds as $key => &$val) {
+	$tmphtml = '';
 	if (isIDFeed($val['url'])) {
-		$html .= "Fetching IDFeed: ".$key."<br />\n";
-		$html .= getIDFeed($key, $val);
+		if ($tmphtml = getIDFeed($key, $val)) {
+			$html .= "Fetching IDFeed: ".$key."<br />\n".$tmphtml;
+		}
 	} else {
-		$html .= "Fetching OldFeed: ".$key."<br />\n";
-		$html .= getOldFeed($key, $val);
+		if ($tmphtml = getOldFeed($key, $val)) {
+			$html .= "Fetching RSS Feed: ".$key."<br />\n".$tmphtml;
+		}
 	}
-	config::set("fetch_idfeeds", $feeds);
+	if ($tmphtml ) {
+		config::set("fetch_idfeeds", $feeds);
+	}
 }
 echo $html."<br />\n";
 
@@ -84,7 +89,7 @@ function getIDFeed(&$key, &$val)
 	$html = '';
 	// Just in case, check for empty urls.
 	if(empty($val['url'])) {
-		return 'No URL given<br />';
+		return '';
 	}
 	$feedfetch = new IDFeed();
 	$feedfetch->setID();
@@ -133,8 +138,13 @@ function getIDFeed(&$key, &$val)
  */
 function isIDFeed(&$url)
 {
-	// Believe the user ...
-	if (strpos($url, 'idfeed')) return true;
+	if (!$url) {
+		// No point checking further.
+		return false;
+	} else if (strpos($url, 'idfeed')) {
+		// Believe the user ...
+		return true;
+	}
 
 	if(strpos($url, '?')) {
 		$urltest = preg_replace('/\?.*/', '?a=idfeed&kll_id=-1', $url);
@@ -167,7 +177,9 @@ function getOldFeed(&$key, &$val)
 {
 	$html = '';
 	// Just in case, check for empty urls.
-	if(empty($val['url'])) return 'No URL given<br />';
+	if(empty($val['url'])) {
+		return '';
+	}
 
 	$url = $val['url'];
 	if (!strpos($url, 'a=feed')) {
