@@ -11,8 +11,6 @@
  *
  */
 
-// set this to 1 if you are running a master killboard and want
-// to even fetch mails not related to your corp / alliance
 require_once('common/admin/admin_menu.php');
 
 $page = new Page("Administration - IDFeed Syndication " . IDFeed::version);
@@ -20,55 +18,54 @@ $page->setCachable(false);
 $page->setAdmin();
 
 $feeds = config::get("fetch_idfeeds");
-if(is_null($feeds))
-{
+// Add an empty feed to the list, or create with one empty feed.
+if(is_null($feeds)) {
 	$feeds[] = array('url'=>"", 'apikills'=>0, 'trusted'=>0, 'lastkill'=>0);
 	config::set("fetch_idfeeds", $feeds);
+} else {
+	$feeds[] = array('url'=>"", 'apikills'=>0, 'trusted'=>0, 'lastkill'=>0);
 }
-else $feeds[] = array('url'=>"", 'apikills'=>0, 'trusted'=>0, 'lastkill'=>0);
 
 $feedcount = count($feeds);
 
 // saving urls and options
 if ($_POST['submit'] || $_POST['fetch'])
 {
-    if ($_POST['fetch_comment'])
-        config::set('fetch_comment', $_POST['fetch_comment']);
-    else
-        config::set('fetch_comment', '');
-	if(!is_null($feeds))
-    foreach($feeds as $key => &$val)
-    {
+	if(is_null($feeds)) {
+		$feeds = array();
+	}
+    foreach($feeds as $key => &$val) {
+		// Use the md5 of the url as a key for each feed.
         $url = md5($val['url']);
-        if ($_POST[$url])
-        {
-            if ($_POST['trusted'] && in_array ($url, $_POST['trusted']))
-			$val['trusted'] = 1;
-            else $val['trusted'] = 0;
-            if ($_POST['apikills'] && in_array ($url, $_POST['apikills']))
-			{
-				if(!$val['apikills']) $val['lastkill'] = 0;
-				$val['apikills'] = 1;
+
+        if ($_POST[$url]) {
+            if ($_POST['trusted'] && in_array ($url, $_POST['trusted'])) {
+				$val['trusted'] = 1;
+			} else {
+				$val['trusted'] = 0;
 			}
-            else
-			{
-				if($val['apikills']) $val['lastkill'] = 0;
-				$val['apikills'] = 0;
+			$val['apikills'] = 0;
+			if($_POST['lastkill'.$url] != $val['lastkill']) {
+				$val['lastkill'] = intval($_POST['lastkill'.$url]);
 			}
-			if($_POST['lastkill'.$url] != $val['lastkill']) $val['lastkill'] = intval($_POST['lastkill'.$url]);
             // reset the feed lastkill details if the URL or api status has changed
-            if($_POST[$url] != $val['url'] )
-			{
+            if($_POST[$url] != $val['url'] ) {
 				$val['url'] = $_POST[$url];
 				$val['lastkill'] = 0;
 			}
-			if ($_POST['delete'] && in_array ($url, $_POST['delete']))
+			if ($_POST['delete'] && in_array ($url, $_POST['delete'])) {
 				unset($feeds[$key]);
-        }
-        else unset($feeds[$key]);
+			}
+        } else {
+			unset($feeds[$key]);
+		}
     }
 	$newlist = array();
-	foreach($feeds as $key => &$val) $newlist[$val['url']] = $val;
+	foreach($feeds as $key => &$val) {
+		if ($val['url']) {
+			$newlist[$val['url']] = $val;
+		}
+	}
 	$feeds = &$newlist;
 	config::set("fetch_idfeeds", $feeds);
 	$feeds[] = array('url'=>"", 'apikills'=>0, 'trusted'=>0, 'lastkill'=>0);
@@ -92,17 +89,18 @@ if ($_POST['fetch'])
 }
 // generating the html
 $rows = array();
-foreach($feeds as $key => &$val)
-{
+foreach($feeds as $key => &$val) {
 	$key = md5($val['url']);
-    if (!isset($_POST['fetch_feed'][$key]) || $_POST['fetch_feed'][$key]) $fetch=false;
-	else $fetch = true;
+    if (!isset($_POST['fetch_feed'][$key])
+			|| $_POST['fetch_feed'][$key]) {
+		$fetch=false;
+	} else {
+		$fetch = true;
+	}
 	$rows[] = array('name'=>$key, 'uri'=>$val['url'], 'lastkill'=>$val['lastkill'], 'trusted'=>$val['trusted'], 'fetch'=>!$fetch);
 }
 $smarty->assignByRef('rows', $rows);
 
-if (config::get('fetch_comment'))
-    $smarty->assign('comment', config::get('fetch_comment'));
 $smarty->assign('results', $html);
 $page->addContext($menubox->generate());
 $page->setContent($smarty->fetch(get_tpl('admin_idfeed')));
