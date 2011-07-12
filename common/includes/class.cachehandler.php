@@ -14,10 +14,15 @@
  */
 class CacheHandler
 {
+	/** @var string Internal root path. */
 	protected static $internalroot = KB_CACHEDIR;
+	/** @var string External root path. */
 	protected static $externalroot = KB_CACHEDIR;
+	/** @var array Cache of generated paths to avoid recalculation. */
 	protected static $paths = array();
+	/** @var string Default location in cache to store files. */
 	protected static $defaultLocation = "store";
+	/** @var integer Depth of subdirectories. */
 	protected static $depth = 2;
 
 	/**
@@ -38,8 +43,8 @@ class CacheHandler
 	/**
 	 * Get a file from the cache.
 	 *
-	 * @param string $filename String filename, starting from below cache dir.
-	 * @param string $location set a specific subdirectory of the cache to use.
+	 * @param string $filename Filename, starting from below cache dir.
+	 * @param string $location Set a specific subdirectory of the cache to use.
 	 *
 	 * @return boolean true if successful, false if an error occurred.
 	 */
@@ -52,6 +57,11 @@ class CacheHandler
 
 	/**
 	 * Remove a cached file
+	 *
+	 * @param string $filename Name of cached file.
+	 * @param string $location Optional location. Sets a specific subdirectory
+	 * of the cache to use.
+	 * @return boolean true on success, false on failure.
 	 */
 	public static function remove($filename, $location = null)
 	{
@@ -70,6 +80,7 @@ class CacheHandler
 	 *
 	 * @param string $dir String The directory to remove.
 	 * @param boolean $parents Remove empty parent directory if true.
+	 * @return boolean true on success, false on failure.
 	 */
 	protected static function removeDir($dir, $parents = true)
 	{
@@ -84,7 +95,7 @@ class CacheHandler
 				if (is_dir(self::$internalroot.'/'.$dir.$fname)
 					 && substr($fname, 0, 1) != ".")
 				{
-					$del += self::removeDir($dir.$fname."/", false);
+					self::removeDir($dir.$fname."/", false);
 				}
 			}
 			// Is the directory empty now?
@@ -104,8 +115,9 @@ class CacheHandler
 	 *
 	 * @param string $dir The directory to remove files from.
 	 * @param integer $hours The minimum age in hours of files to remove.
+	 * @param boolean $removeDir Set true to remove empty directories.
 	 *
-	 * @return integer The count of files removed.
+	 * @return integer|false The count of files removed or false on error.
 	 */
 	public static function removeByAge($dir = null, $hours = 24, $removeDir = true)
 	{
@@ -139,35 +151,33 @@ class CacheHandler
 	/**
 	 * Remove files in a cache directory to reduce total size to that given.
 	 *
-	 * @param string $dir String The directory to remove files from.
-	 * @param integer $hours int The minimum age in hours of files to remove.
+	 * @param string $dir The directory to remove files from.
+	 * @param integer $maxsize The maximum size in Megabytes for the cache.
+	 * @param boolean $bysize Whether to remove largest files first or oldest.
 	 *
-	 * @return integer The count of files removed.
+	 * @return integer|false The count of files removed or false on error.
 	 */
 	public static function removeBySize($dir, $maxsize = 0, $bysize = false)
 	{
-		if(!is_numeric($maxsize))
-		{
-			if(substr($maxsize, -1) == 'k')
-			{
+		if(!is_numeric($maxsize)) {
+			if(substr($maxsize, -1) == 'k') {
 				$maxsize = substr($maxsize, 0, strlen($maxsize) - 1);
 				$maxsize = $maxsize * pow(2,10);
-			}
-			elseif(substr($maxsize, -1) == 'M')
-			{
+			} else if(substr($maxsize, -1) == 'M') {
 				$maxsize = substr($maxsize, 0, strlen($maxsize) - 1);
 				$maxsize = $maxsize * pow(2,20);
-			}
-			elseif(substr($maxsize, -1) == 'G')
-			{
+			} else if(substr($maxsize, -1) == 'G') {
 				$maxsize = substr($maxsize, 0, strlen($maxsize) - 1);
 				$maxsize = $maxsize * pow(2,30);
+			} else {
+				return false;
 			}
-			else return false;
+		} else {
+			$maxsize = $maxsize * pow(2,20);
 		}
 		$files = self::getFiles($dir);
-		if($bysize) usort($files, array(CacheHandler, 'compareSize'));
-		else usort($files, array(CacheHandler, 'compareAge'));
+		if($bysize) usort($files, array('CacheHandler', 'compareSize'));
+		else usort($files, array('CacheHandler', 'compareAge'));
 		$cursize = 0;
 		$delcount = 0;
 		foreach($files as $file)
@@ -191,7 +201,7 @@ class CacheHandler
 	/**
 	 * Return an array of all files under the given dir.
 	 *
-	 * @param string $dir String Root directory to search in.
+	 * @param string $dir Root directory to search in.
 	 *
 	 * @return array (age, name, size)
 	 */
@@ -224,6 +234,10 @@ class CacheHandler
 	}
 	/**
 	 * Age comparison function for use with file array returned by getFiles.
+	 *
+	 * @param array $a (age, name, size)
+	 * @param array $b (age, name, size)
+	 * @return integer -1 if a is older, 0 for same age, +1 if b is older.
 	 */
 	private static function compareAge($a, $b)
 	{
@@ -232,6 +246,10 @@ class CacheHandler
 	}
 	/**
 	 * Size comparison function for use with file array returned by getFiles.
+	 *
+	 * @param array $a (age, name, size)
+	 * @param array $b (age, name, size)
+	 * @return integer -1 if a is bigger, 0 for same age, +1 if b is bigger.
 	 */
 	private static function compareSize($a, $b)
 	{
@@ -240,6 +258,11 @@ class CacheHandler
 	}
 	/**
 	 * Add subdirectories to the given depth and return the full cachefile path.
+	 * @param string $filename Name of cached file.
+	 * @param string $location Optional location. Sets a specific subdirectory
+	 * of the cache to use.
+	 * @param boolean $create Set true to create the path if it does not exist.
+	 * @return string The full cachefile path.
 	 */
 	protected static function getPath($filename, $location = null, $create = false)
 	{
@@ -296,6 +319,9 @@ class CacheHandler
 	}
 	/**
 	 * Return true if the file is in the cache.
+	 * @param string $filename Name of cached file.
+	 * @param string $location Optional location. Sets a specific subdirectory
+	 * of the cache to use.
 	 * @return boolean true if the file exists, false otherwise.
 	 */
 	public static function exists($filename, $location = null)
@@ -306,6 +332,10 @@ class CacheHandler
 	}
 	/**
 	 * Return the age of the given cache file.
+	 * @param string $filename Name of cached file.
+	 * @param string $location Optional location. Sets a specific subdirectory
+	 * of the cache to use.
+	 * @return integer|boolean the age of the file in seconds or false on error.
 	 */
 	public static function age($filename, $location = null)
 	{
@@ -315,6 +345,10 @@ class CacheHandler
 	}
 	/**
 	 * Get the internally accessible address of the cached file.
+	 * @param string $filename Name of cached file.
+	 * @param string $location Optional location. Sets a specific subdirectory
+	 * of the cache to use.
+	 * @return string The path to the given file.
 	 */
 	public static function getInternal($filename, $location = null)
 	{
@@ -322,20 +356,33 @@ class CacheHandler
 	}
 	/**
 	 * Get the externally accessible address of the cached file.
+	 * @param string $filename Name of cached file.
+	 * @param string $location Optional location. Sets a specific subdirectory
+	 * of the cache to use.
+	 * @return string The external path to the given file.
 	 */
 	public static function getExternal($filename, $location = null)
 	{
 		return self::$externalroot.'/'.self::getPath($filename, $location, false);
 	}
 	/**
-	 * Get the externally accessible address of the cached file.
+	 * Change the default cache directory used to make external links.
+	 *
+	 * Note that the safety of the path returned is up to the caller to verify.
+	 *
+	 * @param string $dir The new root path
+	 * @return string The new root path as set.
 	 */
-	public static function setExternalPath($filename)
+	public static function setExternalPath($dir)
 	{
-		return self::$externalroot.'/'.$filename;
+		self::$externalroot = $dir;
+		return self::$externalroot;
 	}
 	/**
 	 * Change the default cache root directory
+	 *
+	 * @param string $dir valid path to a suitable cache directory.
+	 * @return boolean true if the new path was valid, false if not.
 	 */
 	public static function setInternalPath($dir)
 	{
