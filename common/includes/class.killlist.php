@@ -656,8 +656,8 @@ class KillList
 				'dmgtaken' => $row['kll_dmgtaken'],
 				'timestamp' => $row['kll_timestamp'],
 				'solarsystemid' => $row['sys_id'],
-				'solarsystemname', $row['sys_name'],
-				'solarsystemsecurity', $row['sys_sec'],
+				'solarsystemname' => $row['sys_name'],
+				'solarsystemsecurity' => $row['sys_sec'],
 				'externalid' => $row['kll_external_id'],
 				'killpoints' => $row['kll_points'],
 				'iskloss' => $row['kll_isk_loss']
