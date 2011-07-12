@@ -818,3 +818,10 @@ a.kb-contract:visited {
 	margin-left:20px;
 	margin-right:20px;
 }
+
+.no_stretch
+{
+	overflow: hidden;
+	white-space: nowrap;
+}
+
