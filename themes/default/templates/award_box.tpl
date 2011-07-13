@@ -1,4 +1,4 @@
-<!-- award_box.tpl -->
+<!-- award_box.tpl -->&nbsp;
 <table class="kb-table" width="150" cellspacing="1">
 	<tr>
 		<td class="kb-table-header" align="center">{$title}</td>
