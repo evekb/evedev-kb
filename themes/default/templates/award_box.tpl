@@ -14,13 +14,11 @@
 				<tr>
 					<td width="15"><b>1.</b></td>
 					<td align="left" colspan="2"><a class="kb-shipclass" href="{$url}">{$name}</a></td>
-					<td></td>
 				</tr>
 				<tr>
 					<td></td>
 					<td align="left">{$bar}</td>
 					<td align="right"><b>{$cnt}</b></td>
-					<td></td>
 				</tr>
 				{foreach from=$top key=key item=i}
 				{strip}
