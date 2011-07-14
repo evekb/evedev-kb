@@ -64,16 +64,16 @@
 			</td>
 			<td style="width: 160px" class="kb-table-cell">
 			<div class="no_stretch" style="text-align:left; width: 160px; height:auto">{if $config->get('killlist_regionnames')} {$k.region}, {$k.system}{else}<b>{$k.system}</b>{/if} ({if $k.loss || $k.kill}{$k.systemsecurity|max:0|string_format:"%01.1f"}{else}<span style="color:{if $k.systemsecurity >= 0.5}green{elseif $k.systemsecurity < 0.05}red{else}orange{/if};">{$k.systemsecurity|max:0|string_format:"%01.1f"}</span>{/if})<br /></div>
-	{if $config->get('killlist_involved') || $comments_count}
+	{if $k.inv || $comments_count}
 				<div style="float:left">
-		{if $comments_count}<img style="vertical-align: middle"src="{$theme_url}/img/comment_white13_10.gif" alt="C:" /> {$k.commentcount}{/if}
-		{if $config->get('killlist_involved')}<img src="{$theme_url}/img/involved10_10.png"  style="vertical-align: middle" alt="I:" /> {$k.inv}{/if}
+		{if $k.inv}<img src="{$theme_url}/img/involved10_10.png"  style="vertical-align: middle" alt="I:" /> {$k.inv}{/if}
+		{if $comments_count}<span {if  !$k.commentcount}style="visibility: hidden"{/if}><img style="vertical-align: middle"src="{$theme_url}/img/comment_white13_10.gif" alt="C:" /> {$k.commentcount}</span>{/if}
 				</div>{/if}
 				<div style="float:right">
 		{if $daybreak}
-					<a href="{$kb_host}/?a=kill_related&amp;kll_id={$k.id}"><b>{$k.timestamp|date_format:"%H:%M"}</b></a>
+					<a href="{$k.urlrelated}"><b>{$k.timestamp|date_format:"%H:%M"}</b></a>
 		{else}
-					<a href="{$kb_host}/?a=kill_related&amp;kll_id={$k.id}"><b>{$k.timestamp|date_format:"%d.%m.%y"} {$k.timestamp|date_format:"%H:%M"}</b></a>
+					<a href="{$k.urlrelated}"><b>{$k.timestamp|date_format:"%d.%m.%y"} {$k.timestamp|date_format:"%H:%M"}</b></a>
 		{/if}
 				</div>
 			</td>
