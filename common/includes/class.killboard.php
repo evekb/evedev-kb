@@ -7,6 +7,7 @@
  */
 
 /**
+ * @todo This whole class will go away.
  * @package EDK
  */
 class Killboard
@@ -20,5 +21,16 @@ class Killboard
 		if ($active) $sql .= " and ( ctr_ended is null or now() <= ctr_ended ) limit 1";
 		$qry->execute($sql);
 		return ($qry->recordCount() > 0);
+	}
+
+	/**
+	 * Looooong deprecated function. Really, stop using this.
+	 * @deprecated
+	 * @return boolean
+	 */
+	public static function hasContracts()
+	{
+		trigger_error("Deprecated. Stop calling me.", E_USER_NOTICE);
+		return false;
 	}
 }
