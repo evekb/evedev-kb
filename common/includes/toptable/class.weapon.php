@@ -10,7 +10,7 @@ class TopTable_Weapon
 {
 	function TopTable_Weapon(TopList_Base $toplist)
 	{
-		$this->toplist = $TopList;
+		$this->toplist = $toplist;
 	}
 
 	function generate()

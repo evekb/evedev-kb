@@ -8,9 +8,9 @@
 
 class TopTable_Ship
 {
-	function TopTable_Ship($TopList)
+	function TopTable_Ship($toplist)
 	{
-		$this->toplist = $TopList;
+		$this->toplist = $toplist;
 	}
 
 	function generate()

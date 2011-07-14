@@ -8,9 +8,9 @@
 
 class TopTable_Corp
 {
-	function TopTable_Corp($TopList, $entity)
+	function TopTable_Corp($toplist, $entity)
 	{
-		$this->toplist = $TopList;
+		$this->toplist = $toplist;
 		$this->entity_ = $entity;
 	}
 

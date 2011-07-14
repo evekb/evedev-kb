@@ -8,9 +8,9 @@
 
 class TopTable_Pilot
 {
-	function TopTable_Pilot($TopList, $entity)
+	function TopTable_Pilot($toplist, $entity)
 	{
-		$this->toplist = $TopList;
+		$this->toplist = $toplist;
 		$this->entity_ = $entity;
 	}
 
