@@ -58,47 +58,56 @@ class pKillDetail extends pageAssembly
 	 */
 	function start()
 	{
-		if(isset($_GET['kll_id'])) $this->kll_id = intval($_GET['kll_id']);
-		else $this->kll_id = 0;
-		if(isset($_GET['kll_external_id'])) $this->kll_external_id = intval($_GET['kll_external_id']);
-		elseif(isset($_GET['kll_ext_id'])) $this->kll_external_id = intval($_GET['kll_ext_id']);
-		else $this->kll_external_id = 0;
-		if(isset($_GET['nolimit'])) $this->nolimit = true;
-		else $this->nolimit = false;
+		$this->kll_id = (int)edkURI::getArg('kll_id', 1);
+		if (!$this->kll_id) {
+			$this->kll_external_id = (int)edkURI::getArg('kll_ext_id');
+			if (!$this->kll_external_id) {
+				$id = (int)edkURI::getArg('id');
+				// True for NPC corps too, but NPC alliances recorded as corps
+				// fail here. Use Jedi mind tricks?
+				if ($id > 1000000) {
+					$this->kll_external_id = $id;
+				} else {
+					$this->kll_id = $id;
+				}
+			}
+		}
+		$this->nolimit = edkURI::getArg('nolimit', 2);
 
 		$this->menuOptions = array();
 
 		$this->page = new Page('Kill details');
 
-		if (!$this->kll_id && !$this->kll_external_id)
-		{
+		if (!$this->kll_id && !$this->kll_external_id) {
 			$html = "No kill id specified.";
 			$this->page->setContent($html);
 			$this->page->generate($html);
 			exit;
 		}
 
-		if($this->kll_id)
-		{
+		if($this->kll_id) {
 			$this->kill = Cacheable::factory('Kill', $this->kll_id);
-		}
-		else
-		{
+		} else {
 			$this->kill = new Kill($this->kll_external_id, true);
 			$this->kll_id = $this->kill->getID();
 		}
 		$this->kill->setDetailedInvolved();
 
-		if (!$this->kill->exists())
-		{
+		if (!$this->kill->exists()) {
 			$html="That kill doesn't exist.";
 			$this->page->setContent($html);
 			$this->page->generate($html);
 			exit;
 		}
 
-		if($this->kll_external_id) $this->page->addHeader("<link rel='canonical' href='".KB_HOST."/?a=kill_detail&amp;kll_ext_id=". $this->kll_external_id."' />");
-		else $this->page->addHeader("<link rel='canonical' href='".KB_HOST."/?a=kill_detail&amp;kll_id=".$this->kll_id."' />");
+		if($this->kll_external_id) {
+			$this->page->addHeader("<link rel='canonical' href='"
+					.edkURI::build(array('kll_ext_id', $this->kll_external_id,
+						true))."' />");
+		} else {
+			$this->page->addHeader("<link rel='canonical' href='"
+					.edkURI::build(array('kll_id', $this->kll_id, true))."' />");
+		}
 
 		$this->system = $this->kill->getSystem();
 		$this->finalblow = false;
@@ -404,22 +413,32 @@ class pKillDetail extends pageAssembly
 
 			$weapon                    =$inv->getWeapon();
 
-			$this->involved[$i]['shipImage'] =$ship->getImage(64);
+			$this->involved[$i]['shipImage'] = $ship->getImage(64);
 			$this->involved[$i]['shipTechLevel'] = $ship->getTechLevel();
 			$this->involved[$i]['shipIsFaction'] = $ship->isFaction();
-			$this->involved[$i]['pilotURL']  ="?a=pilot_detail&amp;plt_id=" . $pilot->getID();
-			$this->involved[$i]['pilotName'] =$pilot->getName();
+			if($this->involved[$i]['externalID']) {
+				$this->involved[$i]['pilotURL']  =
+						edkURI::build(array('a', 'pilot_detail', true),
+						array('plt_ext_id', $this->involved[$i]['externalID'], true));
+			} else {
+				$this->involved[$i]['pilotURL']  =
+						edkURI::build(array('a', 'pilot_detail', true),
+						array('plt_id', $pilot->getID(), false));
+			}
+			$this->involved[$i]['pilotName'] = $pilot->getName();
 			$this->involved[$i]['secStatus'] = $inv->getSecStatus();
-			$this->involved[$i]['corpURL']   ="?a=corp_detail&amp;crp_id=" . $corp->getID();
-			$this->involved[$i]['corpName']  =$corp->getName();
-			$this->involved[$i]['alliURL']   ="?a=alliance_detail&amp;all_id=" . $alliance->getID();
-			$this->involved[$i]['alliName']  =$alliance->getName();
-			$this->involved[$i]['shipName']  =$ship->getName();
-			$this->involved[$i]['shipID']    =$ship->getExternalID();
-			$this->involved[$i]['damageDone']=$inv->dmgdone_;
-			$shipclass                 =$ship->getClass();
-
-			$this->involved[$i]['shipClass'] =$shipclass->getName();
+			$this->involved[$i]['corpURL']   =
+					edkURI::build(array('a', 'corp_detail', true),
+					array('crp_id', $corp->getID(), true));
+			$this->involved[$i]['corpName']  = $corp->getName();
+			$this->involved[$i]['alliURL']   =
+					edkURI::build(array('a', 'alliance_detail', true),
+					array('all_id', $alliance->getID(), true));
+			$this->involved[$i]['alliName']  = $alliance->getName();
+			$this->involved[$i]['shipName']  = $ship->getName();
+			$this->involved[$i]['shipID']    = $ship->getExternalID();
+			$this->involved[$i]['damageDone']= $inv->dmgdone_;
+			$this->involved[$i]['shipClass'] = $ship->getClass()->getName();
 
 			//detects NPC type things and runs a few conversions (Rats, Towers, Bubbles)
 			$tpilot = $pilot->getName();
@@ -454,7 +473,7 @@ class pKillDetail extends pageAssembly
 
 				//get the external ID from the pilot class - if not found then add it to a list of pilots
 				//and check the api in bulk
-				if($this->involved[$i]['externalID'] == 0)
+				if(!$this->involved[$i]['externalID'])
 				{
 					$pilotname = str_replace(" ", "%20", $pilot->getName());
 					$fetchExternalIDs[] = $pilotname;
@@ -637,11 +656,17 @@ class pKillDetail extends pageAssembly
 			$smarty->assign('victimPortrait', $plt->getPortraitURL(64));
 			$smarty->assign('victimExtID', $plt->getExternalID());
 		}
-		$smarty->assign('victimURL', "?a=pilot_detail&amp;plt_id=" . $this->kill->getVictimID());
+		$smarty->assign('victimURL',
+					edkURI::build(array('a', 'pilot_detail', true),
+					array('plt_id', $this->kill->getVictimID(), false)));
 		$smarty->assign('victimName', $this->kill->getVictimName());
-		$smarty->assign('victimCorpURL', "?a=corp_detail&amp;crp_id=" . $this->kill->getVictimCorpID());
+		$smarty->assign('victimCorpURL',
+					edkURI::build(array('a', 'corp_detail', true),
+					array('crp_id', $this->kill->getVictimCorpID(), false)));
 		$smarty->assign('victimCorpName', $this->kill->getVictimCorpName());
-		$smarty->assign('victimAllianceURL', "?a=alliance_detail&amp;all_id=" . $this->kill->getVictimAllianceID());
+		$smarty->assign('victimAllianceURL',
+					edkURI::build(array('a', 'alliance_detail', true),
+					array('all_id', $this->kill->getVictimAllianceID(), false)));
 		$smarty->assign('victimAllianceName', $this->kill->getVictimAllianceName());
 		$smarty->assign('victimDamageTaken', $this->kill->getDamageTaken());
 
@@ -797,7 +822,7 @@ class pKillDetail extends pageAssembly
 			{
 				$smarty->assign('systemID', $this->system->getID());
 				$smarty->assign('system', $this->system->getName() . ' (Classified)');
-				$smarty->assign('systemURL', "?a=system_detail&amp;sys_id=" . $this->system->getID());
+				$smarty->assign('systemURL', KB_HOST."/?a=system_detail&amp;sys_id=" . $this->system->getID());
 				$smarty->assign('systemSecurity', $this->system->getSecurity(true));
 			}
 			else
@@ -811,7 +836,9 @@ class pKillDetail extends pageAssembly
 		{
 			$smarty->assign('systemID', $this->system->getID());
 			$smarty->assign('system', $this->system->getName());
-			$smarty->assign('systemURL', "?a=system_detail&amp;sys_id=" . $this->system->getID());
+			$smarty->assign('systemURL', edkURI::build(
+					array('a', 'system_detail', true),
+					array('sys_id', $this->system->getID(), true)));
 			$smarty->assign('systemSecurity', $this->system->getSecurity(true));
 		}
 
@@ -1118,22 +1145,22 @@ class pKillDetail extends pageAssembly
 		$this->addMenuItem("caption", "View");
 		$this->addMenuItem("link",
 			"Killmail",
-			"?a=kill_mail&amp;kll_id=" . $this->kill->getID(),
+			KB_HOST."/?a=kill_mail&amp;kll_id=" . $this->kill->getID(),
 			0,0,
-			"sndReq('?a=kill_mail&amp;kll_id=" . $this->kill->getID()
+			"sndReq('".KB_HOST."/?a=kill_mail&amp;kll_id=" . $this->kill->getID()
 			. "');ReverseContentDisplay('popup')");
 
 		if (config::get('kd_EFT'))
 		{
 			$this->addMenuItem("link",
 				"EFT Fitting",
-				"?a=eft_fitting&amp;kll_id=" . $this->kill->getID(),
+				KB_HOST."/?a=eft_fitting&amp;kll_id=" . $this->kill->getID(),
 				0,0,
-				"sndReq('?a=eft_fitting&amp;kll_id=" . $this->kill->getID()
+				"sndReq('".KB_HOST."?a=eft_fitting&amp;kll_id=" . $this->kill->getID()
 				. "');ReverseContentDisplay('popup')");
 			$this->addMenuItem("link",
 				"EvE Fitting",
-				"?a=eve_fitting&amp;kll_id=" . $this->kill->getID());
+				KB_HOST."/?a=eve_fitting&amp;kll_id=" . $this->kill->getID());
 		}
 
 		if ($this->kill->relatedKillCount() > 1 || $this->kill->relatedLossCount() > 1 ||
@@ -1141,7 +1168,7 @@ class pKillDetail extends pageAssembly
 				&& $this->kill->relatedKillCount() + $this->kill->relatedLossCount() > 1))
 		{
 			$this->addMenuItem("link", "Related kills (" . $this->kill->relatedKillCount() . "/" . $this->kill->relatedLossCount() . ")",
-				"?a=kill_related&amp;kll_id=" . $this->kill->getID());
+			edkURI::build(array('a', 'kill_related', true), array('kll_id', $this->kill->getID(), true)));
 		}
 
 		if ($this->page->isAdmin())
@@ -1149,18 +1176,18 @@ class pKillDetail extends pageAssembly
 			$this->addMenuItem("caption", "Admin");
 			$this->addMenuItem("link",
 				"Delete",
-				"?a=admin_kill_delete&amp;kll_id=" . $this->kill->getID(),
+				KB_HOST."/?a=admin_kill_delete&amp;kll_id=" . $this->kill->getID(),
 				0,0,
-				"openWindow('?a=admin_kill_delete&amp;kll_id=" . $this->kill->getID()
+				"openWindow('".KB_HOST."/?a=admin_kill_delete&amp;kll_id=" . $this->kill->getID()
 				. "', null, 420, 300, '' );");
 
 			if (isset($_GET['view']) && $_GET['view'] == 'FixSlot')
 			{
-				$this->addMenuItem("link", "Adjust Values", "?a=kill_detail&amp;kll_id=" . $this->kill->getID() . "");
+				$this->addMenuItem("link", "Adjust Values", KB_HOST."/?a=kill_detail&amp;kll_id=" . $this->kill->getID() . "");
 			}
 			else
 			{
-				$this->addMenuItem("link", "Fix Slots", "?a=kill_detail&amp;kll_id=" . $this->kill->getID() . "&amp;view=FixSlot");
+				$this->addMenuItem("link", "Fix Slots", KB_HOST."/?a=kill_detail&amp;kll_id=" . $this->kill->getID() . "&amp;view=FixSlot");
 			}
 		}
 		return "";

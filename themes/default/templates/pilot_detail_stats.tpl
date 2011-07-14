@@ -2,11 +2,11 @@
 	<tr class='kb-table-row-even'>
 		<td rowspan='8' width='128'><img src="{$portrait_URL}" border="0" width="128" height="128" alt="portrait" /></td>
 		<td class='kb-table-cell' width='160'><b>Corporation:</b></td>
-		<td class='kb-table-cell'><a href="?a=corp_detail&amp;crp_id={$corp_id}">{$corp_name}</a></td>
+		<td class='kb-table-cell'><a href="{$kb_host}/?a=corp_detail&amp;crp_id={$corp_id}">{$corp_name}</a></td>
 	</tr>
 	<tr class='kb-table-row-even'>
 		<td class='kb-table-cell'><b>Alliance:</b></td>
-		<td class='kb-table-cell'><a href="?a=alliance_detail&amp;all_id={$all_id}">{$all_name}</a></td>
+		<td class='kb-table-cell'><a href="{$kb_host}/?a=alliance_detail&amp;all_id={$all_id}">{$all_name}</a></td>
 	</tr>
 	<tr class='kb-table-row-even'>
 		<td class='kb-table-cell'><b>Kills:</b></td>

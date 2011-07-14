@@ -4,7 +4,7 @@
 		<tr class="{cycle name="ccl"}" >
 			<td style="width:64px; height:64px; vertical-align:top" rowspan="3"><img src="{$victimShipImage}" alt="{$victimShipName}"/> </td>
 			<td class="kb-table-cell" style="height:17px"><b>Ship:</b></td>
-			<td class="kb-table-cell"><b><a href="?a=invtype&amp;id={$victimShipID}">{$victimShipName}</a></b> ({$victimShipClassName})</td>
+			<td class="kb-table-cell"><b><a href="{$kb_host}/?a=invtype&amp;id={$victimShipID}">{$victimShipName}</a></b> ({$victimShipClassName})</td>
 		</tr>
 		<tr class="{cycle name="ccl"}">
 			<td class="kb-table-cell" style="height:17px"><b>Location:</b></td>

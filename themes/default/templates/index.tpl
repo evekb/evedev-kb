@@ -6,23 +6,28 @@
 	<meta name="description" content="EDK Killboard - {$config->get('cfg_kbtitle')}" />
 	<meta name="keywords" content="EDK, killboard, {$config->get('cfg_kbtitle')}, {if $kb_owner}{$kb_owner}, {/if}Eve-Online, killmail" />
 	<title>{$kb_title}</title>
-	<link rel="stylesheet" type="text/css" href="{$theme_url}/{$style}.css" />
+	<link rel="stylesheet" type="text/css" href="{$kb_host}/themes/default/default.css" />
+	{if $style}<link rel="stylesheet" type="text/css" href="{$theme_url}/{$style}.css" />{/if}
 {$page_headerlines}
 	<script type="text/javascript" src="{$kb_host}/themes/generic.js"></script>
 </head>
 <body {$on_load} style="height: 100%">
 {$page_bodylines}
-	<div id="popup">
-	</div>
+	<div id="popup"></div>
+	<div id="stuff1"></div>
+	<div id="stuff2"></div>
+	<div id="stuff3"></div>
+	<div id="stuff4"></div>
 	<div id="main">
 {if $banner}
 		<div id="header">
 {if $bannerswf=='true'}
-		<OBJECT classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" WIDTH="1000" HEIGHT="200" id="{$banner}" ALIGN="">
-		<PARAM NAME=movie VALUE="{$kb_host}/banner/{$banner}"> <PARAM NAME=quality VALUE=high> <PARAM NAME=bgcolor VALUE=black> <EMBED src="banner/{$banner}" quality=high bgcolor=black WIDTH="1000" HEIGHT="200" NAME="{$banner}" ALIGN="" TYPE="application/x-shockwave-flash" PLUGINSPAGE="http://www.macromedia.com/go/getflashplayer"></EMBED> </OBJECT>
+			<object type="application/x-shockwave-flash" data="{$kb_host}/banner/{$banner}" height="200" width="1000">
+				<param name="movie" value="myFlashMovie.swf" />
+			</object>
 {else}
 		<a href="{if $banner_link}{$banner_link}{else}?a=home{/if}">
-			<img src="{$kb_host}/banner/{$banner}" style="border:0px" alt="Banner" {if $banner_x && $banner_y}width = "{$banner_x}" height="{$banner_y}"{/if} />
+			<img src="{$kb_host}/banner/{$banner}" style="border:0" alt="Banner" {if $banner_x && $banner_y}width = "{$banner_x}" height="{$banner_y}"{/if} />
 		</a>
 {/if}
 		</div>
@@ -31,7 +36,7 @@
 			<table class="navigation" width="100%" style="height:25px;" border="0" cellspacing="1">
 				<tr class="kb-table-row-odd">
 		{section name=item loop=$menu}
-					<td style="width:{$menu_w}; text-align:center"><a class="link" style="display: block;" href="{$menu[item].link}">{$menu[item].text}</a></td>
+					<td style="width:{$menu_w}; text-align:center"><a class="link" style="display: block;" href="{$kb_host}/{$menu[item].link}">{$menu[item].text}</a></td>
 		{/section}
 				</tr>
 			</table>

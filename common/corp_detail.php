@@ -58,66 +58,80 @@ class pCorpDetail extends pageAssembly
 	{
 		$this->page = new Page('Corporation details');
 
-		if(isset($_GET['scl_id'])) $this->scl_id = intval($_GET['scl_id']);
-		else $this->scl_id = false;
-		if(isset($_GET['crp_id'])) $this->crp_id = intval($_GET['crp_id']);
-		if(isset($_GET['crp_external_id'])) $this->crp_external_id = intval($_GET['crp_external_id']);
-		elseif(isset($_GET['crp_ext_id'])) $this->crp_external_id = intval($_GET['crp_ext_id']);
-		$this->view = $_GET['view'];
-		if($this->view) $this->page->addHeader('<meta name="robots" content="noindex, nofollow" />');
+		$this->scl_id = (int)edkURI::getArg('scl_id');
+		$this->crp_id = (int)edkURI::getArg('crp_id');
+		if (!$this->crp_id) {
+			$this->crp_external_id = (int)edkURI::getArg('crp_ext_id');
+			if (!$this->crp_external_id) {
+				$id = (int)edkURI::getArg('id');
+				// True for NPC corps too, but NPC alliances recorded as corps
+				// fail here. Use Jedi mind tricks?
+				if ($id > 1000000) {
+					$this->crp_external_id = $id;
+				} else {
+					$this->crp_id = $id;
+				}
+			}
+		}
 
-		if(!$this->crp_id)
-		{
-			if($this->crp_external_id)
-			{
+		$this->view = preg_replace('/[^a-zA-Z0-9_-]/','', edkURI::getArg('view', 2));
+		if($this->view) {
+			$this->page->addHeader('<meta name="robots" content="noindex, nofollow" />');
+		}
+
+		if(!$this->crp_id) {
+			if($this->crp_external_id) {
 				$this->corp = new Corporation($this->crp_external_id, true);
 				$this->crp_id = $this->corp->getID();
-			}
-			else
-			{
+			} else {
 				$html = 'That corporation does not exist.';
 				$this->page->setContent($html);
 				$this->page->generate();
 				exit;
 			}
-		}
-		else
-		{
-			$this->corp = new Corporation($this->crp_id);
+		} else {
+			$this->corp = Cacheable::factory('Corporation', $this->crp_id);
 			$this->crp_external_id = $this->corp->getExternalID();
 		}
 
-		if($this->crp_external_id) $this->page->addHeader("<link rel='canonical' href='".KB_HOST."/?a=corp_detail&amp;crp_ext_id=". $this->crp_external_id."' />");
-		else $this->page->addHeader("<link rel='canonical' href='".KB_HOST."/?a=corp_detail&amp;crp_id=".$this->crp_id."' />");
+		if($this->crp_external_id) {
+			$this->page->addHeader("<link rel='canonical' href='"
+					.edkURI::build(array('crp_ext_id', $this->crp_external_id,
+						true))."' />");
+		} else {
+			$this->page->addHeader("<link rel='canonical' href='"
+					.edkURI::build(array('crp_id', $this->crp_id,
+						true))."' />");
+		}
 
 		$this->alliance = $this->corp->getAlliance();
 
-		$this->month = intval($_GET['m']);
-		$this->year = intval($_GET['y']);
+		if ($this->view) {
+			$this->year = (int)edkURI::getArg('y', 3);
+			$this->month = (int)edkURI::getArg('m', 4);
+		} else {
+			$this->year = (int)edkURI::getArg('y', 2);
+			$this->month = (int)edkURI::getArg('m', 3);
+		}
 
-		if ($this->month == '')
+		if (!$this->month) {
 			$this->month = kbdate('m');
-
-		if ($this->year == '')
+		}
+		if (!$this->year) {
 			$this->year = kbdate('Y');
+		}
 
-		if ($this->month == 12)
-		{
+		if ($this->month == 12) {
 			$this->nmonth = 1;
 			$this->nyear = $this->year + 1;
-		}
-		else
-		{
+		} else {
 			$this->nmonth = $this->month + 1;
 			$this->nyear = $this->year;
 		}
-		if ($this->month == 1)
-		{
+		if ($this->month == 1) {
 			$this->pmonth = 12;
 			$this->pyear = $this->year - 1;
-		}
-		else
-		{
+		} else {
 			$this->pmonth = $this->month - 1;
 			$this->pyear = $this->year;
 		}
@@ -168,37 +182,44 @@ class pCorpDetail extends pageAssembly
 
 		$smarty->assign('portrait_url', $this->corp->getPortraitURL(128));
 
-		if($this->alliance->getName() == "None")
+		if($this->alliance->getName() == "None") {
 			$smarty->assign('alliance_url', false);
-		else if($this->alliance->getExternalID())
-			$smarty->assign('alliance_url', "?a=alliance_detail&amp;all_ext_id=".$this->alliance->getExternalID());
-		else
-			$smarty->assign('alliance_url', "?a=alliance_detail&amp;all_id=".$this->alliance->getID());
+		} else if($this->alliance->getExternalID()) {
+			$smarty->assign('alliance_url', edkURI::build(
+					array('a', 'alliance_detail', true),
+					array('all_ext_id', $this->alliance->getExternalID(), true)));
+		} else {
+			$smarty->assign('alliance_url', edkURI::build(
+					array('a', 'alliance_detail', true),
+					array('all_id', $this->alliance->getID(), true)));
+		}
 		$smarty->assign('alliance_name', $this->alliance->getName());
 
 		$smarty->assign('kill_count', $this->kill_summary->getTotalKills());
 		$smarty->assign('loss_count', $this->kill_summary->getTotalLosses());
 		$smarty->assign('damage_done', number_format($this->kill_summary->getTotalKillISK()/1000000000, 2));
 		$smarty->assign('damage_received', number_format($this->kill_summary->getTotalLossISK()/1000000000, 2));
-		if ($this->kill_summary->getTotalKillISK())
-		{
-			$smarty->assign('efficiency', number_format(100 * $this->kill_summary->getTotalKillISK() / ($this->kill_summary->getTotalKillISK() + $this->kill_summary->getTotalLossISK()), 2));
-		}
-		else
-		{
+		if ($this->kill_summary->getTotalKillISK()) {
+			$smarty->assign('efficiency',
+					number_format(100 * $this->kill_summary->getTotalKillISK() /
+							($this->kill_summary->getTotalKillISK()
+							+ $this->kill_summary->getTotalLossISK()), 2));
+		} else {
 			$smarty->assign('efficiency', 0);
 		}
 
-		if ($result != "Corporation is not part of alliance.")
-		{
-			$smarty->assign('ceo_url', "?a=pilot_detail&amp;plt_ext_id=".$myAPI->getCeoID());
+		if ($result != "Corporation is not part of alliance.") {
+			$smarty->assign('ceo_url', edkURI::build(
+					array('a', 'pilot_detail', true),
+					array('plt_ext_id', $myAPI->getCeoID(), true)));
 			$smarty->assign('ceo_name', $myAPI->getCeoName());
 			$smarty->assign('HQ_location', $myAPI->getStationName());
 			$smarty->assign('member_count', $myAPI->getMemberCount());
 			$smarty->assign('share_count', $myAPI->getShares());
 			$smarty->assign('tax_rate', $myAPI->getTaxRate());
 			$smarty->assign('external_url', $myAPI->getUrl());
-			$smarty->assign('corp_description', str_replace( "<br>", "<br />", $myAPI->getDescription()));
+			$smarty->assign('corp_description', str_replace( "<br>", "<br />",
+					$myAPI->getDescription()));
 		}
 		return $smarty->fetch(get_tpl('corp_detail_stats'));
 	}
@@ -209,8 +230,20 @@ class pCorpDetail extends pageAssembly
 	function killList()
 	{
 		global $smarty;
-		if(isset($this->viewList[$this->view])) return call_user_func_array($this->viewList[$this->view], array(&$this));
+		if(isset($this->viewList[$this->view])) {
+			return call_user_func_array($this->viewList[$this->view], array(&$this));
+		}
+		$args = array();
+		if ($this->crp_external_id) {
+			$args[] = array('crp_ext_id', $this->crp_external_id, true);
+		} else {
+			$args[] = array('crp_id', $this->crp_id, true);
+		}
 
+		$pyear = array('m', $this->pyear, true);
+		$nyear = array('m', $this->nyear, true);
+		$pmonth = array('m', $this->pmonth, true);
+		$nmonth = array('m', $this->nmonth, true);
 		switch ($this->view)
 		{
 			case "":
@@ -284,8 +317,8 @@ class pCorpDetail extends pageAssembly
 				$smarty->assign('nmonth', $this->nmonth);
 				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('crp_id', $this->crp_id);
-				$smarty->assign('url_previous', "?a=corp_detail&amp;view=pilot_kills&amp;crp_id=$this->crp_id&amp;m=$this->pmonth&amp;y=$this->pyear");
-				$smarty->assign('url_next', "?a=corp_detail&amp;view=pilot_kills&amp;crp_id=$this->crp_id&amp;m=$this->nmonth&amp;y=$this->nyear");
+				$smarty->assign('url_previous', edkURI::build($args, array('view', 'pilot_kills', true), $pyear, $pmonth));
+				$smarty->assign('url_next', edkURI::build($args, array('view', 'pilot_kills', true), $nyear, $nmonth));
 
 				$list = new TopList_Kills();
 				$list->addInvolvedCorp($this->crp_id);
@@ -313,8 +346,8 @@ class pCorpDetail extends pageAssembly
 				$smarty->assign('nmonth', $this->nmonth);
 				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('crp_id', $this->crp_id);
-				$smarty->assign('url_previous', "?a=corp_detail&amp;view=pilot_scores&amp;crp_id=$this->crp_id&amp;m=$this->pmonth&amp;y=$this->pyear");
-				$smarty->assign('url_next', "?a=corp_detail&amp;view=pilot_scores&amp;crp_id=$this->crp_id&amp;m=$this->nmonth&amp;y=$this->nyear");
+				$smarty->assign('url_previous', edkURI::build($args, array('view', 'pilot_scores', true), $pyear, $pmonth));
+				$smarty->assign('url_next', edkURI::build($args, array('view', 'pilot_scores', true), $nyear, $nmonth));
 
 				$list = new TopList_Score();
 				$list->addInvolvedCorp($this->crp_id);
@@ -342,8 +375,8 @@ class pCorpDetail extends pageAssembly
 				$smarty->assign('nmonth', $this->nmonth);
 				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('crp_id', $this->crp_id);
-				$smarty->assign('url_previous', "?a=corp_detail&amp;view=pilot_solo&amp;crp_id=$this->crp_id&amp;m=$this->pmonth&amp;y=$this->pyear");
-				$smarty->assign('url_next', "?a=corp_detail&amp;view=pilot_solo&amp;crp_id=$this->crp_id&amp;m=$this->nmonth&amp;y=$this->nyear");
+				$smarty->assign('url_previous', edkURI::build($args, array('view', 'pilot_solo', true), $pyear, $pmonth));
+				$smarty->assign('url_next', edkURI::build($args, array('view', 'pilot_solo', true), $nyear, $nmonth));
 
 				$list = new TopList_SoloKiller();
 				$list->addInvolvedCorp($this->crp_id);
@@ -372,8 +405,8 @@ class pCorpDetail extends pageAssembly
 				$smarty->assign('nmonth', $this->nmonth);
 				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('crp_id', $this->crp_id);
-				$smarty->assign('url_previous', "?a=corp_detail&amp;view=pilot_damage&amp;crp_id=$this->crp_id&amp;m=$this->pmonth&amp;y=$this->pyear");
-				$smarty->assign('url_next', "?a=corp_detail&amp;view=pilot_damage&amp;crp_id=$this->crp_id&amp;m=$this->nmonth&amp;y=$this->nyear");
+				$smarty->assign('url_previous', edkURI::build($args, array('view', 'pilot_damage', true), $pyear, $pmonth));
+				$smarty->assign('url_next', edkURI::build($args, array('view', 'pilot_damage', true), $nyear, $nmonth));
 
 				$list = new TopList_DamageDealer();
 				$list->addInvolvedCorp($this->crp_id);
@@ -402,8 +435,8 @@ class pCorpDetail extends pageAssembly
 				$smarty->assign('nmonth', $this->nmonth);
 				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('crp_id', $this->crp_id);
-				$smarty->assign('url_previous', "?a=corp_detail&amp;view=pilot_griefer&amp;crp_id=$this->crp_id&amp;m=$this->pmonth&amp;y=$this->pyear");
-				$smarty->assign('url_next', "?a=corp_detail&amp;view=pilot_griefer&amp;crp_id=$this->crp_id&amp;m=$this->nmonth&amp;y=$this->nyear");
+				$smarty->assign('url_previous', edkURI::build($args, array('view', 'pilot_griefer', true), $pyear, $pmonth));
+				$smarty->assign('url_next', edkURI::build($args, array('view', 'pilot_griefer', true), $nyear, $nmonth));
 
 				$list = new TopList_Kills();
 				$list->addVictimShipClass(20); // freighter
@@ -441,8 +474,8 @@ class pCorpDetail extends pageAssembly
 				$smarty->assign('nmonth', $this->nmonth);
 				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('crp_id', $this->crp_id);
-				$smarty->assign('url_previous', "?a=corp_detail&amp;view=pilot_losses&amp;crp_id=$this->crp_id&amp;m=$this->pmonth&amp;y=$this->pyear");
-				$smarty->assign('url_next', "?a=corp_detail&amp;view=pilot_losses&amp;crp_id=$this->crp_id&amp;m=$this->nmonth&amp;y=$this->nyear");
+				$smarty->assign('url_previous', edkURI::build($args, array('view', 'pilot_losses', true), $pyear, $pmonth));
+				$smarty->assign('url_next', edkURI::build($args, array('view', 'pilot_losses', true), $nyear, $nmonth));
 
 				$list = new TopList_Losses();
 				$list->addVictimCorp($this->crp_id);
@@ -483,8 +516,8 @@ class pCorpDetail extends pageAssembly
 				$smarty->assign('nmonth', $this->nmonth);
 				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('crp_id', $this->crp_id);
-				$smarty->assign('url_previous', "?a=corp_detail&amp;view=violent_systems&amp;crp_id=$this->crp_id&amp;m=$this->pmonth&amp;y=$this->pyear");
-				$smarty->assign('url_next', "?a=corp_detail&amp;view=violent_systems&amp;crp_id=$this->crp_id&amp;m=$this->nmonth&amp;y=$this->nyear");
+				$smarty->assign('url_previous', edkURI::build($args, array('view', 'violent_systems', true), $pyear, $pmonth));
+				$smarty->assign('url_next', edkURI::build($args, array('view', 'violent_systems', true), $nyear, $nmonth));
 
 				$startdate = gmdate('Y-m-d H:i', makeStartDate(0, $this->year, $this->month));
 				$enddate = gmdate('Y-m-d H:i', makeEndDate(0, $this->year, $this->month));
@@ -583,22 +616,29 @@ class pCorpDetail extends pageAssembly
 	 */
 	function menuSetup()
 	{
+		$args = array();
+		if ($this->crp_external_id) {
+			$args[] = array('crp_ext_id', $this->crp_external_id, true);
+		} else {
+			$args[] = array('crp_id', $this->crp_id, true);
+		}
+
 		$this->addMenuItem("caption","Kills &amp; losses");
-		$this->addMenuItem("link","Recent activity", "?a=corp_detail&amp;crp_id=" . $this->corp->getID());
-		$this->addMenuItem("link","Kills", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=kills");
-		$this->addMenuItem("link","Losses", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=losses");
+		$this->addMenuItem("link","Recent activity", edkURI::build($args));
+		$this->addMenuItem("link","Kills", edkURI::build($args, array('view', 'kills', true)));
+		$this->addMenuItem("link","Losses", edkURI::build($args, array('view', 'losses', true)));
 		$this->addMenuItem("caption","Pilot statistics");
-		$this->addMenuItem("link","Top killers", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=pilot_kills");
+		$this->addMenuItem("link","Top killers", edkURI::build($args, array('view', 'pilot_kills', true)));
 
 		if (config::get('kill_points'))
-			$this->addMenuItem("link","Top scorers", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=pilot_scores");
-		$this->addMenuItem("link","Top solokillers", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=pilot_solo");
-		$this->addMenuItem("link","Top damagedealers", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=pilot_damage");
-		$this->addMenuItem("link","Top griefers", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=pilot_griefer");
-		$this->addMenuItem("link","Top losers", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=pilot_losses");
+			$this->addMenuItem("link","Top scorers", edkURI::build($args, array('view', 'pilot_scores', true)));
+		$this->addMenuItem("link","Top solokillers", edkURI::build($args, array('view', 'pilot_solo', true)));
+		$this->addMenuItem("link","Top damagedealers", edkURI::build($args, array('view', 'pilot_damage', true)));
+		$this->addMenuItem("link","Top griefers", edkURI::build($args, array('view', 'pilot_griefer', true)));
+		$this->addMenuItem("link","Top losers", edkURI::build($args, array('view', 'pilot_losses', true)));
 		$this->addMenuItem("caption","Global statistics");
-		$this->addMenuItem("link","Ships &amp; weapons", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=ships_weapons");
-		$this->addMenuItem("link","Most violent systems", "?a=corp_detail&amp;crp_id=" . $this->corp->getID() . "&amp;view=violent_systems");
+		$this->addMenuItem("link","Ships &amp; weapons", edkURI::build($args, array('view', 'ships_weapons', true)));
+		$this->addMenuItem("link","Most violent systems", edkURI::build($args, array('view', 'violent_systems', true)));
 		return "";
 	}
 	/**

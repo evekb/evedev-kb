@@ -634,39 +634,39 @@ class KillList
 			}
 
 			$kill = new KillWrapper($row['kll_id']);
-			$arr = array('victimexternalid' => $row['plt_externalid'],
+			$arr = array('victimexternalid' => (int)$row['plt_externalid'],
 				'victimname' => $row['plt_name'],
-				'victimid' => $row['kll_victim_id'],
-				'victimcorpid' => $row['crp_id'],
+				'victimid' => (int)$row['kll_victim_id'],
+				'victimcorpid' => (int)$row['crp_id'],
 				'victimcorpname' => $row['crp_name'],
-				'victimallianceid' => $row['all_id'],
+				'victimallianceid' => (int)$row['all_id'],
 				'victimalliancename' => $row['all_name'],
-				'victimshipexternalid' => $row['shp_externalid'],
+				'victimshipexternalid' => (int)$row['shp_externalid'],
 				'victimshipname' => $row['shp_name'],
 				'victimshipclassname' => $row['scl_class'],
 				'victimshipvalue' => $row['scl_value'],
-				'fbpilotid' => $row['fbplt_id'],
-				'fbpilotexternalid' => $row['fbplt_externalid'],
-				'fbcorpid' => $row['fbcrp_id'],
-				'fballianceid' => $row['fball_id'],
+				'fbpilotid' => (int)$row['fbplt_id'],
+				'fbpilotexternalid' => (int)$row['fbplt_externalid'],
+				'fbcorpid' => (int)$row['fbcrp_id'],
+				'fballianceid' => (int)$row['fball_id'],
 				'fbpilotname' => $row['fbplt_name'],
 				'fbcorpname' => $row['fbcrp_name'],
 				'fballiancename' => $row['fball_name'],
-				'victimshipid' => $row['shp_id'],
+				'victimshipid' => (int)$row['shp_id'],
 				'dmgtaken' => $row['kll_dmgtaken'],
 				'timestamp' => $row['kll_timestamp'],
-				'solarsystemid' => $row['sys_id'],
+				'solarsystemid' => (int)$row['sys_id'],
 				'solarsystemname' => $row['sys_name'],
 				'solarsystemsecurity' => $row['sys_sec'],
-				'externalid' => $row['kll_external_id'],
-				'killpoints' => $row['kll_points'],
-				'iskloss' => $row['kll_isk_loss']
+				'externalid' => (int)$row['kll_external_id'],
+				'killpoints' => (int)$row['kll_points'],
+				'iskloss' => (float)$row['kll_isk_loss']
 				);
 			$kill->setArray($arr);
 			//Set the involved party count if it is known
-			if($this->involved_) $kill->setInvolvedPartyCount($row['inv']);
+			if($this->involved_) $kill->setInvolvedPartyCount((int)$row['inv']);
 			//Set the comment count if it is known
-			if($this->comments_) $kill->setCommentCount($row['comments']);
+			if($this->comments_) $kill->setCommentCount((int)$row['comments']);
 			if (isset($this->_tag))
 			{
 				$kill->_tag = $this->_tag;

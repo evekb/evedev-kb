@@ -60,7 +60,7 @@ class pageAssembly
             {
                 if (is_callable(array($this, $cb[1])))
                 {
-                    return call_user_func(array($this, $cb[1]), $this);
+                    return call_user_func_array(array($this, $cb[1]), array(&$this));
                 }
                 return false;
             }
@@ -72,7 +72,7 @@ class pageAssembly
             $cb = explode('::', $callback);
             if (is_callable($cb))
             {
-                return call_user_func($cb, $this);
+                return call_user_func_array($cb, array(&$this));
             }
             return false;
         }

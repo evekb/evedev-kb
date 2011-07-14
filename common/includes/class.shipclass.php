@@ -117,7 +117,7 @@ class ShipClass extends Cacheable
 		elseif ($value > 250)
 			$color = "purple";
 
-		return IMG_URL."/ships/ship-".$color.".gif";
+		return config::get('cfg_img')."/ships/ship-".$color.".gif";
 	}
 
 	private function execQuery()

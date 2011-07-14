@@ -33,51 +33,44 @@ class pAwards extends pageAssembly
 		$this->page = new Page(Language::get('page_awards'));
 		$this->page->addHeader('<meta name="robots" content="index, follow" />');
 
-		$this->page->addHeader("<link rel='canonical' href='".KB_HOST."/?a=awards' />");
+		$this->page->addHeader("<link rel='canonical' href='".edkURI::build(array('a', 'awards', true))."' />");
 
-		if(isset($_GET['m'])) $this->month = intval($_GET['m']);
-		else $this->month = kbdate('m') - 1;
-		if(isset($_GET['y'])) $this->year = intval($_GET['y']);
-		else $this->year = kbdate('Y');
-
-		// Make sure month and year are set.
-		if(!$this->year)
-		{
-			$this->year = kbdate('Y');
+		$this->year = (int)edkURI::getArg('y', 1);
+		$this->month = (int)edkURI::getArg('m', 2);
+		if(!$this->month){
 			$this->month = kbdate('m') - 1;
 		}
+		if(!$this->year) {
+			$this->year = kbdate('Y');
+		}
 
-		if ($this->month == 0)
-		{
+		if ($this->month == 0) {
 			$this->month = 12;
 			$this->year = $this->year - 1;
 		}
 
-		if ($this->month == 12)
-		{
+		if ($this->month == 12) {
 			$this->nmonth = 1;
 			$this->nyear = $this->year + 1;
-		}
-		else
-		{
+		} else {
 			$this->nmonth = $this->month + 1;
 			$this->nyear = $this->year;
 		}
-		if ($this->month == 1)
-		{
+		if ($this->month == 1) {
 			$this->pmonth = 12;
 			$this->pyear = $this->year - 1;
-		}
-		else
-		{
+		} else {
 			$this->pmonth = $this->month - 1;
 			$this->pyear = $this->year;
 		}
 
 		$this->monthname = kbdate("F", strtotime("2000-".$this->month."-2"));
 
-		if(isset($_GET['view'])) $this->view = $_GET['view'];
-		else $this->view = false;
+		if (!edkURI::getArg('y', 1)) {
+			$this->view = edkURI::getArg('view', 1);
+		} else {
+			$this->view = edkURI::getArg('view', 3);
+		}
 
 		$this->viewList = array();
 
@@ -227,9 +220,9 @@ class pAwards extends pageAssembly
 	function menuSetup()
 	{
 		$this->addMenuItem("caption", "Navigation");
-		$this->addMenuItem("link", "Previous month ", "?a=awards&amp;m=".$this->pmonth."&amp;y=".$this->pyear);
+		$this->addMenuItem("link", "Previous month ", edkURI::build(array('y', $this->pyear, true), array('m', $this->pmonth, true)));
 		if (! ($this->month == kbdate("m") - 1 && $this->year == kbdate("Y")))
-			$this->addMenuItem("link", "Next month", "?a=awards&amp;m=".$this->nmonth."&amp;y=".$this->nyear);
+			$this->addMenuItem("link", "Next month", edkURI::build(array('y', $this->nyear, true), array('m', $this->nmonth, true)));
 	}
 	/**
 	 * Add an item to the menu in standard box format.

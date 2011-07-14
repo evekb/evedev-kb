@@ -67,7 +67,7 @@ class Box
         $smarty->assign('count', count($this->box_array));
         if ($this->icon_)
         {
-            $smarty->assign('icon', IMG_URL."/".$this->icon_);
+            $smarty->assign('icon', config::get('cfg_img')."/".$this->icon_);
         }
         $smarty->assign('title', $this->title_ );
         $smarty->assign('items', $this->box_array);

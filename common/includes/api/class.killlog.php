@@ -875,12 +875,6 @@ class API_KillLog
                             }
                         }
 
-						//if ( $this->iscronjob_ )
-						//{
-						//	$this->Output_ .= $this->killmail_; // experimental - output the killmail as the API Parser understood it
-						//} else {
-						//	$this->Output_ .= str_replace("\r\n", "<br>", $this->killmail_);
-						//}
 						$this->Output_ .= '<br/>';
                     }
                 }
@@ -900,7 +894,7 @@ class API_KillLog
 
                 if ( $killid == -2 )
 				{
-                    $this->Output_ .= "Killmail ID:".$this->killid_. " is not related to ".KB_TITLE.".<br>";
+                    $this->Output_ .= "Killmail ID:".$this->killid_. " is not related to ".config::get('cfg_kbtitle').".<br>";
 					$this->ignoredmails_++;
                	}
 				// Killmail exists - as we're here and the mail was posted, it is not a verified mail, so verify it now.

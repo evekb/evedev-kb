@@ -81,7 +81,7 @@ if ($_REQUEST['opt'] == 'search')
 				$class = 'kb-table-row-even';
 			}
 			$html .= "<tr class=\"".$class."\" style=\"height: 66px;\">";
-			$html .= '<td width="64" align="center"><img src="'.IMG_URL.'/ships/64_64/'.$data['ext'].'.png" alt="" /></td>';
+			$html .= '<td width="64" align="center"><img src="'.config::get('cfg_img').'/ships/64_64/'.$data['ext'].'.png" alt="" /></td>';
 			$html .= '<td align="center">'.$data['id'].'</td>';
 			$html .= '<td>'.$data['shp_name'].'</td>';
 			$html .= '<td>'.$data['scl_class'].'</td>';
@@ -206,7 +206,7 @@ if (!isset($_REQUEST['opt']))
 			$class = 'kb-table-row-even';
 		}
 		$html .= "<tr class=\"".$class."\" style=\"height: 34px;\">";
-		$html .= '<td width="32" align="center"><img src="'.IMG_URL.'/ships/32_32/'.$data['ext'].'.png" alt="" /></td>';
+		$html .= '<td width="32" align="center"><img src="'.config::get('cfg_img').'/ships/32_32/'.$data['ext'].'.png" alt="" /></td>';
 		$html .= '<td align="center">'.$data['id'].'</td>';
 		$html .= '<td>'.$data['shp_name'].'</td>';
 		$html .= '<td>'.$data['scl_class'].'</td>';

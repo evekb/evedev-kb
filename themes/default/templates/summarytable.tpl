@@ -72,7 +72,7 @@
 	</table>
 	{/if}
 {/if}
-{if $clearfilter}<table align="center"><tr><td style="text-align:center; vertical-align:top" class="weeknav">[<a href="{$clearfilter}">clear filter</a>]</td></tr></table>{/if}
+{if $clearfilter}<div style="text-align:center;" class="weeknav">[<a href="{$clearfilter}">clear filter</a>]</div>{/if}
 </div>
 <!-- /summarytable.tpl -->
 

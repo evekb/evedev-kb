@@ -54,12 +54,24 @@ class pAllianceDetail extends pageAssembly
 	{
 		$this->page = new Page();
 
-		$this->scl_id = intval($_GET['scl_id']);
-		$this->all_id = intval($_GET['all_id']);
-		if(isset($_GET['all_external_id'])) $this->all_external_id = intval($_GET['all_external_id']);
-		elseif(isset($_GET['all_ext_id'])) $this->all_external_id = intval($_GET['all_ext_id']);
-		else $this->all_external_id = 0;
-		$this->view = $_GET['view'];
+		$this->scl_id = (int)edkURI::getArg('scl_id');
+		$this->all_id = (int)edkURI::getArg('all_id');
+		$this->all_external_id = (int)edkURI::getArg('all_ext_id');
+
+		if (!$this->all_id && !$this->all_external_id ) {
+			$this->all_id = (int)edkURI::getArg('id', 1);
+			// And now a bit of magic to test if this is an external ID
+			if(($this->all_id > 500000 && $this->all_id < 500021)
+					|| $this->all_id > 1000000) {
+				$this->all_external_id = $this->all_id;
+				$this->all_id = 0;
+			}
+		}
+
+		$this->view = preg_replace('/[^a-zA-Z0-9_-]/','', edkURI::getArg('view', 2));
+		$this->viewList = array();
+
+		// Search engines should only index the main view.
 		if($this->view) $this->page->addHeader('<meta name="robots" content="noindex, nofollow" />');
 
 		if (!$this->all_id && !$this->all_external_id)
@@ -87,39 +99,48 @@ class pAllianceDetail extends pageAssembly
 			$this->all_external_id = $this->alliance->getExternalID();
 		}
 
-		if($this->all_external_id) $this->page->addHeader("<link rel='canonical' href='".KB_HOST."/?a=alliance_detail&amp;all_ext_id=". $this->all_external_id."' />");
-		else $this->page->addHeader("<link rel='canonical' href='".KB_HOST."/?a=alliance_detail&amp;all_id=".$this->all_id."' />");
+		if($this->all_external_id) {
+			$this->page->addHeader("<link rel='canonical' href='"
+					.edkURI::build(array("all_ext_id",
+							$this->all_external_id, true))
+					."' />");
+		}
+		else {
+			$this->page->addHeader("<link rel='canonical' href='"
+				.edkURI::build(array("all_id", $this->all_id, true))
+				."' />");
+		}
+		if ($this->view) {
+			$this->year = (int)edkURI::getArg('y', 3);
+			$this->month = (int)edkURI::getArg('m', 4);
+		} else {
+			$this->year = (int)edkURI::getArg('y', 2);
+			$this->month = (int)edkURI::getArg('m', 3);
+		}
 
-		$this->month = intval($_GET['m']);
-		$this->year = intval($_GET['y']);
-
-		if ($this->month == '')
+		if (!$this->month) {
 			$this->month = kbdate('m');
-
-		if ($this->year == '')
+		}
+		if (!$this->year) {
 			$this->year = kbdate('Y');
+		}
 
-		if ($this->month == 12)
-		{
+		if ($this->month == 12) {
 			$this->nmonth = 1;
 			$this->nyear = $this->year + 1;
-		}
-		else
-		{
+		} else {
 			$this->nmonth = $this->month + 1;
 			$this->nyear = $this->year;
 		}
-		if ($this->month == 1)
-		{
+		if ($this->month == 1) {
 			$this->pmonth = 12;
 			$this->pyear = $this->year - 1;
-		}
-		else
-		{
+		} else {
 			$this->pmonth = $this->month - 1;
 			$this->pyear = $this->year;
 		}
 		$this->monthname = kbdate("F", strtotime("2000-".$this->month."-2"));
+
 		global $smarty;
 		$smarty->assign('monthname', $this->monthname);
 		$smarty->assign('year', $this->year);
@@ -127,8 +148,13 @@ class pAllianceDetail extends pageAssembly
 		$smarty->assign('pyear', $this->pyear);
 		$smarty->assign('nmonth', $this->nmonth);
 		$smarty->assign('nyear', $this->nyear);
-		if($this->alliance->isFaction()) $this->page->setTitle(Language::get('page_faction_det').' - '.$this->alliance->getName());
-		else $this->page->setTitle(Language::get('page_all_det').' - '.$this->alliance->getName());
+		if($this->alliance->isFaction()) {
+			$this->page->setTitle(Language::get('page_faction_det').' - '
+					.$this->alliance->getName());
+		} else {
+			$this->page->setTitle(Language::get('page_all_det').' - '
+					.$this->alliance->getName());
+		}
 
 		$smarty->assign('all_name', $this->alliance->getName());
 		$smarty->assign('all_id', $this->alliance->getID());
@@ -164,8 +190,15 @@ class pAllianceDetail extends pageAssembly
 		if($this->alliance->getExternalID()) $myAlliance = $myAlliAPI->LocateAllianceID( $this->alliance->getExternalID() );
 		else $myAlliance = $myAlliAPI->LocateAlliance( $this->alliance->getName() );
 
-		if($this->alliance->isFaction()) $this->page->setTitle(Language::get('page_faction_det').' - '.$this->alliance->getName() . " [" . $myAlliance["shortName"] . "]");
-		else $this->page->setTitle(Language::get('page_all_det').' - '.$this->alliance->getName() . " [" . $myAlliance["shortName"] . "]");
+		if($this->alliance->isFaction()) {
+			$this->page->setTitle(Language::get('page_faction_det').' - '
+					.$this->alliance->getName()." [" . $myAlliance["shortName"]
+					."]");
+		} else {
+			$this->page->setTitle(Language::get('page_all_det').' - '
+					.$this->alliance->getName()." [".$myAlliance["shortName"]
+					."]");
+		}
 
 		$myCorpAPI = new API_CorporationSheet();
 
@@ -205,8 +238,7 @@ class pAllianceDetail extends pageAssembly
 				unset($membercorp);
 			}
 
-			if(!isset($this->kill_summary))
-			{
+			if(!isset($this->kill_summary)) {
 				$this->kill_summary = new KillSummaryTable();
 				$this->kill_summary->addInvolvedAlliance($this->alliance);
 				$this->kill_summary->generate();
@@ -214,12 +246,9 @@ class pAllianceDetail extends pageAssembly
 			$smarty->assign('myAlliance', $myAlliance);
 			$smarty->assign('memberCorpCount', count($myAlliance["memberCorps"]));
 
-			if ($this->kill_summary->getTotalKillISK())
-			{
+			if ($this->kill_summary->getTotalKillISK()) {
 				 $efficiency = round($this->kill_summary->getTotalKillISK() / ($this->kill_summary->getTotalKillISK() + $this->kill_summary->getTotalLossISK()) * 100, 2);
-			}
-			else
-			{
+			} else {
 				$efficiency = 0;
 			}
 
@@ -231,10 +260,11 @@ class pAllianceDetail extends pageAssembly
 		$smarty->assign('totallosses', $this->kill_summary->getTotalLosses());
 		$smarty->assign('totalkisk', round($this->kill_summary->getTotalKillISK()/1000000000, 2));
 		$smarty->assign('totallisk', round($this->kill_summary->getTotalLossISK()/1000000000, 2));
-		if ($this->kill_summary->getTotalKillISK())
+		if ($this->kill_summary->getTotalKillISK()) {
 			$smarty->assign('efficiency', round($this->kill_summary->getTotalKillISK() / ($this->kill_summary->getTotalKillISK() + $this->kill_summary->getTotalLossISK()) * 100, 2));
-		else
+		} else {
 			$smarty->assign('efficiency', '0');
+		}
 		return $smarty->fetch(get_tpl('alliance_detail_stats'));
 	}
 
@@ -289,7 +319,7 @@ class pAllianceDetail extends pageAssembly
 
 		switch ($this->view)
 		{
-			case "":
+			default:
 				$list = new KillList();
 				$list->setOrdered(true);
 				if (config::get('comments_count')) $list->setCountComments(true);
@@ -367,8 +397,8 @@ class pAllianceDetail extends pageAssembly
 				$smarty->assign('nmonth', $this->nmonth);
 				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('all_id', $this->all_id);
-				$smarty->assign('url_previous', "?a=alliance_detail&amp;view=corp_kills&amp;all_id=$this->all_id&amp;m=$this->pmonth&amp;y=$this->pyear");
-				$smarty->assign('url_next', "?a=alliance_detail&amp;view=corp_kills&amp;all_id=$this->all_id&amp;m=$this->nmonth&amp;y=$this->nyear");
+				$smarty->assign('url_previous', edkURI::build(array('y', '$this->pyear', true), array('m', '$this->pmonth', true), array('view', 'corp_kills', true)));
+				$smarty->assign('url_next', edkURI::build(array('y', '$this->nyear', true), array('m', '$this->nmonth', true), array('view', 'corp_kills', true)));
 
 				$list = new TopList_CorpKills();
 				$list->addInvolvedAlliance($this->alliance);
@@ -452,14 +482,12 @@ class pAllianceDetail extends pageAssembly
 
 				$qry = DBFactory::getDBQuery();
 				$qry->execute($sql);
-				while ($row = $qry->getRow())
-				{
+				while ($row = $qry->getRow()) {
 					$shipclass[] = new Shipclass($row['scl_id']);
 				}
-				foreach ($shipclass as $shp)
-				{
+				foreach ($shipclass as $shp) {
 					$list = new TopList_CorpLosses();
-						$list->addVictimAlliance($this->alliance);
+					$list->addVictimAlliance($this->alliance);
 					$list->addVictimShipClass($shp);
 					$table = new TopTable_Corp($list, Language::get('losses'));
 					$content = $table->generate();
@@ -479,12 +507,10 @@ class pAllianceDetail extends pageAssembly
 
 				$qry = DBFactory::getDBQuery();
 				$qry->execute($sql);
-				while ($row = $qry->getRow())
-				{
+				while ($row = $qry->getRow()) {
 					$shipclass[] = new Shipclass($row['scl_id']);
 				}
-				foreach ($shipclass as $shp)
-				{
+				foreach ($shipclass as $shp) {
 					$list = new TopList_Losses();
 					$list->addVictimAlliance($this->alliance);
 					$list->addVictimShipClass($shp);
@@ -505,8 +531,8 @@ class pAllianceDetail extends pageAssembly
 				$smarty->assign('nmonth', $this->nmonth);
 				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('all_id', $this->all_id);
-				$smarty->assign('url_previous', "?a=alliance_detail&amp;view=corp_kills&amp;all_id=$this->all_id&amp;m=$this->pmonth&amp;y=$this->pyear");
-				$smarty->assign('url_next', "?a=alliance_detail&amp;view=corp_kills&amp;all_id=$this->all_id&amp;m=$this->nmonth&amp;y=$this->nyear");
+				$smarty->assign('url_previous', edkURI::build(array('y', $this->pyear, true), array('m', $this->pmonth, true), array('view', corp_kill, true)));
+				$smarty->assign('url_next', edkURI::build(array('y', '$this->nyear', true), array('m', '$this->nmonth', true), array('view', 'corp_kills', true)));
 
 				$list = new TopList_CorpLosses();
 				$list->addVictimAlliance($this->alliance);
@@ -534,8 +560,8 @@ class pAllianceDetail extends pageAssembly
 				$smarty->assign('nmonth', $this->nmonth);
 				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('all_id', $this->all_id);
-				$smarty->assign('url_previous', "?a=alliance_detail&amp;view=pilot_kills&amp;all_id=$this->all_id&amp;m=$this->pmonth&amp;y=$this->pyear");
-				$smarty->assign('url_next', "?a=alliance_detail&amp;view=pilot_kills&amp;all_id=$this->all_id&amp;m=$this->nmonth&amp;y=$this->nyear");
+				$smarty->assign('url_previous', edkURI::build(array('y', '$this->pyear', true), array('m', '$this->pmonth', true), array('view', 'pilot_kills', true)));
+				$smarty->assign('url_next', edkURI::build(array('y', '$this->nyear', true), array('m', '$this->nmonth', true), array('view', 'pilot_kills', true)));
 
 				$list = new TopList_Kills();
 				$list->addInvolvedAlliance($this->alliance);
@@ -563,8 +589,8 @@ class pAllianceDetail extends pageAssembly
 				$smarty->assign('nmonth', $this->nmonth);
 				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('all_id', $this->all_id);
-				$smarty->assign('url_previous', "?a=alliance_detail&amp;view=pilot_scores&amp;all_id=$this->all_id&amp;m=$this->pmonth&amp;y=$this->pyear");
-				$smarty->assign('url_next', "?a=alliance_detail&amp;view=pilot_scores&amp;all_id=$this->all_id&amp;m=$this->nmonth&amp;y=$this->nyear");
+				$smarty->assign('url_previous', edkURI::build(array('y', '$this->pyear', true), array('m', '$this->pmonth', true), array('view', 'pilot_scores', true)));
+				$smarty->assign('url_next', edkURI::build(array('y', '$this->nyear', true), array('m', '$this->nmonth', true), array('view', 'pilot_scores', true)));
 
 				$list = new TopList_Score();
 				$list->addInvolvedAlliance($this->alliance);
@@ -590,8 +616,8 @@ class pAllianceDetail extends pageAssembly
 				$smarty->assign('nmonth', $this->nmonth);
 				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('all_id', $this->all_id);
-				$smarty->assign('url_previous', "?a=alliance_detail&amp;view=pilot_losses&amp;all_id=$this->all_id&amp;m=$this->pmonth&amp;y=$this->pyear");
-				$smarty->assign('url_next', "?a=alliance_detail&amp;view=pilot_losses&amp;all_id=$this->all_id&amp;m=$this->nmonth&amp;y=$this->nyear");
+				$smarty->assign('url_previous', edkURI::build(array('y', '$this->pyear', true), array('m', '$this->pmonth', true), array('view', 'pilot_losses', true)));
+				$smarty->assign('url_next', edkURI::build(array('y', '$this->nyear', true), array('m', '$this->nmonth', true), array('view', 'pilot_losses', true)));
 
 				$list = new TopList_Losses();
 				$list->addVictimAlliance($this->alliance);
@@ -634,8 +660,8 @@ class pAllianceDetail extends pageAssembly
 				$smarty->assign('nmonth', $this->nmonth);
 				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('all_id', $this->all_id);
-				$smarty->assign('url_previous', "?a=alliance_detail&amp;view=violent_systems&amp;all_id=$this->all_id&amp;m=$this->pmonth&amp;y=$this->pyear");
-				$smarty->assign('url_next', "?a=alliance_detail&amp;view=violent_systems&amp;all_id=$this->all_id&amp;m=$this->nmonth&amp;y=$this->nyear");
+				$smarty->assign('url_previous', edkURI::build(array('y', '$this->pyear', true), array('m', '$this->pmonth', true), array('view', 'violent_systems', true)));
+				$smarty->assign('url_next', edkURI::build(array('y', '$this->nyear', true), array('m', '$this->nmonth', true), array('view', 'violent_systems', true)));
 
 				$startdate = gmdate('Y-m-d H:i', makeStartDate(0, $this->year, $this->month));
 				$enddate = gmdate('Y-m-d H:i', makeEndDate(0, $this->year, $this->month));
@@ -729,7 +755,7 @@ class pAllianceDetail extends pageAssembly
 				return $this->corpList();
 				break;
 		}
-		return $smarty->fetch(get_tpl('alliance_detail'));
+		return '';
 	}
 
 	/**
@@ -767,30 +793,37 @@ class pAllianceDetail extends pageAssembly
 	 */
 	function menuSetup()
 	{
+		$args = array();
+		if ($this->all_external_id) {
+			$args[] = array('all_ext_id', $this->all_external_id, true);
+		} else {
+			$args[] = array('all_id', $this->all_id, true);
+		}
+
 		$menubox = new Box("Menu");
 		$menubox->setIcon("menu-item.gif");
 		$this->addMenuItem("caption","Kills &amp; losses");
-		$this->addMenuItem("link","Recent activity", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID());
-		$this->addMenuItem("link","Kills", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=kills");
-		$this->addMenuItem("link","Losses", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=losses");
+		$this->addMenuItem("link","Recent activity", edkURI::build($args));
+		$this->addMenuItem("link","Kills", edkURI::build($args, array('view', 'kills', true)));
+		$this->addMenuItem("link","Losses", edkURI::build($args, array('view', 'losses', true)));
 		$this->addMenuItem("caption","Corp statistics");
-		$this->addMenuItem("link","Corp List", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=corp_list");
-		$this->addMenuItem("link","Top killers", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=corp_kills");
-		$this->addMenuItem("link","Top losers", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=corp_losses");
-		$this->addMenuItem("link","Destroyed ships", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=corp_kills_class");
-		$this->addMenuItem("link","Lost ships", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=corp_losses_class");
+		$this->addMenuItem("link","Corp List", edkURI::build($args, array('view', 'corp_list', true)));
+		$this->addMenuItem("link","Top killers", edkURI::build($args, array('view', 'corp_kills', true)));
+		$this->addMenuItem("link","Top losers", edkURI::build($args, array('view', 'corp_losses', true)));
+		$this->addMenuItem("link","Destroyed ships", edkURI::build($args, array('view', 'corp_kills_class', true)));
+		$this->addMenuItem("link","Lost ships", edkURI::build($args, array('view', 'corp_losses_class', true)));
 		$this->addMenuItem("caption","Pilot statistics");
-		$this->addMenuItem("link","Top killers", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=pilot_kills");
+		$this->addMenuItem("link","Top killers", edkURI::build($args, array('view', 'pilot_kills', true)));
 		if (config::get('kill_points'))
 		{
-			$this->addMenuItem('link', "Top scorers", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=pilot_scores");
+			$this->addMenuItem('link', "Top scorers", edkURI::build($args, array('view', 'pilot_scores', true)));
 		}
-		$this->addMenuItem("link","Top losers", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=pilot_losses");
-		$this->addMenuItem("link","Destroyed ships", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=kills_class");
-		$this->addMenuItem("link","Lost ships", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=losses_class");
+		$this->addMenuItem("link","Top losers", edkURI::build($args, array('view', 'pilot_losses', true)));
+		$this->addMenuItem("link","Destroyed ships", edkURI::build($args, array('view', 'kills_class', true)));
+		$this->addMenuItem("link","Lost ships", edkURI::build($args, array('view', 'losses_class', true)));
 		$this->addMenuItem("caption","Global statistics");
-		$this->addMenuItem("link","Ships &amp; weapons", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=ships_weapons");
-		$this->addMenuItem("link","Most violent systems", "?a=alliance_detail&amp;all_id=" . $this->alliance->getID() . "&amp;view=violent_systems");
+		$this->addMenuItem("link","Ships &amp; weapons", edkURI::build($args, array('view', 'ships_weapons', true)));
+		$this->addMenuItem("link","Most violent systems", edkURI::build($args, array('view', 'violent_systems', true)));
 	}
 	/**
 	 * Add an item to the menu in standard box format.

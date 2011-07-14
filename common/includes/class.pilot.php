@@ -209,10 +209,10 @@ class Pilot extends Entity
 			} else {
 				$row = $qry->getRow();
 				$this->valid = true;
-				$this->id = $row['plt_id'];
+				$this->id = (int)$row['plt_id'];
 				$this->name = $row['plt_name'];
-				$this->corpid = $row['plt_crp_id'];
-				$this->externalid = intval($row['plt_externalid']);
+				$this->corpid = (int)$row['plt_crp_id'];
+				$this->externalid = (int)$row['plt_externalid'];
 				$this->putCache();
 
 			}
@@ -303,6 +303,7 @@ class Pilot extends Entity
 									 set plt_crp_id = ".$corp->getID().",
 										 plt_updated = date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s') WHERE plt_externalid = ".$externalID);
 					}
+					$this->valid = true;
 					$this->putCache();
 					return $this->id;
 				}
@@ -319,9 +320,8 @@ class Pilot extends Entity
 			$this->name = $name;
 			$this->corpid = $corp->getID();
 			$this->updated = strtotime(preg_replace("/\./","-",$timestamp)." UTC");
-		}
-		else
-		{
+			$this->valid = true;
+		} else {
 			$row = $qry->getRow();
 			$this->id = $row['plt_id'];
 			if(!is_null($row['plt_updated'])) {
@@ -340,6 +340,7 @@ class Pilot extends Entity
 			$this->corp = $corp;
 			$this->name = $name;
 			$this->corpid = $corp->getID();
+			$this->valid = true;
 		}
 		$this->putCache();
 		return $this->id;
@@ -399,11 +400,13 @@ class Pilot extends Entity
 			$this->id = $old_id;
 			$qry->autocommit(true);
 
+			$this->valid = true;
 			$this->putCache();
 			return true;
 		}
 		$qry->execute("update kb3_pilots set plt_externalid = ".$this->externalid."
                        where plt_id = ".$this->id);
+		$this->valid = true;
 		$this->putCache();
 		return true;
 	}
@@ -425,6 +428,7 @@ class Pilot extends Entity
 		$this->externalid = intval($row['plt_externalid']);
 		$this->corpid = $row['plt_crp_id'];
 		$this->updated = strtotime($row['plt_updated']." UTC");
+		$this->valid = true;
 
 }
 	

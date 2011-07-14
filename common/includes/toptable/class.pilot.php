@@ -10,27 +10,35 @@ class TopTable_Pilot
 {
 	function TopTable_Pilot($TopList, $entity)
 	{
-		$this->TopList = $TopList;
+		$this->toplist = $TopList;
 		$this->entity_ = $entity;
 	}
 
 	function generate()
 	{
 		global $smarty;
-		$this->TopList->generate();
+		$this->toplist->generate();
 
 		$i = 1;
 		$rows = array();
-		while ($row = $this->TopList->getRow())
+		while ($row = $this->toplist->getRow())
 		{
-			$pilot = new Pilot($row['plt_id']);
-			if($pilot->getExternalID()) $uri = "?a=pilot_detail&amp;plt_ext_id=".$pilot->getExternalID();
-			else $uri = "?a=pilot_detail&amp;plt_id=".$row['plt_id'];
+			if($row['plt_externalid']) {
+				$uri = edkURI::build(array('a', 'pilot_detail', true),
+						array('plt_ext_id', $row['plt_externalid'], true));
+				$img = imageURL::getURL('Pilot', $row['plt_externalid'], 32);
+			} else {
+				$uri = edkURI::build(array('a', 'pilot_detail', true),
+						array('plt_id', $row['plt_id'], true));
+
+				$pilot = new Pilot($row['plt_id']);
+				$img = $pilot->getPortraitURL(32);
+			}
 			$rows[] = array(
 				'rank' => $i,
-				'name' => $pilot->getName(),
+				'name' => $row['plt_name'],
 				'uri' => $uri,
-				'portrait' => $pilot->getPortraitURL(32),
+				'portrait' => $img,
 				'count' => $row['cnt']);
 			$i++;
 		}

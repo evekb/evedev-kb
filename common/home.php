@@ -10,6 +10,10 @@
  */
 class pHome extends pageAssembly
 {
+	private $pargs = array();
+	private $nargs = array();
+	private $cargs = array();
+
 	function __construct()
 	{
 		parent::__construct();
@@ -19,20 +23,30 @@ class pHome extends pageAssembly
 		// Legacy support for mods placing themselves after it.
 		$this->queue('contracts');
 		$this->queue('killList');
-		$this->view = preg_replace('/[^a-zA-Z0-9_-]/','',$_GET['view']);
-		$this->viewList = array();
-
-		$this->menuOptions = array();
 	}
 
 	function start()
 	{
 		$this->page = new Page();
 		$this->page->addHeader("<link rel='canonical' href='".KB_HOST."/' />");
-		if(isset($_GET['scl_id']) || isset($_GET['y'])) $this->page->addHeader('<meta name="robots" content="index, nofollow" />');
+
+		$this->view = preg_replace('/[^a-zA-Z0-9_-]/','', edkURI::getArg('view', 1));
+		if (is_numeric($this->view)) {
+			$this->view = preg_replace('/[^a-zA-Z0-9_-]/','', edkURI::getArg('view', 3));
+			if (is_numeric($this->view)) {
+				$this->view = '';
+			}
+		}
+		$this->viewList = array();
+
+		$this->menuOptions = array();
+		if(edkURI::getArg('scl_id') === false
+				|| edkURI::getArg('y', 1) === false) {
+			$this->page->addHeader('<meta name="robots" content="index, nofollow" />');
+		}
 		$this->menuOptions = array();
 
-		$this->scl_id = intval($_GET['scl_id']);
+		$this->scl_id = edkURI::getArg('scl_id');
 
 		$this->killcount = config::get('killcount');
 		$this->hourlimit = config::get('limit_hours');
@@ -42,14 +56,21 @@ class pHome extends pageAssembly
 			&& (count(config::get('cfg_allianceid')) || count(config::get('cfg_corpid')) || count(config::get('cfg_pilotid')));
 
 		$week = $month = $year = 0;
-		if(isset($_GET['w'])) $week = intval($_GET['w']);
-		if(isset($_GET['m'])) $month = intval($_GET['m']);
-		if(isset($_GET['y'])) $year = intval($_GET['y']);
+		$year = (int)edkURI::getArg('y', 1);
+		if (config::get('show_monthly') ) {
+			$month = (int)edkURI::getArg('m', 2);
+		} else {
+			$week = (int)edkURI::getArg('w', 2);
+		}
 		$this->setTime($week, $year, $month);
 
-		if($this->view == 'kills') $this->page->setTitle('Kills - '.$this->getCurrentPeriod());
-		elseif($this->view == 'losses') $this->page->setTitle('Losses - '.$this->getCurrentPeriod());
-		else $this->page->setTitle($this->getCurrentPeriod());
+		if($this->view == 'kills') {
+			$this->page->setTitle('Kills - '.$this->getCurrentPeriod());
+		} else if($this->view == 'losses') {
+			$this->page->setTitle('Losses - '.$this->getCurrentPeriod());
+		} else {
+			$this->page->setTitle($this->getCurrentPeriod());
+		}
 	}
 	/**
 	 *  Check if summary tables are enabled and if so return a table for this week.
@@ -117,27 +138,30 @@ class pHome extends pageAssembly
 		if (config::get('killlist_involved')) $klist->setCountInvolved(true);
 
 		// Select between kills, losses or both.
-		if($this->view == 'combined' || ($this->view == '' && $this->showcombined)) involved::load($klist,'combined');
-		elseif($this->view == 'losses') involved::load($klist,'loss');
-		else involved::load($klist,'kill');
+		if($this->view == 'combined' || ($this->view == '' && $this->showcombined)) {
+			involved::load($klist,'combined');
+		} else if($this->view == 'losses') {
+			involved::load($klist,'loss');
+		} else {
+			involved::load($klist,'kill');
+		}
 
-		if ($this->scl_id)
+		if ($this->scl_id) {
 			$klist->addVictimShipClass($this->scl_id);
-		else
+		} else {
 			$klist->setPodsNoobShips(config::get('podnoobs'));
+		}
 
 		// If no week is set then show the most recent kills. Otherwise
 		// show all kills for the week using the page splitter.
-		if(empty($_GET['w']) && empty($_GET['y']) && config::get("cfg_fillhome"))
-		{
+		if(!$this->week && !$this->month && !$this->year
+				&& config::get("cfg_fillhome")) {
 			$klist->setLimit($this->killcount);
 			$table = new KillListTable($klist);
 			if($this->showcombined) $table->setCombined(true);
 			$table->setLimit($this->killcount);
 			$html .= $table->generate();
-		}
-		else
-		{
+		} else {
 			$this->loadTime($klist);
 			//$klist->setWeek($this->week);
 			//$klist->setYear($this->year);
@@ -160,24 +184,48 @@ class pHome extends pageAssembly
 		// Display the menu for previous and next weeks.
 		$this->addMenuItem("caption","Navigation");
 
-		if($this->view == 'kills') $suffix = '&amp;view=kills';
-		elseif($this->view == 'losses') $suffix .= '&amp;view=losses';
-		if($this->scl_id) $suffixscl = '&amp;scl_id='.$this->scl_id;
-
-		$this->addMenuItem("link","Previous ".$this->getPeriodName(),
-			"?a=home&amp;" . $this->getPreviousPeriodLink() . $suffix.$suffixscl);
-		if(!$this->isCurrentPeriod())
-		{
-			$this->addMenuItem("link","Next ".$this->getPeriodName(),
-				"?a=home&amp;" . $this->getNextPeriodLink() . $suffix.$suffixscl);
+		$view = false;
+		if($this->view == 'kills') {
+			$view = array('view', 'kills', true);
+		} else if($this->view == 'losses') {
+			$view = array('view', 'losses', true);
 		}
-		$this->addMenuItem("link", "Kills",
-			"?a=home&amp;" . $this->getCurrentPeriodLink() . '&amp;view=kills'.$suffixscl);
-		$this->addMenuItem("link", "Losses",
-			"?a=home&amp;" . $this->getCurrentPeriodLink() . '&amp;view=losses'.$suffixscl);
-		if(config::get('show_comb_home')) $this->addMenuItem("link",
-				$weektext."All Kills",
-				"?a=home&amp;" . $this->getCurrentPeriodLink() . $suffixscl);
+		if($this->scl_id) {
+			$sclarg = array('scl_id', $this->scl_id, false);;
+		} else {
+			$sclarg = false;
+		}
+		$previous = $this->pargs;
+		$next = $this->nargs;
+		if ($view) {
+			$previous[] = $view;
+			$next[] = $view;
+		}
+
+		$killLink = $this->cargs;
+		$killLink[] = array('view', 'kills', true);
+		$lossLink = $this->cargs;
+		$lossLink[] = array('view', 'losses', true);
+		$combinedLink = $this->cargs;
+		if ($sclarg) {
+			$previous[] = $sclarg;
+			$next[] = $sclarg;
+			$killLink[] = $sclarg;
+			$lossLink[] = $sclarg;
+			$combinedLink[] = $sclarg;
+		}
+		$this->addMenuItem("link","Previous ".$this->getPeriodName(),
+			edkURI::build($previous));
+		if(!$this->isCurrentPeriod()) {
+			$this->addMenuItem("link","Next ".$this->getPeriodName(),
+				edkURI::build($next));
+		}
+		$this->addMenuItem("link", "Kills", edkURI::build($killLink));
+		$this->addMenuItem("link", "Losses", edkURI::build($lossLink));
+		if(config::get('show_comb_home')) {
+			$this->addMenuItem("link", $weektext."All Kills",
+					edkURI::build($combinedLink));
+		}
 		return "";
 	}
 	/**
@@ -340,6 +388,16 @@ class pHome extends pageAssembly
 		$this->previousPeriodLink = 'w='.$this->pweek.'&amp;y='.$this->pyear;
 		$this->nextPeriodLink = 'w='.$this->nweek.'&amp;y='.$this->nyear;
 		$this->currentPeriodLink = 'w='.$this->week.'&amp;y='.$this->year;
+
+		$this->pargs = array();
+		$this->pargs[] = array('y', $this->pyear, true);
+		$this->pargs[] = array('w', $this->pweek, true);
+		$this->nargs = array();
+		$this->nargs[] = array('y', $this->nyear, true);
+		$this->nargs[] = array('w', $this->nweek, true);
+		$this->cargs = array();
+		$this->cargs[] = array('y', $this->year, true);
+		$this->cargs[] = array('w', $this->week, true);
 	}
 
 	/**
@@ -383,9 +441,19 @@ class pHome extends pageAssembly
 		$this->period = date('F', mktime(0,0,0,$this->month, 1,$this->year)).', '.$this->year;
 		$this->currentTime =
 			($this->month == kbdate('m') && $this->year == kbdate('Y'));
+		// TODO: remove these once we're sure they're not being used.
 		$this->previousPeriodLink = 'm='.$this->pmonth.'&amp;y='.$this->pyear;
 		$this->nextPeriodLink = 'm='.$this->nmonth.'&amp;y='.$this->nyear;
 		$this->currentPeriodLink = 'm='.$this->month.'&amp;y='.$this->year;
+
+		$this->pargs[] = array('y', $this->pyear, true);
+		$this->pargs[] = array('m', $this->pmonth, true);
+
+		$this->nargs[] = array('y', $this->nyear, true);
+		$this->nargs[] = array('m', $this->nmonth, true);
+
+		$this->cargs[] = array('y', $this->year, true);
+		$this->cargs[] = array('m', $this->month, true);
 	}
 	/**
 	 * Returns true if the board is showing the current time period.

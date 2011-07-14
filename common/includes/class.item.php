@@ -103,19 +103,19 @@ class Item extends Cacheable
 		$it_name = $this->getName();
 		if (($this->row_['itm_techlevel'] == 5) && $show_style) // is a T2?
 		{
-			$icon .= IMG_URL.'/items/'.$size.'_'.$size.'/t2'.$show_style.'.png';
+			$icon .= config::get('cfg_img').'/items/'.$size.'_'.$size.'/t2'.$show_style.'.png';
 		}
 		elseif (($this->row_['itm_techlevel'] > 5) && ($this->row_['itm_techlevel'] < 10) && $show_style) // is a faction item?
 		{
-			$icon .= IMG_URL.'/items/'.$size.'_'.$size.'/f'.$show_style.'.png';
+			$icon .= config::get('cfg_img').'/items/'.$size.'_'.$size.'/f'.$show_style.'.png';
 		}
 		elseif (($this->row_['itm_techlevel'] > 10) && strstr($it_name,"Modified") && $show_style) // or it's an officer?
 		{
-			$icon .= IMG_URL.'/items/'.$size.'_'.$size.'/o'.$show_style.'.png';
+			$icon .= config::get('cfg_img').'/items/'.$size.'_'.$size.'/o'.$show_style.'.png';
 		}
 		elseif (($this->row_['itm_techlevel'] > 10) && (strstr($it_name,"-Type")) && $show_style) // or it's just a deadspace item.
 		{
-			$icon .= IMG_URL.'/items/'.$size.'_'.$size.'/d'.$show_style.'.png';
+			$icon .= config::get('cfg_img').'/items/'.$size.'_'.$size.'/d'.$show_style.'.png';
 		}
 		elseif (
 			(strstr($it_name,"Blood ")
@@ -130,7 +130,7 @@ class Item extends Cacheable
 			) && $show_style
 		) // finally if it's a faction it should have its prefix
 		{
-			$icon = IMG_URL.'/items/'.$size.'_'.$size.'/f'.$show_style.'.png';
+			$icon = config::get('cfg_img').'/items/'.$size.'_'.$size.'/f'.$show_style.'.png';
 		}
 		else // but maybe it was only a T1 item :P
 		{

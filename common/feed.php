@@ -32,10 +32,10 @@ $maxreturned = 200;
 $html = '<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
   	<channel>
-	<title>'.KB_TITLE.'</title>
+	<title>'.config::get('cfg_kbtitle').'</title>
 	<link>'.KB_HOST.'</link>
 	<description>Kill Feed '.$feedversion.'</description>
-	<copyright>'.KB_TITLE."</copyright>\n";
+	<copyright>'.config::get('cfg_kbtitle')."</copyright>\n";
 if($_GET['combined']) $html .= "<combined>true</combined>\n";
 if($_GET['APIkills']) $html .= "<apikills>true</apikills>\n";
 $klist = new KillList();

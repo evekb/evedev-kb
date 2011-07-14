@@ -17,7 +17,7 @@
 			<b>Executor:</b>
 		</td>
 		<td class='kb-table-cell'>
-			{if $myAlliance.executorCorpID}<a href="?a=corp_detail&amp;crp_ext_id={$myAlliance.executorCorpID}">{$myAlliance.executorCorpName}</a>{/if}
+			{if $myAlliance.executorCorpID}<a href="{$kb_host}/?a=corp_detail&amp;crp_ext_id={$myAlliance.executorCorpID}">{$myAlliance.executorCorpName}</a>{/if}
 		</td>
 	</tr>
 	<tr class="kb-table-row-even">

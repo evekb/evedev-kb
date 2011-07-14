@@ -62,6 +62,8 @@ class KillListTable
 		}
 
 		$c = 0;
+		$kdpage = array('a', 'kill_detail', true);
+		$krpage = array('a', 'kill_related', true);
 		while ($kill  = $this->kill_list_->getKill())
 		{
 			if ($this->limit_ && $c >= $this->limit_)
@@ -109,7 +111,9 @@ class KillListTable
 			$kll['victimshipid'] = $kill->getVictimShipExternalID();
 			$kll['fbid'] = $kill->getFBPilotID();
 			$kll['fbcorpid'] = $kill->getFBCorpID();
-			if (config::get('killlist_involved')) $kll['inv'] = $kill->getInvolvedPartyCount();
+			if (config::get('killlist_involved')) {
+				$kll['inv'] = $kill->getInvolvedPartyCount();
+			}
 			$kll['timestamp'] = $kill->getTimeStamp();
 			if (config::get('killlist_alogo'))
 			{
@@ -146,6 +150,14 @@ class KillListTable
 				elseif (config::get('cfg_pilotid') && in_array($kill->getVictimID(), config::get('cfg_pilotid'))) $kll['loss'] = true;
 				else $kll['loss'] = false;
 				$kll['kill'] = !$kll['loss'];
+			}
+			$kll['urldetail'] = edkURI::build($kdpage,
+					array('kll_id', $kll['id'], true));
+			if ($kll['inv']) {
+				$kll['urlrelated'] = edkURI::build($krpage,
+					array('kll_id', $kll['id'], true));
+			} else {
+				$kll['urlrelated'] = $kll['urldetail'];
 			}
 			event::call('killlist_table_kill', $kll);
 			$kills[] = $kll;

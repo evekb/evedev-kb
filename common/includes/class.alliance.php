@@ -265,15 +265,21 @@ class Alliance extends Entity
      */
 	function getPortraitURL($size = 128)
 	{
-		if(file_exists("img/alliances/".$this->getUnique().".png"))
-		{
-			if ($size == 128)
+		if ($this->getExternalID()) {
+			return imageURL::getURL('Alliance', $this->getExternalID(), $size);
+		} else if(file_exists("img/alliances/".$this->getUnique().".png")) {
+			if ($size == 128) {
 				return IMG_HOST."/img/alliances/".$this->getUnique().".png";
-			else if(CacheHandler::exists($this->getUnique()."_$size.png", 'img'))
-				return KB_HOST."/".CacheHandler::getExternal($this->getUnique()."_$size.png", 'img');
-			return '?a=thumb&amp;type=alliance&amp;id='.$this->getUnique().'&amp;size='.$size;
+			} else if(CacheHandler::exists($this->getUnique()."_$size.png", 'img')) {
+				return KB_HOST."/".CacheHandler::getExternal($this->getUnique()
+						."_$size.png", 'img');
+			} else {
+				return KB_HOST.'/?a=thumb&amp;type=alliance&amp;id='
+				.$this->getUnique().'&amp;size='.$size;
+			}
+		} else {
+			return imageURL::getURL('Alliance', 1, $size);
 		}
-		return imageURL::getURL('Alliance', $this->externalid, $size);
 	}
 
 	/**
@@ -281,7 +287,7 @@ class Alliance extends Entity
 	 */
 	private function fetchAlliance()
 	{
-		if(!$this->externalid) return false;
+		if(!$this->getExternalID()) return false;
 
 		$myID = new API_IDtoName();
 		$myID->setIDs($this->externalid);

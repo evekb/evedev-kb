@@ -99,7 +99,7 @@ class Page
 	{
 		global $smarty;
 
-		$smarty->assign('kb_title', KB_TITLE.' '.$this->title);
+		$smarty->assign('kb_title', config::get('cfg_kbtitle').' '.$this->title);
 
 		if ($this->onload)
 		{
@@ -113,7 +113,9 @@ class Page
 		event::call('page_assemblebody', $this);
 		$smarty->assign('page_bodylines', join("\n", $this->bodylines));
 
-		if (MAIN_SITE) $smarty->assign('banner_link', MAIN_SITE);
+		if (config::get('cfg_mainsite')) {
+			$smarty->assign('banner_link', config::get('cfg_mainsite'));
+		}
 
 		$smarty->assign('banner', config::get('style_banner'));
 		$smarty->assign('banner_x', config::get('style_banner_x'));
@@ -163,6 +165,8 @@ class Page
 		$html = $smarty->fetch(get_tpl('index'));
 		if (!$this->cachable) config::put('cache_enabled', false);
 		event::call('final_content', $html);
+		$html = preg_replace('/[ \t\r\n]+\<\//', ' </', $html);
+		$html = preg_replace('/>[ \t\r\n]+/', '> ', $html);
 		echo $html;
 	}
 	/**

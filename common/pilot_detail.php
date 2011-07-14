@@ -59,38 +59,38 @@ class pPilotDetail extends pageAssembly
 	{
 		$this->page = new Page();
 
-		$this->scl_id = intval($_GET['scl_id']);
-		$this->plt_id = intval($_GET['plt_id']);
-		if(isset($_GET['plt_external_id'])) $this->plt_external_id = intval($_GET['plt_external_id']);
-		elseif(isset($_GET['plt_ext_id'])) $this->plt_external_id = intval($_GET['plt_ext_id']);
-		else $this->plt_external_id = 0;
-		$this->view =  preg_replace('/[^a-zA-Z0-9_-]/','',$_GET['view']);
-		if($this->view) $this->page->addHeader('<meta name="robots" content="noindex, nofollow" />');
+		$this->scl_id = (int)edkURI::getArg('scl_id');
+		$this->plt_id = (int)edkURI::getArg('plt_id');
+		if (!$this->plt_id) {
+			$this->plt_external_id = (int)edkURI::getArg('plt_ext_id');
+			if (!$this->plt_external_id) {
+				$id = (int)edkURI::getArg('id');
+				// Arbitrary number bigger than we expect to reach locally
+				if ($id > 1000000) {
+					$this->plt_external_id = $id;
+				} else {
+					$this->plt_id = $id;
+				}
+			}
+		}
 
-		if(!$this->plt_id)
-		{
-			if($this->plt_external_id)
-			{
+		$this->view = preg_replace('/[^a-zA-Z0-9_-]/','', edkURI::getArg('view', 2));
+		if($this->view) {
+			$this->page->addHeader('<meta name="robots" content="noindex, nofollow" />');
+		}
+
+		if(!$this->plt_id) {
+			if($this->plt_external_id) {
 				$this->pilot = new Pilot(0, $this->plt_external_id);
 				$this->plt_id = $this->pilot->getID();
-			}
-			elseif(PILOT_ID)
-			{
-				$this->plt_id = PILOT_ID;
-				$this->pilot = new Pilot(PILOT_ID);
-				$this->plt_external_id = $this->pilot->getExternalID();
-			}
-			else
-			{
+			} else {
 				$html = 'That pilot doesn\'t exist.';
 				$this->page->generate($html);
 				exit;
 			}
 
-		}
-		else
-		{
-			$this->pilot = new Pilot($this->plt_id);
+		} else {
+			$this->pilot = Cacheable::factory('Pilot', $this->plt_id);
 			$this->plt_external_id = $this->pilot->getExternalID();
 
 		}
@@ -99,7 +99,8 @@ class pPilotDetail extends pageAssembly
 		if (!$this->pilot->exists())
 		{
 			$html = 'That pilot doesn\'t exist.';
-			$this->page->generate($html);
+			$this->page->setContent($html);
+			$this->page->generate();
 			exit;
 		}
 
@@ -108,37 +109,6 @@ class pPilotDetail extends pageAssembly
 
 		$this->corp = $this->pilot->getCorp();
 		$this->alliance = $this->corp->getAlliance();
-		
-		$this->month = intval($_GET['m']);
-		$this->year = intval($_GET['y']);
-
-		if ($this->month == '')
-			$this->month = kbdate('m');
-
-		if ($this->year == '')
-			$this->year = kbdate('Y');
-
-		if ($this->month == 12)
-		{
-			$this->nmonth = 1;
-			$this->nyear = $this->year + 1;
-		}
-		else
-		{
-			$this->nmonth = $this->month + 1;
-			$this->nyear = $this->year;
-		}
-		if ($this->month == 1)
-		{
-			$this->pmonth = 12;
-			$this->pyear = $this->year - 1;
-		}
-		else
-		{
-			$this->pmonth = $this->month - 1;
-			$this->pyear = $this->year;
-		}
-		$this->monthname = kbdate("F", strtotime("2000-".$this->month."-2"));
 	}
 	/**
 	 *  Set up the stats used by stats and summaryTable functions.
@@ -314,12 +284,18 @@ class pPilotDetail extends pageAssembly
 	 */
 	function menuSetup()
 	{
+		$args = array();
+		if ($this->plt_external_id) {
+			$args[] = array('plt_ext_id', $this->plt_external_id, true);
+		} else {
+			$args[] = array('plt_id', $this->plt_id, true);
+		}
 		$this->addMenuItem("caption","Kills &amp; losses");
-		$this->addMenuItem("link","Recent activity", "?a=pilot_detail&amp;plt_id=".$this->pilot->getID()."&amp;view=recent");
-		$this->addMenuItem("link","Kills", "?a=pilot_detail&amp;plt_id=".$this->pilot->getID()."&amp;view=kills");
-		$this->addMenuItem("link","Losses", "?a=pilot_detail&amp;plt_id=".$this->pilot->getID()."&amp;view=losses");
+		$this->addMenuItem("link","Recent activity", edkURI::build($args, array('view', 'recent', true)));
+		$this->addMenuItem("link","Kills", edkURI::build($args, array('view', 'kills', true)));
+		$this->addMenuItem("link","Losses", edkURI::build($args, array('view', 'losses', true)));
 		$this->addMenuItem("caption","Statistics");
-		$this->addMenuItem("link","Ships &amp; weapons", "?a=pilot_detail&amp;plt_id=".$this->pilot->getID()."&amp;view=ships_weapons");
+		$this->addMenuItem("link","Ships &amp; weapons", edkURI::build($args, array('view', 'ships_weapons', true)));
 		return "";
 	}
 	/**

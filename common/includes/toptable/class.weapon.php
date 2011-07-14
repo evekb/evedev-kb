@@ -8,23 +8,24 @@
 
 class TopTable_Weapon
 {
-	function TopTable_Weapon($TopList)
+	function TopTable_Weapon(TopList_Base $toplist)
 	{
-		$this->TopList = $TopList;
+		$this->toplist = $TopList;
 	}
 
 	function generate()
 	{
 		global $smarty;
-		$this->TopList->generate();
+		$this->toplist->generate();
 
-		while ($row = $this->TopList->getRow())
+		while ($row = $this->toplist->getRow())
 		{
 			$item = new Item($row['itm_id']);
 			$rows[] = array(
 				'rank' => false,
 				'name' => $item->getName(),
-				'uri' => "?a=invtype&amp;id=".$item->getID(),
+				'uri' => edkURI::build(array('a', 'invtype', true),
+						array('id', $item->getID(), true)),
 				'icon' => $item->getIcon(32),
 				'count' => $row['cnt']);
 		}

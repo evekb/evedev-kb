@@ -13,10 +13,11 @@ event::register('page_assembleheader', 'edk_xajax::insertHTML');
 //event::register('page_assembleheader', 'edk_xajax::lateProcess');
 event::register('mods_initialised', 'edk_xajax::lateProcess');
 //event::register('page_initialisation', 'edk_xajax::lateProcess');
-$uri= $xajax->getRequestURI();
+
+$uri = edkURI::build(edkURI::parseURI());
 if(strpos($uri, "?") === false) $uri .= "?xajax=1";
 else $uri .= "&xajax=1";
-$xajax->setRequestURI($uri);
+$xajax->configure('requestURI', $uri);
 
 /**
  * @package EDK
@@ -39,7 +40,7 @@ class edk_xajax
 		}
 
 		global $xajax;
-		$obj->addBody($xajax->getJavascript("common/xajax/"));
+		$obj->addBody($xajax->getJavascript(config::get('cfg_kbhost')."/common/xajax/"));
 	}
 
 	public static function lateProcess()

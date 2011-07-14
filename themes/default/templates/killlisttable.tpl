@@ -17,11 +17,11 @@
 {section name=kill loop=$killlist[day].kills}
 {assign var="k" value=$killlist[day].kills[kill]}
 {if $k.loss}
-		<tr class="{cycle name=ccl}-loss" onclick="window.location.href='?a=kill_detail&amp;kll_id={$k.id}';">
+		<tr class="{cycle name=ccl}-loss" onclick="window.location.href='{$k.urldetail}';">
 {elseif $k.kill}
-		<tr class="{cycle name=ccl}-kill" onclick="window.location.href='?a=kill_detail&amp;kll_id={$k.id}';">
+		<tr class="{cycle name=ccl}-kill" onclick="window.location.href='{$k.urldetail}';">
 {else}
-		<tr class="{cycle name=ccl}" onclick="window.location.href='?a=kill_detail&amp;kll_id={$k.id}';">
+		<tr class="{cycle name=ccl}" onclick="window.location.href='{$k.urldetail}';">
 {/if}
 			<td class="kb-table-imgcell">
 				<img src='{$k.victimshipimage}' style="border: 0px; width: 32px; height: 32px;" alt="" />
@@ -73,7 +73,7 @@
 		{if $daybreak}
 					<a href="{$k.urlrelated}"><b>{$k.timestamp|date_format:"%H:%M"}</b></a>
 		{else}
-					<a href="{$k.urlrelated}"><b>{$k.timestamp|date_format:"%d.%m.%y"} {$k.timestamp|date_format:"%H:%M"}</b></a>
+					<a href="{$k.urlrelated}"><b>{$k.timestamp|date_format:"%y-%m-%d"} {$k.timestamp|date_format:"%H:%M"}</b></a>
 		{/if}
 				</div>
 			</td>

@@ -10,15 +10,15 @@ class TopTable_Ship
 {
 	function TopTable_Ship($TopList)
 	{
-		$this->TopList = $TopList;
+		$this->toplist = $TopList;
 	}
 
 	function generate()
 	{
 		global $smarty;
-		$this->TopList->generate();
+		$this->toplist->generate();
 
-		while ($row = $this->TopList->getRow())
+		while ($row = $this->toplist->getRow())
 		{
 			$ship = new Ship($row['shp_id']);
 			$shipclass = $ship->getClass();

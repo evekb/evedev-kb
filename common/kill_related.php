@@ -550,27 +550,6 @@ class pKillRelated extends pageAssembly
 					}
 				}
 			}
-	/*
-			// Replace pods and unknowns
-			if(isset($this->pilots[$side][$row['ind_plt_id']]))
-			{
-				foreach ($this->pilots[$side][$row['ind_plt_id']] as $id => &$_ship)
-				{
-					if ($_ship['shpclass'] == 18 || $_ship['shpclass'] == 2)
-					{
-						$shipimage = IMG_URL.'/ships/32_32/'.$row['shp_externalid'].'.png';
-						$_ship['sid'] = $row['ind_shp_id'];
-						$_ship['spic'] = $shipimage;
-						$_ship['ts'] = strtotime($kill->getTimeStamp());
-						$_ship['scl'] = $row['scl_points'];
-						$_ship['ship'] = $row['shp_name'];
-						$_ship['weapon'] = $row['itm_name'];
-						$_ship['shpclass'] = $row['scl_id'];
-						continue 2;
-					}
-				}
-			}
-	 */
 			$shipimage = imageURL::getURL('Ship', $row['shp_externalid'], 32);
 			$this->pilots[$side][$row['ind_plt_id']][] = array('name' => $row['plt_name'], 'sid' => $row['ind_shp_id'],
 				   'spic' => $shipimage, 'aid' => $row['ind_all_id'], 'ts' => strtotime($kill->getTimeStamp()),

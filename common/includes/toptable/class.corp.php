@@ -10,26 +10,29 @@ class TopTable_Corp
 {
 	function TopTable_Corp($TopList, $entity)
 	{
-		$this->TopList = $TopList;
+		$this->toplist = $TopList;
 		$this->entity_ = $entity;
 	}
 
 	function generate()
 	{
 		global $smarty;
-		$this->TopList->generate();
+		$this->toplist->generate();
 
 		$i = 1;
-		while ($row = $this->TopList->getRow())
+		while ($row = $this->toplist->getRow())
 		{
 			$corp = new Corporation($row['crp_id']);
-			if($corp->getExternalID()) $uri = "?a=corp_detail&amp;crp_ext_id=".$corp->getExternalID();
-			else $uri = "?a=corp_detail&amp;crp_id=".$row['crp_id'];
+			if($row['crp_external_id']) {
+				$uri = KB_HOST."/?a=corp_detail&amp;crp_ext_id=".$row['crp_external_id'];
+			} else {
+				$uri = KB_HOST."/?a=corp_detail&amp;crp_id=".$row['crp_id'];
+			}
 			$rows[] = array(
 				'rank' => $i,
-				'name' => $corp->getName(),
+				'name' => $row['crp_name'],
 				'uri' => $uri,
-				'portrait' => $corp->getPortraitURL(32),
+				'portrait' => imageURL::getURL('Corporation', (int)$row['crp_external_id'], 32),
 				'count' => $row['cnt']);
 			$i++;
 		}

@@ -62,30 +62,6 @@ header('Content-Type: text/html; charset=UTF-8');
 // smarty doesnt like it
 if(get_magic_quotes_runtime()) @set_magic_quotes_runtime(0);
 
-// remove some chars from the request string to avoid 'hacking'-attempts
-if(!isset($_GET['a'])) $_GET['a'] = 'home';
-$page = str_replace('.', '', $_GET['a']);
-$page = str_replace('/', '', $page);
-if ($page == '' || $page == 'index')
-{
-	$page = 'home';
-}
-// Serve feeds to feed fetchers.
-if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK Feedfetcher') !== false) $page = 'feed';
-
-// Serve idfeeds to idfeed fetchers.
-else if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK IDFeedfetcher') !== false) $page = 'idfeed';
-
-// check for the igb
-else if (strpos($_SERVER['HTTP_USER_AGENT'], 'EVE-IGB') !== FALSE)
-{
-	define('IS_IGB', true);
-}
-else
-{
-	define('IS_IGB', false);
-}
-
 // load the config from the database
 $config = new Config();
 if(!config::get('cfg_kbhost'))
@@ -100,71 +76,47 @@ if(!config::get('cfg_img'))
 			config::get('cfg_kbhost')."/img");
 }
 define('KB_HOST', config::get('cfg_kbhost'));
-define('MAIN_SITE', config::get('cfg_mainsite'));
 define('IMG_URL', config::get('cfg_img'));
 if(substr(IMG_URL, -4) == '/img') define('IMG_HOST', substr(IMG_URL, 0, strpos(IMG_URL, "/img")));
 else  define('IMG_HOST', KB_HOST);
-define('KB_TITLE', config::get('cfg_kbtitle'));
+
+$page = edkURI::getArg('a', 0);
+edkURI::usePath(config::get('cfg_pathinfo'));
+// Serve feeds to feed fetchers.
+if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK Feedfetcher') !== false) {
+	$page = 'feed';
+} else if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK IDFeedfetcher') !== false) {
+// Serve idfeeds to idfeed fetchers.
+	$page = 'idfeed';
+} else if (strpos($_SERVER['HTTP_USER_AGENT'], 'EVE-IGB') !== false) {
+// check for the igb
+	define('IS_IGB', true);
+} else {
+	define('IS_IGB', false);
+}
 
 // set up themes.
-if(isset($_GET['theme']))
+if(isset($_GET['theme'])) {
 	$themename = preg_replace('/[^0-9a-zA-Z-_]/','',$_GET['theme']);
-else $themename = config::get('theme_name');
+} else {
+	$themename = config::get('theme_name');
+}
 
-if(isset($_GET['style']))
+if(isset($_GET['style'])) {
 	$stylename = preg_replace('/[^0-9a-zA-Z-_]/','',$_GET['style']);
-else $stylename = config::get('style_name');
+} else {
+	$stylename = config::get('style_name');
+}
 
-if(!is_dir("themes/".$themename)) $themename = 'default';
+if(!is_dir("themes/".$themename."/templates")) {
+	$themename = 'default';
+}
 
-if(!file_exists("themes/".$themename."/".$stylename.".css"))
+if(!file_exists("themes/".$themename."/".$stylename.".css")) {
 	$stylename = 'default';
+}
 
 define('THEME_URL', config::get('cfg_kbhost').'/themes/'.$themename);
-
-// Ensure board owner is stored appropriately in the config.
-// Should move to an update before release.
-if(!is_array(config::get('cfg_pilotid')))
-	if(config::get('cfg_pilotid')) config::set('cfg_pilotid',array(config::get('cfg_pilotid')));
-	else config::set('cfg_pilotid',array());
-if(!is_array(config::get('cfg_corpid'))) 
-	if(config::get('cfg_corpid')) config::set('cfg_corpid',array(config::get('cfg_corpid')));
-	else config::set('cfg_corpid',array());
-if(!is_array(config::get('cfg_allianceid'))) 
-	if(config::get('cfg_allianceid')) config::set('cfg_allianceid', array(config::get('cfg_allianceid')));
-	else config::set('cfg_allianceid',array());
-
-//Configure legacy defines.
-if(config::get('cfg_allianceid'))
-{
-	$all = config::get('cfg_allianceid');
-	define('PILOT_ID', 0);
-	define('CORP_ID', 0);
-	define('ALLIANCE_ID', $all[0] );
-	unset($all);
-}
-elseif (config::get('cfg_corpid'))
-{
-	$crp = config::get('cfg_corpid');
-	define('PILOT_ID', 0);
-	define('CORP_ID', $crp[0] );
-	define('ALLIANCE_ID', 0);
-	unset($crp);
-}
-elseif (config::get('cfg_pilotid'))
-{
-	$plt = config::get('cfg_pilotid');
-	define('PILOT_ID', $plt[0] );
-	define('CORP_ID', 0);
-	define('ALLIANCE_ID', 0);
-	unset($plt);
-}
-else
-{
-	define('PILOT_ID', 0);
-	define('CORP_ID', 0);
-	define('ALLIANCE_ID', 0);
-}
 
 // set up titles/roles
 role::init();
@@ -200,54 +152,46 @@ if(config::get('DBUpdate') < LATEST_DB_UPDATE)
 }
 
 // all admin files are now in the admin directory and preload the menu
-if (substr($page, 0, 5) == 'admin')
-{
+if (substr($page, 0, 5) == 'admin') {
 	require_once('common/admin/admin_menu.php');
 	$page = 'admin/'.$page;
-}
-else if(config::get('cfg_locked') && $page != 'login' && !session::isAdmin())
+} else if(config::get('cfg_locked') && $page != 'login' && !session::isAdmin()) {
 	$page = "locked";
+}
 
-// old modcode for loading settings
-if (substr($page, 0, 9) == 'settings_')
-{
-	$settingsPage = true;
-}
-else
-{
-	$settingsPage = false;
-}
-if(file_exists("themes/".$themename."/init.php"))
+$settingsPage = (substr($page, 0, 9) == 'settings_');
+
+if(file_exists("themes/".$themename."/init.php")) {
 	include_once("themes/".$themename."/init.php");
+}
 $mods_active = explode(',', config::get('mods_active'));
 $modOverrides = false;
 $modconflicts = array();
 
 $modInfo = array();
-foreach ($mods_active as $mod)
-{
+foreach ($mods_active as $mod) {
 	// load all active modules which need initialization
-	if (file_exists('mods/'.$mod.'/init.php'))
-	{
+	if (file_exists('mods/'.$mod.'/init.php')) {
 		include('mods/'.$mod.'/init.php');
 	}
-	if(!isset($modInfo[$mod]))
+	if(!isset($modInfo[$mod])) {
 		$modInfo[$mod] = array("name"=>$mod,
 			"abstract"=>"Purpose unknown",
 			"about"=>"");
-	if (file_exists('mods/'.$mod.'/'.$page.'.php'))
-	{
+	}
+	if (file_exists('mods/'.$mod.'/'.$page.'.php')) {
 		$modconflicts[] = $mod;
 		$modOverrides = true;
 		$modOverride = $mod;
 	}
 }
-if(count($modconflicts)>1)
-{
+if(count($modconflicts) > 1) {
 	echo "<html><head></head><body>There are multiple active mods ".
 			"for this page. Only one may be active at a time. All others ".
 			"must be deactivated in the admin panel.<br>";
-	foreach($modconflicts as $modname) echo $modname." <br> ";
+	foreach($modconflicts as $modname) {
+		echo $modname." <br> ";
+	}
 	echo "</body>";
 	die();
 }
@@ -267,17 +211,18 @@ cache::check($page);
  * @global Smarty $smarty
  */
 $smarty = new Smarty();
-if(is_dir('./themes/'.$themename.'/templates'))
-	$smarty->template_dir = './themes/'.$themename.'/templates';
-else $smarty->template_dir = './themes/default/templates';
+$smarty->template_dir = "./themes/$themename/templates";
 
-if(!is_dir(KB_CACHEDIR.'/templates_c/'.$themename))
+if(!is_dir(KB_CACHEDIR.'/templates_c/'.$themename)) {
 	mkdir(KB_CACHEDIR.'/templates_c/'.$themename);
+}
 $smarty->compile_dir = KB_CACHEDIR.'/templates_c/'.$themename;
 
 $smarty->cache_dir = KB_CACHEDIR.'/data';
 $smarty->assign('theme_url', THEME_URL);
-$smarty->assign('style', $stylename);
+if ($style != 'default' && $theme != 'default') {
+	$smarty->assign('style', $stylename);
+}
 $smarty->assign('img_url', IMG_URL);
 $smarty->assign('img_host', IMG_HOST);
 $smarty->assign('kb_host', KB_HOST);
@@ -322,8 +267,8 @@ if ($settingsPage)
 {
 	if (!session::isAdmin())
 	{
-		header('Location: ?a=login');
-		echo '<a href="?a=login">Login</a>';
+		header('Location: '.edkURI::build(array('a', 'login', true)));
+		echo '<a href="'.edkURI::build(array('a', 'login', true)).'">Login</a>';
 		exit;
 	}
 

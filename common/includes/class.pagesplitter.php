@@ -37,7 +37,7 @@ class PageSplitter
 		$endpage = ceil($this->max_ / $this->split_);
 		if ($_GET['page'])
 		{
-			$url = preg_replace("/&page=([0-9]+)/", "",
+			$url = preg_replace("/&?page=([0-9]+)/", "",
 					$_SERVER['QUERY_STRING']);
 			$url = preg_replace("/&/", "&amp;", $url);
 			$page = $_GET['page'];

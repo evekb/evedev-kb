@@ -47,7 +47,12 @@ class imageURL
 					break;
 				case 'Corporation':
 				case 'Alliance':
-					$url .= "/$type/{$id}_{$size}.png";
+					// Check for NPC alliances recorded as corps.
+					if($id > 500000 && $id < 500021) {
+						$url .= "/Alliance/{$id}_{$size}.png";
+					} else {
+						$url .= "/$type/{$id}_{$size}.png";
+					}
 					break;
 				case 'Type':
 				case 'InventoryType':
