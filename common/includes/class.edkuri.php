@@ -48,8 +48,11 @@ class edkURI {
 		$args = array();
 		$pagefound = false;
 
-		if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] ) {
-			$pathparts = explode('/', $_SERVER['PATH_INFO']);
+		if(isset($_SERVER['PATH_INFO'])) {
+			$pathinfo = trim($_SERVER['PATH_INFO'], '/');
+		}
+		if ($pathinfo) {
+			$pathparts = explode('/', $pathinfo);
 			$pos = 0;
 			foreach($pathparts as $parameter) {
 				if ($parameter == '' || is_null($parameter)) {
@@ -77,8 +80,12 @@ class edkURI {
 			}
 			$parts = explode('=', $parameter);
 			if ($parts[0] == 'a') {
-				if ($pagefound || !$parts[1]) {
+				if (!$parts[1]) {
 					continue;
+				} else if ($pathinfo) {
+					// An old broken link. Discard the pathinfo and redirect.
+					header('Location: '.KB_HOST.'/?'.$_SERVER['QUERY_STRING']);
+					die;
 				} else {
 					$pagefound = true;
 					array_unshift($args, array('a', $parts[1], false));
