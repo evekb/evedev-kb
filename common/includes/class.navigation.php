@@ -32,18 +32,22 @@ class Navigation
 		if (Killboard::hasCampaigns() == false)
 		{
 			$query .= " AND url NOT LIKE '%?a=campaigns'";
+			$query .= " AND url NOT LIKE '%/campaigns/'";
 		}
 		if (config::get('public_losses'))
 		{
 			$query .= " AND url NOT LIKE '%?a=losses'";
+			$query .= " AND url NOT LIKE '%/losses/'";
 		}
 		if (!config::get('show_standings'))
 		{
 			$query .= " AND url NOT LIKE '%a=standings'";
+			$query .= " AND url NOT LIKE '%/standings/'";
 		}
 		if (config::get('public_stats')=='remove')
 		{
 			$query .= " AND url NOT LIKE '%?a=self_detail'";
+			$query .= " AND url NOT LIKE '%/self_detail/'";
 		}
 		$query .= " AND (page = '".$this->page."' OR page = 'ALL_PAGES') AND hidden = 0";
 		$query .= " AND KBSITE = '" . $this->site . "' ORDER BY posnr";
