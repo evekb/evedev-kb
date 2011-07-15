@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * $Date$
  * $Revision$
  * $HeadURL$

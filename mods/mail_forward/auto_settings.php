@@ -4,7 +4,7 @@
  */
 if (!class_exists('options'))
 {
-    header('Location: ?a=admin&field=Modules&sub=Mail%20Forward');
+    header('Location: '.KB_HOST.'/?a=admin&field=Modules&sub=Mail%20Forward');
 }
 options::cat('Modules', 'Mail Forward', 'Forwarding');
 options::fadd('Forwarding active', 'forward_active', 'checkbox');
