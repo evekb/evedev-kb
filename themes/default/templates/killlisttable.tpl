@@ -71,9 +71,9 @@
 				</div>{/if}
 				<div style="float:right">
 		{if $daybreak}
-					<a href="{$k.urlrelated}"><b>{$k.timestamp|date_format:"%H:%M"}</b></a>
+					{if $k.urlrelated}<a href="{$k.urlrelated}">{/if}<b>{$k.timestamp|date_format:"%H:%M"}</b>{if $k.urlrelated}</a>{/if}
 		{else}
-					<a href="{$k.urlrelated}"><b>{$k.timestamp|date_format:"%y-%m-%d"} {$k.timestamp|date_format:"%H:%M"}</b></a>
+					{if $k.urlrelated}<a href="{$k.urlrelated}">{/if}<b>{$k.timestamp|date_format:"%y-%m-%d"} {$k.timestamp|date_format:"%H:%M"}</b>{if $k.urlrelated}</a>{/if}
 		{/if}
 				</div>
 			</td>

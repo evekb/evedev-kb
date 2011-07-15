@@ -153,11 +153,9 @@ class KillListTable
 			}
 			$kll['urldetail'] = edkURI::build($kdpage,
 					array('kll_id', $kll['id'], true));
-			if ($kll['inv']) {
+			if (!$kill->isClassified()) {
 				$kll['urlrelated'] = edkURI::build($krpage,
 					array('kll_id', $kll['id'], true));
-			} else {
-				$kll['urlrelated'] = $kll['urldetail'];
 			}
 			event::call('killlist_table_kill', $kll);
 			$kills[] = $kll;
