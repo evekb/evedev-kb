@@ -64,7 +64,7 @@ function bevel($x, $y, $size)
 
 // ship
 $sid = $kill->getVictimShipExternalID();
-$img = imagecreatefrompng("img/ships/64_64/".$sid.".png");
+$img = shipImage::get($sid);
 imagecopyresampled($im, $img, 354, 6, 0, 0, 40, 40, 64, 64);
 
 bevel(354, 6, 40);

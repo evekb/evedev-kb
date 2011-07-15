@@ -49,7 +49,7 @@ imagettftext($im, 11, 0, 5, 45, $white, MPATH.'spaceage.ttf', $kill->getVictimSh
 
 // ship
 $sid = $kill->getVictimShipExternalID();
-$img = imagecreatefrompng("img/ships/64_64/".$sid.".png");
+$img = shipImage::get($sid);
 imagecopyresampled($im, $img, 5, 5, 0, 0, 30, 30, 64, 64);
 
 // player portrait

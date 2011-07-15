@@ -1,8 +1,8 @@
-<table class="navigation" width="100%" height="25" border="0" cellspacing="1">
+<table class="navigation" width="100%" border="0" cellspacing="1">
 <tr class="kb-table-header"><td>Available Signatures</td></tr>
 {section name=tpl loop=$signatures}
 <tr class="kb-table-row-even">
-<td align="center">&nbsp;<br/><img src="?a=sig&i={$pilot}&s={$signatures[tpl]}"><br/>&nbsp;</td>
+<td align="center">&nbsp;<br/><img src="{$kb_host}?a=sig&i={$pilot}&s={$signatures[tpl]}"><br/>&nbsp;</td>
 </tr><tr class="kb-table-row-odd">
 <td align="center">
 <textarea cols="80" rows="2">[url={$kb_host}?a=pilot_detail&plt_id={$pilot}]

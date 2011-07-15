@@ -3,9 +3,10 @@
  * @package EDK
  */
 
+edkloader::register('shipImage', dirname(__FILE__)."/shipImage.php");
+
 ob_start();
-if (!$sig_name = $_GET['s'])
-{
+if (!$sig_name = edkURI::getArg('s', 2)) {
 	$sig_name = 'default';
 }
 $sig_name = str_replace('.', '', $sig_name);
@@ -23,23 +24,54 @@ function errorPic($string)
 	exit;
 }
 
-if ($plt_id = intval($_GET['i']))
+function lastKill($id)
 {
-	$pilot = new Pilot($plt_id);
-}
-else if ($plt_id = intval($_GET['ext']))
-{
-	$pilot = new Pilot(0, $plt_id);
-	$plt_id = $pilot->getID();
-}
-else
-{
-	errorPic('No pilot id specified.');
-	$pilot = new Pilot();
+	$id = (int)$id;
+	if (!$id) {
+		return false;
+	}
+	$sql = "SELECT UNIX_TIMESTAMP(max(ind_timestamp)) as last "
+			."FROM kb3_inv_detail WHERE ind_plt_id = $id";
+	$qry = DBFactory::getDBQuery();
+	$qry->execute($sql);
+
+	$row = $qry->getRow();
+	if (!$row['last']) {
+		return false;
+	} else {
+		return time() - (int)$row['last'];
+	}
 }
 
-if (!$pilot->exists())
-{
+$plt_id = (int)edkURI::getArg('i');
+if ($plt_id) {
+	$pilot = Cacheable::factory('Pilot', $plt_id);
+} else {
+	$plt_ext_id = (int)edkURI::getArg('ext');
+	if ($plt_ext_id) {
+		$pilot = new Pilot(0, $plt_id);
+		$plt_id = $pilot->getID();
+	} else {
+		$plt_id = edkURI::getArg('id');
+		if (!$plt_id) {
+			errorPic('No pilot id specified.');
+			$pilot = new Pilot();
+		} else if ($plt_id < 1000000) {
+			$pilot = Cacheable::factory('Pilot', $plt_id);
+		} else {
+			$pilot = new Pilot(0, $plt_id);
+			$plt_id = $pilot->getID();
+		}
+	}
+}
+if (!$plt_ext_id) {
+	$plt_ext_id = $pilot->getExternalID();
+}
+// If we still don't have an external ID then just use the internal for names.
+if (!$plt_ext_id) {
+	$plt_ext_id = $plt_id;
+}
+if (!$pilot->exists()) {
 	errorPic('That pilot doesnt exist.');
 }
 
@@ -56,23 +88,20 @@ if (array_search($alliance->getID(), config::get('cfg_allianceid')) === false
 
 $id = abs(crc32($sig_name));
 // check for cached version
-if (file_exists(KB_CACHEDIR.'/data/sig_'.$id.'_'.$plt_id))
-{
-	$age = filemtime(KB_CACHEDIR.'/data/sig_'.$id.'_'.$plt_id);
-
-	// cache files for 30 minutes
-	if (time() - $age < 30*60)
+if (file_exists(CacheHandler::exists("{$plt_ext_id}_sig_{$id}.jpg", 'img'))) {
+	// cache files for 120 minutes
+	if (time() - CacheHandler::age("{$plt_ext_id}_sig_{$id}.jpg", 'img') < 120*60
+			|| lastKill($plt_id) > 120 *60)
 	{
-		if (file_exists(dirname(__FILE__).'/signatures/'.$sig_name.'/typ.png'))
-		{
-			header('Content-Type: image/png');
-		}
-		else
-		{
+		if(isset($_SERVER['HTTP_IF_NONE_MATCH'])
+		|| isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
+			header($_SERVER["SERVER_PROTOCOL"]." 304 Not Modified");
+			die;
+		} else {
 			header('Content-Type: image/jpeg');
+			readfile(CacheHandler::get("{$plt_ext_id}_sig_{$id}.jpg", 'img'));
+			die;
 		}
-		readfile(KB_CACHEDIR.'/data/sig_'.$id.'_'.$plt_id);
-		return;
 	}
 }
 
@@ -91,24 +120,17 @@ if (!is_dir(dirname(__FILE__).'/signatures/'.$sig_name))
 // let the template do the work, we just output $im
 require(dirname(__FILE__).'/signatures/'.$sig_name.'/'.$sig_name.'.php');
 
-if (headers_sent())
-{
+if (headers_sent()) {
 	trigger_error('An error occured. Headers have already been sent.<br/>', E_USER_ERROR);
 }
-if (ob_get_contents())
-{
+if (ob_get_contents()) {
 	trigger_error('An error occured. Content has already been sent.<br/>', E_USER_ERROR);
-}
-else if (file_exists(dirname(__FILE__).'/signatures/'.$sig_name.'/typ.png'))
-{
-	header('Content-Type: image/png');
-	imagepng($im, 'cache/data/sig_'.$id.'_'.$plt_id);
-	readfile(KB_CACHEDIR.'/data/sig_'.$id.'_'.$plt_id);}
-else
-{
+} else {
 	header('Content-Type: image/jpeg');
-	imagejpeg($im, 'cache/data/sig_'.$id.'_'.$plt_id, 90);
-	readfile(KB_CACHEDIR.'/data/sig_'.$id.'_'.$plt_id);
+	imagejpeg($im, CacheHandler::getInternal("{$plt_ext_id}_sig_{$id}.jpg", 'img'), 90);
+	readfile(CacheHandler::getInternal("{$plt_ext_id}_sig_{$id}.jpg", 'img'));
 }
 
 ob_end_flush();
+
+die;
