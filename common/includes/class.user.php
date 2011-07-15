@@ -104,17 +104,27 @@ class user
 
 		if (!user::loggedin())
 		{
-			$box->addOption('link', 'Login', '?a=login');
-			$box->addOption('link', 'Register', '?a=register');
+			$box->addOption('link', 'Login',
+					edkURI::build(array('a', 'login', true)));
+			$box->addOption('link', 'Register',
+					edkURI::build(array('a', 'register', true)));
 		}
 		else
 		{
 			if (user::get('usr_pilot_id'))
 			{
 				$plt = new pilot(user::get('usr_pilot_id'));
-				$box->addOption('link', $plt->getName(), '?a=pilot_detail&plt_id='.$plt->getID());
+				if ($plt->getExternalID()) {
+					$id = $plt->getExternalID();
+				} else {
+					$id = $plt->getID();
+				}
+				$box->addOption('link', $plt->getName(),
+						edkURI::build(array('a', 'pilot_detail', true),
+								array('plt_id', $id, true)));
 			}
-			$box->addOption('link', 'Logout', '?a=logout');
+			$box->addOption('link', 'Logout',
+					edkURI::build(array('a', 'logout', true)));
 		}
 
 		event::call('user_menu_create', $box);

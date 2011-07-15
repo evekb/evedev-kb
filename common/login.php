@@ -34,7 +34,7 @@ if (trim($_POST['usrpass']))
 			session::create(true);
 
 			session_write_close();
-			header('Location: ?a=admin');
+			header('Location: '.KB_HOST.'/?a=admin');
 			die;
 		}
 	}
@@ -43,7 +43,7 @@ if (trim($_POST['usrpass']))
 		session::create(true);
 
 		session_write_close();
-		header('Location: ?a=admin');
+		header('Location: '.KB_HOST.'/?a=admin');
 		die;
 	}
 	else
@@ -51,7 +51,7 @@ if (trim($_POST['usrpass']))
 		$result = user::login($_POST['usrlogin'], $_POST['usrpass']);
 		if ($result)
 		{
-			header('Location: ?a=home');
+			header('Location: '.KB_HOST.'/?a=home');
 			die;
 		}
 		else

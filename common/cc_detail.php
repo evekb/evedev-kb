@@ -271,11 +271,11 @@ class pContractDetail extends pageAssembly
 	function menuSetup()
 	{
 		$this->addMenuItem("caption","Overview");
-		$this->addMenuItem("link","Target overview", "?a=cc_detail&amp;ctr_id=".$this->ctr_id);
+		$this->addMenuItem("link","Target overview", KB_HOST."/?a=cc_detail&amp;ctr_id=".$this->ctr_id);
 		$this->addMenuItem("caption","Kills &amp; losses");
-		$this->addMenuItem("link","Recent activity", "?a=cc_detail&amp;ctr_id=".$this->ctr_id."&amp;view=recent_activity");
-		$this->addMenuItem("link","All kills", "?a=cc_detail&amp;ctr_id=".$this->ctr_id."&amp;view=kills");
-		$this->addMenuItem("link","All losses", "?a=cc_detail&amp;ctr_id=".$this->ctr_id."&amp;view=losses");
+		$this->addMenuItem("link","Recent activity", KB_HOST."/?a=cc_detail&amp;ctr_id=".$this->ctr_id."&amp;view=recent_activity");
+		$this->addMenuItem("link","All kills", KB_HOST."/?a=cc_detail&amp;ctr_id=".$this->ctr_id."&amp;view=kills");
+		$this->addMenuItem("link","All losses", KB_HOST."/?a=cc_detail&amp;ctr_id=".$this->ctr_id."&amp;view=losses");
 		return "";
 	}
 	/**

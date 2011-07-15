@@ -156,7 +156,7 @@ if (isset($_SESSION['admin_kill_export']['select']))
 			switch ($_POST['searchtype'])
 			{
 				case 'pilot':
-					$link = '?a=admin_kill_export&add=p'.$row['plt_id'];
+					$link = KB_HOST.'/?a=admin_kill_export&add=p'.$row['plt_id'];
 					$descr = 'Pilot '.$row['plt_name'].' from '.$row['crp_name'];
 					break;
 				case 'corp':
@@ -164,7 +164,7 @@ if (isset($_SESSION['admin_kill_export']['select']))
 					$descr = 'Corp '.$row['crp_name'].', member of '.$row['all_name'];
 					break;
 				case 'alliance':
-					$link = '?a=admin_kill_export&add=a'.$row['all_id'];
+					$link = KB_HOST.'/?a=admin_kill_export&add=a'.$row['all_id'];
 					$descr = 'Alliance '.$row['all_name'];
 					break;
 			}
@@ -236,21 +236,21 @@ if (isset($_SESSION['admin_kill_export']['select']))
 			{
 				$alliance = new Alliance($id);
 				$text = $alliance->getName();
-				$link = '?a=admin_kill_export&del='.$typ.$id;
+				$link = KB_HOST.'/?a=admin_kill_export&del='.$typ.$id;
 				$permt[$typ][] = array('text' => $text, 'link' => $link);
 			}
 			if ($typ == 'p')
 			{
 				$pilot = new Pilot($id);
 				$text = $pilot->getName();
-				$link = '?a=admin_kill_export&del='.$typ.$id;
+				$link = KB_HOST.'/?a=admin_kill_export&del='.$typ.$id;
 				$permt[$typ][] = array('text' => $text, 'link' => $link);
 			}
 			if ($typ == 'c')
 			{
 				$corp = new Corporation($id);
 				$text = $corp->getName();
-				$link = '?a=admin_kill_export&del='.$typ.$id;
+				$link = KB_HOST.'/?a=admin_kill_export&del='.$typ.$id;
 				$permt[$typ][] = array('text' => $text, 'link' => $link);
 			}
 		}
@@ -337,7 +337,7 @@ if (isset($_SESSION['admin_kill_export']['do']))
 		// nothing to export, retry
 		unset($_SESSION['admin_kill_export']['do']);
 		$_SESSION['admin_kill_export']['select'] = 1;
-		header('Location: ?a=admin_kill_export');
+		header('Location: '.KB_HOST.'/?a=admin_kill_export');
 	}
 }
 $page->addContext($menubox->generate());

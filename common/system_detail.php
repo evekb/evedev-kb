@@ -10,7 +10,8 @@
  */
 class pSystemDetail extends pageAssembly
 {
-	
+	private $args = array();
+
 	function __construct()
 	{
 		parent::__construct();
@@ -20,44 +21,51 @@ class pSystemDetail extends pageAssembly
 		$this->queue("summaryTable");
 		$this->queue("killList");
 	}
-	
+
 	/**
-	
+
 	 * Start constructing the page.
-	
+
 	 * Prepare all the shared variables such as dates and check alliance ID.
 	 *
 	 */
 	function start()
 	{
-		$this->sys_id = intval($_GET['sys_id']);
+		$this->sys_id = (int)edkURI::getArg('sys_id', 1, true);
+		$this->view = preg_replace('/[^a-zA-Z0-9_-]/', '',
+						edkURI::getArg('view', 2, true));
+
+		$this->args[] = array('a', 'system_detail', true);
+		$this->args[] = array('sys_id', $this->sys_id, true);
+		$this->scl_id = (int)edkURI::getArg('scl_id');
+
 		global $smarty;
 		$this->smarty = $smarty;
-		$this->view =  preg_replace('/[^a-zA-Z0-9_-]/','',$_GET['view']);
 		$this->viewList = array();
 		$this->menuOptions = array();
 
 		$this->page = new Page();
 		$this->page->addHeader('<meta name="robots" content="noindex, nofollow" />');
 
-		if (!$this->sys_id)
-		{
+		if (!$this->sys_id) {
 			echo 'no valid id supplied<br/>';
 			exit;
 		}
 
-		$this->page->addHeader("<link rel='canonical' href='".KB_HOST."/?a=system_detail&amp;sys_id=". $this->sys_id."' />");
+		$this->page->addHeader("<link rel='canonical' href='".
+				edkURI::build($this->args)."' />");
 
 		$this->system = new SolarSystem($this->sys_id);
 		$this->menuOptions = array();
 		$this->page->setTitle('System details - '.$this->system->getName());
-		$this->smarty->assign('sys_id',$this->sys_id);
+		$this->smarty->assign('sys_id', $this->sys_id);
 	}
-	
+
 	function map()
 	{
 		return $this->smarty->fetch(get_tpl("system_detail_map"));
 	}
+
 	/**
 	 *  Set up the stats used by the stats and summary table functions
 	 */
@@ -65,18 +73,25 @@ class pSystemDetail extends pageAssembly
 	{
 		$this->kill_summary = new KillSummaryTable();
 		$this->kill_summary->setSystem($this->sys_id);
-		if(config::get('kill_classified')) $this->kill_summary->setEndDate(gmdate('Y-m-d H:i',strtotime('now - '.(config::get('kill_classified')).' hours')));
+		if (config::get('kill_classified')) {
+			$this->kill_summary->setEndDate(
+					gmdate('Y-m-d H:i', strtotime('now - '
+					.(config::get('kill_classified')).' hours')));
+		}
 		involved::load($this->kill_summary, 'kill');
 		$this->kill_summary->generate();
 		return "";
 	}
+
 	/**
 	 *  Build the summary table showing all kills and losses for this corporation.
 	 */
 	function summaryTable()
 	{
-		if($this->view != '' && $this->view != 'kills'
-			&& $this->view != 'losses') return '';
+		if ($this->view != '' && $this->view != 'kills'
+				&& $this->view != 'losses') {
+			return '';
+		}
 		return $this->kill_summary->generate();
 	}
 
@@ -86,43 +101,50 @@ class pSystemDetail extends pageAssembly
 	function killList()
 	{
 		global $smarty;
-		if(isset($this->viewList[$this->view])) return call_user_func_array($this->viewList[$this->view], array(&$this));
+		if (isset($this->viewList[$this->view])) {
+			return call_user_func_array(
+					$this->viewList[$this->view], array(&$this));
+		}
 
 		$klist = new KillList();
 		$klist->setOrdered(true);
-		if ($this->view == 'losses')
-			involved::load($klist,'loss');
-		else
-			involved::load($klist,'kill');
+		if ($this->view == 'losses') {
+			involved::load($klist, 'loss');
+		} else {
+			involved::load($klist, 'kill');
+		}
 		$klist->addSystem($this->system);
-		if(config::get('kill_classified')) $klist->setEndDate(gmdate('Y-m-d H:i',strtotime('now - '.(config::get('kill_classified')).' hours')));
-		if ($_GET['scl_id'])
-			$klist->addVictimShipClass(intval($_GET['scl_id']));
-		else
+		if (config::get('kill_classified')) {
+			$klist->setEndDate(gmdate('Y-m-d H:i', strtotime('now - '
+					.(config::get('kill_classified')).' hours')));
+		}
+		if ($this->scl_id) {
+			$klist->addVictimShipClass(intval($this->scl_id));
+		} else {
 			$klist->setPodsNoobShips(config::get('podnoobs'));
+		}
 
-		if ($this->view == 'recent' || !$this->view)
-		{
+		if ($this->view == 'recent' || !$this->view) {
 			$klist->setLimit(20);
 			$smarty->assign('klheader', config::get('killcount').' most recent kills');
-		}
-		elseif($this->view == 'losses')
+		} else if ($this->view == 'losses') {
 			$smarty->assign('klheader', 'All losses');
-		else
-			$smarty ->assign('klheader', 'All kills');
+		} else {
+			$smarty->assign('klheader', 'All kills');
+		}
 
 		$klist->setPageSplit(config::get('killcount'));
 
 		$pagesplitter = new PageSplitter($klist->getCount(), config::get('killcount'));
 
 		$table = new KillListTable($klist);
-		$smarty->assign('klsplit',$pagesplitter->generate());
-		$smarty->assign('kltable',$table->generate());
+		$smarty->assign('klsplit', $pagesplitter->generate());
+		$smarty->assign('kltable', $table->generate());
 		$html = $smarty->fetch(get_tpl('system_detail'));
-		
+
 		return $html;
 	}
-	
+
 	/**
 	 *  Reset the assembly object to prepare for creating the context.
 	 */
@@ -132,7 +154,7 @@ class pSystemDetail extends pageAssembly
 		$this->queue("menuSetup");
 		$this->queue("menu");
 	}
-	
+
 	/**
 	 * Set up the menu.
 	 *
@@ -140,12 +162,16 @@ class pSystemDetail extends pageAssembly
 	 */
 	function menuSetup()
 	{
-		$this->addMenuItem("caption","Navigation");
-		$this->addMenuItem("link","All kills", "?a=system_detail&amp;sys_id=".$this->sys_id."&amp;view=kills");
-		$this->addMenuItem("link","All losses", "?a=system_detail&amp;sys_id=".$this->sys_id."&amp;view=losses");
-		$this->addMenuItem("link","Recent Activity", "?a=system_detail&amp;sys_id=".$this->sys_id."&amp;view=recent");
+		$this->addMenuItem("caption", "Navigation");
+		$this->addMenuItem("link", "All kills",
+				edkURI::build($this->args, array('view', 'kills', true)));
+		$this->addMenuItem("link", "All losses",
+				edkURI::build($this->args, array('view', 'losses', true)));
+		$this->addMenuItem("link", "Recent Activity",
+				edkURI::build($this->args, array('view', 'recent', true)));
 		return "";
 	}
+
 	/**
 	 * Build the menu.
 	 *
@@ -155,15 +181,14 @@ class pSystemDetail extends pageAssembly
 	{
 		$menubox = new box("Menu");
 		$menubox->setIcon("menu-item.gif");
-		foreach($this->menuOptions as $options)
-		{
-			if(isset($options[2]))
-				$menubox->addOption($options[0],$options[1], $options[2]);
-			else
-				$menubox->addOption($options[0],$options[1]);
+		foreach ($this->menuOptions as $options) {
+			if (isset($options[2]))
+					$menubox->addOption($options[0], $options[1], $options[2]);
+			else $menubox->addOption($options[0], $options[1]);
 		}
 		return $menubox->generate();
 	}
+
 	/**
 	 * Add an item to the menu in standard box format.
 	 *
@@ -189,8 +214,8 @@ class pSystemDetail extends pageAssembly
 	{
 		$this->viewList[$view] = $callback;
 	}
-}
 
+}
 $systemDetail = new pSystemDetail();
 event::call("systemdetail_assembling", $systemDetail);
 $html = $systemDetail->assemble();

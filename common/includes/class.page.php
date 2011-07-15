@@ -165,8 +165,9 @@ class Page
 		$html = $smarty->fetch(get_tpl('index'));
 		if (!$this->cachable) config::put('cache_enabled', false);
 		event::call('final_content', $html);
-		$html = preg_replace('/[ \t\r\n]+\<\//', ' </', $html);
-		$html = preg_replace('/>[ \t\r\n]+/', '> ', $html);
+		// Reduce page size by about 10%
+		//$html = preg_replace('/\s+\<\//', ' </', $html);
+		//$html = preg_replace('/>\s+/', '> ', $html);
 		echo $html;
 	}
 	/**
@@ -208,8 +209,8 @@ class Page
 	{
 		if (!Session::isAdmin())
 		{
-			header("Location: ?a=login");
-			echo '<a href="?a=login">Login</a>';
+			header("Location: ".KB_HOST."/?a=login");
+			echo '<a href="'.KB_HOST.'/?a=login">Login</a>';
 			exit;
 		}
 	}
@@ -237,7 +238,7 @@ class Page
 	public function setSuperAdmin()
 	{
 		if (!Session::isSuperAdmin())
-			Header("Location: ?a=login");
+			Header("Location: ".KB_HOST."/?a=login");
 	}
 	/**
 	 * Set whether this page is cacheable.

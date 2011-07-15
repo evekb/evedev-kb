@@ -50,35 +50,35 @@ class Box2 extends Box
 
 $menubox = new Box2();
 
-//options::oldMenu('Features', "Contracts", "?a=admin_cc&amp;op=view&amp;type=contract");
-options::oldMenu('Features', "Campaigns", "?a=admin_cc&amp;op=view&amp;type=campaign");
-options::oldMenu('Features', "Standings", "?a=admin_standings");
+//options::oldMenu('Features', "Contracts", KB_HOST."/?a=admin_cc&amp;op=view&amp;type=contract");
+options::oldMenu('Features', "Campaigns", KB_HOST."/?a=admin_cc&amp;op=view&amp;type=campaign");
+options::oldMenu('Features', "Standings", KB_HOST."/?a=admin_standings");
 
-options::oldMenu('Appearance', "Map Options", "?a=admin_mapoptions");
+options::oldMenu('Appearance', "Map Options", KB_HOST."/?a=admin_mapoptions");
 
-options::oldMenu('Advanced', "Post Permissions", "?a=admin_postperm");
-options::oldMenu('Advanced', "Ship Values", "?a=admin_shp_val");
-options::oldMenu('Advanced', "Item Values", "?a=admin_value_editor");
-options::oldMenu('Advanced', "Value Fetch", "?a=admin_value_fetch");
+options::oldMenu('Advanced', "Post Permissions", KB_HOST."/?a=admin_postperm");
+options::oldMenu('Advanced', "Ship Values", KB_HOST."/?a=admin_shp_val");
+options::oldMenu('Advanced', "Item Values", KB_HOST."/?a=admin_value_editor");
+options::oldMenu('Advanced', "Value Fetch", KB_HOST."/?a=admin_value_fetch");
 
-options::oldMenu('Features', "Modules", "?a=admin_mods");
+options::oldMenu('Features', "Modules", KB_HOST."/?a=admin_mods");
 
-options::oldMenu('Features', "Feed Syndication", "?a=admin_feedsyndication");
-options::oldMenu('Features', "IDFeed Syndication", "?a=admin_idfeedsyndication");
-options::oldMenu('Features', "CCP API Feed", "?a=admin_apimod");
+options::oldMenu('Features', "Feed Syndication", KB_HOST."/?a=admin_feedsyndication");
+options::oldMenu('Features', "IDFeed Syndication", KB_HOST."/?a=admin_idfeedsyndication");
+options::oldMenu('Features', "CCP API Feed", KB_HOST."/?a=admin_apimod");
 
-options::oldMenu('Maintenance', "Auditing", "?a=admin_audit");
-options::oldMenu('Maintenance', "Troubleshooting", "?a=admin_troubleshooting");
-options::oldMenu('Maintenance', "File Verification", "?a=admin_verify");
-options::oldMenu('Maintenance', "Upgrade", "?a=admin_upgrade");
-options::oldMenu('Maintenance', "Settings Report", "?a=admin_status");
-options::oldMenu('Kill Import/Export', "Kill Import - files", "?a=admin_kill_import");
-options::oldMenu('Kill Import/Export', "Kill Import - csv", "?a=admin_kill_import_csv");
-options::oldMenu('Kill Import/Export', "Kill Export - files", "?a=admin_kill_export");
-options::oldMenu('Kill Import/Export', "Kill Export - csv", "?a=admin_kill_export_search");
-options::oldMenu('- Logout -', "Logout", "?a=logout");
+options::oldMenu('Maintenance', "Auditing", KB_HOST."/?a=admin_audit");
+options::oldMenu('Maintenance', "Troubleshooting", KB_HOST."/?a=admin_troubleshooting");
+options::oldMenu('Maintenance', "File Verification", KB_HOST."/?a=admin_verify");
+options::oldMenu('Maintenance', "Upgrade", KB_HOST."/?a=admin_upgrade");
+options::oldMenu('Maintenance', "Settings Report", KB_HOST."/?a=admin_status");
+options::oldMenu('Kill Import/Export', "Kill Import - files", KB_HOST."/?a=admin_kill_import");
+options::oldMenu('Kill Import/Export', "Kill Import - csv", KB_HOST."/?a=admin_kill_import_csv");
+options::oldMenu('Kill Import/Export', "Kill Export - files", KB_HOST."/?a=admin_kill_export");
+options::oldMenu('Kill Import/Export', "Kill Export - csv", KB_HOST."/?a=admin_kill_export_search");
+options::oldMenu('- Logout -', "Logout", KB_HOST."/?a=logout");
 
 #options::oldMenu('User', 'Titles', '?a=admin_titles');
 
-options::oldMenu('Appearance', "Top Navigation", "?a=admin_navmanager");
+options::oldMenu('Appearance', "Top Navigation", KB_HOST."/?a=admin_navmanager");
 

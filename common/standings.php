@@ -48,7 +48,7 @@ while ($row = $qry->getRow())
 		$alliance = new Alliance($row['sta_to']);
 		$text = $alliance->getName();
 		$pid = $alliance->getUnique();
-		$link = '?a=admin_standings&del='.$typ.$row['sta_to'];
+		$link = KB_HOST.'/?a=admin_standings&del='.$typ.$row['sta_to'];
 		$permt[$typ][] = array('text' => $text, 'link' => $link, 'value' => $val, 'comment' => $row['sta_comment'],
 			'id' => $id, 'pid' => $pid, 'typ' => $row['sta_to'], 'icon' => $icon);
 	}
@@ -56,7 +56,7 @@ while ($row = $qry->getRow())
 	{
 		$corp = new Corporation($row['sta_to']);
 		$text = $corp->getName();
-		$link = '?a=admin_standings&del='.$typ.$row['sta_to'];
+		$link = KB_HOST.'/?a=admin_standings&del='.$typ.$row['sta_to'];
 		$permt[$typ][] = array('text' => $text, 'link' => $link, 'value' => $val, 'comment' => $row['sta_comment'],
 			'id' => $id, 'typ' => $typ, 'icon' => $icon);
 	}

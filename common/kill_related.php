@@ -14,14 +14,6 @@ class pKillRelated extends pageAssembly
 	function __construct()
 	{
 		parent::__construct();
-		if(isset($_GET['kll_id'])) $this->kll_id = intval($_GET['kll_id']);
-		else $this->kll_id = 0;
-		if(isset($_GET['kll_external_id'])) $this->kll_external_id = intval($_GET['kll_external_id']);
-		elseif(isset($_GET['kll_ext_id'])) $this->kll_external_id = intval($_GET['kll_ext_id']);
-		else $this->kll_external_id = 0;
-
-		$this->menuOptions = array();
-
 		$this->queue("start");
 		$this->queue("getInvolved");
 		$this->queue("buildStats");
@@ -53,21 +45,31 @@ class pKillRelated extends pageAssembly
 		$this->page = new Page('Related kills & losses');
 		$this->page->addHeader('<meta name="robots" content="index, nofollow" />');
 
-		$scl_id = intval($_GET['scl_id']);
-		if (!$this->kll_id = intval($_GET['kll_id']))
-		{
+		$this->kll_id = (int)edkURI::getArg('kll_id', 1);
+		if (!$this->kll_id) {
+			$this->kll_external_id = (int)edkURI::getArg('kll_ext_id');
+			if (!$this->kll_external_id) {
+				// internal and external ids easily overlap so we can't guess which
+				$this->kll_id = (int)edkURI::getArg('id');
+			} else {
+				$this->kill = new Kill($this->kll_external_id, true);
+				$this->kill->setDetailedInvolved();
+				$this->kll_id = $this->kill->getID();
+			}
+		} else {
+			$this->kill = Cacheable::factory('Kill', $this->kll_id);
+			$this->kill->setDetailedInvolved();
+		}
+		$this->adjacent = edkURI::getArg('adjacent');
+		$this->scl_id = (int)edkURI::getArg('scl_id');
+
+		$this->menuOptions = array();
+
+		if (!$this->kll_id || !$this->kill->exists()) {
 			echo 'No valid kill id specified';
 			exit;
 		}
-		$this->kill = new Kill($this->kll_id);
-		$this->kill->setDetailedInvolved();
-		if(!$this->kill->exists())
-		{
-			echo 'No valid kill id specified';
-			exit;
-		}
-		if($this->kill->isClassified())
-		{
+		if($this->kill->isClassified()) {
 			Header("Location: ".KB_HOST."/?a=kill_detail&kll_id=".$this->kll_id);
 			die();
 		}
@@ -117,7 +119,7 @@ class pKillRelated extends pageAssembly
 	{
 		// this is a fast query to get the system and timestamp
 		$rqry = DBFactory::getDBQuery();
-		if(isset($_GET['adjacent']))
+		if($this->adjacent)
 			$rsql = 'SELECT kll_timestamp, b.sys_id from kb3_kills
 			join kb3_systems a ON (a.sys_id = kll_system_id)
 			join kb3_system_jumps on (sjp_from = a.sys_eve_id)
@@ -228,10 +230,10 @@ class pKillRelated extends pageAssembly
 		foreach($this->invCorp as $ic) $this->llist->addVictimCorp($ic);
 		foreach($this->invAll as $ia) $this->llist->addVictimAlliance($ia);
 
-		if ($scl_id)
+		if ($this->scl_id)
 		{
-			$this->klist->addVictimShipClass($scl_id);
-			$this->llist->addVictimShipClass($scl_id);
+			$this->klist->addVictimShipClass($this->scl_id);
+			$this->llist->addVictimShipClass($this->scl_id);
 		}
 
 		$this->destroyed = $pods = array();
@@ -344,7 +346,7 @@ class pKillRelated extends pageAssembly
 		else
 		{
 			$this->kill = new Kill($this->kll_id);
-			if(!isset($_GET['adjacent'])) $smarty->assign('system', $this->kill->getSolarSystemName());
+			if($this->adjacent) $smarty->assign('system', $this->kill->getSolarSystemName());
 			else
 			{
 				$sysnames = array();
@@ -610,10 +612,17 @@ class pKillRelated extends pageAssembly
 	public function menuSetup()
 	{
 		$this->addMenuItem("caption", "View");
-		if(!isset($_GET['adjacent'])) $this->addMenuItem("link", "Include adjacent", "?a=kill_related&amp;adjacent&amp;kll_id=".$this->kll_id);
-		else $this->addMenuItem("link", "Remove adjacent", "?a=kill_related&amp;kll_id=".$this->kll_id);
-		$this->addMenuItem("link", "Back to Killmail", "?a=kill_detail&amp;kll_id=".$this->kll_id);
-		$this->addMenuItem("link", "Kills &amp; losses", "?a=kill_related&amp;kll_id=".$this->kll_id);
+		if($this->adjacent) {
+			$this->addMenuItem("link", "Include adjacent",
+					edkURI::build(array('kll_id', $this->kll_id, true),
+					array('adjacent', true, true)));
+		} else {
+			$this->addMenuItem("link", "Include adjacent",
+					edkURI::build(array('kll_id', $this->kll_id, true)));
+		}
+		$this->addMenuItem("link", "Back to Killmail",
+					edkURI::build(array('a', 'kill_detail', true),
+							array('kll_id', $this->kll_id, true)));
 	}
 	public function menu()
 	{

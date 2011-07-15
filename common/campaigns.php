@@ -83,8 +83,8 @@ class pCampaignList extends pageAssembly
 	 */
 	function menuSetup()
 	{
-		$this->addMenuItem('link', 'Active campaigns', '?a=campaigns');
-		$this->addMenuItem('link', 'Past campaigns', '?a=campaigns&amp;view=past');
+		$this->addMenuItem('link', 'Active campaigns', KB_HOST.'/?a=campaigns');
+		$this->addMenuItem('link', 'Past campaigns', KB_HOST.'/?a=campaigns&amp;view=past');
 		return "";
 	}
 	/**

@@ -272,7 +272,7 @@ class options
 				}
 
 				// we're not a category, make it clickable
-				$menubox->addOption('link', $subfield, '?a=admin&amp;field='.urlencode($field).'&amp;sub='.urlencode($subfield));
+				$menubox->addOption('link', $subfield, KB_HOST.'/?a=admin&amp;field='.urlencode($field).'&amp;sub='.urlencode($subfield));
 			}
 			$lastfield = $field;
 		}

@@ -49,15 +49,15 @@ if ($_POST['searchphrase'] != "" && strlen($_POST['searchphrase']) >= 3)
 		switch ($_POST['searchtype'])
 		{
 			case 'pilot':
-				$link = '?a=admin_postperm&amp;add=p'.$row['plt_id'];
+				$link = KB_HOST.'/?a=admin_postperm&amp;add=p'.$row['plt_id'];
 				$descr = 'Pilot '.$row['plt_name'].' from '.$row['crp_name'];
 				break;
 			case 'corp':
-				$link = "?a=admin_postperm&amp;add=c".$row['crp_id'];
+				$link = KB_HOST."/?a=admin_postperm&amp;add=c".$row['crp_id'];
 				$descr = 'Corp '.$row['crp_name'].', member of '.$row['all_name'];
 				break;
 			case 'alliance':
-				$link = '?a=admin_postperm&amp;add=a'.$row['all_id'];
+				$link = KB_HOST.'/?a=admin_postperm&amp;add=a'.$row['all_id'];
 				$descr = 'Alliance '.$row['all_name'];
 				break;
 		}
@@ -142,21 +142,21 @@ if ($string != 'all')
 			{
 				$alliance = new Alliance($id);
 				$text = $alliance->getName();
-				$link = '?a=admin_postperm&amp;del='.$typ.$id;
+				$link = KB_HOST.'/?a=admin_postperm&amp;del='.$typ.$id;
 				$permt[$typ][] = array('text' => $text, 'link' => $link);
 			}
 			if ($typ == 'p')
 			{
 				$pilot = new Pilot($id);
 				$text = $pilot->getName();
-				$link = '?a=admin_postperm&amp;del='.$typ.$id;
+				$link = KB_HOST.'/?a=admin_postperm&amp;del='.$typ.$id;
 				$permt[$typ][] = array('text' => $text, 'link' => $link);
 			}
 			if ($typ == 'c')
 			{
 				$corp = new Corporation($id);
 				$text = $corp->getName();
-				$link = '?a=admin_postperm&amp;del='.$typ.$id;
+				$link = KB_HOST.'/?a=admin_postperm&amp;del='.$typ.$id;
 				$permt[$typ][] = array('text' => $text, 'link' => $link);
 			}
 		}

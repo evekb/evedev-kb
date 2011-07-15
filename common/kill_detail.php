@@ -62,14 +62,8 @@ class pKillDetail extends pageAssembly
 		if (!$this->kll_id) {
 			$this->kll_external_id = (int)edkURI::getArg('kll_ext_id');
 			if (!$this->kll_external_id) {
-				$id = (int)edkURI::getArg('id');
-				// True for NPC corps too, but NPC alliances recorded as corps
-				// fail here. Use Jedi mind tricks?
-				if ($id > 1000000) {
-					$this->kll_external_id = $id;
-				} else {
-					$this->kll_id = $id;
-				}
+				// internal and external ids easily overlap so we can't guess which
+				$this->kll_id = (int)edkURI::getArg('id');
 			}
 		}
 		$this->nolimit = edkURI::getArg('nolimit', 2);

@@ -34,53 +34,54 @@ class AwardBox
 		$rows = array();
 		$max = 0;
 
-		for($i = 1; $i < 11; $i++)
-		{
+		for ($i = 1; $i < 11; $i++) {
 			$row = $this->toplist_->getRow();
-			if($row)
-			{
+			if ($row) {
 				array_push($rows, $row);
 			}
-			if($row['cnt'] > $max)
-			{
+			if ($row['cnt'] > $max) {
 				$max = $row['cnt'];
 			}
 		}
 
-		if(!$rows[0]['plt_id'])
-		{
+		if (!$rows[0]['plt_id']) {
 			return;
 		}
 
 		$pilot = new Pilot($rows[0]['plt_id']);
 		$smarty->assign('title', $this->title_);
 		$smarty->assign('pilot_portrait', $pilot->getPortraitURL(64));
-		$smarty->assign('award_img', config::get('cfg_img')."/awards/".$this->award_.".png");
-		$smarty->assign('url', "?a=pilot_detail&amp;plt_id=".$rows[0]['plt_id']);
+		$smarty->assign('award_img',
+				config::get('cfg_img')."/awards/".$this->award_.".png");
+		$smarty->assign('url', edkURI::build(array('a', 'pilot_detail', true),
+						array('plt_id', $rows[0]['plt_id'], true)));
 		$smarty->assign('name', $pilot->getName());
 
 		$bar = new BarGraph($rows[0]['cnt'], $max, 60);
 		$smarty->assign('bar', $bar->generate());
 		$smarty->assign('cnt', $rows[0]['cnt']);
 
-		for($i = 2; $i < 11; $i++)
-		{
-			if(!$rows[$i - 1]['plt_id'])
-			{
+		for ($i = 2; $i < 11; $i++) {
+			if (!$rows[$i - 1]['plt_id']) {
 				break;
-			}
-			if(!$rows[$i - 1]['plt_name'])
-			{
+			} else if (!$rows[$i - 1]['plt_name']) {
 				$pilot = new Pilot($rows[$i - 1]['plt_id']);
 				$pilotname = $pilot->getName();
+			} else {
+				$pilotname = $rows[$i - 1]['plt_name'];
 			}
-			else $pilotname = $rows[$i - 1]['plt_name'];
 			$bar = new BarGraph($rows[$i - 1]['cnt'], $max, 60);
-			$top[$i] = array('url' => "?a=pilot_detail&amp;plt_id=".$rows[$i - 1]['plt_id'], 'name' => $pilotname, 'bar' => $bar->generate(), 'cnt' => $rows[$i - 1]['cnt']);
+			$top[$i] = array(
+				'url' => edkURI::build(array('a', 'pilot_detail', true),
+						array('plt_id', $rows[0]['plt_id'], true)),
+				'name' => $pilotname,
+				'bar' => $bar->generate(),
+				'cnt' => $rows[$i - 1]['cnt']);
 		}
 
 		$smarty->assign('top', $top);
 		$smarty->assign('comment', $this->comment_);
 		return $smarty->fetch(get_tpl('award_box'));
 	}
+
 }

@@ -101,31 +101,31 @@ class pSearch extends pageAssembly
                     switch ($this->searchtype)
                     {
                         case "pilot":
-                            $result['link'] = "?a=pilot_detail&amp;plt_id=".$row['plt_id'];
+                            $result['link'] = KB_HOST."/?a=pilot_detail&amp;plt_id=".$row['plt_id'];
                             $result['name'] = $row['plt_name'];
                             $result['type'] = $row['crp_name'];
                             $results[] = $result;
                             break;
                         case "corp":
-                            $result['link'] = "?a=corp_detail&amp;crp_id=".$row['crp_id'];
+                            $result['link'] = KB_HOST."/?a=corp_detail&amp;crp_id=".$row['crp_id'];
                             $result['name'] = $row['crp_name'];
                             $result['type'] = $row['all_name'];
                             $results[] = $result;
                             break;
                         case "alliance":
-                            $result['link'] = "?a=alliance_detail&amp;all_id=".$row['all_id'];
+                            $result['link'] = KB_HOST."/?a=alliance_detail&amp;all_id=".$row['all_id'];
                             $result['name'] = $row['all_name'];
                             $result['type'] = '';
                             $results[] = $result;
                             break;
                         case "system":
-                            $result['link'] = "?a=system_detail&amp;sys_id=".$row['sys_id'];
+                            $result['link'] = KB_HOST."/?a=system_detail&amp;sys_id=".$row['sys_id'];
                             $result['name'] = $row['sys_name'];
                             $result['type'] = '';
                             $results[] = $result;
                             break;
                         case 'item':
-                            $result['link'] = "?a=invtype&amp;id=".$row['typeID'];
+                            $result['link'] = KB_HOST."/?a=invtype&amp;id=".$row['typeID'];
                             $result['name'] = $row['typeName'];
                             $result['type'] = '';
                             $results[] = $result;

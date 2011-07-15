@@ -131,7 +131,7 @@ function post()
 //            $qry->execute("insert into kb3_log (log_kll_id, log_site, log_ip_address, log_timestamp) values(".
 //                    $killid.",'".KB_SITE."','".getip()."', now())");
 
-            header("Location: ?a=kill_detail&kll_id=".$killid);
+            header("Location: ".KB_HOST."/?a=kill_detail&kll_id=".$killid);
             exit;
         }
     }

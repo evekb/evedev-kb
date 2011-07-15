@@ -8,5 +8,4 @@
 
 $session = new Session();
 $session->destroy();
-header('Location: ?a=admin');
-?>
+header('Location: '.KB_HOST.'/?a=admin');
