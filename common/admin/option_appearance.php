@@ -279,7 +279,6 @@ class admin_appearance
 		if(!file_exists(KB_CACHEDIR.'/templates_c/'.$themename.'/'))
 				mkdir(KB_CACHEDIR.'/templates_c/'.$themename.'/', 0755, true);
 		$smarty->compile_dir = KB_CACHEDIR.'/templates_c/'.$themename.'/';
-		admin_appearance::removeOld(0, KB_CACHEDIR.'/templates_c', true);
 	}
 
 	/**
