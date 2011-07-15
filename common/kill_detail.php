@@ -410,14 +410,14 @@ class pKillDetail extends pageAssembly
 			$this->involved[$i]['shipImage'] = $ship->getImage(64);
 			$this->involved[$i]['shipTechLevel'] = $ship->getTechLevel();
 			$this->involved[$i]['shipIsFaction'] = $ship->isFaction();
-			if($this->involved[$i]['externalID']) {
+			if($pilot->getExternalID(true)) {
 				$this->involved[$i]['pilotURL']  =
 						edkURI::build(array('a', 'pilot_detail', true),
-						array('plt_ext_id', $this->involved[$i]['externalID'], true));
+						array('plt_ext_id', $pilot->getExternalID(), true));
 			} else {
 				$this->involved[$i]['pilotURL']  =
 						edkURI::build(array('a', 'pilot_detail', true),
-						array('plt_id', $pilot->getID(), false));
+						array('plt_id', $pilot->getID(), true));
 			}
 			$this->involved[$i]['pilotName'] = $pilot->getName();
 			$this->involved[$i]['secStatus'] = $inv->getSecStatus();
