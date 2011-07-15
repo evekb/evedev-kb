@@ -46,10 +46,18 @@ class pSelf extends pageAssembly
 			foreach(config::get('cfg_allianceid') as $entity)
 			{
 				$alliance = new Alliance($entity);
+				if ($alliance->getExternalID()) {
+					$url = edkURI::page('alliance_detail', $alliance->getExternalID(),
+							'all_ext_id');
+				} else {
+					$url = edkURI::page('alliance_detail', $alliance->getID(),
+							'all_id');
+				}
 				$alls[] = array('id' => $alliance->getID(),
 					'extid' => $alliance->getExternalID(),
 					'name' => $alliance->getName(),
-					'portrait' => $alliance->getPortraitURL(128));
+					'portrait' => $alliance->getPortraitURL(128),
+					'url' => $url);
 			}
 		}
 		if(config::get('cfg_corpid'))
@@ -58,10 +66,18 @@ class pSelf extends pageAssembly
 			foreach(config::get('cfg_corpid') as $entity)
 			{
 				$corp = new Corporation($entity);
+				if ($corp->getExternalID()) {
+					$url = edkURI::page('corp_detail', $corp->getExternalID(),
+							'crp_ext_id');
+				} else {
+					$url = edkURI::page('corp_detail', $corp->getID(),
+							'crp_id');
+				}
 				$corps[] = array('id' => $corp->getID(),
 					'extid' => $corp->getExternalID(),
 					'name' => $corp->getName(),
-					'portrait' => $corp->getPortraitURL(128));
+					'portrait' => $corp->getPortraitURL(128),
+					'url' => $url);
 			}
 		}
 		if(config::get('cfg_pilotid'))
@@ -70,10 +86,18 @@ class pSelf extends pageAssembly
 			foreach(config::get('cfg_pilotid') as $entity)
 			{
 				$pilot = new Pilot($entity);
+				if ($pilot->getExternalID()) {
+					$url = edkURI::page('pilot_detail', $pilot->getExternalID(),
+							'plt_ext_id');
+				} else {
+					$url = edkURI::page('pilot_detail', $pilot->getID(),
+							'plt_id');
+				}
 				$pilots[] = array('id' => $pilot->getID(),
 					'extid' => $pilot->getExternalID(),
 					'name' => $pilot->getName(),
-					'portrait' => $pilot->getPortraitURL(128));
+					'portrait' => $pilot->getPortraitURL(128),
+					'url' => $url);
 			}
 		}
 
@@ -100,24 +124,48 @@ if(count(config::get('cfg_allianceid'))
 else if(config::get('cfg_allianceid'))
 {
 	$alls = config::get('cfg_allianceid');
-	header("Location: ".KB_HOST."?a=alliance_detail&all_id=".$alls[0]);
+	/* @var $alliance Alliance */
+	$alliance = Cacheable::factory('Alliance', $alls[0]);
+	if ($alliance->getExternalID()) {
+		$arr = array('all_ext_id', $alliance->getExternalID(), true);
+	} else {
+		$arr = array('all_id', $alls[0], true);;
+	}
+	header("Location: ".
+			edkURI::build(array('a', 'alliance_detail', true), $arr));
 	die;
 }
 elseif(config::get('cfg_corpid'))
 {
 	$corps = config::get('cfg_corpid');
-	header("Location: ".KB_HOST."?a=corp_detail&crp_id=".$corps[0]);
+	/* @var $corp Corporation */
+	$corp = Cacheable::factory('Corporation', $corps[0]);
+	if ($corp->getExternalID()) {
+		$arr = array('crp_ext_id', $corp->getExternalID(), true);
+	} else {
+		$arr = array('crp_id', $corps[0], true);;
+	}
+	header("Location: ".edkURI::build(array('a', 'corp_detail', true), $arr));
 	die;
 }
 elseif(config::get('cfg_pilotid'))
 {
 	$pilots = config::get('cfg_pilotid');
-	header("Location: ".KB_HOST."?a=pilot_detail&plt_id=".$pilots[0]);
+	/* @var $pilot Pilot */
+	$pilot = Cacheable::factory('Pilot', $pilots[0]);
+	if ($pilot->getExternalID()) {
+		$url = edkURI::page('pilot_detail', $pilot->getExternalID(),
+				'plt_ext_id');
+	} else {
+		$url = edkURI::page('pilot_detail', $pilots[0],
+				'plt_id');
+	}
+	header("Location: $url");
 	die;
 }
 else
 {
-	header("Location: ".KB_HOST."?a=about");
+	header("Location: ".edkURI::page('about'));
 	die;
 }
 
