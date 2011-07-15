@@ -11,5 +11,5 @@
   PRIMARY KEY  (`crp_id`),
   UNIQUE KEY `crp_name` (`crp_name`),
   UNIQUE KEY `crp_external_id` (`crp_external_id`)
-) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) Engine=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;</structure>
 </kb3>
