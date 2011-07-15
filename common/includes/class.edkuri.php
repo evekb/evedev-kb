@@ -265,6 +265,33 @@ class edkURI {
 			return self::make($args);
 		}
 	}
+
+	/**
+	 * Make a link to a specific page and id combination
+	 *
+	 * e.g. page('alliance_detail', 1234, 'all_id')
+	 * returns a link to kburl/alliance_detail/1234/ or
+	 * kburl/?a=alliance_detail&all_id=1234
+	 *
+	 * page('awards')
+	 * returns a link to kburl/awards/ or
+	 * kburl/?a=awards
+	 *
+	 * @param string $page the name of the page to link to
+	 * @param integer $id an optional id to use
+	 * @param string $idname an optional name for the id
+	 * @return string The URI for the page.
+	 */
+	public static function page($page, $id = 0, $idname = 'id')
+	{
+		$id = (int)$id;
+		if ($id) {
+			return self::build(array('a', $page, true),
+					array($idname, $id, true));
+		} else {
+			return self::build(array('a', $page, true));
+		}
+	}
 	/**
 	 * Set the root url used to create URIs.
 	 *
