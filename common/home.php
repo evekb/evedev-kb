@@ -57,9 +57,9 @@ class pHome extends pageAssembly
 
 		$week = $month = $year = 0;
 		$year = (int)edkURI::getArg('y', 1);
-		if (config::get('show_monthly') ) {
+		if ($year && config::get('show_monthly') ) {
 			$month = (int)edkURI::getArg('m', 2);
-		} else {
+		} else if ($year){
 			$week = (int)edkURI::getArg('w', 2);
 		}
 		$this->setTime($week, $year, $month);
@@ -154,8 +154,7 @@ class pHome extends pageAssembly
 
 		// If no week is set then show the most recent kills. Otherwise
 		// show all kills for the week using the page splitter.
-		if(!$this->week && !$this->month && !$this->year
-				&& config::get("cfg_fillhome")) {
+		if(config::get("cfg_fillhome") && !edkURI::getArg('y', 1)) {
 			$klist->setLimit($this->killcount);
 			$table = new KillListTable($klist);
 			if($this->showcombined) $table->setCombined(true);
