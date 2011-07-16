@@ -308,7 +308,7 @@ class Parser
 			!isset($shipname) ||
 			!isset($systemname) ||
 			!isset($systemsec))
-			return 0;
+		return 0;
 
 		if ($checkauth)
 			$authorized = false;
@@ -558,6 +558,11 @@ class Parser
 				if (!$iship->getID())
 				{
 					$this->error('Ship not found.', $isname);
+				}
+
+				if (strcmp($iwname, 'Unknown') == 0 && $iship->getID())
+				{
+					$iwname = $iship->getName();
 				}
 
 				$iweapon = $this->fetchItem($iwname);
