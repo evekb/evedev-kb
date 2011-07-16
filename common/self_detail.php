@@ -127,12 +127,11 @@ else if(config::get('cfg_allianceid'))
 	/* @var $alliance Alliance */
 	$alliance = Cacheable::factory('Alliance', $alls[0]);
 	if ($alliance->getExternalID()) {
-		$arr = array('all_ext_id', $alliance->getExternalID(), true);
+		$url = edkURI::page('alliance_detail', $alliance->getExternalID(), 'all_ext_id');
 	} else {
-		$arr = array('all_id', $alls[0], true);;
+		$url = edkURI::page('alliance_detail', $alls[0], 'all_id');
 	}
-	header("Location: ".
-			edkURI::build(array('a', 'alliance_detail', true), $arr));
+	header("Location: ".htmlspecialchars_decode($url));
 	die;
 }
 elseif(config::get('cfg_corpid'))
@@ -141,11 +140,11 @@ elseif(config::get('cfg_corpid'))
 	/* @var $corp Corporation */
 	$corp = Cacheable::factory('Corporation', $corps[0]);
 	if ($corp->getExternalID()) {
-		$arr = array('crp_ext_id', $corp->getExternalID(), true);
+		$url = edkURI::page('corp_detail', $corp->getExternalID(), 'crp_ext_id');
 	} else {
-		$arr = array('crp_id', $corps[0], true);;
+		$url = edkURI::page('corp_detail', $corps[0], 'crp_id');
 	}
-	header("Location: ".edkURI::build(array('a', 'corp_detail', true), $arr));
+	header("Location: ".htmlspecialchars_decode($url));
 	die;
 }
 elseif(config::get('cfg_pilotid'))
@@ -160,7 +159,7 @@ elseif(config::get('cfg_pilotid'))
 		$url = edkURI::page('pilot_detail', $pilots[0],
 				'plt_id');
 	}
-	header("Location: $url");
+	header("Location: ".htmlspecialchars_decode($url));
 	die;
 }
 else
