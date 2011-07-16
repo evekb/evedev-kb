@@ -58,6 +58,6 @@ cache_update	*
 cache_time	10
 DBUpdate	022
 upd_dbVersion	1.0.8
-upd_codeVersion	3.2.2
+upd_codeVersion	3.2.3
 cfg_log	1
 cfg_sqlhalt	1

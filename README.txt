@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v3.2.2
+Eve Development Network Killboard v3.2.3
 -------------------------------------------
 
 // REQUIREMENTS
@@ -24,6 +24,11 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
+v3.2.3
+Related kill count fix
+Incarna DB
+Custom EDK URL creation support (supports future versions of EDK)
+-------------------------------------------
 v3.2.2
 Use CCP image server for images
 If using local cache of images, fetch Types from CCP
