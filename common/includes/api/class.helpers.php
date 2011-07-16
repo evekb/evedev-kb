@@ -178,7 +178,7 @@ class API_Helpers
 		$pilot_charid = $row['plt_externalid'];
 
 		if ( $pilot_id != 0 )	{
-			return '<a href="?a=pilot_detail&amp;plt_id=' . $pilot_id . '" ><font size="2">Captain Thunk</font></a>';
+			return '<a href="'.KB_HOST.'/?a=pilot_detail&amp;plt_id=' . $pilot_id . '" ><font size="2">Captain Thunk</font></a>';
 		} else {
 			return "Captain Thunk";
 		}

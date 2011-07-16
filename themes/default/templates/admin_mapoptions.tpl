@@ -1,4 +1,4 @@
-<form id="options" name="options" method="post" action="?a=admin_mapoptions">
+<form id="options" name="options" method="post" action="{$kb_host}/?a=admin_mapoptions">
 <b>Note:</b> You don't need to set colors if you don't want to overwrite the default.<br/>
 The other settings do have an effect if they're touched though.<br/>
 <b>Usage:</b> Input into a RGB-colorfield set of 3 values seperated by ','. If you want to have those values treated as hex then put an x in front of each.

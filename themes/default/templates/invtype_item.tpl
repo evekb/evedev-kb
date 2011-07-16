@@ -45,8 +45,8 @@
                 <tr class="{cycle name=ccl}">
                     <td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon{$key.icon}.png" border="0" alt="" /></td>
                     <td class="kb-table-cell"><b>{$key.displayName}</b></td>
-                    <td class="kb-table-cell" align="right">{if $key.unit == 'typeID'}<a href="?a=invtype&amp;id={$key.value}">{$item->resolveTypeID($key.value)}</a>
-                                                            {elseif $key.unit == 'groupID'}<a href="?a=groupdb&amp;id={$key.value}">{$item->resolveGroupID($key.value)}</a>
+                    <td class="kb-table-cell" align="right">{if $key.unit == 'typeID'}<a href="{$kb_host}/?a=invtype&amp;id={$key.value}">{$item->resolveTypeID($key.value)}</a>
+                                                            {elseif $key.unit == 'groupID'}<a href="{$kb_host}/?a=groupdb&amp;id={$key.value}">{$item->resolveGroupID($key.value)}</a>
                                                             {elseif $key.unit == 'attributeID'}{$item->resolveAttributeID($key.value)}
                                                             {else}{$key.value} {$key.unit}{/if}</td>
                 </tr>

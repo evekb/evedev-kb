@@ -28,9 +28,9 @@ else if (isset($_GET['permanent']))
 else
 {
 	$html .= "Delete Kill ID \"".$kll_id."\": ";
-	$html .= "<button onClick=\"window.location.href='?a=admin_kill_delete&confirm=yes&kll_id=".$kll_id."'\">Yes</button><br />";
+	$html .= "<button onClick=\"window.location.href='".KB_HOST."/?a=admin_kill_delete&confirm=yes&kll_id=".$kll_id."'\">Yes</button><br />";
 	$html .= "Delete and prevent reposting: ";
-	$html .= "<button onClick=\"window.location.href='?a=admin_kill_delete&permanent=yes&kll_id=".$kll_id."'\">Yes</button><br />";
+	$html .= "<button onClick=\"window.location.href='".KB_HOST."/?a=admin_kill_delete&permanent=yes&kll_id=".$kll_id."'\">Yes</button><br />";
 	$html .= "Abort deletion and return: ";
 	$html .= "<button onClick=\"window.close();\">No</button>";
 }

@@ -16,7 +16,7 @@
 {else}
 {section name=i loop=$targets}
 <br />
-<div class="kb-contract-target-header">Target {$targets[i].type} - {if $targets[i].type == 'region'}{$targets[i].name}{else}<a class="kb-contract" href="?a={$targets[i].type}_detail&amp;{if $targets[i].type == 'system'}sys{elseif $targets[i].type == 'corp'}crp{elseif $targets[i].type == 'alliance'}all{/if}_id={$targets[i].id}">{$targets[i].name}</a>{/if}
+<div class="kb-contract-target-header">Target {$targets[i].type} - {if $targets[i].type == 'region'}{$targets[i].name}{else}<a class="kb-contract" href="{$kb_host}/?a={$targets[i].type}_detail&amp;{if $targets[i].type == 'system'}sys{elseif $targets[i].type == 'corp'}crp{elseif $targets[i].type == 'alliance'}all{/if}_id={$targets[i].id}">{$targets[i].name}</a>{/if}
 </div>
 {$targets[i].summary}
 <br />

@@ -18,7 +18,7 @@ $sql = 'SELECT * FROM kb3_item_types d
     $html .= "<table class=kb-table-header cellspacing=0><tr><td width=400 colspan=27 align=center>INDEX</td></tr><tr class=kb-table-row-odd>";
     foreach ($index as $il)
     {
-	$html .= '<td><a href="?a=itemdb&id='.$il.'">'.$il.'</a></td>';
+	$html .= '<td><a href="'.KB_HOST.'/?a=itemdb&id='.$il.'">'.$il.'</a></td>';
     }	 
     $html .= "</tr></table><br><br>";
     $qry = DBFactory::getDBQuery();;
@@ -27,7 +27,7 @@ $sql = 'SELECT * FROM kb3_item_types d
     $html .= "<tr class=kb-table-header><td width=400>Group Name</td></tr>";
     while ($row = $qry->getRow())
     {
-        $html .= '<tr class=kb-table-row-odd><td><a href="?a=groupdb&id='.$row['itt_id'].'">'.$row['itt_name'].'</a></td></tr>';
+        $html .= '<tr class=kb-table-row-odd><td><a href="'.KB_HOST.'/?a=groupdb&id='.$row['itt_id'].'">'.$row['itt_name'].'</a></td></tr>';
     }
     $html .= "</table>";
 

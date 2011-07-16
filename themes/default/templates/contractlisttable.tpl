@@ -13,7 +13,7 @@
 {cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
 {foreach from=$contracts item=i}
  <tr class="{cycle advance=false name=ccl}" onmouseover="this.className='kb-table-row-hover';"
-    onmouseout="this.className='{cycle name=ccl}';" onclick="window.location.href='?a=cc_detail&amp;ctr_id={$i.id}';">
+    onmouseout="this.className='{cycle name=ccl}';" onclick="window.location.href='{$kb_host}/?a=cc_detail&amp;ctr_id={$i.id}';">
   <td class="kb-table-cell"><b>{$i.name}</b></td>
   <td class="kb-table-cell" align="center">{$i.startdate|truncate:10:""}</td>
 {if $contract_getactive == "no"}

@@ -182,7 +182,7 @@ if ($_POST['fetch'])
     }
 }
 // generating the html
-$html .= '<form id="options" name="options" method="post" action="?a=admin_feedsyndication">';
+$html .= '<form id="options" name="options" method="post" action="'.KB_HOST.'/?a=admin_feedsyndication">';
 $html .= "</table>";
 
 $html .= "<div class='block-header2'>Feeds</div><table>";

@@ -516,7 +516,7 @@ class update
 		update::checkStatus();
 		if(update::$codeVersion > Config::get('upd_codeVersion'))
 		{
-			return "<div>Code updates are available, <a href='?a=admin_upgrade'>here</a></div><br/>";
+			return "<div>Code updates are available, <a href='".KB_HOST."/?a=admin_upgrade'>here</a></div><br/>";
 		}
 		return "<div>No updates available</div>";
 	}
@@ -533,7 +533,7 @@ class update
 		update::checkStatus();
 		if(update::$dbVersion > Config::get('upd_dbVersion'))
 		{
-			return "<div>Database updates are available, <a href='?a=admin_upgrade'>here</a></div><br/>";
+			return "<div>Database updates are available, <a href='".KB_HOST."/?a=admin_upgrade'>here</a></div><br/>";
 		}
 		return "<div>No updates available</div>";
 	}

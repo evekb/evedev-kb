@@ -1,11 +1,11 @@
 {if $config->get('post_permission')=='all'}
 <p><strong>Authorisation checking is disabled.</strong> Kills involving pilots from any corp or alliance may be posted.</p>
 {if $config->get('post_password') == ''}<p>A password is still required to post a killmail.</p>{/if}
-<p><a href="?a=admin_postperm&amp;authall=0">Enable authorisation checking.</a></p>
+<p><a href="{$kb_host}/?a=admin_postperm&amp;authall=0">Enable authorisation checking.</a></p>
 {else}
 <b>Note:</b> Permissions set here allow posting of kills involving pilots, corporations or alliances in addition to those set in the configuration page.<br/>
 <br/>
-<form id="search" action="?a=admin_postperm" method="post">
+<form id="search" action="{$kb_host}/?a=admin_postperm" method="post">
 <table class="kb-subtable">
   <tr><td>Type:</td><td>Text: (3 letters minimum)</td></tr>
   <tr><td><select id="searchtype" name="searchtype"><option value="pilot">Pilot</option>
@@ -39,5 +39,5 @@
 {/section}
 </table>
 <br/>
-<a href="?a=admin_postperm&amp;authall=1">Disable authorisation checking (and delete all granted permissions).</a>
+<a href="{$kb_host}/?a=admin_postperm&amp;authall=1">Disable authorisation checking (and delete all granted permissions).</a>
 {/if}

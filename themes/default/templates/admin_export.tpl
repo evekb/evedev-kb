@@ -1,6 +1,6 @@
 Please select pilots, corps or alliances to be exported.<br/>
 <br/>
-<form id="search" action="?a=admin_kill_export" method="post">
+<form id="search" action="{$kb_host}/?a=admin_kill_export" method="post">
 <table class="kb-subtable">
 <tr><td>Type:</td><td>Text: (3 letters minimum)</td></tr>
 <tr><td><select id="searchtype" name="searchtype"><option value="pilot">Pilot</option>
@@ -31,6 +31,6 @@ Please select pilots, corps or alliances to be exported.<br/>
 {/section}
 </table>
 {if $permissions}
-<br/><a href="?a=admin_kill_export&sub=do">Export Mails</a>
+<br/><a href="{$kb_host}/?a=admin_kill_export&sub=do">Export Mails</a>
 {/if}
 <br/>

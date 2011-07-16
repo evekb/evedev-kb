@@ -1,5 +1,5 @@
 <script type="text/javascript" src="{$kb_host}/themes/default/search.js"></script>
-<form id='search' action="?a=search" method='post'>
+<form id='search' action="{$kb_host}/?a=search" method='post'>
 <table class='kb-subtable'>
 	<tr>
 		<td>Type:</td>

@@ -93,7 +93,7 @@ function post()
 			{
 				$html = "That mail has been deleted. Kill id was ".$parser->getDupeID();
 				if($page->isAdmin()) $html .= '<br />
-<form id="postform" name="postform" class="f_killmail" method="post" action="?a=post">
+<form id="postform" name="postform" class="f_killmail" method="post" action="'.KB_HOST.'/?a=post">
 	<input type="hidden" name="killmail" id="killmail" value = "'.htmlentities($_POST['killmail']).'"/>
 	<input type="hidden" name="kll_id" id="kill_id" value = "'.$parser->getDupeID().'"/>
 	<input type="hidden" name="undelete" id="undelete" value = "1"/>

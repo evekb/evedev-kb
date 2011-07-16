@@ -1,4 +1,4 @@
-<form action="?a=admin_mods" method="post">
+<form action="{$kb_host}/?a=admin_mods" method="post">
 	<input type="hidden" name="set_mods" value="1" />
 	<table class="kb-table" width="99%" align="center" cellspacing="1">
 		<tr class="kb-table-header">
@@ -7,7 +7,7 @@
 		</tr>
 {foreach from=$rows key=key item=i}
 		<tr class='kb-table-row-odd' style="height: 34px;">
-			<td>{$i.name}{if $i.settings} [<a href="?a=settings_{$i.name}">settings</a>]{/if}</td>
+			<td>{$i.name}{if $i.settings} [<a href="{$kb_host}/?a=settings_{$i.name}">settings</a>]{/if}</td>
 			<td align='center'>
 				<input name="mod_{$i.name}" type="checkbox" {if $i.checked}checked="checked" {/if}/>
 			</td>

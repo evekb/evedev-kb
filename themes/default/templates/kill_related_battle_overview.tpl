@@ -36,7 +36,7 @@
 {else}
       <td class="kb-table-cell"><b><a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$pilot}">{$i.name}</a></b><br/>{$i.ship}</td>
 {/if}
-      <td class="kb-table-cell"><b><a href="?a=corp_detail&amp;crp_id={$i.cid}">{$i.corp}</a></b><br/><a href="?a=alliance_detail&amp;all_id={$i.aid}" style="font-weight: normal;">{$i.alliance}</a></td>
+      <td class="kb-table-cell"><b><a href="{$kb_host}/?a=corp_detail&amp;crp_id={$i.cid}">{$i.corp}</a></b><br/><a href="{$kb_host}/?a=alliance_detail&amp;all_id={$i.aid}" style="font-weight: normal;">{$i.alliance}</a></td>
     </tr>
 {/foreach}
 {/foreach}
@@ -70,7 +70,7 @@
       </td>
     {else}
     <td class="kb-table-cell"><div style="position: relative;"><b><a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$pilot}">{$i.name}</a></b><br/>{$i.ship}
-	    <div style="position: absolute; right:0px; top:-6px; width:32px; height:32px; z-index:1;"><a href="?a=kill_detail&amp;kll_id={$i.podid}"><img src="{$podpic}" alt="" /></a></div>
+	    <div style="position: absolute; right:0px; top:-6px; width:32px; height:32px; z-index:1;"><a href="{$kb_host}/?a=kill_detail&amp;kll_id={$i.podid}"><img src="{$podpic}" alt="" /></a></div>
         </div>
     </td>
     {/if}

@@ -56,7 +56,7 @@ if ($_REQUEST['opt'] == 'search')
 		{
 			if (!$c)
 			{
-				$html .= '<form id="search" action="?a=admin_shp_val" method=post>';
+				$html .= '<form id="search" action="'.KB_HOST.'/?a=admin_shp_val" method=post>';
 				$html .= '<table class="kb-table" width="99%" align="center" cellspacing="1">';
 				$html .= '<input type="hidden" name="opt" value="add" />';
 				$html .= '<tr class="kb-table-header">';
@@ -142,7 +142,7 @@ if (!isset($_REQUEST['opt']))
 	$page->setTitle("Administration - Shipvalues");
 
 	$html .= '<div class="block-header2">Add a Shipvalue</div>';
-	$html .= '<form id="search" action="?a=admin_shp_val" method=post>';
+	$html .= '<form id="search" action="'.KB_HOST.'/?a=admin_shp_val" method=post>';
 	$html .= '<input type="hidden" name="opt" value="search" />';
 	$html .= '<table class="kb-subtable"><tr>';
 	$html .= '<td>ShipID</td><td>or Shipname</td>';
@@ -166,7 +166,7 @@ if (!isset($_REQUEST['opt']))
 	{
 		if (!$c)
 		{
-			$html .= '<form id="search" action="?a=admin_shp_val" method="post">';
+			$html .= '<form id="search" action="'.KB_HOST.'/?a=admin_shp_val" method="post">';
 			$html .= '<table class="kb-table" width="99%" align="center" cellspacing="1">';
 			$html .= '<input type="hidden" name="opt" value="add" />';
 			$html .= '<script type="text/javascript">

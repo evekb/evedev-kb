@@ -2,7 +2,7 @@
 <p><a href="javascript:window.close();">[close]</a></p>
 {elseif $id}Confirm deletion of Comment ID "{$id}":
 <div class="comment-text">
-	<a href="?a=search&amp;searchtype=pilot&amp;searchphrase={$name}">{$name}</a>:
+	<a href="{$kb_host}/?a=search&amp;searchtype=pilot&amp;searchphrase={$name}">{$name}</a>:
 	<p>{$comment}</p>
 </div>
 <br />

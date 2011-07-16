@@ -12,7 +12,7 @@
 {section name=sys loop=$corps}
 	{assign var="c" value=$corps[sys]}
 	<tr class='kb-table-row-even'>
-		<td class='kb-table-cell'><a href="?a=corp_detail&amp;crp_ext_id={$c.corpExternalID}">{$c.corpName}</a></td>
+		<td class='kb-table-cell'><a href="{$kb_host}/?a=corp_detail&amp;crp_ext_id={$c.corpExternalID}">{$c.corpName}</a></td>
 		<td class='kb-table-cell' align='center'>{$c.ticker}</td>
 		<td class='kb-table-cell' align='center'>{$c.members}</td>
 		<td class='kb-table-cell' align='center'>{$c.joinDate}</td>

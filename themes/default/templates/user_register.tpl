@@ -1,4 +1,4 @@
-<form method="post" action="?a=register">
+<form method="post" action="{$kb_host}/?a=register">
 {if $error}
 <div class="block-header2">Error</div>
 {$error}<br/><br/>

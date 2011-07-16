@@ -35,7 +35,7 @@ while ($row = $qry->getRow())
         $class = "kb-table-row-odd";
         $odd = true;
     }
-    $html .= "<tr class='" . $class . "' onmouseover=\"this.className='kb-table-row-hover';\" onmouseout=\"this.className='" . $class . "';\" onclick=\"window.location.href='?a=kill_detail&amp;kll_id=" . $row['log_kll_id'] . "';\">";
+    $html .= "<tr class='" . $class . "' onmouseover=\"this.className='kb-table-row-hover';\" onmouseout=\"this.className='" . $class . "';\" onclick=\"window.location.href='".KB_HOST."/?a=kill_detail&amp;kll_id=" . $row['log_kll_id'] . "';\">";
     $html .= "<td align='center'><b>" . $row['log_kll_id'] . "</b></td>";
     $html .= "<td>" . $row['kll_timestamp'] . "</td>";
     $html .= "<td>" . $row['log_timestamp'] . "</td>";

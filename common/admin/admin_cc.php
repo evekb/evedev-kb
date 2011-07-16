@@ -55,7 +55,7 @@ if ($_GET['op'] == "del")
 	{
 		$page->setTitle("Administration - Delete ".$_GET['type']);
 		$html .= "Confirm deletion:&nbsp;";
-		$html .= "<button onclick=\"window.location.href='?a=admin_cc&amp;ctr_id=".$_GET['ctr_id']."&amp;op=del&amp;type=".$_GET['type']."&amp;confirm=yes'\">Yes</button>&nbsp;&nbsp;&nbsp;";
+		$html .= "<button onclick=\"window.location.href='".KB_HOST."/?a=admin_cc&amp;ctr_id=".$_GET['ctr_id']."&amp;op=del&amp;type=".$_GET['type']."&amp;confirm=yes'\">Yes</button>&nbsp;&nbsp;&nbsp;";
 		$html .= "<button onclick=\"window.history.back();\">No</button>";
 	}
 }
@@ -167,16 +167,16 @@ if ($_GET['op'] == "edit")
 				switch ($_POST['add_type'])
 				{
 					case 0:
-						$html .= "<td><a href=\"?a=corp_detail&amp;crp_id=".$row['id']."\">".$row['name']."</a></td><td align='center'><button id='submit' name='submit' onclick=\"window.location.href='?a=admin_cc&amp;ctr_id=".$_GET['ctr_id']."&amp;op=edit&amp;type=".$_GET['type']."&amp;add_type=".$_POST['add_type']."&amp;add_id=".$row['id']."'\">Select</button></td>";
+						$html .= "<td><a href=\"?a=corp_detail&amp;crp_id=".$row['id']."\">".$row['name']."</a></td><td align='center'><button id='submit' name='submit' onclick=\"window.location.href='".KB_HOST."/?a=admin_cc&amp;ctr_id=".$_GET['ctr_id']."&amp;op=edit&amp;type=".$_GET['type']."&amp;add_type=".$_POST['add_type']."&amp;add_id=".$row['id']."'\">Select</button></td>";
 						break;
 					case 1:
-						$html .= "<td><a href=\"?a=alliance_detail&amp;all_id=".$row['id']."\">".$row['name']."</a></td><td align='center'><button id='submit' name='submit' onclick=\"window.location.href='?a=admin_cc&amp;ctr_id=".$_GET['ctr_id']."&amp;op=edit&amp;type=".$_GET['type']."&amp;add_type=".$_POST['add_type']."&amp;add_id=".$row['id']."'\">Select</button></td>";
+						$html .= "<td><a href=\"?a=alliance_detail&amp;all_id=".$row['id']."\">".$row['name']."</a></td><td align='center'><button id='submit' name='submit' onclick=\"window.location.href='".KB_HOST."/?a=admin_cc&amp;ctr_id=".$_GET['ctr_id']."&amp;op=edit&amp;type=".$_GET['type']."&amp;add_type=".$_POST['add_type']."&amp;add_id=".$row['id']."'\">Select</button></td>";
 						break;
 					case 2:
-						$html .= "<td>".$row['name']."</td><td align=center><button id=submit name=submit onClick=\"window.location.href='?a=admin_cc&ctr_id=".$_GET['ctr_id']."&op=edit&type=".$_GET['type']."&add_type=".$_POST['add_type']."&add_id=".$row['id']."'\">Select</button></td>";
+						$html .= "<td>".$row['name']."</td><td align=center><button id=submit name=submit onClick=\"window.location.href='".KB_HOST."/?a=admin_cc&ctr_id=".$_GET['ctr_id']."&op=edit&type=".$_GET['type']."&add_type=".$_POST['add_type']."&add_id=".$row['id']."'\">Select</button></td>";
 						break;
 					case 3:
-						$html .= "<td>".$row['name']."</td><td align=center><button id=submit name=submit onClick=\"window.location.href='?a=admin_cc&ctr_id=".$_GET['ctr_id']."&op=edit&type=".$_GET['type']."&add_type=".$_POST['add_type']."&add_id=".$row['id']."'\">Select</button></td>";
+						$html .= "<td>".$row['name']."</td><td align=center><button id=submit name=submit onClick=\"window.location.href='".KB_HOST."/?a=admin_cc&ctr_id=".$_GET['ctr_id']."&op=edit&type=".$_GET['type']."&add_type=".$_POST['add_type']."&add_id=".$row['id']."'\">Select</button></td>";
 						break;
 				}
 				$html .= "</tr>";

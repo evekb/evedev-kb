@@ -53,7 +53,7 @@ for ( $i = 1; $i <= $keycount; $i++ )
             $isupdated = true;
             for ( $x = 0; $x < $charcount; $x++ )
             {
-                $html .= '<a href="?a=admin_apimod&CharID=' . $CharList[$x]['charID'] . '&SetNum=' . $selectid . '">'. $CharList[$x]['Name'] . '</a><br />';
+                $html .= '<a href="'.KB_HOST.'/?a=admin_apimod&CharID=' . $CharList[$x]['charID'] . '&SetNum=' . $selectid . '">'. $CharList[$x]['Name'] . '</a><br />';
             }
         } else {
 			if($error = $myCharSelect->getError()) $html .= "<b>Error ".$error['code'].": ".$error['message']."</b>";
@@ -82,7 +82,7 @@ if ($_POST['clearapicache'])
 		}
 	}
 	// drop table
-	$db = DBFactory::getDBQuery(true);;
+	$db = DBFactory::getDBQuery(true);
 	$db->execute("TRUNCATE TABLE `kb3_apicache`");
 	$html .= "Cache cleared.<br />";
 	$html .= "<script type=\"text/javascript\">window.location = \"?a=admin_apimod\"</script>"; //*/
@@ -279,7 +279,7 @@ if ($_POST['clearlog'])
 if ($_POST['apilog'])
 {
 	$html .= "<div class='block-header2'>API Log</div>";
-	$html .= "<form id='options' name='options' method='post' action='?a=admin_apimod'>";
+	$html .= "<form id='options' name='options' method='post' action='".KB_HOST."/?a=admin_apimod'>";
 
 	$sql = 'SELECT * 
 			FROM kb3_apilog
@@ -357,7 +357,7 @@ if ($_POST['apilog'])
 } else {
 	// API Settings 
 	$html .= "<div class='block-header2'>API Key Details (must be CEO/Director to retrieve corp mails)</div>";
-	$html .= "<form id='options' name='options' method='post' action='?a=admin_apimod'>";
+	$html .= "<form id='options' name='options' method='post' action='".KB_HOST."/?a=admin_apimod'>";
 	
 	// show current server time
 	$html .= "Servers current time: <font color = \"#00FF00\">" . date("M d Y H:i") . "</font><br /><br />";
@@ -624,7 +624,7 @@ function getPlayerDetails( $characteridentitifier )
 {
     $sql = 'select plts.plt_id, plts.plt_name from kb3_pilots plts where plts.plt_externalid = "' . $characteridentitifier . '"';
 
-    $qry = DBFactory::getDBQuery();;
+    $qry = DBFactory::getDBQuery();
     $qry->execute($sql);
     $row = $qry->getRow();
 
@@ -632,7 +632,7 @@ function getPlayerDetails( $characteridentitifier )
     $pilot_name = $row['plt_name'];
 
     if ($pilot_name != "")	{
-        return ' (<a href="?a=pilot_detail&amp;plt_id=' . $pilot_id . '">'. $pilot_name . '</a>)';
+        return ' (<a href="'.KB_HOST.'/?a=pilot_detail&amp;plt_id=' . $pilot_id . '">'. $pilot_name . '</a>)';
     } else {
         return "";
     }
@@ -640,7 +640,7 @@ function getPlayerDetails( $characteridentitifier )
 
 function checkDBforAPI()
 {
-	$qry = DBFactory::getDBQuery();;
+	$qry = DBFactory::getDBQuery();
 	
 	// check kb3_kills table and if necessary add extra field for API kll_external_id
 	$isKB3KillsUpdated = false;

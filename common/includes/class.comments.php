@@ -128,8 +128,8 @@ class Comments
         $string = str_replace(array('[b]','[/b]','[i]','[/i]','[u]','[/u]'), 
                               array('<b>','</b>','<i>','</i>','<u>','</u>'), $string); 
         $string = preg_replace('^\[color=(.*?)](.*?)\[/color]^', '<span style="color:\1">\2</span>', $string);
-        $string = preg_replace('^\[kill=(.*?)](.*?)\[/kill]^', '<a href="?a=kill_detail&amp;kll_id=\1">\2</a>', $string);
-        $string = preg_replace('^\[pilot=(.*?)](.*?)\[/pilot]^', '<a href="?a=pilot_detail&amp;plt_id=\1">\2</a>', $string);
+        $string = preg_replace('^\[kill=(.*?)](.*?)\[/kill]^', '<a href="'.KB_HOST.'/?a=kill_detail&amp;kll_id=\1">\2</a>', $string);
+        $string = preg_replace('^\[pilot=(.*?)](.*?)\[/pilot]^', '<a href="'.KB_HOST.'/?a=pilot_detail&amp;plt_id=\1">\2</a>', $string);
         return nl2br(addslashes($string)); 
     } 
 } 

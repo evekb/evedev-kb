@@ -5,7 +5,7 @@
 	</tr>
     {foreach from=$rows item='row'}
 	<tr class='kb-table-row-odd'>
-		<td><a href="?a=invtype&amp;id={$row.typeID}">{$row.typeName}</a></td>
+		<td><a href="{$kb_host}/?a=invtype&amp;id={$row.typeID}">{$row.typeName}</a></td>
 	</tr>
 	{/foreach}
 </table>

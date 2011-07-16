@@ -187,7 +187,7 @@ if (isset($_SESSION['kill_import']['do']))
 	{
 		$html .= '<meta http-equiv="refresh" content="5; URL=?a=admin_kill_import" />';
 		$html .= 'Automatic refresh in 5s<br/>';
-		$html .= '<a href="?a=admin_kill_import">Read next '.$_SESSION['kill_import']['num'].'</a>&nbsp;<a href="?a=admin_kill_import&submit=Reset">Reset</a>';
+		$html .= '<a href="'.KB_HOST.'/?a=admin_kill_import">Read next '.$_SESSION['kill_import']['num'].'</a>&nbsp;<a href="'.KB_HOST.'/?a=admin_kill_import&submit=Reset">Reset</a>';
 		$_SESSION['kill_import']['read'] += $read;
 		$_SESSION['kill_import']['p_all'] += $p_all;
 		$_SESSION['kill_import']['posted_all'] += $posted_all;
@@ -205,7 +205,7 @@ if (isset($_SESSION['kill_import']['do']))
 				$html .= $mal_file.'<br/>';
 			}
 
-		$html .= '<a href="?a=admin_kill_import">Ok</a>';
+		$html .= '<a href="'.KB_HOST.'/?a=admin_kill_import">Ok</a>';
 		unset($_SESSION['kill_import']);
 	}
 }

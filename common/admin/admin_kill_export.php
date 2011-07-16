@@ -329,7 +329,7 @@ if (isset($_SESSION['admin_kill_export']['do']))
 			fclose($fp);
 		}
 		$html .= $cnt.' mails exported<br/>';
-		$html .= '<a href="?a=admin_kill_export">Ok</a>';
+		$html .= '<a href="'.KB_HOST.'/?a=admin_kill_export">Ok</a>';
 		unset($_SESSION['admin_kill_export']);
 	}
 	else

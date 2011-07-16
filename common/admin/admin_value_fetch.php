@@ -72,7 +72,7 @@ else
 	$html = '<center>Mod version: <b><a href="http://eve-id.net/forum/viewtopic.php?f=505&amp;t=9653">'. $version .'</a></b><br /><br />';
 	$html .= 'Last update: '.$time.'<br /><br />';
 
-	$html .= '<form method="post" action="?a=admin_value_fetch">';
+	$html .= '<form method="post" action="'.KB_HOST.'/?a=admin_value_fetch">';
 	$html .= '<table width="100%" border="1">';
 	$html .= '<tr><td>Update Ship Values</td><td><input type="radio" name="ship" value="shipyes" checked="checked" />Yes</td><td><input type="radio" name="ship" value="shipno" />No</td></tr>';
 	$html .= '<tr><td>Update Faction Values</td><td><input type="radio" name="faction" value="factionyes" checked="checked" />Yes</td><td><input type="radio" name="faction" value="factionno" />No</td></tr>';
