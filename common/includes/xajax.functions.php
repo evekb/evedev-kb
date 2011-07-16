@@ -107,23 +107,23 @@ function doAjaxSearch($searchphrase='', $type='pilot', $limit = 10)
 				}
 			while($qry->fetch())
 			{
-				$result .= "<tr class='kb-table-row-even'><td><a href='".KB_HOST;
+				$result .= "<tr class='kb-table-row-even'><td><a href='";
 				switch($type)
 				{
 					case "pilot":
-						$result .= "/?a=pilot_detail&amp;plt_id=$id'>";
+						$result .= edkURI::page('pilot_detail', $id)."'>";
 						break;
 					case "corp":
-						$result .= "/?a=corp_detail&amp;crp_id=$id'>";
+						$result .= edkURI::page('corp_detail', $id)."'>";
 						break;
 					case "alliance":
-						$result .= "/?a=alliance_detail&amp;all_id=$id'>";
+						$result .= edkURI::page('alliance_detail', $id)."'>";
 						break;
 					case "system":
-						$result .= "/?a=system_detail&amp;sys_id=$id'>";
+						$result .= edkURI::page('system_detail', $id)."'>";
 						break;
 					case "item":
-						$result .= "/?a=invtype&amp;id=$id'>";
+						$result .= edkURI::page('invtype', $id)."'>";
 						break;
 				}
 				$result .= $name1."</a></td><td>".$name2."</td></tr>";

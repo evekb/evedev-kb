@@ -52,7 +52,6 @@ else if(file_exists("install") && !file_exists("install/install.lock"))
 	die($html);
 }
 require_once('common/includes/globals.php');
-if(isset($_GET['xajax'])) require_once('common/includes/xajax.functions.php');
 
 // Set the default encoding to UTF-8
 header('Content-Type: text/html; charset=UTF-8');
@@ -82,6 +81,8 @@ else  define('IMG_HOST', KB_HOST);
 
 $page = edkURI::getArg('a', 0);
 edkURI::usePath(config::get('cfg_pathinfo'));
+if(isset($_GET['xajax'])) require_once('common/includes/xajax.functions.php');
+
 // Serve feeds to feed fetchers.
 if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK Feedfetcher') !== false) {
 	$page = 'feed';

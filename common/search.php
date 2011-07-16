@@ -101,31 +101,31 @@ class pSearch extends pageAssembly
                     switch ($this->searchtype)
                     {
                         case "pilot":
-                            $result['link'] = KB_HOST."/?a=pilot_detail&amp;plt_id=".$row['plt_id'];
+                            $result['link'] = edkURI::page('pilot_detail', $row['plt_id']);
                             $result['name'] = $row['plt_name'];
                             $result['type'] = $row['crp_name'];
                             $results[] = $result;
                             break;
                         case "corp":
-                            $result['link'] = KB_HOST."/?a=corp_detail&amp;crp_id=".$row['crp_id'];
+                            $result['link'] = edkURI::page('corp_detail', $row['crp_id']);
                             $result['name'] = $row['crp_name'];
                             $result['type'] = $row['all_name'];
                             $results[] = $result;
                             break;
                         case "alliance":
-                            $result['link'] = KB_HOST."/?a=alliance_detail&amp;all_id=".$row['all_id'];
+                            $result['link'] = edkURI::page('alliance_detail', $row['all_id']);
                             $result['name'] = $row['all_name'];
                             $result['type'] = '';
                             $results[] = $result;
                             break;
                         case "system":
-                            $result['link'] = KB_HOST."/?a=system_detail&amp;sys_id=".$row['sys_id'];
+                            $result['link'] = edkURI::page('system_detail', $row['sys_id']);
                             $result['name'] = $row['sys_name'];
                             $result['type'] = '';
                             $results[] = $result;
                             break;
                         case 'item':
-                            $result['link'] = KB_HOST."/?a=invtype&amp;id=".$row['typeID'];
+                            $result['link'] = edkURI::page('invtype', $row['typeID']);
                             $result['name'] = $row['typeName'];
                             $result['type'] = '';
                             $results[] = $result;
@@ -134,7 +134,7 @@ class pSearch extends pageAssembly
                     if ($qry->recordCount() == 1)
                     {
                         // if there is only one entry we redirect the user
-                        header("Location: ".KB_HOST.'/'.html_entity_decode($result['link']));
+                        header("Location: ".html_entity_decode($result['link']));
                         die;
                     }
                 }
