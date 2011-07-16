@@ -552,6 +552,8 @@ class Parser
 				if (!$iship->getID())
 				{
 					$this->error('Ship not found.', $isname);
+				} else if (strcmp($iwname, 'Unknown') == 0) {
+					$iwname = $iship->getName();
 				}
 
 				$iweapon = $this->fetchItem($iwname);
