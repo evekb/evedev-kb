@@ -21,9 +21,9 @@ class pCampaignList extends pageAssembly
 	{
 		parent::__construct();
 
-		$this->view =  preg_replace('/[^a-zA-Z0-9_-]/','',$_GET['view']);
+		$this->view = preg_replace('/[^a-zA-Z0-9_-]/','', edkURI::getArg('view', 1));
 		$this->viewList = array();
-		$this->pageNum = intval($_GET['page']);
+		$this->pageNum = (int)edkURI::getArg('page');
 		$this->menuOptions = array();
 
 		$this->queue("start");

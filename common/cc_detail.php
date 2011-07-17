@@ -19,10 +19,10 @@ class pContractDetail extends pageAssembly
 	function __construct()
 	{
 		parent::__construct();
-		$this->scl_id = intval($_GET['scl_id']);
-		$this->ctr_id = intval($_GET['ctr_id']);
+		$this->scl_id = (int)edkURI::getArg('scl_id');
+		$this->ctr_id = (int)edkURI::getArg('ctr_id', 1);
+		$this->view = preg_replace('/[^a-zA-Z0-9_-]/','', edkURI::getArg('view', 2));
 
-		$this->view =  preg_replace('/[^a-zA-Z0-9_-]/','',$_GET['view']);
 		$this->viewList = array();
 
 		$this->menuOptions = array();
