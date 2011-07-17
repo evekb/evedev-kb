@@ -37,10 +37,11 @@ class ContractList
 		$sql = "select ctr.ctr_id, ctr.ctr_started, ctr.ctr_ended, ctr.ctr_name
                 from kb3_contracts ctr
                where ctr.ctr_site = '".KB_SITE."'";
-		if ($this->active && !$this->inactive)
+		if ($this->active_ == "yes") {
 			$sql .= " and ( ctr_ended is null or now() <= ctr_ended )";
-		elseif ($this->inactive && !$this->active)
+		} else if ($this->active_ == "no") {
 			$sql .= " and ( now() >= ctr_ended )";
+		}
 		$sql .= " order by ctr_ended, ctr_started desc";
 		$this->qry = DBFactory::getDBQuery();
 		$this->qry->execute($sql);
