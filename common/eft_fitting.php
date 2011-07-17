@@ -9,7 +9,7 @@
 // Original by TEKAI
 // Ammo addition and little modifications by Wes Lave
 
-$kll_id = intval($_GET['kll_id']);
+$kll_id = (int)edkURI::getArg('kll_id');
 $kill = new Kill($kll_id);
 $ship = $kill->getVictimShip();
 $pilotname = $kill->getVictimName();

@@ -20,7 +20,7 @@ class pInvtype extends pageAssembly
 
 	function start()
 	{
-		$this->groupID = intval($_GET['id']);
+		$this->groupID = edkURI::getArg('id');
 		$this->page = new Page('Item Database');
 
 	}
