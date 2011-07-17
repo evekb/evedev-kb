@@ -43,23 +43,23 @@
 			<td style="width: {$width_victim}px" class="kb-table-cell">
 				<div class="no_stretch" style="width: {$width_victim}px;">
 	{if $k.loss}
-					<a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$k.victimid}"><b>{$k.victim}</b></a>
+					<a href="{$k.urlvictim}"><b>{$k.victim}</b></a>
 					<br />
-					<a href="{$kb_host}/?a=corp_detail&amp;crp_id={$k.victimcorpid}">{$k.victimcorp}</a>
+					<a href="{$k.urlvictimcorp}">{$k.victimcorp}</a>
 	{else}
 		{if $k.victimalliancename != "None" && $k.victimalliancename != "NONE"}
-				<a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$k.victimid}"><b>{$k.victim}</b></a><br /><a href="{$kb_host}/?a=alliance_detail&amp;all_id={$k.victimallianceid}">{$k.victimalliancename}</a>
+				<a href="{$k.urlvictim}"><b>{$k.victim}</b></a><br /><a href="{$k.urlvictimall}">{$k.victimalliancename}</a>
 		{else}
-				<a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$k.victimid}"><b>{$k.victim}</b></a><br /><a href="{$kb_host}/?a=corp_detail&amp;crp_id={$k.victimcorpid}">{$k.victimcorp}</a>
+				<a href="{$k.urlvictim}"><b>{$k.victim}</b></a><br /><a href="{$k.urlvictimcorp}">{$k.victimcorp}</a>
 		{/if}
 	{/if}
 				</div>
 			</td>
 			<td style="width: 180px" class="kb-table-cell">
 				<div class="no_stretch" style="width: 180px;">
-					<a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$k.fbid}"><b>{$k.fb}</b></a>
+					<a href="{$k.urlfb}"><b>{$k.fb}</b></a>
 					<br />
-					<a href="{$kb_host}/?a=corp_detail&amp;crp_id={$k.fbcorpid}">{$k.fbcorp}</a>
+					<a href="{$k.urlfbcorp}">{$k.fbcorp}</a>
 				</div>
 			</td>
 			<td style="width: 160px" class="kb-table-cell">

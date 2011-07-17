@@ -145,10 +145,21 @@ class KillListTable
 			}
 			if ($this->combined_)
 			{
-				if(config::get('cfg_allianceid') && in_array($kill->getVictimAllianceID(), config::get('cfg_allianceid'))) $kll['loss'] = true;
-				elseif (config::get('cfg_corpid') && in_array($kill->getVictimCorpID(), config::get('cfg_corpid'))) $kll['loss'] = true;
-				elseif (config::get('cfg_pilotid') && in_array($kill->getVictimID(), config::get('cfg_pilotid'))) $kll['loss'] = true;
-				else $kll['loss'] = false;
+				if(config::get('cfg_allianceid')
+						&& in_array($kill->getVictimAllianceID(),
+								config::get('cfg_allianceid'))) {
+					$kll['loss'] = true;
+				} else if (config::get('cfg_corpid')
+						&& in_array($kill->getVictimCorpID(),
+								config::get('cfg_corpid'))) {
+					$kll['loss'] = true;
+				} else if (config::get('cfg_pilotid')
+						&& in_array($kill->getVictimID(),
+								config::get('cfg_pilotid'))) {
+					$kll['loss'] = true;
+				} else {
+					$kll['loss'] = false;
+				}
 				$kll['kill'] = !$kll['loss'];
 			}
 			$kll['urldetail'] = edkURI::build($kdpage,
@@ -157,6 +168,21 @@ class KillListTable
 				$kll['urlrelated'] = edkURI::build($krpage,
 					array('kll_id', $kll['id'], true));
 			}
+			$kll['victimextid'] = $kill->getVictimExternalID();
+			$kll['urlvictim'] = edkURI::page('pilot_detail',
+					$kll['victimextid'] ? $kll['victimextid'] : $kll['victimid'],
+					$kll['victimextid'] ? 'plt_ext_id' : 'plt_id');
+			$kll['urlfb'] = edkURI::page('pilot_detail',
+					$kll['fbplext'] ? $kll['fbplext'] : $kll['fbid'],
+					$kll['fbplext'] ? 'plt_ext_id' : 'plt_id');
+			if ($kll['allianceexists'] ){
+				$kll['urlvictimall'] = edkURI::page('alliance_detail',
+					$kll['victimallianceid'], 'all_id');
+			} 
+			$kll['urlvictimcorp'] = edkURI::page('corp_detail',
+					$kll['victimcorpid'], 'crp_id');
+			$kll['urlfbcorp'] = edkURI::page('corp_detail',
+					$kll['fbcorpid'], 'crp_id');
 			event::call('killlist_table_kill', $kll);
 			$kills[] = $kll;
 		}
