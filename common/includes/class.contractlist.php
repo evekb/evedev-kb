@@ -54,11 +54,7 @@ class ContractList
 	 */
 	function setActive($active)
 	{
-		if ($active != 'yes' && $active != 'no') {
-			$this->active = 'both';
-		} else {
-			$this->active = $active;
-		}
+		$this->active_ = $active;
 	}
 
 	/**
