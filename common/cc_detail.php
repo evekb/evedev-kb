@@ -139,7 +139,8 @@ class pContractDetail extends pageAssembly
 
 		if ($this->contract->getComment())
 		{
-			$smarty->assign("contract_comment", $this->contract->getComment());
+			$smarty->assign("contract_comment",htmlentities(
+					$this->contract->getComment(), ENT_QUOTES, 'UTF-8'));
 			$html = $smarty->fetch(get_tpl("cc_detail_comment"));
 		}
 
