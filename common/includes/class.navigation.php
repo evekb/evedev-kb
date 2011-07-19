@@ -71,11 +71,6 @@ class Navigation
 		$this->type = $type;
 	}
 
-	public function setPage($page)
-	{
-		$this->page = $page;
-	}
-
 	public function generateMenu()
 	{
 		$this->execQuery();
@@ -83,7 +78,9 @@ class Navigation
 		$menu = new Menu();
 		while ($row = $this->getRow()) {
 			$url = $row['url'];
-			$menu->add($url , $row['descr']);
+			// Note that changing the standard naming will also remove any
+			// translations.
+			$menu->add($url , Language::get($row['descr']));
 		}
 		return $menu;
 	}
