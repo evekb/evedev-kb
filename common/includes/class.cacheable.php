@@ -93,13 +93,16 @@ abstract class Cacheable {
 
 	/**
 	 * Delete the cached version of an object.
+	 *
+	 * @param Cacheable $obj
+	 * @return boolean True on success.
 	 */
-	 protected function delCache()
+	 public static function delCache($obj)
 	 {
-		unset(self::$cache[get_class($this).$this->getID()]);
+		unset(self::$cache[get_class($obj).$obj->getID()]);
 
 		return self::$cachehandler->remove(
-				get_class($this).$this->getID(), $this);
+				get_class($obj).$obj->getID());
 	 }
 	/**
 	 * Initialise the cachehandler.
