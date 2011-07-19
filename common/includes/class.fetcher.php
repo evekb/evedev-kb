@@ -350,7 +350,7 @@ class Fetcher
 						else $logurl = $this->uurl.'?a=kill_detail&kll_id='.intval($this->title);
 						logger::logKill($killid, $logurl);
 
-						$this->html .= "Killmail ".intval($this->title)." successfully posted <a href=\"?a=kill_detail&kll_id=".$killid."\">here</a>.<br />";
+						$this->html .= "Killmail ".intval($this->title)." successfully posted <a href=\"".edkURI::page('kill_detail', $killid, 'kll_id')."\">here</a>.<br />";
 
 						if(config::get('fetch_comment'))
 						{
