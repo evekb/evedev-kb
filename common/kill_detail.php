@@ -431,7 +431,7 @@ class pKillDetail extends pageAssembly
 			$this->involved[$i]['alliName']  = $alliance->getName();
 			$this->involved[$i]['shipName']  = $ship->getName();
 			$this->involved[$i]['shipID']    = $ship->getExternalID();
-			$this->involved[$i]['damageDone']= $inv->dmgdone_;
+			$this->involved[$i]['damageDone']= $inv->getDamageDone();
 			$this->involved[$i]['shipClass'] = $ship->getClass()->getName();
 
 			//detects NPC type things and runs a few conversions (Rats, Towers, Bubbles)
