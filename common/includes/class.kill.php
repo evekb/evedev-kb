@@ -512,7 +512,9 @@ class Kill extends Cacheable
 			return $this->mail;
 		}
 
-		$this->execQuery();
+		if (!$this->timestamp) {
+			$this->execQuery();
+		}
 		if(!$this->valid) {
 			return "The specified kill ID is not valid.";
 		}
@@ -674,7 +676,7 @@ class Kill extends Cacheable
 		}
 		$this->dupeid = 0;
 		$qry = DBFactory::getDBQuery(true);
-		if (!$this->getFBPilotID() || !$this->victimid) {
+		if (!$this->fbpilotid || !$this->victimid) {
 			return 0;
 		}
 		if($this->externalid) {

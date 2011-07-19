@@ -363,7 +363,10 @@ class IDFeed
 				else if($internalID) $logaddress .= "?a=kill_detail&kll_id=".$internalID;
 				logger::logKill($id, $logaddress);
 			}
-			else $this->skipped[] = array(intval($row['killID']), $internalID, $kill->getDupe());
+			else {
+				$this->skipped[] = array(intval($row['killID']),
+					$internalID, $kill->getDupe(true));
+			}
 		}
 		else $this->skipped[] = array($externalID, $internalID, $id);
 
