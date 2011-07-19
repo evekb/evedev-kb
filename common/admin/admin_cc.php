@@ -66,7 +66,7 @@ if ($_GET['op'] == "edit")
 	if (!$contract->validate()) exit;
 	if ($_POST['detail_submit'])
 	{
-		$contract->add(htmlentities($_POST['ctr_name']), $_GET['type'],
+		$contract->add($_POST['ctr_name'], $_GET['type'],
 			$_POST['ctr_started'], $_POST['ctr_ended'], $_POST['ctr_comment']);
 
 		header("Location: ".KB_HOST."/?a=admin_cc&op=view&type=".$_GET['type']);
@@ -196,10 +196,10 @@ if ($_GET['op'] == "edit")
 		$html .= "<form id=detail_edit name=detail_edit method=post action=?a=admin_cc&ctr_id=".$_GET['ctr_id']."&op=edit&type=".$_GET['type'].">";
 		$html .= "<table class=kb-subtable width=98%>";
 
-		$html .= "<tr><td width=80><b>Name:</b></td><td><input type=text name=ctr_name id=ctr_name size=38 maxlength=38 value=\"".$contract->getName()."\"></td></tr>";
+		$html .= "<tr><td width=80><b>Name:</b></td><td><input type=text name=ctr_name id=ctr_name size=38 maxlength=38 value=\"".htmlspecialchars($contract->getName(), ENT_QUOTES)."\"></td></tr>";
 		$html .= "<tr><td width=80><b>Start date:</b></td><td><input type=text name=ctr_started id=ctr_started size=10 maxlength=10 value=\"".substr($contract->getStartDate(), 0, 10)."\"> (yyyy-mm-dd)</td></tr>";
 		$html .= "<tr><td width-80><b>End date:</b></td><td><input type=text name=ctr_ended id=ctr_ended size=10 maxlength=10 value=\"".substr($contract->getEndDate(), 0, 10)."\"> (yyyy-mm-dd or blank)</td></tr>";
-		$html .= "<tr><td><b>Comment:</b></td><td><input type='text' name='ctr_comment' value='".htmlentities($contract->getComment(), ENT_QUOTES, 'UTF-8')."' size='100'/></td></tr>";
+		$html .= "<tr><td><b>Comment:</b></td><td><input type='text' name='ctr_comment' value='".htmlspecialchars($contract->getComment(), ENT_QUOTES)."' size='100'/></td></tr>";
 		$html .= "<tr><td></td></tr>";
 		$html .= "<tr><td></td><td><input type=submit name=detail_submit value=\"Save\"></td></tr>";
 
@@ -270,7 +270,7 @@ if ($_GET['op'] == "add")
 	if ($_POST['detail_submit'])
 	{
 		$contract = new Contract();
-		$contract->add(htmlentities($_POST['ctr_name']), $_GET['type'], $_POST['ctr_started'], $_POST['ctr_ended'], $_POST['ctr_comment']);
+		$contract->add($_POST['ctr_name'], $_GET['type'], $_POST['ctr_started'], $_POST['ctr_ended'], $_POST['ctr_comment']);
 
 		header("Location: ".KB_HOST."/?a=admin_cc&ctr_id=".$contract->getID()."&op=edit&type=".$_GET['type']);
 	}

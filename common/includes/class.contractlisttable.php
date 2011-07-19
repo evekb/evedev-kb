@@ -47,9 +47,6 @@ class ContractListTable
 		$qry = DBFactory::getDBQuery();
 		while ($contract = $this->contractlist->getContract())
 		{
-			// generate all necessary objects within the contract
-			$contract->execQuery();
-
 			// Losses
 
 			// Outer query adds up the ships and cost.

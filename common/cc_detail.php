@@ -19,14 +19,6 @@ class pContractDetail extends pageAssembly
 	function __construct()
 	{
 		parent::__construct();
-		$this->scl_id = (int)edkURI::getArg('scl_id');
-		$this->ctr_id = (int)edkURI::getArg('ctr_id', 1);
-		$this->view = preg_replace('/[^a-zA-Z0-9_-]/','', edkURI::getArg('view', 2));
-
-		$this->viewList = array();
-
-		$this->menuOptions = array();
-
 		$this->queue("start");
 		$this->queue("stats");
 		$this->queue("comment");
@@ -52,6 +44,14 @@ class pContractDetail extends pageAssembly
 	function start()
 	{
 		$this->page = new Page();
+		$this->scl_id = (int)edkURI::getArg('scl_id');
+		$this->ctr_id = (int)edkURI::getArg('ctr_id', 1);
+		$this->view = preg_replace('/[^a-zA-Z0-9_-]/','', edkURI::getArg('view', 2));
+
+		$this->viewList = array();
+
+		$this->menuOptions = array();
+
 		$this->contract = new Contract($this->ctr_id);
 		if(!$this->contract->validate())
 		{
@@ -62,7 +62,9 @@ class pContractDetail extends pageAssembly
 
 		$title = 'Campaign details';
 
-		$this->page->setTitle($title.' - '.$this->contract->getName());
+		// SetTitle will escape the characters so unescape first.
+		$this->page->setTitle($title.' - '.html_entity_decode(
+				$this->contract->getName(), ENT_QUOTES, 'UTF-8'));
 		$this->page->addHeader('<meta name="robots" content="index, nofollow" />');
 
 	}
@@ -160,7 +162,7 @@ class pContractDetail extends pageAssembly
 		switch ($this->view)
 		{
 			case "":
-				$qrylength=DBFactory::getDBQuery();;
+				$qrylength=DBFactory::getDBQuery();
 				// set break at half of the number of valid classes - excludes noob ships, drones and unknown
 				$qrylength->execute("SELECT count(*) - 3 AS cnt FROM kb3_ship_classes");
 				if($qrylength->recordCount())
