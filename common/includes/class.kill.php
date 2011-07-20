@@ -742,8 +742,6 @@ class Kill extends Cacheable
 	private function execQuery()
 	{
 		if (!$this->executed) {
-		 trigger_error("Stuff", E_USER_ERROR);
-			//var_dump($this);die;
 			if ($this->isCached()) {
 				$cache = $this->getCache();
 				if ($cache->valid) {
