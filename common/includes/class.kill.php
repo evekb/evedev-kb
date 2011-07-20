@@ -672,7 +672,10 @@ class Kill extends Cacheable
 			if($this->dupeid != 0) {
 				return $this->dupeid;
 			}
-			$this->execQuery();
+			// Don't call execQuery unless we're missing information.
+			if (!$this->timestamp) {
+				$this->execQuery();
+			}
 		}
 		$this->dupeid = 0;
 		$qry = DBFactory::getDBQuery(true);
@@ -705,7 +708,7 @@ class Kill extends Cacheable
                     AND kll_victim_id = ".$this->victimid."
                     AND kll_ship_id = ".$this->victimship->getID()."
                     AND kll_system_id = ".$this->solarsystem->getID()."
-                    AND kll_fb_plt_id = ".$this->getFBPilotID()."
+                    AND kll_fb_plt_id = ".$this->fbpilotid."
                     AND kll_dmgtaken = ".intval($this->dmgtaken);
 		$sql .= "             AND kll_id != ".$this->id;
 		$qry->execute($sql);
@@ -739,6 +742,8 @@ class Kill extends Cacheable
 	private function execQuery()
 	{
 		if (!$this->executed) {
+		 trigger_error("Stuff", E_USER_ERROR);
+			//var_dump($this);die;
 			if ($this->isCached()) {
 				$cache = $this->getCache();
 				if ($cache->valid) {
