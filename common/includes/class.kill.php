@@ -1369,6 +1369,36 @@ class Kill extends Cacheable
 				|| !$this->getFBPilotID() || !$this->getHash(false, false)) {
 			return 0;
 		}
+		// Check slot counts.
+		$locations = array();
+		foreach ($this->droppeditems_ as $dest) {
+			$locations[$dest->getLocationID()] += $dest->getQuantity();
+		}
+		foreach ($this->destroyeditems_ as $dest) {
+			$locations[$dest->getLocationID()] += $dest->getQuantity();
+		}
+		$dogma = Cacheable::factory('dogma', $this->victimship->getExternalID());
+		$lowcount = (int)$dogma->attrib['lowSlots']['value'];
+		$medcount = (int)$dogma->attrib['medSlots']['value'];
+		$hicount = (int)$dogma->attrib['hiSlots']['value'];
+		// Is there anything flyable that has no rig slots?
+		$rigcount = (int)($dogma->attrib['rigSlots']['value'] ?
+				$dogma->attrib['rigSlots']['value'] : 3);
+		$subcount = 5;
+		if ($lowcount
+				&& ($locations[1] > $hicount
+				|| $locations[2] > $medcount
+				|| $locations[3] > $lowcount
+				|| $locations[5] > $rigcount)
+				) {
+			return 0;
+		} else if ((!$lowcount && $locations[7])
+				&& ($locations[7] > $subcount
+				|| $locations[5] > $rigcount)
+				) {
+			return 0;
+		}
+
 		if ($id == null) {
 			$qid = 'null';
 		} else {
