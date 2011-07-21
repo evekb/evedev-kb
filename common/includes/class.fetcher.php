@@ -352,11 +352,6 @@ class Fetcher
 
 						$this->html .= "Killmail ".intval($this->title)." successfully posted <a href=\"".edkURI::page('kill_detail', $killid, 'kll_id')."\">here</a>.<br />";
 
-						if(config::get('fetch_comment'))
-						{
-							$comments = new Comments($killid);
-							$comments->addComment("Feed Syndication ", config::get('fetch_comment')." mail fetched from: ".$this->uurl);
-						}
 						$this->killsAdded++;
 					}
 					if($this->idordered && intval($this->title) > 0)
