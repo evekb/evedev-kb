@@ -217,8 +217,8 @@ if(count($page_error) == 0)
 					$codeversion = $piece['version'];
 				}
 				//kill the template and page caches
-				admin_acache::removeOld(0, KB_PAGECACHEDIR.'/', true);
-				admin_acache::removeOld(0, KB_CACHEDIR.'/templates_c', true);
+				CacheHandler::removeByAge('store', 0, true);
+				CacheHandler::removeByAge('templates_c', 0, true);
 				break;
 			}
 		}
