@@ -11,6 +11,7 @@ options::cat('Appearance', 'Global Options', 'Global Look');
 options::fadd('Banner', 'style_banner', 'select', array('admin_appearance', 'createSelectBanner'), array('admin_appearance', 'changeBanner'));
 options::fadd('Theme', 'theme_name', 'select', array('admin_appearance', 'createSelectTheme'), array('admin_appearance', 'changeTheme'));
 options::fadd('Style', 'style_name', 'select', array('admin_appearance', 'createSelectStyle'), array('admin_appearance', 'changeStyle'));
+options::fadd('Language', 'cfg_language', 'select', array('admin_appearance', 'createLanguage'));
 
 options::cat('Appearance', 'Global Options', 'Global Options');
 options::fadd('Display standings', 'show_standings', 'checkbox');
@@ -327,5 +328,24 @@ class admin_appearance
 
 		$smarty->assign('banner_x', $dimensions[0]);
 		$smarty->assign('banner_y', $dimensions[1]);
+	}
+	public static function createLanguage()
+	{
+		$options = array();
+		$dir = scandir('common/language');
+		foreach($dir as $file) {
+			if (substr($file, 0, 1) == '.'
+					|| substr($file, -4) != '.php') {
+				continue;
+			}
+			if (config::get('cfg_language') == substr($file, 0, -4)) {
+				$state = 1;
+			} else {
+				$state = 0;
+			}
+			$options[] = array('value' => substr($file, 0, -4),
+				'descr' => substr($file, 0, -4), 'state' => $state);
+		}
+		return $options;
 	}
 }
