@@ -58,7 +58,7 @@ class pKillDetail extends pageAssembly
 	 */
 	function start()
 	{
-		$this->kll_id = (int)edkURI::getArg('kll_id', 1);
+		$this->kll_id = (int)edkURI::getArg('kll_id');
 		if (!$this->kll_id) {
 			$this->kll_external_id = (int)edkURI::getArg('kll_ext_id');
 			if (!$this->kll_external_id) {
