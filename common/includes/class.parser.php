@@ -134,14 +134,18 @@ class Parser
 			// We still want to update the external ID if we were given one.
 			if($this->externalID)
 			{
-				$qry->execute("UPDATE kb3_kills SET kll_external_id = ".
-					$this->externalID." WHERE kll_id = ".$this->dupeid_);
-				$qry->execute("UPDATE kb3_mails SET kll_external_id = ".
-					$this->externalID.", kll_modified_time = UTC_TIMESTAMP() WHERE kll_id = ".$this->dupeid_.
-					" AND kll_external_id IS NULL");
+				$qry->execute("UPDATE kb3_kills"
+						."JOIN kb3_mails ON kb3_mails.kll_id = kb3_kills.kll_id"
+					." SET kb3_kills.kll_external_id = ".$this->externalID
+					.", kb3_mails.kll_external_id = ".$this->externalID
+					.", kll_modified_time = UTC_TIMESTAMP()"
+					." WHERE kb3_kills.kll_id = ".$this->dupeid_
+					." AND kb3_kills.kll_external_id IS NULL");
 
-				if($trust >= 0 && $this->trust && $trust > $this->trust)
-					$qry->execute("UPDATE kb3_mails SET kll_trust = ".$this->trust);
+				if($trust >= 0 && $this->trust && $trust > $this->trust) {
+					$qry->execute("UPDATE kb3_mails SET kll_trust = "
+							.$this->trust." WHERE kll_id = ".$this->dupeid_);
+				}
 			}
 
 			if($trust < 0) return -4;
