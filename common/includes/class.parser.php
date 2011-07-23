@@ -135,12 +135,12 @@ class Parser
 			if($this->externalID)
 			{
 				$qry->execute("UPDATE kb3_kills"
-						."JOIN kb3_mails ON kb3_mails.kll_id = kb3_kills.kll_id"
-					." SET kb3_kills.kll_external_id = ".$this->externalID
-					.", kb3_mails.kll_external_id = ".$this->externalID
-					.", kll_modified_time = UTC_TIMESTAMP()"
-					." WHERE kb3_kills.kll_id = ".$this->dupeid_
-					." AND kb3_kills.kll_external_id IS NULL");
+						." JOIN kb3_mails ON kb3_mails.kll_id = kb3_kills.kll_id"
+						." SET kb3_kills.kll_external_id = ".$this->externalID
+						.", kb3_mails.kll_external_id = ".$this->externalID
+						.", kll_modified_time = UTC_TIMESTAMP()"
+						." WHERE kb3_kills.kll_id = ".$this->dupeid_
+						." AND kb3_kills.kll_external_id IS NULL");
 
 				if($trust >= 0 && $this->trust && $trust > $this->trust) {
 					$qry->execute("UPDATE kb3_mails SET kll_trust = "
