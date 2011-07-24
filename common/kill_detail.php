@@ -85,7 +85,6 @@ class pKillDetail extends pageAssembly
 			$this->kill = new Kill($this->kll_external_id, true);
 			$this->kll_id = $this->kill->getID();
 		}
-		$this->kill->setDetailedInvolved();
 
 		if (!$this->kill->exists()) {
 			$html="That kill doesn't exist.";
@@ -376,17 +375,25 @@ class pKillDetail extends pageAssembly
 		if(!is_numeric($invlimit)) $this->nolimit = 1;
 		foreach ($this->kill->getInvolved() as $inv)
 		{
-			$pilot                     =$inv->getPilot();
-			$corp                      =$inv->getCorp();
-			$alliance                  =$inv->getAlliance();
-			$ship                      =$inv->getShip();
+			$pilot = Cacheable::factory('Pilot', $inv->getPilotID());
+			$corp = Cacheable::factory('Corporation', $inv->getCorpID());
+			$alliance = Cacheable::factory('Alliance', $inv->getAllianceID());
+			$ship = Cacheable::factory('Ship', $inv->getShipID());
 
 			$this->InvAllies[$alliance->getName()]["quantity"]+=1;
 			$this->InvAllies[$alliance->getName()]["corps"][$corp->getName()]+=1;
 			$this->InvShips[$ship->getName()] += 1;
-			if(config::get('cfg_allianceid') && in_array($alliance->getID(), config::get('cfg_allianceid'))) $this->ownKill = true;
-			elseif(config::get('cfg_corpid') && in_array($corp->getID(), config::get('cfg_corpid'))) $this->ownKill = true;
-			elseif(config::get('cfg_pilotid') && in_array($pilot->getID(), config::get('cfg_pilotid'))) $this->ownKill = true;
+			if(config::get('cfg_allianceid')
+					&& in_array($alliance->getID(),
+					config::get('cfg_allianceid'))) {
+				$this->ownKill = true;
+			} else if(config::get('cfg_corpid')
+					&& in_array($corp->getID(), config::get('cfg_corpid'))) {
+				$this->ownKill = true;
+			} else if(config::get('cfg_pilotid')
+					&& in_array($pilot->getID(), config::get('cfg_pilotid'))) {
+				$this->ownKill = true;
+			}
 
 
 			if(!$this->nolimit && $i > $invlimit)
@@ -394,7 +401,7 @@ class pKillDetail extends pageAssembly
 				if($i == $invlimit + 1)
 				{
 					$smarty->assign('limited', true);
-					$smarty->assign('moreInvolved', count($this->kill->involvedparties_) - $invlimit);
+					$smarty->assign('moreInvolved', $this->kill->getInvolvedPartyCount() - $invlimit);
 					$smarty->assign('unlimitURL', '?'.htmlentities($_SERVER['QUERY_STRING']).'&amp;nolimit');
 				}
 
@@ -405,7 +412,7 @@ class pKillDetail extends pageAssembly
 				}
 			}
 
-			$weapon                    =$inv->getWeapon();
+			$weapon = Cacheable::factory('Item', $inv->getWeaponID());
 
 			$this->involved[$i]['shipImage'] = $ship->getImage(64);
 			$this->involved[$i]['shipTechLevel'] = $ship->getTechLevel();
@@ -514,19 +521,14 @@ class pKillDetail extends pageAssembly
 				foreach($nameIDPair as $idpair)
 				{
 				//store the IDs
-					foreach ($this->kill->involvedparties_ as $inv)
+					foreach ($this->kill->getInvolved() as $inv)
 					{
-						$pilot = $inv->getPilot();
-						$corp = $inv->getCorp();
-						$pname = $pilot->getName();
-						$cname = $corp->getName();
+						$pilot = Cacheable::factory('Pilot', $inv->getPilotID());
+						$corp = Cacheable::factory('Corporation', $inv->getCorpID());
 
-						if($idpair['name'] == $cname)
-						{
+						if($idpair['name'] == $corp->getName()) {
 							$corp->setExternalID($idpair['characterID']);
-						}
-						elseif($idpair['name'] == $pname)
-						{
+						} else if($idpair['name'] == $pilot->getName()) {
 							$pilot->setCharacterID($idpair['characterID']);
 						}
 					}

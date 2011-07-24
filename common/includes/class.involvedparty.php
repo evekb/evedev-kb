@@ -7,43 +7,45 @@
  */
 
 /**
+ * A simple wrapper for involved party information.
  * @package EDK
  */
 class InvolvedParty
 {
 	/** var integer */
-	protected $pilotid_;
+	protected $pilotid;
 	/** var integer */
-	protected $corpid_;
+	protected $corpid;
 	/** var integer */
-	protected $allianceid_;
+	protected $allianceid;
 	/** var float */
-	protected $secstatus_;
-	/** var Ship */
-	protected $ship_;
-	/** var Item */
-	protected $weapon_;
+	protected $secstatus;
 	/** var integer */
-	public $dmgdone_;
+	protected $shipid;
+	/** var integer */
+	protected $weaponid;
+	/** var integer */
+	protected $dmgdone;
 
 	/**
 	 * @param integer $pilotid
 	 * @param integer $corpid
 	 * @param integer $allianceid
-	 * @param flat $secstatus
-	 * @param Ship $ship
-	 * @param Item $weapon
+	 * @param float $secstatus
+	 * @param integer $ship
+	 * @param integer $weapon
 	 * @param integer $dmgdone 
 	 */
-	function InvolvedParty($pilotid, $corpid, $allianceid, $secstatus, $ship, $weapon, $dmgdone = 0)
+	function InvolvedParty($pilotid, $corpid, $allianceid, $secstatus, $shipid,
+			$weaponid, $dmgdone = 0)
 	{
-		$this->pilotid_ = $pilotid;
-		$this->corpid_ = $corpid;
-		$this->allianceid_ = $allianceid;
-		$this->secstatus_ = $secstatus;
-		$this->ship_ = $ship;
-		$this->weapon_ = $weapon;
-		$this->dmgdone_ = $dmgdone;
+		$this->pilotid = (int)$pilotid;
+		$this->corpid = (int)$corpid;
+		$this->allianceid = (int)$allianceid;
+		$this->secstatus = (float)$secstatus;
+		$this->shipid = (int)$shipid;
+		$this->weaponid = (int)$weaponid;
+		$this->dmgdone = (int)$dmgdone;
 	}
 
 	/**
@@ -51,7 +53,7 @@ class InvolvedParty
 	 */
 	function getPilotID()
 	{
-		return $this->pilotid_;
+		return $this->pilotid;
 	}
 
 	/**
@@ -59,7 +61,7 @@ class InvolvedParty
 	 */
 	function getCorpID()
 	{
-		return $this->corpid_;
+		return $this->corpid;
 	}
 
 	/**
@@ -67,7 +69,68 @@ class InvolvedParty
 	 */
 	function getAllianceID()
 	{
-		return $this->allianceid_;
+		return $this->allianceid;
+	}
+
+	/**
+	 * @return integer
+	 */
+	function getShipID()
+	{
+		return $this->shipid;
+	}
+
+	/**
+	 * @return integer
+	 */
+	function getWeaponID()
+	{
+		return $this->weaponid;
+	}
+
+	/**
+	 * @deprecated
+	 * @return Pilot
+	 */
+	function getPilot()
+	{
+		return Cacheable::factory('Pilot', $this->pilotid);
+	}
+
+	/**
+	 * @deprecated
+	 * @return Corporation
+	 */
+	function getCorp()
+	{
+		return Cacheable::factory('Corporation', $this->corpid);
+	}
+
+	/**
+	 * @deprecated
+	 * @return Alliance
+	 */
+	function getAlliance()
+	{
+		return Cacheable::factory('Alliance', $this->allianceid);
+	}
+
+	/**
+	 * @deprecated
+	 * @return Ship
+	 */
+	function getShip()
+	{
+		return Cacheable::factory('Ship', $this->shipid);
+	}
+
+	/**
+	 * @deprecated
+	 * @return Item
+	 */
+	function getWeapon()
+	{
+		return Cacheable::factory('Item', $this->weaponid);
 	}
 
 	/**
@@ -75,23 +138,7 @@ class InvolvedParty
 	 */
 	function getSecStatus()
 	{
-		return number_format($this->secstatus_, 1);
-	}
-
-	/**
-	 * @return Ship
-	 */
-	function getShip()
-	{
-		return $this->ship_;
-	}
-
-	/**
-	 * @return Item
-	 */
-	function getWeapon()
-	{
-		return $this->weapon_;
+		return number_format($this->secstatus, 1);
 	}
 
 	/**
@@ -99,6 +146,6 @@ class InvolvedParty
 	 */
 	function getDamageDone()
 	{
-		return $this->dmgdone_;
+		return $this->dmgdone;
 	}
 }

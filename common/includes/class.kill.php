@@ -24,7 +24,6 @@ class Kill extends Cacheable
 	public $involvedparties_ = array();
 	public $destroyeditems_ = array();
 	public $droppeditems_ = array();
-	public $VictimDamageTaken = 0;
 	private $fullinvolved = false;
 	private $timestamp = null;
 	private $dmgtaken = null;
@@ -609,9 +608,9 @@ class Kill extends Cacheable
 				}
 				$mail .= "Ship: ".$ship->getName()."\r\n";
 				$mail .= "Weapon: ".$weapon->getName()."\r\n";
-				$mail .= "Damage Done: ".$inv->dmgdone_."\r\n";
+				$mail .= "Damage Done: ".$inv->getDamageDone()."\r\n";
 			} else {
-				$mail .= "Damage Done: ".$inv->dmgdone_."\r\n";
+				$mail .= "Damage Done: ".$inv->getDamageDone()."\r\n";
 			}
 			$mail .= "\r\n";
 		}
@@ -726,7 +725,7 @@ class Kill extends Cacheable
 			// and did the same damage.
 			$invList = array();
 			foreach($this->involvedparties_ as $inv)
-				$invList[] = '('.$inv->getPilotID().','.intval($inv->dmgdone_).')';
+				$invList[] = '('.$inv->getPilotID().','.intval($inv->getDamageDone()).')';
 			$sql = 'SELECT COUNT(*) as count FROM kb3_inv_detail WHERE ind_kll_id = '.
 				$kll_id.' AND (ind_plt_id,ind_dmgdone) IN ('.implode(',', $invList).')';
 
@@ -750,7 +749,6 @@ class Kill extends Cacheable
 					$this->involvedparties_ = $cache->involvedparties_;
 					$this->destroyeditems_ = $cache->destroyeditems_;
 					$this->droppeditems_ = $cache->droppeditems_;
-					$this->VictimDamageTaken = $cache->VictimDamageTaken;
 					$this->fullinvolved = $cache->fullinvolved;
 					$this->timestamp = $cache->timestamp;
 					$this->victimid = $cache->victimid;
@@ -819,7 +817,6 @@ class Kill extends Cacheable
 			$this->externalid = $row['kll_external_id'];
 			$this->iskloss = $row['kll_isk_loss'];
 			$this->fbplt_ext = $row['fbplt_externalid'];
-			$this->VictimDamageTaken = $row['kll_dmgtaken'];
 			$this->dmgtaken = $row['kll_dmgtaken'];
 			$this->killpoints = $row['kll_points'];
 
@@ -848,25 +845,14 @@ class Kill extends Cacheable
 			$qry->execute($sql) or die($qry->getErrorMsg());
 			while ($row = $qry->getRow())
 			{
-				$pilot = new Pilot($row['ind_plt_id'], $row['plt_externalid'], $row['plt_name'], $row['ind_crp_id']);
-
-				$corp = new Corporation($row['ind_crp_id']);
-
-				$alliance = new Alliance($row['ind_all_id']);
-
-
-				$ship = new Ship($row['shp_id']);
-
-				$weapon = new Item($row['ind_wep_id']);
-
-				$involved = new DetailedInv($pilot,
+				$involved = new InvolvedParty($row['ind_plt_id'],
+					$row['ind_crp_id'],
+					$row['ind_all_id'],
 					$row['ind_sec_status'],
-					$corp,
-					$alliance,
-					$ship,
-					$weapon,
+					$row['shp_id'],
+					$row['ind_wep_id'],
 					$row['ind_dmgdone']);
-				array_push($this->involvedparties_, $involved);
+				$this->involvedparties_[] = $involved;
 			}
 			$destroyedlist = new ItemList(null, true);
 			$destroyedlist->addKillDestroyed($this->id);
@@ -875,7 +861,7 @@ class Kill extends Cacheable
 					$item->row_['itd_quantity'],
 					$item->row_['itl_location'],
 					$item->row_['itd_itl_id']);
-				array_push($this->destroyeditems_, $destroyed);
+				$this->destroyeditems_[] = $destroyed;
 			}
 			$droppedlist = new ItemList(null, true);
 			$droppedlist->addKillDropped($this->id);
@@ -884,7 +870,7 @@ class Kill extends Cacheable
 					$item->row_['itd_quantity'],
 					$item->row_['itl_location'],
 					$item->row_['itd_itl_id']);
-				array_push($this->droppeditems_, $dropped);
+				$this->droppeditems_[] = $dropped;
 			}
 		}
 		$this->executed = true;
@@ -951,9 +937,11 @@ class Kill extends Cacheable
 		$this->involvedcount = $invcount;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	function setDetailedInvolved()
 	{
-		$this->fullinvolved = true;
 	}
 
 	/**
@@ -1389,7 +1377,7 @@ class Kill extends Cacheable
 //		if ($lowcount
 //				&& ($locations[1] > $hicount
 //				|| $locations[2] > $medcount
-//				|| $locations[3] > $lowcount
+//				||  $locations[3] > $lowcount
 //				|| $locations[5] > $rigcount)
 //				) {
 //			return 0;
@@ -1462,14 +1450,12 @@ class Kill extends Cacheable
 				return 0;
 			}
 
-			if (!$inv->dmgdone_) {
-				$inv->dmgdone_ = 0;
-			}
 			if($notfirstd) $involveddsql .= ", ";
 			$involveddsql .= "( ".$this->getID().", date_format('".$this->timestamp."', '%Y.%m.%d %H:%i:%s'), "
-				.$inv->getPilotID().", '".$inv->getSecStatus()."', "
-				.$inv->getAllianceID().", ".$inv->getCorpID().", ".$ship->getID().", "
-				.$weapon->getID().", ".$order++.", ".$inv->dmgdone_.")";
+					.$inv->getPilotID().", '".$inv->getSecStatus()."', "
+					.$inv->getAllianceID().", ".$inv->getCorpID().", "
+					.$ship->getID().", ".$weapon->getID().", ".$order++.", "
+					.$inv->getDamageDone().")";
 			$notfirstd = true;
 			if(!in_array($inv->getAllianceID(), $invall)) {
 				if($notfirsta) $involvedasql .= ", ";

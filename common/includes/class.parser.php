@@ -640,12 +640,9 @@ class Parser
 				}
 
 				$iparty = new InvolvedParty($ipilot->getID(), $icorp->getID(),
-					$ialliance->getID(), $secstatus, $iship, $iweapon);
+					$ialliance->getID(), $secstatus, $iship->getID(),
+						$iweapon->getID(), $idmgdone);
 
-				if ($dmgtaken)
-				{
-					$iparty->dmgdone_ = $idmgdone;
-				}
 				$kill->addInvolvedParty($iparty);
 
 				if ($finalblow == 1)
