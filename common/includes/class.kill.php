@@ -662,7 +662,7 @@ class Kill extends Cacheable
 
 	/**
 	 * Check if this kill is a duplicate and return the id if so.
-	 * 
+	 *
 	 * @param boolean $checkonly
 	 * @return integer
 	 */
@@ -776,7 +776,7 @@ class Kill extends Cacheable
 			}
 			$qry = DBFactory::getDBQuery();
 
-			$sql = "select kll.kll_id, kll.kll_timestamp, 
+			$sql = "select kll.kll_id, kll.kll_timestamp,
                           ali.all_id, kll.kll_ship_id,
                           kll.kll_system_id, kll.kll_ship_id, kll.kll_external_id,
                           kll.kll_victim_id, plt.plt_externalid, kll.kll_isk_loss,
@@ -1001,21 +1001,21 @@ class Kill extends Cacheable
 			$sql .= " AND (".implode(" OR ", $sqlinv).")";
 		} else if(config::get('cfg_allianceid')) {
 			$sql ="SELECT COUNT(DISTINCT ina_kll_id) AS kills FROM kb3_inv_all INNER JOIN
-				kb3_kills ON (kll_id = ina_kll_id) WHERE 
+				kb3_kills ON (kll_id = ina_kll_id) WHERE
 				ina_all_id in (".implode(",", config::get('cfg_allianceid')).") AND
 				ina_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) + 60 * 60))."'
 				AND ina_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) - 60 * 60))."'
 				AND kll_system_id = ".$this->getSystem()->getID();
 		} else if(config::get('cfg_corpid')) {
 			$sql ="SELECT COUNT(DISTINCT inc_kll_id) AS kills FROM kb3_inv_crp INNER JOIN
-				kb3_kills ON (kll_id = inc_kll_id) WHERE 
+				kb3_kills ON (kll_id = inc_kll_id) WHERE
 				inc_crp_id in (".implode(",", config::get('cfg_corpid')).") AND
 				inc_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) + 60 * 60))."'
 				AND inc_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) - 60 * 60))."'
 				AND kll_system_id = ".$this->getSystem()->getID();
 		} else if(config::get('cfg_pilotid')) {
 			$sql ="SELECT COUNT(DISTINCT ind_kll_id) AS kills FROM kb3_inv_detail INNER JOIN
-				kb3_kills ON (kll_id = ind_kll_id) WHERE 
+				kb3_kills ON (kll_id = ind_kll_id) WHERE
 				ind_plt_id in (".implode(",", config::get('cfg_pilotid')).") AND
 				ind_timestamp <= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) + 60 * 60))."'
 				AND ind_timestamp >= '".(date('Y-m-d H:i:s',strtotime($this->getTimeStamp()) - 60 * 60))."'
@@ -1369,35 +1369,36 @@ class Kill extends Cacheable
 				|| !$this->getFBPilotID() || !$this->getHash(false, false)) {
 			return 0;
 		}
-		// Check slot counts.
-		$locations = array();
-		foreach ($this->droppeditems_ as $dest) {
-			$locations[$dest->getLocationID()] += $dest->getQuantity();
-		}
-		foreach ($this->destroyeditems_ as $dest) {
-			$locations[$dest->getLocationID()] += $dest->getQuantity();
-		}
-		$dogma = Cacheable::factory('dogma', $this->victimship->getExternalID());
-		$lowcount = (int)$dogma->attrib['lowSlots']['value'];
-		$medcount = (int)$dogma->attrib['medSlots']['value'];
-		$hicount = (int)$dogma->attrib['hiSlots']['value'];
-		// Is there anything flyable that has no rig slots?
-		$rigcount = (int)($dogma->attrib['rigSlots']['value'] ?
-				$dogma->attrib['rigSlots']['value'] : 3);
-		$subcount = 5;
-		if ($lowcount
-				&& ($locations[1] > $hicount
-				|| $locations[2] > $medcount
-				|| $locations[3] > $lowcount
-				|| $locations[5] > $rigcount)
-				) {
-			return 0;
-		} else if ((!$lowcount && $locations[7])
-				&& ($locations[7] > $subcount
-				|| $locations[5] > $rigcount)
-				) {
-			return 0;
-		}
+		// TODO: Redo accounting for ammo (see kill_detail).
+//		// Check slot counts.
+//		$locations = array();
+//		foreach ($this->droppeditems_ as $dest) {
+//			$locations[$dest->getLocationID()] += $dest->getQuantity();
+//		}
+//		foreach ($this->destroyeditems_ as $dest) {
+//			$locations[$dest->getLocationID()] += $dest->getQuantity();
+//		}
+//		$dogma = Cacheable::factory('dogma', $this->victimship->getExternalID());
+//		$lowcount = (int)$dogma->attrib['lowSlots']['value'];
+//		$medcount = (int)$dogma->attrib['medSlots']['value'];
+//		$hicount = (int)$dogma->attrib['hiSlots']['value'];
+//		// Is there anything flyable that has no rig slots?
+//		$rigcount = (int)($dogma->attrib['rigSlots']['value'] ?
+//				$dogma->attrib['rigSlots']['value'] : 3);
+//		$subcount = 5;
+//		if ($lowcount
+//				&& ($locations[1] > $hicount
+//				|| $locations[2] > $medcount
+//				|| $locations[3] > $lowcount
+//				|| $locations[5] > $rigcount)
+//				) {
+//			return 0;
+//		} else if ((!$lowcount && $locations[7])
+//				&& ($locations[7] > $subcount
+//				|| $locations[5] > $rigcount)
+//				) {
+//			return 0;
+//		}
 
 		if ($id == null) {
 			$qid = 'null';
