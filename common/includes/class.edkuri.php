@@ -146,8 +146,6 @@ class edkURI {
 		if (!is_null($position) && isset(self::$args[$position])) {
 			if (self::$args[$position][1] === true) {
 				return self::$args[$position][0];
-			} else {
-				return self::$args[$position][1];
 			}
 		}
 		return false;
