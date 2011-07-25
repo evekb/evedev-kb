@@ -52,9 +52,9 @@ class Ship extends Cacheable
 	 */
 	function getID()
 	{
-		if($this->id) return $this->id;
-		elseif($this->externalid)
-		{
+    if($this->id) {
+      return $this->id;
+    } else if(isset($this->externalid)) {
 			$this->execQuery();
 			return $this->id;
 		}
