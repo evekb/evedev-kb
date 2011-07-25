@@ -462,7 +462,7 @@ class IDFeed
 		$pilot->add(strval($inv['characterName']), $corp, $time, intval($inv['characterID']));
 
 		$iparty = new InvolvedParty($pilot->getID(), $corp->getID(),
-			$alliance->getID(), floatval($inv['securityStatus']), $ship, $weapon, intval($inv['damageDone']));
+			$alliance->getID(), floatval($inv['securityStatus']), $ship->getID(), $weapon->getID(), intval($inv['damageDone']));
 
 		$kill->addInvolvedParty($iparty);
 		if(intval($inv['finalBlow']) == 1) $kill->setFBPilotID($pilot->getID());
