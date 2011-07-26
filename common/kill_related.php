@@ -50,15 +50,13 @@ class pKillRelated extends pageAssembly
 			$this->kll_external_id = (int)edkURI::getArg('kll_ext_id');
 			if (!$this->kll_external_id) {
 				// internal and external ids easily overlap so we can't guess which
-				$this->kll_id = (int)edkURI::getArg('id');
+				$this->kll_id = (int)edkURI::getArg(null, 1);
 			} else {
 				$this->kill = new Kill($this->kll_external_id, true);
-				$this->kill->setDetailedInvolved();
 				$this->kll_id = $this->kill->getID();
 			}
 		} else {
 			$this->kill = Cacheable::factory('Kill', $this->kll_id);
-			$this->kill->setDetailedInvolved();
 		}
 		$this->adjacent = edkURI::getArg('adjacent');
 		$this->scl_id = (int)edkURI::getArg('scl_id');
@@ -84,7 +82,7 @@ class pKillRelated extends pageAssembly
 		$this->invCorp = array();
 		// Find all involved parties not in the same corp/alliance as the victim. If
 		// the board has an owner swap sides if necessary so board owner is the killer
-		foreach ($this->kill->involvedparties_ as $inv)
+		foreach ($this->kill->getInvolved() as $inv)
 		{
 			if(strcasecmp($inv->getAlliance()->getName(),'None'))
 			{

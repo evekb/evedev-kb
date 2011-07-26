@@ -221,7 +221,7 @@ $smarty->compile_dir = KB_CACHEDIR.'/templates_c/'.$themename;
 
 $smarty->cache_dir = KB_CACHEDIR.'/data';
 $smarty->assign('theme_url', THEME_URL);
-if ($style != 'default' && $theme != 'default') {
+if ($stylename != 'default' && $themename != 'default') {
 	$smarty->assign('style', $stylename);
 }
 $smarty->assign('img_url', IMG_URL);

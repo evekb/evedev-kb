@@ -21,7 +21,7 @@ class pInvtype extends pageAssembly
 
 	function start()
 	{
-		$this->typeID = edkURI::getArg('id');
+		$this->typeID = edkURI::getArg('id', 1);
 		$this->page = new Page('Item Details');
 
 	}

@@ -60,14 +60,12 @@ class edkURI {
 				} else if ($pos == 0) {
 					if (is_numeric($parameter)) {
 						$args[] = array('a', 'home', true);
-						$args[] = array('id', $parameter, true);
+						$args[] = array($parameter, true, true);
 						$pos++;
 					} else {
 						$args[] = array('a', $parameter, true);
 					}
 					$pagefound = true;
-				} else if ($pos == 1 && is_numeric($parameter)) {
-					$args[] = array('id', $parameter, true);
 				} else {
 					$args[] = array($parameter, true, true);
 				}

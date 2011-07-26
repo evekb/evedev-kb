@@ -63,7 +63,7 @@ class pCorpDetail extends pageAssembly
 		if (!$this->crp_id) {
 			$this->crp_external_id = (int)edkURI::getArg('crp_ext_id');
 			if (!$this->crp_external_id) {
-				$id = (int)edkURI::getArg('id');
+				$id = (int)edkURI::getArg('id', 1);
 				// True for NPC corps too, but NPC alliances recorded as corps
 				// fail here. Use Jedi mind tricks?
 				if ($id > 1000000) {

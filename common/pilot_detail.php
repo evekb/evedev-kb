@@ -64,7 +64,7 @@ class pPilotDetail extends pageAssembly
 		if (!$this->plt_id) {
 			$this->plt_external_id = (int)edkURI::getArg('plt_ext_id');
 			if (!$this->plt_external_id) {
-				$id = (int)edkURI::getArg('id');
+				$id = (int)edkURI::getArg('id', 1);
 				// Arbitrary number bigger than we expect to reach locally
 				if ($id > 1000000) {
 					$this->plt_external_id = $id;

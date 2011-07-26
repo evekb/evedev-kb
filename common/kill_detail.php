@@ -63,7 +63,7 @@ class pKillDetail extends pageAssembly
 			$this->kll_external_id = (int)edkURI::getArg('kll_ext_id');
 			if (!$this->kll_external_id) {
 				// internal and external ids easily overlap so we can't guess which
-				$this->kll_id = (int)edkURI::getArg('id');
+				$this->kll_id = (int)edkURI::getArg('id', 1);
 			}
 		}
 		$this->nolimit = edkURI::getArg('nolimit', 2);
