@@ -81,6 +81,8 @@ else  define('IMG_HOST', KB_HOST);
 
 $page = edkURI::getArg('a', 0);
 edkURI::usePath(config::get('cfg_pathinfo'));
+if (defined('KB_PHP')) edkURI::setRoot(KB_PHP);
+
 if(isset($_GET['xajax'])) require_once('common/includes/xajax.functions.php');
 
 // Serve feeds to feed fetchers.
