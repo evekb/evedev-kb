@@ -155,6 +155,7 @@ function getComments($kll_id, $message = '')
 		if(!$smarty)
 		{
 			$smarty = new Smarty();
+			$themename = config::get('theme_name');
 			if(is_dir('./themes/'.$themename.'/templates'))
 				$smarty->template_dir = './themes/'.$themename.'/templates';
 			else $smarty->template_dir = './themes/default/templates';
