@@ -104,8 +104,8 @@ class pPilotDetail extends pageAssembly
 			exit;
 		}
 
-		if($this->plt_external_id) $this->page->addHeader("<link rel='canonical' href='".KB_HOST."/?a=pilot_detail&amp;plt_ext_id=". $this->plt_external_id."' />");
-		else $this->page->addHeader("<link rel='canonical' href='".KB_HOST."/?a=pilot_detail&amp;plt_id=".$this->plt_id."' />");
+		if($this->plt_external_id) $this->page->addHeader("<link rel='canonical' href='".edkURI::page('pilot_detail', $this->plt_external_id, 'plt_ext_id')."' />");
+		else $this->page->addHeader("<link rel='canonical' href='".edkURI::page('pilot_detail', $this->plt_id, 'plt_id')."' />");
 
 		$this->corp = $this->pilot->getCorp();
 		$this->alliance = $this->corp->getAlliance();

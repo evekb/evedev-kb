@@ -28,8 +28,7 @@ class pHome extends pageAssembly
 	function start()
 	{
 		$this->page = new Page();
-		$this->page->addHeader("<link rel='canonical' href='".KB_HOST."/' />");
-
+		$this->page->addHeader("<link rel='canonical' href='".edkURI::page()."' />");
 		$this->view = preg_replace('/[^a-zA-Z0-9_-]/','', edkURI::getArg('view', 1));
 		if (is_numeric($this->view)) {
 			$this->view = preg_replace('/[^a-zA-Z0-9_-]/','', edkURI::getArg('view', 3));
