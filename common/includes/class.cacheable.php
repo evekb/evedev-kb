@@ -21,17 +21,19 @@ abstract class Cacheable {
 	 * Create or fetch a new Cacheable object.
 	 *
 	 * @param string $classname A valid Cacheable class.
-	 * @param integer $id The id to create/retrieve.
+	 * @param integer $id The id of the object to create/retrieve.
 	 * @return mixed
 	 */
 	public static function factory($classname, $id)
 	{
-		if(!self::$cachehandler) self::init();
+		if(!self::$cachehandler) {
+			self::init();
+		}
 
-		if (class_exists('Config', false) && !config::get('cfg_objcache')) {
-			return new $classname($id);
-		} else if (isset(self::$cache[$classname.$id])) {
+		if (isset(self::$cache[$classname.$id])) {
 			return self::$cache[$classname.$id];
+		} else if (class_exists('Config', false) && !config::get('cfg_objcache')) {
+			return new $classname($id);
 		} else if (self::$cachehandler->exists($classname.$id)) {
 			return self::$cachehandler->get($classname.$id);
 		} else {
@@ -47,12 +49,17 @@ abstract class Cacheable {
 	 */
 	protected function isCached()
 	{
-		if (!config::get('cfg_objcache')) return false;
-
-		if(isset(self::$cache[get_class($this).$this->getID()]))
+		if(isset(self::$cache[get_class($this).$this->getID()])) {
 			return true;
+		}
 
-		if(!self::$cachehandler) self::init();
+		if (!config::get('cfg_objcache')) {
+			return false;
+		}
+
+		if(!self::$cachehandler) {
+			self::init();
+		}
 		return self::$cachehandler->exists(get_class($this).$this->getID());
 	}
 
@@ -64,12 +71,17 @@ abstract class Cacheable {
 	 */
 	protected function getCache()
 	{
-		if (!config::get('cfg_objcache')) return false;
-
-		if(isset(self::$cache[get_class($this).$this->getID()]))
+		if(isset(self::$cache[get_class($this).$this->getID()])) {
 			return self::$cache[get_class($this).$this->getID()];
+		}
 
-		if(!self::$cachehandler) self::init();
+		if (!config::get('cfg_objcache')) {
+			return false;
+		}
+
+		if(!self::$cachehandler) {
+			self::init();
+		}
 		return self::$cachehandler->get(get_class($this).$this->getID());
 	}
 
@@ -81,12 +93,16 @@ abstract class Cacheable {
 	 */
 	protected function putCache()
 	{
-		if (!config::get('cfg_objcache')) return false;
-
 		// The unserialize/serialize is used to make a deep copy
 		self::$cache[get_class($this).$this->getID()] = unserialize(serialize($this));
 
-		if(!self::$cachehandler) self::init();
+		if (!config::get('cfg_objcache')) {
+			return false;
+		}
+
+		if(!self::$cachehandler) {
+			self::init();
+		}
 		return self::$cachehandler->put(
 				get_class($this).$this->getID(), $this);
 	}
@@ -101,6 +117,9 @@ abstract class Cacheable {
 	 {
 		unset(self::$cache[get_class($obj).$obj->getID()]);
 
+		if (!config::get('cfg_objcache')) {
+			return true;
+		}
 		return self::$cachehandler->remove(
 				get_class($obj).$obj->getID());
 	 }
@@ -112,9 +131,11 @@ abstract class Cacheable {
 	 */
 	private static function init()
 	{
-		if(defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE == true)
+		if(defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE == true) {
 			self::$cachehandler = new CacheHandlerHashedMem();
-		else self::$cachehandler = new CacheHandlerHashed();
+		} else {
+			self::$cachehandler = new CacheHandlerHashed();
+		}
 	}
 
 	/**
