@@ -866,7 +866,7 @@ class Kill extends Cacheable
 			$droppedlist = new ItemList(null, true);
 			$droppedlist->addKillDropped($this->id);
 			while($item = $droppedlist->getItem()) {
-				$dropped = new DroppedItem($item,
+				$dropped = new DestroyedItem($item,
 					$item->row_['itd_quantity'],
 					$item->row_['itl_location'],
 					$item->row_['itd_itl_id']);
