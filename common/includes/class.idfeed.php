@@ -380,11 +380,11 @@ class IDFeed
 		// If we have no character ID and no name then it's a structure or NPC
 		//	- if we have a moonID (anchored at a moon) call it corpname - moonname
 		//	- if we don't have a moonID call it corpname - systemname
+		$victim = $row->victim;
 		if(!strval($victim['characterName'])
 			&& intval($victim['characterID']))
 				return false;
 
-		$victim = $row->victim;
 		$alliance = new Alliance();
 		$corp = new Corporation();
 		if(intval($victim['allianceID']))
@@ -479,7 +479,7 @@ class IDFeed
 
 		if(intval($item['qtyDropped']))
 		{
-			$kill->addDroppedItem(new DroppedItem(new Item(intval($item['typeID'])), intval($item['qtyDropped']), '', $location));
+			$kill->addDroppedItem(new DestroyedItem(new Item(intval($item['typeID'])), intval($item['qtyDropped']), '', $location));
 		}
 		else
 		{
