@@ -985,8 +985,8 @@ class API_KillLog
     function getlastkillid($data)
     {
         $mylastkillid = 0;
-        $startpoint = intval;
-        $endpoint = intval;
+        $startpoint = 0;
+        $endpoint = 0;
 
         $startpoint = $this->mystrripos($data, 'row killID="');
         if ( $startpoint != "0" )
