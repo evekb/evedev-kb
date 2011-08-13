@@ -39,7 +39,7 @@
 	{/if}				</tr>
 {/if}
 					<tr class="{cycle name=ccl}">
-						<td style="white-space: nowrap" class="kb-table-cell"><b><a class="kb-shipclass{if $i.hl}-hl{/if}" href="?{$i.qry}&amp;scl_id={$i.id}">{$i.name}</a></b></td>
+						<td style="white-space: nowrap" class="kb-table-cell"><b><a class="kb-shipclass{if $i.hl}-hl{/if}" href="{$i.qry}scl_id={$i.id}">{$i.name}</a></b></td>
 						<td class="kl-kill{if $i.kills == 0}-null{/if}" style="text-align:center">{$i.kills}</td>
 {if $verbose}				<td class="kl-kill{if $i.kills == 0}-null{/if}" style="text-align:center">{$i.kisk}</td>
 {/if}
