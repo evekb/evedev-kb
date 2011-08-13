@@ -22,17 +22,18 @@ class TopTable_Corp
 		$i = 1;
 		while ($row = $this->toplist->getRow())
 		{
-			$corp = new Corporation($row['crp_id']);
-			if($row['crp_external_id']) {
-				$uri = KB_HOST."/?a=corp_detail&amp;crp_ext_id=".$row['crp_external_id'];
+			/* @var $corp Corporation */
+			$corp = Cacheable::factory('Corporation', $row['crp_id']);
+			if($corp->getExternalID()) {
+				$uri = KB_HOST."/?a=corp_detail&amp;crp_ext_id=".$corp->getExternalID();
 			} else {
 				$uri = KB_HOST."/?a=corp_detail&amp;crp_id=".$row['crp_id'];
 			}
 			$rows[] = array(
 				'rank' => $i,
-				'name' => $row['crp_name'],
+				'name' => $corp->getName(),
 				'uri' => $uri,
-				'portrait' => imageURL::getURL('Corporation', (int)$row['crp_external_id'], 32),
+				'portrait' => imageURL::getURL('Corporation', $corp->getExternalID(false), 32),
 				'count' => $row['cnt']);
 			$i++;
 		}
