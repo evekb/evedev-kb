@@ -35,19 +35,26 @@ class PageSplitter
 			return;
 
 		$endpage = ceil($this->max_ / $this->split_);
-		if ($_GET['page'])
-		{
-			$url = preg_replace("/&?page=([0-9]+)/", "",
-					$_SERVER['QUERY_STRING']);
-			$url = preg_replace("/&/", "&amp;", $url);
-			$page = $_GET['page'];
-		}
-		else
-		{
-			$url = $_SERVER['QUERY_STRING'];
-			$url = preg_replace("/&/", "&amp;", $url);
+		$args = edkURI::parseURI();
+		if ($page = edkURI::getArg('page')) {
+			if (edkURI::getArg('page')) {
+				foreach ($args as $key => $value) {
+					if($value[0] == 'page') {
+						unset($args[$key]);
+						break;
+					}
+				}
+			}
+		} else {
 			$page = 1;
 		}
+		$url = edkURI::build($args);
+		if(strpos($url, '?') === false) {
+			$url .= "?";
+		} else {
+			$url .= "&amp;";
+		}
+
 		$smarty->assign('splitter_endpage', $endpage);
 		$smarty->assign('splitter_page', $page);
 		$smarty->assign('splitter_url', $url);
