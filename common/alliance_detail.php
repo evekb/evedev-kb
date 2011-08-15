@@ -101,13 +101,13 @@ class pAllianceDetail extends pageAssembly
 
 		if($this->all_external_id) {
 			$this->page->addHeader("<link rel='canonical' href='"
-					.edkURI::build(array("all_ext_id",
+					.edkURI::build($args, array("all_ext_id",
 							$this->all_external_id, true))
 					."' />");
 		}
 		else {
 			$this->page->addHeader("<link rel='canonical' href='"
-				.edkURI::build(array("all_id", $this->all_id, true))
+				.edkURI::build($args, array("all_id", $this->all_id, true))
 				."' />");
 		}
 		if ($this->view) {
@@ -315,7 +315,10 @@ class pAllianceDetail extends pageAssembly
 		else
 			$smarty->assign('view', $this->view);
 
-		if(isset($this->viewList[$this->view])) return call_user_func_array($this->viewList[$this->view], array(&$this));
+		$args = array(array('a', 'alliance_detail', true), array('all_id', $this->all_id, true));
+		if(isset($this->viewList[$this->view])) {
+			return call_user_func_array($this->viewList[$this->view], array(&$this));
+		}
 
 		switch ($this->view)
 		{
@@ -397,8 +400,8 @@ class pAllianceDetail extends pageAssembly
 				$smarty->assign('nmonth', $this->nmonth);
 				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('all_id', $this->all_id);
-				$smarty->assign('url_previous', edkURI::build(array('y', '$this->pyear', true), array('m', '$this->pmonth', true), array('view', 'corp_kills', true)));
-				$smarty->assign('url_next', edkURI::build(array('y', '$this->nyear', true), array('m', '$this->nmonth', true), array('view', 'corp_kills', true)));
+				$smarty->assign('url_previous', edkURI::build($args, array('view', 'corp_kills', true), array('y', $this->pyear, true), array('m', $this->pmonth, true)));
+				$smarty->assign('url_next', edkURI::build($args, array('view', 'corp_kills', true), array('y', $this->nyear, true), array('m', $this->nmonth, true)));
 
 				$list = new TopList_CorpKills();
 				$list->addInvolvedAlliance($this->alliance);
@@ -531,8 +534,8 @@ class pAllianceDetail extends pageAssembly
 				$smarty->assign('nmonth', $this->nmonth);
 				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('all_id', $this->all_id);
-				$smarty->assign('url_previous', edkURI::build(array('y', $this->pyear, true), array('m', $this->pmonth, true), array('view', corp_kill, true)));
-				$smarty->assign('url_next', edkURI::build(array('y', '$this->nyear', true), array('m', '$this->nmonth', true), array('view', 'corp_kills', true)));
+				$smarty->assign('url_previous', edkURI::build($args, array('view', 'corp_losses', true), array('y', $this->pyear, true), array('m', $this->pmonth, true)));
+				$smarty->assign('url_next', edkURI::build($args, array('view', 'corp_losses', true), array('y', $this->nyear, true), array('m', $this->nmonth, true)));
 
 				$list = new TopList_CorpLosses();
 				$list->addVictimAlliance($this->alliance);
@@ -560,8 +563,8 @@ class pAllianceDetail extends pageAssembly
 				$smarty->assign('nmonth', $this->nmonth);
 				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('all_id', $this->all_id);
-				$smarty->assign('url_previous', edkURI::build(array('y', '$this->pyear', true), array('m', '$this->pmonth', true), array('view', 'pilot_kills', true)));
-				$smarty->assign('url_next', edkURI::build(array('y', '$this->nyear', true), array('m', '$this->nmonth', true), array('view', 'pilot_kills', true)));
+				$smarty->assign('url_previous', edkURI::build($args, array('view', 'pilot_kills', true), array('y', $this->pyear, true), array('m', $this->pmonth, true)));
+				$smarty->assign('url_next', edkURI::build($args, array('view', 'pilot_kills', true), array('y', $this->nyear, true), array('m', $this->nmonth, true)));
 
 				$list = new TopList_Kills();
 				$list->addInvolvedAlliance($this->alliance);
@@ -589,8 +592,8 @@ class pAllianceDetail extends pageAssembly
 				$smarty->assign('nmonth', $this->nmonth);
 				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('all_id', $this->all_id);
-				$smarty->assign('url_previous', edkURI::build(array('y', '$this->pyear', true), array('m', '$this->pmonth', true), array('view', 'pilot_scores', true)));
-				$smarty->assign('url_next', edkURI::build(array('y', '$this->nyear', true), array('m', '$this->nmonth', true), array('view', 'pilot_scores', true)));
+				$smarty->assign('url_previous', edkURI::build($args, array('view', 'pilot_scores', true), array('y', $this->pyear, true), array('m', $this->pmonth, true)));
+				$smarty->assign('url_next', edkURI::build($args, array('view', 'pilot_scores', true), array('y', $this->nyear, true), array('m', $this->nmonth, true)));
 
 				$list = new TopList_Score();
 				$list->addInvolvedAlliance($this->alliance);
@@ -616,8 +619,8 @@ class pAllianceDetail extends pageAssembly
 				$smarty->assign('nmonth', $this->nmonth);
 				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('all_id', $this->all_id);
-				$smarty->assign('url_previous', edkURI::build(array('y', '$this->pyear', true), array('m', '$this->pmonth', true), array('view', 'pilot_losses', true)));
-				$smarty->assign('url_next', edkURI::build(array('y', '$this->nyear', true), array('m', '$this->nmonth', true), array('view', 'pilot_losses', true)));
+				$smarty->assign('url_previous', edkURI::build($args, array('view', 'pilot_losses', true), array('y', $this->pyear, true), array('m', $this->pmonth, true)));
+				$smarty->assign('url_next', edkURI::build($args, array('view', 'pilot_losses', true), array('y', $this->nyear, true), array('m', $this->nmonth, true)));
 
 				$list = new TopList_Losses();
 				$list->addVictimAlliance($this->alliance);
@@ -660,8 +663,8 @@ class pAllianceDetail extends pageAssembly
 				$smarty->assign('nmonth', $this->nmonth);
 				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('all_id', $this->all_id);
-				$smarty->assign('url_previous', edkURI::build(array('y', '$this->pyear', true), array('m', '$this->pmonth', true), array('view', 'violent_systems', true)));
-				$smarty->assign('url_next', edkURI::build(array('y', '$this->nyear', true), array('m', '$this->nmonth', true), array('view', 'violent_systems', true)));
+				$smarty->assign('url_previous', edkURI::build($args, array('view', 'violent_systems', true), array('y', $this->pyear, true), array('m', $this->pmonth, true)));
+				$smarty->assign('url_next', edkURI::build($args, array('view', 'violent_systems', true), array('y', $this->nyear, true), array('m', $this->nmonth, true)));
 
 				$startdate = gmdate('Y-m-d H:i', makeStartDate(0, $this->year, $this->month));
 				$enddate = gmdate('Y-m-d H:i', makeEndDate(0, $this->year, $this->month));
