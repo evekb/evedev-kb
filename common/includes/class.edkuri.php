@@ -231,8 +231,7 @@ class edkURI {
 				$url .= '?';
 			}
 		}
-		$url .= join('&', $qryarr);
-		$url = htmlentities($url);
+		$url .= join('&amp;', $qryarr);
 		return $url;
 	}
 
