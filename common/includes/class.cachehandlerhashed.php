@@ -65,7 +65,7 @@ class CacheHandlerHashed extends CacheHandler
 	{
 		$path = self::getPathHashed($key, $location, false);
 
-		return file_exists(self::$internalroot.'/'.$path);
+		return is_file(self::$internalroot.'/'.$path);
 	}
 	/**
 	 * Get the externally accessible address of the cached file.
