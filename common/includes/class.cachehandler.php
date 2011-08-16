@@ -36,9 +36,8 @@ class CacheHandler
 	 */
 	public static function put($filename, $data, $location = null)
 	{
-		$path = self::getPath($filename, $location, true);
-
-		return file_put_contents(self::$internalroot."/".$path, $data);
+		return file_put_contents(self::$internalroot."/"
+				.self::getPath($filename, $location, true), $data);
 	}
 
 	/**
@@ -51,9 +50,8 @@ class CacheHandler
 	 */
 	public static function get($filename, $location = null)
 	{
-		$path = self::getPath($filename, $location, false);
-
-		return @file_get_contents(self::$internalroot."/".$path);
+		return @file_get_contents(self::$internalroot."/"
+				.self::getPath($filename, $location, false));
 	}
 
 	/**
@@ -155,12 +153,11 @@ class CacheHandler
 		foreach ($files as $num => $fname) {
 			if (substr($fname, 0, 1) != ".") {
 				if (is_dir(self::$internalroot.'/'.$dir.$fname)) {
-					$del += self::removeByAge($dir.$fname."/", $hours, $removeDir);
-				} else if ((time() - filemtime(
-								self::$internalroot.'/'.$dir.$fname)) > $seconds) {
-					if (unlink(self::$internalroot.'/'.$dir.$fname)) {
-						$del = $del + 1;
-					}
+					$del += self::removeByAge(
+							$dir.$fname."/", $hours, $removeDir);
+				} else if ((time() - filemtime(self::$internalroot.'/'
+						.$dir.$fname)) > $seconds) {
+					$del += (int)@unlink(self::$internalroot.'/'.$dir.$fname);
 				}
 			}
 		}
@@ -365,9 +362,8 @@ class CacheHandler
 	 */
 	public static function exists($filename, $location = null)
 	{
-		$path = self::getPath($filename, $location, false);
-
-		return file_exists(self::$internalroot.'/'.$path);
+		return file_exists(self::$internalroot.'/'
+				.self::getPath($filename, $location, false));
 	}
 
 	/**
@@ -379,11 +375,9 @@ class CacheHandler
 	 */
 	public static function age($filename, $location = null)
 	{
-		if (!file_exists(self::getPath($filename, $location, false))) {
-			return false;
-		}
+		$mtime = @filemtime(self::getPath($filename, $location, false));
 
-		return time() - filemtime(self::getPath($filename, $location, false));
+		return $mtime ? time() - $mtime : false;
 	}
 
 	/**
@@ -439,9 +433,10 @@ class CacheHandler
 				|| !is_dir($dir)
 				|| !is_writeable($dir)) {
 			return false;
+		} else {
+			self::$internalroot = $dir;
+			return true;
 		}
-
-		self::$internalroot = $dir;
 	}
 
 }
