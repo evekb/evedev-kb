@@ -573,11 +573,22 @@ class Kill extends Cacheable
 
 			$weapon = $inv->getWeapon();
 			$ship = $inv->getShip();
-			if (!$pilot->getName()
-					|| !$corp->getName()
-					|| !$alliance->getName()
-					|| !$weapon->getName()
-					|| !$ship->getName()) {
+
+			// Split these into multiple ifs so the error tells us where the
+			// problem was.
+			if (!$pilot->getName()) {
+				trigger_error("Invalid mail", E_USER_ERROR);
+				return "";
+			} else if (!$corp->getName()) {
+				trigger_error("Invalid mail", E_USER_ERROR);
+				return "";
+			} else if (!$alliance->getName()) {
+				trigger_error("Invalid mail", E_USER_ERROR);
+				return "";
+			} else if (!$weapon->getName()) {
+				trigger_error("Invalid mail", E_USER_ERROR);
+				return "";
+			} else if (!$ship->getName()) {
 				trigger_error("Invalid mail", E_USER_ERROR);
 				return "";
 			}
@@ -1268,7 +1279,7 @@ class Kill extends Cacheable
 				if(strpos($item->getName(), "Blueprint") === FALSE) $value += $itd->getValue() * $itd->getQuantity();
 			}
 		}
-		$value += $this->victimship->getPrice();
+		$value += $this->getVictimShip()->getPrice();
 		if($update) {
 			$qry = DBFactory::getDBQuery();
 			$qry->execute("UPDATE kb3_kills SET kll_isk_loss = '$value' WHERE
