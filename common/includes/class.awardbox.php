@@ -73,7 +73,7 @@ class AwardBox
 			$bar = new BarGraph($rows[$i - 1]['cnt'], $max, 60);
 			$top[$i] = array(
 				'url' => edkURI::build(array('a', 'pilot_detail', true),
-						array('plt_id', $rows[0]['plt_id'], true)),
+						array('plt_id', $rows[$i-1]['plt_id'], true)),
 				'name' => $pilotname,
 				'bar' => $bar->generate(),
 				'cnt' => $rows[$i - 1]['cnt']);
