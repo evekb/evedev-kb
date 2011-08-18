@@ -47,6 +47,7 @@ class edkURI {
 		}
 		$args = array();
 		$pagefound = false;
+		$pathinfo = null;
 
 		if(isset($_SERVER['PATH_INFO'])) {
 			$pathinfo = trim($_SERVER['PATH_INFO'], '/');

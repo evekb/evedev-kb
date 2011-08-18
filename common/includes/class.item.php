@@ -73,7 +73,7 @@ class Item extends Cacheable
 		if (!$full) return $img;
 		if ($size == 24)
 		{
-			$show_style .= '_'.config::get('fp_ammostyle');
+			$show_style = '_'.config::get('fp_ammostyle');
 			$t_s = config::get('fp_ttag');
 			$f_s = config::get('fp_ftag');
 			$d_s = 0;
@@ -81,7 +81,7 @@ class Item extends Cacheable
 		}
 		elseif ($size == 48 || $size = 32)
 		{
-			$show_style .= '_'.config::get('fp_highstyle');
+			$show_style = '_'.config::get('fp_highstyle');
 			$t_s = config::get('fp_ttag');
 			$f_s = config::get('fp_ftag');
 			$d_s = config::get('fp_dtag');

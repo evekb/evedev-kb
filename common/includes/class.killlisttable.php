@@ -14,20 +14,18 @@ class KillListTable
 	/** @var KillList */
 	private $kill_list_;
 	/** @var integer */
-	private $limit;
-	/** @var integer */
-	private $offset;
+	private $limit_;
 	/** @var boolean */
 	private $daybreak_;
+	/** @var boolean */
+	private $combined_;
 
 	/**
 	 * @param KillList $kill_list
 	 */
 	function KillListTable($kill_list)
 	{
-		$this->limit = 0;
-		$this->offset = 0;
-
+		$this->limit_ = 0;
 		$this->kill_list_ = $kill_list;
 		$this->daybreak_ = true;
 	}
@@ -64,6 +62,7 @@ class KillListTable
 		$c = 0;
 		$kdpage = array('a', 'kill_detail', true);
 		$krpage = array('a', 'kill_related', true);
+		$kills = array();
 		while ($kill  = $this->kill_list_->getKill())
 		{
 			if ($this->limit_ && $c >= $this->limit_)
@@ -111,6 +110,7 @@ class KillListTable
 			$kll['victimshipid'] = $kill->getVictimShipExternalID();
 			$kll['fbid'] = $kill->getFBPilotID();
 			$kll['fbcorpid'] = $kill->getFBCorpID();
+			$kll['inv'] = 0;
 			if (config::get('killlist_involved')) {
 				$kll['inv'] = $kill->getInvolvedPartyCount();
 			}
@@ -143,6 +143,9 @@ class KillListTable
 			{
 				$kll['commentcount'] = $kill->countComment();
 			}
+
+			$kll['loss'] = false;
+			$kll['kill'] = false;
 			if ($this->combined_)
 			{
 				if(config::get('cfg_allianceid')
@@ -157,8 +160,6 @@ class KillListTable
 						&& in_array($kill->getVictimID(),
 								config::get('cfg_pilotid'))) {
 					$kll['loss'] = true;
-				} else {
-					$kll['loss'] = false;
 				}
 				$kll['kill'] = !$kll['loss'];
 			}

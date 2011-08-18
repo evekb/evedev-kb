@@ -7,11 +7,11 @@
 	<meta name="keywords" content="EDK, killboard, {$config->get('cfg_kbtitle')}, {if $kb_owner}{$kb_owner}, {/if}Eve-Online, killmail" />
 	<title>{$kb_title}</title>
 	<link rel="stylesheet" type="text/css" href="{$kb_host}/themes/default/default.css" />
-	{if $style}<link rel="stylesheet" type="text/css" href="{$theme_url}/{$style}.css" />{/if}
+	{if isset($style)}<link rel="stylesheet" type="text/css" href="{$theme_url}/{$style}.css" />{/if}
 {$page_headerlines}
 	<script type="text/javascript" src="{$kb_host}/themes/generic.js"></script>
 </head>
-<body {$on_load} style="height: 100%">
+<body {if isset($on_load)}{$on_load}{/if} style="height: 100%">
 {$page_bodylines}
 	<div id="popup"></div>
 	<div id="stuff1"></div>
@@ -41,7 +41,7 @@
 				</tr>
 			</table>
 		</div>
-{if $message}
+{if isset($message)}
 		<div id="boardmessage">{$message}</div>
 {/if}
 		<div id="page-title">{$page_title}</div>

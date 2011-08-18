@@ -22,8 +22,7 @@ class TopList_Kills extends TopList_Base
 
 		$this->setSQLTop($sql);
 
-		$this->setSQLBottom($sqlB." group by ind.ind_plt_id order by 1 desc
-                            limit ".$this->limit);
+		$this->setSQLBottom(" group by ind.ind_plt_id order by 1 desc limit ".$this->limit);
 		if (count($this->inc_vic_scl))
 		{
 			$this->setPodsNoobShips(true);

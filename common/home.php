@@ -158,7 +158,7 @@ class pHome extends pageAssembly
 			$table = new KillListTable($klist);
 			if($this->showcombined) $table->setCombined(true);
 			$table->setLimit($this->killcount);
-			$html .= $table->generate();
+			$html = $table->generate();
 		} else {
 			$this->loadTime($klist);
 			//$klist->setWeek($this->week);
@@ -168,7 +168,7 @@ class pHome extends pageAssembly
 			$table = new KillListTable($klist);
 			if($this->showcombined) $table->setCombined(true);
 			$pagesplit = $pagesplitter->generate();
-			$html .= $pagesplit.$table->generate().$pagesplit;
+			$html = $pagesplit.$table->generate().$pagesplit;
 		}
 		return $html;
 	}
@@ -253,7 +253,7 @@ class pHome extends pageAssembly
 	 */
 	function clock()
 	{
-	// Show the Eve time.
+		// Show the Eve time.
 		if(config::get('show_clock'))
 		{
 			$clock = new Clock();
@@ -267,7 +267,7 @@ class pHome extends pageAssembly
 	 */
 	function topLists()
 	{
-	// Display the top pilot lists.
+		// Display the top pilot lists.
 		if($this->view != 'losses')
 		{
 			$tklist = new TopList_Kills();
@@ -276,7 +276,7 @@ class pHome extends pageAssembly
 
 			$tklist->generate();
 			$tkbox = new AwardBox($tklist, "Top killers", "kills in " . $this->getCurrentPeriod(), "kills", "eagle");
-			$html .= $tkbox->generate();
+			$html = $tkbox->generate();
 		}
 		if($this->view == 'losses')
 		{
@@ -286,7 +286,7 @@ class pHome extends pageAssembly
 
 			$tllist->generate();
 			$tlbox = new AwardBox($tllist, "Top losers", "losses in " . $this->getCurrentPeriod(), "losses", "moon");
-			$html .= $tlbox->generate();
+			$html = $tlbox->generate();
 		}
 		if ($this->view != 'losses')
 		{
@@ -298,7 +298,7 @@ class pHome extends pageAssembly
 
 			$tklist->generate();
 			$tkbox = new AwardBox($tklist, "Top scorers", "points in " . $this->getCurrentPeriod(), "points", "redcross");
-			$html .= $tkbox->generate();
+			$html = $tkbox->generate();
 		}
 		return $html;
 	}

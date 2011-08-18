@@ -59,6 +59,7 @@ class pKillDetail extends pageAssembly
 	function start()
 	{
 		$this->kll_id = (int)edkURI::getArg('kll_id');
+		$this->kll_external_id = 0;
 		if (!$this->kll_id) {
 			$this->kll_external_id = (int)edkURI::getArg('kll_ext_id');
 			if (!$this->kll_external_id) {
@@ -380,9 +381,25 @@ class pKillDetail extends pageAssembly
 			$alliance = Cacheable::factory('Alliance', $inv->getAllianceID());
 			$ship = Cacheable::factory('Ship', $inv->getShipID());
 
-			$this->InvAllies[$alliance->getName()]["quantity"]+=1;
-			$this->InvAllies[$alliance->getName()]["corps"][$corp->getName()]+=1;
-			$this->InvShips[$ship->getName()] += 1;
+			$alliance_name = $alliance->getName();
+			if(!isset($this->InvAllies[$alliance_name])) {
+				$this->InvAllies[$alliance_name] = Array( 'quantity' => 1, 'corps' => Array());
+			} else {
+				$this->InvAllies[$alliance_name]["quantity"] += 1;
+			}
+			$corp_name = $corp->getName();
+			if(!isset($this->InvAllies[$alliance_name]["corps"][$corp_name])) {
+				$this->InvAllies[$alliance_name]["corps"][$corp_name] = 1;
+			} else {
+				$this->InvAllies[$alliance_name]["corps"][$corp_name] += 1;
+			}
+			
+			$ship_name = $ship->getName();
+			if(!isset($this->InvShips[$ship_name])){
+				$this->InvShips[$ship_name] = 1;
+			} else {
+				$this->InvShips[$ship_name] += 1;
+			}
 			if(config::get('cfg_allianceid')
 					&& in_array($alliance->getID(),
 					config::get('cfg_allianceid'))) {
