@@ -50,7 +50,12 @@ class KillList
 	private $vic_all_ = array();
 	private $minkllid_ = 0;
 	private $maxkllid_ = 0;
+	private $minextkllid_ = 0;
+	private $maxextkllid_ = 0;
 	private $killpoints_ = 0;
+	private $involved_ = 0;
+	private $orderby_ = '';
+	private $limit_ = 0;
 	private $expr = array();
 
 	function KillList()
