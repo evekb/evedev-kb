@@ -533,6 +533,24 @@ class Kill extends Cacheable
 			$this->victimalliancename = $all->getName();
 		}
 
+		if (!$this->getVictimName()) {
+			trigger_error("Invalid mail", E_USER_ERROR);
+			return "";
+		} else if (!$this->getVictimCorpName()) {
+			trigger_error("Invalid mail", E_USER_ERROR);
+			return "";
+		} else if (!$this->getVictimAllianceName()
+				&& !$this->getVictimFactionName()) {
+			trigger_error("Invalid mail", E_USER_ERROR);
+			return "";
+		} else if (!$ship->getName()) {
+			trigger_error("Invalid mail", E_USER_ERROR);
+			return "";
+		} else if (!$this->getSystem()->getName()) {
+			trigger_error("Invalid mail", E_USER_ERROR);
+			return "";
+		}
+
 		$mail .= substr(str_replace('-', '.' , $this->getTimeStamp()), 0, 16)."\r\n\r\n";
 		// Starbase (so this is a POS mail)
 		if ( in_array($shipclass->getID(), array(35, 36, 37, 38)) ) {
@@ -883,9 +901,9 @@ class Kill extends Cacheable
 					$item->row_['itd_itl_id']);
 				$this->droppeditems_[] = $dropped;
 			}
+			$this->executed = true;
+			$this->putCache();
 		}
-		$this->executed = true;
-		$this->putCache();
 	}
 
 	/**
