@@ -234,7 +234,7 @@ class pKillRelated extends pageAssembly
 			$this->llist->addVictimShipClass($this->scl_id);
 		}
 
-		$this->destroyed = $pods = array();
+		$this->destroyed = $this->pods = array();
 		$this->pilots = array('a' => array(), 'e' => array());
 		$this->kslist->rewind();
 		$classified = false;
@@ -477,9 +477,7 @@ class pKillRelated extends pageAssembly
 
 	private function podded($pilot)
 	{
-		global $pods;
-
-		if ($result = array_search((string)$pilot, $pods))
+		if ($result = array_search((string)$pilot, $this->pods))
 		{
 			global $smarty;
 
@@ -559,12 +557,15 @@ class pKillRelated extends pageAssembly
 		}
 	}
 
+	/**
+	 * @param Kill $kill
+	 * @param string $side a,e for ally, enemy
+	 */
 	private function handle_destroyed($kill, $side)
 	{
 		$this->destroyed[$kill->getID()] = $kill->getVictimID();
 
-		$ship = new Ship();
-		$ship->lookup($kill->getVictimShipName());
+		$ship = $kill->getVictimShip();
 		$shipc = $ship->getClass();
 
 		$ts = strtotime($kill->getTimeStamp());
@@ -574,8 +575,7 @@ class pKillRelated extends pageAssembly
 		{
 			// increase the timestamp of a podkill by 1 so its after the shipkill
 			$ts++;
-			global $pods;
-			$pods[$kill->getID()] = $kill->getVictimID();
+			$this->pods[$kill->getID()] = $kill->getVictimID();
 
 			// return when we've added him already
 			if (isset($this->pilots[$side][$kill->getVictimId()]))
