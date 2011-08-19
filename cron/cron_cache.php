@@ -63,7 +63,7 @@ $Sovtemp = $mySovAPI->fetchXML();
 $out .= "Caching Sovereignty XML - cached until:" . API_Helpers::ConvertTimestamp($mySovAPI->getCachedUntil()) . "\n";
 
 // Alliance
-$myAlliAPI = new AllianceAPI();
+$myAlliAPI = new API_Alliance();
 $Allitemp .= $myAlliAPI->initXML();
 $out .= "Caching Alliance XML - cached until:" . API_Helpers::ConvertTimestamp($myAlliAPI->getCachedUntil()) . "\n";
 
