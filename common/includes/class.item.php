@@ -185,7 +185,7 @@ class Item extends Cacheable
 				return;
 			}
 
-			if (!isset($this->qry)) $this->qry = DBFactory::getDBQuery();
+			$qry = DBFactory::getDBQuery();
 
 			$sql = "select inv.*, kb3_item_types.*, dga.value as techlevel, itp.price, dc.value as usedcharge, dl.value as usedlauncher
 							   from kb3_invtypes inv
@@ -195,15 +195,16 @@ class Item extends Cacheable
 							   left join kb3_dgmtypeattributes dc on dc.typeID = inv.typeID AND dc.attributeID IN (128)
 							   left join kb3_dgmtypeattributes dl on dl.typeID = inv.typeID AND dl.attributeID IN (137,602)
 							   where inv.typeID = '".$this->id."'";
-			$this->qry->execute($sql);
-			$this->row_ = $this->qry->getRow();
-			$this->row_['itm_icon'] = $this->row_['icon'];
-			$this->row_['itm_techlevel'] = $this->row_['techlevel'];
-			$this->row_['itm_externalid'] = $this->row_['typeID'];
-			$this->row_['itm_value'] = $this->row_['price'];
-			$this->executed = true;
-			
-			$this->putCache();
+			if ($qry->execute($sql)) {
+				$this->row_ = $qry->getRow();
+				$this->row_['itm_icon'] = $this->row_['icon'];
+				$this->row_['itm_techlevel'] = $this->row_['techlevel'];
+				$this->row_['itm_externalid'] = $this->row_['typeID'];
+				$this->row_['itm_value'] = $this->row_['price'];
+				$this->executed = true;
+
+				$this->putCache();
+			}
 		}
 	}
 
