@@ -111,16 +111,16 @@ function doAjaxSearch($searchphrase='', $type='pilot', $limit = 10)
 				switch($type)
 				{
 					case "pilot":
-						$result .= edkURI::page('pilot_detail', $id)."'>";
+						$result .= edkURI::page('pilot_detail', $id, 'plt_id')."'>";
 						break;
 					case "corp":
-						$result .= edkURI::page('corp_detail', $id)."'>";
+						$result .= edkURI::page('corp_detail', $id, 'crp_id')."'>";
 						break;
 					case "alliance":
-						$result .= edkURI::page('alliance_detail', $id)."'>";
+						$result .= edkURI::page('alliance_detail', $id, 'all_id')."'>";
 						break;
 					case "system":
-						$result .= edkURI::page('system_detail', $id)."'>";
+						$result .= edkURI::page('system_detail', $id, 'sys_id')."'>";
 						break;
 					case "item":
 						$result .= edkURI::page('invtype', $id)."'>";
