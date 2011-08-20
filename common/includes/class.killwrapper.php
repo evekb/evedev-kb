@@ -29,7 +29,6 @@ class KillWrapper extends Kill
 	public $involvedparties_ = array();
 	public $destroyeditems_ = array();
 	public $droppeditems_ = array();
-	public $VictimDamageTaken = 0;
 	private $fullinvolved = false;
 	private $timestamp = null;
 	private $dmgtaken = null;
@@ -388,7 +387,7 @@ class KillWrapper extends Kill
 	 */
 	function getVictimShip()
 	{
-		return $this->victimship;
+		return Cacheable::factory('Ship', $this->victimshipid);
 	}
 
 	/**
@@ -644,7 +643,10 @@ class KillWrapper extends Kill
 	 */
 	function calculateKillPoints()
 	{
-		if (!$this->involvedparties_) $this->execQuery();
+		if (!$this->involvedparties_) {
+			trigger_error("KillWrapper is not initialised", E_USER_ERROR);
+			die;
+		}
 
 		$ship = $this->getVictimShip();
 		$shipclass = $ship->getClass();
