@@ -1,0 +1,36 @@
+# Killboard config
+kbconfig.php
+
+# installation lock file
+install/install.lock
+
+# cache files
+cache/templates_c/
+!cache/templates_c/.htaccess
+cache/store/
+!cache/store/.htaccess
+cache/page/
+!cache/page/.htaccess
+cache/mails/
+!cache/mails/.htaccess
+cache/api/
+!cache/api/.htaccess
+cache/SQL/
+!cache/SQL/.htaccess
+cache/error.log
+cache/evecentral/
+cache/img
+cache/update
+
+# IDE/Editor temporary files
+*~
+*.swp
+*.bak
+.buildpath
+.cache
+.project
+.settings
+
+# IIS7 
+web.config
+
