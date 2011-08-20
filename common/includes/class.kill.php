@@ -423,6 +423,11 @@ class Kill extends Cacheable
 		if(!isset($this->victimshipid)) {
 			$this->execQuery();
 		}
+		//TODO: Find out how this can happen and stop it.
+		if(!isset($this->victimshipid)) {
+			trigger_error("No victim ship id set", E_USER_ERROR);
+			return "";
+		}
 		$this->victimship = Cacheable::factory('Ship', $this->victimshipid);
 		return $this->victimship;
 	}
@@ -803,27 +808,17 @@ class Kill extends Cacheable
 			}
 			$qry = DBFactory::getDBQuery();
 
-			$sql = "select kll.kll_id, kll.kll_timestamp,
-                          ali.all_id, kll.kll_ship_id,
-                          kll.kll_system_id, kll.kll_ship_id, kll.kll_external_id,
-                          kll.kll_victim_id, plt.plt_externalid, kll.kll_isk_loss,
-                          kll.kll_crp_id, kll.kll_points, kll.kll_isk_loss,
-                          fbplt.plt_id as fbplt_id,
-                          fbcrp.crp_id as fbcrp_id,
-                          fbali.all_id as fbali_id,
-                          kll_dmgtaken
-                     from kb3_kills kll, kb3_pilots plt, kb3_corps crp,
-                          kb3_alliances ali, kb3_alliances fbali, kb3_corps fbcrp,
-                          kb3_pilots fbplt, kb3_inv_detail fb
-                    where kll.kll_id = '".$this->id."'
-                      and plt.plt_id = kll.kll_victim_id
-                      and crp.crp_id = kll.kll_crp_id
-                      and ali.all_id = kll.kll_all_id
-					  and fb.ind_kll_id = kll.kll_id
-					  and fb.ind_plt_id = kll.kll_fb_plt_id
-                      and fbali.all_id = fb.ind_all_id
-                      and fbcrp.crp_id = fb.ind_crp_id
-                      and fbplt.plt_id = kll.kll_fb_plt_id";
+			$sql = "select kll.kll_id, kll.kll_external_id, kll.kll_timestamp,
+						kll.kll_victim_id, kll.kll_crp_id, kll.kll_all_id,
+						kll.kll_ship_id, kll.kll_system_id,
+						kll.kll_points, kll.kll_isk_loss, kll_dmgtaken,
+						fb.ind_plt_id as fbplt_id,
+						fb.ind_crp_id as fbcrp_id,
+						fb.ind_all_id as fbali_id
+					from kb3_kills kll, kb3_inv_detail fb
+					where kll.kll_id = '".$this->id."'
+						and fb.ind_kll_id = kll.kll_id
+						and fb.ind_plt_id = kll.kll_fb_plt_id";
 
 			$qry->execute($sql);
 			$row = $qry->getRow();
@@ -835,52 +830,35 @@ class Kill extends Cacheable
 			}
 
 			$this->timestamp = $row['kll_timestamp'];
-			$this->solarsystemid = $row['kll_system_id'];
-			$this->victimid = $row['kll_victim_id'];
-			$this->victimcorpid = $row['kll_crp_id'];
-			$this->victimallianceid = $row['all_id'];
-			$this->victimshipid = $row['kll_ship_id'];
-			$this->fbpilotid = $row['fbplt_id'];
-			$this->fbcorpid = $row['fbcrp_id'];
-			$this->fballianceid = $row['fbali_id'];
-			$this->externalid = $row['kll_external_id'];
-			$this->iskloss = $row['kll_isk_loss'];
-			$this->fbplt_ext = $row['fbplt_externalid'];
-			$this->dmgtaken = $row['kll_dmgtaken'];
-			$this->killpoints = $row['kll_points'];
-
-			$this->setVictimName($row['plt_name']);
-			$this->setVictimCorpName($row['crp_name']);
-			$this->setVictimAllianceName($row['all_name']);
-			$this->setFBPilot(new Pilot($row['fbplt_id'], $row['fbplt_externalid'], $row['fbplt_name'], $row['fbcrp_id']));
-			$this->setFBPilotName($row['fbplt_name']);
-			$this->setFBCorpName($row['fbcrp_name']);
-			$this->setFBAllianceName($row['fbali_name']);
+			$this->solarsystemid = (int)$row['kll_system_id'];
+			$this->victimid = (int)$row['kll_victim_id'];
+			$this->victimcorpid = (int)$row['kll_crp_id'];
+			$this->victimallianceid = (int)$row['kll_all_id'];
+			$this->victimshipid = (int)$row['kll_ship_id'];
+			$this->fbpilotid = (int)$row['fbplt_id'];
+			$this->fbcorpid = (int)$row['fbcrp_id'];
+			$this->fballianceid = (int)$row['fbali_id'];
+			$this->externalid = (int)$row['kll_external_id'];
+			$this->iskloss = (float)$row['kll_isk_loss'];
+			$this->dmgtaken = (int)$row['kll_dmgtaken'];
+			$this->killpoints = (int)$row['kll_points'];
 
 			$sql = "select ind_plt_id, ind_crp_id, ind_all_id, ind_sec_status,
-				ind_shp_id, ind_wep_id, ind_dmgdone,
-				shp_id, shp_class,
-				plt_name, plt_externalid, crp_name, crp_external_id
+				ind_shp_id, ind_wep_id, ind_dmgdone
 				from kb3_inv_detail
-				join kb3_pilots on ind_plt_id = plt_id
-				join kb3_corps on ind_crp_id = crp_id
-				join kb3_alliances on ind_all_id = all_id
-				join kb3_ships on ind_shp_id = shp_id
-				join kb3_ship_classes on shp_class = scl_id
-				join kb3_invtypes on ind_wep_id = typeID
 				where ind_kll_id = ".$this->getID()."
 				order by ind_order";
 
 			$qry->execute($sql) or die($qry->getErrorMsg());
 			while ($row = $qry->getRow())
 			{
-				$involved = new InvolvedParty($row['ind_plt_id'],
-					$row['ind_crp_id'],
-					$row['ind_all_id'],
-					$row['ind_sec_status'],
-					$row['shp_id'],
-					$row['ind_wep_id'],
-					$row['ind_dmgdone']);
+				$involved = new InvolvedParty((int)$row['ind_plt_id'],
+					(int)$row['ind_crp_id'],
+					(int)$row['ind_all_id'],
+					(float)$row['ind_sec_status'],
+					(int)$row['ind_shp_id'],
+					(int)$row['ind_wep_id'],
+					(int)$row['ind_dmgdone']);
 				$this->involvedparties_[] = $involved;
 			}
 			$destroyedlist = new ItemList(null, true);
@@ -1597,7 +1575,7 @@ class Kill extends Cacheable
 		$qry->autocommit(true);
 
 		$this->valid = false;
-		if ($this->isCached()) $this->putCache();
+		Cacheable::delCache($this);
 	}
 
 	function addInvolvedParty($involved)
