@@ -101,14 +101,17 @@ class cache
 		// If the cache doesn't exist then we don't need to check times.
 		if (cache::shouldCache($page) && $cachehandler->exists(cache::genCacheName()))
 		{
-			$times = explode(',', config::get('cache_times'));
-			foreach ($times as $string)
-			{
-				$array = explode(':', $string);
-				$cachetimes[$array[0]] = $array[1];
+			$cachetimes = config::get('cache_times');
+			if ( $cachetimes != '' ) {
+				$times = explode(',', config::get('cache_times'));
+				foreach ($times as $string)
+				{
+					$array = explode(':', $string);
+					$cachetimes[$array[0]] = $array[1];
+				}
 			}
 
-			if ($cachetimes[$page])
+			if (isset ($cachetimes[$page]))
 			{
 				$cachetime = $cachetimes[$page];
 			}
@@ -156,8 +159,8 @@ class cache
 
 				// There was a reason for having both checks. etag not always
 				// checked maybe?
-				if (strpos($_SERVER['HTTP_IF_NONE_MATCH'], $etag) !== false ||
-						@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $timestamp)
+				if ((isset( $_SERVER['HTTP_IF_NONE_MATCH'] ) && strpos($_SERVER['HTTP_IF_NONE_MATCH'], $etag) !== false) ||
+						(isset( $_SERVER['HTTP_IF_MODIFIED_SINCE']) && @strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $timestamp))
 				{
 					header($_SERVER["SERVER_PROTOCOL"]." 304 Not Modified");
 					exit;

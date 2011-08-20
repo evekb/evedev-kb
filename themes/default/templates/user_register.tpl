@@ -1,5 +1,5 @@
 <form method="post" action="{$kb_host}/?a=register">
-{if $error}
+{if isset($error)}
 <div class="block-header2">Error</div>
 {$error}<br/><br/>
 {/if}

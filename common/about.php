@@ -85,7 +85,6 @@ class pAbout extends pageAssembly
 		$alliances = $row['cnt'];
 
 		$smarty->assign('kills', $kills);
-		$smarty->assign('items', $items);
 		$smarty->assign('pilots', $pilots);
 		$smarty->assign('corps', $corps);
 		$smarty->assign('alliances', $alliances);

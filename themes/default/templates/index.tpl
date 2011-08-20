@@ -26,7 +26,7 @@
 				<param name="movie" value="myFlashMovie.swf" />
 			</object>
 {else}
-		<a href="{if $banner_link}{$banner_link}{else}?a=home{/if}">
+		<a href="{if isset($banner_link)}{$banner_link}{else}?a=home{/if}">
 			<img src="{$kb_host}/banner/{$banner}" style="border:0" alt="Banner" {if $banner_x && $banner_y}width = "{$banner_x}" height="{$banner_y}"{/if} />
 		</a>
 {/if}

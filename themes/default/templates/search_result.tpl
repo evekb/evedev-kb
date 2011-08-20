@@ -1,5 +1,5 @@
 {if $nonajax}<div class='block-header'>Search results</div><div id='searchresults'>{/if}
-{if !$results}No results.
+{if !isset($results)}No results.
 {else}<table class='kb-table' width='450' cellspacing='1'>
 	<tr class='kb-table-header'>
 		<td>{$result_header}</td>

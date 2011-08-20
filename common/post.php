@@ -21,12 +21,12 @@ else if (isset($_POST['killmail']))
 {
 	$html = post();
 }
-if($html) $smarty->assign('error', $html);
+if(isset($html)) $smarty->assign('error', $html);
 $smarty->assign('isadmin', $page->isAdmin());
 $smarty->assign('post_forbid', config::get('post_forbid'));
 $smarty->assign('post_oog_forbid', config::get('post_oog_forbid'));
 
-$page->setContent($smarty->fetch(get_tpl(post)));
+$page->setContent($smarty->fetch(get_tpl('post')));
 $page->generate();
 
 function post()

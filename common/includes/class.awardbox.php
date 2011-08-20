@@ -44,7 +44,7 @@ class AwardBox
 			}
 		}
 
-		if (!$rows[0]['plt_id']) {
+		if (empty($rows)) {
 			return;
 		}
 
