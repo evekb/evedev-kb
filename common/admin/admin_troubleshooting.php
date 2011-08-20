@@ -94,16 +94,16 @@ else
 	$trouble['Connectivity'][] = array('passed'=>false, 'text'=> $html);
 }
 
-if(array_search('https', stream_get_wrappers()))
-{
-	$html =  '  HTTPS wrapper is installed.';
-	$trouble['Connectivity'][] = array('passed'=>true, 'text'=> $html);
-}
-else
-{
-	$html =  '  HTTPS wrapper is not installed<br />';
-	$trouble['Connectivity'][] = array('passed'=>false, 'text'=> $html);
-}
+//if(array_search('https', stream_get_wrappers()))
+//{
+//	$html =  '  HTTPS wrapper is installed.';
+//	$trouble['Connectivity'][] = array('passed'=>true, 'text'=> $html);
+//}
+//else
+//{
+//	$html =  '  HTTPS wrapper is not installed<br />';
+//	$trouble['Connectivity'][] = array('passed'=>false, 'text'=> $html);
+//}
 
 //yes this is a mess, pew pew and programming dont mix =P
 function find_SQL_Version()
