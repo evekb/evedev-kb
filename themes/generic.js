@@ -70,42 +70,42 @@ else { dd.style.display = "none"; }
 }
 //-->
 
-/*
- 
-Correctly handle PNG transparency in Win IE 5.5 & 6.
-http://homepage.ntlworld.com/bobosola. Updated 18-Jan-2006.
-
-Use in <HEAD> with DEFER keyword wrapped in conditional comments:
-<!--[if lt IE 7]>
-<script defer type="text/javascript" src="pngfix.js"></script>
-<![endif]-->
-
-*/
-
-var arVersion = navigator.appVersion.split("MSIE")
-var version = parseFloat(arVersion[1])
-
-if ((version >= 5.5 ) && (version < 7) && (document.body.filters))
+function updateClock ( )
 {
-   for(var i=0; i<document.images.length; i++)
-   {
-      var img = document.images[i]
-      var imgName = img.src.toUpperCase()
-      if (imgName.substring(imgName.length-3, imgName.length) == "PNG")
-      {
-         var imgID = (img.id) ? "id='" + img.id + "' " : ""
-         var imgClass = (img.className) ? "class='" + img.className + "' " : ""
-         var imgTitle = (img.title) ? "title='" + img.title + "' " : "title='" + img.alt + "' "
-         var imgStyle = "display:inline-block;" + img.style.cssText 
-         if (img.align == "left") imgStyle = "float:left;" + imgStyle
-         if (img.align == "right") imgStyle = "float:right;" + imgStyle
-         if (img.parentElement.href) imgStyle = "cursor:hand;" + imgStyle
-         var strNewHTML = "<span " + imgID + imgClass + imgTitle
-         + " style=\"" + "width:" + img.width + "px; height:" + img.height + "px;" + imgStyle + ";"
-         + "filter:progid:DXImageTransform.Microsoft.AlphaImageLoader"
-         + "(src=\'" + img.src + "\', sizingMethod='scale');\"></span>" 
-         img.outerHTML = strNewHTML
-         i = i-1
-      }
-   }
+  var currentTime = new Date ( );
+  var currentHours = currentTime.getUTCHours ( );
+  var currentMinutes = currentTime.getMinutes ( );
+
+  currentHours = ( currentHours < 10 ? "0" : "" ) + currentHours;
+  currentMinutes = ( currentMinutes < 10 ? "0" : "" ) + currentMinutes;
+
+  var currentTimeString = currentHours + ":" + currentMinutes;
+
+  document.getElementById("clock").firstChild.nodeValue = currentTimeString;
+  setTimeout("updateClock()", 60000 )
+}
+
+var searchBuffer =
+{
+	bufferText: false,
+	bufferTime: 300,
+
+	modified : function(strId)
+	{
+			setTimeout('searchBuffer.compareBuffer("'+strId+'","'+xajax.$(strId).value+'");', this.bufferTime);
+	},
+
+	compareBuffer : function(strId, strText)
+	{
+		if (strText == xajax.$(strId).value && strText != this.bufferText)
+		{
+			this.bufferText = strText;
+			searchBuffer.makeRequest(strId);
+		}
+	},
+
+	makeRequest : function(strId)
+	{
+		xajax_doAjaxSearch(document.getElementById('searchphrase').value, document.getElementById('searchtype').value);
+	}
 }
