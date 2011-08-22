@@ -6,10 +6,9 @@
  * @package EDK
  */
 
-/*
- * Based on work by unknown, Sapyx, Rostik, Tribalize, Ben Thomas, KE and Kovell
- */
-require_once('common/includes/xajax.functions.php');
+if (config::get('comments')) {
+	require_once('common/includes/xajax.functions.php');
+}
 
 /**
  * @package EDK
@@ -693,9 +692,8 @@ class pKillDetail extends pageAssembly
 	 */
 	function comments()
 	{
-		if (config::get('comments'))
-		{
-			$this->page->setOnLoad("xajax_getComments({$this->kll_id});");
+		if (config::get('comments')) {
+			$this->page->addOnLoad("xajax_getComments({$this->kll_id});");
 			$comments = new Comments(0);
 
 			global $smarty;
@@ -811,11 +809,9 @@ class pKillDetail extends pageAssembly
 	{
 		global $smarty;
 		// Ship details
-		$ship=$this->kill->getVictimShip();
-		$shipclass=$ship->getClass();
+		$ship = $this->kill->getVictimShip();
+		$shipclass = $ship->getClass();
 
-		$smarty->assign('victimShip', $this->kill->getVictimShip());
-		$smarty->assign('victimShipClass', $ship->getClass());
 		$smarty->assign('victimShipImage', $ship->getImage(64));
 		$smarty->assign('victimShipTechLevel', $ship->getTechLevel());
 		$smarty->assign('victimShipIsFaction', $ship->isFaction());
