@@ -34,13 +34,12 @@ class edk_xajax
 	public static function insertHTML($obj)
 	{
 		global $xajax_enable;
-		if (!isset($xajax_enable))
-		{
+		if (!isset($xajax_enable)) {
 			return;
 		}
 
 		global $xajax;
-		$obj->addBody($xajax->getJavascript(config::get('cfg_kbhost')."/common/xajax/"));
+		$obj->addHeader($xajax->getJavascript(config::get('cfg_kbhost')."/common/xajax/"));
 	}
 
 	public static function lateProcess()
