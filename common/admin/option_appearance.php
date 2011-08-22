@@ -32,7 +32,6 @@ options::fadd('Fill home page', 'cfg_fillhome', 'checkbox', '', '', 'Include kil
 options::fadd('Display region names', 'killlist_regionnames', 'checkbox');
 options::fadd('Display comment count', 'comments_count', 'checkbox');
 options::fadd('Display involved count', 'killlist_involved', 'checkbox');
-options::fadd('Display alliance logos', 'killlist_alogo', 'checkbox');
 options::fadd('Display clock', 'show_clock', 'checkbox');
 options::fadd('Display Monthly stats', 'show_monthly', 'checkbox', '', '', 'Default is weekly');
 
