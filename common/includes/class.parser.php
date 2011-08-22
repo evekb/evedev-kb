@@ -687,7 +687,7 @@ class Parser
 			$destroyed_items = $this->scanForItems($destroyed);
 			foreach ($destroyed_items as $item)
 			{
-				$ditem = new DestroyedItem($item['item'], $item['quantity'], $item['location']);
+				$ditem = new DestroyedItem($item['item'], $item['quantity'], '', $item['location']);
 				$kill->addDestroyedItem($ditem);
 			}
 		}
@@ -702,7 +702,8 @@ class Parser
 			$dropped_items = $this->scanForItems($dropped);
 			foreach ($dropped_items as $item)
 			{
-				$ditem = new DroppedItem($item['item'], $item['quantity'], $item['location']);
+				$ditem = new DestroyedItem($item['item'], $item['quantity'], '',
+						$item['location']);
 				$kill->addDroppedItem($ditem);
 			}
 		}
@@ -749,29 +750,35 @@ class Parser
 
 	function scanForItems($destroyed)
 	{
+		static $locations;
 		$i = 0;
 		$num = count($destroyed);
-		while ($i < $num)
-		{
+
+		if (is_null($locations)) {
+			$qry = DBFactory::getDBQuery();
+			$qry->execute("SELECT itl_id, itl_location FROM kb3_item_locations");
+			while ($row = $qry->getRow()) {
+				$locations[$row['itl_location']] = $row['itl_id'];
+			}
+		}
+
+		while ($i < $num) {
 			$destroyed[$i] = trim($destroyed[$i]);
 
 			$itemname = substr($destroyed[$i], 0, strlen($destroyed[$i]));
 			//API mod will return null when it can't lookup an item, so filter these
-			if($itemname == '(Cargo)' || (strpos($itemname, ', Qty:') === 0))
-			{
+			if($itemname == '(Cargo)' || (strpos($itemname, ', Qty:') === 0)) {
 				$this->error('Item name missing, yet item has quantity. If you have used the API mod for this kill, you are missing items from your dabase.',$itemname);
 				$i++;
 				continue; //continue to get rest of the mail's possible errors
 			}
 
-			if ($destroyed[$i] == "")
-			{
+			if ($destroyed[$i] == "") {
 				$i++;
 				continue;
 			}
 
-			if ($destroyed[$i] == "Empty.")
-			{
+			if ($destroyed[$i] == "Empty.") {
 				$container = false;
 				$i++;
 				continue;
@@ -786,31 +793,30 @@ class Parser
 			$qtypos = strpos($destroyed[$i], ", Qty: ");
 			$locpos = strrpos($destroyed[$i], "(");
 
-			if ($container && $locpos != false)
-			{
+			if ($container && $locpos != false) {
 				$container = false;
 			}
-			if (strpos($destroyed[$i], "Container"))
-			{
+			if (strpos($destroyed[$i], "Container")) {
 				$container = true;
 			}
-			if ($qtypos <= 0 && !$locpos)
-			{
+			if ($qtypos <= 0 && !$locpos) {
 				$itemlen = strlen($destroyed[$i]);
 				if ($container) $location = "Cargo";
 			}
-			if ($qtypos > 0 && !$locpos)
-			{
+			if ($qtypos > 0 && !$locpos) {
 				$itemlen = $qtypos;
 				$qtylen = strlen($destroyed[$i]) - $qtypos;
-				if ($container) $location = "Cargo";
+				if ($container) {
+					$location = "Cargo";
+				}
 			}
-			if ($locpos > 0 && $qtypos <= 0)
-			{
+			if ($locpos > 0 && $qtypos <= 0) {
 				$itemlen = $locpos - 1;
 				$qtylen = 0;
 				$loclen = strlen($destroyed[$i]) - $locpos - 2;
-				if (!$locpos) $container = false;
+				if (!$locpos) {
+					$container = false;
+				}
 			}
 			if ($locpos > 0 && $qtypos > 0)
 			{
@@ -821,26 +827,28 @@ class Parser
 			}
 
 			$itemname = substr($destroyed[$i], 0, $itemlen);
-			if ($qtypos) $quantity = substr($destroyed[$i], $qtypos + 6, $qtylen);
-			if ($locpos) $location = substr($destroyed[$i], $locpos + 1, $loclen);
+			if ($qtypos) {
+				$quantity = substr($destroyed[$i], $qtypos + 6, $qtylen);
+			}
+			if ($locpos) {
+				$location = substr($destroyed[$i], $locpos + 1, $loclen);
+			}
 
-			if ($quantity == "")
-			{
+			if ($quantity == "") {
 				$quantity = 1;
 			}
 
 			$item = new Item();
 			$item->lookup(trim($itemname));
-			if (!$item->getID())
-			{
+			if (!$item->getID()) {
 				$this->error('Item not found.', trim($itemname));
 			}
-			if ($location == 'In Container')
-			{
+			if ($location == 'In Container') {
 				$location = 'Cargo';
 			}
 
-			$items[] = array('item' => $item, 'quantity' => $quantity, 'location' => $location);
+			$items[] = array('item' => $item, 'quantity' => $quantity,
+				'location' => $locations[$location]);
 			$i++;
 		}
 
@@ -868,8 +876,9 @@ class Parser
 	}
 	/**
 	 * Return alliance from cached list or look up a new name.
+	 * 
 	 * @param string $alliancename Alliance name to look up.
-	 * @return mixed Alliance object matching input name.
+	 * @return Alliance Alliance object matching input name.
 	 */
 	private static function fetchAlliance($alliancename)
 	{
@@ -887,7 +896,7 @@ class Parser
 	 * Return corporation from cached list or look up a new name.
 	 *
 	 * @param string $corpname Alliance name to look up.
-	 * @return mixed Corporation object matching input name.
+	 * @return Corporation Corporation object matching input name.
 	 */
 	private static function fetchCorp($corpname, $alliance = null, $timestamp = null)
 	{
@@ -913,7 +922,7 @@ class Parser
 	 * Return pilot from cached list or look up a new name.
 	 *
 	 * @param string $pilotname Pilot name to look up.
-	 * @return mixed Pilot object matching input name.
+	 * @return Pilot Pilot object matching input name.
 	 */
 	private static function fetchPilot($pilotname, $corp, $timestamp)
 	{
@@ -935,14 +944,13 @@ class Parser
 	 * Return ship from cached list or look up a new name.
 	 *
 	 * @param string $shipname Ship name to look up.
-	 * @return mixed Ship object matching input name.
+	 * @return Ship Ship object matching input name.
 	 */
 	private static function fetchShip($shipname)
 	{
-		if(isset(self::$ships[$shipname]))
+		if(isset(self::$ships[$shipname])) {
 			$ship = self::$ships[$shipname];
-		else
-		{
+		} else {
 			$ship = new Ship();
 			$ship->lookup($shipname);
 			self::$ships[$shipname] = $ship;
@@ -967,6 +975,11 @@ class Parser
 		}
 		return $item;
 	}
+	/**
+	 *
+	 * @param string $mail
+	 * @return string
+	 */
 	public static function hashMail($mail = null)
 	{
 		if(is_null($mail)) return false;
@@ -1032,10 +1045,16 @@ class Parser
 
 		return md5($hashIn, true);
 	}
+	/**
+	 * @return integer
+	 */
 	public function getDupeID()
 	{
 		return $this->dupeid_;
 	}
+	/**
+	 * @return integer
+	 */
 	public function setTrust($trust)
 	{
 		$this->trust = intval($trust);
