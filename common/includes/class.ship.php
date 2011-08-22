@@ -6,20 +6,27 @@
  * @package EDK
  */
 
-
 /**
  * Contains the attributes of a Ship and standard methods to manipulate Ships.
  * @package EDK
  */
 class Ship extends Cacheable
 {
+	/** @var boolean */
 	private $executed = false;
+	/** @var integer */
 	private $id = 0;
+	/** @var integer */
 	private $externalid = null;
+	/** @var string */
 	private $shipname = null;
+	/** @var ShipClass */
 	private $shipclass = null;
+	/** @var integer */
 	private $shiptechlevel = null;
+	/** @var boolean */
 	private $shipisfaction = null;
+	/** @var float */
 	private $value = 0;
 
 	/**
@@ -36,15 +43,20 @@ class Ship extends Cacheable
 	 */
 	function Ship($id = 0, $externalID = null, $name = null, $class = null)
 	{
-		if($id)
-			$this->id = intval($id);
-		if(isset($externalID))
-			$this->externalid = intval($externalID);
-		if(isset($name))
+		if ($id) {
+			$this->id = (int)$id;
+		}
+		if (isset($externalID)) {
+			$this->externalid = (int)$externalID;
+		}
+		if (isset($name)) {
 			$this->shipname = $name;
-		if(isset($class))
+		}
+		if (isset($class)) {
 			$this->shipclass = $class;
+		}
 	}
+
 	/**
 	 * Return the id for this Ship.
 	 *
@@ -52,14 +64,15 @@ class Ship extends Cacheable
 	 */
 	function getID()
 	{
-    if($this->id) {
-      return $this->id;
-    } else if(isset($this->externalid)) {
+		if ($this->id) {
+			return $this->id;
+		} else if (isset($this->externalid)) {
 			$this->execQuery();
 			return $this->id;
 		}
 		return 0;
 	}
+
 	/**
 	 * Return the external id for this Ship.
 	 *
@@ -67,9 +80,12 @@ class Ship extends Cacheable
 	 */
 	function getExternalID()
 	{
-		if(!$this->externalid) $this->execQuery();
+		if (!$this->externalid) {
+			$this->execQuery();
+		}
 		return $this->externalid;
 	}
+
 	/**
 	 * Return the name of this Ship.
 	 *
@@ -77,9 +93,12 @@ class Ship extends Cacheable
 	 */
 	function getName()
 	{
-		if (is_null($this->shipname)) $this->execQuery();
+		if (is_null($this->shipname)) {
+			$this->execQuery();
+		}
 		return $this->shipname;
 	}
+
 	/**
 	 * Return the ShipClass for this Ship.
 	 *
@@ -87,9 +106,12 @@ class Ship extends Cacheable
 	 */
 	function getClass()
 	{
-		if (is_null($this->shipclass)) $this->execQuery();
+		if (is_null($this->shipclass)) {
+			$this->execQuery();
+		}
 		return $this->shipclass;
 	}
+
 	/**
 	 * Return the tech level of this Ship.
 	 *
@@ -97,9 +119,12 @@ class Ship extends Cacheable
 	 */
 	function getTechLevel()
 	{
-		if (is_null($this->shiptechlevel)) $this->execQuery();
+		if (is_null($this->shiptechlevel)) {
+			$this->execQuery();
+		}
 		return $this->shiptechlevel;
 	}
+
 	/**
 	 * Return if this Ship is faction.
 	 *
@@ -107,9 +132,12 @@ class Ship extends Cacheable
 	 */
 	function isFaction()
 	{
-		if (is_null($this->shipisfaction)) $this->execQuery();
+		if (is_null($this->shipisfaction)) {
+			$this->execQuery();
+		}
 		return $this->shipisfaction;
 	}
+
 	/**
 	 * Return the URL for a portrait of this Ship.
 	 *
@@ -118,10 +146,13 @@ class Ship extends Cacheable
 	 */
 	function getImage($size)
 	{
-		if (is_null($this->externalid)) $this->execQuery();
+		if (is_null($this->externalid)) {
+			$this->execQuery();
+		}
 
 		return imageURL::getURL('Ship', $this->externalid, $size);
 	}
+
 	/**
 	 * Return the base price of this Ship.
 	 *
@@ -129,7 +160,9 @@ class Ship extends Cacheable
 	 */
 	function getPrice()
 	{
-		if(!$this->value) $this->execQuery();
+		if (!$this->value) {
+			$this->execQuery();
+		}
 		return $this->value;
 	}
 
@@ -142,6 +175,7 @@ class Ship extends Cacheable
 	{
 		$this->shipname = $shipname;
 	}
+
 	/**
 	 * Set the class of this ship.
 	 *
@@ -154,8 +188,7 @@ class Ship extends Cacheable
 
 	function execQuery()
 	{
-		if (!$this->executed)
-		{
+		if (!$this->executed) {
 			if ($this->id && $this->isCached()) {
 				$cache = $this->getCache();
 				$this->shipname = $cache->shipname;
@@ -174,27 +207,32 @@ class Ship extends Cacheable
 			$sql = "select * from kb3_ships shp
 						   inner join kb3_ship_classes scl on shp.shp_class = scl.scl_id";
 			$sql .= ' left join kb3_item_price itm on (shp.shp_externalid = itm.typeID) ';
-			if(is_null($this->externalid)) $sql .= " where shp.shp_id = ".$this->id;
-			else $sql .= " where shp.shp_externalid = ".$this->externalid;
+			if (is_null($this->externalid)) {
+				$sql .= " where shp.shp_id = ".$this->id;
+			} else {
+				$sql .= " where shp.shp_externalid = ".$this->externalid;
+			}
 
 			$qry->execute($sql);
 			$row = $qry->getRow();
 			$this->shipname = $row['shp_name'];
-			$this->shipclass = new ShipClass($row['scl_id']);
-			$this->shiptechlevel = $row['shp_techlevel'];
-			$this->shipisfaction = $row['shp_isfaction'];
-			$this->externalid = $row['shp_externalid'];
-			$this->id = $row['shp_id'];
+			$this->shipclass = Cacheable::factory('ShipClass', $row['scl_id']);
+			$this->shiptechlevel = (int) $row['shp_techlevel'];
+			$this->shipisfaction = (boolean) $row['shp_isfaction'];
+			$this->externalid = (int) $row['shp_externalid'];
+			$this->id = (int) $row['shp_id'];
 
-			if (!$this->value = $row['price'])
-			{
-				$this->value = $row['shp_baseprice'];
+			if (!$this->value = (float) $row['price']) {
+				$this->value = (float) $row['shp_baseprice'];
 			}
 
-			$this->putCache();
+			if ($this->id) {
+				$this->putCache();
+			}
 		}
 		$this->executed = true;
 	}
+
 	/**
 	 * Look up a Ship by name.
 	 *
@@ -205,20 +243,24 @@ class Ship extends Cacheable
 		$pqry = new DBPreparedQuery();
 		$pqry->prepare("select shp_id, shp_name, shp_techlevel, shp_externalid, price, shp_baseprice, shp_class, shp_isfaction from kb3_ships left join kb3_item_price on (shp_externalid = typeID) where shp_name = ?");
 		$pqry->bind_param('s', $name);
-		$baseprice=0;
+		$baseprice = 0;
 		$price = 0;
 		$scl_id = 0;
 		$pqry->bind_result($this->id, $this->shipname, $this->shiptechlevel,
-			$this->externalid, $price, $baseprice, $scl_id, $this->shipisfaction);
-		if(!$pqry->execute() || !$pqry->recordCount()) return false;
-		else $pqry->fetch();
+				$this->externalid, $price, $baseprice, $scl_id, $this->shipisfaction);
+		if (!$pqry->execute() || !$pqry->recordCount()) {
+			return false;
+		} else {
+			$pqry->fetch();
+		}
 
-		$this->shipclass = new ShipClass($scl_id);
-		if (!$this->value = $price)
-		{
+		$this->shipclass = Cacheable::factory('ShipClass', $scl_id);
+		if (!$this->value = $price) {
 			$this->value = $baseprice;
 		}
 
-		$this->putCache();
+		if ($this->id) {
+			$this->putCache();
+		}
 	}
 }
