@@ -12,11 +12,17 @@
  */
 abstract class DBBaseQuery
 {
+	/** @var integer */
 	static protected $totalexectime = 0;
+	/** @var integer */
 	protected $exectime = 0;
+	/** @var boolean */
 	protected $executed = false;
+	/** @var DBConnection */
 	static protected $dbconn = null;
+	/** @var integer */
 	static protected $queryCount = 0;
+	/** @var integer */
 	static protected $queryCachedCount = 0;
 
 	/**

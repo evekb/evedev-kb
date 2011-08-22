@@ -12,28 +12,52 @@
  */
 class DBCachedQuery extends DBBaseQuery
 {
-	// this is the minimum runtime a query has to run to be
-	// eligible for caching in seconds
+	/**
+	 * @var float
+	 * this is the minimum runtime a query has to run to be
+	 * eligible for caching in seconds
+	 */
 	protected static $minruntime = 0.1;
+	/** @var float */
 	protected static $maxmem = null;
-	// maximum size of a cached result set (512kB)
+	/**
+	 * @var integer
+	 * maximum size of a cached result set (512kB)
+	 */
 	protected static $maxcachesize = 524288;
+	/** @var string */
 	protected static $location = "SQL";
+	/** @var integer */
 	protected static $maxage = 10800;
 
+	/** @var array */
 	protected $cache = array();
+	/** @var array */
 	protected $usedtables = array();
+	/** @var boolean */
 	protected $cached = false;
+	/** @var boolean */
 	protected $nocache = false;
+	/** @var string */
 	protected $sql = '';
+	/** @var integer */
 	protected $mtime = 0;
+	/**
+	 * @var integer
+	 * The current row of the cached result.
+	 */
 	protected $currrow = 0;
+	/** @var MySQLi_Result|boolean */
 	protected $resid = null;
+	/** @var CacheHandlerHashed */
 	protected static $cachehandler = null;
+	/** @var array */
 	protected static $baseTables = null;
 
 	/**
 	 * Set up a mysqli cached query object with default values.
+	 *
+	 * @param boolean $nocache true to retrieve results directly from the db.
 	 */
 	function DBCachedQuery($nocache = false)
 	{
@@ -374,6 +398,8 @@ class DBCachedQuery extends DBBaseQuery
 
 	/**
 	 * Return the number of rows returned by the last query.
+	 *
+	 * @return integer|boolean
 	 */
 	function recordCount()
 	{
@@ -390,6 +416,8 @@ class DBCachedQuery extends DBBaseQuery
 
 	/**
 	 * Return the next row of results from the last query.
+	 *
+	 * @return array
 	 */
 	function getRow()
 	{
@@ -418,7 +446,9 @@ class DBCachedQuery extends DBBaseQuery
 		{
 			$this->currrow = 0;
 		}
-		if(!is_null($this->resid)) @mysqli_data_seek($this->resid, 0);
+		if(!is_null($this->resid)) {
+			@mysqli_data_seek($this->resid, 0);
+		}
 	}
 
 	/**
@@ -455,11 +485,15 @@ class DBCachedQuery extends DBBaseQuery
 
 	/**
 	 * Rollback all queries in the current transaction.
+	 *
+	 * @return boolean true on success.
 	 */
 	function rollback()
 	{
 		// if there's no connection to the db then there's nothing to roll back
-		if(!self::$dbconn) return true;
+		if(!self::$dbconn) {
+			return true;
+		}
 		return self::$dbconn->id()->rollback();
 	}
 }

@@ -12,7 +12,9 @@
  */
 class DBNormalQuery extends DBBaseQuery
 {
+	/** @var MySQLi_Result|boolean */
 	private $resid;
+
 	/**
 	 * Prepare a connection for a new mysqli query.
 	 */
@@ -23,35 +25,28 @@ class DBNormalQuery extends DBBaseQuery
 
 	/**
 	 * Execute an SQL string.
+	 *
+	 * If DB_HALTONERROR is set then this will exit on an error.
+	 * @return boolean false on error or true if successful.
 	 */
-
-	/*
-     * If DB_HALTONERROR is set then this will exit on an error.
-     * @return boolean false on error or true if successful.
-	*/
 	function execute($sql)
 	{
 		$t1 = microtime(true);
 
-		$this->resid = mysqli_query(self::$dbconn->id(),$sql);
+		$this->resid = mysqli_query(self::$dbconn->id(), $sql);
 
-		if ($this->resid === false || self::$dbconn->id()->errno)
-		{
-			if(defined('KB_PROFILE'))
-			{
-				DBDebug::recordError("Database error: ".self::$dbconn->id()->error);
-				DBDebug::recordError("SQL: ".$sql);
+		if ($this->resid === false || self::$dbconn->id()->errno) {
+			if (defined('KB_PROFILE')) {
+				DBDebug::recordError("Database error: " . self::$dbconn->id()->error);
+				DBDebug::recordError("SQL: " . $sql);
 			}
-			if (defined('DB_HALTONERROR') && DB_HALTONERROR)
-			{
+			if (defined('DB_HALTONERROR') && DB_HALTONERROR) {
 				echo "Database error: " . self::$dbconn->id()->error . "<br />";
 				echo "SQL: " . $sql . "<br />";
-				trigger_error("SQL error (".self::$dbconn->id()->error, E_USER_ERROR);
+				trigger_error("SQL error (" . self::$dbconn->id()->error, E_USER_ERROR);
 				exit;
-			}
-			else
-			{
-				trigger_error("SQL error (".self::$dbconn->id()->error, E_USER_WARNING);
+			} else {
+				trigger_error("SQL error (" . self::$dbconn->id()->error, E_USER_WARNING);
 				return false;
 			}
 		}
@@ -60,12 +55,15 @@ class DBNormalQuery extends DBBaseQuery
 		self::$totalexectime += $this->exectime;
 		$this->executed = true;
 
-		if(defined('KB_PROFILE')) DBDebug::profile($sql, $this->exectime);
+		if (defined('KB_PROFILE')) {
+			DBDebug::profile($sql, $this->exectime);
+		}
 
 		$this->queryCount(true);
 
 		return true;
 	}
+
 	/**
 	 * Return the number of rows returned by the last query.
 	 *
@@ -73,12 +71,12 @@ class DBNormalQuery extends DBBaseQuery
 	 */
 	function recordCount()
 	{
-		if ($this->resid)
-		{
+		if ($this->resid) {
 			return $this->resid->num_rows;
 		}
 		return false;
 	}
+
 	/**
 	 * Return the next row of results from the last query.
 	 *
@@ -86,19 +84,19 @@ class DBNormalQuery extends DBBaseQuery
 	 */
 	function getRow()
 	{
-		if ($this->resid)
-		{
-			return $this->resid->fetch_assoc();
-		}
-		return false;
+		return $this->resid ? $this->resid->fetch_assoc() : false;
 	}
+
 	/**
 	 * Reset list of results to return the first row from the last query.
 	 */
 	function rewind()
 	{
-		if(!is_null($this->resid)) @mysqli_data_seek($this->resid, 0);
+		if (!is_null($this->resid)) {
+			@mysqli_data_seek($this->resid, 0);
+		}
 	}
+
 	/**
 	 * Return the auto-increment ID from the last insert operation.
 	 */
@@ -106,6 +104,7 @@ class DBNormalQuery extends DBBaseQuery
 	{
 		return self::$dbconn->id()->insert_id;
 	}
+
 	/**
 	 * Return the most recent error message for the DB connection.
 	 */
@@ -115,24 +114,28 @@ class DBNormalQuery extends DBBaseQuery
 
 		return $msg;
 	}
+
 	/**
 	 * Set the autocommit status.
 	 * The default of true commits after every query.
-     * If set to false the queries will not be commited until autocommit is set
-     * to true.
-     *  @param boolean $commit The new autocommit status.
-     *  @return mixed true on success and false on failure.
-	*/
+	 * If set to false the queries will not be commited until autocommit is set
+	 * to true.
+	 *  @param boolean $commit The new autocommit status.
+	 *  @return mixed true on success and false on failure.
+	 */
 	function autocommit($commit = true)
 	{
-		if(defined('KB_PROFILE') && KB_PROFILE == 3)
-		{
-			if(!$commit) DBDebug::recordError("Transaction started.");
-			else DBDebug::recordError("Transaction ended.");
+		if (defined('KB_PROFILE') && KB_PROFILE == 3) {
+			if (!$commit) {
+				DBDebug::recordError("Transaction started.");
+			} else {
+				DBDebug::recordError("Transaction ended.");
+			}
 		}
-		
+
 		return self::$dbconn->id()->autocommit($commit);
 	}
+
 	/**
 	 * Rollback all queries in the current transaction.
 	 *
