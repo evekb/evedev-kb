@@ -11,6 +11,17 @@
  */
 class DestroyedItem
 {
+	/** @var Item */
+	public $item_;
+	/** @var integer */
+	public $quantity_;
+	/** @var string|integer */
+	public $location_;
+	/** @var integer */
+	public $locationID_;
+	/** @var float */
+	private $value;
+
 	/**
 	 * @param Item $item
 	 * @param integer $quantity
@@ -20,9 +31,9 @@ class DestroyedItem
 	function DestroyedItem($item, $quantity, $location, $locationID = null)
 	{
 		$this->item_ = $item;
-		$this->quantity_ = $quantity;
+		$this->quantity_ = (int) $quantity;
 		$this->location_ = $location;
-		$this->locationID_ = $locationID;
+		$this->locationID_ = (int) $locationID;
 	}
 
 	/**
@@ -38,7 +49,9 @@ class DestroyedItem
 	 */
 	function getQuantity()
 	{
-		if ($this->quantity_ == "") $this->quantity = 1;
+		if (!$this->quantity_) {
+			$this->quantity_ = 1;
+		}
 		return $this->quantity_;
 	}
 	/**
@@ -48,90 +61,63 @@ class DestroyedItem
 	 */
 	function getFormattedValue()
 	{
-		if (!isset($this->value))
-		{
+		if (!isset($this->value)) {
 			$this->getValue();
 		}
-		if ($this->value > 0)
-		{
+
+		if ($this->value > 0) {
 			$value = $this->value * $this->getQuantity();
 			// Value Manipulation for prettyness.
-			if (strlen($value) > 6) // Is this value in the millions?
-			{
+			if ($value > 1000000) {
 				$formatted = round($value / 1000000, 2);
 				$formatted = number_format($formatted, 2);
 				$formatted = $formatted." M";
-			}
-			elseif (strlen($value) > 3) // 1000's ?
-			{
+			} else if ($value > 1000) {
 				$formatted = round($value / 1000, 2);
 
 				$formatted = number_format($formatted, 2);
 				$formatted = $formatted." K";
-			}
-			else
-			{
+			} else {
 				$formatted = number_format($value, 2);
-				$formatted = $formatted." isk";
+				$formatted = $formatted." ISK";
 			}
-		}
-		else
-		{
-			$formatted = "0 isk";
+		} else {
+			$formatted = "0 ISK";
 		}
 		return $formatted;
 	}
 
 	/**
-	 * @return integer
+	 * @return float
 	 */
 	function getValue()
 	{
-		if (isset($this->value))
-		{
+		if (isset($this->value)) {
 			return $this->value;
 		}
-		if ($this->item_->row_['itm_value'])
-		{
-			$this->value = $this->item_->row_['itm_value'];
-			return $this->item_->row_['itm_value'];
+		if ($this->item_->row_['itm_value']) {
+			$this->value = (float) $this->item_->row_['itm_value'];
+			return $this->value;
+		} else if ($this->item_->row_['baseprice']) {
+			$this->value = (float) $this->item_->row_['baseprice'];
+			return $this->value;
 		}
-		elseif ($this->item_->row_['baseprice'])
-		{
-			$this->value = $this->item_->row_['baseprice'];
-			return $this->item_->row_['baseprice'];
-		}
-		$this->value = 0;
+
 		$qry = DBFactory::getDBQuery();
 		$qry->execute("select basePrice, price
 					from kb3_invtypes
 					left join kb3_item_price on kb3_invtypes.typeID=kb3_item_price.typeID
 					where kb3_invtypes.typeID='".$this->item_->getID()."'");
-		if ($row = $qry->getRow())
-		{
-			if ($row['price'])
-			{
-				$this->value = $row['price'];
+		if ($row = $qry->getRow()) {
+			if ($row['price']) {
+				$this->value = (float) $row['price'];
+			} else {
+				$this->value = (float) $row['basePrice'];
 			}
-			else
-			{
-				$this->value = $row['basePrice'];
-			}
+		} else {
+			$this->value = 0;
 		}
 		return $this->value;
-
-		//returns the value of an item
-		$value = 0; 				// Set 0 value incase nothing comes back
-		$id = $this->item_->getID(); // get Item ID
-		$qry = DBFactory::getDBQuery();
-		$qry->execute("select itm_value from kb3_items where itm_id= '".$id."'");
-		$row = $qry->getRow();
-		$value = $row['itm_value'];
-		if ($value == '')
-		{
-			$value = 0;
-		}
-		return $value;
 	}
 
 	/**
@@ -139,19 +125,17 @@ class DestroyedItem
 	 */
 	function getLocationID()
 	{
-		if(!is_null($this->locationID_)) return $this->locationID_;
-		$id = false;
-		if (strlen($this->location_) < 2)
-		{
-			$id = $this->item_->getSlot();
+		if(!is_null($this->locationID_)) {
+			return $this->locationID_;
 		}
-		else
-		{
+		if (strlen($this->location_) < 2) {
+			$this->locationID_ = (int) $this->item_->getSlot();
+		} else {
 			$qry = DBFactory::getDBQuery();
 			$qry->execute("select itl_id from kb3_item_locations where itl_location = '".$this->location_."'");
 			$row = $qry->getRow();
-			$id = $row['itl_id'];
+			$this->locationID_ = (int) $row['itl_id'];
 		}
-		return $id;
+		return $this->locationID_;
 	}
 }
