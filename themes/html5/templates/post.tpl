@@ -1,5 +1,5 @@
 <div id="post">
-{if isset($error)}
+{if $error}
 <div id="posterror">{$error}</div>
 {elseif !$post_forbid && !$post_oog_forbid}
 Paste the killmail from your EVEMail inbox into the box below. Make sure you post the <b>ENTIRE</b> mail.<br />

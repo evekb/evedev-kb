@@ -7,7 +7,7 @@
         {assign var="s" value=$syslist[sys]}
 		<tr class="{cycle name=ccl}">
 			<td><b>{$s.counter}</b></td>
-			<td class="kb-table-cell"><b><a href="{$s.url}">{$s.name}</a></b> ({$s.sec})</td>
+			<td><b><a href="{$s.url}">{$s.name}</a></b> ({$s.sec})</td>
 			<td align="center">{$s.kills}</td>
 		</tr>
 {/section}

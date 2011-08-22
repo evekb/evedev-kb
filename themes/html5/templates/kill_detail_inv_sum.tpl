@@ -13,7 +13,7 @@
 			</th>
                         {/if}
                         {if $first == "true"}
-			<td rowspan="{$alliesCount * 2}" class="kb-table-cell" style="white-space: nowrap">
+			<td rowspan="{$alliesCount * 2}" style="white-space: nowrap">
                                 {foreach from=$invShips key="key2" item="l2"}
 				({$l2}) {$key2|truncate:22:"...":true} <br/>
                                 {/foreach}
@@ -22,7 +22,7 @@
                         {/if}
 		</tr>
 		<tr class="kb-table-row-even">
-			<td class="kb-table-cell">
+			<td>
 			{foreach from=$l.corps key="key1" item="l1"}
 				({$l1}) {$key1|truncate:35:"...":true} <br/>
 			{/foreach}

@@ -4,16 +4,16 @@
 {* set to true to show empty slots *}
 {if $destroyed.$slotindex or $dropped.$slotindex}
 	<tr class="kb-table-row-even">
-		<td class="item-icon" width="32"><img width="32" height="32" src="{$img_url}/{$slot.img}" alt="{$slot.text}" border="0" /></td>
-		<td colspan="2" class="kb-table-cell"><b>{$slot.text}</b> </td>
+		<td class="item-icon" width="32"><img width="32" height="32" src="{$img_url}/{$slot.img}" alt="{$slot.text}" /></td>
+		<td colspan="2"><b>{$slot.text}</b> </td>
     {if $config->get('item_values')}
-		<td align="center" class="kb-table-cell"><b>Value</b></td>
+		<td align="center"><b>Value</b></td>
     {/if}
 	</tr>
     {foreach from=$destroyed.$slotindex item="i"}
 	<tr class="kb-table-row-odd">
 		<td class="item-icon" width="32" height="34" valign="top" onclick="CCPEVE.showInfo({$i.itemID})">{$i.Icon}</td>
-		<td class="kb-table-cell">{$i.Name}</td>
+		<td>{$i.Name}</td>
 		<td width="30" align="center">{$i.Quantity}</td>
         {if $config->get('item_values')}
 		<td align="center">{$i.Value}</td>
@@ -52,7 +52,7 @@
     {foreach from=$dropped.$slotindex item="i"}
 	<tr class="kb-table-row-odd" style="background-color: #006000;">
 		<td style="border: 1px solid green;" width="32" height="34" valign="top" onclick="CCPEVE.showInfo({$i.itemID})">{$i.Icon}</td>
-		<td class="kb-table-cell">{$i.Name}</td>
+		<td>{$i.Name}</td>
 		<td width="30" align="center">{$i.Quantity}</td>
         {if $config->get('item_values')}
 		<td align="center">{$i.Value}</td>

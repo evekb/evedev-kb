@@ -17,26 +17,26 @@
     <tr class="{cycle name=ccl}"{if $i.destroyed} style="background-color: #EE4444;"{/if}>
       <td width="32" height="32" style="max-width: 32px;">
 {if $i.destroyed}
-		  <a href="{$kb_host}/?a=kill_detail&amp;kll_id={$i.kll_id}"><img src="{$i.spic}" width="32" height="32" border="0" alt="" /></a>
+		  <a href="{$kb_host}/?a=kill_detail&amp;kll_id={$i.kll_id}"><img src="{$i.spic}" width="32" height="32" alt="" /></a>
 {else}
-        <img src="{$i.spic}" width="32" height="32" border="0" alt="" />
+        <img src="{$i.spic}" width="32" height="32" alt="" />
 {/if}
       </td>
 {if $i.podded}
     {if $config->get('bs_podlink')}
-      <td class="kb-table-cell">
+      <td>
         <b><a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$pilot}">{$i.name}</a>&nbsp;<a href="{$kb_host}/?a=kill_detail&amp;kll_id={$i.podid}">[Pod]</a></b><br/>{$i.ship}
       </td>
     {else}
-      <td class="kb-table-cell"><div style="position: relative;"><b><a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$pilot}">{$i.name}</a></b><br/>{$i.ship}
+      <td><div style="position: relative;"><b><a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$pilot}">{$i.name}</a></b><br/>{$i.ship}
 	<div style="position: absolute; right:0px; top:-6px; width:32px; height:32px; z-index:1;"><a href="{$kb_host}/?a=kill_detail&amp;kll_id={$i.podid}"><img src="{$podpic}" alt="" /></a></div>
         </div>
     </td>
     {/if}
 {else}
-      <td class="kb-table-cell"><b><a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$pilot}">{$i.name}</a></b><br/>{$i.ship}</td>
+      <td><b><a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$pilot}">{$i.name}</a></b><br/>{$i.ship}</td>
 {/if}
-      <td class="kb-table-cell"><b><a href="{$kb_host}/?a=corp_detail&amp;crp_id={$i.cid}">{$i.corp}</a></b><br/><a href="{$kb_host}/?a=alliance_detail&amp;all_id={$i.aid}" style="font-weight: normal;">{$i.alliance}</a></td>
+      <td><b><a href="{$kb_host}/?a=corp_detail&amp;crp_id={$i.cid}">{$i.corp}</a></b><br/><a href="{$kb_host}/?a=alliance_detail&amp;all_id={$i.aid}" style="font-weight: normal;">{$i.alliance}</a></td>
     </tr>
 {/foreach}
 {/foreach}
@@ -58,26 +58,26 @@
     <tr class="{cycle name=ccl}"{if $i.destroyed} style="background-color: #EE4444;"{/if}>
       <td width="32" height="32" style="max-width: 32px;">
 {if $i.destroyed}
-        <a href="{$kb_host}/?a=kill_detail&amp;kll_id={$i.kll_id}"><img src="{$i.spic}" width="32" height="32" border="0" alt="" /></a>
+        <a href="{$kb_host}/?a=kill_detail&amp;kll_id={$i.kll_id}"><img src="{$i.spic}" width="32" height="32" alt="" /></a>
 {else}
-        <img src="{$i.spic}" width="32" height="32" border="0" alt="" />
+        <img src="{$i.spic}" width="32" height="32" alt="" />
 {/if}
       </td>
 {if $i.podded}
     {if $config->get('bs_podlink')}
-      <td class="kb-table-cell">
+      <td>
         <b><a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$pilot}">{$i.name}</a>&nbsp;<a href="{$kb_host}/?a=kill_detail&amp;kll_id={$i.podid}">[Pod]</a></b><br/>{$i.ship}
       </td>
     {else}
-    <td class="kb-table-cell"><div style="position: relative;"><b><a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$pilot}">{$i.name}</a></b><br/>{$i.ship}
+    <td><div style="position: relative;"><b><a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$pilot}">{$i.name}</a></b><br/>{$i.ship}
 	    <div style="position: absolute; right:0px; top:-6px; width:32px; height:32px; z-index:1;"><a href="{$kb_host}/?a=kill_detail&amp;kll_id={$i.podid}"><img src="{$podpic}" alt="" /></a></div>
         </div>
     </td>
     {/if}
 {else}
-      <td class="kb-table-cell"><b><a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$pilot}">{$i.name}</a></b><br/>{$i.ship}</td>
+      <td><b><a href="{$kb_host}/?a=pilot_detail&amp;plt_id={$pilot}">{$i.name}</a></b><br/>{$i.ship}</td>
 {/if}
-      <td class="kb-table-cell"><b><a href="{$kb_host}/?a=corp_detail&amp;crp_id={$i.cid}">{$i.corp}</a></b><br/><a href="{$kb_host}/?a=alliance_detail&amp;all_id={$i.aid}" style="font-weight: normal;">{$i.alliance}</a></td>
+      <td><b><a href="{$kb_host}/?a=corp_detail&amp;crp_id={$i.cid}">{$i.corp}</a></b><br/><a href="{$kb_host}/?a=alliance_detail&amp;all_id={$i.aid}" style="font-weight: normal;">{$i.alliance}</a></td>
     </tr>
 {/foreach}
 {/foreach}

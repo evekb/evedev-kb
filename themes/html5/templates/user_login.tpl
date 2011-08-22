@@ -1,6 +1,6 @@
 <!-- user_login.tpl -->
 <form method="post" action="{$kb_host}/?a=login">
-{if isset($error)}
+{if $error}
 <div class="block-header2">Error</div>
 {$error}<br/><br/>
 {/if}

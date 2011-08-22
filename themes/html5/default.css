@@ -7,7 +7,7 @@ html, body
 	background-color: #222222;
 }
 
-.navigation
+div.navigation
 {
 	background: #111111;
 	padding: 0px;
@@ -15,6 +15,28 @@ html, body
 	border-spacing: 1px;
 }
 
+div.navigation > table
+{
+	width:100%;
+	height:25px;
+	border:0;
+	table-layout: fixed;
+}
+
+div.navigation tr
+{
+	background: #292929;
+}
+
+div.navigation td
+{
+	text-align:center;
+}
+
+div.navigation a
+{
+	display: block;
+}
 font,th,td,p,a,div
 {
 	font-family: Verdana, "Bitstream Vera Sans", Arial, Helvetica;
@@ -65,9 +87,14 @@ input, button, select
 
 #context, .context_element
 {
-	margin-top: 10px;
-	padding: 10px;
 	width: 145px;
+	padding: 10px;
+}
+
+.context_element
+{
+	width: 145px;
+	margin-bottom: 10px;
 }
 
 div.bar
@@ -238,6 +265,7 @@ textarea.killmail
 }
 /* over Kill in home */
 .kb-table-row-hover,
+.contractlist tr:hover,
 .kb-kl-table .kb-table-row-even:hover,
 .kb-kl-table .kb-table-row-odd:hover
 {
@@ -253,260 +281,278 @@ img.finalblow
 
 img.avatar
 {
-  border: 1px solid #333333;
+	border: 1px solid #333333;
 }
 
 img.icon
 {
-  border: 1px solid #333333;
+	border: 1px solid #333333;
 }
 
 td.item-icon
 {
-  border: 1px solid #333333;
+	border: 1px solid #333333;
+}
+
+div.item-icon
+{
+	position:absolute;
+	border: none;
+	height:32px;
+	width:32px;
+	text-align:left;
 }
 
 img.icon-hover
 {
-  border: 1px solid #DD9300;
-  cursor: pointer;
+	border: 1px solid #DD9300;
+	cursor: pointer;
 }
 
 td.avatar-name
 {
-  font-size: 10px;
-  font-weight: bold;
-  color: #cccccc;
+	font-size: 10px;
+	font-weight: bold;
+	color: #cccccc;
 }
 
 td.killmail
 {
-  font-family: "Courier New", Courier;
-  font-size: 11px;
-  color: #dddddd;
+	font-family: "Courier New", Courier;
+	font-size: 11px;
+	color: #dddddd;
 }
 
 td.battleship
 {
-  background: #DD9300;
+	background: #DD9300;
 }
 
-td.kb-table-cell
+.kb-table td
 {
-  padding: 2px;
+	padding: 2px;
 }
 
 td.kb-table-imgcell
 {
-  padding: 0px;
-  width: 32px;
-  vertical-align: top;
+	padding: 0px;
+	height: 32px;
+	width: 32px;
+	vertical-align: middle;
+}
+
+td.kb-table-imgcell > img
+{
+	margin-bottom: -3px;
 }
 
 .kb-date-header
 {
-  background-image: url("../../img/day.gif");
-  background-repeat: no-repeat;
-  background-position: 0px 16px;
+	background-image: url("../../img/day.gif");
+	background-repeat: no-repeat;
+	background-position: 0px 16px;
 
-  color: #cccccc;
+	color: #cccccc;
 
-  font-size: 13px;
-  font-weight: bold;
+	font-size: 13px;
+	font-weight: bold;
 
-  padding-left: 20px;
-  padding-top: 15px;
+	padding-left: 20px;
+	padding-top: 15px;
 }
 
 .kb-contracts-header
 {
-  background-image: url("../../img/contract.gif");
-  background-repeat: no-repeat;
-  background-position: 0px -3px;
+	background-image: url("../../img/contract.gif");
+	background-repeat: no-repeat;
+	background-position: 0px -3px;
 
-  margin-top: 10px;
-  margin-bottom: 15px;
+	margin-top: 10px;
+	margin-bottom: 15px;
 
-  color: #cccccc;
+	color: #cccccc;
 
-  font-size: 12px;
-  font-weight: bold;
-  padding-left: 25px;
-  padding-bottom: 5px;
-  border-bottom: 1px solid #777777;
+	font-size: 12px;
+	font-weight: bold;
+	padding-left: 25px;
+	padding-bottom: 5px;
+	border-bottom: 1px solid #777777;
 
 }
 
 .kb-campaigns-header
 {
-  background-image: url("../../img/campaign.png");
-  background-repeat: no-repeat;
-  background-position: 0px -3px;
+	background-image: url("../../img/campaign.png");
+	background-repeat: no-repeat;
+	background-position: 0px -3px;
 
-  margin-top: 10px;
-  margin-bottom: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 
-  color: #cccccc;
+	color: #cccccc;
 
-  font-size: 12px;
-  font-weight: bold;
-  padding-left: 25px;
-  padding-bottom: 5px;
-  border-bottom: 1px solid #777777;
+	font-size: 12px;
+	font-weight: bold;
+	padding-left: 25px;
+	padding-bottom: 5px;
+	border-bottom: 1px solid #777777;
 
 }
 
 .kb-kills-header
 {
-  background-image: url("../../img/kills.png");
-  background-repeat: no-repeat;
-  background-position: 0px -3px;
+	background-image: url("../../img/kills.png");
+	background-repeat: no-repeat;
+	background-position: 0px -3px;
 
-  margin-top: 10px;
-  margin-bottom: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 
-  color: #cccccc;
+	color: #cccccc;
 
-  font-size: 12px;
-  font-weight: bold;
-  padding-left: 25px;
-  padding-bottom: 5px;
-  border-bottom: 1px solid #777777;
+	font-size: 12px;
+	font-weight: bold;
+	padding-left: 25px;
+	padding-bottom: 5px;
+	border-bottom: 1px solid #777777;
 }
 
 .kb-losses-header
 {
-  background-image: url("../../img/losses.png");
-  background-repeat: no-repeat;
-  background-position: 0px -3px;
+	background-image: url("../../img/losses.png");
+	background-repeat: no-repeat;
+	background-position: 0px -3px;
 
-  margin-top: 10px;
-  margin-bottom: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 
-  color: #cccccc;
+	color: #cccccc;
 
-  font-size: 12px;
-  font-weight: bold;
-  padding-left: 25px;
-  padding-bottom: 5px;
-  border-bottom: 1px solid #777777;
+	font-size: 12px;
+	font-weight: bold;
+	padding-left: 25px;
+	padding-bottom: 5px;
+	border-bottom: 1px solid #777777;
 }
 
 .kb-contract-target-header
 {
-  background-image: url("../../img/contract-target.gif");
-  background-repeat: no-repeat;
-  background-position: 0px -3px;
+	background-image: url("../../img/contract-target.gif");
+	background-repeat: no-repeat;
+	background-position: 0px -3px;
 
-  margin-top: 10px;
-  margin-bottom: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 
-  color: #cccccc;
+	color: #cccccc;
 
-  font-size: 12px;
-  font-weight: bold;
-  padding-left: 25px;
-  padding-bottom: 5px;
-  border-bottom: 1px solid #777777;
+	font-size: 12px;
+	font-weight: bold;
+	padding-left: 25px;
+	padding-bottom: 5px;
+	border-bottom: 1px solid #777777;
 }
-
+.kl-kill, .kl-loss, .kl-kill-null, .kl-loss-null
+{
+	text-align: center;
+}
 .kl-kill-null, .kl-loss-null
 {
-  color: #aaaaaa;
+	color: #aaaaaa;
 }
 
 td.kl-kill-null-bg
 {
-  color: #999999;
-  background: #003300;
+	color: #999999;
+	background: #003300;
 }
 
 td.kl-loss-null-bg
 {
-  color: #999999;
-  background: #330000;
+	color: #999999;
+	background: #330000;
 }
 
 td.kl-kill
 {
-  color: #00aa00;
-  font-weight: bold;
+	color: #00aa00;
+	font-weight: bold;
 }
 
 .kl-loss
 {
-  color: #aa0000;
-  font-weight: bold;
+	color: #aa0000;
+	font-weight: bold;
 }
 
 td.kl-kill-bg
 {
-  background: #003300;
-  color: #00bb00;
-  font-weight: bold;
+	background: #003300;
+	color: #00bb00;
+	font-weight: bold;
 }
 
 td.kl-loss-bg
 {
-  background: #330000;
-  color: #bb0000;
-  font-weight: bold;
+	background: #330000;
+	color: #bb0000;
+	font-weight: bold;
 }
 
 #weeknav
 {
-  right: 0px;
-  top: 20px;
+	right: 0px;
+	top: 20px;
 }
 
 td.weeknav
 {
-  color: #666666;
-  font-size: 9px;
-  font-weight: bold;
+	color: #666666;
+	font-size: 9px;
+	font-weight: bold;
 }
 
 select.kb-select
 {
-  font-size: 10px;
-  width: 210px;
+	font-size: 10px;
+	width: 210px;
 }
 
 input.kb-input
 {
-  font-size: 10px;
+	font-size: 10px;
 }
 
 a:link {
-  color: #FFA500;
-  font-size: 10px;
-  font-weight: bold;
-  text-decoration: none;
+	color: #FFA500;
+	font-size: 10px;
+	font-weight: bold;
+	text-decoration: none;
 }
 
 a.kb-table-row-hover:link {
-  color: #333333;
+	color: #333333;
 }
 
 a:visited {
-  color: #FFA500;
-  font-size: 10px;
-  font-weight: bold;
-  text-decoration: none;
+	color: #FFA500;
+	font-size: 10px;
+	font-weight: bold;
+	text-decoration: none;
 }
 
 a:active {
-  color: #FFA500;
-  font-size: 10px;
-  font-weight: bold;
-  text-decoration: none;
+	color: #FFA500;
+	font-size: 10px;
+	font-weight: bold;
+	text-decoration: none;
 }
 
 a:hover {
-  color: #FFA500;
-  font-size: 10px;
-  font-weight: bold;
-  text-decoration: underline;
+	color: #FFA500;
+	font-size: 10px;
+	font-weight: bold;
+	text-decoration: underline;
 }
 .counter
 {
@@ -536,7 +582,7 @@ a:hover {
 	-moz-border-radius-topright: 10px;
 	-moz-border-radius-bottomleft: 10px;
 	-moz-border-radius-bottomright: 10px;
-	}
+}
 
 .comment:focus {
 	border-color: #FFFFFF;
@@ -554,7 +600,7 @@ a:hover {
 	-moz-border-radius-topright: 10px;
 	-moz-border-radius-bottomleft: 10px;
 	-moz-border-radius-bottomright: 10px;
-	}
+}
 .comment-button:focus {
 	border-color: #FFFFFF;
 }
@@ -566,171 +612,183 @@ a:hover {
 	clear:left;
 	color: #cccccc;
 	font-size: 12px;
-	}
+}
 .comment-text {
 	padding:5px;
 	border-bottom-width:thin;
- 	border-bottom-style:solid;
+	border-bottom-style:solid;
 	border-bottom-color: #333333;
 	overflow: hidden;
-	}
+}
 #countdown {
 	border:0px;
 	background-color:#000000;
 	color: #cccccc;
 	font-size: 12px;
 	font-family: Arial, Helvetica, sans-serif;
-	}
+}
 .popup-table
 {
-filter: alpha(opacity=90);
--moz-opacity: 0.9;
-background-color:#333333;
+	filter: alpha(opacity=90);
+	-moz-opacity: 0.9;
+	background-color:#333333;
 }
 .killcount
 {
-  color: #ffffff;
-  float:right;
-  font-weight: bold;
-  font-size:9px;
-  padding-right:4px;
+	color: #ffffff;
+	font-weight: bold;
+	font-size:9px;
+	padding-right:4px;
 }
 .losscount
 {
-  color: #dd0000;
-  float:left;
-  font-weight: bold;
-  font-size:9px;
+	color: #dd0000;
+	font-weight: bold;
+	font-size:9px;
+}
+
+.kb-summary-summary > .losscount
+{
+	text-align: right;
+}
+.kb-summary-summary > .killcount
+{
+	text-align: left;
 }
 .kb-table-row-even-kill
 {
-  background: #005000;
+	background: #005000;
 }
 
 .kb-table-row-odd-kill
 {
-  background: #004000;
+	background: #004000;
 }
 
 .kb-table-row-even-loss
 {
-  background: #a00000;
+	background: #a00000;
 }
 
 .kb-table-row-odd-loss
 {
-  background: #900000;
+	background: #900000;
 }
 
 .kb-table-row-even-kill:hover
 {
-  color: #FFFFFF;
-  background: #0083CC;
-  cursor: pointer;
+	color: #FFFFFF;
+	background: #0083CC;
+	cursor: pointer;
 }
 
 .kb-table-row-odd-kill:hover
 {
-  color: #FFFFFF;
-  background: #0083CC;
-  cursor: pointer;
+	color: #FFFFFF;
+	background: #0083CC;
+	cursor: pointer;
 }
 
 .kb-table-row-odd-loss:hover
 {
-  color: #222222;
-  background: #DD9300;
-  cursor: pointer;
+	color: #222222;
+	background: #DD9300;
+	cursor: pointer;
 }
 
 .kb-table-row-even-loss:hover
 {
-  color: #222222;
-  background: #DD9300;
-  cursor: pointer;
+	color: #222222;
+	background: #DD9300;
+	cursor: pointer;
 }
 
 div.kb-shiptype
 {
-  float: left;
-  margin-top: 3px;
-  padding-left: 3px;
+	float: left;
+	margin-top: 3px;
+	padding-left: 3px;
 }
 
 div.kb-shipicon
 {
-  float: right;
-  height: 32px;
+	float: right;
+	height: 32px;
 }
 
 td.kb-shipfilter
 {
-  font-family: Verdana, Tahoma;
-  font-size: 12px;
+	font-family: Verdana, Tahoma;
+	font-size: 12px;
 }
 
 a.kb-shipclass:visited {
-  color: #dddddd;
+	color: #dddddd;
 }
 
 a.kb-shipclass:link {
-  color: #dddddd;
+	color: #dddddd;
 }
 
 a.kb-shipclass-hl:link {
-  color: #FFA500;
-  text-decoration: underline;
+	color: #FFA500;
+	text-decoration: underline;
 }
 
 a.kb-shipclass-hl:active {
-  color: #FFA500;
-  text-decoration: underline;
+	color: #FFA500;
+	text-decoration: underline;
 }
 
 a.kb-shipclass-hl:visited {
-  color: #FFA500;
-  text-decoration: underline;
+	color: #FFA500;
+	text-decoration: underline;
 }
 
 a.kb-shipclass:active {
-  color: #dddddd;
+	color: #dddddd;
 }
 
 a.kb-shipclass:hover {
-  color: #dddddd;
-  text-decoration: underline;
+	color: #dddddd;
+	text-decoration: underline;
 }
 
 a.kb-contract:link {
-  font-size: 12px;
+	font-size: 12px;
 }
 
 a.kb-contract:visited {
-  font-size: 12px;
+	font-size: 12px;
 }
 #content
 {
-  float: left;
+	float: left;
 }
 
 #context, .context_element
 {
-  float: right;
+	float: right;
 }
 
+.context_element > *
+{
+	width: 150px;
+	margin-bottom: 10px;
+}
 #main
 {
-  width: 950px;
+	width: 950px;
 
-  background: #111111;
-  border-left: 1px solid #555555;
-  border-right: 1px solid #555555;
-  border-top: 0px solid #555555;
-  border-bottom: 0px solid #555555;
-  padding: 0px;
-  border-collapse: separate;
-  border-spacing: 0px;
-  margin: auto;
+	background: #111111;
+	border-left: 1px solid #555555;
+	border-right: 1px solid #555555;
+	border-top: 0px solid #555555;
+	border-bottom: 0px solid #555555;
+	padding: 0px;
+	border-collapse: separate;
+	border-spacing: 0px;
+	margin: auto;
 }
 
 .stats
@@ -771,7 +829,7 @@ a.kb-contract:visited {
 	clear: both;
 }
 #kl-detail-victim, #kl-detail-invsum, #kl-detail-inv, #kl-detail-comments,
-  #kl-detail-vicship, #kl-detail-shipdetails, #kl-detail-fitting
+#kl-detail-vicship, #kl-detail-shipdetails, #kl-detail-fitting
 {
 	margin-bottom: 10px;
 }
@@ -808,15 +866,14 @@ a.kb-contract:visited {
 	font-weight: bold;
 }
 
-.award_box
+div.awardbox
 {
 	vertical-align:top;
 	text-align:center;
 	float:left;
 	width:150px;
-	height:460px;
-	margin-left:20px;
-	margin-right:20px;
+	height:480px;
+	margin: 0 20px 10px 20px;
 }
 
 .no_stretch
@@ -825,3 +882,399 @@ a.kb-contract:visited {
 	white-space: nowrap;
 }
 
+.contractlist
+{
+	border-spacing: 1px;
+	margin-left:auto;
+	margin-right: auto;
+	text-align:center;
+	width:98%;
+}
+
+.contractlist tr td:first-child
+{
+	text-align: left;
+}
+
+.contractlist tr.kb-table-header td.kb-date
+{
+	width:80px;
+}
+
+.contractlist tr.kb-table-header td.killcount
+{
+	width:50px;
+}
+
+.contractlist tr.kb-table-header td.iskcount
+{
+	width:70px;
+}
+
+.contractlist tr.kb-table-header td.efficiency
+{
+	width:120px;
+}
+
+.contractlist td.kb-date
+{
+	text-align: center;
+}
+.contractlist efficiency
+{
+	width:75px;
+	text-align: left;
+}
+
+.contractlist .efficiency_percent
+{
+	width:40px;
+}
+
+.contractlist .name
+{
+	font-weight: bold;
+}
+.contract-stats
+{
+	width:100%;
+	border-spacing: 1px;
+	table-layout: fixed;
+	margin-bottom: 10px;
+	font-weight: bold;
+}
+
+.contract-stats td
+{
+	text-align: left;
+}
+
+.contract-stats .kb-date
+{
+	width: 120px;
+}
+
+.contract-stats .contract-data-name
+{
+	width: 206px;
+}
+td.contract-logo
+{
+	height: 80px;
+	text-align: center;
+	width: 80px;
+}
+
+.contract-list-summary td.kl-kill-bg,
+.contract-list-summary td.kl-loss-bg
+{
+	width: 60px;
+	text-align: center;
+}
+
+.contract-summary-name
+{
+	width: 112px;
+	font-weight: bold;
+}
+
+.contract-list-efficiency .efficiency_percent,
+.contract-list-efficiency .efficiency_bar
+{
+	width: 120px;
+	font-weight: bold;
+}
+.kb-box
+{
+	width:150px;
+	border-spacing: 1px;
+	margin-bottom: 10px;
+}
+
+.kb-box > tr > td
+{
+	text-align: left;
+}
+
+.kb-box .kb-table-header
+{
+	text-align: center;
+}
+
+img
+{
+	border: 0;
+}
+
+.summarytable td
+{
+	vertical-align:top;
+}
+
+.kb-summary-summary
+{
+	width: 100%;
+	text-align: center;
+}
+.kb-summary-summary > div
+{
+	display: inline-block;
+	width: 48%;
+}
+
+.kb-summary-clear
+{
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%
+}
+
+.summarysubtable
+{
+	border-spacing:1px;
+	width:100%
+}
+
+.summarytable > table
+{
+	width:760px;
+	border-collapse:collapse
+}
+
+.summarytable-verbose
+{
+	width:60px;
+	text-align:center
+}
+
+.summarytable-brief
+{
+	width:30px;
+	text-align:center
+}
+.kb-kl-table
+{
+	margin-left: auto;
+	margin-right: auto;
+	text-align: left;
+	width:760px;
+}
+
+.kl-shiptype
+{
+	width:190px;
+}
+
+.kl-victim
+{
+	width:208px;
+}
+
+.kl-finalblow
+{
+	width: 175px;
+}
+
+.kl-location
+{
+	width: 164px;
+	text-align:left;
+	height:auto;
+}
+
+.kl-shiptype-text
+{
+	width:157px;
+}
+
+.kl-victim-text
+{
+	width:175px;
+}
+
+.kb-kl-table tr.kb-table-header > td
+{
+	text-align:center;
+}
+
+.kb-kl-table td
+{
+	vertical-align: middle;
+}
+.kl-inv-comm
+{
+	float:left;
+	vertical-align: middle;
+}
+
+.kl-inv-comm img
+{
+	vertical-align: middle;
+}
+
+.kl-date
+{
+	float: right;
+}
+
+table.awardbox td.kb-table-header
+{
+	text-align: center;
+}
+
+table.awardbox table
+{
+	border-collapse: collapse;
+	width: 100%;
+	text-align: left;
+}
+
+.awardbox-top td
+{
+	text-align: center;
+	font-weight: bold;
+}
+
+.awardbox-num
+{
+	width: 15px;
+}
+
+.awardbox-count
+{
+	text-align: right;
+}
+
+.awardbox-comment
+{
+	text-align: center;
+}
+
+.awardbox .kb-table-header
+{
+	text-align: center;
+}
+
+.kb-clock
+{
+	text-align: center;
+}
+.kb-clock .kb-subtable
+{
+	border-collapse: collapse;
+	width: 100%;
+}
+
+#clock
+{
+	font-weight: bold;
+}
+
+.alliance-detail .logo,
+.corp-detail .logo,
+.pilot-detail .logo
+{
+	background-color:black;
+	height:128px;
+	text-align:center;
+	width:128px;
+}
+
+.alliance-detail .attribute-name,
+.corp-detail .attribute-name
+{
+	width: 130px;
+}
+
+.pilot-detail .attribute-name
+{
+	width: 180px;
+}
+
+.alliance-detail .attribute-data-short,
+.corp-detail .attribute-data-short
+{
+	width: 90px;
+}
+
+.alliance-detail .attribute-data-long,
+.corp-detail .attribute-data-long
+{
+	width: 270px;
+}
+
+.alliance-detail td,
+.corp-detail td,
+.pilot-detail td
+{
+	text-align: left;
+	font-weight: bold;
+}
+
+.alliance-detail td:last-child,
+.corp-detail td:last-child
+{
+	font-weight: normal;
+}
+
+.corp-detail .description
+{
+	height:100px;
+	overflow:auto;
+	width:100%;
+}
+
+.pilot-detail.stats > table
+{
+	width: 100%;
+	table-layout: fixed;
+}
+
+.toplist-table
+{
+	border-spacing: 1px;
+	width: 306px;
+}
+
+.toplist-table td:first-child
+{
+	padding: 0;
+}
+
+.toplist-table tr
+{
+	height: 32px;
+}
+
+.toplist-table .kb-table-header
+{
+	height: 16px;
+	text-align: center;
+}
+
+.toplist-name
+{
+	width: 200px;
+}
+
+.toplist-rank
+{
+	width: 60px;
+}
+
+.toplist-table td:nth-child(3)
+{
+	text-align: center;
+}
+
+.toplist-table .kb-table-header
+{
+	text-align: center;
+}
+
+/* Disable default styles that are in the way.
+TODO: remove when this is default */
+.killcount, .losscount
+{
+	float:none;
+}

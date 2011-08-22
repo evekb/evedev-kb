@@ -14,24 +14,24 @@
             <div class="block-header">Astronautic</div>
             <table class="kb-table" width="360" border="0" cellspacing="1">
                 <tr class="{cycle name=ccl}">
-                    <td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon03_13.png" border="0" alt="" /></td>
-                    <td class="kb-table-cell"><b>Cargo capacity</b></td>
-                    <td class="kb-table-cell" align="right">{$item->item.capacity} m3</td>
+                    <td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon03_13.png" alt="" /></td>
+                    <td><b>Cargo capacity</b></td>
+                    <td align="right">{$item->item.capacity} m3</td>
                 </tr>
                 <tr class="{cycle name=ccl}">
-                    <td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon02_10.png" border="0" alt="" /></td>
-                    <td class="kb-table-cell"><b>Mass</b></td>
-                    <td class="kb-table-cell" align="right">{$item->item.mass|number_format} kg</td>
+                    <td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon02_10.png" alt="" /></td>
+                    <td><b>Mass</b></td>
+                    <td align="right">{$item->item.mass|number_format} kg</td>
                 </tr>
                 <tr class="{cycle name=ccl}">
-                    <td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon02_09.png" border="0" alt="" /></td>
-                    <td class="kb-table-cell"><b>Volume</b></td>
-                    <td class="kb-table-cell" align="right">{$item->item.volume} m3</td>
+                    <td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon02_09.png" alt="" /></td>
+                    <td><b>Volume</b></td>
+                    <td align="right">{$item->item.volume} m3</td>
                 </tr>
                 <tr class="{cycle name=ccl}">
-                    <td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon07_12.png" border="0" alt="" /></td>
-                    <td class="kb-table-cell"><b>Baseprice</b></td>
-                    <td class="kb-table-cell" align="right">{$item->item.basePrice|number_format} ISK</td>
+                    <td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon07_12.png" alt="" /></td>
+                    <td><b>Baseprice</b></td>
+                    <td align="right">{$item->item.basePrice|number_format} ISK</td>
                 </tr>
             </table>
 
@@ -43,9 +43,9 @@
             <table class="kb-table" width="360" border="0" cellspacing="1">
             {foreach from=$item->attrib key=i item=key}
                 <tr class="{cycle name=ccl}">
-                    <td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon{$key.icon}.png" border="0" alt="" /></td>
-                    <td class="kb-table-cell"><b>{$key.displayName}</b></td>
-                    <td class="kb-table-cell" align="right">{if $key.unit == 'typeID'}<a href="{$kb_host}/?a=invtype&amp;id={$key.value}">{$item->resolveTypeID($key.value)}</a>
+                    <td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon{$key.icon}.png" alt="" /></td>
+                    <td><b>{$key.displayName}</b></td>
+                    <td align="right">{if $key.unit == 'typeID'}<a href="{$kb_host}/?a=invtype&amp;id={$key.value}">{$item->resolveTypeID($key.value)}</a>
                                                             {elseif $key.unit == 'groupID'}<a href="{$kb_host}/?a=groupdb&amp;id={$key.value}">{$item->resolveGroupID($key.value)}</a>
                                                             {elseif $key.unit == 'attributeID'}{$item->resolveAttributeID($key.value)}
                                                             {else}{$key.value} {$key.unit}{/if}</td>

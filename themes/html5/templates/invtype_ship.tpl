@@ -16,8 +16,8 @@
 			{foreach from=$armour key=i item=key}
 				<tr class="{cycle name=ccl}">
 					<td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon{$item->attrib.$key.icon}.png" border="0" alt="" /></td>
-					<td class="kb-table-cell"><b>{$item->attrib.$key.displayName}</b></td>
-					<td class="kb-table-cell" align="right">{if strstr($key, 'Resonance')}{$item->attrib.$key.value*-100+100}
+					<td><b>{$item->attrib.$key.displayName}</b></td>
+					<td align="right">{if strstr($key, 'Resonance')}{$item->attrib.$key.value*-100+100}
 															{else}{$item->attrib.$key.value}{/if} {$item->attrib.$key.unit}</td>
 				</tr>
 			{/foreach}
@@ -27,8 +27,8 @@
 			{foreach from=$shield key=i item=key}
 				<tr class="{cycle name=ccl}">
 					<td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon{$item->attrib.$key.icon}.png" border="0" alt="" /></td>
-					<td class="kb-table-cell"><b>{$item->attrib.$key.displayName}</b></td>
-					<td class="kb-table-cell" align="right">{if strstr($key, 'Resonance')}{$item->attrib.$key.value*-100+100}
+					<td><b>{$item->attrib.$key.displayName}</b></td>
+					<td align="right">{if strstr($key, 'Resonance')}{$item->attrib.$key.value*-100+100}
 															{else}{$item->attrib.$key.value}{/if} {$item->attrib.$key.unit}</td>
 				</tr>
 			{/foreach}
@@ -36,31 +36,31 @@
 			<div class="block-header">Astronautic</div>
 			<table class="kb-table" width="360" border="0" cellspacing="1">
 				<tr class="{cycle name=ccl}">
-					<td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon03_13.png" border="0" alt="" /></td>
-					<td class="kb-table-cell"><b>Cargo capacity</b></td>
-					<td class="kb-table-cell" align="right">{$item->item.capacity} m3</td>
+					<td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon03_13.png" alt="" /></td>
+					<td><b>Cargo capacity</b></td>
+					<td align="right">{$item->item.capacity} m3</td>
 				</tr>
 				<tr class="{cycle name=ccl}">
-					<td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon02_10.png" border="0" alt="" /></td>
-					<td class="kb-table-cell"><b>Mass</b></td>
-					<td class="kb-table-cell" align="right">{$item->item.mass|number_format} kg</td>
+					<td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon02_10.png" alt="" /></td>
+					<td><b>Mass</b></td>
+					<td align="right">{$item->item.mass|number_format} kg</td>
 				</tr>
 				<tr class="{cycle name=ccl}">
-					<td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon02_09.png" border="0" alt="" /></td>
-					<td class="kb-table-cell"><b>Volume</b></td>
-					<td class="kb-table-cell" align="right">{$item->item.volume} m3</td>
+					<td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon02_09.png" alt="" /></td>
+					<td><b>Volume</b></td>
+					<td align="right">{$item->item.volume} m3</td>
 				</tr>
 			{foreach from=$navigation key=i item=key}
 				<tr class="{cycle name=ccl}">
 					<td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon{$item->attrib.$key.icon}.png" border="0" alt="" /></td>
-					<td class="kb-table-cell"><b>{$item->attrib.$key.displayName}</b></td>
-					<td class="kb-table-cell" align="right">{$item->attrib.$key.value} {$item->attrib.$key.unit}</td>
+					<td><b>{$item->attrib.$key.displayName}</b></td>
+					<td align="right">{$item->attrib.$key.value} {$item->attrib.$key.unit}</td>
 				</tr>
 			{/foreach}
 				<tr class="{cycle name=ccl}">
-					<td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon07_12.png" border="0" alt="" /></td>
-					<td class="kb-table-cell"><b>Baseprice</b></td>
-					<td class="kb-table-cell" align="right">{$item->item.basePrice|number_format} ISK</td>
+					<td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon07_12.png" alt="" /></td>
+					<td><b>Baseprice</b></td>
+					<td align="right">{$item->item.basePrice|number_format} ISK</td>
 				</tr>
 			</table>
 			</td>
@@ -72,8 +72,8 @@
 			{foreach from=$fitting key=i item=key}{if $item->attrib.$key.displayName}
 				<tr class="{cycle name=ccl}">
 					<td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon{$item->attrib.$key.icon}.png" border="0" alt="" /></td>
-					<td class="kb-table-cell"><b>{$item->attrib.$key.displayName}</b></td>
-					<td class="kb-table-cell" align="right">{$item->attrib.$key.value} {$item->attrib.$key.unit}</td>
+					<td><b>{$item->attrib.$key.displayName}</b></td>
+					<td align="right">{$item->attrib.$key.value} {$item->attrib.$key.unit}</td>
 				</tr>
 			{/if}{/foreach}
 			</table>
@@ -84,8 +84,8 @@
 			{foreach from=$targetting key=i item=key}{if $item->attrib.$key.displayName}
 				<tr class="{cycle name=ccl}">
 					<td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon{$item->attrib.$key.icon}.png" border="0" alt="" /></td>
-					<td class="kb-table-cell"><b>{$item->attrib.$key.displayName}</b></td>
-					<td class="kb-table-cell" align="right">{$item->attrib.$key.value} {$item->attrib.$key.unit}</td>
+					<td><b>{$item->attrib.$key.displayName}</b></td>
+					<td align="right">{$item->attrib.$key.value} {$item->attrib.$key.unit}</td>
 				</tr>
 			{/if}{/foreach}
 			</table>
@@ -96,8 +96,8 @@
 			{foreach from=$miscellaneous key=i item=key}{if $item->attrib.$key.displayName}
 				<tr class="{cycle name=ccl}">
 					<td class="item-icon" width="32"><img src="{$img_url}/items/32_32/icon{$item->attrib.$key.icon}.png" border="0" alt="" /></td>
-					<td class="kb-table-cell"><b>{$item->attrib.$key.displayName}</b></td>
-					<td class="kb-table-cell" align="right">{$item->attrib.$key.value} {$item->attrib.$key.unit}</td>
+					<td><b>{$item->attrib.$key.displayName}</b></td>
+					<td align="right">{$item->attrib.$key.value} {$item->attrib.$key.unit}</td>
 				</tr>
 			{/if}{/foreach}
 			</table>

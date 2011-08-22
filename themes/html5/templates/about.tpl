@@ -8,8 +8,7 @@ maintained by the <a href="http://www.eve-id.net/"> EVE-Dev</a> group.</p>
 	<a href="http://www.ccpgames.com/">CCP</a>.</p>
 <p>
 	<a href="http://www.eve-id.net/">
-		<img src="http://www.eve-id.net/logo.png" border="0" alt="eve-dev logo"
-			 />
+		<img src="http://www.eve-id.net/logo.png" width="400" height="80" alt="eve-dev logo" />
 	</a>
 </p>
 <!-- /about -->

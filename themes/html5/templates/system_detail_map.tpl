@@ -4,9 +4,9 @@
 		<td colspan="3">Graphical Overview</td>
 	</tr>
 	<tr>
-		<td><img src="{$kb_host}/thumb.php?type=map&amp;id={$sys_id}&amp;size=250" border="0" width="250" height="250" alt="" /></td>
-		<td><img src="{$kb_host}/thumb.php?type=region&amp;id={$sys_id}&amp;size=250" border="0" width="250" height="250" alt="" /></td>
-		<td><img src="{$kb_host}/thumb.php?type=cons&amp;id={$sys_id}&amp;size=250" border="0" width="250" height="250" alt="" /></td>
+		<td><img src="{$kb_host}/thumb.php?type=map&amp;id={$sys_id}&amp;size=250" width="250" height="250" alt="" /></td>
+		<td><img src="{$kb_host}/thumb.php?type=region&amp;id={$sys_id}&amp;size=250" width="250" height="250" alt="" /></td>
+		<td><img src="{$kb_host}/thumb.php?type=cons&amp;id={$sys_id}&amp;size=250" width="250" height="250" alt="" /></td>
 	</tr>
 </table>
 <br/>

@@ -6,15 +6,15 @@
 {if $destroyed.$slotindex or $dropped.$slotindex}
 		<tr class="kb-table-row-even">
 			<td class="item-icon" style="width:32px"><img style="width:32px; height:32px; border:0px" src="{$img_url}/{$slot.img}" alt="{$slot.text}" /></td>
-			<td colspan="2" class="kb-table-cell"><b>{$slot.text}</b> </td>
+			<td colspan="2"><b>{$slot.text}</b> </td>
     {if $config->get('item_values')}
-			<td align="center" class="kb-table-cell"><b>Current Value</b></td>
+			<td align="center"><b>Current Value</b></td>
     {/if}
 		</tr>
     {foreach from=$destroyed.$slotindex item="i"}
 		<tr class="kb-table-row-odd" style="height:32px;">
 			<td class="item-icon" style="width:32px; vertical-align:top"><a href="{$kb_host}/?a=invtype&amp;id={$i.itemID}">{$i.Icon}</a></td>
-			<td class="kb-table-cell">{$i.Name}</td>
+			<td>{$i.Name}</td>
 			<td style="width:30px; text-align:center">{$i.Quantity}</td>
         {if $config->get('item_values')}
 			<td align="center">{$i.Value}</td>
@@ -28,7 +28,7 @@
 						<input type="submit" name="submit" value="UpdateValue" class="comment-button" />
 					</div>
 					<div style="float:right; margin-right: 5px">
-				Current single Item Value:
+						Current single Item Value:
 						<input name="IID" value="{$i.itemID}" type="hidden" />
 						<input name="{$i.itemID}" type="text" class="comment-button" value="{$i.single_unit}" size="6" />
 					</div>
@@ -59,7 +59,7 @@
     {foreach from=$dropped.$slotindex item="i"}
 		<tr class="kb-table-row-odd" style="background-color: #006000; height:34px">
 			<td style="border: 1px solid green; width:32px; vertical-align:top"><a href="{$kb_host}/?a=invtype&amp;id={$i.itemID}">{$i.Icon}</a></td>
-			<td class="kb-table-cell">{$i.Name}</td>
+			<td>{$i.Name}</td>
 			<td style="width:30px; text-align:center">{$i.Quantity}</td>
         {if $config->get('item_values')}
 			<td align="center">{$i.Value}</td>
