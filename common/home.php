@@ -267,6 +267,7 @@ class pHome extends pageAssembly
 	 */
 	function topLists()
 	{
+		$html = '';
 		// Display the top pilot lists.
 		if($this->view != 'losses')
 		{
@@ -276,7 +277,7 @@ class pHome extends pageAssembly
 
 			$tklist->generate();
 			$tkbox = new AwardBox($tklist, "Top killers", "kills in " . $this->getCurrentPeriod(), "kills", "eagle");
-			$html = $tkbox->generate();
+			$html .= $tkbox->generate();
 		}
 		if($this->view == 'losses')
 		{
@@ -286,7 +287,7 @@ class pHome extends pageAssembly
 
 			$tllist->generate();
 			$tlbox = new AwardBox($tllist, "Top losers", "losses in " . $this->getCurrentPeriod(), "losses", "moon");
-			$html = $tlbox->generate();
+			$html .= $tlbox->generate();
 		}
 		if ($this->view != 'losses')
 		{
@@ -298,7 +299,7 @@ class pHome extends pageAssembly
 
 			$tklist->generate();
 			$tkbox = new AwardBox($tklist, "Top scorers", "points in " . $this->getCurrentPeriod(), "points", "redcross");
-			$html = $tkbox->generate();
+			$html .= $tkbox->generate();
 		}
 		return $html;
 	}
