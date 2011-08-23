@@ -20,6 +20,8 @@ class Alliance extends Entity
 	private $executed = false;
 	/** @var string */
 	private $name = null;
+	/** @var string */
+	private $imgurl = null;
 
 	/**
 	 * Create a new Alliance object from the given $id.
@@ -137,7 +139,7 @@ class Alliance extends Entity
 					$this->id = (int) $row['all_id'];
 					$this->name = $row['all_name'];
 					$this->externalid = (int) $row['all_external_id'];
-
+					$this->executed = true;
 					$this->putCache();
 				}
 			}
@@ -180,10 +182,9 @@ class Alliance extends Entity
 					$this->id = (int) $row['all_id'];
 					$this->name = $name;
 					$this->externalid = (int) $row['all_external_id'];
+					$this->executed = true;
 
-					$this->putCache();
-
-					return $this->id;
+					return;
 				}
 				$qry->execute("insert into kb3_alliances ".
 						"(all_id, all_name, all_external_id) values ".
@@ -193,15 +194,17 @@ class Alliance extends Entity
 						"(all_id, all_name) values ".
 						"(null, '".$name."')");
 			}
-			$this->id = $qry->getInsertID();
-		}
-		else {
+			$this->id = (int) $qry->getInsertID();
+			$this->name = $name;
+			$this->externalid = (int) $externalid;
+			$this->executed = true;
+		} else {
 			$row = $qry->getRow();
 			$this->id = (int) $row['all_id'];
 			$this->name = $row['all_name'];
 			$this->externalid = (int) $row['all_external_id'];
+			$this->executed = true;
 		}
-		$this->putCache();
 	}
 
 	/**
@@ -287,20 +290,39 @@ class Alliance extends Entity
 	 */
 	function getPortraitURL($size = 128)
 	{
-		if ($this->getExternalID()) {
-			return imageURL::getURL('Alliance', $this->getExternalID(), $size);
-		} else if (file_exists("img/alliances/".$this->getUnique().".png")) {
+		if (isset($this->imgurl)) {
+			return $this->imgurl;
+		}
+		if (file_exists("img/alliances/".$this->getUnique().".png")) {
 			if ($size == 128) {
-				return IMG_HOST."/img/alliances/".$this->getUnique().".png";
-			} else if (CacheHandler::exists($this->getUnique()."_$size.png", 'img')) {
-				return KB_HOST."/".CacheHandler::getExternal($this->getUnique()
-								."_$size.png", 'img');
+				$this->imgurl = IMG_HOST."/img/alliances/"
+						.$this->getUnique().".png";
+			} else if (CacheHandler::exists(
+					$this->getUnique()."_$size.png",'img')) {
+				$this->imgurl = KB_HOST."/"
+						.CacheHandler::getExternal($this->getUnique()
+						."_$size.png", 'img');
 			} else {
-				return KB_HOST.'/?a=thumb&amp;type=alliance&amp;id='
+				$this->imgurl = KB_HOST.'/?a=thumb&amp;type=alliance&amp;id='
 						.$this->getUnique().'&amp;size='.$size;
 			}
+			$this->putCache();
+		} else if ($this->getExternalID()) {
+			$this->imgurl = imageURL::getURL('Alliance', $this->getExternalID(),
+					$size);
+			$this->putCache();
 		} else {
-			return imageURL::getURL('Alliance', 1, $size);
+			$this->imgurl = imageURL::getURL('Alliance', 1, $size);
+		}
+		return $this->imgurl;
+	}
+
+	function getDetailsURL()
+	{
+		if ($this->getExternalID()) {
+			return edkURI::page('alliance_detail', $this->externalid, 'all_ext_id');
+		} else {
+			return edkURI::page('alliance_detail', $this->id, 'all_id');
 		}
 	}
 

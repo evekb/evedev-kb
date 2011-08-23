@@ -71,6 +71,20 @@ class Corporation extends Entity
 	}
 
 	/**
+	 * Return a URL for the details page of this Corporation.
+	 *
+	 * @return string The URL for this Corporation's details page.
+	 */
+	function getDetailsURL()
+	{
+		if ($this->getExternalID()) {
+			return edkURI::page('corp_detail', $this->externalid, 'crp_ext_id');
+		} else {
+			return edkURI::page('corp_detail', $this->id, 'crp_id');
+		}
+	}
+
+	/**
 	 * Return the corporation CCP ID.
 	 * When populateList is true, the lookup will return 0 in favour of getting
 	 * the external ID from CCP. This helps the kill_detail page load times.
@@ -122,8 +136,6 @@ class Corporation extends Entity
 		$this->name = $row['crp_name'];
 		$this->externalid = intval($row['crp_external_id']);
 		$this->alliance = $row['crp_all_id'];
-
-		$this->putCache();
 	}
 	/**
 	 * Search the database for the corporation details for this object.
@@ -220,7 +232,6 @@ class Corporation extends Entity
 						$qry->execute($sql);
 						$this->alliance = $alliance;
 					}
-					$this->putCache();
 					return $this->id;
 				}
 			}
@@ -264,7 +275,6 @@ class Corporation extends Entity
 				$this->setExternalID(intval($externalid));
 			}
 		}
-		$this->putCache();
 		return $this->id;
 	}
 	/**

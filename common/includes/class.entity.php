@@ -53,7 +53,13 @@ abstract class Entity extends Cacheable {
 	 * Return a URL for the image of this entity.
 	 *
 	 * @param integer $size The size in pixels of the image needed.
-	 * @return string The URL for this corporation's logo.
+	 * @return string The URL for this entity's logo.
 	 */
 	abstract public function getPortraitURL($size = 64);
+	/**
+	 * Return a URL for the details page of this entity.
+	 * 
+	 * @return string The URL for this entity's details page.
+	 */
+	abstract public function getDetailsURL();
 }

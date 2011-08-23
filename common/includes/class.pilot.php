@@ -151,6 +151,20 @@ class Pilot extends Entity
 			return imageURL::getURL('Pilot', $this->externalid, $size);
 		}
 	}
+
+	/**
+	 * Return a URL for the details page of this Pilot.
+	 *
+	 * @return string The URL for this Pilot's details page.
+	 */
+	function getDetailsURL()
+	{
+		if ($this->getExternalID()) {
+			return edkURI::page('pilot_detail', $this->externalid, 'plt_ext_id');
+		} else {
+			return edkURI::page('pilot_detail', $this->id, 'plt_id');
+		}
+	}
 	/**
 	 * Return the file path for the pilot's portrait.
 	 *
@@ -304,7 +318,6 @@ class Pilot extends Entity
 										 plt_updated = date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s') WHERE plt_externalid = ".$externalID);
 					}
 					$this->valid = true;
-					$this->putCache();
 					return $this->id;
 				}
 			}
@@ -342,7 +355,6 @@ class Pilot extends Entity
 			$this->corpid = $corp->getID();
 			$this->valid = true;
 		}
-		$this->putCache();
 		return $this->id;
 	}
 	/**
@@ -422,11 +434,11 @@ class Pilot extends Entity
                        where plt_name = '".$qry->escape(stripslashes($name))."'");
         $row = $qry->getRow();
         if ($row['plt_id']) {
-			$this->id = $row['plt_id'];
+			$this->id = (int) $row['plt_id'];
 		}
 		$this->name = $row['plt_name'];
-		$this->externalid = intval($row['plt_externalid']);
-		$this->corpid = $row['plt_crp_id'];
+		$this->externalid = (int) $row['plt_externalid'];
+		$this->corpid = (int) $row['plt_crp_id'];
 		$this->updated = strtotime($row['plt_updated']." UTC");
 		$this->valid = true;
 
