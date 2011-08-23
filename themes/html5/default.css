@@ -649,11 +649,11 @@ a:hover {
 
 .kb-summary-summary > .losscount
 {
-	text-align: right;
+	text-align: left;
 }
 .kb-summary-summary > .killcount
 {
-	text-align: left;
+	text-align: right;
 }
 .kb-table-row-even-kill
 {
