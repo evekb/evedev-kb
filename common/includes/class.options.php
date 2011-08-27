@@ -70,7 +70,7 @@ class options
 				// for checkboxes we need to set the value to zero if the option is not there
 				if ($element['type'] == 'checkbox')
 				{
-					if ($_POST['option_'.$element['name']] == 'on')
+					if (isset( $_POST['option_'.$element['name']] ) && $_POST['option_'.$element['name']] == 'on')
 					{
 						config::set($element['name'], '1');
 					}

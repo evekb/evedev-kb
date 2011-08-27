@@ -131,7 +131,7 @@ class pHome extends pageAssembly
 		// Display campaigns, if any.
 		if (Killboard::hasCampaigns(true) &&
 				$this->isCurrentPeriod()) {
-			$html .= "<div class=\"kb-campaigns-header\">Active campaigns</div>";
+			$html = "<div class=\"kb-campaigns-header\">Active campaigns</div>";
 			$list = new ContractList();
 			$list->setActive("yes");
 			$list->setCampaigns(true);
