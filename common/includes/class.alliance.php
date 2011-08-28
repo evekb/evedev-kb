@@ -149,15 +149,19 @@ class Alliance extends Entity
 	}
 
 	/**
-	 * Add a new alliance to the database or update the details of an existing one.
+	 * Add a new alliance to the database or update the details of an
+	 * existing alliance.
 	 *
 	 * @param string $name An alliance name for this object.
+	 * @param integer $externalid External ID if known.
+	 * @return type
 	 */
-	function add($name, $externalid = false)
+	function add($name, $externalid = 0)
 	{
 		$qry = DBFactory::getDBQuery();
 		$name = $qry->escape(stripslashes($name));
-		$qry->execute("select * from kb3_alliances where all_name = '".$name."'");
+		$qry->execute("select all_id, all_name, all_external_id"
+				." from kb3_alliances where all_name = '".$name."'");
 
 		if ($qry->recordCount() == 0) {
 			$externalid = (int) $externalid;
@@ -211,7 +215,8 @@ class Alliance extends Entity
 	 * Set the CCP external ID for this alliance.
 	 *
 	 * @param integer $externalid
-	 * @param boolean $update If true and the ID exists, update the existing entry.
+	 * @param boolean $update If true and the ID exists, update the existing
+	 * entry.
 	 *
 	 * @return integer
 	 */
@@ -317,10 +322,16 @@ class Alliance extends Entity
 		return $this->imgurl;
 	}
 
+	/**
+	 * Return the URL for the alliance's details page.
+	 *
+	 * @return string URL for the details page.
+	 */
 	function getDetailsURL()
 	{
 		if ($this->getExternalID()) {
-			return edkURI::page('alliance_detail', $this->externalid, 'all_ext_id');
+			return edkURI::page('alliance_detail', $this->externalid,
+					'all_ext_id');
 		} else {
 			return edkURI::page('alliance_detail', $this->id, 'all_id');
 		}

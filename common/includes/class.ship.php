@@ -258,9 +258,5 @@ class Ship extends Cacheable
 		if (!$this->value = $price) {
 			$this->value = $baseprice;
 		}
-
-		if ($this->id) {
-			$this->putCache();
-		}
 	}
 }

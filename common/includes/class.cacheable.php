@@ -31,7 +31,7 @@ abstract class Cacheable {
 		}
 
 		if (isset(self::$cache[$classname.$id])) {
-			return self::$cache[$classname.$id];
+			return unserialize(self::$cache[$classname.$id]);
 		} else if (class_exists('Config', false) && !config::get('cfg_objcache')) {
 			return new $classname($id);
 		} else if (self::$cachehandler->exists($classname.$id)) {
@@ -72,7 +72,7 @@ abstract class Cacheable {
 	protected function getCache()
 	{
 		if(isset(self::$cache[get_class($this).$this->getID()])) {
-			return self::$cache[get_class($this).$this->getID()];
+			return unserialize(self::$cache[get_class($this).$this->getID()]);
 		}
 
 		if (!config::get('cfg_objcache')) {
@@ -93,8 +93,11 @@ abstract class Cacheable {
 	 */
 	protected function putCache()
 	{
+		if (!$this->getID()) {
+			trigger_error("Invalid ID", E_USER_ERROR);
+		}
 		// The unserialize/serialize is used to make a deep copy
-		self::$cache[get_class($this).$this->getID()] = unserialize(serialize($this));
+		self::$cache[get_class($this).$this->getID()] = serialize($this);
 
 		if (!config::get('cfg_objcache')) {
 			return false;
