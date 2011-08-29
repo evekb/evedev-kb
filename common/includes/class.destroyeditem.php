@@ -28,7 +28,7 @@ class DestroyedItem
 	 * @param string|integer $location
 	 * @param integer $locationID
 	 */
-	function DestroyedItem($item, $quantity, $location, $locationID = null)
+	function DestroyedItem($item, $quantity, $location, $locationID = 0)
 	{
 		$this->item_ = $item;
 		$this->quantity_ = (int) $quantity;
@@ -125,10 +125,10 @@ class DestroyedItem
 	 */
 	function getLocationID()
 	{
-		if(!is_null($this->locationID_)) {
+		if($this->locationID_) {
 			return $this->locationID_;
 		}
-		if (strlen($this->location_) < 2) {
+		if ($this->location_) {
 			$this->locationID_ = (int) $this->item_->getSlot();
 		} else {
 			$qry = DBFactory::getDBQuery();
