@@ -373,7 +373,7 @@ class thumbInt extends thumb
 				if($this->id)
 				{
 					$url = imageURL::getURL('Pilot', $this->id, $size);
-					header("Location: $url");
+					header(html_entity_decode("Location: $url"));
 					die;
 				}
 
