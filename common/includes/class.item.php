@@ -194,38 +194,29 @@ class Item extends Cacheable
 	}
 
 	/**
-	 * Load this Item by name
+	 * Lookup an Item by name
 	 * @param string $name
-	 * @return boolean
+	 * @return Item|boolean
 	 */
-	public function lookup($name)
+	public static function lookup($name)
 	{
-		$name = trim($name);
-		$this->executed = false;
-
 		static $cache_name;
-		if( isset( $cache_name[ $name] ) ) {
-			if( $cache_name[ $name] === false ) {
-				return false;
-			}
-			$this->id = $cache_name[ $name];
-			return true;
+		if (isset($cache_name[$name])) {
+			return $cache_name[$name];
 		}
-
+		$name = trim(stripslashes($name));
 		$qry = DBFactory::getDBQuery();
 		$query = "select typeID as itm_id from kb3_invtypes itm
-				  where typeName = '".$qry->escape(stripslashes($name))."'";
+				  where typeName = '".$qry->escape($name)."'";
 		$qry->execute($query);
-		$row = $qry->getRow();
-		if (!isset($row['itm_id']))
-		{
+		if (!$qry->recordCount()) {
 			$cache_name[$name] = false;
-			return false;
+		} else {
+			$row = $qry->getRow();
+			$cache_name[$name] = Cacheable::factory('Item',
+					(int) $row['itm_id']);
 		}
-		$this->id = $row['itm_id'];
-		$cache_name[$name] = $this->id;
-		unset($this->row);
-		return true;
+		return $cache_name[$name];
 	}
 
 	/**

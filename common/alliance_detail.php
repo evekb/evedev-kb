@@ -232,8 +232,7 @@ class pAllianceDetail extends pageAssembly
 				$this->allianceCorps[] = $membercorp;
 
 				// Check if corp is known to EDK DB, if not, add it.
-				$tempMyCorp->Corporation();
-				$tempMyCorp->lookup($myCorpAPI->getCorporationName());
+				$tempMyCorp = Corporation::lookup($myCorpAPI->getCorporationName());
 				if ($tempMyCorp->getID() == 0) {
 					$tempMyCorp->add($myCorpAPI->getCorporationName(), $this->alliance,
 							substr($tempcorp["startDate"], 0, 16), $myCorpAPI->getCorporationID());

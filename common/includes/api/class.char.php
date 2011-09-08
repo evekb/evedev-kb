@@ -94,8 +94,7 @@ class API_Char
 				// pilot is not in DB
 
 				// Set Corp
-				$pilotscorp = new Corporation();
-				$pilotscorp->lookup($char['corpName']);
+				$pilotscorp = Corporation::lookup($char['corpName']);
 				// Check Corp was set, if not, add the Corp
 				if ( !$pilotscorp->getID() )
 				{

@@ -82,8 +82,7 @@ if ($_GET['pilot'] || $_GET['pilot_name'])
 	{
 		$p = $_GET['pilot_name'];
 	}
-	$pilot = new Pilot();
-	$pilot->lookup(urldecode($p));
+	$pilot = Pilot::lookup(urldecode($p));
 }
 
 if ($_GET['corp'] || $_GET['corp_name'])
@@ -96,8 +95,7 @@ if ($_GET['corp'] || $_GET['corp_name'])
 	{
 		$c = $_GET['corp_name'];
 	}
-	$corp = new Corporation();
-	$corp->lookup(urldecode($c));
+	$corp = Corporation::lookup(urldecode($c));
 }
 
 if ($_GET['alli'] || $_GET['alliance_name'])

@@ -112,19 +112,23 @@ class SolarSystem extends Cacheable
         }
     }
 
-    function lookup($name)
+	/**
+	 * Lookup a SolarSystem by name.
+	 * 
+	 * @param string $name
+	 * @return Solarsystem|boolean
+	 */
+    static function lookup($name)
     {
         $qry = DBFactory::getDBQuery();
-        $qry->execute("select *
-                       from kb3_systems
-                       where sys_name = '".$qry->escape($name)."'");
+        $qry->execute("SELECT sys_id FROM kb3_systems "
+				." WHERE sys_name = '".$qry->escape($name)."'");
 
-        $row = $qry->getRow();
-        if (!$row['sys_id'])
-        {
-            return null;
-        }
-        $this->id = $row['sys_id'];
-        $this->executed = false;
+        if (!$qry->recordCount()) {
+            return false;
+        } else {
+	        $row = $qry->getRow();
+			return Cacheable::factory('SolarSystem', (int)$row['sys_id']);
+		}
     }
 }

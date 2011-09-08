@@ -448,23 +448,24 @@ class Pilot extends Entity
 	}
 
 	/**
-	 * Lookup a pilot name and set this object to use the details found.
+	 * Lookup a pilot name and return a Pilot object.
 	 *
 	 * @param string $name The pilot name to look up.
+	 * @return Pilot|boolean returns false if the Pilot was not found.
 	 */
-	public function lookup($name)
+	public static function lookup($name)
 	{
 		$qry = DBFactory::getDBQuery();
 		$qry->execute("SELECT plt_id, plt_externalid, plt_crp_id, plt_updated "
 				."FROM kb3_pilots WHERE plt_name = '"
 				.$qry->escape(stripslashes($name))."'");
-		$row = $qry->getRow();
-		$this->id = (int) $row['plt_id'];
-		$this->name = $row['plt_name'];
-		$this->externalid = (int) $row['plt_externalid'];
-		$this->corpid = (int) $row['plt_crp_id'];
-		$this->updated = strtotime($row['plt_updated']." UTC");
-		$this->valid = true;
+		if ($qry->recordCount()) {
+			$row = $qry->getRow();
+			return new Pilot($row['plt_id'], $row['plt_externalid'],
+					$row['plt_name'], $row['plt_crp_id']);
+		} else {
+			return false;
+		}
 	}
 
 	/**

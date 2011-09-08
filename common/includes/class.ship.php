@@ -238,25 +238,24 @@ class Ship extends Cacheable
 	 *
 	 * @param string $name a string containing a ship name.
 	 */
-	function lookup($name)
+	static function lookup($name)
 	{
 		$pqry = new DBPreparedQuery();
-		$pqry->prepare("select shp_id, shp_name, shp_techlevel, shp_externalid, price, shp_baseprice, shp_class, shp_isfaction from kb3_ships left join kb3_item_price on (shp_externalid = typeID) where shp_name = ?");
+		$pqry->prepare("select shp_id, shp_name, shp_externalid, shp_class "
+				."from kb3_ships where shp_name = ?");
 		$pqry->bind_param('s', $name);
-		$baseprice = 0;
-		$price = 0;
+		$id = 0;
+		$external_id = 0;
+		$name = "";
 		$scl_id = 0;
-		$pqry->bind_result($this->id, $this->shipname, $this->shiptechlevel,
-				$this->externalid, $price, $baseprice, $scl_id, $this->shipisfaction);
+		$pqry->bind_result($id, $external_id, $name, $scl_id);
 		if (!$pqry->execute() || !$pqry->recordCount()) {
 			return false;
 		} else {
 			$pqry->fetch();
 		}
 
-		$this->shipclass = Cacheable::factory('ShipClass', $scl_id);
-		if (!$this->value = $price) {
-			$this->value = $baseprice;
-		}
+		$shipclass = Cacheable::factory('ShipClass', $scl_id);
+		return new Ship($id, $external_id, $name, $shipclass);
 	}
 }

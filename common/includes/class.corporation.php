@@ -126,16 +126,17 @@ class Corporation extends Entity
 	 *
      * @param string $name The corporation name to look up.
 	*/
-	function lookup($name)
+	static function lookup($name)
 	{
 		$qry = DBFactory::getDBQuery();
-		$qry->execute("select * from kb3_corps
-                       where crp_name = '".slashfix($name)."'");
-		$row = $qry->getRow();
-		$this->id = intval($row['crp_id']);
-		$this->name = $row['crp_name'];
-		$this->externalid = intval($row['crp_external_id']);
-		$this->alliance = $row['crp_all_id'];
+		$qry->execute("select crp_id from kb3_corps where crp_name = '"
+				.slashfix($name)."'");
+		if($qry->recordCount()) {
+			$row = $qry->getRow();
+			return Cacheable::factory('Corporation', (int)$row['crp_id']);
+		} else {
+			return false;
+		}
 	}
 	/**
 	 * Search the database for the corporation details for this object.

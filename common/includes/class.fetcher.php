@@ -142,8 +142,7 @@ class Fetcher
 					$cname = trim(str_replace("\r", "", $cname));
 					if(!isset($corps[$cname]))
 					{
-						$newcorp = new Corporation();
-						$newcorp->lookup($cname);
+						$newcorp = Corporation::lookup($cname);
 						$corps[$cname] = $newcorp;
 					}
 					$namelist[slashfix($name)] = $corps[$cname];
@@ -166,8 +165,7 @@ class Fetcher
 					$cname = trim(str_replace("\r", "", $cname));
 					if(!isset($corps[$cname]))
 					{
-						$newcorp = new Corporation();
-						$newcorp->lookup($cname);
+						$newcorp = Corporation::lookup($cname);
 						$corps[$cname] = $newcorp;
 					}
 					$namelist[slashfix($name)] = $corps[$cname];

@@ -322,8 +322,7 @@ class Parser
 		$alliance = $this->fetchAlliance($alliancename);
 		$corp = $this->fetchCorp($corpname, $alliance, $timestamp);
 		$victim = $this->fetchPilot($victimname, $corp, $timestamp);
-		$system = new SolarSystem();
-		$system->lookup($systemname);
+		$system = SolarSystem::lookup($systemname);
 
 		if (!$system->getID())
 		{
@@ -838,8 +837,7 @@ class Parser
 				$quantity = 1;
 			}
 
-			$item = new Item();
-			$item->lookup(trim($itemname));
+			$item = Item::lookup(trim($itemname));
 			if (!$item->getID()) {
 				$this->error('Item not found.', trim($itemname));
 			}
@@ -909,9 +907,9 @@ class Parser
 		else
 		{
 			$corp = new Corporation();
-			if($alliance == null) $corp->lookup($corpname);
-			else
-			{
+			if($alliance == null) {
+				$corp = Corporation::lookup($corpname);
+			} else {
 				$corp->add($corpname, $alliance, $timestamp, 0, self::$loadExternals);
 				self::$corps[$corpname] = $corp;
 			}
@@ -951,8 +949,7 @@ class Parser
 		if(isset(self::$ships[$shipname])) {
 			$ship = self::$ships[$shipname];
 		} else {
-			$ship = new Ship();
-			$ship->lookup($shipname);
+			$ship = Ship::lookup($shipname);
 			self::$ships[$shipname] = $ship;
 		}
 		return $ship;
@@ -969,8 +966,7 @@ class Parser
 			$item = self::$items[$itemname];
 		else
 		{
-			$item = new Item();
-			$item->lookup($itemname);
+			$item = Item::lookup($itemname);
 			self::$items[$itemname] = $item;
 		}
 		return $item;
