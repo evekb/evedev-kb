@@ -62,9 +62,10 @@ class ItemList
 
 	function execute()
 	{
+		// TODO: remove the duplicated values if possible
 		if ($this->executed || (!count($this->itemarray)&& !count($this->destroyedIDarray) && !count($this->droppedIDarray))) return;
-		$sql = "select inv.icon as itm_icon, inv.typeID as itm_externalid, ".
-			"itp.price as itm_value, kb3_item_types.*, dga.value as itm_techlevel, ".
+		$sql = "select inv.icon, inv.icon as itm_icon, inv.typeID, inv.typeID as itm_externalid, ".
+			"itp.price, itp.price as itm_value, kb3_item_types.*, dga.value as techlevel, dga.value as itm_techlevel, ".
 			"dc.value as usedcharge, dl.value as usedlauncher, ".
 			"inv.groupID, inv.typeName, inv.capacity, inv.raceID, inv.basePrice, inv.marketGroupID";
 		if(count($this->destroyedIDarray)) $sql .= ", if(dl.attributeID IS NULL,sum(itd.itd_quantity),truncate(sum(itd.itd_quantity)/count(dl.attributeID),0)) as itd_quantity, ".
