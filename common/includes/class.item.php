@@ -6,7 +6,6 @@
  * @package EDK
  */
 
-
 /**
  * Contains the details about an Item.
  * @package EDK
@@ -15,8 +14,7 @@ class Item extends Cacheable
 {
 	private $executed = false;
 	private $id = 0;
-	public $row_ = null;
-	private $qry = null;
+	private $row_ = null;
 
 	/**
 	 * Construct a new Item.
@@ -27,15 +25,14 @@ class Item extends Cacheable
 	 *
 	 * @param integer $id Item ID
 	 * @param array $row Array of attributes.
-	*/
+	 */
 	function Item($id = 0, $row = null)
 	{
-		$this->id = (int)$id;
-		if(isset($row))
-		{
+		$this->id = (int) $id;
+		if (isset($row)) {
 			$this->row_ = $row;
 			$this->executed = true;
-		} else if( $this->isCached() ) {
+		} else if ($this->isCached()) {
 			$cache = $this->getCache();
 			$this->row_ = $cache->row_;
 			$this->executed = true;
@@ -46,7 +43,7 @@ class Item extends Cacheable
 	{
 		return $this->id;
 	}
-	
+
 	public function getExternalID()
 	{
 		return $this->getID();
@@ -54,7 +51,9 @@ class Item extends Cacheable
 
 	public function getName()
 	{
-		if(!$this->row_['typeName'])$this->execQuery();
+		if (!$this->row_['typeName']) {
+			$this->execQuery();
+		}
 		return $this->row_['typeName'];
 	}
 
@@ -70,75 +69,63 @@ class Item extends Cacheable
 		global $smarty;
 		$img = imageURL::getURL('InventoryType', $this->id, $size);
 
-		if (!$full) return $img;
-		if ($size == 24)
-		{
+		if (!$full) {
+			return $img;
+		}
+		if ($size == 24) {
 			$show_style = '_'.config::get('fp_ammostyle');
 			$t_s = config::get('fp_ttag');
 			$f_s = config::get('fp_ftag');
 			$d_s = 0;
 			$o_s = 0;
-		}
-		elseif ($size == 48 || $size = 32)
-		{
+		} elseif ($size == 48 || $size = 32) {
 			$show_style = '_'.config::get('fp_highstyle');
 			$t_s = config::get('fp_ttag');
 			$f_s = config::get('fp_ftag');
 			$d_s = config::get('fp_dtag');
 			$o_s = config::get('fp_otag');
-		}
-		else
-		{
+		} else {
 			$show_style = "";
 			$t_s = 1;
 			$f_s = config::get('kd_ftag');
 			$d_s = config::get('kd_dtag');
 			$o_s = config::get('kd_otag');
+		}
+		if ($show_style == "_none" || $show_style == "_") {
+			$show_style = "";
+		}
 
-		}
-		if($show_style == "_none" || $show_style == "_") $show_style = "";
-
-		if($show_style == "_tag" || $show_style == "") return "<img src='$img' title=\"".$this->getName()."\" alt=\"".$this->getName()."\" style='width:{$size}px; height:{$size}px; border:0px' />";
-
-		$it_name = $this->getName();
-		if (($this->row_['itm_techlevel'] == 5) && $show_style) // is a T2?
-		{
-			$icon .= config::get('cfg_img').'/items/'.$size.'_'.$size.'/t2'.$show_style.'.png';
-		}
-		elseif (($this->row_['itm_techlevel'] > 5) && ($this->row_['itm_techlevel'] < 10) && $show_style) // is a faction item?
-		{
-			$icon .= config::get('cfg_img').'/items/'.$size.'_'.$size.'/f'.$show_style.'.png';
-		}
-		elseif (($this->row_['itm_techlevel'] > 10) && strstr($it_name,"Modified") && $show_style) // or it's an officer?
-		{
-			$icon .= config::get('cfg_img').'/items/'.$size.'_'.$size.'/o'.$show_style.'.png';
-		}
-		elseif (($this->row_['itm_techlevel'] > 10) && (strstr($it_name,"-Type")) && $show_style) // or it's just a deadspace item.
-		{
-			$icon .= config::get('cfg_img').'/items/'.$size.'_'.$size.'/d'.$show_style.'.png';
-		}
-		elseif (
-			(strstr($it_name,"Blood ")
-				|| strstr($it_name,"Sansha")
-				|| strstr($it_name,"Arch")
-				|| strstr($it_name,"Domination")
-				|| strstr($it_name,"Republic")
-				|| strstr($it_name,"Navy")
-				|| strstr($it_name,"Guardian")
-				|| strstr($it_name,"Guristas")
-				|| strstr($it_name,"Shadow")
-			) && $show_style
-		) // finally if it's a faction it should have its prefix
-		{
-			$icon = config::get('cfg_img').'/items/'.$size.'_'.$size.'/f'.$show_style.'.png';
-		}
-		else // but maybe it was only a T1 item :P
-		{
+		if ($show_style == "_tag" || $show_style == "") {
 			return "<img src='$img' title=\"".$this->getName()."\" alt=\"".$this->getName()."\" style='width:{$size}px; height:{$size}px; border:0px' />";
 		}
 
-		if (($size == 32 || $size == 48 || true) && ($show_style == '_backglowing'))
-		{
+		$it_name = $this->getName();
+		if (($this->row_['itm_techlevel'] == 5) && $show_style) { // is a T2?
+			$icon .= config::get('cfg_img').'/items/'.$size.'_'.$size.'/t2'.$show_style.'.png';
+		} elseif (($this->row_['itm_techlevel'] > 5) && ($this->row_['itm_techlevel'] < 10) && $show_style) { // is a faction item?
+			$icon .= config::get('cfg_img').'/items/'.$size.'_'.$size.'/f'.$show_style.'.png';
+		} elseif (($this->row_['itm_techlevel'] > 10) && strstr($it_name, "Modified") && $show_style) { // or it's an officer?
+			$icon .= config::get('cfg_img').'/items/'.$size.'_'.$size.'/o'.$show_style.'.png';
+		} elseif (($this->row_['itm_techlevel'] > 10) && (strstr($it_name, "-Type")) && $show_style) { // or it's just a deadspace item.
+			$icon .= config::get('cfg_img').'/items/'.$size.'_'.$size.'/d'.$show_style.'.png';
+		} elseif (
+				(strstr($it_name, "Blood ")
+				|| strstr($it_name, "Sansha")
+				|| strstr($it_name, "Arch")
+				|| strstr($it_name, "Domination")
+				|| strstr($it_name, "Republic")
+				|| strstr($it_name, "Navy")
+				|| strstr($it_name, "Guardian")
+				|| strstr($it_name, "Guristas")
+				|| strstr($it_name, "Shadow")
+				) && $show_style
+		) { // finally if it's a faction it should have its prefix
+			$icon = config::get('cfg_img').'/items/'.$size.'_'.$size.'/f'.$show_style.'.png';
+		} else { // but maybe it was only a T1 item :P
+			return "<img src='$img' title=\"".$this->getName()."\" alt=\"".$this->getName()."\" style='width:{$size}px; height:{$size}px; border:0px' />";
+		}
+
+		if (($size == 32 || $size == 48 || true) && ($show_style == '_backglowing')) {
 			$temp = $img;
 			$img = $icon;
 			$icon = $temp;
@@ -155,8 +142,7 @@ class Item extends Cacheable
 		$this->execQuery();
 
 		// if item has no slot get the slot from parent item
-		if ($this->row_['itt_slot'] == 0)
-		{
+		if ($this->row_['itt_slot'] == 0) {
 			$qry = DBFactory::getDBQuery();
 			$query = "select itt_slot from kb3_item_types
 						inner join kb3_dgmtypeattributes d
@@ -166,8 +152,9 @@ class Item extends Cacheable
 			$qry->execute($query);
 			$row = $qry->getRow();
 
-			if (!$row['itt_slot'])
+			if (!$row['itt_slot']) {
 				return 0;
+			}
 
 			return $row['itt_slot'];
 		}
@@ -176,9 +163,10 @@ class Item extends Cacheable
 
 	private function execQuery()
 	{
-		if (!$this->executed)
-		{
-			if (!$this->id)return false;
+		if (!$this->executed) {
+			if (!$this->id) {
+				return false;
+			}
 			if ($this->id && $this->isCached()) {
 				$this->row_ = $this->getCache()->row_;
 				$this->executed = true;
@@ -187,20 +175,17 @@ class Item extends Cacheable
 
 			$qry = DBFactory::getDBQuery();
 
-			$sql = "select inv.*, kb3_item_types.*, dga.value as techlevel, itp.price, dc.value as usedcharge, dl.value as usedlauncher
-							   from kb3_invtypes inv
-							   left join kb3_dgmtypeattributes dga on dga.typeID=inv.typeID and dga.attributeID=633
-							   left join kb3_item_price itp on itp.typeID=inv.typeID
-							   left join kb3_item_types on groupID=itt_id
-							   left join kb3_dgmtypeattributes dc on dc.typeID = inv.typeID AND dc.attributeID IN (128)
-							   left join kb3_dgmtypeattributes dl on dl.typeID = inv.typeID AND dl.attributeID IN (137,602)
-							   where inv.typeID = '".$this->id."'";
+			$sql = "select inv.*, kb3_item_types.*, dga.value as techlevel,
+				   itp.price, dc.value as usedcharge, dl.value as usedlauncher
+				   from kb3_invtypes inv
+				   left join kb3_dgmtypeattributes dga on dga.typeID=inv.typeID and dga.attributeID=633
+				   left join kb3_item_price itp on itp.typeID=inv.typeID
+				   left join kb3_item_types on groupID=itt_id
+				   left join kb3_dgmtypeattributes dc on dc.typeID = inv.typeID AND dc.attributeID IN (128)
+				   left join kb3_dgmtypeattributes dl on dl.typeID = inv.typeID AND dl.attributeID IN (137,602)
+				   where inv.typeID = '".$this->id."'";
 			if ($qry->execute($sql)) {
 				$this->row_ = $qry->getRow();
-				$this->row_['itm_icon'] = $this->row_['icon'];
-				$this->row_['itm_techlevel'] = $this->row_['techlevel'];
-				$this->row_['itm_externalid'] = $this->row_['typeID'];
-				$this->row_['itm_value'] = $this->row_['price'];
 				$this->executed = true;
 
 				$this->putCache();
@@ -257,13 +242,17 @@ class Item extends Cacheable
 		$qry->execute($query);
 
 		$row = $qry->getRow();
-		if ($row['itm_id']) return $row['itm_id'];
+		if ($row['itm_id']) {
+			return $row['itm_id'];
+		}
 	}
 
 	public function get_used_launcher_group($name = null)
 	{
-		if(is_null($name) && $this->executed) return $this->row_['usedlauncher'];
-		$qry  = DBFactory::getDBQuery();
+		if (is_null($name) && $this->executed) {
+			return $this->row_['usedlauncher'];
+		}
+		$qry = DBFactory::getDBQuery();
 		// I dont think CCP will change this attribute in near future ;-)
 		$query = "SELECT value
 					 FROM kb3_dgmtypeattributes d
@@ -276,19 +265,22 @@ class Item extends Cacheable
 
 	public function get_used_charge_size($name = null)
 	{
-		if(is_null($name) && $this->executed) return $this->row_['usedcharge'];
-		$qry  = DBFactory::getDBQuery();
+		if (is_null($name) && $this->executed) {
+			return $this->row_['usedcharge'];
+		}
+		$qry = DBFactory::getDBQuery();
 		// I dont think CCP will change this attribute in near future ;-)
-		if(is_null($name))
+		if (is_null($name)) {
 			$query = "SELECT value
 					 FROM kb3_dgmtypeattributes d
 					 INNER JOIN kb3_invtypes i ON i.typeID = d.typeID
 			 WHERE i.typeID = ".$this->row_['typeID']." AND d.attributeID IN (128);";
-		else
+		} else {
 			$query = "SELECT value
 			 FROM kb3_dgmtypeattributes d
 			 INNER JOIN kb3_invtypes i ON i.typeID = d.typeID
 					 WHERE i.typeName = '".$qry->escape($name)."' AND d.attributeID IN (128);";
+		}
 		$qry->execute($query);
 		$row = $qry->getRow();
 		return $row['value'];
@@ -297,30 +289,18 @@ class Item extends Cacheable
 	public static function get_ammo_size($name)
 	{
 		$temp = substr($name, strlen($name) - 2, 2);
-		if (strstr($name,'Mining'))
-		{
+		if (strstr($name, 'Mining')) {
 			$a_size = 1;
-		}
-		elseif ($temp == 'XL')
-		{
+		} elseif ($temp == 'XL') {
 			$a_size = 4;
-		}
-		elseif ($temp == ' L')
-		{
+		} elseif ($temp == ' L') {
 			$a_size = 3;
-		}
-		elseif ($temp == ' M')
-		{
+		} elseif ($temp == ' M') {
 			$a_size = 2;
-		}
-		elseif ($temp == ' S')
-		{
+		} elseif ($temp == ' S') {
 			$a_size = 1;
-		}
-		else
-		{
+		} else {
 			$a_size = 0;
-
 		}
 		return $a_size;
 	}
@@ -332,21 +312,27 @@ class Item extends Cacheable
 	 */
 	public function get_group_id($name = null)
 	{
-		if(is_null($name) && $this->executed) return $this->row_['groupID'];
+		if (is_null($name) && $this->executed) {
+			return $this->row_['groupID'];
+		}
 		$qry = DBFactory::getDBQuery();
-		if(is_null($name))
+		if (is_null($name)) {
 			$query = "select groupID
 						from kb3_invtypes
 						where typeName = ".$this->row_['typeID'];
-		else
+		} else {
 			$query = "select groupID
 						from kb3_invtypes
 					   where typeName = '".$qry->escape($name)."'";
+		}
 		$qry->execute($query);
 
 		$row = $qry->getRow();
-		if ($row['groupID']) return $row['groupID'];
+		if ($row['groupID']) {
+			return $row['groupID'];
+		}
 	}
+
 	/**
 	 * Return an attribute of this item.
 	 *
@@ -355,7 +341,9 @@ class Item extends Cacheable
 	 */
 	public function getAttribute($key)
 	{
-		if (!$this->executed) $this->execQuery();
+		if (!$this->executed) {
+			$this->execQuery();
+		}
 		return $this->row_[$key];
 	}
 }

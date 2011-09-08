@@ -95,19 +95,19 @@ class DestroyedItem
 		if (isset($this->value)) {
 			return $this->value;
 		}
-		if ($this->item_->row_['itm_value']) {
-			$this->value = (float) $this->item_->row_['itm_value'];
+		if ($this->item_->getAttribute('price')) {
+			$this->value = (float) $this->item_->getAttribute('price');
 			return $this->value;
-		} else if ($this->item_->row_['baseprice']) {
-			$this->value = (float) $this->item_->row_['baseprice'];
+		} else if ($this->item_->getAttribute('baseprice')) {
+			$this->value = (float) $this->item_->getAttribute('baseprice');
 			return $this->value;
 		}
 
 		$qry = DBFactory::getDBQuery();
-		$qry->execute("select basePrice, price
-					from kb3_invtypes
-					left join kb3_item_price on kb3_invtypes.typeID=kb3_item_price.typeID
-					where kb3_invtypes.typeID='".$this->item_->getID()."'");
+		$qry->execute("SELECT basePrice, price
+					FROM kb3_invtypes
+					LEFT JOIN kb3_item_price ON kb3_invtypes.typeID=kb3_item_price.typeID
+					WHERE kb3_invtypes.typeID='".$this->item_->getID()."'");
 		if ($row = $qry->getRow()) {
 			if ($row['price']) {
 				$this->value = (float) $row['price'];
