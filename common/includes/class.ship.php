@@ -248,7 +248,7 @@ class Ship extends Cacheable
 		$external_id = 0;
 		$name = "";
 		$scl_id = 0;
-		$pqry->bind_result($id, $external_id, $name, $scl_id);
+		$pqry->bind_result($id, $name, $external_id, $scl_id);
 		if (!$pqry->execute() || !$pqry->recordCount()) {
 			return false;
 		} else {
