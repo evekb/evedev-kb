@@ -329,7 +329,7 @@ class Parser
 			$this->error('System not found.', $systemname);
 		}
 
-		$ship = $this->fetchShip($shipname);
+		$ship = Ship::lookup($shipname);
 
 		if (!$ship->getID())
 		{
@@ -557,7 +557,7 @@ class Parser
 					$ipilot = $this->fetchPilot($ipname, $icorp, $timestamp);
 				}
 
-				$iship = $this->fetchShip($isname);
+				$iship = Ship::lookup($isname);
 				if (!$iship->getID())
 				{
 					$this->error('Ship not found.', $isname);
@@ -568,7 +568,7 @@ class Parser
 					$iwname = $iship->getName();
 				}
 
-				$iweapon = $this->fetchItem($iwname);
+				$iweapon = Item::lookup($iwname);
 				if (strcmp($iwname, 'Unknown') == 0)
 				{
 					$this->error('No weapon found for pilot "'.$ipname .'"');
@@ -937,39 +937,6 @@ class Parser
 			self::$pilots[$pilotname] = $pilot;
 		}
 		return $pilot;
-	}
-	/**
-	 * Return ship from cached list or look up a new name.
-	 *
-	 * @param string $shipname Ship name to look up.
-	 * @return Ship Ship object matching input name.
-	 */
-	private static function fetchShip($shipname)
-	{
-		if(isset(self::$ships[$shipname])) {
-			$ship = self::$ships[$shipname];
-		} else {
-			$ship = Ship::lookup($shipname);
-			self::$ships[$shipname] = $ship;
-		}
-		return $ship;
-	}
-	/**
-	 * Return item from cached list or look up a new name.
-	 *
-	 * @param string $itemname Item name to look up.
-	 * @return mixed Item object matching input name.
-	 */
-	private static function fetchItem($itemname)
-	{
-		if(isset(self::$items[$itemname]))
-			$item = self::$items[$itemname];
-		else
-		{
-			$item = Item::lookup($itemname);
-			self::$items[$itemname] = $item;
-		}
-		return $item;
 	}
 	/**
 	 *
