@@ -828,8 +828,8 @@ a.kb-contract:visited {
 {
 	clear: both;
 }
-#kl-detail-victim, #kl-detail-invsum, #kl-detail-inv, #kl-detail-comments,
-#kl-detail-vicship, #kl-detail-shipdetails, #kl-detail-fitting
+.kl-detail-victim, #kl-detail-invsum, .kl-detail-inv, .kl-detail-comments,
+.kl-detail-vicship, #kl-detail-shipdetails, #kl-detail-fitting
 {
 	margin-bottom: 10px;
 }
@@ -1272,6 +1272,96 @@ table.awardbox table
 	text-align: center;
 }
 
+.kl-detail-victim > table,
+.kl-detail-vicship > table,
+.kl-detail-inv > table,
+.kl-detail-comments > table
+{
+	width: 100%;
+	border-collapse: separate;
+}
+.kl-detail-victim .logo
+{
+	width: 68px;
+	text-align: center;
+}
+.kl-detail-victim .logo > img,
+.kl-detail-vicship .logo > img
+{
+	width: 64px;
+	height: 64px;
+}
+.kl-detail-victim .attribute-name
+{
+	width: 68px;
+	font-weight: bold;
+}
+.kl-detail-victim .attribute-data
+{
+	width: 198px;
+}
+.kl-detail-victim td
+{
+	font-weight: bold;
+}
+.kl-detail-vicship .logo
+{
+	width: 68px;
+	text-align: center;
+}
+.kl-detail-vicship td.logo
+{
+	width: 64px;
+	height: 64px;
+	text-align: center;
+}
+.kl-detail-vicship .attribute-name
+{
+	width:118px;
+	font-weight: bold;
+}
+.kl-detail-vicship .attribute-data
+{
+	width: 206px;
+}
+.kl-detail-vicship td
+{
+	font-weight: bold;
+}
+.kl-detail-vicship td:last-child
+{
+	font-weight: normal;
+}
+.kl-detail-inv .logo
+{
+	text-align: center;
+	width: 70px;
+}
+.kl-detail-inv .attribute-data
+{
+	width: 194px;
+}
+.kl-detail-inv td.logo
+{
+	height: 66px;
+	vertical-align: middle;
+	width: 66px;
+}
+.kl-detail-inv td
+{
+	padding: 1px 2px;
+}
+.kl-detail-comments-outer
+{
+	width:100%;
+	text-align:left;
+	vertical-align:top;
+}
+.kl-detail-comments-inner
+{
+	border-collapse: collapse;
+	width:100%;
+}
 /* Disable default styles that are in the way.
 TODO: remove when this is default */
 .killcount, .losscount
