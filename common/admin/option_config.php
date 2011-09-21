@@ -451,14 +451,12 @@ class admin_config
 
 			if($set == 'p')
 			{
-				$all = new Alliance();
-				$all->add('Unknown');
+				$all = Alliance::add('Unknown');
 
 				$crp = new Corporation();
 				$crp->add('Unknown', $all, $timestamp, 0, false);
 
-				$plt = new Pilot();
-				$plt->add($char_info[0]['name'], $crp, $timestamp, $char_info[0]['characterID'], false);
+				$plt = Pilot::add($char_info[0]['name'], $crp, $timestamp, $char_info[0]['characterID'], false);
 
 				$_POST['option_cfg_pilotid'] = $value = $plt->getID();
 				$pilots = config::get('cfg_pilotid');
@@ -469,8 +467,7 @@ class admin_config
 			}
 			else if($set == 'c')
 			{
-				$all = new Alliance();
-				$all->add('Unknown');
+				$all = Alliance::add('Unknown');
 
 				$crp = new Corporation();
 				$crp->add($char_info[0]['name'], $all, $timestamp, $char_info[0]['characterID'], false);
@@ -484,8 +481,7 @@ class admin_config
 			}
 			else if($set == 'a')
 			{
-				$all = new Alliance();
-				$all->add('Unknown');
+				$all = Alliance::add('Unknown');
 
 				$_POST['option_cfg_allianceid'] = $value = $all->getID();
 				$alliances = config::get('option_cfg_allianceid');
