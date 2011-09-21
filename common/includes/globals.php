@@ -31,6 +31,8 @@ define('KB_RELEASE', '(Incursion)');
 
 // Make sure the core functions are loaded.
 require_once('common/includes/class.edkloader.php');
+spl_autoload_register('edkloader::load');
+
 // Set up the external class files with the autoloader.
 edkloader::register('Smarty', 'common/smarty/Smarty.class.php');
 

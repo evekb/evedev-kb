@@ -96,5 +96,3 @@ class edkloader
 		self::$dir = $dir;
 	}
 }
-
-spl_autoload_register('edkloader::load');
