@@ -39,7 +39,6 @@ if(file_exists(getcwd().'/cron_clearup.php')) {
 chdir($KB_HOME);
 
 require_once('kbconfig.php');
-require_once('common/includes/class.edkloader.php');
 require_once('common/includes/globals.php');
 require_once('common/includes/db.php');
 require_once ('common/includes/class.edkerror.php');
