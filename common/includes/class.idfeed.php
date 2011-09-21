@@ -493,13 +493,13 @@ class IDFeed
 		$alliance = new Alliance();
 		$corp = new Corporation();
 		if (intval($victim['allianceID'])) {
-			$alliance->add(strval($victim['allianceName']),
+			$alliance = Alliance::add(strval($victim['allianceName']),
 					intval($victim['allianceID']));
 		} else if (intval($victim['factionID'])) {
-			$alliance->add(strval($victim['factionName']),
+			$alliance = Alliance::add(strval($victim['factionName']),
 					intval($victim['factionID']));
 		} else {
-			$alliance->add("None");
+			$alliance = Alliance::add("None");
 		}
 		$corp->add(strval($victim['corporationName']), $alliance, $time,
 					intval($victim['corporationID']));
@@ -530,8 +530,7 @@ class IDFeed
 			$name = strval($victim['characterName']);
 		}
 
-		$pilot = new Pilot();
-		$pilot->add($name, $corp, $time, intval($victim['characterID']));
+		$pilot = Pilot::add($name, $corp, $time, intval($victim['characterID']));
 		$ship = new Ship(0, intval($victim['shipTypeID']));
 
 		$kill->setVictim($pilot);
@@ -557,18 +556,17 @@ class IDFeed
 		$alliance = new Alliance();
 		$corp = new Corporation();
 		if (intval($inv['allianceID'])) {
-			$alliance->add(strval($inv['allianceName']),
+			$alliance = Alliance::add(strval($inv['allianceName']),
 					intval($inv['allianceID']));
 		} else if (intval($inv['factionID'])) {
-			$alliance->add(strval($inv['factionName']),
+			$alliance = Alliance::add(strval($inv['factionName']),
 					intval($inv['factionID']));
 		} else {
-			$alliance->add("None");
+			$alliance = Alliance::add("None");
 		}
 		$corp->add(strval($inv['corporationName']), $alliance, $time,
 					intval($inv['corporationID']));
 
-		$pilot = new Pilot();
 		$charname = strval($inv['characterName']);
 		// Allow for blank names for consistency with CCP API.
 		if (preg_match("/^(Mobile \w+ Warp|\w+ Control Tower( \w+)?)/",
@@ -580,7 +578,7 @@ class IDFeed
 			$charname = $inv['corporationName'].' - '.$weapon->getName();
 		} else if ($charname == "") $charname = $ship->getName();
 
-		$pilot->add(strval($inv['characterName']), $corp, $time,
+		$pilot = Pilot::add(strval($inv['characterName']), $corp, $time,
 					 intval($inv['characterID']));
 
 		$iparty = new InvolvedParty($pilot->getID(), $corp->getID(),

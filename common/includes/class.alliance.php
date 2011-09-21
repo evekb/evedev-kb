@@ -156,16 +156,16 @@ class Alliance extends Entity
 	 * @param integer $externalid External ID if known.
 	 * @return type
 	 */
-	function add($name, $externalid = 0)
+	static function add($name, $externalid = 0)
 	{
 		$qry = DBFactory::getDBQuery();
 		$name = $qry->escape(stripslashes($name));
 		$qry->execute("select all_id, all_name, all_external_id"
 				." from kb3_alliances where all_name = '".$name."'");
 
-		if ($qry->recordCount() == 0) {
+		if (!$qry->recordCount()) {
 			$externalid = (int) $externalid;
-			if (!$externalid) {
+			if (!$externalid && strcasecmp($name, 'None') != 0) {
 				$allname = str_replace(" ", "%20", $name);
 				$myID = new API_NametoID();
 				$myID->setNames($allname);
@@ -183,32 +183,34 @@ class Alliance extends Entity
 					$qry->execute("UPDATE kb3_alliances SET all_name = '".$name
 							."' WHERE all_external_id = ".$externalid);
 
-					$this->id = (int) $row['all_id'];
-					$this->name = $name;
-					$this->externalid = (int) $row['all_external_id'];
-					$this->executed = true;
+					$all = Cacheable::factory('Alliance', (int) $qry->getInsertID());
+					$all->name = $name;
+					$all->externalid = (int) $externalid;
+					$all->executed = true;
 
 					return;
+				} else {
+					$qry->execute("insert into kb3_alliances ".
+							"(all_id, all_name, all_external_id) values ".
+							"(null, '".$name."', ".$externalid.")");
 				}
-				$qry->execute("insert into kb3_alliances ".
-						"(all_id, all_name, all_external_id) values ".
-						"(null, '".$name."', ".$externalid.")");
 			} else {
 					$qry->execute("insert into kb3_alliances ".
 						"(all_id, all_name) values ".
 						"(null, '".$name."')");
 			}
-			$this->id = (int) $qry->getInsertID();
-			$this->name = $name;
-			$this->externalid = (int) $externalid;
-			$this->executed = true;
+			$all = Cacheable::factory('Alliance', (int) $qry->getInsertID());
+			$all->name = $name;
+			$all->externalid = (int) $externalid;
+			$all->executed = true;
 		} else {
 			$row = $qry->getRow();
-			$this->id = (int) $row['all_id'];
-			$this->name = $row['all_name'];
-			$this->externalid = (int) $row['all_external_id'];
-			$this->executed = true;
+			$all = Cacheable::factory('Alliance', (int)$row['all_id']);
+			$all->name = $row['all_name'];
+			$all->externalid = $row['all_external_id'];
+			$all->executed = true;
 		}
+		return $all;
 	}
 
 	/**

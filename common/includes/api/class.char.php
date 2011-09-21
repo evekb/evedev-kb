@@ -98,12 +98,10 @@ class API_Char
 				// Check Corp was set, if not, add the Corp
 				if ( !$pilotscorp->getID() )
 				{
-					$ialliance = new Alliance();
-					$ialliance->add('None');
+					$ialliance = Alliance::add('None');
 					$pilotscorp->add($char['corpName'], $ialliance, gmdate("Y-m-d H:i:s"));
 				}
-				$ipilot = new Pilot();
-				$ipilot->add($char['Name'], $pilotscorp, gmdate("Y-m-d H:i:s"), intval($char['charID']));
+				Pilot::add($char['Name'], $pilotscorp, gmdate("Y-m-d H:i:s"), intval($char['charID']));
 			}
 		}
 

@@ -109,8 +109,7 @@ class Fetcher
 				$pos = 0;
 				$namelist = array();
 				$newcorp = new Corporation();
-				$newall = new Alliance();
-				$newall->add("None");
+				$newall = Alliance::add("None");
 				// Corps
 				while($pos = strpos($data, 'Corp: ', $pos + 1))
 				{
@@ -448,13 +447,12 @@ class Fetcher
 			if(!is_array($tempNames)) continue;
 			$myNames = array_merge($myNames, $tempNames);
 		}
-		$newpilot = new Pilot();
 		if(!is_array($myNames)) die("Name fetch error : ".$myNames);
 		foreach($myNames as $name)
 		{
 			if(isset($names[slashfix($name['name'])]))
 			{
-				$newpilot->add(slashfix($name['name']), $names[slashfix($name['name'])], '0000-00-00', $name['characterID']);
+				Pilot::add(slashfix($name['name']), $names[slashfix($name['name'])], '0000-00-00', $name['characterID']);
 // Adding all at once is faster but skips checks for name/id clashes.
 //if($sql == '') $sql = "INSERT INTO kb3_pilots (plt_name, plt_crp_id, plt_externalid, plt_updated) values ('".slashfix($name['name'])."', ".$names[slashfix($name['name'])]->getID().', '.$name['characterID'].", '0000-00-00')";
 //else $sql .= ", ('".slashfix($name['name'])."', ".$names[slashfix($name['name'])]->getID().', '.$name['characterID'].", '0000-00-00')";

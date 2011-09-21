@@ -274,25 +274,21 @@ class Pilot extends Entity
 	 * @param Corporation $corp Corporation object for this pilot's corporation
 	 * @param string $timestamp time this pilot's corp was updated
 	 * @param integer $externalID CCP external id
+	 * @param boolean $loadExternals Whether to check for an external ID
+	 * @return Pilot
 	 */
-	public function add($name, $corp, $timestamp, $externalID = 0,
+	public static function add($name, $corp, $timestamp, $externalID = 0,
 			$loadExternals = true)
 	{
-		// Make sure we don't change a cached object.
-		if ($this->id && $this->isCached()) {
-			Cacheable::delCache($this);
-		}
 		// Check if pilot exists with a non-cached query.
 		$qry = DBFactory::getDBQuery(true);
 		$name = $qry->escape(stripslashes($name));
 		// Insert or update a pilot with a cached query to update cache.
 		$qryI = DBFactory::getDBQuery(true);
-		$qry->execute("select *
-                        from kb3_pilots
-                       where plt_name = '".$name."'");
+		$qry->execute("SELECT * FROM kb3_pilots WHERE plt_name = '".$name."'");
 
-		if ($qry->recordCount() == 0) {
-			$externalID = intval($externalID);
+		if (!$qry->recordCount()) {
+			$externalID = (int)$externalID;
 			// If no external id is given then look it up.
 			if (!$externalID && $loadExternals) {
 				$pilotname = str_replace(" ", "%20", $name);
@@ -300,72 +296,69 @@ class Pilot extends Entity
 				$myID->setNames($pilotname);
 				$myID->fetchXML();
 				$myNames = $myID->getNameData();
-				$externalID = intval($myNames[0]['characterID']);
+				$externalID = (int)$myNames[0]['characterID'];
 			}
 			// If we have an external id then check it isn't already in use.
 			// If we find it then update the old corp with the new name and
 			// return.
 			if ($externalID) {
-				$qry->execute("SELECT * FROM kb3_pilots WHERE plt_externalid = ".$externalID);
-				if ($qry->recordCount() > 0) {
+				$qry->execute("SELECT * FROM kb3_pilots WHERE plt_externalid = "
+						.$externalID);
+				if ($qry->recordCount()) {
+					$pilot = Cacheable::factory('Pilot', $row['plt_id']);
+
 					$row = $qry->getRow();
-					$qryI->execute("UPDATE kb3_pilots SET plt_name = '".$name."' WHERE plt_externalid = ".$externalID);
-
-					$this->id = $row['plt_id'];
-					$this->name = $name;
-					$this->externalid = $row['plt_externalid'];
-					$this->corpid = $row['plt_crp_id'];
-					if (!is_null($row['plt_updated'])) {
-						$this->updated = strtotime($row['plt_updated']." UTC");
-					} else {
-						$this->updated = null;
+					$qryI->execute("UPDATE kb3_pilots SET plt_name = '".$name
+							."' WHERE plt_externalid = ".$externalID);
+					if ($qryI->affectedRows() > 0) {
+						Cacheable::delCache($pilot);
 					}
-
-					// Now check if the corp needs to be updated.
-					if ($row['plt_crp_id'] != $corp->getID() && $this->isUpdatable($timestamp)) {
-						$qryI->execute("update kb3_pilots
-									 set plt_crp_id = ".$corp->getID().",
-										 plt_updated = date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s') WHERE plt_externalid = ".$externalID);
+					$qryI->execute("UPDATE kb3_pilots SET plt_crp_id = "
+							.$corp->getID().", plt_updated = "
+							."date_format( '".$timestamp
+							."', '%Y.%m.%d %H:%i:%s') WHERE plt_externalid = "
+							.$externalID." AND plt_crp_id <> ".$corp->getID()
+							." AND ( plt_updated < date_format( '".$timestamp
+							."', '%Y-%m-%d %H:%i') OR plt_updated is null )");
+					if ($qryI->affectedRows() > 0) {
+						Cacheable::delCache($pilot);
 					}
-					$this->valid = true;
-					return $this->id;
+					return $pilot;
 				}
 			}
-			$qry->execute("insert into kb3_pilots (plt_name, plt_crp_id, plt_externalid, plt_updated) values (
-                                                        '".$name."',
-                                                        ".$corp->getID().",
-                                                        ".$externalID.",
-                                                        date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s'))
-														ON DUPLICATE KEY UPDATE plt_crp_id=".$corp->getID().",
-                                                        plt_externalid=".$externalID.",
-                                                        plt_updated=date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s')");
-			$this->id = $qry->getInsertID();
-			$this->name = $name;
-			$this->corpid = $corp->getID();
-			$this->updated = strtotime(preg_replace("/\./", "-", $timestamp)." UTC");
-			$this->valid = true;
+			$qry->execute("INSERT INTO kb3_pilots (plt_name, plt_crp_id, "
+					."plt_externalid, plt_updated) values ('".$name."', "
+					.$corp->getID().",	".$externalID.",
+					date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s'))
+					ON DUPLICATE KEY UPDATE plt_crp_id=".$corp->getID().",
+					plt_externalid=".$externalID.",
+					plt_updated=date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s')");
+			return new Pilot($qry->getInsertID(), $externalID, $name,
+					$corp->getID());
 		} else {
+			// Name found.
 			$row = $qry->getRow();
-			$this->id = $row['plt_id'];
+			$id = $row['plt_id'];
 			if (!is_null($row['plt_updated'])) {
-				$this->updated = strtotime($row['plt_updated']." UTC");
+				$updated = strtotime($row['plt_updated']." UTC");
 			} else {
-				$this->updated = null;
+				$updated = 0;
 			}
-			if ($this->isUpdatable($timestamp) && $row['plt_crp_id'] != $corp->getID()) {
-				$qryI->execute("update kb3_pilots
-                             set plt_crp_id = ".$corp->getID().",
-                                 plt_updated = date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s') where plt_id = ".$this->id);
+			if ($updated < strtotime($timestamp." UTC")
+					&& $corp->getID() != $row['plt_crp_id']) {
+				$qryI->execute("UPDATE kb3_pilots SET plt_crp_id = "
+						.$corp->getID().", plt_updated = '".$timestamp
+						."' WHERE plt_name = '".$name."'"
+						." AND plt_crp_id <> ".$corp->getID()
+						." AND ( plt_updated < '".$timestamp
+						."' OR plt_updated is null )");
 			}
+			$plt = new Pilot($id, $externalID, $name, $corp);
 			if (!$row['plt_externalid'] && $externalID) {
-				$this->setCharacterID($externalID);
+				$plt->setCharacterID($externalID);
 			}
-			$this->corp = $corp;
-			$this->name = $name;
-			$this->corpid = $corp->getID();
-			$this->valid = true;
+			return $plt;
 		}
-		return $this->id;
 	}
 
 	/**
@@ -490,7 +483,8 @@ class Pilot extends Entity
 		$corp = new Corporation();
 		$corp->add("Unknown", $alliance, '2000-01-01 00:00:00');
 
-		$this->add($myNames[0]['name'], $corp, $myID->getCurrentTime(),
+		Pilot::add($myNames[0]['name'], $corp, $myID->getCurrentTime(),
 				intval($myNames[0]['characterID']));
+		$this->name = $myNames[0]['name'];
 	}
 }

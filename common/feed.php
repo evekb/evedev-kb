@@ -108,8 +108,7 @@ if ($_GET['alli'] || $_GET['alliance_name'])
 	{
 		$a = $_GET['alliance_name'];
 	}
-	$alli = new Alliance();
-	$alli->add(urldecode($a));
+	$alli = Alliance::add(urldecode($a));
 }
 
 if ($_GET['master'] == 1 && config::get('feed_allowmaster') == 1)

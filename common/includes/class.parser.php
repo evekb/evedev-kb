@@ -884,8 +884,7 @@ class Parser
 			$alliance = self::$alliances[$alliancename];
 		else
 		{
-			$alliance = new Alliance();
-			$alliance->add($alliancename);
+			$alliance = Alliance::add($alliancename);
 			self::$alliances[$alliancename] = $alliance;
 		}
 		return $alliance;
@@ -932,8 +931,7 @@ class Parser
 		}
 		else
 		{
-			$pilot = new Pilot();
-			$pilot->add($pilotname, $corp, $timestamp, 0, self::$loadExternals);
+			$pilot = Pilot::add($pilotname, $corp, $timestamp, 0, self::$loadExternals);
 			self::$pilots[$pilotname] = $pilot;
 		}
 		return $pilot;

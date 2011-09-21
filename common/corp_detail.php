@@ -172,7 +172,7 @@ class pCorpDetail extends pageAssembly
 		// Update the name if it has changed.
 		if($result == "")
 		{
-			$this->alliance->add($myAPI->getAllianceName(),
+			$this->alliance = Alliance::add($myAPI->getAllianceName(),
 				$myAPI->getAllianceID());
 			$this->corp->add($myAPI->getCorporationName(),
 				$this->alliance, $myAPI->getCurrentTime(),

@@ -178,7 +178,7 @@ class API_Alliance
 		foreach($this->sxe->result->rowset->row as $row)
 		{
 			$NumberOfAlliances++;
-			$alliance->add(strval($row['name']), intval($row['allianceID']));
+			$alliance = Alliance::add(strval($row['name']), intval($row['allianceID']));
 			if($andCorps)
 				foreach($row->rowset->row as $corpRow)
 				{
