@@ -20,6 +20,7 @@
  * 1.0.4 Involved party structures keep their name
  * 		Kills are logged with source board's id.
  * 1.0.7 Better CCP API handling
+ * 1.0.8 Handle NPC ships in API feeds.
  * @package EDK
  */
 class IDFeed
@@ -36,7 +37,7 @@ class IDFeed
 	private $cachedTime = '';
 	private $errormsg = '';
 	private $errorcode = 0;
-	const version = "1.07";
+	const version = "1.08";
 
 	/**
 	 * Construct the Fetcher class and initialise variables.
@@ -87,7 +88,6 @@ class IDFeed
 					." while fetching file.", E_USER_WARNING);
 			return false;
 		}
-		unset($http);
 		if ($this->xml) {
 			return true;
 		} else {
@@ -226,7 +226,7 @@ class IDFeed
 	 */
 	function setStartKill($id = 0, $internal = false)
 	{
-		$id = intval($id);
+		$id = (int)$id;
 		if (!$id) {
 			return false;
 		}
@@ -240,7 +240,7 @@ class IDFeed
 
 	function setRange($range = 0)
 	{
-		$range = intval($range);
+		$range = (int)$range;
 		if ($range <= 0) {
 			return false;
 		}
@@ -253,7 +253,7 @@ class IDFeed
 	 */
 	function setStartDate($date = 0)
 	{
-		if (!$date = intval($date)) {
+		if (!$date = (int)$date) {
 			return false;
 		}
 		$this->options['startdate'] = $date;
@@ -265,7 +265,7 @@ class IDFeed
 	 */
 	function setEndDate($date = 0)
 	{
-		if (!$date = intval($date)) {
+		if (!$date = (int)$date) {
 			return false;
 		}
 		$this->options['enddate'] = $date;
@@ -281,7 +281,7 @@ class IDFeed
 	 */
 	function setSystem($systemID = 0)
 	{
-		if (!$systemID = intval($systemID)) {
+		if (!$systemID = (int)$systemID) {
 			return false;
 		}
 		$this->options['system'] = $systemID;
@@ -297,7 +297,7 @@ class IDFeed
 	 */
 	function setRegion($regionID = 0)
 	{
-		if (!$regionID = intval($regionID)) {
+		if (!$regionID = (int)$regionID) {
 			return false;
 		}
 		$this->options['region'] = $regionID;
@@ -319,7 +319,7 @@ class IDFeed
 
 	function setTrust($trust = 0)
 	{
-		$this->trust = intval($trust);
+		$this->trust = (int)$trust;
 		return $this->trust;
 	}
 
@@ -370,7 +370,7 @@ class IDFeed
 		$this->time = $sxe->currentTime;
 		$this->cachedTime = $sxe->cachedUntil;
 		if (isset($sxe->error)) {
-			$this->errorcode = intval($sxe->error['code']);
+			$this->errorcode = (int)$sxe->error['code'];
 			$this->errormsg = strval($sxe->error);
 			return 0;
 		}
@@ -390,23 +390,23 @@ class IDFeed
 	 */
 	private function processKill($row)
 	{
-		$internalID = intval($row['killInternalID']);
-		$externalID = intval($row['killID']);
+		$internalID = (int)$row['killInternalID'];
+		$externalID = (int)$row['killID'];
 		if (!$id = $this->killExists($row)) {
 			$qry = DBFactory::getDBQuery();
 
 			$kill = new Kill();
-			if (intval($row['trust']) >= $this->trust && $externalID) {
+			if ((int)$row['trust'] >= $this->trust && $externalID) {
 				$kill->setExternalID($externalID);
 			}
-			if (intval($row['trust'])) {
-				$kill->setTrust(intval($row['trust']));
+			if ((int)$row['trust']) {
+				$kill->setTrust((int)$row['trust']);
 			}
 
 			$kill->setTimeStamp(strval($row['killTime']));
 
 			$qry->execute("SELECT sys_id FROM kb3_systems WHERE sys_eve_id = '"
-					.intval($row['solarSystemID'])."'");
+					.(int)$row['solarSystemID']."'");
 			if (!$qry->recordCount()) {
 				return false;
 			}
@@ -457,7 +457,7 @@ class IDFeed
 				}
 				logger::logKill($id, $logaddress);
 			} else {
-				$this->skipped[] = array(intval($row['killID']),
+				$this->skipped[] = array((int)$row['killID'],
 					$internalID, $kill->getDupe(true));
 			}
 		}
@@ -486,30 +486,30 @@ class IDFeed
 		//	- if we don't have a moonID call it corpname - systemname
 		$victim = $row->victim;
 		if (!strval($victim['characterName'])
-				&& intval($victim['characterID'])) {
+				&& (int)$victim['characterID']) {
 			return false;
 		}
 
 		$alliance = new Alliance();
 		$corp = new Corporation();
-		if (intval($victim['allianceID'])) {
+		if ((int)$victim['allianceID']) {
 			$alliance = Alliance::add(strval($victim['allianceName']),
-					intval($victim['allianceID']));
-		} else if (intval($victim['factionID'])) {
+					(int)$victim['allianceID']);
+		} else if ((int)$victim['factionID']) {
 			$alliance = Alliance::add(strval($victim['factionName']),
-					intval($victim['factionID']));
+					(int)$victim['factionID']);
 		} else {
 			$alliance = Alliance::add("None");
 		}
 		$corp->add(strval($victim['corporationName']), $alliance, $time,
-					intval($victim['corporationID']));
+					(int)$victim['corporationID']);
 
 		if (!strval($victim['characterName'])) {
-			if (intval($row['moonID'])) {
-				$name = API_Helpers::getMoonName(intval($row['moonID']));
+			if ((int)$row['moonID']) {
+				$name = API_Helpers::getMoonName((int)$row['moonID']);
 				if (!$name) {
 					$idtoname = new API_IDtoName();
-					$idtoname->setIDs(intval($row['moonID']));
+					$idtoname->setIDs((int)$row['moonID']);
 
 					if ($idtoname->fetchXML()) {
 						return false;
@@ -524,21 +524,21 @@ class IDFeed
 				$name = strval($victim['corporationName'])." - "
 						.$kill->getSystem()->getName();
 			}
-		} else if (!intval($victim['shipTypeID'])) {
+		} else if (!(int)$victim['shipTypeID']) {
 			return false;
 		} else {
 			$name = strval($victim['characterName']);
 		}
 
-		$pilot = Pilot::add($name, $corp, $time, intval($victim['characterID']));
-		$ship = new Ship(0, intval($victim['shipTypeID']));
+		$pilot = Pilot::add($name, $corp, $time, (int)$victim['characterID']);
+		$ship = new Ship(0, (int)$victim['shipTypeID']);
 
 		$kill->setVictim($pilot);
 		$kill->setVictimID($pilot->getID());
 		$kill->setVictimCorpID($corp->getID());
 		$kill->setVictimAllianceID($alliance->getID());
 		$kill->setVictimShip($ship);
-		$kill->set('dmgtaken', intval($victim['damageTaken']));
+		$kill->set('dmgtaken', (int)$victim['damageTaken']);
 		return true;
 	}
 
@@ -550,22 +550,22 @@ class IDFeed
 	 */
 	private function processInvolved($inv, &$kill, $time)
 	{
-		$ship = new Ship(0, intval($inv['shipTypeID']));
-		$weapon = new Item(intval($inv['weaponTypeID']));
+		$ship = new Ship(0, (int)$inv['shipTypeID']);
+		$weapon = Cacheable::factory('Item', (int)$inv['weaponTypeID']);
 
 		$alliance = new Alliance();
 		$corp = new Corporation();
-		if (intval($inv['allianceID'])) {
+		if ((int)$inv['allianceID']) {
 			$alliance = Alliance::add(strval($inv['allianceName']),
-					intval($inv['allianceID']));
-		} else if (intval($inv['factionID'])) {
+					(int)$inv['allianceID']);
+		} else if ((int)$inv['factionID']) {
 			$alliance = Alliance::add(strval($inv['factionName']),
-					intval($inv['factionID']));
+					(int)$inv['factionID']);
 		} else {
 			$alliance = Alliance::add("None");
 		}
 		$corp->add(strval($inv['corporationName']), $alliance, $time,
-					intval($inv['corporationID']));
+					(int)$inv['corporationID']);
 
 		$charname = strval($inv['characterName']);
 		// Allow for blank names for consistency with CCP API.
@@ -576,18 +576,23 @@ class IDFeed
 				&& (preg_match("/^(Mobile \w+ Warp|\w+ Control Tower( \w+)?)/",
 				   $weapon->getName()))) {
 			$charname = $inv['corporationName'].' - '.$weapon->getName();
-		} else if ($charname == "") $charname = $ship->getName();
+		} else if ($charname == "" && !(int)$inv['characterID']) {
+			// NPC ship
+			$ship = Ship::lookup("Unknown");
+			$weapon = Cacheable::factory('Item', $inv['shipTypeID']);
+			$charname = $weapon->getName();
+		}
 
 		$pilot = Pilot::add(strval($inv['characterName']), $corp, $time,
-					 intval($inv['characterID']));
+					 (int)$inv['characterID']);
 
 		$iparty = new InvolvedParty($pilot->getID(), $corp->getID(),
-						$alliance->getID(), floatval($inv['securityStatus']),
+				$alliance->getID(), floatval($inv['securityStatus']),
 						$ship->getID(), $weapon->getID(),
 						(int) $inv['damageDone']);
 
 		$kill->addInvolvedParty($iparty);
-		if (intval($inv['finalBlow']) == 1) {
+		if ((int)$inv['finalBlow'] == 1) {
 			$kill->setFBPilotID($pilot->getID());
 		}
 	}
@@ -599,22 +604,22 @@ class IDFeed
 	 */
 	private function processItem($item, &$kill)
 	{
-		if (intval($item['flag']) == 5) {
+		if ((int)$item['flag'] == 5) {
 			$location = 4;
-		} else if (intval($item['flag']) == 87) {
+		} else if ((int)$item['flag'] == 87) {
 			$location = 6;
 		} else {
-			$litem = new Item(intval($item['typeID']));
+			$litem = new Item((int)$item['typeID']);
 			$location = $litem->getSlot();
 		}
 
-		if (intval($item['qtyDropped'])) {
+		if ((int)$item['qtyDropped']) {
 			$kill->addDroppedItem(new DestroyedItem(new Item(
-					intval($item['typeID'])), intval($item['qtyDropped']), '',
+					(int)$item['typeID']), (int)$item['qtyDropped'], '',
 					$location));
 		} else {
 			$kill->addDestroyedItem(new DestroyedItem(new Item(
-					intval($item['typeID'])), intval($item['qtyDestroyed']), '',
+					(int)$item['typeID']), (int)$item['qtyDestroyed'], '',
 					$location));
 		}
 		// Check for containers.
@@ -671,20 +676,20 @@ class IDFeed
 			if ($qry->recordCount()) {
 				$qrow = $qry->getRow();
 				$id = $qrow['kll_id'];
-				if (intval($row['trust']) >= $this->trust
-						&& intval($row['killID'])) {
+				if ((int)$row['trust'] >= $this->trust
+						&& (int)$row['killID']) {
 					$qry->execute("UPDATE kb3_kills JOIN kb3_mails ON kb3_kills.kll_id = ".
 							"kb3_mails.kll_id SET kb3_mails.kll_external_id = ".
-							intval($row['killID']).", kb3_kills.kll_external_id = ".
-							intval($row['killID'])." WHERE kb3_mails.kll_id = $id AND ".
+							(int)$row['killID'].", kb3_kills.kll_external_id = ".
+							(int)$row['killID']." WHERE kb3_mails.kll_id = $id AND ".
 							"kb3_mails.kll_external_id IS NULL");
 				}
 				return $id;
 			}
 		}
-		if (intval($row['killID']) > 0) {
+		if ((int)$row['killID'] > 0) {
 			$qry->execute("SELECT kll_id FROM kb3_kills "
-					."WHERE kll_external_id = ".intval($row['killID']));
+					."WHERE kll_external_id = ".(int)$row['killID']);
 			if ($qry->recordCount()) {
 				$qrow = $qry->getRow();
 				$id = $qrow['kll_id'];
