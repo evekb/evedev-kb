@@ -80,8 +80,15 @@ if(isset($_GET['corp']))
 if(isset($_GET['pilot']))
 {
 	$arr = explode(',',$_GET['pilot']);
-	foreach($arr as &$val) $val = intval($val);
-	$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_externalid IN (".implode(',', $arr).")");
+	$arr_pilots = array();
+	foreach($arr as $val) {
+		// Remove 0 external ids since that matches all pilots with no id.
+		if ((int)$val) {
+			$arr_pilots[] = (int)$val;
+		}
+
+	}
+	$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_externalid IN (".implode(',', $arr_pilots).")");
 	if(!$qry->recordCount()) show($sxe);
 	while($row = $qry->getRow()) $list->addCombinedPilot($row['plt_id']);
 }
