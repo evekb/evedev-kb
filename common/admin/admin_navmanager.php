@@ -75,8 +75,9 @@ $page->generate();
 
 function increasePriority($id)
 {
-	$id = (int)$id;
+	$id = (int) $id;
     $qry = DBFactory::getDBQuery(true);
+	$qry->autocommit(false);
     $query = "SELECT posnr FROM kb3_navigation WHERE ID = $id AND KBSITE = '".KB_SITE."'";
     $qry->execute($query);
     $row = $qry->getRow();
@@ -85,14 +86,15 @@ function increasePriority($id)
     $query = "UPDATE kb3_navigation SET posnr = (posnr-1) WHERE nav_type = 'top' AND posnr = $next AND KBSITE = '".KB_SITE."'";
     $qry->execute($query);
 
-    $query = "UPDATE kb3_navigation SET posnr = (posnr+1) WHERE ID = $id";
+    $query = "UPDATE kb3_navigation SET posnr = (posnr+1) WHERE ID = $id AND KBSITE = '".KB_SITE."'";
     $qry->execute($query);
+	$qry->autocommit(true);
 }
-
 function decreasePriority($id)
 {
-	$id = (int)$id;
+	$id = (int) $id;
     $qry = DBFactory::getDBQuery(true);
+	$qry->autocommit(false);
     $query = "SELECT posnr FROM kb3_navigation WHERE ID = $id AND KBSITE = '".KB_SITE."'";
     $qry->execute($query);
     $row = $qry->getRow();
@@ -101,16 +103,17 @@ function decreasePriority($id)
     $query = "UPDATE kb3_navigation SET posnr = (posnr+1) WHERE nav_type = 'top' AND posnr = $prev AND KBSITE = '".KB_SITE."'";
     $qry->execute($query);
 
-    $query = "UPDATE kb3_navigation SET posnr = (posnr-1) WHERE ID = $id";
+    $query = "UPDATE kb3_navigation SET posnr = (posnr-1) WHERE ID = $id AND KBSITE = '".KB_SITE."'";;
     $qry->execute($query);
+	$qry->autocommit(true);
 }
 
 function renamePage($id, $name)
 {
-	$id = (int)$id;
+	$id = (int) $id;
     $qry = DBFactory::getDBQuery(true);
 	$name = $qry->escape($name);
-    $query = "UPDATE kb3_navigation SET descr ='$name' WHERE ID=$id";
+    $query = "UPDATE kb3_navigation SET descr ='$name' WHERE ID=$id AND KBSITE = '".KB_SITE."'";
     $qry->execute($query);
 }
 
@@ -119,11 +122,11 @@ function changeUrl($id, $url)
     $qry = DBFactory::getDBQuery(true);
 	$id = (int)$id;
 	$url = $qry->escape($url);
-    $query = "UPDATE kb3_navigation SET url ='$url' WHERE ID=$id AND intern=0";
+    $query = "UPDATE kb3_navigation SET url ='$url' WHERE ID=$id AND KBSITE = '".KB_SITE."'";
     $qry->execute($query);
 }
 
-function newPage($descr, $url, $target = null)
+function newPage($descr, $url)
 {
     $qry = DBFactory::getDBQuery(true);
 	$descr = $qry->escape(preg_replace('/[^\w_-\d]/', '', $descr));
@@ -132,23 +135,23 @@ function newPage($descr, $url, $target = null)
     $qry->execute($query);
     $row = $qry->getRow();
     $posnr = $row['nr'] + 1;
-    $query = "INSERT INTO kb3_navigation SET descr='$descr', intern=0, nav_type='top',url='$url', target ='_self', posnr=$posnr, page='ALL_PAGES', KBSITE = '".KB_SITE."'";
+    $query = "INSERT INTO kb3_navigation SET descr='$descr', intern=0, nav_type='top', url='$url', target ='', posnr=$posnr, page='ALL_PAGES', KBSITE = '".KB_SITE."'";
     $qry->execute($query);
 }
 
 function delPage($id)
 {
-	$id = (int)$id;
+	$id = (int) $id;
     $qry = DBFactory::getDBQuery(true);
-    $query = "DELETE FROM kb3_navigation WHERE ID=$id AND intern=0";
+    $query = "DELETE FROM kb3_navigation WHERE ID=$id AND KBSITE = '".KB_SITE."'";
     $qry->execute($query);
 }
 
 function chgHideStatus($id, $status)
 {
-	$id = (int)$id;
-	$status = (int)$status;
+	$id = (int) $id;
+	$status = (int) $status % 2;
     $qry = DBFactory::getDBQuery(true);
-    $query = "UPDATE kb3_navigation SET hidden ='$status' WHERE ID=$id";
+    $query = "UPDATE kb3_navigation SET hidden ='$status' WHERE ID=$id AND KBSITE = '".KB_SITE."'";
     $qry->execute($query);
 }
