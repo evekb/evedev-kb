@@ -617,7 +617,8 @@ class IDFeed
 			$kill->addDroppedItem(new DestroyedItem(new Item(
 					(int)$item['typeID']), (int)$item['qtyDropped'], '',
 					$location));
-		} else {
+		}
+		if ((int)$item['qtyDestroyed']) {
 			$kill->addDestroyedItem(new DestroyedItem(new Item(
 					(int)$item['typeID']), (int)$item['qtyDestroyed'], '',
 					$location));
