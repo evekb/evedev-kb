@@ -1256,6 +1256,19 @@ class Kill
 		$notfirstd = false;
 		$notfirsta = false;
 		$notfirstc = false;
+
+		function involvedComparator($a, $b)
+		{
+			if($a->dmgdone_ != $b->dmgdone_) {
+				return $a->dmgdone_ > $b->dmgdone_ ? -1 : 1;
+			} else {
+				$pilota = new Pilot($a->getPilotID());
+				$pilotb = new Pilot($b->getPilotID());
+				return strcmp($pilota->getName(), $pilotb->getName());
+			}
+		}
+		usort($this->involvedparties_, 'involvedComparator');
+
 		foreach ($this->involvedparties_ as $inv)
 		{
 			$ship = $inv->getShip();
