@@ -100,7 +100,7 @@ if ($_POST['fetch'])
 		else if(!$val['apikills'] && intval($feedfetch->getLastInternalReturned()) > $val['lastkill'])
 			$val['lastkill'] = intval($feedfetch->getLastInternalReturned());
 		$html .= "Feed: ".$val['url']."<br />\n";
-		if(count($feedfetch->getPosted()) == 1) $html .= count($feedfetch->getPosted())." kills was posted and ";
+		if(count($feedfetch->getPosted()) == 1) $html .= count($feedfetch->getPosted())." kill was posted and ";
 		else $html .= count($feedfetch->getPosted())." kills were posted and ";
 		if(count($feedfetch->getSkipped()) == 1) $html .= count($feedfetch->getSkipped())." was skipped.<br />\n";
 		else $html .= count($feedfetch->getSkipped())." were skipped.<br />\n";
