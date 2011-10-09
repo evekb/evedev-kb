@@ -31,7 +31,7 @@ abstract class Cacheable {
 		}
 
 		if (isset(self::$cache[$classname.$id])) {
-			return unserialize(self::$cache[$classname.$id]);
+			return self::$cache[$classname.$id];
 		} else if (class_exists('Config', false) && !config::get('cfg_objcache')) {
 			return new $classname($id);
 		} else if (self::$cachehandler->exists($classname.$id)) {
@@ -41,6 +41,18 @@ abstract class Cacheable {
 		}
 
 	}
+
+	/**
+	 * Get a cached object by ID
+	 * @param integer $id
+	 * @return Cacheable Returns an object of the called class type for the
+	 * given $id
+	 */
+	public static function getByID($id)
+	{
+		return Cacheable::factory(get_called_class(), (int) $id);
+	}
+
 	/**
 	 * Return whether this object is cached.
 	 *
@@ -72,7 +84,7 @@ abstract class Cacheable {
 	protected function getCache()
 	{
 		if(isset(self::$cache[get_class($this).$this->getID()])) {
-			return unserialize(self::$cache[get_class($this).$this->getID()]);
+			return self::$cache[get_class($this).$this->getID()];
 		}
 
 		if (!config::get('cfg_objcache')) {
@@ -97,7 +109,7 @@ abstract class Cacheable {
 			trigger_error("Invalid ID", E_USER_ERROR);
 		}
 		// The unserialize/serialize is used to make a deep copy
-		self::$cache[get_class($this).$this->getID()] = serialize($this);
+		self::$cache[get_class($this).$this->getID()] = unserialize(serialize($this));
 
 		if (!config::get('cfg_objcache')) {
 			return false;
