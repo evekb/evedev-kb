@@ -136,6 +136,16 @@ class IDFeed
 	}
 
 	/**
+	 * Set the XML parsed by the idfeed.
+	 * @param string $xml
+	 * @return type
+	 */
+	function setLogName($name)
+	{
+		$this->name = preg_replace("/[^\w\d _-]/", "", (string)$name);
+	}
+
+	/**
 	 * Set the type and ID of the feed to retrieve.
 	 * @param string $type pilot/corp/alliance.
 	 * @param integer $id
@@ -426,39 +436,59 @@ class IDFeed
 				return;
 			}
 
+			$this->npc_only = true;
 			foreach ($row->rowset[0]->row as $inv) {
 				$this->processInvolved($inv, $kill, strval($row['killTime']));
 			}
-			if (isset($row->rowset[1]->row[0])) {
-				foreach ($row->rowset[1]->row as $item) {
-					$this->processItem($item, $kill);
-				}
-			}
-			$id = $kill->add();
-			if ($id == 0) {
-				echo htmlentities($row->asXML());
-				var_dump($kill);
-				die;
-			}
 
-			if ($id > 0) {
-				$this->posted[] = array($kill->getExternalID(), $internalID,
-					$id);
-				$logaddress = "ID:".$this->url;
-				if (strpos($logaddress, "?")) {
-					$logaddress = substr($logaddress, 0, strpos($logaddress,
-							"?"));
-				}
-				if ($kill->getExternalID()) {
-					$logaddress .= "?a=kill_detail&kll_ext_id="
-							.$kill->getExternalID();
-				} else if ($internalID) {
-					$logaddress .= "?a=kill_detail&kll_id=".$internalID;
-				}
-				logger::logKill($id, $logaddress);
+			// Don't post NPC only kills if configured.
+			if ($this->npc_only && Config::get('post_no_npc_only')) {
+				$this->skipped[] = array($externalID, $internalID, 0);
 			} else {
-				$this->skipped[] = array((int)$row['killID'],
-					$internalID, $kill->getDupe(true));
+				if (isset($row->rowset[1]->row[0])) {
+					foreach ($row->rowset[1]->row as $item) {
+						$this->processItem($item, $kill);
+					}
+				}
+				$id = $kill->add();
+				if ($id == 0) {
+					echo htmlentities($row->asXML());
+					var_dump($kill);
+					die;
+				}
+
+				if ($id > 0) {
+					$this->posted[] = array($kill->getExternalID(), $internalID,
+						$id);
+					if($this->url) {
+						$logaddress = "ID:".$this->url;
+						if (strpos($logaddress, "?")) {
+							$logaddress = substr($logaddress, 0,
+									strpos($logaddress, "?"));
+						}
+						if ($kill->getExternalID()) {
+							$logaddress .= "?a=kill_detail&kll_ext_id="
+									.$kill->getExternalID();
+						} else if ($internalID) {
+							$logaddress .= "?a=kill_detail&kll_id=".$internalID;
+						}
+					} else if ($this->name) {
+						$logaddress = "ID:".$this->url;
+						if ($kill->getExternalID()) {
+							$logaddress .= ":kll_ext_id="
+									.$kill->getExternalID();
+						} else if ($internalID) {
+							$logaddress .= ":kll_id=".$internalID;
+						}
+					} else {
+						$logaddress = "ID: local input";
+					}
+
+					logger::logKill($id, $logaddress);
+				} else {
+					$this->skipped[] = array((int)$row['killID'],
+						$internalID, $kill->getDupe(true));
+				}
 			}
 		}
 		else $this->skipped[] = array($externalID, $internalID, $id);
@@ -550,11 +580,13 @@ class IDFeed
 	 */
 	private function processInvolved($inv, &$kill, $time)
 	{
+		$npc = false;
 		$ship = new Ship(0, (int)$inv['shipTypeID']);
 		$weapon = Cacheable::factory('Item', (int)$inv['weaponTypeID']);
 
 		$alliance = new Alliance();
 		$corp = new Corporation();
+
 		if ((int)$inv['allianceID']) {
 			$alliance = Alliance::add(strval($inv['allianceName']),
 					(int)$inv['allianceID']);
@@ -567,27 +599,32 @@ class IDFeed
 		$corp->add(strval($inv['corporationName']), $alliance, $time,
 					(int)$inv['corporationID']);
 
-		$charname = strval($inv['characterName']);
+		$charid = (int)$inv['characterID'];
+		$charname = (string)$inv['characterName'];
 		// Allow for blank names for consistency with CCP API.
-		if (preg_match("/^(Mobile \w+ Warp|\w+ Control Tower( \w+)?)/",
+		if (preg_match("/(Mobile (Large|Medium|Small) Warp Disruptor I?I?|\w+ Control Tower( \w+)?)/",
 				$charname)) {
 			$charname = $inv['corporationName'].' - '.$charname;
+			$charid = 0;
 		} else if ($charname == ""
-				&& (preg_match("/^(Mobile \w+ Warp|\w+ Control Tower( \w+)?)/",
+				&& (preg_match("/(Mobile \w+ Warp|\w+ Control Tower( \w+)?)/",
 				   $weapon->getName()))) {
 			$charname = $inv['corporationName'].' - '.$weapon->getName();
-		} else if ($charname == "" && !(int)$inv['characterID']) {
+			$charid = 0;
+		} else if ($charname == "" && !$charid) {
 			// NPC ship
 			$ship = Ship::lookup("Unknown");
-			$weapon = Cacheable::factory('Item', $inv['shipTypeID']);
+			$weapon = Cacheable::factory('Item', (int) $inv['shipTypeID']);
 			$charname = $weapon->getName();
+			$npc = true;
+			$charid = $weapon->getID();
 		}
 
-		$pilot = Pilot::add(strval($inv['characterName']), $corp, $time,
-					 (int)$inv['characterID']);
+		$pilot = Pilot::add((string)$charname, $corp, $time,
+					 $charid);
 
 		$iparty = new InvolvedParty($pilot->getID(), $corp->getID(),
-				$alliance->getID(), floatval($inv['securityStatus']),
+				$alliance->getID(), (float) $inv['securityStatus'],
 						$ship->getID(), $weapon->getID(),
 						(int) $inv['damageDone']);
 
@@ -595,6 +632,7 @@ class IDFeed
 		if ((int)$inv['finalBlow'] == 1) {
 			$kill->setFBPilotID($pilot->getID());
 		}
+		$this->npc_only = $this->npc_only && $npc;
 	}
 
 	/**
