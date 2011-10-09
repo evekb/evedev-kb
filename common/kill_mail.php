@@ -6,8 +6,8 @@
  * @package EDK
  */
 
-$kll_id = (int)edkURI::getArg('kll_id');
-$kill = new Kill($kll_id);
+$kll_id = (int)edkURI::getArg('kll_id', 1);
+$kill = Cacheable::factory('Kill', $kll_id);
 ?>
 popup|<form>
 <table class="popup-table" height="100%" width="355px">
