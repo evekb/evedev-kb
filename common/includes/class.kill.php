@@ -1256,19 +1256,7 @@ class Kill
 		$notfirstd = false;
 		$notfirsta = false;
 		$notfirstc = false;
-
-		function involvedComparator($a, $b)
-		{
-			if($a->dmgdone_ != $b->dmgdone_) {
-				return $a->dmgdone_ > $b->dmgdone_ ? -1 : 1;
-			} else {
-				$pilota = new Pilot($a->getPilotID());
-				$pilotb = new Pilot($b->getPilotID());
-				return strcmp($pilota->getName(), $pilotb->getName());
-			}
-		}
-		usort($this->involvedparties_, 'involvedComparator');
-
+		usort($this->involvedparties_, array('Kill', 'involvedComparator'));
 		foreach ($this->involvedparties_ as $inv)
 		{
 			$ship = $inv->getShip();
@@ -1516,6 +1504,16 @@ class Kill
 		if(!$this->getHash()) return $this->trust;
 		$this->trust = 0;
 		return $this->trust;
+	}
+	private static function involvedComparator($a, $b)
+	{
+		if($a->dmgdone_ != $b->dmgdone_) {
+			return $a->dmgdone_ > $b->dmgdone_ ? -1 : 1;
+		} else {
+			$pilota = new Pilot($a->getPilotID());
+			$pilotb = new Pilot($b->getPilotID());
+			return strcmp($pilota->getName(), $pilotb->getName());
+		}
 	}
 }
 
