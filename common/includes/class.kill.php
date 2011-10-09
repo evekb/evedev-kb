@@ -1447,6 +1447,10 @@ class Kill extends Cacheable
 		$notfirstd = false;
 		$notfirsta = false;
 		$notfirstc = false;
+
+		// Make sure involved parties are ordered by damage done.
+		usort($this->involvedparties_, array('Kill','involvedComparator'));
+		
 		foreach ($this->involvedparties_ as $inv) {
 			$ship = $inv->getShip();
 			$weapon = $inv->getWeapon();
@@ -1695,5 +1699,21 @@ class Kill extends Cacheable
 				$this->externalid = $extID;
 				$this->putCache();
 			}
+	}
+	/**
+	 * Compares two InvolvedParty objects for sorting by damage then name.
+	 * @param InvolvedParty $a
+	 * @param InvolvedParty $b
+	 * @return int -1, 0, or 1
+	 */
+	static private function involvedComparator($a, $b)
+	{
+		if($a->getDamageDone() != $b->getDamageDone()) {
+			return $a->getDamageDone() > $b->getDamageDone() ? -1 : 1;
+		} else {
+			$pilota = new Pilot($a->getPilotID());
+			$pilotb = new Pilot($b->getPilotID());
+			return strcmp($pilota->getName(), $pilotb->getName());
+		}
 	}
 }
