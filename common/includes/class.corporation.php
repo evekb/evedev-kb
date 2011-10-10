@@ -377,21 +377,19 @@ class Corporation extends Entity
 		if(!$this->externalid) $this->execQuery();
 		if(!$this->externalid) return false;
 
-		$myID = new API_IDtoName();
-		$myID->setIDs($this->externalid);
-		$myID->fetchXML();
-		$myNames = $myID->getIDData();
-		if(empty($myNames[0]['name'])) return false;
-
 		$myAPI = new API_CorporationSheet();
 		$myAPI->setCorpID($this->externalid);
 		$result = $myAPI->fetchXML();
-		if(!empty($result)) return false;
+
+		if($result == false) {
+			return false;
+		}
 
 		$alliance = new Alliance($myAPI->getAllianceID(), true);
 
-		$this->add(slashfix($myNames[0]['name']), $alliance,
-			$myAPI->getCurrentTime(), intval($myNames[0]['characterID']));
+		$this->add(slashfix($myAPI->getCorporationName()), $alliance,
+			$myAPI->getCurrentTime(), intval($myAPI->getCorporationID()));
+
 		return true;
 	}
 }
