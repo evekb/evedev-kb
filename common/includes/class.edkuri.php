@@ -218,7 +218,9 @@ class edkURI {
 			if (!$parameters || $parameters[0][0] != 'a') {
 				$url .= self::getArg('a', 0).'/';
 			}
-			$url .= join('/', $patharr).'/';
+			if($patharr) {
+				$url .= join('/', $patharr).'/';
+			}
 			if ($qryarr) {
 				$url .= '?';
 			}
@@ -237,12 +239,17 @@ class edkURI {
 	}
 
 	/**
-	 * This method is similar to build but can be used to combine arrays
+	 * Create a board URI from the given arguments.
+	 *
+	 * This takes an ordered array of parameter arrays. Each parameter array
+	 * contains name, value (or true if no value), true/false depending on
+	 * whether it was in the pathinfo or querystring. If a page is not specified
+	 * then the current page will be assumed.
 	 *
 	 * e.g.
-	 * build({0=>{all_id, 1234, true}}, {view, kills, true})
+	 * build({0=>{'all_id', 1234, true}}, {'view', 'kills', true})
 	 * or
-	 * build({all_id, 1234, true}, {view, kills, true})
+	 * build({'all_id', 1234, true}, {'view', 'kills', true})
 	 *
 	 * @param array $parameters an array of parameters or a single parameter
 	 * @param array $arr a parameter.
