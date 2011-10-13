@@ -825,7 +825,7 @@ class IDFeed
 				JOIN kb3_corps ON (crp_id = ind_crp_id)
 				JOIN kb3_ships ON (shp_id = ind_shp_id)
 				JOIN kb3_invtypes ON (ind_wep_id = typeID)
-				WHERE ind_kll_id = ".$kill->getID();
+				WHERE ind_kll_id = ".$kill->getID()." ORDER BY ind_order ASC";
 			$qry->execute($sql);
 
 			while ($inv = $qry->getRow()) {

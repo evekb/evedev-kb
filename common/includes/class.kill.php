@@ -1708,12 +1708,6 @@ class Kill extends Cacheable
 	 */
 	static private function involvedComparator($a, $b)
 	{
-		if($a->getDamageDone() != $b->getDamageDone()) {
-			return $a->getDamageDone() > $b->getDamageDone() ? -1 : 1;
-		} else {
-			$pilota = new Pilot($a->getPilotID());
-			$pilotb = new Pilot($b->getPilotID());
-			return strcmp($pilota->getName(), $pilotb->getName());
-		}
+		return $b->getDamageDone() - $a->getDamageDone();
 	}
 }
