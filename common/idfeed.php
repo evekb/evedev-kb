@@ -199,7 +199,7 @@ while($kill = $list->getKill())
 		JOIN kb3_pilots ON (plt_id = ind_plt_id) 
 		JOIN kb3_corps ON (crp_id = ind_crp_id) 
 		JOIN kb3_ships ON (shp_id = ind_shp_id)
-		WHERE ind_kll_id = ".$kill->getID();
+		WHERE ind_kll_id = ".$kill->getID()." ORDER BY ind_order ASC";
 	$qry->execute($sql);
 
 	while ($inv = $qry->getRow())

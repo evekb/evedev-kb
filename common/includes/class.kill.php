@@ -1507,13 +1507,7 @@ class Kill
 	}
 	private static function involvedComparator($a, $b)
 	{
-		if($a->dmgdone_ != $b->dmgdone_) {
-			return $a->dmgdone_ > $b->dmgdone_ ? -1 : 1;
-		} else {
-			$pilota = new Pilot($a->getPilotID());
-			$pilotb = new Pilot($b->getPilotID());
-			return strcmp($pilota->getName(), $pilotb->getName());
-		}
+		return $b->dmgdone_ - $a->dmgdone_;
 	}
 }
 
