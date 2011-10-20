@@ -54,7 +54,11 @@ class options
 	// this will emulate the old options menu
 	public static function oldMenu($field, $subfield, $link)
 	{
-		self::$data[$field][$subfield] = $link;
+		if(is_array($link)) {
+			self::$data[$field][$subfield] = edkURI::build($link);
+		} else {
+			self::$data[$field][$subfield] = $link;
+		}
 	}
 
 	// this handles the submit from the optionspage
@@ -102,8 +106,8 @@ class options
 
 	public static function genOptionsPage()
 	{
-		$field = urldecode($_GET['field']);
-		$sub = urldecode($_GET['sub']);
+		$field = urldecode(edkURI::getArg('field', 1));
+		$sub = urldecode(edkURI::getArg('sub',2));
 
 		global $smarty, $page;
 
@@ -272,7 +276,10 @@ class options
 				}
 
 				// we're not a category, make it clickable
-				$menubox->addOption('link', $subfield, KB_HOST.'/?a=admin&amp;field='.urlencode($field).'&amp;sub='.urlencode($subfield));
+				$menubox->addOption('link', $subfield, edkURI::build(
+						array(array('a', 'admin', true),
+							array('field', $field, true),
+							array('sub', $subfield, true))));
 			}
 			$lastfield = $field;
 		}
