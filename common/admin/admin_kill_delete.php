@@ -8,19 +8,19 @@
 
 $page = new Page('Administration - Deletion of Kill ID "'.intval($_GET['kll_id']).'"');
 $page->setAdmin();
-$dbconn = new DBConnection();
-$kll_id = intval($_GET['kll_id']);
+
+$kll_id = (int)edkURI::getArg('kll_id', 1);
 
 if (isset($_GET['confirm']))
 {
-	$kill = new Kill($kll_id);
+	$kill = Kill::getByID($kll_id);
 	$kill->remove(true, false);
 	$html .= "Kill ID \"".$kll_id."\" deleted!";
 	$html .= "<br><br><a href=\"javascript:window.close();\">[close]</a>";
 }
 else if (isset($_GET['permanent']))
 {
-	$kill = new Kill($kll_id);
+	$kill = Kill::getByID($kll_id);
 	$kill->remove(true, true);
 	$html .= "Kill ID \"".$kll_id."\" deleted!";
 	$html .= "<br><br><a href=\"javascript:window.close();\">[close]</a>";
