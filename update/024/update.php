@@ -74,11 +74,32 @@ function update024()
 		}
         if(config::get('024updatestatus') <6)
 		{
-			$qry->execute("UPDATE kb3_ships SET shp_id = shp_id+100000");
-			$qry->execute("UPDATE kb3_ships SET shp_id = shp_externalid");
+			$qry->execute("SHOW COLUMNS FROM kb3_ships LIKE 'shp_externalid'");
+			if($qry->recordCount()) {
+				$qry->execute("UPDATE kb3_ships SET shp_id = shp_id+100000");
+				$qry->execute("UPDATE kb3_ships SET shp_id = shp_externalid");
+			}
 			config::set('024updatestatus',6);
 			$smarty->assign('refresh',1);
 			$smarty->assign('content', "24. kb3_ships is updated.");
+			$smarty->display('update.tpl');
+			die();
+		}
+        if(config::get('024updatestatus') <7)
+		{
+			$qry->execute("SHOW COLUMNS FROM kb3_ships LIKE 'shp_externalid'");
+			if($qry->recordCount()) {
+				$qry->execute("ALTER TABLE `kb3_ships`"
+						." DROP `shp_name`,"
+						." DROP `shp_externalid`,"
+						." DROP `shp_rce_id`,"
+						." DROP `shp_baseprice`,"
+						." DROP `shp_techlevel`,"
+						." DROP `shp_isfaction`");
+			}
+			config::set('024updatestatus',7);
+			$smarty->assign('refresh',1);
+			$smarty->assign('content', "24. kb3_ships shrunk.");
 			$smarty->display('update.tpl');
 			die();
 		}
