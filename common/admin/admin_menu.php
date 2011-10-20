@@ -57,9 +57,7 @@ options::oldMenu('Features', "Standings", KB_HOST."/?a=admin_standings");
 options::oldMenu('Appearance', "Map Options", KB_HOST."/?a=admin_mapoptions");
 
 options::oldMenu('Advanced', "Post Permissions", KB_HOST."/?a=admin_postperm");
-options::oldMenu('Advanced', "Ship Values", KB_HOST."/?a=admin_shp_val");
-options::oldMenu('Advanced', "Item Values", KB_HOST."/?a=admin_value_editor");
-options::oldMenu('Advanced', "Value Fetch", KB_HOST."/?a=admin_value_fetch");
+options::oldMenu('Advanced', "Item Values", KB_HOST."/?a=admin_value_fetch");
 
 options::oldMenu('Features', "Modules", KB_HOST."/?a=admin_mods");
 
@@ -75,7 +73,7 @@ options::oldMenu('Maintenance', "Settings Report", KB_HOST."/?a=admin_status");
 options::oldMenu('Kill Import/Export', "Kill Import - files", KB_HOST."/?a=admin_kill_import");
 options::oldMenu('Kill Import/Export', "Kill Import - csv", KB_HOST."/?a=admin_kill_import_csv");
 options::oldMenu('Kill Import/Export', "Kill Export - files", KB_HOST."/?a=admin_kill_export");
-options::oldMenu('Kill Import/Export', "Kill Export - csv", KB_HOST."/?a=admin_kill_export_search");
+//options::oldMenu('Kill Import/Export', "Kill Export - csv", KB_HOST."/?a=admin_kill_export_search");
 options::oldMenu('- Logout -', "Logout", KB_HOST."/?a=logout");
 
 #options::oldMenu('User', 'Titles', '?a=admin_titles');
