@@ -15,7 +15,7 @@ require_once("common/admin/admin_menu.php");
 $page = new Page("Settings - API Mod " . APIVERSION);
 $page->setCachable(false);
 $page->setAdmin();
-		
+
 $isupdated = false;
 
 // check db update for API fields
@@ -35,35 +35,6 @@ if (config::get('API_Key_count'))
     $keycount = config::get('API_Key_count');
 else
     $keycount = 1;
-
-// find select char name loop
-for ( $i = 1; $i <= $keycount; $i++ )
-{
-    if (isset($_POST['select'.$i]))
-    {
-        $selectid = $i;
-
-        $myCharSelect = new API_Char();
-        $CharList = $myCharSelect->fetch(config::get('API_UserID_' . $selectid), config::get('API_Key_' . $selectid));
-		
-        $charcount = count($CharList);
-        if ( $charcount > 0 ) 
-        {
-	        $html .= "Click the character you'd like to set:<br /><br />";
-            $isupdated = true;
-            for ( $x = 0; $x < $charcount; $x++ )
-            {
-                $html .= '<a href="'.KB_HOST.'/?a=admin_apimod&CharID=' . $CharList[$x]['charID'] . '&SetNum=' . $selectid . '">'. $CharList[$x]['Name'] . '</a><br />';
-            }
-        } else {
-			if($error = $myCharSelect->getError()) $html .= "<b>Error ".$error['code'].": ".$error['message']."</b>";
-            else $html .= "<b>No characters found, check your details are correct and the Eve API is online</b>";
-        } 
-    }
-	
-	// Set cachetimes in variable array (solves unable to read last cachetime problem when importing
-	$apicachetime[$i] = ApiCache::get("API_CachedUntil_" . $i);
-}
 
 if ($_POST['clearapicache'])
 {
@@ -88,34 +59,19 @@ if ($_POST['clearapicache'])
 	$html .= "<script type=\"text/javascript\">window.location = \"?a=admin_apimod\"</script>"; //*/
 }
 
+if ($_POST['add'] ) {
+	$key_name = $_POST['keyname'];
+	$key_id = $_POST['keyid'];
+	$key_key = $_POST['keycode'];
+
+	$qry = DBFactory::getDBQuery(true);
+	$sql = "INSERT INTO kb3_api_keys( key_name, key_id, key_key, key_kbsite, key_flags ) VALUES ( '$key_name', '$key_id', '$key_key', '" . KB_SITE . "', 0 )";
+	$qry->execute($sql);
+}
+
+
 if ($_POST['submit'] || $_POST['import']  )
 {
-    if (ctype_digit($_POST['API_Key_count']) && $_POST['API_Key_count'] > 0)
-    {
-        $keycount = $_POST['API_Key_count'];
-        config::set('API_Key_count', $keycount);
-        for ( $i = 99; $i > $keycount; $i-- )
-        {
-            config::del('API_Name_' . $i);
-            config::del('API_Key_' . $i);
-            config::del('API_UserID_' . $i);
-            config::del('API_CharID_' . $i);
-            config::del('API_Type_' . $i);
-            ApiCache::del('API_CachedUntil_' . $i);
-        }
-    }
-    for ($i = 1; $i <= $keycount; $i++)
-    {
-        config::set("API_Name_" . $i . "", $_POST["API_Name_" . $i]);
-        config::set("API_Key_" . $i . "", $_POST["API_Key_" . $i]);
-        config::set("API_UserID_" . $i . "", $_POST["API_UserID_" . $i]);
-        config::set("API_CharID_" . $i . "", $_POST["API_CharID_" . $i]);
-        if ($_POST["API_Type_". $i] == "char")
-            config::set("API_Type_" . $i, "char");
-        else
-            config::set("API_Type_" . $i, "corp");
-    }	
-
     if ($_POST['API_Comment'])
         config::set('API_Comment', $_POST['API_Comment']);
     else
@@ -125,7 +81,7 @@ if ($_POST['submit'] || $_POST['import']  )
         config::set('API_Update', '0');
     else
         config::set('API_Update', '1');
-		
+
     if ($_POST['API_IgnoreNPC'])
         config::set('API_IgnoreNPC', '0');
     else
@@ -135,7 +91,7 @@ if ($_POST['submit'] || $_POST['import']  )
         config::set('API_IgnoreCorpFF', '0');
     else
         config::set('API_IgnoreCorpFF', '1');
-		
+
     if ($_POST['API_IgnoreAllianceFF'])
         config::set('API_IgnoreAllianceFF', '0');
     else
@@ -155,12 +111,12 @@ if ($_POST['submit'] || $_POST['import']  )
         config::set('API_NoSpam', '0');
     else
         config::set('API_NoSpam', '1');
-		
+
 	if ($_POST['API_UseCache'])
         config::set('API_UseCache', '0');
     else
         config::set('API_UseCache', '1');
-		
+
     if ($_POST['API_MultipleMode'])
         config::set('API_MultipleMode', '0');
     else
@@ -175,27 +131,17 @@ if ($_POST['submit'] || $_POST['import']  )
         config::set('API_extendedtimer_alliancelist', '0');
     else
         config::set('API_extendedtimer_alliancelist', '1');
-		
+
 	if ($_POST['API_extendedtimer_conq'])
         config::set('API_extendedtimer_conq', '0');
     else
-        config::set('API_extendedtimer_conq', '1');	
-	
-	if ($_POST['API_extendedtimer_facwarsystems'])
-        config::set('API_extendedtimer_facwarsystems', '0');
-    else
-        config::set('API_extendedtimer_facwarsystems', '1');
-		
-	//if ($_POST['API_ForceDST'])
-        //config::set('API_ForceDST', '0');
-    //else
-        //config::set('API_ForceDST', '1');
-		
+        config::set('API_extendedtimer_conq', '1');
+
 	if ($_POST['API_ConvertTimestamp'])
         config::set('API_ConvertTimestamp', '0');
     else
         config::set('API_ConvertTimestamp', '1');
-		
+
     $html .= "Settings Saved.<br />";
 }
 
@@ -204,14 +150,14 @@ if ($_POST['import'] || isset($_GET['Process']))
     // Importing of mails
     $myEveAPI = new API_KillLog();
     $myEveAPI->iscronjob_ = false;
-	
+
     if ($_GET['Process'])
     {
         $processindex = $_GET['Process'];
     } else {
         $processindex = 1;
     }
-	
+
     if ($keycount > 0 )
 	{
 		if (config::get("API_MultipleMode") == 0 )
@@ -222,11 +168,11 @@ if ($_POST['import'] || isset($_GET['Process']))
             $typestring = config::get("API_Type_" . $i);
             $outputdata .= $myEveAPI->Import($keystring, $typestring, $i);
 			$apicachetime[$i] = $myEveAPI->CachedUntil_;
-			
+
 			$file = @fopen(KB_CACHEDIR.'/data/report.txt', 'a');
         	fwrite($file, $outputdata);
        		fclose($file);
-			
+
 			//ApiCache::set('API_CachedUntil_' . $keyindex, $myEveAPI->cachetext_);
 			$processindex++;
 			if ($processindex <= $keycount)
@@ -238,7 +184,7 @@ if ($_POST['import'] || isset($_GET['Process']))
         		$html .= fread($fp, filesize(KB_CACHEDIR.'/data/report.txt'));
         		fclose($fp);
 				@unlink(KB_CACHEDIR.'/data/report.txt'); // delete file, it was temporary
-				
+
 			}
 		} else {
 			for ( $i = 1; $i <= $keycount; $i++ )
@@ -272,8 +218,7 @@ foreach((array)$files as $file){
 if ($_POST['clearlog'])
 {
 	$qry = DBFactory::getDBQuery();
-	$qry->execute("DELETE FROM kb3_apilog
-				   WHERE log_site = '" . KB_SITE . "'");
+	$qry->execute("DELETE FROM kb3_apilog WHERE log_site = '" . KB_SITE . "'");
 }
 
 if ($_POST['apilog'])
@@ -281,9 +226,9 @@ if ($_POST['apilog'])
 	$html .= "<div class='block-header2'>API Log</div>";
 	$html .= "<form id='options' name='options' method='post' action='".KB_HOST."/?a=admin_apimod'>";
 
-	$sql = 'SELECT * 
+	$sql = 'SELECT *
 			FROM kb3_apilog
-			WHERE log_site = "' .KB_SITE . '" 
+			WHERE log_site = "' .KB_SITE . '"
 			ORDER BY log_timestamp DESC limit 250';
 
 	$qry = DBFactory::getDBQuery();
@@ -321,7 +266,7 @@ if ($_POST['apilog'])
 		$numverified = $row['log_verified'];
 		$numignored = $row['log_ignored'];
 		$datasource = $row['log_source'];
-		
+
 		if ( $numposted > 0 )
 			$numposted = "<font color = \"#00FF00\">" . $numposted . "</font>";
 		if ( $numverified > 0 )
@@ -334,7 +279,7 @@ if ($_POST['apilog'])
 			$datasource = "<font color = \"#FF0000\">" . $datasource . "</font>";
 		if ( $datasource == "New XML" )
 			$datasource = "<font color = \"#00FF00\">" . $datasource . "</font>";
-			
+
     	$html .= "<tr class='" . $class . "'>";
     	$html .= "<td align='center'><b>" . stripslashes($row['log_keyname']) . "</b></td>";
     	$html .= "<td>" . $numposted . "</td>";
@@ -353,12 +298,12 @@ if ($_POST['apilog'])
 	$html .= "<br />";
 	$html .= "<table><tr><td width='60'><input type=\"submit\" name=\"back\" value=\"Back\" /></td><td><input type='submit' name='clearlog' value='Clear Log' /></td></tr></table>";
 	$html .= "</form>";
-	
+
 } else {
-	// API Settings 
+	// API Settings
 	$html .= "<div class='block-header2'>API Key Details (must be CEO/Director to retrieve corp mails)</div>";
 	$html .= "<form id='options' name='options' method='post' action='".KB_HOST."/?a=admin_apimod'>";
-	
+
 	// show current server time
 	$html .= "Servers current time: <font color = \"#00FF00\">" . date("M d Y H:i") . "</font><br /><br />";
 
@@ -381,64 +326,104 @@ uasort($order, "cmp");
 foreach($order as $key => $value ) {
 	if ($order[$key] == "" ) unset ($order[$key]);
 }
-// Add blank entries to back end of list
-while (sizeof($order) < $keycount) $order[] = sizeof($order) + 1;
 
-	// Key Details
-        $ni = 0;
-        foreach($order as $key => $value)
-        {
-                $i = $key;
-                $ni++;
+$html .= "<i> Your UserID and API FULL Key can be obtained <a href=\"http://support.eveonline.com/api/Key/CreatePredefined/256\">here</a></i><br /><br />";
 
-   	$characteridentitifier = config::get("API_CharID_" . $i);
-    	$html .= "<table class='kb-subtable'>";
-    	$html .= "<tr><td>Key Name #" . $ni .":</td><td><input type=\"text\" name=\"API_Name_" . $ni . "\" value=\"".config::get("API_Name_" . $i) . "\" /> (This is just to remind yourself which key is being used)</td></tr>";
-    	$html .= "<tr><td>Full API Key #" . $ni . ":</td><td><input type=\"password\" size='26' name=\"API_Key_" . $ni . "\" value=\"".config::get("API_Key_" . $i) . "\" /></td></tr>";
-    	$html .= "<tr><td>API CharID #" . $ni . ":</td><td><input type=\"text\"  name=\"API_CharID_" . $ni . "\" value=\"" . $characteridentitifier . "\" />";
-    	if ($characteridentitifier != "") {
-        	$html .= getPlayerDetails($characteridentitifier);
-    	}
-    	if (config::get("API_Key_" . $i) != "" && config::get("API_UserID_" . $i) != "") {
-        	$html .= "</td><td colspan=\"2\"><input type='submit' class='w00t'" . " name='select" . $ni . "' value=\"Select Character\" />";
-    	}
-    	$html .= "</td></tr>";
-    	$html .= "<tr><td>API UserID #" . $ni . ":</td><td><input type=\"text\" name=\"API_UserID_" . $ni . "\" value=\"".config::get("API_UserID_" . $i) . "\" /></td></tr>";
-    	$html .= "<tr><td>Key Type #" . $ni .":</td>";
-    	$html .= "<td>Corp <input type=\"radio\" name=\"API_Type_" . $ni . "\" value=\"corp\" ";
-    	if (config::get("API_Type_" . $i) != "char") {
-        	$html .= "checked='checked'";
-    	}
-    	$html .= " />";
-    	$html .= "       Player <input type=\"radio\" name=\"API_Type_" . $ni . "\" value=\"char\" ";
-    	if (config::get("API_Type_" . $i) == "char") {
-        	$html .= "checked='checked'";
-    	}
-   	 	$html .= " /></td></tr>";
-		$cachetime = API_Helpers::ConvertTimestamp($apicachetime[$i]);
-    	//$cachetime = date("Y-m-d H:i:s",  strtotime($apicachetime[$i]) + $gmoffset);
-    	if ($cachetime == "")
-    	{
-        	$cachetime = "unknown";
-        	$txtcolour = "<font color = \"#FF0000\">";
-    	} else {
-        	if (strtotime(gmdate("M d Y H:i:s")) - strtotime($apicachetime[$i]) > 0)
-        	{
-           	 	$txtcolour = "<font color = \"#00FF00\">";
-            	//$txtcolour = "<style=\"color:green\">";
-        	} else {
-            	$txtcolour = "<font color = \"#FF0000\">";
-        	}
-    	}
-    	$html .= "<tr><td>Data is cached until:</td><td>" . $txtcolour . $cachetime . "</font></td></tr>";
-    	$html .= "</table><br />";
+$html .= "<table style='width: 100%' class='kb-subtable'>";
+$html .= "<tr><td>Name</td><td>ID</td><td>Verification Code</td><td>Corp</td><td>Char</td><td>Status</td></tr>";
+
+$html .= "<tr class='kb-table-row-even'>";
+$html .= "<td><input type='text' name='keyname' id='keyname' size='20' /></td>";
+$html .= "<td><input type='text' name='keyid' id='keyid' size='10' maxlength='64' /></td>";
+$html .= "<td><input type='text' name='keycode' id='keycode' size='32' maxlength='64' /></td><td colspan='3'><input id='add' name='add' type='submit' value='Add' /></td></tr>";
+$html .= "<tr><td colspan='6'>&nbsp;</td></tr>";
+$qry = new DBQuery();
+$qry->execute("SELECT * FROM kb3_api_keys WHERE key_kbsite = '" . KB_SITE . "' ORDER BY key_name");
+while ($row = $qry->getRow()) {
+	$html .= ($cycle) ? "<tr class='kb-table-row-even'>" : "<tr class='kb-table-row-odd'>";
+	$html .= "<td>".$row['key_name']."</td>";
+	$html .= "<td>".$row['key_id']."</td>";
+	$html .= "<td>".$row['key_key']."</td>";
+
+	$flags = $row['key_flags'];
+
+	if ($flags == 0 ) {
+		echo $row['key_name'];
+		$act = new API_Account();
+		if ($act->CheckAccess($row['key_id'], $row['key_key'],256)) {
+			// valid new style key with valid access
+			switch( $act->GetType($row['key_id'], $row['key_key']) ) {
+				case "Account":
+					$flags |= KB_APIKEY_CHAR;
+					break;
+				case "Corporation":
+					$flags |= KB_APIKEY_CORP;
+					break;
+			}
+		} else {
+			if( $act->getError() !== null ) {
+				switch ( $act->getError() ) {
+					case 203:
+						if( $act->isOldKey($row['key_id'], $row['key_key']) ) {
+							$flags |= KB_APIKEY_LEGACY;
+							break;
+						}
+						$flags |= KB_APIKEY_BADAUTH;
+						break;
+					case 222:
+						if( $act->isOldKey($row['key_id'], $row['key_key']) ) {
+							$flags |= KB_APIKEY_LEGACY;
+							break;
+						}
+						$flags |= KB_APIKEY_EXPIRED;
+						break;
+					default:
+				}
+			} else {
+				// no error so user didn't have '256' access
+			}
+		}
+		$qry2 = new DBQuery();
+		$sql = "UPDATE kb3_api_keys SET key_flags = $flags WHERE key_name='".$row['key_name']."' AND key_id='".$row['key_id']."' AND key_key='".$row['key_key']."' AND key_kbsite = '" . KB_SITE . "'";
+		$qry2->execute($sql);
 	}
-	$html .= "<table class='api-keys'>";
-	$html .= "<tr><td height='30' width='150'>Number of API Keys:</td>";
-	$html .= "<td><input type='text' name='API_Key_count' size='2' maxlength='2' class='password' value=\"" . $keycount . "\" /></td></tr>";
-	$html .= "</table><br />";
-	$html .= "<i> Your UserID and API FULL Key can be obtained <a href=\"http://myeve.eve-online.com/api/default.asp\">here</a></i><br />";
-	$html .= "<i> Once your UserID and API Key have been entered and the settings saved you can then select the available character IDs if you don't know them by clicking the \"select character\" button that appears and then clicking the character name</i><br /><br />";
+
+	if ($flags & KB_APIKEY_LEGACY) {
+		$html .= "<td>-</td><td>-</td>";
+	} else {
+		if ($flags & KB_APIKEY_CORP) {
+			$html .= "<td>X</td>";
+		} else {
+			$html .= "<td></td>";
+		}
+
+		if ($flags & KB_APIKEY_CHAR) {
+			$html .= "<td>X</td>";
+		} else {
+			$html .= "<td></td>";
+		}
+	}
+
+	// status column
+	$html .= "<td>";
+	if ($flags == 0 ) {
+		$html .= "No Status";
+	} else {
+		if ($flags & KB_APIKEY_LEGACY) {
+			$html .= "Requires Updated Key";
+		}
+		if ($flags & KB_APIKEY_BADAUTH) {
+			$html .= "Bad Authentication";
+		}
+		if ($flags & KB_APIKEY_EXPIRED) {
+			$html .= "Expired Key";
+		}
+	}
+	$html .= "</td>";
+	$html .= "</tr>";
+	$cycle = !$cycle;
+}
+$html .= "</table>";
 
 	// API Caching Options
 	$html .= "<div class='block-header2'>API XML Caching Options</div><table>";
@@ -454,33 +439,6 @@ while (sizeof($order) < $keycount) $order[] = sizeof($order) + 1;
 	if (!config::get('API_ConvertTimestamp'))
     	$html .= " checked=\"checked\"";
 	$html .= " /></td></tr>";
-
-	//$html .= "<tr><td height='30' width='150'>Force Daylight Saving Time on displayed cache times?</i></td>";
-	//$html .= "<td><input type='checkbox' name='API_ForceDST' id='API_ForceDST'";
-	//if (!config::get('API_ForceDST'))
-    	//$html .= " checked=\"checked\"";
-	//$html .= "></tr>";
-
-	$html .= "<tr><td height='30' width='150'>Use Extended 24hr cache timer for Sovereignty.xml?</td>";
-	$html .= "<td><input type='checkbox' name='API_extendedtimer_sovereignty' id='API_extendedtimer_sovereignty'";
-	if (!config::get('API_extendedtimer_sovereignty'))
-    	$html .= " checked=\"checked\"";
-	$html .= " />";
-	//$tempcachetime = date("Y-m-d H:i:s",  strtotime(ApiCache::get('API_map_Sovereignty')) + $gmoffset);
-	$tempcachetime = API_Helpers::ConvertTimestamp(ApiCache::get('API_map_Sovereignty'));
-	if ($tempcachetime == "")
-	{
-		$html .= "</td></tr>";
-	} else {
-		if (strtotime(gmdate("M d Y H:i:s")) - strtotime(ApiCache::get('API_map_Sovereignty')) > 0)
-		{
-		$txtcolour = "<font color = \"#00FF00\">";
-		//$txtcolour = "<style=\"color:green\">";
-    	} else {
-    		$txtcolour = "<font color = \"#FF0000\">";
-    	}
-		$html .= "Data is cached until:</td><td>" . $txtcolour . $tempcachetime . "</font></td></tr>";
-	}
 
 	$html .= "<tr><td height='30' width='150'>Use Extended 24hr cache timer for AllianceList.xml?</td>";
 	$html .= "<td><input type='checkbox' name='API_extendedtimer_alliancelist' id='API_extendedtimer_alliancelist'";
@@ -518,27 +476,6 @@ while (sizeof($order) < $keycount) $order[] = sizeof($order) + 1;
 		{
 		$txtcolour = "<font color = \"#00FF00\">";
 		//$txtcolour = "<style=\"color:green\">";
-    	} else {
-    		$txtcolour = "<font color = \"#FF0000\">";
-    	}
-		$html .= "Data is cached until:</td><td>" . $txtcolour . $tempcachetime . "</font></td></tr>";
-	}
-
-	$html .= "<tr><td height='30' width='150'>Use Extended 24hr cache timer for FacWarSystems.xml?</td>";
-	$html .= "<td><input type='checkbox' name='API_extendedtimer_facwarsystems' id='API_extendedtimer_facwarsystems'";
-	if (!config::get('API_extendedtimer_facwarsystems'))
-    	$html .= " checked=\"checked\"";
-	$html .= " />";
-	//$tempcachetime =  date("Y-m-d H:i:s",  strtotime(ApiCache::get('API_map_FacWarSystems')) + $gmoffset);
-	$tempcachetime = API_Helpers::ConvertTimestamp(ApiCache::get('API_map_FacWarSystems'));
-	if ($tempcachetime == "")
-	{
-		$html .= "</td></tr>";
-	} else {
-		if (strtotime(gmdate("M d Y H:i:s")) - strtotime(ApiCache::get('API_map_FacWarSystems')) > 0)
-		{
-			$txtcolour = "<font color = \"#00FF00\">";
-			//$txtcolour = "<style=\"color:green\">";
     	} else {
     		$txtcolour = "<font color = \"#FF0000\">";
     	}
@@ -615,7 +552,7 @@ while (sizeof($order) < $keycount) $order[] = sizeof($order) + 1;
 }
 $html .= "<div class='block-header2'></div>";
 $html .= "<div>Written by " . API_Helpers::FindThunk() . " (<a href=\"http://eve-id.net/forum/viewtopic.php?f=505&amp;t=8827\" >Support</a>)</div>";
-	
+
 $page->setContent($html);
 $page->addContext($menubox->generate());
 $page->generate();
@@ -641,7 +578,7 @@ function getPlayerDetails( $characteridentitifier )
 function checkDBforAPI()
 {
 	$qry = DBFactory::getDBQuery();
-	
+
 	// check kb3_kills table and if necessary add extra field for API kll_external_id
 	$isKB3KillsUpdated = false;
 	$qry->execute("SHOW COLUMNS FROM kb3_kills");
@@ -654,11 +591,11 @@ function checkDBforAPI()
 	if (!$isKB3KillsUpdated)
 	{
 		// add new column
-		$qry->execute("ALTER TABLE `kb3_kills` 
+		$qry->execute("ALTER TABLE `kb3_kills`
 						ADD `kll_external_id` INT( 11 ) UNSIGNED NULL DEFAULT NULL ,
 						ADD UNIQUE ( kll_external_id )");
 	}
-	
+
 	// check kb3_alliances table and if necessary add extra field for API all_external_id
 	$isKB3AllianceUpdated = false;
 	$qry->execute("SHOW COLUMNS FROM kb3_alliances");
@@ -671,11 +608,11 @@ function checkDBforAPI()
 	if (!$isKB3AllianceUpdated)
 	{
 		// add new column
-		$qry->execute("ALTER TABLE `kb3_alliances` 
+		$qry->execute("ALTER TABLE `kb3_alliances`
 						ADD `all_external_id` INT( 11 ) UNSIGNED NULL DEFAULT NULL ,
 						ADD UNIQUE ( all_external_id )");
 	}
-	
+
 	// check kb3_corps table and if necessary add extra field for API crp_external_id
 	$isKB3CorpsUpdated = false;
 	$qry->execute("SHOW COLUMNS FROM kb3_corps");
@@ -688,11 +625,11 @@ function checkDBforAPI()
 	if (!$isKB3CorpsUpdated)
 	{
 		// add new column
-		$qry->execute("ALTER TABLE `kb3_corps` 
+		$qry->execute("ALTER TABLE `kb3_corps`
 						ADD `crp_external_id` INT( 11 ) UNSIGNED NULL DEFAULT NULL ,
 						ADD UNIQUE ( crp_external_id )");
 	}
-	
+
 	// create kb3_apilog table
 	$qry->execute("CREATE TABLE IF NOT EXISTS `kb3_apilog` (
 			`log_site` VARCHAR( 20 ) NOT NULL ,
@@ -706,7 +643,7 @@ function checkDBforAPI()
 			`log_type` VARCHAR( 20 ) NOT NULL ,
 			`log_timestamp` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'
 			) ENGINE = MYISAM ");
-			
+
 	// set update complete
 	config::set('API_DBUpdate', '1');
 }
