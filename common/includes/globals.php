@@ -105,12 +105,11 @@ function get_tpl($name)
 			} else if (is_file('./themes/default/templates/igb_'.$name.'.tpl')) {
 				return '../../default/templates/igb_'.$name.'.tpl';
 			}
-		} else {
-			if (is_file('./themes/'.$themename.'/templates/'.$name.'.tpl')) {
-				return $name.'.tpl';
-			} else if (is_file('./themes/default/templates/'.$name.'.tpl')) {
-				return '../../default/templates/'.$name.'.tpl';
-			}
+		}
+		if (is_file('./themes/'.$themename.'/templates/'.$name.'.tpl')) {
+			 return $name.'.tpl';
+		} else if (is_file('./themes/default/templates/'.$name.'.tpl')) {
+			return '../../default/templates/'.$name.'.tpl';
 		}
 	}
 	return $name.'.tpl';
