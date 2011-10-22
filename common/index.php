@@ -214,6 +214,10 @@ cache::check($page);
  * @global Smarty $smarty
  */
 $smarty = new Smarty();
+if(!session::isAdmin()) {
+	// Disable checking of timestamps for templates to improve performance.
+	$smarty->compile_check = false;
+}
 $smarty->template_dir = "./themes/$themename/templates";
 
 if(!is_dir(KB_CACHEDIR.'/templates_c/'.$themename)) {
