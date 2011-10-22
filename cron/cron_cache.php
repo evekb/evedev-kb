@@ -56,25 +56,10 @@ $ApiCache = new ApiCache(KB_SITE);
 $outhead = "Running Cron_Cache - with API Mod ". APIVERSION . " on " . gmdate("M d Y H:i") . "\n\n";
 $out = '';
 
-// Sovereignty
-$mySovAPI = new API_Sovereignty();
-$Sovtemp = $mySovAPI->fetchXML();
-$out .= "Caching Sovereignty XML - cached until:" . API_Helpers::ConvertTimestamp($mySovAPI->getCachedUntil()) . "\n";
-
 // Alliance
 $myAlliAPI = new API_Alliance();
 $Allitemp .= $myAlliAPI->initXML();
 $out .= "Caching Alliance XML - cached until:" . API_Helpers::ConvertTimestamp($myAlliAPI->getCachedUntil()) . "\n";
-
-// Conquerable Station and Outposts list
-$myConqAPI = new API_ConquerableStationList();
-$Conqtemp .= $myConqAPI->fetchXML();
-$out .= "Caching Conquerable Station XML - cached until:" . API_Helpers::ConvertTimestamp($myConqAPI->getCachedUntil()) . "\n";
-
-// Factional Warfare Systems
-$myFacAPI = new API_FacWarSystems();
-$Factemp .= $myFacAPI->fetchXML();
-$out .= "Caching Factional Warfare Systems XML - cached until:" . API_Helpers::ConvertTimestamp($myFacAPI->getCachedUntil()) . "\n";
 
 if ($out)
 {

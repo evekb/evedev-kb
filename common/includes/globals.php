@@ -9,7 +9,7 @@
 define('SVN_REV', "Dev");
 
 if (!defined('LATEST_DB_UPDATE')) {
-	define('LATEST_DB_UPDATE', "023");
+	define('LATEST_DB_UPDATE', "024");
 }
 
 define('KB_CACHEDIR', 'cache');
@@ -26,6 +26,12 @@ define("APIVERSION", "V3.3");
 // even numbers for minor = development version
 define('KB_VERSION', '3.3beta');
 define('KB_RELEASE', '(Incursion)');
+
+define('KB_APIKEY_LEGACY', 1);
+define('KB_APIKEY_CORP', 2);
+define('KB_APIKEY_CHAR', 4);
+define('KB_APIKEY_BADAUTH', 8);
+define('KB_APIKEY_EXPIRED', 16);
 
 // Make sure the core functions are loaded.
 require_once('common/includes/class.edkloader.php');

@@ -6,62 +6,32 @@
  * @package EDK
  */
 
+ require_once("class.api.php");
 /**
  * Retrieve Character list from CCP API
  * @package EDK
  */
-class API_Char
+class API_Char extends API
 {
 	private $error = false;
 	private $chars = array();
 
 	public function fetch($userID, $APIKey)
 	{
-		$data = $this->loaddata($userID, $APIKey);
-
-		$sxe = @simplexml_load_string($data);
-
-		if($sxe->error)
-		{
-			$this->error = array();
-			$this->error['code'] = strval($sxe->error['code']);
-			$this->error['message'] = strval($sxe->error);
-		}
-		else if($sxe)
-		{
-			foreach($sxe->result->rowset->row as $row)
-			{
-				$this->chars[] = array(
-					'Name'=>strval($row['name']),
-					'corpName'=>strval($row['corporationName']),
-					'charID'=>strval($row['characterID']),
-					'corpID'=>strval($row['corporationID']));
-			}
+		$data = self::CallAPI( "account", "Characters", null, $userID, $APIKey );
+		
+		foreach($data->characters as $character) {
+			$this->chars[] = array(
+					'Name'=>strval($character->name),
+					'corpName'=>strval($character->corporationName),
+					'charID'=>strval($character->characterID),
+					'corpID'=>strval($character->corporationID));
 
 			// add any characters not already in the kb
 			$this->updateChars();
-		}
-
+					
+			}
 		return $this->chars;
-	}
-
-	private function loaddata($userID, $APIKey)
-	{
-        $url = API_SERVER."/account/Characters.xml.aspx";
-
-		$http = new http_request($url, "POST");
-		$http->set_useragent("PHPApi");
-
-		$http->set_postform('userID', $userID);
-		$http->set_postform('APIKey', $APIKey);
-
-		$result = $http->get_content();
-
-		$this->error = array();
-		$this->error['code'] = $http->get_http_code();
-		$this->error['message'] = $http->getError();
-
-		return $result;
 	}
 
 	private function updateChars()
@@ -106,13 +76,5 @@ class API_Char
 		}
 
 		return;
-	}
-	/**
-	 * Return any errors encountered or false if none.
-	 */
-	function getError()
-	{
-		return $this->error;
-
 	}
 }

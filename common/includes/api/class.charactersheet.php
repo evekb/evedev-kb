@@ -7,7 +7,7 @@
  */
 
 /**
- * API Character Sheet - char/CharacterSheet.xml.aspx
+ * API Character Sheet - char/CharacterSheet
  * Incomplete - Does not read Certificates or Roles
  * @package EDK
  */
