@@ -44,9 +44,7 @@ class pInvtype extends pageAssembly
 		if ($item->get('itt_cat') == 6)
 		{
 			//we have a ship, so get it from the db
-			$ship = new Ship(0, $item->get('typeID'));
-			$smarty->assign('shiptechlevel', $ship->getTechLevel());
-			$smarty->assign('shipisfaction', $ship->isFaction());
+			$ship = Ship::getByID($item->get('typeID'));
 			$smarty->assign('shipImage', $ship->getImage(64));
 
 			$smarty->assign('armour', array('armorHP','armorEmDamageResonance',
