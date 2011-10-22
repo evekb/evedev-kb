@@ -48,16 +48,6 @@ class API_KillLog
         $lastdatakillid = 1;
         $currentdatakillid = 0;
 
-		// API Caching system, If we're still under cachetime reuse the last XML, if not download the new one. Helps with Bug hunting and just better all round.
-		if ($this->API_CacheTime_ == "")
-    	{
-        	$this->API_CacheTime = "2005-01-01 00:00:00"; // fake date to ensure that it runs first time.
-    	}
-
-		if (is_file(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml'))
-			$cacheexists = true;
-		else
-			$cacheexists = false;
 		if(defined('BETA') && BETA)
 		{
 			if($errorcode = $this->fetchErrors($keyindex))
@@ -65,41 +55,20 @@ class API_KillLog
 					.config::get('API_Name_'.$keyindex)." failed with error code "
 					.$errorcode."</i></div><br><br>";
 
-			// if API_UseCache = 1 (off) then don't use cache
-			if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($this->API_CacheTime_) > 0) || ($this->API_UseCaching_ == 1)  || !$cacheexists )
-			{
-				// Load new XML
-				$logsource = "New XML";
-				$this->Output_ .= "<i>Downloading latest XML file for " . config::get('API_Name_'.$keyindex) . "</i><br><br>";
-				$data = '';
-				$date2 = '';
-				do {
-					$tmp = $this->loaddata($currentdatakillid, $keystring, $typestring);
-					if(!$data || strpos($tmp, 'result') !== false)
-							$data .= $tmp;
-					$data = preg_replace('/\s*<\/rowset>\s*<\/result.*<result>\s*<rowset[^>]*>/s', '', $data);
-					$data2 .= $tmp;
-					$lastdatakillid = $currentdatakillid;
-					$currentdatakillid = $this->getlastkillid($data);
-				} while ( $lastdatakillid != $currentdatakillid );
-				if ( $this->API_UseCaching_ == 0 )
-				{
-					// save the file if no errors have occurred
-					if ($this->errorcode_ == 0)
-					{
-						file_put_contents(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml', $data);
-						//chmod the file so it can be altered by cronjobs in future
-						@chmod(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml',0666);
-					}
-				}
-			} else {
-				// re-use cached XML
-				$this->Output_ .= "<i>Using cached XML file for " . config::get('API_Name_'.$keyindex) . "</i><br><br>";
-				$logsource = "Cache";
-
-				$data = file_get_contents(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml');
-				if(!$data) return "<i>error loading cached file ".config::get('API_Name_'.$keyindex)."_KillLog.xml</i><br><br>";
-			}
+			// Load new XML
+			$logsource = "New XML";
+			$this->Output_ .= "<i>Downloading latest XML file for " . config::get('API_Name_'.$keyindex) . "</i><br><br>";
+			$data = '';
+			$date2 = '';
+			do {
+				$tmp = $this->loaddata($currentdatakillid, $keystring, $typestring);
+				if(!$data || strpos($tmp, 'result') !== false)
+						$data .= $tmp;
+				$data = preg_replace('/\s*<\/rowset>\s*<\/result.*<result>\s*<rowset[^>]*>/s', '', $data);
+				$data2 .= $tmp;
+				$lastdatakillid = $currentdatakillid;
+				$currentdatakillid = $this->getlastkillid($data);
+			} while ( $lastdatakillid != $currentdatakillid );
 
 			$feedfetch = new IDFeed();
 			if($data)
@@ -159,44 +128,16 @@ class API_KillLog
 				return "<div class=block-header2><i>".config::get('API_Name_'.$keyindex)." failed with error code ".$errorcode."</i></div><br><br>";
 			}
 
-			// if API_UseCache = 1 (off) then don't use cache
-			if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($this->API_CacheTime_) > 0) || ($this->API_UseCaching_ == 1)  || !$cacheexists )
-			{
-				// Load new XML
-				$logsource = "New XML";
-				$this->Output_ .= "<i>Downloading latest XML file for " . config::get('API_Name_'.$keyindex) . "</i><br><br>";
-				$data = '<myxml thunkage="1">';
-				do {
-					$data .= $this->loaddata($currentdatakillid, $keystring, $typestring);
-					$lastdatakillid = $currentdatakillid;
-					$currentdatakillid = $this->getlastkillid($data);
-				} while ( $lastdatakillid != $currentdatakillid );
-				$data .= '</myxml>';
-
-				if ( ( $this->API_UseCaching_ ) == 0 )//&& ( $this->iscronjob_ == false ) )
-				{
-					// save the file if no errors have occurred
-					if ($this->errorcode_ == 0)
-					{
-						$file = fopen(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml', 'w+');
-						fwrite($file, $data);
-						fclose($file);
-						//chmod the file so it can be altered by cronjobs in future
-						@chmod(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml',0666);
-					}
-				}
-			} else {
-				// re-use cached XML
-				$this->Output_ .= "<i>Using cached XML file for " . config::get('API_Name_'.$keyindex) . "</i><br><br>";
-				$logsource = "Cache";
-
-				if ($fp = @fopen(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml', 'r')) {
-					$data = fread($fp, filesize(KB_CACHEDIR.'/api/'.config::get('API_Name_'.$keyindex).'_KillLog.xml'));
-					fclose($fp);
-				} else {
-					return "<i>error loading cached file ".config::get('API_Name_'.$keyindex)."_KillLog.xml</i><br><br>";
-				}
-			}
+			// Load new XML
+			$logsource = "New XML";
+			$this->Output_ .= "<i>Downloading latest XML file for " . config::get('API_Name_'.$keyindex) . "</i><br><br>";
+			$data = '<myxml thunkage="1">';
+			do {
+				$data .= $this->loaddata($currentdatakillid, $keystring, $typestring);
+				$lastdatakillid = $currentdatakillid;
+				$currentdatakillid = $this->getlastkillid($data);
+			} while ( $lastdatakillid != $currentdatakillid );
+			$data .= '</myxml>';
 
 			$xml_parser = xml_parser_create();
 			xml_set_object ( $xml_parser, $this );
@@ -260,24 +201,14 @@ class API_KillLog
                     // dropped items
                     $this->droppeditems_['typeid'][] = $this->typeid_;
                     $this->droppeditems_['qty'][] = $this->qtydropped_;
-                    //if ($this->isContainer)
-					//{
-					//	$this->droppeditems_['flag'][] = -1;
-					//} else {
-						$this->droppeditems_['flag'][] = $this->itemFlag_;
-					//}
+					$this->droppeditems_['flag'][] = $this->itemFlag_;
                 }
                 if ($this->qtydestroyed_ != 0)
 				{
                     // destroyed items
                     $this->destroyeditems_['typeid'][] =$this->typeid_;
                     $this->destroyeditems_['qty'][] = $this->qtydestroyed_;
-                   // if ($this->isContainer)
-					//{
-					//	$this->destroyeditems_['flag'][] = -1;
-					//} else {
-						$this->destroyeditems_['flag'][] = $this->itemFlag_;
-					//}
+					$this->destroyeditems_['flag'][] = $this->itemFlag_;
                 }
                 $this->typeid_ = 0;
                 $this->itemFlag_ = 0;
@@ -285,7 +216,6 @@ class API_KillLog
                 $this->qtydestroyed_ = 0;
             }
 			// goes after so container itself doesn't count as "(in countainer)
-
         }
 
         if (count($attribs))
@@ -299,14 +229,12 @@ class API_KillLog
                         break;
                     case "CHARACTERNAME":
 						$this->pname_ = $v;
-
                         break;
 					case "CORPORATIONID":
                         $this->corporationID_ = $v;
 						break;
                     case "CORPORATIONNAME":
 						$this->corporation_ = $v;
-
                         break;
                     case "ALLIANCEID":
                         $this->allianceID_ = $v;
@@ -469,12 +397,6 @@ class API_KillLog
 					if ($this->allianceID_ != 0)
 						$alliance->add($this->alliance_, $this->allianceID_);
 					else $alliance->add("None");
-
-//					$corporation = new Corporation();
-//					$corporation->add($this->corporation_, $alliance, $this->killtime_, $this->corporationID_);
-//
-//					$pilot = new Pilot();
-//					$pilot->add($this->pname_, $corporation, $this->killtime_, $this->charid_);
                 }
 
                 // set victim corp and alliance for FF check
@@ -550,12 +472,6 @@ class API_KillLog
 						if ($this->allianceID_ != 0)
 							$alliance->add($this->alliance_, $this->allianceID_);
 						else $alliance->add("None");
-// We don't know the time yet? Weird, yet somehow true.
-//						$corporation = new Corporation();
-//						$corporation->add($this->corporation_, $alliance, $this->killtime_, $this->corporationID_);
-//
-//						$pilot = new Pilot();
-//						$pilot->add($this->pname_, $corporation, $this->killtime_, $this->charid_);
                     }
 
                     $this->pname_ = "";
