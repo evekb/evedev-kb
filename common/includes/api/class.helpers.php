@@ -14,54 +14,6 @@
 class API_Helpers
 {
 	// **********************************************************************************************************************************************
-	// ****************                         					   Load Generic XML               					             ****************
-	// **********************************************************************************************************************************************
-
-	// loads a generic XML sheet that requires no API Login as such
-	public static function LoadGlobalData($path)
-	{
-		$temppath = substr($path, 0, strlen($path) - 9);
-		$configvalue = "API" . str_replace("/", "_", $temppath);
-
-		$CachedTime = ApiCache::get($configvalue);
-		$UseCaching = config::get('API_UseCache');
-
-		// API Caching system, If we're still under cachetime reuse the last XML, if not download the new one. Helps with Bug hunting and just better all round.
-		if ($CachedTime == "")
-		{
-			$CachedTime = "2005-01-01 00:00:00"; // fake date to ensure that it runs first time.
-		}
-
-		if (is_file(KB_CACHEDIR.'/api/'.$configvalue.'.xml'))
-			$cacheexists = true;
-		else
-			$cacheexists = false;
-
-		if ((strtotime(gmdate("M d Y H:i:s")) - strtotime($CachedTime) > 0) || ($UseCaching == 1)  || !$cacheexists )// if API_UseCache = 1 (off) then don't use cache
-		{
-			$url = API_SERVER.$path;
-
-			$http = new http_request($url);
-			$http->set_useragent("PHPApi EDK".KB_VERSION);
-
-			$contents = $http->get_content();
-
-			// Save the file if we're caching (0 = true in Thunks world)
-			if ( $contents && $UseCaching == 0 )
-				file_put_contents(KB_CACHEDIR.'/api/'.$configvalue.'.xml', $contents);
-		}
-		else
-		{
-			// re-use cached XML
-			if ($contents = file_get_contents(KB_CACHEDIR.'/api/'.$configvalue.'.xml')) {
-			} else {
-				return "<i>error loading cached file ".$configvalue.".xml</i><br><br>";
-			}
-		}
-		return $contents;
-	}
-
-	// **********************************************************************************************************************************************
 	// ****************                         					Convert ID -> Name               					             ****************
 	// **********************************************************************************************************************************************
 	public static function gettypeIDname($id, $update = false)
