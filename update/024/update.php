@@ -54,8 +54,11 @@ function update024()
 		}
         if(config::get('024updatestatus') <4)
 		{
-			$qry->execute("UPDATE kb3_kills JOIN kb3_ships ON kll_ship_id ="
-					." shp_id SET kll_ship_id = shp_externalid");
+			$qry->execute("SHOW COLUMNS FROM kb3_ships LIKE 'shp_externalid'");
+			if($qry->recordCount()) {
+				$qry->execute("UPDATE kb3_kills JOIN kb3_ships ON kll_ship_id ="
+						." shp_id SET kll_ship_id = shp_externalid");
+			}
 			config::set('024updatestatus',4);
 			$smarty->assign('refresh',1);
 			$smarty->assign('content', "24. kb3_kills ships are updated.");
@@ -64,8 +67,11 @@ function update024()
 		}
         if(config::get('024updatestatus') <5)
 		{
-			$qry->execute("UPDATE kb3_inv_detail JOIN kb3_ships ON ind_shp_id ="
-					." shp_id SET ind_shp_id = shp_externalid");
+			$qry->execute("SHOW COLUMNS FROM kb3_ships LIKE 'shp_externalid'");
+			if($qry->recordCount()) {
+				$qry->execute("UPDATE kb3_inv_detail JOIN kb3_ships ON ind_shp_id ="
+						." shp_id SET ind_shp_id = shp_externalid");
+			}
 			config::set('024updatestatus',5);
 			$smarty->assign('refresh',1);
 			$smarty->assign('content', "24. kb3_inv_detail ships are updated.");
@@ -100,6 +106,18 @@ function update024()
 			config::set('024updatestatus',7);
 			$smarty->assign('refresh',1);
 			$smarty->assign('content', "24. kb3_ships shrunk.");
+			$smarty->display('update.tpl');
+			die();
+		}
+        if(config::get('024updatestatus') <8)
+		{
+			$qry->execute("SHOW TABLES LIKE 'kb3_ships_values'");
+			if($qry->recordCount())	{
+				$qry->execute("DROP TABLE kb3_ships_values");
+			}
+			config::set('024updatestatus',8);
+			$smarty->assign('refresh',1);
+			$smarty->assign('content', "24. kb3_ships_values removed.");
 			$smarty->display('update.tpl');
 			die();
 		}
