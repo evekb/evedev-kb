@@ -16,11 +16,13 @@
  */
 class KillWrapper extends Kill
 {
+
 	/**
 	 * The ID for this kill
 	 * @var integer
 	 */
 	private $id = 0;
+
 	/**
 	 * The external ID from CCP for this kill
 	 * @var integer
@@ -62,7 +64,7 @@ class KillWrapper extends Kill
 	private $victimexternalid = null;
 	private $fbpilotexternalid = null;
 	private $commentcount = null;
-	
+
 	/**
 	 * @param integer $id The ID for this kill
 	 * @param boolean $external If true then $id is treated as an external ID.
@@ -70,24 +72,18 @@ class KillWrapper extends Kill
 	function KillWrapper($id = 0, $external = false)
 	{
 		$id = intval($id);
-		if($id && $external)
-		{
+		if ($id && $external) {
 			$qry = DBFactory::getDBQuery();
-			$qry->execute("SELECT kll_id FROM kb3_kills WHERE kll_external_id = ".$id);
-			if($qry->recordCount())
-			{
+			$qry->execute("SELECT kll_id FROM kb3_kills WHERE kll_external_id = " . $id);
+			if ($qry->recordCount()) {
 				$result = $qry->getRow();
 				$this->id = $result['kll_id'];
 				$this->externalid = $id;
-			}
-			else
-			{
+			} else {
 				$this->id = null;
 				$this->externalid = null;
 			}
-		}
-		else
-		{
+		} else {
 			$this->id = $id;
 			$this->externalid = null;
 		}
@@ -100,13 +96,16 @@ class KillWrapper extends Kill
 	 */
 	function setArray($arr)
 	{
-		foreach($arr as $key=>$val) $this->$key = $val;
+		foreach ($arr as $key => $val) {
+			$this->$key = $val;
+		}
 	}
 
 	function set($var, $value)
 	{
 		$this->$var = $value;
 	}
+
 	/**
 	 * Get the internal ID of this kill.
 	 *
@@ -126,6 +125,7 @@ class KillWrapper extends Kill
 	{
 		return $this->externalid;
 	}
+
 	/**
 	 * Return the dropped items array for this kill.
 	 *
@@ -135,6 +135,7 @@ class KillWrapper extends Kill
 	{
 		return $this->droppeditems_;
 	}
+
 	/**
 	 * Return the destroyed items array for this kill.
 	 *
@@ -144,6 +145,7 @@ class KillWrapper extends Kill
 	{
 		return $this->destroyeditems_;
 	}
+
 	/**
 	 * @return string
 	 */
@@ -151,35 +153,41 @@ class KillWrapper extends Kill
 	{
 		return $this->timestamp;
 	}
+
 	/**
 	 * Return the victim Pilot object.
 	 *
 	 * @return Pilot
-	*/
+	 */
 	function getVictim()
 	{
-		if (isset($this->victim)) return $this->victim;
+		if (isset($this->victim)) {
+			return $this->victim;
+		}
 		$this->victim = new Pilot($this->victimid);
 		return $this->victim;
 	}
+
 	/**
 	 * Return the victim Corporation.
 	 *
 	 * @return Corporation
-	*/
+	 */
 	function getVictimCorp()
 	{
 		return $this->victimcorp;
 	}
+
 	/**
 	 * Return the victim Alliance.
 	 *
 	 * @return Alliance
-	*/
+	 */
 	function getVictimAlliance()
 	{
 		return $this->victimalliance;
 	}
+
 	/**
 	 * Return the amount of damage taken by the victim.
 	 * @return integer
@@ -258,7 +266,7 @@ class KillWrapper extends Kill
 	 */
 	function getVictimFactionName()
 	{
-		if($this->getVictimAlliance()->isFaction()) {
+		if ($this->getVictimAlliance()->isFaction()) {
 			return $this->getVictimAlliance()->getName();
 		} else {
 			return "None";
@@ -280,9 +288,12 @@ class KillWrapper extends Kill
 	 */
 	function getSystem()
 	{
-		if(isset($this->solarsystem)) return $this->solarsystem;
-		else $this->solarsystem = new SolarSystem($this->solarsystemid);
-		
+		if (isset($this->solarsystem)) {
+			return $this->solarsystem;
+		} else {
+			$this->solarsystem = SolarSystem::getByID($this->solarsystemid);
+		}
+
 		return $this->solarsystem;
 	}
 
@@ -387,7 +398,7 @@ class KillWrapper extends Kill
 	 */
 	function getVictimShip()
 	{
-		return Cacheable::factory('Ship', $this->victimshipid);
+		return Ship::getByID($this->victimshipid);
 	}
 
 	/**
@@ -405,7 +416,7 @@ class KillWrapper extends Kill
 	 */
 	function getVictimShipName()
 	{
-		return $this->victimshipname;
+		return $this->getVictimShip()->getName();
 	}
 
 	/**
@@ -414,7 +425,7 @@ class KillWrapper extends Kill
 	 */
 	function getVictimShipExternalID()
 	{
-		return $this->victimshipexternalid;
+		return $this->victimshipid;
 	}
 
 	/**
@@ -423,7 +434,7 @@ class KillWrapper extends Kill
 	 */
 	function getVictimShipClassName()
 	{
-		return $this->victimshipclassname;
+		return $this->getVictimShip()->getClass()->getName();
 	}
 
 	/**
@@ -432,7 +443,7 @@ class KillWrapper extends Kill
 	 */
 	function getVictimShipValue()
 	{
-		return $this->$this->victimshipvalue;
+		return $this->victimshipvalue;
 	}
 
 	/**
@@ -442,7 +453,7 @@ class KillWrapper extends Kill
 	 */
 	function getVictimShipImage($size)
 	{
-		return imageURL::getURL('Ship', $this->victimshipexternalid, $size);
+		return imageURL::getURL('Ship', $this->victimshipid, $size);
 	}
 
 	/**
@@ -463,7 +474,7 @@ class KillWrapper extends Kill
 	 */
 	function getRawMail()
 	{
-		$kill = new Kill($this->id);
+		$kill = Kill::getByID($this->id);
 		return $kill->getRawMail();
 	}
 
@@ -475,12 +486,12 @@ class KillWrapper extends Kill
 	 */
 	function getDupe($checkonly = false)
 	{
-		trigger_error(__FUNCTION__." not implemented in this class", E_USER_ERROR);
+		trigger_error(__FUNCTION__ . " not implemented in this class", E_USER_ERROR);
 	}
 
 	private function execQuery()
 	{
-		trigger_error(__FUNCTION__." not implemented in this class", E_USER_ERROR);
+		trigger_error(__FUNCTION__ . " not implemented in this class", E_USER_ERROR);
 	}
 
 	/**
@@ -490,13 +501,15 @@ class KillWrapper extends Kill
 	 */
 	function isClassified()
 	{
-		if (config::get('kill_classified'))
-		{
-			if (user::role('classified_see')) return false;
+		if (config::get('kill_classified')) {
+			if (user::role('classified_see'))
+				return false;
 
-			if($this->getClassifiedTime() > 0) return true;
+			if ($this->getClassifiedTime() > 0)
+				return true;
 		}
-		else return false;
+		else
+			return false;
 	}
 
 	/** Return the time left until this kill is not classified.
@@ -506,11 +519,10 @@ class KillWrapper extends Kill
 	function getClassifiedTime()
 	{
 		if (config::get('kill_classified') &&
-				strtotime($this->getTimeStamp()." UTC") >
-				time() - config::get('kill_classified') * 3600)
-		{
+				strtotime($this->getTimeStamp() . " UTC") >
+				time() - config::get('kill_classified') * 3600) {
 			return (config::get('kill_classified') * 3600
-				- time() + strtotime($this->getTimeStamp()." UTC"));
+					- time() + strtotime($this->getTimeStamp() . " UTC"));
 		}
 		return 0;
 	}
@@ -545,7 +557,9 @@ class KillWrapper extends Kill
 	 */
 	function exists()
 	{
-		if(!isset($this->valid)) $this->execQuery();
+		if (!isset($this->valid)) {
+			$this->execQuery();
+		}
 		return $this->valid;
 	}
 
@@ -557,7 +571,9 @@ class KillWrapper extends Kill
 	function relatedKillCount()
 	{
 		// No details for classified kills.
-		if($this->isClassified()) return 0;
+		if ($this->isClassified()) {
+			return 0;
+		}
 		return $this->relatedkillcount;
 	}
 
@@ -569,7 +585,9 @@ class KillWrapper extends Kill
 	function relatedLossCount()
 	{
 		// No details for classified kills.
-		if($this->isClassified()) return 0;
+		if ($this->isClassified()) {
+			return 0;
+		}
 		return $this->relatedlosscount;
 	}
 
@@ -589,12 +607,9 @@ class KillWrapper extends Kill
 	function setFBPilotName($fbpilotname)
 	{
 		$npc = strpos($fbpilotname, "#");
-		if ($npc === false)
-		{
+		if ($npc === false) {
 			$this->fbpilotname = $fbpilotname;
-		}
-		else
-		{
+		} else {
 			$name = explode("#", $fbpilotname);
 			$plt = new Item($name[2]);
 			$this->fbpilotname = $plt->getName();
@@ -609,27 +624,26 @@ class KillWrapper extends Kill
 	function calculateISKLoss($update = true)
 	{
 		$value = 0;
-		foreach($this->destroyeditems_ as $itd)
-		{
+		foreach ($this->destroyeditems_ as $itd) {
 			$item = $itd->getItem();
-			if(strpos($item->getName(), "Blueprint") === FALSE) $value += $itd->getValue() * $itd->getQuantity();
+			if (strpos($item->getName(), "Blueprint") === FALSE) {
+				$value += $itd->getValue() * $itd->getQuantity();
+			}
 		}
-		if(config::get('kd_droptototal'))
-		{
-			foreach($this->droppeditems_ as $itd)
-			{
+		if (config::get('kd_droptototal')) {
+			foreach ($this->droppeditems_ as $itd) {
 				$item = $itd->getItem();
-				if(strpos($item->getName(), "Blueprint") === FALSE) $value += $itd->getValue() * $itd->getQuantity();
+				if (strpos($item->getName(), "Blueprint") === FALSE) {
+					$value += $itd->getValue() * $itd->getQuantity();
+				}
 			}
 		}
 		$value += $this->victimship->getPrice();
-		if($update)
-		{
+		if ($update) {
 			$qry = DBFactory::getDBQuery();
 			$qry->execute("UPDATE kb3_kills SET kll_isk_loss = '$value' WHERE
-				kll_id = '".$this->id."'");
-			if($this->iskloss)
-			{
+				kll_id = '" . $this->id . "'");
+			if ($this->iskloss) {
 				summaryCache::update($this, $value - $this->iskloss);
 			}
 		}
@@ -653,20 +667,21 @@ class KillWrapper extends Kill
 		$vicpoints = $shipclass->getPoints();
 		$maxpoints = round($vicpoints * 1.2);
 
-		foreach ($this->involvedparties_ as $inv)
-		{
+		foreach ($this->involvedparties_ as $inv) {
 			$shipinv = $inv->getShip();
 			$shipclassinv = $shipinv->getClass();
 			$invpoints += $shipclassinv->getPoints();
 		}
 
-		if($vicpoints + $invpoints > 0)
-		{
+		if ($vicpoints + $invpoints > 0) {
 			$gankfactor = $vicpoints / ($vicpoints + $invpoints);
 			$points = ceil($vicpoints * ($gankfactor / 0.75));
+		} else {
+			$points = 0;
 		}
-		else $points = 0;
-		if ($points > $maxpoints) $points = $maxpoints;
+		if ($points > $maxpoints) {
+			$points = $maxpoints;
+		}
 
 		$points = round($points, 0);
 		return $points;
@@ -674,12 +689,12 @@ class KillWrapper extends Kill
 
 	function add($id = null)
 	{
-		trigger_error(__FUNCTION__." not implemented in this class", E_USER_ERROR);
+		trigger_error(__FUNCTION__ . " not implemented in this class", E_USER_ERROR);
 	}
 
 	function remove($delcomments = true, $permanent = true)
 	{
-		trigger_error(__FUNCTION__." not implemented in this class", E_USER_ERROR);
+		trigger_error(__FUNCTION__ . " not implemented in this class", E_USER_ERROR);
 	}
 
 	function addInvolvedParty($involved)
@@ -698,38 +713,51 @@ class KillWrapper extends Kill
 	}
 
 	/** Return the array of involved parties.
-	*
-	* @return mixed InvolvedParty[].
-	*
-	*/
+	 *
+	 * @return mixed InvolvedParty[].
+	 *
+	 */
 	function getInvolved()
 	{
-		if(!$this->involvedparties_) $this->execQuery();
+		if (!$this->involvedparties_) {
+			$this->execQuery();
+		}
 		return $this->involvedparties_;
 	}
+
 	function setHash($hash)
 	{
-		if(strlen($hash) > 16) $this->hash = pack("H*", $hash);
-		else $this->hash = $hash;
+		if (strlen($hash) > 16) {
+			$this->hash = pack("H*", $hash);
+		} else {
+			$this->hash = $hash;
+		}
 	}
+
 	function getHash($hex = false, $update = true)
 	{
-		if($this->hash)
-		{
-			if($hex) return bin2hex($this->hash);
-			else return $this->hash;
+		if ($this->hash) {
+			if ($hex) {
+				return bin2hex($this->hash);
+			} else {
+				return $this->hash;
+			}
+		} else {
+			trigger_error(__FUNCTION__ . " not implemented in this class",
+					E_USER_ERROR);
 		}
-		else trigger_error(
-				__FUNCTION__." not implemented in this class", E_USER_ERROR);
 	}
+
 	function setRawMail($mail)
 	{
 		$this->mail = $mail;
 	}
+
 	public function setTrust($trust)
 	{
 		$this->trust = intval($trust);
 	}
+
 	public function getTrust()
 	{
 		return $this->trust;
@@ -741,6 +769,7 @@ class KillWrapper extends Kill
 	 */
 	public function updateExternalID($extID)
 	{
-		trigger_error(__FUNCTION__." not implemented in this class", E_USER_ERROR);
+		trigger_error(__FUNCTION__ . " not implemented in this class", E_USER_ERROR);
 	}
+
 }

@@ -220,7 +220,7 @@ class Ship extends Cacheable
 
 			$qry->execute($sql);
 			$row = $qry->getRow();
-			$this->shipname = $row['typeName'];
+			$this->shipname = $row['shp_id'] ? $row['typeName'] : "Unknown";
 			$this->shipclass = Cacheable::factory('ShipClass', $row['shp_class']);
 			$this->id = (int) $row['shp_id'];
 
@@ -254,9 +254,9 @@ class Ship extends Cacheable
 		}
 		if ($pqry === null) {
 			$pqry = new DBPreparedQuery();
-			$pqry->prepare("SELECT  typeID, typeName, shp_class"
-					." FROM kb3_ships INNER JOIN kb3_invtypes ON shp_id=typeID"
-					." WHERE shp_name = ?");
+			$pqry->prepare("SELECT typeID, typeName, shp_class"
+					." FROM kb3_ships RIGHT JOIN kb3_invtypes ON shp_id=typeID"
+					." WHERE typeName = ?");
 			$pqry->bind_param('s', $shp_name);
 			$pqry->bind_result($id, $typeName, $scl_id);
 		}
@@ -267,6 +267,10 @@ class Ship extends Cacheable
 			return false;
 		} else {
 			$pqry->fetch();
+		}
+		if ($scl_id == null) {
+			$qry->execute("INSERT INTO kb3_ships values(shp_id, shp_class) ($typeID, 18)");
+			$scl_id = 18; // "Unknown"
 		}
 		$shipclass = ShipClass::getByID($scl_id);
 		$cache_name[$name] = new Ship($id, null, $typeName, $shipclass);

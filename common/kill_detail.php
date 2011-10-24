@@ -420,7 +420,7 @@ class pKillDetail extends pageAssembly
 							array('all_id', $alliance->getID(), true));
 			$this->involved[$i]['alliName'] = $alliance->getName();
 			$this->involved[$i]['shipName'] = $ship->getName();
-			$this->involved[$i]['shipID'] = $ship->getExternalID();
+			$this->involved[$i]['shipID'] = $ship->getID();
 			$this->involved[$i]['damageDone'] = $inv->getDamageDone();
 			$this->involved[$i]['shipClass'] = $ship->getClass()->getName();
 
@@ -611,7 +611,7 @@ class pKillDetail extends pageAssembly
 		global $smarty;
 		$smarty->assign('killID', $this->kill->getID());
 		$plt = new Pilot($this->kill->getVictimID());
-		$item = new dogma($this->kill->getVictimShip()->getExternalID());
+		$item = new dogma($this->kill->getVictimShip()->getID());
 		// itt_cat = 6 for ships. Assume != 6 is a structure.
 		if ($item->get('itt_cat') != 6) {
 			$corp = new Corporation($this->kill->getVictimCorpID());
@@ -761,11 +761,11 @@ class pKillDetail extends pageAssembly
 		$smarty->assign('victimShipTechLevel', $ship->getTechLevel());
 		$smarty->assign('victimShipIsFaction', $ship->isFaction());
 		$smarty->assign('victimShipName', $ship->getName());
-		$smarty->assign('victimShipID', $ship->getExternalID());
+		$smarty->assign('victimShipID', $ship->getID());
 		$smarty->assign('victimShipClassName', $shipclass->getName());
 		if ($this->page->isAdmin()) $smarty->assign('ship', $ship);
 
-		$ssc = new dogma($ship->getExternalID());
+		$ssc = new dogma($ship->getID());
 
 		$smarty->assignByRef('ssc', $ssc);
 
