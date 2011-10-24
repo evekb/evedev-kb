@@ -7,7 +7,7 @@
 		</tr>
 {foreach from=$rows key=key item=i}
 		<tr class='kb-table-row-odd' style="height: 34px;">
-			<td>{$i.name}{if $i.settings} [<a href="{$kb_host}/?a=settings_{$i.name}">settings</a>]{/if}</td>
+			<td>{$i.name}{if $i.settings} [<a href="{$i.url}">settings</a>]{/if}</td>
 			<td align='center'>
 				<input name="mod_{$i.name}" type="checkbox" {if $i.checked}checked="checked" {/if}/>
 			</td>
