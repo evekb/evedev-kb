@@ -21,26 +21,12 @@ class RSSTable extends KillListTable
 
     function generate()
     {
-        global $config;
-        $odd = false;
-        $prevdate = "";
         $this->kill_list_->rewind();
 
-        while ($kill = $this->kill_list_->getKill())
-        {
-			if ($kill->isClassified())
-			{
+        while ($kill = $this->kill_list_->getKill()) {
+			if ($kill->isClassified()) {
 				continue;
 			}
-            $url = KB_HOST;
-            if(strncasecmp("http://", KB_HOST, 7))
-            {
-                $url = "http://".KB_HOST;
-            }
-            if($url[strlen($url) - 1] != '/')
-            {
-                $url .= '/';
-            }
             /* date in format:  Tue, 03 Jun 2003 09:39:21 GMT 
             Hack added because the time is not parsed correctly by strtotime()
             */
@@ -55,19 +41,19 @@ class RSSTable extends KillListTable
     <![CDATA[
         <p><b>Ship:</b> ".$kill->getVictimShipName()."
             <br /><b>Victim:</b> ".$kill->getVictimName()."
-            <br /><b>Corp:</b> ".shorten($kill->getVictimCorpName())."
-            <br /><b>Alliance:</b> ".shorten($kill->getVictimAllianceName())."
-            <br /><b>System:</b> ".shorten($kill->getSolarSystemName(), 10)."
+            <br /><b>Corp:</b> ".$kill->getVictimCorpName()."
+            <br /><b>Alliance:</b> ".$kill->getVictimAllianceName()."
+            <br /><b>System:</b> ".$kill->getSolarSystemName()."
             <br /><b>Date:</b> ".$timestamp."
             <br />
             <br /><b>Killed By:</b>
             <br /><b>Final Blow:</b> ".$kill->getFBPilotName()."
-            <br /><b>Corp:</b> ".shorten($kill->getFBCorpName())."
-            <br /><b>Alliance:</b> ".shorten($kill->getFBAllianceName())."
+            <br /><b>Corp:</b> ".$kill->getFBCorpName()."
+            <br /><b>Alliance:</b> ".$kill->getFBAllianceName()."
         </p>
      ]]>
     </description>
-    <guid>".$url."index.php?a=kill_detail&amp;kll_id=".$kill->getID()."</guid>
+    <guid>".edkURI::page('kill_detail', $kill->getID(), 'kll_id')."</guid>
     <pubDate>".$datestring."</pubDate>
 </item>\n";
         }
@@ -75,4 +61,3 @@ class RSSTable extends KillListTable
         return $html;
     }
 }
-?>
