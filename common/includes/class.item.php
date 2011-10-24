@@ -213,8 +213,7 @@ class Item extends Cacheable
 			$cache_name[$name] = false;
 		} else {
 			$row = $qry->getRow();
-			$cache_name[$name] = Cacheable::factory('Item',
-					(int) $row['itm_id']);
+			$cache_name[$name] = Item::getByID((int)$row['itm_id']);
 		}
 		return $cache_name[$name];
 	}
