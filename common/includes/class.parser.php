@@ -14,8 +14,6 @@ class Parser
 	private static $pilots = array();
 	private static $corps = array();
 	private static $alliances = array();
-	private static $ships = array();
-	private static $items = array();
 	private $error_ = array();
 	private $killmail_ = '';
 	private $externalID = 0;
