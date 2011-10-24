@@ -118,10 +118,9 @@ class pKillRelated extends pageAssembly
 		// this is a fast query to get the system and timestamp
 		$rqry = DBFactory::getDBQuery();
 		if ($this->adjacent) {
-			$rsql = 'SELECT kll_timestamp, b.sys_id from kb3_kills
+			$rsql = 'SELECT kll_timestamp, sjp_to from kb3_kills
 				join kb3_systems a ON (a.sys_id = kll_system_id)
-				join kb3_system_jumps on (sjp_from = a.sys_eve_id)
-				join kb3_systems b ON (b.sys_eve_id = sjp_to)
+				join kb3_system_jumps on (sjp_from = a.sys_id)
 				where kll_id = '.$this->kll_id.' UNION
 				SELECT kll_timestamp, kll_system_id as sys_id from kb3_kills
 				where kll_id = '.$this->kll_id;
@@ -131,7 +130,7 @@ class pKillRelated extends pageAssembly
 		}
 		$rqry->execute($rsql);
 		while ($rrow = $rqry->getRow()) {
-			$this->systems[] = $rrow['sys_id'];
+			$this->systems[] = $rrow['sjp_to'];
 			$basetime = $rrow['kll_timestamp'];
 		}
 

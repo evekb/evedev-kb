@@ -144,7 +144,7 @@ if (isset($_GET['pilotname'])) {
 }
 
 if (isset($_GET['system'])) {
-	$qry->execute("SELECT sys_id FROM kb3_systems WHERE sys_eve_id = ".intval($_GET['system'])." LIMIT 1");
+	$qry->execute("SELECT sys_id FROM kb3_systems WHERE sys_id = ".intval($_GET['system'])." LIMIT 1");
 	if (!$qry->recordCount()) {
 		show($sxe);
 	}

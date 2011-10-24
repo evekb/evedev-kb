@@ -415,13 +415,11 @@ class IDFeed
 
 			$kill->setTimeStamp(strval($row['killTime']));
 
-			$qry->execute("SELECT sys_id FROM kb3_systems WHERE sys_eve_id = '"
-					.(int)$row['solarSystemID']."'");
-			if (!$qry->recordCount()) {
+			$qrow = $qry->getRow();
+			$sys = SolarSystem::getByID($qrow['sys_id']);
+			if (!$sys->getName()) {
 				return false;
 			}
-			$qrow = $qry->getRow();
-			$sys = new SolarSystem($qrow['sys_id']);
 			$kill->setSolarSystem($sys);
 
 			if (!$this->processVictim($row, $kill, strval($row['killTime']))) {
@@ -454,6 +452,7 @@ class IDFeed
 				if ($id == 0) {
 					echo htmlentities($row->asXML());
 					var_dump($kill);
+					trigger_error("Kill not added.", E_USER_ERROR);
 					die;
 				}
 
@@ -561,7 +560,7 @@ class IDFeed
 		}
 
 		$pilot = Pilot::add($name, $corp, $time, (int)$victim['characterID']);
-		$ship = new Ship(0, (int)$victim['shipTypeID']);
+		$ship = Ship::getByID((int)$victim['shipTypeID']);
 
 		$kill->setVictim($pilot);
 		$kill->setVictimID($pilot->getID());
@@ -581,7 +580,7 @@ class IDFeed
 	private function processInvolved($inv, &$kill, $time)
 	{
 		$npc = false;
-		$ship = new Ship(0, (int)$inv['shipTypeID']);
+		$ship = Ship::getByID((int)$inv['shipTypeID']);
 		$weapon = Cacheable::factory('Item', (int)$inv['weaponTypeID']);
 
 		$alliance = new Alliance();
@@ -819,12 +818,12 @@ class IDFeed
 			$qry = DBFactory::getDBQuery();
 			$sql = "SELECT ind_sec_status, ind_all_id, ind_crp_id,
 				ind_shp_id, ind_wep_id, ind_order, ind_dmgdone, plt_id, plt_name,
-				plt_externalid, crp_name, crp_external_id, shp_name,
-				shp_externalid, typeName AS wep_name FROM kb3_inv_detail
+				plt_externalid, crp_name, crp_external_id, stype.typeName AS shp_name,
+				wtype.typeName AS wep_name FROM kb3_inv_detail
 				JOIN kb3_pilots ON (plt_id = ind_plt_id)
 				JOIN kb3_corps ON (crp_id = ind_crp_id)
-				JOIN kb3_ships ON (shp_id = ind_shp_id)
-				JOIN kb3_invtypes ON (ind_wep_id = typeID)
+				JOIN kb3_invtypes stype ON (stype.typeID = ind_shp_id)
+				JOIN kb3_invtypes wtypeON (ind_wep_id = wtype.typeID)
 				WHERE ind_kll_id = ".$kill->getID()." ORDER BY ind_order ASC";
 			$qry->execute($sql);
 
@@ -846,7 +845,7 @@ class IDFeed
 					$invrow->addAttribute('characterID', $inv['plt_externalid']);
 					$invrow->addAttribute('characterName', $inv['plt_name']);
 					$invrow->addAttribute('weaponTypeID', $inv['ind_wep_id']);
-					$invrow->addAttribute('shipTypeID', $inv['shp_externalid']);
+					$invrow->addAttribute('shipTypeID', $inv['ind_shp_id']);
 				}
 				$invrow->addAttribute('corporationID', $inv['crp_external_id']);
 				$invrow->addAttribute('corporationName', $inv['crp_name']);

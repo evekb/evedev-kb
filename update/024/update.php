@@ -121,6 +121,18 @@ function update024()
 			$smarty->display('update.tpl');
 			die();
 		}
+        if(config::get('024updatestatus') <9)
+		{
+			$qry->execute("SHOW COLUMNS FROM kb3_systems LIKE 'sys_eve_id'");
+			if($qry->recordCount()) {
+				$qry->execute("ALTER TABLE `kb3_systems` DROP `sys_eve_id`");
+			}
+			config::set('024updatestatus',9);
+			$smarty->assign('refresh',1);
+			$smarty->assign('content', "24. kb3_systems shrunk.");
+			$smarty->display('update.tpl');
+			die();
+		}
 		killCache();
 		config::set("DBUpdate", "024");
 		$qry->execute("INSERT INTO kb3_config (cfg_site, cfg_key, cfg_value) SELECT cfg_site, 'DBUpdate', '024' FROM kb3_config GROUP BY cfg_site ON DUPLICATE KEY UPDATE cfg_value = '024'");

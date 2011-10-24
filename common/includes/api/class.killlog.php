@@ -58,7 +58,7 @@ class API_KillLog
 			$cacheexists = true;
 		else
 			$cacheexists = false;
-		if(defined('BETA') && BETA)
+		if(true)
 		{
 			if($errorcode = $this->fetchErrors($keyindex))
 				return "<div class=block-header2><i>"
@@ -376,7 +376,7 @@ class API_KillLog
 						}
                         break;
                     case "SOLARSYSTEMID": // convert to system name and fetch system security - DONE
-                        $sql = 'select sys.sys_name, sys.sys_sec from kb3_systems sys where sys.sys_eve_id = '.$v;
+                        $sql = 'select sys.sys_name, sys.sys_sec from kb3_systems sys where sys.sys_id = '.$v;
 
                         $qry = DBFactory::getDBQuery();;
                         $qry->execute($sql);
@@ -467,8 +467,8 @@ class API_KillLog
                 {
 					$alliance = new Alliance();
 					if ($this->allianceID_ != 0)
-						$alliance->add($this->alliance_, $this->allianceID_);
-					else $alliance->add("None");
+						$alliance = Alliance::add($this->alliance_, $this->allianceID_);
+					else $alliance = Alliance::add("None");
 
 //					$corporation = new Corporation();
 //					$corporation->add($this->corporation_, $alliance, $this->killtime_, $this->corporationID_);
@@ -547,9 +547,11 @@ class API_KillLog
 					if ( config::get('API_Update') == 0 )
 					{
 						$alliance = new Alliance();
-						if ($this->allianceID_ != 0)
-							$alliance->add($this->alliance_, $this->allianceID_);
-						else $alliance->add("None");
+						if ($this->allianceID_ != 0) {
+							$alliance = Alliance::add($this->alliance_, $this->allianceID_);
+						} else {
+							$alliance = Alliance::add("None");
+						}
 // We don't know the time yet? Weird, yet somehow true.
 //						$corporation = new Corporation();
 //						$corporation->add($this->corporation_, $alliance, $this->killtime_, $this->corporationID_);
