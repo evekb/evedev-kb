@@ -77,6 +77,10 @@ class Pilot
 					return $this->externalid_;
 				}
 			}
+			// If getName() != name_ then this is a structure, not a pilot.
+			if ($this->getName() != $this->name_) {
+				return 0;
+			}
 			$myID = new API_NametoID();
 			$myID->setNames($this->getName());
 			$myID->fetchXML();
