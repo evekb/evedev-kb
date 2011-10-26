@@ -444,6 +444,8 @@ class pKillDetail extends pageAssembly
 
 				$this->involved[$i]['typeID'] = 2; //type number for corporations.
 
+				$this->involved[$i]['pilotURL'] =
+						edkURI::page('invtype', $weapon->getID());
 				$this->involved[$i]['shipImage'] = imageURL::getURL('Ship',
 								$weapon->getID(), 64);
 			} else {
@@ -617,21 +619,20 @@ class pKillDetail extends pageAssembly
 			$corp = new Corporation($this->kill->getVictimCorpID());
 			$smarty->assign('victimPortrait', $corp->getPortraitURL(64));
 			$smarty->assign('victimExtID', 0);
+			$smarty->assign('victimURL', edkURI::page('invtype',
+					$item->getID()));
 		} else {
 			$smarty->assign('victimPortrait', $plt->getPortraitURL(64));
 			$smarty->assign('victimExtID', $plt->getExternalID());
+			$smarty->assign('victimURL', edkURI::page('pilot_detail',
+					$this->kill->getVictimID(), 'plt_id'));
 		}
-		$smarty->assign('victimURL', edkURI::build(
-				array('a', 'pilot_detail', true),
-				array('plt_id', $this->kill->getVictimID(), false)));
 		$smarty->assign('victimName', $this->kill->getVictimName());
-		$smarty->assign('victimCorpURL', edkURI::build(
-				array('a', 'corp_detail', true),
-				array('crp_id', $this->kill->getVictimCorpID(), false)));
+		$smarty->assign('victimCorpURL', edkURI::page('corp_detail',
+				$this->kill->getVictimCorpID(), 'crp_id'));
 		$smarty->assign('victimCorpName', $this->kill->getVictimCorpName());
-		$smarty->assign('victimAllianceURL', edkURI::build(
-				array('a', 'alliance_detail', true),
-				array('all_id', $this->kill->getVictimAllianceID(), false)));
+		$smarty->assign('victimAllianceURL', edkURI::page('alliance_detail',
+				$this->kill->getVictimAllianceID(), 'all_id'));
 		$smarty->assign('victimAllianceName',
 				$this->kill->getVictimAllianceName());
 		$smarty->assign('victimDamageTaken', $this->kill->getDamageTaken());
