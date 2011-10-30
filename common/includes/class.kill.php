@@ -1359,7 +1359,7 @@ class Kill extends Cacheable
 	protected function realadd($id = null)
 	{
 		if ( $this->timestamp == "" || !$this->getVictim()->getID()
-				|| !$this->victimship->getID() || !$this->solarsystem->getID()
+				|| !$this->victimship->getName() || !$this->solarsystem->getID()
 				|| !$this->victimallianceid || !$this->victimcorpid
 				|| !$this->getFBPilotID() || !$this->getHash(false, false)) {
 			return 0;
@@ -1456,7 +1456,7 @@ class Kill extends Cacheable
 			$weapon = $inv->getWeapon();
 			if (!$inv->getPilotID() || $inv->getSecStatus() == ""
 					|| !$inv->getAllianceID() || !$inv->getCorpID()
-					|| !$ship->getID() || !$weapon->getID()) {
+					|| !$ship->getName() || !$weapon->getID()) {
 				$this->remove();
 				return 0;
 			}
