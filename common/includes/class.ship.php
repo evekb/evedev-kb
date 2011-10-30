@@ -252,6 +252,11 @@ class Ship extends Cacheable
 		if (isset($cache_name[$name])) {
 			return $cache_name[$name];
 		}
+		if ($name == "Unknown") {
+			$cache_name[$name] = Ship::getByID(0);
+			return $cache_name[$name];
+			
+		}
 		if ($pqry === null) {
 			$pqry = new DBPreparedQuery();
 			$pqry->prepare("SELECT typeID, typeName, shp_class"

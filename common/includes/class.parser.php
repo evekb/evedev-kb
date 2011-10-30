@@ -556,7 +556,7 @@ class Parser
 				}
 
 				$iship = Ship::lookup($isname);
-				if (!$iship->getID())
+				if (!$iship->getName())
 				{
 					$this->error('Ship not found.', $isname);
 				}
