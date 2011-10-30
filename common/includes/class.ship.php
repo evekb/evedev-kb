@@ -257,11 +257,11 @@ class Ship extends Cacheable
 			$pqry->prepare("SELECT typeID, typeName, shp_class"
 					." FROM kb3_ships RIGHT JOIN kb3_invtypes ON shp_id=typeID"
 					." WHERE typeName = ?");
-			$pqry->bind_param('s', $shp_name);
-			$pqry->bind_result($id, $typeName, $scl_id);
 		}
 
-		$typeName = $name;
+		$shp_name = $name;
+		$pqry->bind_param('s', $shp_name);
+		$pqry->bind_result($id, $typeName, $scl_id);
 
 		if (!$pqry->execute() || !$pqry->recordCount()) {
 			return false;
