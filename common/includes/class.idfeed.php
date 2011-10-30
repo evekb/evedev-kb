@@ -85,7 +85,7 @@ class IDFeed
 		$this->xml = $http->get_content();
 		if ($http->get_http_code() != 200) {
 			trigger_error("HTTP error ".$http->get_http_code()
-					." while fetching file.", E_USER_WARNING);
+					." while fetching feed from ".$this->url.$options.".", E_USER_WARNING);
 			return false;
 		}
 		if ($this->xml) {
@@ -416,7 +416,7 @@ class IDFeed
 			$kill->setTimeStamp(strval($row['killTime']));
 
 			$qrow = $qry->getRow();
-			$sys = SolarSystem::getByID($qrow['sys_id']);
+			$sys = SolarSystem::getByID((int)$row['solarSystemID']);
 			if (!$sys->getName()) {
 				return false;
 			}
