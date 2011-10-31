@@ -22,7 +22,7 @@
 		</tr>
         {if $admin and $config->get('item_values') and !$fixSlot}
 		<tr class="kb-table-row-even">
-			<td colspan="4" style="vertical-align:top; text-align:right">
+			<td colspan="4">
 				<form method="post" action="">
 					<div style="float:right">
 						<input type="submit" name="submit" value="UpdateValue" class="comment-button" />
@@ -38,9 +38,12 @@
         {/if}
         {if $admin and $i.slotID < 4 and $fixSlot}
 		<tr class="kb-table-row-even">
-			<td colspan="3" style="vertical-align:top">
+			<td colspan="4">
 				<form method="post" action="">
-					<div style="text-align:right">
+					<div style="float:right;">
+						<input type="submit" name="submit" value="UpdateSlot" class="comment-button" />
+					</div>
+					<div style="float:right;">
 				Fix slot:
 						<input name="IID" value="{$i.itemID}" type="hidden" />
 						<input name="KID" value="{$killID}" type="hidden" />
@@ -48,26 +51,23 @@
 						<input name="OLDSLOT" value="{$i.slotID}" type="hidden" />
 						<input name="{$i.itemID}" type="text" class="comment-button" value="{$i.slotID}" size="6" />
 					</div>
-					<div>
-						<input type="submit" name="submit" value="UpdateSlot" class="comment-button" />
-					</div>
 				</form>
 			</td>
 		</tr>
         {/if}
     {/foreach}
     {foreach from=$dropped.$slotindex item="i"}
-		<tr class="kb-table-row-odd" style="background-color: #006000;">
-			<td style="border: 1px solid green; width:32px; vertical-align:top"><a href="{$i.url}">{$i.Icon}</a></td>
+		<tr class="kb-table-row-odd dropped">
+			<td><a href="{$i.url}">{$i.Icon}</a></td>
 			<td>{$i.Name}</td>
-			<td style="width:30px; text-align:center">{$i.Quantity}</td>
+			<td>{$i.Quantity}</td>
         {if $config->get('item_values')}
 			<td>{$i.Value}</td>
         {/if}
 		</tr>
         {if $admin and $config->get('item_values') and !$fixSlot}
 		<tr class="kb-table-row-even">
-			<td colspan="4" style="vertical-align:top; text-align:right">
+			<td colspan="4">
 				<form method="post" action="">
 					<div style="float:right">
 						<input type="submit" name="submit" value="UpdateValue" class="comment-button" />
@@ -83,18 +83,18 @@
         {/if}
 	{if $admin and $i.slotID < 4 and $fixSlot}
 		<tr class="kb-table-row-even">
-			<td colspan="3" valign="top">
+			<td colspan="4">
 				<form method="post" action="">
-					<div style="text-align:right">
+					<div style="float:right;">
+						<input type="submit" name="submit" value="UpdateSlot" class="comment-button" />
+					</div>
+					<div style="float:right;">
 				Fix slot:
 						<input name="IID" value="{$i.itemID}" type="hidden" />
 						<input name="KID" value="{$killID}" type="hidden" />
 						<input name="TYPE" value="dropped" type="hidden" />
 						<input name="OLDSLOT" value="{$i.slotID}" type="hidden" />
 						<input name="{$i.itemID}" type="text" class="comment-button" value="{$i.slotID}" size="6" />
-					</div>
-					<div>
-						<input type="submit" name="submit" value="UpdateSlot" class="comment-button" />
 					</div>
 				</form>
 			</td>
@@ -105,20 +105,24 @@
 {/foreach}
 {cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
 {if $item_values}
-		<tr class="{cycle name="ccl"} summary">
-			<td colspan="3"><div><strong>Total Module Loss:</strong></div></td>
+		<tr class="{cycle name="ccl"} summary itemloss">
+			<td colspan="3"><div>Total Module Loss:</div></td>
 			<td>{$itemValue}</td>
 		</tr>
-		<tr class="{cycle name="ccl"} summary" style="background-color: #006000;">
-			<td style="border: 1px solid #006000;" colspan="3"><div><strong>Total Module Drop:</strong></div></td>
-			<td style="border: 1px solid green;">{$dropValue}</td>
+		<tr class="{cycle name="ccl"} summary itemdrop">
+			<td colspan="3"><div>Total Module Drop:</div></td>
+			<td>{$dropValue}</td>
 		</tr>
-	{if $BPOValue > 0}<tr class="{cycle name="ccl"}" style="background-color: {$dropped_colour};">
-			<td style="border: 1px solid {$dropped_colour};" colspan="3"><div style="text-align:right"><strong>Blueprints (not counted in weekly total):</strong></div></td>
-			<td style="border: 1px solid green;" align="right">{$BPOValue}</td>
-		</tr>{/if}
-		<tr class="{cycle name="ccl"} summary">
-			<td colspan="3"><div><strong>Ship Loss:</strong></div></td>
+		{if $BPOValue > 0}
+			<tr class="{cycle name="ccl"} summary bpo">
+				<td colspan="3">
+					<div>Blueprints (not counted in weekly total):</div>
+				</td>
+				<td>{$BPOValue}</td>
+			</tr>
+		{/if}
+		<tr class="{cycle name="ccl"} summary shiploss">
+			<td colspan="3"><div>Ship Loss:</div></td>
 			<td>{$shipValue}</td>
 		</tr>
         {if $admin and $config->get('item_values') and !$fixSlot}
@@ -130,15 +134,17 @@
 					</div>
 					<div style="float:right; margin-right: 5px">
 				Current Ship Value:
-									<input name="SID" value="{$ship->getExternalID()}" type="hidden" />
-									<input name="{$ship->getExternalID()}" type="text" class="comment-button" value="{$ship->getPrice()}" size="10" />
+						<input name="SID" value="{$ship->getExternalID()}" type="hidden" />
+						<input name="{$ship->getExternalID()}" type="text" class="comment-button" value="{$ship->getPrice()}" size="10" />
 					</div>
 				</form>
 			</td>
 		</tr>
         {/if}
 		<tr class="{cycle name="ccl"}" style="background-color: #600000;">
-			<td style="border: 1px solid #600000;" colspan="3"><div style="text-align:right"><strong>Total Loss at current prices:</strong></div></td>
+			<td style="border: 1px solid #600000;" colspan="3">
+				<div style="text-align:right; font-weight: bold;">Total Loss at current prices:</div>
+			</td>
 			<td style="border: 1px solid #C00000; text-align:right">{$totalLoss}</td>
 		</tr>
 {/if}

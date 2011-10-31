@@ -1440,9 +1440,28 @@ td.finalblow
 	text-align:center;
 	width:30px;
 }
+.kl-detail-shipdetails tr.kb-table-row-odd > td:last-child
+{
+	text-align:right;
+}
 .kl-detail-shipdetails tr.summary
 {
 	text-align: right;
+}
+.kl-detail-shipdetails tr.summary.bpo,
+.kl-detail-shipdetails tr.summary.itemdrop,
+.kl-detail-shipdetails tr.dropped
+{
+	background-color: #060;
+}
+.kl-detail-shipdetails tr.summary.bpo td,
+.kl-detail-shipdetails tr.summary.itemdrop td
+{
+	border: 1px solid green
+}
+.kl-detail-shipdetails tr.summary td:first-child
+{
+	font-weight: bold;
 }
 /* Disable default styles that are in the way.
 TODO: remove when this is default */
