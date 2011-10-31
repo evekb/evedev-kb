@@ -24,7 +24,7 @@
 					</tr>
 					<tr>
 						<td>
-							<form id="postform" method="post" action="">
+							<form id="postform" method="post" action="{$formURL}">
 								<table>
 									<tr>
 										<td>

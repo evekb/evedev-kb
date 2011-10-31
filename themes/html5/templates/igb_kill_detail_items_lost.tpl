@@ -23,7 +23,7 @@
         {if $admin and $config->get('item_values') and !$fixSlot}
 		<tr class="kb-table-row-even">
 			<td colspan="4">
-				<form method="post" action="">
+				<form method="post" action="{$formURL}">
 					<div style="float:right">
 						<input type="submit" name="submit" value="UpdateValue" class="comment-button" />
 					</div>
@@ -39,7 +39,7 @@
         {if $admin and $i.slotID < 4 and $fixSlot}
 		<tr class="kb-table-row-even">
 			<td colspan="4">
-				<form method="post" action="">
+				<form method="post" action="{$formURL}">
 					<div style="float:right;">
 						<input type="submit" name="submit" value="UpdateSlot" class="comment-button" />
 					</div>
@@ -68,7 +68,7 @@
         {if $admin and $config->get('item_values') and !$fixSlot}
 		<tr class="kb-table-row-even">
 			<td colspan="4">
-				<form method="post" action="">
+				<form method="post" action="{$formURL}">
 					<div style="float:right">
 						<input type="submit" name="submit" value="UpdateValue" class="comment-button" />
 					</div>
@@ -84,7 +84,7 @@
 	{if $admin and $i.slotID < 4 and $fixSlot}
 		<tr class="kb-table-row-even">
 			<td colspan="4">
-				<form method="post" action="">
+				<form method="post" action="{$formURL}">
 					<div style="float:right;">
 						<input type="submit" name="submit" value="UpdateSlot" class="comment-button" />
 					</div>
@@ -128,7 +128,7 @@
         {if $admin and $config->get('item_values') and !$fixSlot}
 		<tr class="kb-table-row-even">
 			<td colspan="4" style="vertical-align:top; text-align:right">
-				<form method="post" action="">
+				<form method="post" action="{$formURL}">
 					<div style="float:right">
 						<input type="submit" name="submit" value="UpdateValue" class="comment-button" />
 					</div>
