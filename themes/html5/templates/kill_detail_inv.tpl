@@ -12,11 +12,10 @@
 				</a>
 			</td>
 			<td rowspan="5" class="logo">
-				<a href="{$kb_host}/?a=invtype&amp;id={$i.shipID}">
+				<a href="{$i.shipURL}">
 					<img {if $i.finalBlow == "true"} class="finalblow"{/if} src='{$i.shipImage}' alt='{$i.shipName}' title='{$i.shipName}' />
 				</a>
 			</td>
-
 			<td><a href="{$i.pilotURL}">{$i.pilotName}</a></td>
 		</tr>
 		<tr class="{cycle name="ccl"}">
@@ -26,10 +25,10 @@
 			<td><a href="{$i.alliURL}">{$i.alliName}</a></td>
 		</tr>
 		<tr class="{cycle name="ccl"}">
-			<td><b><a href="{$kb_host}/?a=invtype&amp;id={$i.shipID}">{$i.shipName}</a></b> ({$i.shipClass})</td>
+			<td><a href="{$i.shipURL}">{$i.shipName}</a> ({$i.shipClass})</td>
 		</tr>
 		<tr class="{cycle name="ccl"}">
-			<td>{if $i.weaponID}<a href="{$kb_host}/?a=invtype&amp;id={$i.weaponID}">{$i.weaponName}</a>{else}{$i.weaponName}{/if}</td>
+			<td>{if $i.weaponID}<a href="{$i.weaponURL}">{$i.weaponName}</a>{else}{$i.weaponName}{/if}</td>
 		</tr>
 		<tr class="{cycle name="ccl"}">
 			<td colspan="2">Damage done:</td><td>{$i.damageDone} {if $victimDamageTaken > 0}({($i.damageDone/$victimDamageTaken*100)|string_format:"%.2f"}%){/if}</td>

@@ -13,7 +13,7 @@
 		</tr>
     {foreach from=$destroyed.$slotindex item="i"}
 		<tr class="kb-table-row-odd" style="height:32px;">
-			<td class="item-icon" style="width:32px; vertical-align:top"><a href="{$kb_host}/?a=invtype&amp;id={$i.itemID}">{$i.Icon}</a></td>
+			<td class="item-icon" style="width:32px; vertical-align:top"><a href="{$i.url}">{$i.Icon}</a></td>
 			<td>{$i.Name}</td>
 			<td style="width:30px; text-align:center">{$i.Quantity}</td>
         {if $config->get('item_values')}
@@ -58,7 +58,7 @@
     {/foreach}
     {foreach from=$dropped.$slotindex item="i"}
 		<tr class="kb-table-row-odd" style="background-color: #006000; height:34px">
-			<td style="border: 1px solid green; width:32px; vertical-align:top"><a href="{$kb_host}/?a=invtype&amp;id={$i.itemID}">{$i.Icon}</a></td>
+			<td style="border: 1px solid green; width:32px; vertical-align:top"><a href="{$i.url}">{$i.Icon}</a></td>
 			<td>{$i.Name}</td>
 			<td style="width:30px; text-align:center">{$i.Quantity}</td>
         {if $config->get('item_values')}

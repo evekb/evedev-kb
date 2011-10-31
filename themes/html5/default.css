@@ -277,6 +277,8 @@ textarea.killmail
 img.finalblow
 {
 	border: 1px solid #FFA500;
+	width: 64px;
+	height: 64px;
 }
 
 img.avatar
@@ -1362,9 +1364,19 @@ table.awardbox table
 	border-collapse: collapse;
 	width:100%;
 }
+
+td.finalblow
+{
+	text-align: center;
+	width: 64px;
+}
 /* Disable default styles that are in the way.
 TODO: remove when this is default */
 .killcount, .losscount
 {
 	float:none;
+}
+#context, .context_element
+{
+	margin-top: 0;
 }
