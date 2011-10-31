@@ -1384,6 +1384,52 @@ td.finalblow
 	text-align: center;
 	width:60px;
 }
+.invtype > div
+{
+	width: 360px;
+	display: inline-block;
+	vertical-align: top;
+	text-align: left;
+}
+.invtype > div:first-child
+{
+	margin-right: 30px;
+	margin-left: 5px;
+}
+.invtype img.logo
+{
+	float: left;
+	height: 64px;
+	margin-right: 10px;
+	width: 64px;
+}
+.invtype img.icon
+{
+	height: 32px;
+	width: 32px;
+}
+.invtype table.kb-table
+{
+	width:100%;
+}
+.invtype td.description
+{
+	text-align: left !important;
+}
+.invtype table.kb-table td:first-child
+{
+	height:32px;
+	width:32px;
+}
+.invtype table.kb-table td:nth-child(2)
+{
+	font-weight: bold;
+}
+.invtype table.kb-table td:last-child
+{
+	width:100px;
+	text-align: right;
+}
 /* Disable default styles that are in the way.
 TODO: remove when this is default */
 .killcount, .losscount
