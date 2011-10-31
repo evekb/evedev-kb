@@ -291,9 +291,12 @@ img.icon
 	border: 1px solid #333333;
 }
 
-td.item-icon
+td.item-icon,
+th.item-icon
 {
 	border: 1px solid #333333;
+	height: 32px;
+	width: 32px;
 }
 
 div.item-icon
@@ -330,7 +333,8 @@ td.battleship
 	background: #DD9300;
 }
 
-.kb-table td
+.kb-table td,
+.kb-table th
 {
 	padding: 2px;
 }
@@ -831,7 +835,7 @@ a.kb-contract:visited {
 	clear: both;
 }
 .kl-detail-victim, #kl-detail-invsum, .kl-detail-inv, .kl-detail-comments,
-.kl-detail-vicship, #kl-detail-shipdetails, #kl-detail-fitting
+.kl-detail-vicship, .kl-detail-shipdetails, #kl-detail-fitting
 {
 	margin-bottom: 10px;
 }
@@ -1408,7 +1412,8 @@ td.finalblow
 	height: 32px;
 	width: 32px;
 }
-.invtype table.kb-table
+.invtype table.kb-table,
+.kl-detail-shipdetails table.kb-table
 {
 	width:100%;
 }
@@ -1428,6 +1433,15 @@ td.finalblow
 .invtype table.kb-table td:last-child
 {
 	width:100px;
+	text-align: right;
+}
+.kl-detail-shipdetails tr.kb-table-row-odd > td:nth-child(3)
+{
+	text-align:center;
+	width:30px;
+}
+.kl-detail-shipdetails tr.summary
+{
 	text-align: right;
 }
 /* Disable default styles that are in the way.
