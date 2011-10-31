@@ -1,4 +1,5 @@
 <?php
+
 /**
  * $Date$
  * $Revision$
@@ -12,35 +13,36 @@
  */
 class imageURL
 {
-	const QUERYSTRING = 1;
-	const PATH = 2;
-
-	static private $imageServer = null;
-	static private $queryType = null;
-
 	static function getURL($type, $id, $size, $internal = false)
 	{
-		if(is_null(self::$imageServer)) self::init();
-		$url = self::$imageServer;
-
 		$id = intval($id);
 		$size = intval($size);
 
-		if($id == 0)
-		{
-			if($size == 32 || $size == 64 || $size == 128 || $size == 256)
+		if ($id == 0) {
+			if ($size == 32 || $size == 64 || $size == 128 || $size == 256) {
 				return KB_HOST."/img/portrait_0_{$size}.jpg";
-			else return KB_HOST."/img/portrait_0_64.jpg";
+			} else {
+				return KB_HOST."/img/portrait_0_64.jpg";
+			}
 		}
 
 		// We reduce ammo images to 24x24 on kill_details.
-		if($size < 32) $internal = true;
-		if($internal) $url = KB_HOST."/thumb.php";
+		if ($size < 32) {
+			$internal = true;
+		}
+		// Images are handled by the killboard if they are maps or we specify
+		// (globally or just this instance)
+		if ($type == 'map' || $type == 'region' || $type == 'cons'
+				|| !config::get('cfg_ccpimages') || $internal) {
+			$ccp = false;
+			$url = KB_HOST."/thumb.php";
+		} else {
+			$ccp = true;
+			$url = "http://".IMG_SERVER;
+		}
 
-		if(self::$queryType == self::PATH && !$internal)
-		{
-			switch($type)
-			{
+		if ($ccp || config::get('cfg_pathinfo')) {
+			switch ($type) {
 				case 'Character':
 				case 'Pilot':
 					$url .= "/Character/{$id}_{$size}.jpg";
@@ -48,7 +50,7 @@ class imageURL
 				case 'Corporation':
 				case 'Alliance':
 					// Check for NPC alliances recorded as corps.
-					if($id > 500000 && $id < 500021) {
+					if ($id > 500000 && $id < 500021) {
 						$url .= "/Alliance/{$id}_{$size}.png";
 					} else {
 						$url .= "/$type/{$id}_{$size}.png";
@@ -57,49 +59,25 @@ class imageURL
 				case 'Type':
 				case 'InventoryType':
 				case 'Ship':
-					if($size > 64 && $type == 'Ship')
+					if ($size > 64 && $type == 'Ship')
 						$url .= "/Render/{$id}_{$size}.png";
-					else $url .= "/InventoryType/{$id}_{$size}.png";
+					else
+						$url .= "/InventoryType/{$id}_{$size}.png";
 					break;
 				case 'Render':
 					$url .= "/Render/{$id}_{$size}.png";
 					break;
+				default:
+					$url .= "/{$type}/{$id}_{$size}.png";
+					break;
 			}
+		} else {
+			$url .= "?type=$type&amp;id=$id&amp;size=$size";
 		}
-		else
-		{
-			switch($type)
-			{
-				case 'Character':
-				case 'Pilot':
-					$url .= "?type=$type&amp;id=$id&amp;size=$size";
-					if($internal) $url .= "&amp;int=1";
-					break;
-				case 'Corporation':
-				case 'Alliance':
-				case 'Type':
-				case 'InventoryType':
-				case 'Ship':
-				case 'Render':
-					$url .= "?type=$type&amp;id=$id&amp;size=$size";
-					break;
-			}
+		if ($internal) {
+			$url .= "&amp;int=1";
 		}
 		return $url;
-	}
-
-	static function init()
-	{
-		if(config::get('cfg_ccpimages'))
-		{
-			self::$imageServer = "http://".IMG_SERVER;
-			self::$queryType = self::PATH;
-		}
-		else
-		{
-			self::$imageServer = KB_HOST."/thumb.php";
-			self::$queryType = self::QUERYSTRING;
-		}
 	}
 
 }

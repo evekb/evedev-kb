@@ -187,6 +187,7 @@ class pKillDetail extends pageAssembly
 					(
 					'Icon' => $item->getIcon(32),
 					'Name' => $i_name,
+					'url' => edkURI::page('invtype', $i_id),
 					'Quantity' => $i_qty,
 					'Value' => $formatted,
 					'single_unit' => $value,
@@ -275,6 +276,7 @@ class pKillDetail extends pageAssembly
 				$this->drop_array[$i_location][] = array(
 					'Icon' => $item->getIcon(32),
 					'Name' => $i_name,
+					'url' => edkURI::page('invtype', $i_id),
 					'Quantity' => $i_qty,
 					'Value' => $formatted,
 					'single_unit' => $value,
@@ -421,6 +423,7 @@ class pKillDetail extends pageAssembly
 			$this->involved[$i]['alliName'] = $alliance->getName();
 			$this->involved[$i]['shipName'] = $ship->getName();
 			$this->involved[$i]['shipID'] = $ship->getID();
+			$this->involved[$i]['shipURL'] = edkURI::page('invtype', $ship->getID());
 			$this->involved[$i]['damageDone'] = $inv->getDamageDone();
 			$this->involved[$i]['shipClass'] = $ship->getClass()->getName();
 
@@ -466,6 +469,7 @@ class pKillDetail extends pageAssembly
 					&& $weapon->getName() != $ship->getName()) {
 				$this->involved[$i]['weaponName'] = $weapon->getName();
 				$this->involved[$i]['weaponID'] = $weapon->getID();
+				$this->involved[$i]['weaponURL'] = edkURI::page('invtype', $weapon->getID());
 			}
 			else $this->involved[$i]['weaponName'] = "Unknown";
 
@@ -763,6 +767,7 @@ class pKillDetail extends pageAssembly
 		$smarty->assign('victimShipIsFaction', $ship->isFaction());
 		$smarty->assign('victimShipName', $ship->getName());
 		$smarty->assign('victimShipID', $ship->getID());
+		$smarty->assign('victimShipURL', edkURI::page('invtype', $ship->getID()));
 		$smarty->assign('victimShipClassName', $shipclass->getName());
 		if ($this->page->isAdmin()) $smarty->assign('ship', $ship);
 
@@ -1173,21 +1178,25 @@ class pKillDetail extends pageAssembly
 			$mapbox = new Box("Map");
 			if (IS_IGB) {
 				$mapbox->addOption("img",
-						IMG_HOST."/thumb.php?type=map&amp;id=".$this->system->getID()."&amp;size=145",
-						"javascript:CCPEVE.showInfo(3, ".$this->system->getRegionID().")");
+						imageURL::getURL('map', $this->system->getID(), 145),
+						"javascript:CCPEVE.showInfo(3, "
+								.$this->system->getRegionID().")");
 				$mapbox->addOption("img",
-						IMG_HOST."/thumb.php?type=region&amp;id=".$this->system->getID()."&amp;size=145",
-						"javascript:CCPEVE.showInfo(4, ".$this->system->getConstellationID().")");
+						imageURL::getURL('region', $this->system->getID(), 145),
+						"javascript:CCPEVE.showInfo(4, "
+								.$this->system->getConstellationID().")");
 				$mapbox->addOption("img",
-						IMG_HOST."/thumb.php?type=cons&amp;id=".$this->system->getID()."&amp;size=145",
-						"javascript:CCPEVE.showInfo(5, ".$this->system->getExternalID().")");
+						imageURL::getURL('cons', $this->system->getID(), 145),
+						"javascript:CCPEVE.showInfo(5, "
+								.$this->system->getExternalID().")");
 			} else {
 				$mapbox->addOption("img",
-						IMG_HOST."/thumb.php?type=map&amp;id=".$this->system->getID()."&amp;size=145");
+						imageURL::getURL('map', $this->system->getID(), 145));
 				$mapbox->addOption("img",
-						IMG_HOST."/thumb.php?type=region&amp;id=".$this->system->getID()."&amp;size=145");
+						imageURL::getURL('region', $this->system->getID(),
+								145));
 				$mapbox->addOption("img",
-						IMG_HOST."/thumb.php?type=cons&amp;id=".$this->system->getID()."&amp;size=145");
+						imageURL::getURL('cons', $this->system->getID(), 145));
 			}
 			return $mapbox->generate();
 		}
