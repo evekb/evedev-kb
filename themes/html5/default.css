@@ -834,7 +834,7 @@ a.kb-contract:visited {
 {
 	clear: both;
 }
-.kl-detail-victim, #kl-detail-invsum, .kl-detail-inv, .kl-detail-comments,
+.kl-detail-victim, .kl-detail-invsum, .kl-detail-inv, .kl-detail-comments,
 .kl-detail-vicship, .kl-detail-shipdetails, #kl-detail-fitting
 {
 	margin-bottom: 10px;
@@ -1462,6 +1462,24 @@ td.finalblow
 .kl-detail-shipdetails tr.summary td:first-child
 {
 	font-weight: bold;
+}
+.kl-detail-invsum > table.kb-table
+{
+	width:100%;
+}
+.kl-detail-invsum td
+{
+	vertical-align: top;
+}
+.kl-detail-invsum td.invcorps,
+.kl-detail-invsum td.invcorps > div.no_stretch
+{
+	width:210px;
+}
+.kl-detail-invsum td.invships,
+.kl-detail-invsum td.invships > div.no_stretch
+{
+	width:117px;
 }
 /* Disable default styles that are in the way.
 TODO: remove when this is default */
