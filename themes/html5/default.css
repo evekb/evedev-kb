@@ -1370,6 +1370,20 @@ td.finalblow
 	text-align: center;
 	width: 64px;
 }
+.violentsystems td:first-child
+{
+	font-weight: bold;
+	width:25px
+}
+.violentsystems td:nth-child(2)
+{
+	width:215px
+}
+.violentsystems td:last-child
+{
+	text-align: center;
+	width:60px;
+}
 /* Disable default styles that are in the way.
 TODO: remove when this is default */
 .killcount, .losscount
