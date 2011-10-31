@@ -154,6 +154,7 @@ class pKillDetail extends pageAssembly
 		}
 		$smarty->assign('panel_colour', config::get('fp_theme'));
 		$smarty->assign('showiskd', config::get('kd_showiskd'));
+		$smarty->assign('formURL', edkURI::build(edkURI::parseURI()));
 
 		$this->involvedSetup();
 		$this->fittingSetup();
