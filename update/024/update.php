@@ -15,13 +15,16 @@ function update024()
 
 		if(config::get('024updatestatus') <1)
 		{
-			$qry->execute("SELECT min(sys_eve_id) as min FROM kb3_systems");
-			$row = $qry->getRow();
-			$min = $row['min'];
-			$qry->execute("UPDATE kb3_kills
-				JOIN kb3_systems on sys_id = kll_system_id
-				SET kll_system_id = sys_eve_id
-				WHERE kll_system_id < $min");
+			$qry->execute("SHOW COLUMNS FROM kb3_systems LIKE 'sys_eve_id'");
+			if($qry->recordCount()) {
+				$qry->execute("SELECT min(sys_eve_id) as min FROM kb3_systems");
+				$row = $qry->getRow();
+				$min = $row['min'];
+				$qry->execute("UPDATE kb3_kills
+					JOIN kb3_systems on sys_id = kll_system_id
+					SET kll_system_id = sys_eve_id
+					WHERE kll_system_id < $min");
+			}
 			config::set('024updatestatus',1);
 			$smarty->assign('refresh',1);
 			$smarty->assign('content', "24. Updated kb3_kills systems.");
@@ -30,13 +33,16 @@ function update024()
 		}
 		if(config::get('024updatestatus') <2)
 		{
-			$qry->execute("SELECT min(sys_eve_id) as min FROM kb3_systems");
-			$row = $qry->getRow();
-			$min = $row['min'];
-			$qry->execute("UPDATE kb3_contract_details
-				JOIN kb3_systems on sys_id = ctd_sys_id
-				SET ctd_sys_id = sys_eve_id
-				WHERE ctd_sys_id < $min");
+			$qry->execute("SHOW COLUMNS FROM kb3_systems LIKE 'sys_eve_id'");
+			if($qry->recordCount()) {
+				$qry->execute("SELECT min(sys_eve_id) as min FROM kb3_systems");
+				$row = $qry->getRow();
+				$min = $row['min'];
+				$qry->execute("UPDATE kb3_contract_details
+					JOIN kb3_systems on sys_id = ctd_sys_id
+					SET ctd_sys_id = sys_eve_id
+					WHERE ctd_sys_id < $min");
+			}
 			config::set('024updatestatus',2);
 			$smarty->assign('refresh',1);
 			$smarty->assign('content', "24. Updated kb3_contract_details.");
@@ -45,7 +51,10 @@ function update024()
 		}
         if(config::get('024updatestatus') <3)
 		{
-			$qry->execute("UPDATE kb3_systems SET sys_id = sys_eve_id");
+			$qry->execute("SHOW COLUMNS FROM kb3_systems LIKE 'sys_eve_id'");
+			if($qry->recordCount()) {
+				$qry->execute("UPDATE kb3_systems SET sys_id = sys_eve_id");
+			}
 			config::set('024updatestatus',3);
 			$smarty->assign('refresh',1);
 			$smarty->assign('content', "24. kb3_systems is updated.");
