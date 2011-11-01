@@ -1480,6 +1480,56 @@ td.finalblow
 {
 	width:117px;
 }
+.fitting-panel > div.fit-module
+{
+	height:32px;
+	width:32px;
+	z-index:2;
+}
+.fitting-panel > div.fit-ammo
+{
+	height:24px;
+	width:24px;
+	z-index:3;
+}
+.fitting-panel > div
+{
+	position: absolute;
+}
+.fitting-panel div.bigship
+{
+	height:256px;
+	left:72px;
+	top:71px;
+	width:256px;
+	z-index:0;
+}
+.fitting-panel img.bigship
+{
+	height:256px;
+	width:256px;
+}
+.fitting-panel div.verified
+{
+	height:16px;
+	left:382px;
+	top:0;
+	width:16px;
+	z-index:4;
+}
+.fitting-panel div.verified > img
+{
+	height:16px;
+	width:16px;
+}
+.fitting-panel div.fit-slot-bg
+{
+	left: 0;
+	top: 0;
+	width: 398px;
+	height: 398px;
+	z-index:1;
+}
 /* Disable default styles that are in the way.
 TODO: remove when this is default */
 .killcount, .losscount
