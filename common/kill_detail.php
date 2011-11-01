@@ -197,9 +197,7 @@ class pKillDetail extends pageAssembly
 				);
 
 				//Fitting, KE - add destroyed items to an array of all fitted items.
-				if (($i_location != 4) 
-						&& ($i_location != 5)
-						&& ($i_location != 6)) {
+				if ($i_location <= 3 || $i_location == 7 || $i_location == 5) {
 					if (($i_usedgroup != 0)) {
 						if ($i_location == 1) {
 							$i_ammo = $item->get_ammo_size($i_name);
@@ -239,14 +237,6 @@ class pKillDetail extends pageAssembly
 								'destroyed' => true
 							);
 						}
-					}
-				} else if (($destroyed->getLocationID() == 5)) {
-					for ($count = 0; $count < $i_qty; $count++) {
-						$this->fitting_array[$i_location][] = array(
-							'Name' => $i_name,
-							'Icon' => $item->getIcon(32),
-							'itemID' => $i_id
-						);
 					}
 				}
 				//fitting thing end
@@ -708,6 +698,12 @@ class pKillDetail extends pageAssembly
 			'items' => array()
 		);
 
+		$slot_array[7] = array(
+			'img' => 'icon76_04.png',
+			'text' => 'Fitted - Subsystems',
+			'items' => array()
+		);
+
 		$slot_array[6] = array(
 			'img' => 'icon02_10.png',
 			'text' => 'Drone bay',
@@ -719,9 +715,10 @@ class pKillDetail extends pageAssembly
 			'text' => 'Cargo Bay',
 			'items' => array()
 		);
-		$slot_array[7] = array(
-			'img' => 'icon76_04.png',
-			'text' => 'Fitted - Subsystems',
+
+		$slot_array[8] = array(
+			'img' => 'icon03_14.png',
+			'text' => 'Implants',
 			'items' => array()
 		);
 		$smarty->assignByRef('slots', $slot_array);
