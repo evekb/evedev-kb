@@ -995,15 +995,13 @@ class pKillDetail extends pageAssembly
 		$smarty->assign('victimShipBigImage',
 				$this->kill->getVictimShip()->getImage(256));
 
-		if (config::get('kd_verify')) {
+		if ($this->kill->getExternalID() != 0) {
+			$this->verification = true;
+			$smarty->assign('verify_id', $this->kill->getExternalID());
+		} else {
 			$this->verification = false;
-			if ($this->kill->getExternalID() != 0) {
-				$this->verification = true;
-				$smarty->assign('verify_id', $this->kill->getExternalID());
-			}
-			$smarty->assign('verify_yesno', $this->verification);
 		}
-		$smarty->assign('showverify', config::get('kd_verify'));
+		$smarty->assign('verify_yesno', $this->verification);
 
 		//get the actual slot count for each vessel - for the fitting panel
 		$dogma = Cacheable::factory('dogma',
