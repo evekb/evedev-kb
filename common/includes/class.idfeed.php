@@ -642,8 +642,13 @@ class IDFeed
 	private function processItem($item, &$kill)
 	{
 		if ((int)$item['flag'] == 5) {
+			// Cargo
+			$location = 4;
+		} else if ((int)$item['flag'] == 89) {
+			// Implant
 			$location = 4;
 		} else if ((int)$item['flag'] == 87) {
+			// Drone Bay
 			$location = 6;
 		} else {
 			$litem = new Item((int)$item['typeID']);
@@ -899,6 +904,9 @@ class IDFeed
 					} else if ($iRow['itd_itl_id'] == 6) {
 						// drone
 						$itemRow->addAttribute('flag', 87);
+					} else if ($iRow['itd_itl_id'] == 8) {
+						// implant
+						$itemRow->addAttribute('flag', 89);
 					} else {
 						$itemRow->addAttribute('flag', 0);
 					}
