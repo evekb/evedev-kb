@@ -53,13 +53,13 @@ class pKillRelated extends pageAssembly
 			if (!$this->kll_external_id) {
 				// internal and external ids easily overlap so we can't guess which
 				$this->kll_id = (int) edkURI::getArg(null, 1);
-				$this->kill = Cacheable::factory('Kill', $this->kll_id);
+				$this->kill = Kill::getByID($this->kll_id);
 			} else {
 				$this->kill = new Kill($this->kll_external_id, true);
 				$this->kll_id = $this->kill->getID();
 			}
 		} else {
-			$this->kill = Cacheable::factory('Kill', $this->kll_id);
+			$this->kill = Kill::getByID($this->kll_id);
 		}
 		$this->adjacent = edkURI::getArg('adjacent');
 		$this->scl_id = (int) edkURI::getArg('scl_id');
@@ -118,7 +118,7 @@ class pKillRelated extends pageAssembly
 		// this is a fast query to get the system and timestamp
 		$rqry = DBFactory::getDBQuery();
 		if ($this->adjacent) {
-			$rsql = 'SELECT kll_timestamp, sjp_to from kb3_kills
+			$rsql = 'SELECT kll_timestamp, sjp_to as sys_id from kb3_kills
 				join kb3_systems a ON (a.sys_id = kll_system_id)
 				join kb3_system_jumps on (sjp_from = a.sys_id)
 				where kll_id = '.$this->kll_id.' UNION
@@ -130,7 +130,7 @@ class pKillRelated extends pageAssembly
 		}
 		$rqry->execute($rsql);
 		while ($rrow = $rqry->getRow()) {
-			$this->systems[] = $rrow['sjp_to'];
+			$this->systems[] = $rrow['sys_id'];
 			$basetime = $rrow['kll_timestamp'];
 		}
 
@@ -324,12 +324,12 @@ class pKillRelated extends pageAssembly
 		if ($classified) {
 			$smarty->assign('system', 'Classified System');
 		} else {
-			if ($this->adjacent) {
+			if (!$this->adjacent) {
 				$smarty->assign('system', $this->kill->getSolarSystemName());
 			} else {
 				$sysnames = array();
 				foreach ($this->systems as $sys_id) {
-					$system = new SolarSystem($sys_id);
+					$system = SolarSystem::getByID($sys_id);
 					$sysnames[] = $system->getName();
 				}
 				$smarty->assign('system', implode(', ', $sysnames));
@@ -511,7 +511,7 @@ class pKillRelated extends pageAssembly
 			$pos = strpos($row['plt_name'], "#");
 			if ($pos !== false) {
 				$name = explode("#", $row['plt_name']);
-				$item = new Item($name[2]);
+				$item = Item::getByID($name[2]);
 				$row['plt_name'] = $item->getName();
 			}
 
@@ -590,12 +590,12 @@ class pKillRelated extends pageAssembly
 	{
 		$this->addMenuItem("caption", "View");
 		if ($this->adjacent) {
+			$this->addMenuItem("link", "Remove adjacent",
+					edkURI::build(array('kll_id', $this->kll_id, true)));
+		} else {
 			$this->addMenuItem("link", "Include adjacent",
 					edkURI::build(array('kll_id', $this->kll_id, true),
 							array('adjacent', true, true)));
-		} else {
-			$this->addMenuItem("link", "Include adjacent",
-					edkURI::build(array('kll_id', $this->kll_id, true)));
 		}
 		$this->addMenuItem("link", "Back to Killmail",
 				edkURI::build(array('a', 'kill_detail', true),
