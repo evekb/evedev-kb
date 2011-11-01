@@ -216,7 +216,8 @@ class pKillDetail extends pageAssembly
 							'Icon' => $item->getIcon(24),
 							'itemID' => $i_id,
 							'usedgroupID' => $i_usedgroup,
-							'size' => $i_ammo
+							'size' => $i_ammo,
+							'destroyed' => true
 						);
 					} else {
 						// Use a max of 8 as a sanity check.
@@ -234,7 +235,8 @@ class pKillDetail extends pageAssembly
 								'Icon' => $item->getIcon(32),
 								'itemID' => $i_id,
 								'groupID' => $item->get_group_id(),
-								'chargeSize' => $i_charge
+								'chargeSize' => $i_charge,
+								'destroyed' => true
 							);
 						}
 					}
@@ -303,7 +305,8 @@ class pKillDetail extends pageAssembly
 							'Icon' => $item->getIcon(24),
 							'itemID' => $i_id,
 							'usedgroupID' => $i_usedgroup,
-							'size' => $i_ammo
+							'size' => $i_ammo,
+							'destroyed' => false
 						);
 					} else {
 						// Use a max of 8 as a sanity check.
@@ -320,7 +323,8 @@ class pKillDetail extends pageAssembly
 								'Icon' => $item->getIcon(32),
 								'itemID' => $i_id,
 								'groupID' => $item->get_group_id(),
-								'chargeSize' => $i_charge
+								'chargeSize' => $i_charge,
+								'destroyed' => false
 							);
 						}
 					}
