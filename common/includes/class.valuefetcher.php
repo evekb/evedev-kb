@@ -1,4 +1,4 @@
-<?php
+a<?php
 /**
  * $Date$
  * $Revision$
@@ -22,10 +22,10 @@ class valueFetcher
 			$factionurl = 'http://prices.c0rporation.com/faction.xml')
 	{
 		// Check the input
-		if ($file == null || $file == "") {
+		if ($url == null || $url == "") {
 			die("ERROR");
 		}
-		$this->url = $file;
+		$this->url = $url;
 		$this->factionurl = $factionurl;
 	}
 
