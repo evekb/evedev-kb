@@ -37,6 +37,7 @@ class IDFeed
 	private $cachedTime = '';
 	private $errormsg = '';
 	private $errorcode = 0;
+	private $npcOnly = true;
 	const version = "1.08";
 
 	/**
@@ -434,13 +435,13 @@ class IDFeed
 				return;
 			}
 
-			$this->npc_only = true;
+			$this->npcOnly = true;
 			foreach ($row->rowset[0]->row as $inv) {
 				$this->processInvolved($inv, $kill, strval($row['killTime']));
 			}
 
 			// Don't post NPC only kills if configured.
-			if ($this->npc_only && Config::get('post_no_npc_only')) {
+			if ($this->npcOnly && Config::get('post_no_npc_only')) {
 				$this->skipped[] = array($externalID, $internalID, 0);
 			} else {
 				if (isset($row->rowset[1]->row[0])) {
@@ -472,7 +473,7 @@ class IDFeed
 							$logaddress .= "?a=kill_detail&kll_id=".$internalID;
 						}
 					} else if ($this->name) {
-						$logaddress = "ID:".$this->url;
+						$logaddress = "ID:".$this->name;
 						if ($kill->getExternalID()) {
 							$logaddress .= ":kll_ext_id="
 									.$kill->getExternalID();
@@ -485,8 +486,18 @@ class IDFeed
 
 					logger::logKill($id, $logaddress);
 				} else {
-					$this->skipped[] = array((int)$row['killID'],
-						$internalID, $kill->getDupe(true));
+					$dupeid = $kill->getDupe(true);
+					$this->skipped[] = array($externalID,
+						$internalID, $dupeid);
+					if ($externalID && (int)$row['trust'] >= $this->trust) {
+						 $qry = DBFactory::getDBQuery(true);
+						 $qry->execute("UPDATE kb3_kills"
+							." JOIN kb3_mails ON kb3_kills.kll_id ="
+							." kb3_mails.kll_id SET kb3_mails.kll_external_id="
+							.$externalID.", kb3_kills.kll_external_id="
+							.$externalID." WHERE kb3_mails.kll_id = $dupeid AND"
+							." kb3_mails.kll_external_id IS NULL");
+				   }				
 				}
 			}
 		}
@@ -631,7 +642,7 @@ class IDFeed
 		if ((int)$inv['finalBlow'] == 1) {
 			$kill->setFBPilotID($pilot->getID());
 		}
-		$this->npc_only = $this->npc_only && $npc;
+		$this->npcOnly = $this->npcOnly && $npc;
 	}
 
 	/**
