@@ -438,7 +438,7 @@ class Parser
 								}
 								//alliance lookup for warp disruptors - normal NPCs aren't to be bundled in
 								$crp = $this->fetchCorp($corporation);
-								if($crp->getExternalID(true) > 0)
+								if($crp && $crp->getExternalID(true) > 0)
 								{
 									if(strtotime($timestamp) > time() - 24*60*60 && $crp->fetchCorp())
 									{
