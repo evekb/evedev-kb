@@ -37,6 +37,8 @@ class pHome extends pageAssembly
 	public $page;
 	/** @var boolean */
 	private $showcombined;
+	/** @var boolean */
+	private $dateSet = false;
 
 	function __construct()
 	{
@@ -56,14 +58,64 @@ class pHome extends pageAssembly
 				"<link rel='canonical' href='".edkURI::page()."' />");
 		$this->view = preg_replace('/[^a-zA-Z0-9_-]/', '',
 				edkURI::getArg('view', 1));
+		$period = edkURI::getArg('period');
+
+		$day = $week = $month = $year = 0;
 		// First argument is either the view or the year
-		if (is_numeric($this->view)) {
-			$this->view = preg_replace('/[^a-zA-Z0-9_-]/', '',
-					edkURI::getArg('view', 3));
-			if (is_numeric($this->view)) {
-				$this->view = '';
+		if (is_numeric($this->view) || !$this->view 
+				|| $this->view == 'day'
+				|| $this->view == 'week'
+				|| $this->view == 'month') {
+			$this->view = '';
+			$datestart = 1;
+		} else {
+			$datestart = 2;
+		}
+
+		$year = edkURI::getArg('y', $datestart);
+
+		if((int)$year && !$period) {
+			$year = (int)$year;
+			$this->dateSet = true;
+			if (config::get('show_monthly')) {
+				$month = (int) edkURI::getArg('m', $datestart + 1);
+			} else {
+				$week = (int) edkURI::getArg('w', $datestart + 1);
+			}
+		} else if ($year || $period) {
+			if (!$period) {
+				$period = $year;
+			}
+			$datestart++;
+			switch($period) {
+				case "month":
+					$year = (int) edkURI::getArg('y', $datestart);
+					if((int)$year) {
+						$month = (int) edkURI::getArg('m', $datestart + 1);
+						$this->dateSet = true;
+					}
+					break;
+				case "week":
+					$year = (int) edkURI::getArg('y', $datestart);
+					if((int)$year) {
+						$week = (int) edkURI::getArg('w', $datestart + 1);
+						$this->dateSet = true;
+					}
+					break;
+				case "day":
+					$year = (int) edkURI::getArg('y', $datestart);
+					if((int)$year) {
+						$month = (int) edkURI::getArg('m', $datestart + 1);
+						if((int)$month) {
+							$day = (int) edkURI::getArg('d', $datestart + 2);
+							$this->dateSet = true;
+						}
+					}
+					break;
 			}
 		}
+
+		$this->setTime($week, $year, $month, $day);
 
 		if (edkURI::getArg('scl_id') === false
 				|| edkURI::getArg('y', 1) === false) {
@@ -78,17 +130,6 @@ class pHome extends pageAssembly
 						|| count(config::get('cfg_corpid'))
 						|| count(config::get('cfg_pilotid')));
 
-		$week = $month = $year = 0;
-		$year = (int) edkURI::getArg('y', 1);
-		if ($year) {
-			if (config::get('show_monthly')) {
-				$month = (int) edkURI::getArg('m', 2);
-			} else {
-				$week = (int) edkURI::getArg('w', 2);
-			}
-		}
-		$this->setTime($week, $year, $month);
-
 		if ($this->view == 'kills') {
 			$this->page->setTitle('Kills - '.$this->getCurrentPeriod());
 		} else if ($this->view == 'losses') {
@@ -99,7 +140,8 @@ class pHome extends pageAssembly
 	}
 
 	/**
-	 * Check if summary tables are enabled and if so return a table for this week.
+	 * Check if summary tables are enabled and if so return a table for this
+	 * week.
 	 *
 	 * @return string HTML string for a summary table.
 	 */
@@ -131,7 +173,7 @@ class pHome extends pageAssembly
 		// Display campaigns, if any.
 		if (Killboard::hasCampaigns(true) &&
 				$this->isCurrentPeriod()) {
-			$html .= "<div class=\"kb-campaigns-header\">Active campaigns</div>";
+			$html = "<div class='kb-campaigns-header'>Active campaigns</div>";
 			$list = new ContractList();
 			$list->setActive("yes");
 			$list->setCampaigns(true);
@@ -184,7 +226,7 @@ class pHome extends pageAssembly
 
 		// If no week is set then show the most recent kills. Otherwise
 		// show all kills for the week using the page splitter.
-		if (config::get("cfg_fillhome") && !edkURI::getArg('y', 1)) {
+		if (config::get("cfg_fillhome") && !$this->dateSet) {
 			$klist->setLimit(config::get('killcount'));
 			$table = new KillListTable($klist);
 			if ($this->showcombined) $table->setCombined(true);
@@ -195,7 +237,8 @@ class pHome extends pageAssembly
 			//$klist->setWeek($this->week);
 			//$klist->setYear($this->year);
 			$klist->setPageSplit(config::get('killcount'));
-			$pagesplitter = new PageSplitter($klist->getCount(), config::get('killcount'));
+			$pagesplitter = new PageSplitter($klist->getCount(),
+					config::get('killcount'));
 			$table = new KillListTable($klist);
 			if ($this->showcombined) $table->setCombined(true);
 			$pagesplit = $pagesplitter->generate();
@@ -224,14 +267,14 @@ class pHome extends pageAssembly
 		$previous = $this->pargs;
 		$next = $this->nargs;
 		if ($view) {
-			$previous[] = $view;
-			$next[] = $view;
+			array_unshift($previous, $view);
+			array_unshift($next, $view);
 		}
 
 		$killLink = $this->cargs;
-		$killLink[] = array('view', 'kills', true);
+		array_unshift($killLink, array('view', 'kills', true));
 		$lossLink = $this->cargs;
-		$lossLink[] = array('view', 'losses', true);
+		array_unshift($lossLink, array('view', 'losses', true));
 		$combinedLink = $this->cargs;
 		if ($sclarg) {
 			$previous[] = $sclarg;
@@ -268,7 +311,7 @@ class pHome extends pageAssembly
 		$menubox->setIcon("menu-item.gif");
 		foreach ($this->menuOptions as $options) {
 			if (isset($options[2])) {
-					$menubox->addOption($options[0], $options[1], $options[2]);
+				$menubox->addOption($options[0], $options[1], $options[2]);
 			} else {
 				$menubox->addOption($options[0], $options[1]);
 			}
@@ -303,7 +346,8 @@ class pHome extends pageAssembly
 			involved::load($tklist, 'kill');
 
 			$tklist->generate();
-			$tkbox = new AwardBox($tklist, "Top killers", "kills in ".$this->getCurrentPeriod(), "kills", "eagle");
+			$tkbox = new AwardBox($tklist, "Top killers", "kills in "
+					.$this->getCurrentPeriod(), "kills", "eagle");
 			$html = $tkbox->generate();
 
 			$tklist = new TopList_Score();
@@ -311,7 +355,8 @@ class pHome extends pageAssembly
 			involved::load($tklist, 'kill');
 
 			$tklist->generate();
-			$tkbox = new AwardBox($tklist, "Top scorers", "points in ".$this->getCurrentPeriod(), "points", "redcross");
+			$tkbox = new AwardBox($tklist, "Top scorers", "points in "
+					.$this->getCurrentPeriod(), "points", "redcross");
 			$html .= $tkbox->generate();
 		} else {
 			$tllist = new TopList_Losses();
@@ -319,7 +364,8 @@ class pHome extends pageAssembly
 			involved::load($tllist, 'loss');
 
 			$tllist->generate();
-			$tlbox = new AwardBox($tllist, "Top losers", "losses in ".$this->getCurrentPeriod(), "losses", "moon");
+			$tlbox = new AwardBox($tllist, "Top losers", "losses in "
+					.$this->getCurrentPeriod(), "losses", "moon");
 			$html = $tlbox->generate();
 		}
 		return $html;
@@ -335,6 +381,15 @@ class pHome extends pageAssembly
 		$this->queue('menu');
 		$this->queue('clock');
 		$this->queue('topLists');
+	}
+
+	/**
+	 * Return the set day.
+	 * @return integer
+	 */
+	function getDay()
+	{
+		return $this->day;
 	}
 
 	/**
@@ -364,6 +419,75 @@ class pHome extends pageAssembly
 		return $this->year;
 	}
 
+	/**
+	 * Return the requested view.
+	 * @return string
+	 */
+	function getView()
+	{
+		return $this->view;
+	}
+
+	/**
+	 *
+	 * @param integer $day
+	 * @param integer $month
+	 * @param integer $year
+	 */
+	function setDay($day, $month, $year)
+	{
+		if ($month < 1 || $month > 12 || $year < 2000) {
+			$month = kbdate('m');
+			$year = getYear();
+		}
+		$this->month = $month;
+		if ($this->month < 10) {
+			$this->month = '0'.$this->month;
+		}
+		$this->year = $year;
+		$this->day = $day;
+
+		$cdate = strtotime("{$this->year}-{$this->month}-{$this->day} 00:01"
+				." UTC");
+		$pdate = $cdate - 24 * 60 * 60;
+		$ndate = $cdate + 24 * 60 * 60;
+
+		$pyear = gmdate("Y", $pdate);
+		$pmonth = gmdate("m", $pdate);
+		$pday = gmdate("d", $pdate);
+
+		$nyear = gmdate("Y", $ndate);
+		$nmonth = gmdate("m", $ndate);
+		$nday = gmdate("d", $ndate);
+
+		$cyear = gmdate("Y", $cdate);
+		$cmonth = gmdate("m", $cdate);
+		$cday = gmdate("d", $cdate);
+
+
+		$this->periodName = 'Day';
+		$this->period = date('d F, Y', mktime(0, 0, 0,
+				$this->month, $this->day, $this->year));
+		$this->currentTime =
+				($this->day == kbdate('d')
+				&& $this->month == kbdate('m')
+				&& $this->year == kbdate('Y'));
+
+		$this->pargs[] = array('period', 'day', true);
+		$this->pargs[] = array('y', $pyear, true);
+		$this->pargs[] = array('m', $pmonth, true);
+		$this->pargs[] = array('d', $pday, true);
+
+		$this->nargs[] = array('period', 'day', true);
+		$this->nargs[] = array('y', $nyear, true);
+		$this->nargs[] = array('m', $nmonth, true);
+		$this->nargs[] = array('d', $nday, true);
+
+		$this->cargs[] = array('period', 'day', true);
+		$this->cargs[] = array('y', $this->year, true);
+		$this->cargs[] = array('m', $this->month, true);
+		$this->cargs[] = array('d', $cday, true);
+	}
 	/**
 	 *
 	 * @param integer $week
@@ -402,13 +526,18 @@ class pHome extends pageAssembly
 		$this->currentTime =
 				($this->week == kbdate('W') && $this->year == kbdate('o'));
 
-		$this->pargs = array();
+		$this->pargs = $this->nargs = $this->cargs = array();
+		if (config::get('show_monthly')) {
+			$this->pargs[] = array('period', 'week', true);
+			$this->nargs[] = array('period', 'week', true);
+			$this->cargs[] = array('period', 'week', true);
+		}
 		$this->pargs[] = array('y', $pyear, true);
 		$this->pargs[] = array('w', $pweek, true);
-		$this->nargs = array();
+
 		$this->nargs[] = array('y', $nyear, true);
 		$this->nargs[] = array('w', $nweek, true);
-		$this->cargs = array();
+
 		$this->cargs[] = array('y', $this->year, true);
 		$this->cargs[] = array('w', $this->week, true);
 	}
@@ -446,11 +575,16 @@ class pHome extends pageAssembly
 			$nyear = $this->year;
 		}
 		$this->periodName = 'Month';
-		$this->period = date('F', mktime(0, 0, 0,
-				$this->month, 1, $this->year)).', '.$this->year;
+		$this->period = date('F, Y', mktime(0, 0, 0,
+				$this->month, 1, $this->year));
 		$this->currentTime =
 				($this->month == kbdate('m') && $this->year == kbdate('Y'));
 
+		if (!config::get('show_monthly')) {
+			$this->pargs[] = array('period', 'month', true);
+			$this->nargs[] = array('period', 'month', true);
+			$this->cargs[] = array('period', 'month', true);
+		}
 		$this->pargs[] = array('y', $pyear, true);
 		$this->pargs[] = array('m', $pmonth, true);
 
@@ -463,8 +597,8 @@ class pHome extends pageAssembly
 
 	/**
 	 * Returns true if the board is showing the current time period.
-	 * @return boolean true if the board is showing the current time period, false
-	 *  otherwise.
+	 * @return boolean true if the board is showing the current time period,
+	 * false otherwise.
 	 */
 	function isCurrentPeriod()
 	{
@@ -524,7 +658,6 @@ class pHome extends pageAssembly
 		return '';
 	}
 
-
 	/**
 	 * Return an array of arguments to generate current period links.
 	 *
@@ -561,7 +694,12 @@ class pHome extends pageAssembly
 	 */
 	function loadTime(&$object)
 	{
-		if ($this->week) {
+		if ($this->day) {
+			$object->setStartDate("{$this->year}-{$this->month}-{$this->day}"
+					." 00:00");
+			$object->setEndDate("{$this->year}-{$this->month}-{$this->day}"
+					." 23:59");
+		} else if ($this->week) {
 			$object->setWeek($this->week);
 			$object->setYear($this->year);
 		} elseif ($this->month) {
@@ -569,7 +707,6 @@ class pHome extends pageAssembly
 			$end = makeEndDate($this->week, $this->year, $this->month);
 			$object->setStartDate(gmdate('Y-m-d H:i', $start));
 			$object->setEndDate(gmdate('Y-m-d H:i', $end));
-			//die('start='.gmdate('Y-m-d H:i',$start).'end='.gmdate('Y-m-d H:i',$end));
 		}
 	}
 
@@ -580,9 +717,12 @@ class pHome extends pageAssembly
 	 * @param integer $year
 	 * @param integer $month
 	 */
-	function setTime($week = 0, $year = 0, $month = 0)
+	function setTime($week = 0, $year = 0, $month = 0, $day = 0)
 	{
-		if ($week && $year) {
+		if ($day && $month && $year) {
+			$this->setDay($day, $month, $year);
+			$this->week = 0;
+		} else if ($week && $year) {
 			$this->setWeek($week, $year);
 			$this->month = 0;
 		} elseif ($month && $year) {
@@ -619,16 +759,6 @@ class pHome extends pageAssembly
 	function addView($view, $callback)
 	{
 		$this->viewList[$view] = $callback;
-	}
-
-	/**
-	 * Legacy stub for old mods to position after.
-	 *
-	 * New mods should not use this because it may go away and then you will cry
-	 * @deprecated
-	 */
-	function contracts()
-	{
 	}
 }
 
