@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v3.2.0
+Eve Development Network Killboard v4.0.0 beta
 -------------------------------------------
 
 // REQUIREMENTS
@@ -24,6 +24,45 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
+v4.0.0
+Cleaner URLs: kburl/home/2011/23/kills/
+More caching! Objects can now be filecached(meh)/memcached(yay!)
+Corp logo transparency returns
+IIS bug avoided
+improved error messages
+improved duplicate checks
+improved toplist display for mixed boards
+ajcron admin panel display fix
+various other internal fixes
+Added html5 theme
+New API support
+More stuff
+-------------------------------------------
+v3.2.3
+Related kill count fix
+Incarna DB
+Custom EDK URL creation support (supports future versions of EDK)
+-------------------------------------------
+v3.2.2
+Use CCP image server for images
+If using local cache of images, fetch Types from CCP
+Fix for pilot points and corp icons in killlists
+Increased contrast of red graphs in red theme
+Troubleshooting page checks SSL support.
+-------------------------------------------
+v3.2.1
+Corp logo transparency returns
+IIS bug avoided
+pilot points shown
+improved error messages
+thumbnail fixes for lighttpd
+more default thumbnail sizes
+summary tables on public boards work again
+improved duplicate checks
+improved toplist display for mixed boards
+ajcron admin panel display fix
+various other internal fixes
+-------------------------------------------
 v3.2.0
 Mixed pilot/corp/alliance board owner
 - no limits on number or type of owners

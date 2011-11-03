@@ -24,7 +24,7 @@ define("APIVERSION", "V3.3");
 
 // current version: major.minor.sub
 // even numbers for minor = development version
-define('KB_VERSION', '3.3beta');
+define('KB_VERSION', '4.0.0 beta');
 define('KB_RELEASE', '(Incursion)');
 
 // Make sure the core functions are loaded.
