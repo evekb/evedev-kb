@@ -834,11 +834,10 @@ class IDFeed
 			$qry = DBFactory::getDBQuery();
 			$sql = "SELECT ind_sec_status, ind_all_id, ind_crp_id,
 				ind_shp_id, ind_wep_id, ind_order, ind_dmgdone, plt_id, plt_name,
-				plt_externalid, crp_name, crp_external_id, stype.typeName AS shp_name,
+				plt_externalid, crp_name, crp_external_id,
 				wtype.typeName AS wep_name FROM kb3_inv_detail
 				JOIN kb3_pilots ON (plt_id = ind_plt_id)
 				JOIN kb3_corps ON (crp_id = ind_crp_id)
-				JOIN kb3_invtypes stype ON (stype.typeID = ind_shp_id)
 				JOIN kb3_invtypes wtype ON (ind_wep_id = wtype.typeID)
 				WHERE ind_kll_id = ".$kill->getID()." ORDER BY ind_order ASC";
 			$qry->execute($sql);
