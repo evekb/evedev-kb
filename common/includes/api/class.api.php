@@ -23,6 +23,10 @@ class API {
 		PhealConfig::getInstance()->log = new PhealFileLog('cache/');
 	}
 
+	function IsCached() {
+		$isCached = (bool)PhealConfig::getInstance()->cache->load($keyID, $vCode, $this->options['scope'], $this->options['name'], $api['args']); 
+	}
+	
 	function CallAPI( $scope, $call, $data, $userid, $key ) {
 		//echo $scope, $call, $userid, $key;
 		//PhealConfig::getInstance()->api_customkeys = false;

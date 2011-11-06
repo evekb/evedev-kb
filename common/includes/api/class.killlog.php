@@ -10,9 +10,12 @@
 // ****************                                    API KillLog - /corp/Killlog.xml.aspx                                      ****************
 // **********************************************************************************************************************************************
 
-class API_KillLog
+require_once("class.api.php");
+require_once("class.account.php");
+
+class API_KillLog extends API
 {
-    function Import($keystring, $typestring, $keyindex)
+    function Import($name, $id, $key, $flags)
 	{
 		$this->mailcount_ = 0;
 		$this->ignoredmails_ = 0;
@@ -26,7 +29,16 @@ class API_KillLog
 		$this->errortext_ = "";
 		$this->CachedUntil_ = "";
 
-        // reduces strain on DB
+		// Skip bad keys
+		if ( $flags & KB_APIKEY_BADAUTH || $flags & KB_APIKEY_EXPIRED ) {
+			return; // skip bad keys
+		}
+		
+		// also skip legacy keys now
+		if( $flags & KB_APIKEY_LEGACY)
+			return;
+
+		// reduces strain on DB
 		if(function_exists("set_time_limit"))
       		set_time_limit(0);
 
@@ -36,11 +48,11 @@ class API_KillLog
         $this->API_IgnoreCorpFF_ = config::get('API_IgnoreCorpFF');
         $this->API_IgnoreAllianceFF_ = config::get('API_IgnoreAllianceFF');
         $this->API_NoSpam_ = config::get('API_NoSpam');
-		$this->API_CacheTime_ = ApiCache::get('API_CachedUntil_' . $keyindex);
 		$this->API_UseCaching_ = config::get('API_UseCache');
         $this->keyindex_ = $keyindex;
 
-
+		$typestring = 'Char';
+		
 		// Initialise for error correcting and missing itemID resolution
 		$this->myIDName = new API_IDtoName();
 		$this->myNameID = new API_NametoID();
@@ -48,143 +60,113 @@ class API_KillLog
         $lastdatakillid = 1;
         $currentdatakillid = 0;
 
-		if(defined('BETA') && BETA)
-		{
-			if($errorcode = $this->fetchErrors($keyindex))
-				return "<div class=block-header2><i>"
-					.config::get('API_Name_'.$keyindex)." failed with error code "
-					.$errorcode."</i></div><br><br>";
+		$logsource = "New XML";
+		// Load new XML
+		$this->Output_ .= "<i>Downloading latest XML file for $name</i><br><br>";
+		
+		$accts = new API_Account();
+		$characters = $accts->fetch($id, $key);
 
-			// Load new XML
-			$logsource = "New XML";
-			$this->Output_ .= "<i>Downloading latest XML file for " . config::get('API_Name_'.$keyindex) . "</i><br><br>";
-			$data = '';
-			$date2 = '';
-			do {
-				$tmp = $this->loaddata($currentdatakillid, $keystring, $typestring);
-				if(!$data || strpos($tmp, 'result') !== false)
-						$data .= $tmp;
-				$data = preg_replace('/\s*<\/rowset>\s*<\/result.*<result>\s*<rowset[^>]*>/s', '', $data);
-				$data2 .= $tmp;
-				$lastdatakillid = $currentdatakillid;
-				$currentdatakillid = $this->getlastkillid($data);
-			} while ( $lastdatakillid != $currentdatakillid );
+		foreach($characters as $char) {
+			$this->Output_ .= "Processing " . $char['charID'] . "<br><br>";
+			$currentkill = 0;
+			$lastkill = -1;
+			while ($lastkill != $currentkill) {
+				$lastkill = $currentkill;
+				$args = array("characterID" => $char['charID']);
+				if($lastkill) {
+					$args["beforeKillID"] = $lastkill;
+				}
+				
+				if ( $flags & KB_APIKEY_CORP ) {
+					$killLog = self::CallAPI( "corp", "KillLog", $args, $id, $key );
+				}
+				if ( $flags & KB_APIKEY_CHAR ) {
+					$killLog = self::CallAPI( "char", "KillLog", $args, $id, $key );
+				}
 
-			$feedfetch = new IDFeed();
-			if($data)
-			{
-				$feedfetch->setXML($data);
+				if (self::GetError() === null) {
+					// Get oldest kill
+					$currentkill = 0;
+					$sxe = simplexml_load_string($this->pheal->xml);					
+					foreach($sxe->result->rowset->row as $row) {
+						if($currentkill < (int)$row['killID']) {
+							$currentkill = (int)$row['killID'];
+						}
+					}
+				}
+
+				if (self::GetError() !== null) {
+					if (self::GetError() == 120 && $this->pheal->xml) {
+						// Check if we just need to skip back a few kills
+						// i.e. first page of kills is already fetched.
+						$pos = strpos($this->pheal->xml, "Expected beforeKillID [");
+						if($pos) {
+							$pos += 23;
+							$pos2 = strpos($this->pheal->xml, "]", $pos);
+							$currentkill = (int)substr($this->pheal->xml, $pos, $pos2 - $pos);
+						}
+					} else if (!$posted && !$skipped) {
+						// Something went wrong and no kills were found.
+						$qry = DBFactory::getDBQuery();
+						$logtype = "Cron Job";
+
+						$qry->execute("insert into kb3_apilog	values( '".KB_SITE."', '"
+								.addslashes($name)."',"
+								."0, "
+								."0, "
+								."0, "
+								."0, "
+								."0, '"
+								."Error','"
+								."Cron Job','"
+								. self::GetError() . "', "
+								."UTC_TIMESTAMP() )");						
+						return $this->Output_;
+					} else {
+						// We found kills!
+						$qry = DBFactory::getDBQuery();
+						$logtype = "Cron Job";
+
+						$qry->execute("insert into kb3_apilog values( '".KB_SITE."', '"
+								.addslashes($name)."',"
+								.count($posted).","
+								."0 ,"
+								.count($skipped).","
+								."0 ,"
+								.(count($posted) + count($skipped)).",'"
+								."New XML','"
+								."Cron Job','"
+								. (self::GetError() == 119 ? 0: self::GetError()) . "', "
+								."UTC_TIMESTAMP() )");
+
+						echo "<div class='block-header2'>".count($posted)
+								." kill".(count($posted) == 1 ? "" : "s")." posted, ".count($skipped)." skipped from feed: "
+								.$keyID.".<br></div>";
+						if($posted) {
+							echo "<div class='block-header2'>Posted</div>\n";
+							foreach($posted as $id) {
+								echo "<div><a href='"
+										.edkURI::page('kill_detail', $id[2], 'kll_id')
+										."'>Kill ".$id[0]."</a></div>";
+							}
+						}
+						return $this->Output_;
+					}
+				}
+
+				$feedfetch = new IDFeed();
+				$feedfetch->setXML($this->pheal->xml);
 				$feedfetch->setTrust(-1);
 				$feedfetch->read();
-				if($feedfetch->getCachedTime())
-				{
-					$this->CachedUntil_ = $feedfetch->getCachedTime();
-					ApiCache::set('API_CachedUntil_' . $this->keyindex_, $feedfetch->getCachedTime());
-				}
+
+				$posted += sizeof($feedfetch->getPosted());
+				$skipped += sizeof($feedfetch->getSkipped());
+
+				$this->Output_ .= "<div class=block-header2>" . $posted ." kills, ". $skipped . " skipped  from feed: $name<br></div>";
 			}
-
-			$posted = count($feedfetch->getPosted());
-			$skipped = count($feedfetch->getSkipped());
-
-			$this->Output_ .= "<div class=block-header2>" . $posted
-				." kills, ". $skipped . " skipped  from feed: " . config::get('API_Name_'.$keyindex) . ".<br></div>";
-
-			// Write to kb3_apilog
-			$qry = DBFactory::getDBQuery();;
-			if ($this->iscronjob_)
-				$logtype = "Cron Job";
-			else
-				$logtype = "Manual";
-
-			$qry->execute( "insert into kb3_apilog	values( '" . KB_SITE . "', '"
-															. addslashes(config::get('API_Name_'.$keyindex)) . "',"
-															. $posted . ","
-															. "0 ,"
-															. $skipped . ","
-															. "0 ,"
-															. ($posted + $skipped) . ",'"
-															. $logsource . "','"
-															. $logtype . "','"
-															. $feedfetch->getErrorCode() . "', "
-															. "UTC_TIMESTAMP() )" );
-
-		}
-		else
-		{
-			$qry = DBFactory::getDBQuery();
-			$qry->execute("SELECT log_errorcode FROM kb3_apilog WHERE log_site = '"
-				.KB_SITE."' AND log_keyname = '".
-				addslashes(config::get('API_Name_'.$keyindex)).
-				"' ORDER BY log_timestamp DESC");
-			if($qry->recordCount())
-			{
-				$row = $qry->getRow();
-				$errorcode = $row['log_errorcode'];
-			}
-			else $errorcode = 0;
-			// Don't let the cron keep checking jobs that have returned an
-			if(($errorcode >= 200 && $errorcode < 300|| $errorcode == 105) && $this->iscronjob_)
-			{
-				return "<div class=block-header2><i>".config::get('API_Name_'.$keyindex)." failed with error code ".$errorcode."</i></div><br><br>";
-			}
-
-			// Load new XML
-			$logsource = "New XML";
-			$this->Output_ .= "<i>Downloading latest XML file for " . config::get('API_Name_'.$keyindex) . "</i><br><br>";
-			$data = '<myxml thunkage="1">';
-			do {
-				$data .= $this->loaddata($currentdatakillid, $keystring, $typestring);
-				$lastdatakillid = $currentdatakillid;
-				$currentdatakillid = $this->getlastkillid($data);
-			} while ( $lastdatakillid != $currentdatakillid );
-			$data .= '</myxml>';
-
-			$xml_parser = xml_parser_create();
-			xml_set_object ( $xml_parser, $this );
-			xml_set_element_handler($xml_parser, "startElement", "endElement");
-			xml_set_character_data_handler ( $xml_parser, 'characterData' );
-
-			if (!xml_parse($xml_parser, $data, true))
-				return $this->Output_ .= "<i>Error getting XML data from ".API_SERVER."</i><br><br>";
-
-			if ( strlen($data) == 28 )
-				return $this->Output_ .= "<i>Error contacting ".API_SERVER."</i><br><br>";
-
-			xml_parser_free($xml_parser);
-
-			if ( ($this->hasdownloaded_ == false) && ($this->errortext_ != "") )
-			{
-				$this->Output_ .= "<font color = \"#FF0000\">".$this->errortext_ . "</font><br>";
-				$logsource = "Error";
-			}
-
-			if ($this->mailcount_)
-				$this->Output_ .= "<div class=block-header2>".$this->mailcount_." kills, " . $this->malformedmails_ . " malformed, " . $this->ignoredmails_ . " ignored and " . $this->verified_ . " verified from feed: " . config::get('API_Name_'.$keyindex) . " which contained ".$this->totalmails_." mails.<br></div>";
-			else
-				$this->Output_ .= "<div class=block-header2>No kills added, ". $this->malformedmails_ . " malformed, " . $this->ignoredmails_." ignored and " . $this->verified_ . " verified from feed: " . config::get('API_Name_'.$keyindex) . " which contained ".$this->totalmails_." mails.<br></div>";
-
-			// Write to kb3_apilog
-			$qry = DBFactory::getDBQuery();;
-			if ($this->iscronjob_)
-				$logtype = "Cron Job";
-			else
-				$logtype = "Manual";
-
-			$qry->execute( "insert into kb3_apilog	values( '" . KB_SITE . "', '"
-															. addslashes(config::get('API_Name_'.$keyindex)) . "',"
-															. $this->mailcount_ . ","
-															. $this->malformedmails_ . ","
-															. $this->ignoredmails_ . ","
-															. $this->verified_ . ","
-															. $this->totalmails_ . ",'"
-															. $logsource . "','"
-															. $logtype . "','"
-															. $this->errorcode_ . "', "
-															. "UTC_TIMESTAMP() )" );
-		}
-		
+		}			
         return $this->Output_;
-
     }
 
     function startElement($parser, $name, $attribs)
@@ -849,38 +831,6 @@ class API_KillLog
         }
     }
 
-    function loaddata($refid, $keystring, $typestring)
-    {
-        $url = API_SERVER."/" . $typestring . "/KillLog.xml.aspx";
-
-        if ($refid != 0)
-            $keystring .= '&beforeKillID=' . $refid;
-		//TODO: change the all the $keystring chains to arrays
-		$keypairs = explode('&', $keystring);
-		$keys = array();
-		foreach($keypairs as $val)
-		{
-			$pair = explode("=", $val);
-			$keys[$pair[0]] = $pair[1];
-		}
-        $path = '/' . $typestring . '/Killlog.xml.aspx';
-        $fp = @fsockopen(API_SERVER, 80);
-
-		$http = new http_request($url);
-		$http->set_useragent("PHPApi");
-		foreach($keys as $key => $val) $http->set_postform($key, $val);
-
-		$contents = $http->get_content();
-
-		$start = strpos($contents, "?>");
-		if ($start !== FALSE)
-		{
-			$contents = substr($contents, $start + strlen("\r\n\r\n"));
-		}
-
-		return $contents;
-    }
-
     function mystrripos($haystack, $needle, $offset=0)
     {
         if($offset<0)
@@ -941,30 +891,5 @@ class API_KillLog
         $qry->execute( "SELECT * FROM `kb3_kills` WHERE `kll_external_id` =" . $killid );
 		$row = $qry->getRow();
 		return $row['kll_external_id'];
-	}
-
-	/**
-	 * Check if the previous fetches had errors
-	 */
-	private function fetchErrors($keyindex)
-	{
-		$qry = DBFactory::getDBQuery();
-		$qry->execute("SELECT log_errorcode, log_timestamp FROM kb3_apilog WHERE log_site = '"
-			.KB_SITE."' AND log_keyname = '".
-			addslashes(config::get('API_Name_'.$keyindex)).
-			"' ORDER BY log_timestamp DESC LIMIT 1");
-		if($qry->recordCount())
-		{
-			$row = $qry->getRow();
-			if(strtotime($row['log_timestamp']) < time() - 7 * 24 * 60 * 60)
-				$errorcode = $row['log_errorcode'];
-			else $errorcode = 0;
-		}
-		else $errorcode = 0;
-		// Don't let the cron keep checking jobs that have returned an
-		if(($errorcode >= 200 && $errorcode < 300 || $errorcode == 105) &&
-				$this->iscronjob_)
-			return $errorcode;
-		else return false;
 	}
 }
