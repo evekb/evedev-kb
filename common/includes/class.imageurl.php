@@ -13,10 +13,18 @@
  */
 class imageURL
 {
+	private static $callbacks = array();
+	
 	static function getURL($type, $id, $size, $internal = false)
 	{
-		$id = intval($id);
-		$size = intval($size);
+		$id = (int)$id;
+		$size = (int)$size;
+		
+		foreach(self::$callbacks as $callback) {
+			if ($result = call_user_func_array($callback, func_get_args())) {
+				return $result;
+			}
+		}
 
 		if ($id == 0) {
 			if ($size == 32 || $size == 64 || $size == 128 || $size == 256) {
@@ -80,4 +88,13 @@ class imageURL
 		return $url;
 	}
 
+	static function registerHandler($callback)
+	{
+		if (!is_callable($callback)) {
+			trigger_error('The supplied callback has to be callable.', E_USER_WARNING);
+			return;
+		}
+		
+		self::$callbacks[] = $callback;
+	}
 }
