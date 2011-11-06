@@ -66,8 +66,10 @@ function update026()
 						$key_flags |= KB_APIKEY_CHAR;
 					}
 
-					$sql = "INSERT INTO kb3_api_keys( key_name, key_id, key_key, key_kbsite, key_flags ) VALUES ( '$key_name', '$key_id', '$key_key', '$key_kbsite', '$key_flags' )";
-					$qry2->execute($sql);
+					if ( $key_id != '' ) {
+						$sql = "INSERT INTO kb3_api_keys( key_name, key_id, key_key, key_kbsite, key_flags ) VALUES ( '$key_name', '$key_id', '$key_key', '$key_kbsite', '$key_flags' )";
+						$qry2->execute($sql);
+					}
 					
 					// remove legacy config items
 					$sql = "DELETE FROM kb3_config where cfg_site = '$key_kbsite' AND ( cfg_key = 'API_UserID_$i' OR cfg_key = 'API_CharID_$i' OR cfg_key = 'API_Key_$i' OR cfg_key = 'API_Name_$i' OR cfg_key = 'API_Type_$i' ) ";
