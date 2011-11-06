@@ -286,7 +286,7 @@ class API_KillLog extends API
 						}
                         break;
                     case "SOLARSYSTEMID": // convert to system name and fetch system security - DONE
-                        $sql = 'select sys.sys_name, sys.sys_sec from kb3_systems sys where sys.sys_eve_id = '.$v;
+                        $sql = 'select sys.sys_name, sys.sys_sec from kb3_systems sys where sys.sys_id = '.$v;
 
                         $qry = DBFactory::getDBQuery();;
                         $qry->execute($sql);
@@ -377,8 +377,8 @@ class API_KillLog extends API
                 {
 					$alliance = new Alliance();
 					if ($this->allianceID_ != 0)
-						$alliance->add($this->alliance_, $this->allianceID_);
-					else $alliance->add("None");
+						$alliance = Alliance::add($this->alliance_, $this->allianceID_);
+					else $alliance = Alliance::add("None");
                 }
 
                 // set victim corp and alliance for FF check
@@ -451,9 +451,11 @@ class API_KillLog extends API
 					if ( config::get('API_Update') == 0 )
 					{
 						$alliance = new Alliance();
-						if ($this->allianceID_ != 0)
-							$alliance->add($this->alliance_, $this->allianceID_);
-						else $alliance->add("None");
+						if ($this->allianceID_ != 0) {
+							$alliance = Alliance::add($this->alliance_, $this->allianceID_);
+						} else {
+							$alliance = Alliance::add("None");
+						}
                     }
 
                     $this->pname_ = "";

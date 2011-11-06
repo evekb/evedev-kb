@@ -39,8 +39,7 @@ class SolarSystem extends Cacheable
 
     function getExternalID()
     {
-        $this->execQuery();
-        return $this->row['sys_eve_id'];
+        return $this->id;
     }
 
     function getName()

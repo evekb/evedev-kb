@@ -61,9 +61,7 @@ class cache
 			return false;
 		}
 		// Don't cache the image files.
-		if ($page == 'thumb' ||
-				$page == 'mapview' ||
-				$page == 'sig') return false;
+		if ($page == 'thumb' || $page == 'sig') return false;
 		self::checkLoad();
 		if (config::get('is_reinforced') && count($_POST) == 0)
 		{

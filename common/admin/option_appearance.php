@@ -58,7 +58,6 @@ options::fadd('Include dropped value in total loss', 'kd_droptototal', 'checkbox
 //options::fadd('Show Officer items tag', 'kd_otag', 'checkbox');
 options::fadd('Show Fitting Panel', 'fp_show', 'checkbox');
 options::fadd('Show Fitting Exports', 'kd_EFT', 'checkbox');
-options::fadd('Show API verification', 'kd_verify', 'checkbox');
 options::fadd('Limit involved parties', 'kd_involvedlimit', 'edit:size:4', '', '', 'Leave blank for no limit.');
 
 options::cat('Appearance', 'Kill Details', 'Fitting Panel');

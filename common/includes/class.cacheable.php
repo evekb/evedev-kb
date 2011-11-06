@@ -105,9 +105,6 @@ abstract class Cacheable {
 	 */
 	protected function putCache()
 	{
-		if (!$this->getID()) {
-			trigger_error("Invalid ID", E_USER_ERROR);
-		}
 		// The unserialize/serialize is used to make a deep copy
 		self::$cache[get_class($this).$this->getID()] = unserialize(serialize($this));
 

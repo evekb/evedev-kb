@@ -55,23 +55,4 @@ function checkAll(checkname, exby)
 	<br />
 	<br />
 	<input type='submit' id='submitFetch' name='fetch' value="Fetch!" />
-	<br />
-	<br />
-	<div class='block-header2'>Options</div>
-	<table>
-		<tr>
-			<td height='50' width='150'>
-				<b>Comment for automatically parsed killmails?</b>
-			</td>
-			<td>
-				<input type='text' size='50' class='password' name='fetch_comment' id='fetch_comment' value="{$comment}" />
-				<br />
-				<i> (leave blank for none)</i>
-				<br />
-			</td>
-		</tr>
-	</table>
-	<br />
-	<br />
-	<input type='submit' id='submitOptions' name='submit' value="Save" />
 </form>

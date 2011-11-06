@@ -154,6 +154,7 @@ class pKillDetail extends pageAssembly
 		}
 		$smarty->assign('panel_colour', config::get('fp_theme'));
 		$smarty->assign('showiskd', config::get('kd_showiskd'));
+		$smarty->assign('formURL', edkURI::build(edkURI::parseURI()));
 
 		$this->involvedSetup();
 		$this->fittingSetup();
@@ -187,6 +188,7 @@ class pKillDetail extends pageAssembly
 					(
 					'Icon' => $item->getIcon(32),
 					'Name' => $i_name,
+					'url' => edkURI::page('invtype', $i_id),
 					'Quantity' => $i_qty,
 					'Value' => $formatted,
 					'single_unit' => $value,
@@ -195,9 +197,7 @@ class pKillDetail extends pageAssembly
 				);
 
 				//Fitting, KE - add destroyed items to an array of all fitted items.
-				if (($i_location != 4) 
-						&& ($i_location != 5)
-						&& ($i_location != 6)) {
+				if ($i_location <= 3 || $i_location == 7 || $i_location == 5) {
 					if (($i_usedgroup != 0)) {
 						if ($i_location == 1) {
 							$i_ammo = $item->get_ammo_size($i_name);
@@ -214,7 +214,8 @@ class pKillDetail extends pageAssembly
 							'Icon' => $item->getIcon(24),
 							'itemID' => $i_id,
 							'usedgroupID' => $i_usedgroup,
-							'size' => $i_ammo
+							'size' => $i_ammo,
+							'destroyed' => true
 						);
 					} else {
 						// Use a max of 8 as a sanity check.
@@ -232,17 +233,10 @@ class pKillDetail extends pageAssembly
 								'Icon' => $item->getIcon(32),
 								'itemID' => $i_id,
 								'groupID' => $item->get_group_id(),
-								'chargeSize' => $i_charge
+								'chargeSize' => $i_charge,
+								'destroyed' => true
 							);
 						}
-					}
-				} else if (($destroyed->getLocationID() == 5)) {
-					for ($count = 0; $count < $i_qty; $count++) {
-						$this->fitting_array[$i_location][] = array(
-							'Name' => $i_name,
-							'Icon' => $item->getIcon(32),
-							'itemID' => $i_id
-						);
 					}
 				}
 				//fitting thing end
@@ -275,6 +269,7 @@ class pKillDetail extends pageAssembly
 				$this->drop_array[$i_location][] = array(
 					'Icon' => $item->getIcon(32),
 					'Name' => $i_name,
+					'url' => edkURI::page('invtype', $i_id),
 					'Quantity' => $i_qty,
 					'Value' => $formatted,
 					'single_unit' => $value,
@@ -300,7 +295,8 @@ class pKillDetail extends pageAssembly
 							'Icon' => $item->getIcon(24),
 							'itemID' => $i_id,
 							'usedgroupID' => $i_usedgroup,
-							'size' => $i_ammo
+							'size' => $i_ammo,
+							'destroyed' => false
 						);
 					} else {
 						// Use a max of 8 as a sanity check.
@@ -317,7 +313,8 @@ class pKillDetail extends pageAssembly
 								'Icon' => $item->getIcon(32),
 								'itemID' => $i_id,
 								'groupID' => $item->get_group_id(),
-								'chargeSize' => $i_charge
+								'chargeSize' => $i_charge,
+								'destroyed' => false
 							);
 						}
 					}
@@ -420,7 +417,8 @@ class pKillDetail extends pageAssembly
 							array('all_id', $alliance->getID(), true));
 			$this->involved[$i]['alliName'] = $alliance->getName();
 			$this->involved[$i]['shipName'] = $ship->getName();
-			$this->involved[$i]['shipID'] = $ship->getExternalID();
+			$this->involved[$i]['shipID'] = $ship->getID();
+			$this->involved[$i]['shipURL'] = edkURI::page('invtype', $ship->getID());
 			$this->involved[$i]['damageDone'] = $inv->getDamageDone();
 			$this->involved[$i]['shipClass'] = $ship->getClass()->getName();
 
@@ -444,6 +442,8 @@ class pKillDetail extends pageAssembly
 
 				$this->involved[$i]['typeID'] = 2; //type number for corporations.
 
+				$this->involved[$i]['pilotURL'] =
+						edkURI::page('invtype', $weapon->getID());
 				$this->involved[$i]['shipImage'] = imageURL::getURL('Ship',
 								$weapon->getID(), 64);
 			} else {
@@ -464,6 +464,7 @@ class pKillDetail extends pageAssembly
 					&& $weapon->getName() != $ship->getName()) {
 				$this->involved[$i]['weaponName'] = $weapon->getName();
 				$this->involved[$i]['weaponID'] = $weapon->getID();
+				$this->involved[$i]['weaponURL'] = edkURI::page('invtype', $weapon->getID());
 			}
 			else $this->involved[$i]['weaponName'] = "Unknown";
 
@@ -611,27 +612,26 @@ class pKillDetail extends pageAssembly
 		global $smarty;
 		$smarty->assign('killID', $this->kill->getID());
 		$plt = new Pilot($this->kill->getVictimID());
-		$item = new dogma($this->kill->getVictimShip()->getExternalID());
+		$item = new dogma($this->kill->getVictimShip()->getID());
 		// itt_cat = 6 for ships. Assume != 6 is a structure.
 		if ($item->get('itt_cat') != 6) {
 			$corp = new Corporation($this->kill->getVictimCorpID());
 			$smarty->assign('victimPortrait', $corp->getPortraitURL(64));
 			$smarty->assign('victimExtID', 0);
+			$smarty->assign('victimURL', edkURI::page('invtype',
+					$item->getID()));
 		} else {
 			$smarty->assign('victimPortrait', $plt->getPortraitURL(64));
 			$smarty->assign('victimExtID', $plt->getExternalID());
+			$smarty->assign('victimURL', edkURI::page('pilot_detail',
+					$this->kill->getVictimID(), 'plt_id'));
 		}
-		$smarty->assign('victimURL', edkURI::build(
-				array('a', 'pilot_detail', true),
-				array('plt_id', $this->kill->getVictimID(), false)));
 		$smarty->assign('victimName', $this->kill->getVictimName());
-		$smarty->assign('victimCorpURL', edkURI::build(
-				array('a', 'corp_detail', true),
-				array('crp_id', $this->kill->getVictimCorpID(), false)));
+		$smarty->assign('victimCorpURL', edkURI::page('corp_detail',
+				$this->kill->getVictimCorpID(), 'crp_id'));
 		$smarty->assign('victimCorpName', $this->kill->getVictimCorpName());
-		$smarty->assign('victimAllianceURL', edkURI::build(
-				array('a', 'alliance_detail', true),
-				array('all_id', $this->kill->getVictimAllianceID(), false)));
+		$smarty->assign('victimAllianceURL', edkURI::page('alliance_detail',
+				$this->kill->getVictimAllianceID(), 'all_id'));
 		$smarty->assign('victimAllianceName',
 				$this->kill->getVictimAllianceName());
 		$smarty->assign('victimDamageTaken', $this->kill->getDamageTaken());
@@ -698,6 +698,12 @@ class pKillDetail extends pageAssembly
 			'items' => array()
 		);
 
+		$slot_array[7] = array(
+			'img' => 'icon76_04.png',
+			'text' => 'Fitted - Subsystems',
+			'items' => array()
+		);
+
 		$slot_array[6] = array(
 			'img' => 'icon02_10.png',
 			'text' => 'Drone bay',
@@ -709,9 +715,10 @@ class pKillDetail extends pageAssembly
 			'text' => 'Cargo Bay',
 			'items' => array()
 		);
-		$slot_array[7] = array(
-			'img' => 'icon76_04.png',
-			'text' => 'Fitted - Subsystems',
+
+		$slot_array[8] = array(
+			'img' => 'icon03_14.png',
+			'text' => 'Implants',
 			'items' => array()
 		);
 		$smarty->assignByRef('slots', $slot_array);
@@ -761,11 +768,12 @@ class pKillDetail extends pageAssembly
 		$smarty->assign('victimShipTechLevel', $ship->getTechLevel());
 		$smarty->assign('victimShipIsFaction', $ship->isFaction());
 		$smarty->assign('victimShipName', $ship->getName());
-		$smarty->assign('victimShipID', $ship->getExternalID());
+		$smarty->assign('victimShipID', $ship->getID());
+		$smarty->assign('victimShipURL', edkURI::page('invtype', $ship->getID()));
 		$smarty->assign('victimShipClassName', $shipclass->getName());
 		if ($this->page->isAdmin()) $smarty->assign('ship', $ship);
 
-		$ssc = new dogma($ship->getExternalID());
+		$ssc = new dogma($ship->getID());
 
 		$smarty->assignByRef('ssc', $ssc);
 
@@ -988,15 +996,13 @@ class pKillDetail extends pageAssembly
 		$smarty->assign('victimShipBigImage',
 				$this->kill->getVictimShip()->getImage(256));
 
-		if (config::get('kd_verify')) {
+		if ($this->kill->getExternalID() != 0) {
+			$this->verification = true;
+			$smarty->assign('verify_id', $this->kill->getExternalID());
+		} else {
 			$this->verification = false;
-			if ($this->kill->getExternalID() != 0) {
-				$this->verification = true;
-				$smarty->assign('verify_id', $this->kill->getExternalID());
-			}
-			$smarty->assign('verify_yesno', $this->verification);
 		}
-		$smarty->assign('showverify', config::get('kd_verify'));
+		$smarty->assign('verify_yesno', $this->verification);
 
 		//get the actual slot count for each vessel - for the fitting panel
 		$dogma = Cacheable::factory('dogma',
@@ -1172,21 +1178,25 @@ class pKillDetail extends pageAssembly
 			$mapbox = new Box("Map");
 			if (IS_IGB) {
 				$mapbox->addOption("img",
-						IMG_HOST."/thumb.php?type=map&amp;id=".$this->system->getID()."&amp;size=145",
-						"javascript:CCPEVE.showInfo(3, ".$this->system->getRegionID().")");
+						imageURL::getURL('map', $this->system->getID(), 145),
+						"javascript:CCPEVE.showInfo(3, "
+								.$this->system->getRegionID().")");
 				$mapbox->addOption("img",
-						IMG_HOST."/thumb.php?type=region&amp;id=".$this->system->getID()."&amp;size=145",
-						"javascript:CCPEVE.showInfo(4, ".$this->system->getConstellationID().")");
+						imageURL::getURL('region', $this->system->getID(), 145),
+						"javascript:CCPEVE.showInfo(4, "
+								.$this->system->getConstellationID().")");
 				$mapbox->addOption("img",
-						IMG_HOST."/thumb.php?type=cons&amp;id=".$this->system->getID()."&amp;size=145",
-						"javascript:CCPEVE.showInfo(5, ".$this->system->getExternalID().")");
+						imageURL::getURL('cons', $this->system->getID(), 145),
+						"javascript:CCPEVE.showInfo(5, "
+								.$this->system->getExternalID().")");
 			} else {
 				$mapbox->addOption("img",
-						IMG_HOST."/thumb.php?type=map&amp;id=".$this->system->getID()."&amp;size=145");
+						imageURL::getURL('map', $this->system->getID(), 145));
 				$mapbox->addOption("img",
-						IMG_HOST."/thumb.php?type=region&amp;id=".$this->system->getID()."&amp;size=145");
+						imageURL::getURL('region', $this->system->getID(),
+								145));
 				$mapbox->addOption("img",
-						IMG_HOST."/thumb.php?type=cons&amp;id=".$this->system->getID()."&amp;size=145");
+						imageURL::getURL('cons', $this->system->getID(), 145));
 			}
 			return $mapbox->generate();
 		}

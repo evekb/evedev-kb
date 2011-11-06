@@ -14,8 +14,6 @@ class Parser
 	private static $pilots = array();
 	private static $corps = array();
 	private static $alliances = array();
-	private static $ships = array();
-	private static $items = array();
 	private $error_ = array();
 	private $killmail_ = '';
 	private $externalID = 0;
@@ -440,7 +438,7 @@ class Parser
 								}
 								//alliance lookup for warp disruptors - normal NPCs aren't to be bundled in
 								$crp = $this->fetchCorp($corporation);
-								if($crp->getExternalID(true) > 0)
+								if($crp && $crp->getExternalID(true) > 0)
 								{
 									if(strtotime($timestamp) > time() - 24*60*60 && $crp->fetchCorp())
 									{
@@ -558,7 +556,7 @@ class Parser
 				}
 
 				$iship = Ship::lookup($isname);
-				if (!$iship->getID())
+				if (!$iship->getName())
 				{
 					$this->error('Ship not found.', $isname);
 				}

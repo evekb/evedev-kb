@@ -16,8 +16,6 @@ class Ship extends Cacheable
 	private $executed = false;
 	/** @var integer */
 	private $id = 0;
-	/** @var integer */
-	private $externalid = null;
 	/** @var string */
 	private $shipname = null;
 	/** @var ShipClass */
@@ -37,7 +35,7 @@ class Ship extends Cacheable
 	 * constructor.
 	 *
 	 * @param integer $id The Ship ID.
-	 * @param integer $externalID The Ship external ID.
+	 * @param null unused.
 	 * @param string $name The Ship name.
 	 * @param ShipClass $class The ShipClass for this Ship.
 	 */
@@ -45,9 +43,6 @@ class Ship extends Cacheable
 	{
 		if ($id) {
 			$this->id = (int)$id;
-		}
-		if (isset($externalID)) {
-			$this->externalid = (int)$externalID;
 		}
 		if (isset($name)) {
 			$this->shipname = $name;
@@ -75,15 +70,13 @@ class Ship extends Cacheable
 
 	/**
 	 * Return the external id for this Ship.
-	 *
+	 * 
+	 * @deprecated
 	 * @return integer external id for this Ship.
 	 */
 	function getExternalID()
 	{
-		if (!$this->externalid) {
-			$this->execQuery();
-		}
-		return $this->externalid;
+		return $this->getID();
 	}
 
 	/**
@@ -119,8 +112,16 @@ class Ship extends Cacheable
 	 */
 	function getTechLevel()
 	{
-		if (is_null($this->shiptechlevel)) {
+		if ($this->shiptechlevel === null) {
 			$this->execQuery();
+			$attrib = dogma::getByID($this->id)->attrib['techLevel'];
+			if($attrib) {
+				$this->shiptechlevel = (int)$attrib['value'];
+			}
+			if(!$this->shiptechlevel) {
+				$this->shiptechlevel = 1;
+			}
+			$this->putCache();
 		}
 		return $this->shiptechlevel;
 	}
@@ -132,8 +133,17 @@ class Ship extends Cacheable
 	 */
 	function isFaction()
 	{
-		if (is_null($this->shipisfaction)) {
+		if ($this->shipisfaction === null) {
 			$this->execQuery();
+			$attrib = dogma::getByID($this->id)->attrib['metaLevel'];
+			if($attrib) {
+				$metalevel = (int)$attrib['value'];
+				$this->shipisfaction = ($metalevel > 0 && $metalevel != 5);
+			}
+			if(!$this->shipisfaction) {
+				$this->shipisfaction = false;
+			}
+			$this->putCache();
 		}
 		return $this->shipisfaction;
 	}
@@ -146,11 +156,11 @@ class Ship extends Cacheable
 	 */
 	function getImage($size)
 	{
-		if (is_null($this->externalid)) {
+		if (is_null($this->id)) {
 			$this->execQuery();
 		}
 
-		return imageURL::getURL('Ship', $this->externalid, $size);
+		return imageURL::getURL('Ship', $this->id, $size);
 	}
 
 	/**
@@ -195,7 +205,6 @@ class Ship extends Cacheable
 				$this->shipclass = $cache->shipclass;
 				$this->shiptechlevel = $cache->shiptechlevel;
 				$this->shipisfaction = $cache->shipisfaction;
-				$this->externalid = $cache->externalid;
 				$this->id = $cache->id;
 				$this->value = $cache->value;
 				$this->executed = true;
@@ -204,26 +213,19 @@ class Ship extends Cacheable
 
 			$qry = DBFactory::getDBQuery();
 
-			$sql = "select * from kb3_ships shp
-						   inner join kb3_ship_classes scl on shp.shp_class = scl.scl_id";
-			$sql .= ' left join kb3_item_price itm on (shp.shp_externalid = itm.typeID) ';
-			if (is_null($this->externalid)) {
-				$sql .= " where shp.shp_id = ".$this->id;
-			} else {
-				$sql .= " where shp.shp_externalid = ".$this->externalid;
-			}
+			$sql = "SELECT typeName, shp_id, shp_class, basePrice, price FROM kb3_ships
+						   INNER JOIN kb3_invtypes ON typeID=shp_id";
+			$sql .= " NATURAL LEFT JOIN kb3_item_price";
+			$sql .= " WHERE shp_id = ".$this->id;
 
 			$qry->execute($sql);
 			$row = $qry->getRow();
-			$this->shipname = $row['shp_name'];
-			$this->shipclass = Cacheable::factory('ShipClass', $row['scl_id']);
-			$this->shiptechlevel = (int) $row['shp_techlevel'];
-			$this->shipisfaction = (boolean) $row['shp_isfaction'];
-			$this->externalid = (int) $row['shp_externalid'];
+			$this->shipname = $row['shp_id'] ? $row['typeName'] : "Unknown";
+			$this->shipclass = Cacheable::factory('ShipClass', $row['shp_class']);
 			$this->id = (int) $row['shp_id'];
 
 			if (!$this->value = (float) $row['price']) {
-				$this->value = (float) $row['shp_baseprice'];
+				$this->value = (float) $row['basePrice'];
 			}
 
 			if ($this->id) {
@@ -240,22 +242,43 @@ class Ship extends Cacheable
 	 */
 	static function lookup($name)
 	{
-		$pqry = new DBPreparedQuery();
-		$pqry->prepare("select shp_id, shp_name, shp_externalid, shp_class "
-				."from kb3_ships where shp_name = ?");
-		$pqry->bind_param('s', $name);
-		$id = 0;
-		$external_id = 0;
-		$name = "";
-		$scl_id = 0;
-		$pqry->bind_result($id, $name, $external_id, $scl_id);
+		static $cache_name = array();
+		static $pqry = null;
+		static $id = 0;
+		static $shp_name = "";
+		static $scl_id = 0;
+		static $typeName = "";
+
+		if (isset($cache_name[$name])) {
+			return $cache_name[$name];
+		}
+		if ($name == "Unknown") {
+			$cache_name[$name] = Ship::getByID(0);
+			return $cache_name[$name];
+			
+		}
+		if ($pqry === null) {
+			$pqry = new DBPreparedQuery();
+			$pqry->prepare("SELECT typeID, typeName, shp_class"
+					." FROM kb3_ships RIGHT JOIN kb3_invtypes ON shp_id=typeID"
+					." WHERE typeName = ?");
+		}
+
+		$shp_name = $name;
+		$pqry->bind_param('s', $shp_name);
+		$pqry->bind_result($id, $typeName, $scl_id);
+
 		if (!$pqry->execute() || !$pqry->recordCount()) {
 			return false;
 		} else {
 			$pqry->fetch();
 		}
-
-		$shipclass = Cacheable::factory('ShipClass', $scl_id);
-		return new Ship($id, $external_id, $name, $shipclass);
+		if ($scl_id == null) {
+			$qry->execute("INSERT INTO kb3_ships values(shp_id, shp_class) ($typeID, 18)");
+			$scl_id = 18; // "Unknown"
+		}
+		$shipclass = ShipClass::getByID($scl_id);
+		$cache_name[$name] = new Ship($id, null, $typeName, $shipclass);
+		return $cache_name[$name];
 	}
 }

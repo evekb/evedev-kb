@@ -45,11 +45,6 @@ if($_POST['submit'])
 		$count = $fetch->fetch_values($fetchfaction);
 		$html .= "Fetched and updated <b>". $count."</b> items!<br /><br />";
 
-		if ($_POST['ship'] == "shipyes")
-		{
-			$ships = $fetch->updateShips();
-			$html .= "Updated ".$ships." ships.";
-		}
 	}
 	catch (Exception $e)
 	{
@@ -69,12 +64,10 @@ else
 		$url = "http://eve.no-ip.de/prices/30d/prices-all.xml";
 	}
 
-	$html = '<center>Mod version: <b><a href="http://eve-id.net/forum/viewtopic.php?f=505&amp;t=9653">'. $version .'</a></b><br /><br />';
 	$html .= 'Last update: '.$time.'<br /><br />';
 
-	$html .= '<form method="post" action="'.KB_HOST.'/?a=admin_value_fetch">';
+	$html .= '<form method="post" action="'.edkURI::page("admin_value_fetch").'">';
 	$html .= '<table width="100%" border="1">';
-	$html .= '<tr><td>Update Ship Values</td><td><input type="radio" name="ship" value="shipyes" checked="checked" />Yes</td><td><input type="radio" name="ship" value="shipno" />No</td></tr>';
 	$html .= '<tr><td>Update Faction Values</td><td><input type="radio" name="faction" value="factionyes" checked="checked" />Yes</td><td><input type="radio" name="faction" value="factionno" />No</td></tr>';
 	$html .= '<tr><td>Filename</td><td colspan="2"><input type="text" name="turl" id="turl" value="'.$url.'" size="110" /></td></tr>';
 	$html .= '<tr><td colspan="3" align="center"><i>Leave above field empty to reset to default.</i></td></tr>';
@@ -83,7 +76,8 @@ else
 		$html .= '<tr><td colspan="3" align="center"><b>YOU HAVE UPDATED LESS THAN 24 HOURS AGO!</b></td></tr>';
 	}
 	$html .= '<tr><td colspan="3"><button value="submit" type="submit" name="submit">Fetch</button></td></tr>';
-	$html .= '</table></form></center>';
+	$html .= '</table></form>';
+	$html .= '<br /><a href="'.edkURI::page('admin_value_editor').'">Manually update values</a>';
 }
 
 $page->setContent($html);

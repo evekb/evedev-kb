@@ -1,36 +1,30 @@
-<div id="kl-detail-invsum">
+<div class="kl-detail-invsum">
 	<div class="block-header">Involved parties: {$involvedPartyCount}</div>
-
-            {if $showext && $involvedPartyCount > 4}
-	<table class="kb-table" width="100%" border="0" cellspacing="1">
-                {assign var="first" value="true"}
-
-                {foreach from=$invAllies key="key" item="l"}
-		<tr class="kb-table-row-even" >
-                        {if 1 || $alliesCount > 0}
-			<th class="kb-table-header">
-				({$l.quantity}) {$key|truncate:30:"...":true}
-			</th>
-                        {/if}
-                        {if $first == "true"}
-			<td rowspan="{$alliesCount * 2}" style="white-space: nowrap">
-                                {foreach from=$invShips key="key2" item="l2"}
-				({$l2}) {$key2|truncate:22:"...":true} <br/>
-                                {/foreach}
-			</td>
-                            {assign var="first" value="false"}
-                        {/if}
-		</tr>
-		<tr class="kb-table-row-even">
-			<td>
-			{foreach from=$l.corps key="key1" item="l1"}
-				({$l1}) {$key1|truncate:35:"...":true} <br/>
-			{/foreach}
-			</td>
-		</tr>
-                {/foreach}
-
-	</table>
-	<br/>
-            {/if}
+	{if $showext && $involvedPartyCount > 4}
+		<table class="kb-table">
+			<tr class="kb-table-row-even" >
+				<td class="invcorps">
+					<div class="no_stretch">
+						{foreach from=$invAllies key="key" item="l"}
+							<div class="kb-table-header">
+								({$l.quantity}) {$key}
+							</div>
+							<div>
+								{foreach from=$l.corps key="key1" item="l1"}
+									({$l1}) {$key1|truncate:35:"...":true} <br/>
+								{/foreach}
+							</div>
+						{/foreach}
+					</div>
+				</td>
+				<td class="invships">
+					<div class="no_stretch">
+					{foreach from=$invShips key="key2" item="l2"}
+						({$l2}) {$key2} <br/>
+					{/foreach}
+					</div>
+				</td>
+			</tr>
+		</table>
+	{/if}
 </div>

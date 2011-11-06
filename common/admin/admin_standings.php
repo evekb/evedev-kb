@@ -12,21 +12,19 @@ $page = new Page();
 $page->setAdmin();
 $page->setTitle('Administration - Standings');
 
-if ($_REQUEST['searchphrase'] != "" && strlen($_REQUEST['searchphrase']) >= 3)
-{
-	switch ($_REQUEST['searchtype'])
-	{
+if ($_REQUEST['searchphrase'] != "" && strlen($_REQUEST['searchphrase']) >= 3) {
+	switch ($_REQUEST['searchtype']) {
 		case 'corp':
 			$sql = "select crp.crp_id, crp.crp_name, ali.all_name
                     from kb3_corps crp, kb3_alliances ali
-                    where lower( crp.crp_name ) like lower( '%".slashfix($_REQUEST['searchphrase'])."%' )
+                    where lower( crp.crp_name ) like lower( '%" . slashfix($_REQUEST['searchphrase']) . "%' )
                     and crp.crp_all_id = ali.all_id
                     order by crp.crp_name";
 			break;
 		case 'alliance':
 			$sql = "select ali.all_id, ali.all_name
                     from kb3_alliances ali
-                    where lower( ali.all_name ) like lower( '%".slashfix($_REQUEST['searchphrase'])."%' )
+                    where lower( ali.all_name ) like lower( '%" . slashfix($_REQUEST['searchphrase']) . "%' )
                     order by ali.all_name";
 			break;
 	}
@@ -34,18 +32,16 @@ if ($_REQUEST['searchphrase'] != "" && strlen($_REQUEST['searchphrase']) >= 3)
 	$qry = DBFactory::getDBQuery();
 	$qry->execute($sql);
 
-	while ($row = $qry->getRow())
-	{
-		switch ($_REQUEST['searchtype'])
-		{
+	while ($row = $qry->getRow()) {
+		switch ($_REQUEST['searchtype']) {
 			case 'corp':
 				$typ = 'Corporation';
-				$link = 'c'.$row['crp_id'];
-				$descr = $row['crp_name'].', member of '.$row['all_name'];
+				$link = 'c' . $row['crp_id'];
+				$descr = $row['crp_name'] . ', member of ' . $row['all_name'];
 				break;
 			case 'alliance':
 				$typ = 'Alliance';
-				$link = 'a'.$row['all_id'];
+				$link = 'a' . $row['all_id'];
 				$descr = $row['all_name'];
 				break;
 		}
@@ -54,86 +50,88 @@ if ($_REQUEST['searchphrase'] != "" && strlen($_REQUEST['searchphrase']) >= 3)
 	$smarty->assignByRef('results', $results);
 	$smarty->assign('search', true);
 }
-if ($val = $_REQUEST['standing'])
-{
+if ($val = $_REQUEST['standing']) {
 	$fields = array();
-	if (CORP_ID)
-	{
-		$fromtyp = 'c';
-		$fields[] = CORP_ID;
-	}
-	else
-	{
-		$fromtyp = 'a';
-		$fields[] = ALLIANCE_ID;
-	}
-	$fields[] = intval(substr($_REQUEST['sta_id'], 1));
-	$fields[] = $fromtyp;
-	$fields[] = substr($_REQUEST['sta_id'], 0, 1);
-	$fields[] = str_replace(',', '.', $val);
-	$fields[] = slashfix($_REQUEST['comment']);
-
 	$qry = DBFactory::getDBQuery();
-	$qry->execute('INSERT INTO kb3_standings VALUES (\''.join("','", $fields).'\')');
-}
-if ($_REQUEST['del'])
-{
-	if (CORP_ID)
-	{
+	foreach (config::get('cfg_corpid') as $id) {
 		$fromtyp = 'c';
-		$fromid = CORP_ID;
+		$fields[] = $id;
+		$fields[] = intval(substr($_REQUEST['sta_id'], 1));
+		$fields[] = $fromtyp;
+		$fields[] = substr($_REQUEST['sta_id'], 0, 1);
+		$fields[] = str_replace(',', '.', $val);
+		$fields[] = slashfix($_REQUEST['comment']);
+
+		$qry->execute('INSERT INTO kb3_standings VALUES (\'' . join("','", $fields) . '\')');
 	}
-	else
-	{
+	foreach (config::get('cfg_allianceid') as $id) {
 		$fromtyp = 'a';
-		$fromid = ALLIANCE_ID;
+		$fields[] = $id;
+		$fields[] = intval(substr($_REQUEST['sta_id'], 1));
+		$fields[] = $fromtyp;
+		$fields[] = substr($_REQUEST['sta_id'], 0, 1);
+		$fields[] = str_replace(',', '.', $val);
+		$fields[] = slashfix($_REQUEST['comment']);
+
+		$qry->execute('INSERT INTO kb3_standings VALUES (\'' . join("','", $fields) . '\')');
 	}
-	$totyp = substr($_REQUEST['del'], 0, 1);
+}
+if ($_REQUEST['del']) {
+	$totyp = preg_replace('/[^ac]/', '', substr($_REQUEST['del'], 0, 1));
 	$toid = intval(substr($_REQUEST['del'], 1));
 
 	$qry = DBFactory::getDBQuery();
-	$qry->execute('DELETE FROM kb3_standings WHERE sta_from='.$fromid.' AND sta_from_type=\''.$fromtyp.'\'
-                                             AND sta_to='.$toid.' AND sta_to_type=\''.$totyp.'\' LIMIT 1');
+	if (config::get('cfg_corpid')) {
+		$qry->execute('DELETE FROM kb3_standings WHERE sta_from IN ('
+				. join(',', config::get('cfg_corpid'))
+				. ') AND sta_from_type=\'c\' AND sta_to=' . $toid
+				. ' AND sta_to_type=\'' . $totyp . '\'');
+	}
+	if (config::get('cfg_allianceid')) {
+		$qry->execute('DELETE FROM kb3_standings WHERE sta_from IN ('
+				. join(',', config::get('cfg_allianceid'))
+				. ') AND sta_from_type=\'' . $fromtyp . '\' AND sta_to=' . $toid
+				. ' AND sta_to_type=\'' . $totyp . '\'');
+	}
 }
 
 $qry = DBFactory::getDBQuery();
-if (CORP_ID)
-{
-	$qry->execute('SELECT * FROM kb3_standings WHERE sta_from='.CORP_ID.' AND sta_from_type=\'c\' ORDER BY sta_value DESC');
+$ent = array();
+if (config::get("cfg_corpid")) {
+	$ent[] = 'sta_from IN (' . join(',', config::get("cfg_corpid"))
+			. ') AND sta_from_type=\'c\'';
 }
-else
-{
-	$qry->execute('SELECT * FROM kb3_standings WHERE sta_from='.ALLIANCE_ID.' AND sta_from_type=\'a\' ORDER BY sta_value DESC');
+if (config::get("cfg_allianceid")) {
+	$ent[] = 'sta_from IN (' . join(',', config::get("cfg_allianceid"))
+			. ') AND sta_from_type=\'a\'';
 }
+$qry->execute('SELECT * FROM kb3_standings WHERE ('
+		. join(') OR (', $ent)
+		. ') ORDER BY sta_value DESC');
 
 $permt = array();
-while ($row = $qry->getRow())
-{
+while ($row = $qry->getRow()) {
 	$typ = $row['sta_to_type'];
 	$val = sprintf("%01.1f", $row['sta_value']);
-	$id = $typ.$row['sta_to'];
-	if ($typ == 'a')
-	{
-		$alliance = new Alliance($row['sta_to']);
+	$id = $typ . $row['sta_to'];
+	if ($typ == 'a') {
+		$alliance = Alliance::getByID($row['sta_to']);
 		$text = $alliance->getName();
-		$link = KB_HOST.'/?a=admin_standings&del='.$typ.$row['sta_to'];
+		$link = edkURI::page('admin_standings', $typ . $row['sta_to'], 'del');
 		$permt[$typ][] = array('text' => $text, 'link' => $link, 'value' => $val, 'comment' => $row['sta_comment'], 'id' => $id);
 	}
-	if ($typ == 'c')
-	{
-		$corp = new Corporation($row['sta_to']);
+	if ($typ == 'c') {
+		$corp = Corporation::getByID($row['sta_to']);
 		$text = $corp->getName();
-		$link = KB_HOST.'/?a=admin_standings&del='.$typ.$row['sta_to'];
+		$link = edkURI::page('admin_standings', $typ . $row['sta_to'], 'del');
 		$permt[$typ][] = array('text' => $text, 'link' => $link, 'value' => $val, 'comment' => $row['sta_comment'], 'id' => $id);
 	}
 }
 $perm = array();
-if ($permt['a'])
-{
+if ($permt['a']) {
 	$perm[] = array('name' => 'Alliances', 'list' => $permt['a']);
 }
-if ($permt['c'])
-{
+if ($permt['c']) {
 	$perm[] = array('name' => 'Corporations', 'list' => $permt['c']);
 }
 

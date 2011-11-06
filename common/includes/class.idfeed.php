@@ -37,6 +37,7 @@ class IDFeed
 	private $cachedTime = '';
 	private $errormsg = '';
 	private $errorcode = 0;
+	private $npcOnly = true;
 	const version = "1.08";
 
 	/**
@@ -85,7 +86,7 @@ class IDFeed
 		$this->xml = $http->get_content();
 		if ($http->get_http_code() != 200) {
 			trigger_error("HTTP error ".$http->get_http_code()
-					." while fetching file.", E_USER_WARNING);
+					." while fetching feed from ".$this->url.$options.".", E_USER_WARNING);
 			return false;
 		}
 		if ($this->xml) {
@@ -415,13 +416,11 @@ class IDFeed
 
 			$kill->setTimeStamp(strval($row['killTime']));
 
-			$qry->execute("SELECT sys_id FROM kb3_systems WHERE sys_eve_id = '"
-					.(int)$row['solarSystemID']."'");
-			if (!$qry->recordCount()) {
+			$qrow = $qry->getRow();
+			$sys = SolarSystem::getByID((int)$row['solarSystemID']);
+			if (!$sys->getName()) {
 				return false;
 			}
-			$qrow = $qry->getRow();
-			$sys = new SolarSystem($qrow['sys_id']);
 			$kill->setSolarSystem($sys);
 
 			if (!$this->processVictim($row, $kill, strval($row['killTime']))) {
@@ -436,13 +435,13 @@ class IDFeed
 				return;
 			}
 
-			$this->npc_only = true;
+			$this->npcOnly = true;
 			foreach ($row->rowset[0]->row as $inv) {
 				$this->processInvolved($inv, $kill, strval($row['killTime']));
 			}
 
 			// Don't post NPC only kills if configured.
-			if ($this->npc_only && Config::get('post_no_npc_only')) {
+			if ($this->npcOnly && Config::get('post_no_npc_only')) {
 				$this->skipped[] = array($externalID, $internalID, 0);
 			} else {
 				if (isset($row->rowset[1]->row[0])) {
@@ -454,6 +453,7 @@ class IDFeed
 				if ($id == 0) {
 					echo htmlentities($row->asXML());
 					var_dump($kill);
+					trigger_error("Kill not added.", E_USER_ERROR);
 					die;
 				}
 
@@ -473,7 +473,7 @@ class IDFeed
 							$logaddress .= "?a=kill_detail&kll_id=".$internalID;
 						}
 					} else if ($this->name) {
-						$logaddress = "ID:".$this->url;
+						$logaddress = "ID:".$this->name;
 						if ($kill->getExternalID()) {
 							$logaddress .= ":kll_ext_id="
 									.$kill->getExternalID();
@@ -486,8 +486,18 @@ class IDFeed
 
 					logger::logKill($id, $logaddress);
 				} else {
-					$this->skipped[] = array((int)$row['killID'],
-						$internalID, $kill->getDupe(true));
+					$dupeid = $kill->getDupe(true);
+					$this->skipped[] = array($externalID,
+						$internalID, $dupeid);
+					if ($externalID && (int)$row['trust'] >= $this->trust) {
+						 $qry = DBFactory::getDBQuery(true);
+						 $qry->execute("UPDATE kb3_kills"
+							." JOIN kb3_mails ON kb3_kills.kll_id ="
+							." kb3_mails.kll_id SET kb3_mails.kll_external_id="
+							.$externalID.", kb3_kills.kll_external_id="
+							.$externalID." WHERE kb3_mails.kll_id = $dupeid AND"
+							." kb3_mails.kll_external_id IS NULL");
+				   }				
 				}
 			}
 		}
@@ -561,7 +571,7 @@ class IDFeed
 		}
 
 		$pilot = Pilot::add($name, $corp, $time, (int)$victim['characterID']);
-		$ship = new Ship(0, (int)$victim['shipTypeID']);
+		$ship = Ship::getByID((int)$victim['shipTypeID']);
 
 		$kill->setVictim($pilot);
 		$kill->setVictimID($pilot->getID());
@@ -581,7 +591,7 @@ class IDFeed
 	private function processInvolved($inv, &$kill, $time)
 	{
 		$npc = false;
-		$ship = new Ship(0, (int)$inv['shipTypeID']);
+		$ship = Ship::getByID((int)$inv['shipTypeID']);
 		$weapon = Cacheable::factory('Item', (int)$inv['weaponTypeID']);
 
 		$alliance = new Alliance();
@@ -632,7 +642,7 @@ class IDFeed
 		if ((int)$inv['finalBlow'] == 1) {
 			$kill->setFBPilotID($pilot->getID());
 		}
-		$this->npc_only = $this->npc_only && $npc;
+		$this->npcOnly = $this->npcOnly && $npc;
 	}
 
 	/**
@@ -643,8 +653,13 @@ class IDFeed
 	private function processItem($item, &$kill)
 	{
 		if ((int)$item['flag'] == 5) {
+			// Cargo
+			$location = 4;
+		} else if ((int)$item['flag'] == 89) {
+			// Implant
 			$location = 4;
 		} else if ((int)$item['flag'] == 87) {
+			// Drone Bay
 			$location = 6;
 		} else {
 			$litem = new Item((int)$item['typeID']);
@@ -819,12 +834,11 @@ class IDFeed
 			$qry = DBFactory::getDBQuery();
 			$sql = "SELECT ind_sec_status, ind_all_id, ind_crp_id,
 				ind_shp_id, ind_wep_id, ind_order, ind_dmgdone, plt_id, plt_name,
-				plt_externalid, crp_name, crp_external_id, shp_name,
-				shp_externalid, typeName AS wep_name FROM kb3_inv_detail
+				plt_externalid, crp_name, crp_external_id,
+				wtype.typeName AS wep_name FROM kb3_inv_detail
 				JOIN kb3_pilots ON (plt_id = ind_plt_id)
 				JOIN kb3_corps ON (crp_id = ind_crp_id)
-				JOIN kb3_ships ON (shp_id = ind_shp_id)
-				JOIN kb3_invtypes ON (ind_wep_id = typeID)
+				JOIN kb3_invtypes wtype ON (ind_wep_id = wtype.typeID)
 				WHERE ind_kll_id = ".$kill->getID()." ORDER BY ind_order ASC";
 			$qry->execute($sql);
 
@@ -846,7 +860,7 @@ class IDFeed
 					$invrow->addAttribute('characterID', $inv['plt_externalid']);
 					$invrow->addAttribute('characterName', $inv['plt_name']);
 					$invrow->addAttribute('weaponTypeID', $inv['ind_wep_id']);
-					$invrow->addAttribute('shipTypeID', $inv['shp_externalid']);
+					$invrow->addAttribute('shipTypeID', $inv['ind_shp_id']);
 				}
 				$invrow->addAttribute('corporationID', $inv['crp_external_id']);
 				$invrow->addAttribute('corporationName', $inv['crp_name']);
@@ -900,6 +914,9 @@ class IDFeed
 					} else if ($iRow['itd_itl_id'] == 6) {
 						// drone
 						$itemRow->addAttribute('flag', 87);
+					} else if ($iRow['itd_itl_id'] == 8) {
+						// implant
+						$itemRow->addAttribute('flag', 89);
 					} else {
 						$itemRow->addAttribute('flag', 0);
 					}

@@ -277,6 +277,8 @@ textarea.killmail
 img.finalblow
 {
 	border: 1px solid #FFA500;
+	width: 64px;
+	height: 64px;
 }
 
 img.avatar
@@ -289,9 +291,12 @@ img.icon
 	border: 1px solid #333333;
 }
 
-td.item-icon
+td.item-icon,
+th.item-icon
 {
 	border: 1px solid #333333;
+	height: 32px;
+	width: 32px;
 }
 
 div.item-icon
@@ -328,7 +333,8 @@ td.battleship
 	background: #DD9300;
 }
 
-.kb-table td
+.kb-table td,
+.kb-table th
 {
 	padding: 2px;
 }
@@ -594,7 +600,6 @@ a:hover {
 	color: #cccccc;
 	font-size: 12px;
 	margin-top: 5px;
-	padding-left: 8px;
 	font-family: Arial, Helvetica, sans-serif;
 	-moz-border-radius-topleft: 10px;
 	-moz-border-radius-topright: 10px;
@@ -828,8 +833,8 @@ a.kb-contract:visited {
 {
 	clear: both;
 }
-.kl-detail-victim, #kl-detail-invsum, .kl-detail-inv, .kl-detail-comments,
-.kl-detail-vicship, #kl-detail-shipdetails, #kl-detail-fitting
+.kl-detail-victim, .kl-detail-invsum, .kl-detail-inv, .kl-detail-comments,
+.kl-detail-vicship, .kl-detail-shipdetails, #kl-detail-fitting
 {
 	margin-bottom: 10px;
 }
@@ -1362,9 +1367,179 @@ table.awardbox table
 	border-collapse: collapse;
 	width:100%;
 }
+
+td.finalblow
+{
+	text-align: center;
+	width: 64px;
+}
+.violentsystems td:first-child
+{
+	font-weight: bold;
+	width:25px
+}
+.violentsystems td:nth-child(2)
+{
+	width:215px
+}
+.violentsystems td:last-child
+{
+	text-align: center;
+	width:60px;
+}
+.invtype > div
+{
+	width: 360px;
+	display: inline-block;
+	vertical-align: top;
+	text-align: left;
+}
+.invtype > div:first-child
+{
+	margin-right: 30px;
+	margin-left: 5px;
+}
+.invtype img.logo
+{
+	float: left;
+	height: 64px;
+	margin-right: 10px;
+	width: 64px;
+}
+.invtype img.icon
+{
+	height: 32px;
+	width: 32px;
+}
+.invtype table.kb-table,
+.kl-detail-shipdetails table.kb-table
+{
+	width:100%;
+}
+.invtype td.description
+{
+	text-align: left !important;
+}
+.invtype table.kb-table td:first-child
+{
+	height:32px;
+	width:32px;
+}
+.invtype table.kb-table td:nth-child(2)
+{
+	font-weight: bold;
+}
+.invtype table.kb-table td:last-child
+{
+	width:100px;
+	text-align: right;
+}
+.kl-detail-shipdetails tr.kb-table-row-odd > td:nth-child(3)
+{
+	text-align:center;
+	width:30px;
+}
+.kl-detail-shipdetails tr.kb-table-row-odd > td:last-child
+{
+	text-align:right;
+}
+.kl-detail-shipdetails tr.summary
+{
+	text-align: right;
+}
+.kl-detail-shipdetails tr.summary.bpo,
+.kl-detail-shipdetails tr.summary.itemdrop,
+.kl-detail-shipdetails tr.dropped
+{
+	background-color: #060;
+}
+.kl-detail-shipdetails tr.summary.bpo td,
+.kl-detail-shipdetails tr.summary.itemdrop td
+{
+	border: 1px solid green
+}
+.kl-detail-shipdetails tr.summary td:first-child
+{
+	font-weight: bold;
+}
+.kl-detail-invsum > table.kb-table
+{
+	width:100%;
+}
+.kl-detail-invsum td
+{
+	vertical-align: top;
+}
+.kl-detail-invsum td.invcorps,
+.kl-detail-invsum td.invcorps > div.no_stretch
+{
+	width:210px;
+}
+.kl-detail-invsum td.invships,
+.kl-detail-invsum td.invships > div.no_stretch
+{
+	width:117px;
+}
+.fitting-panel > div.fit-module
+{
+	height:32px;
+	width:32px;
+	z-index:2;
+}
+.fitting-panel > div.fit-ammo
+{
+	height:24px;
+	width:24px;
+	z-index:3;
+}
+.fitting-panel > div
+{
+	position: absolute;
+}
+.fitting-panel div.bigship
+{
+	height:256px;
+	left:72px;
+	top:71px;
+	width:256px;
+	z-index:0;
+}
+.fitting-panel img.bigship
+{
+	height:256px;
+	width:256px;
+}
+.fitting-panel div.verified
+{
+	height:16px;
+	left:382px;
+	top:0;
+	width:16px;
+	z-index:4;
+}
+.fitting-panel div.verified > img
+{
+	height:16px;
+	width:16px;
+}
+.fitting-panel div.fit-slot-bg
+{
+	left: 0;
+	top: 0;
+	width: 398px;
+	height: 398px;
+	z-index:1;
+}
 /* Disable default styles that are in the way.
 TODO: remove when this is default */
 .killcount, .losscount
 {
 	float:none;
+}
+#context, .context_element
+{
+	margin-top: 0;
+}
+.comment-button {
+	padding-left: 0;
 }

@@ -18,10 +18,9 @@ class TopTable_Ship
 		global $smarty;
 		$this->toplist->generate();
 
-		$arg = array('a', 'invtype', true);
 		while ($row = $this->toplist->getRow())
 		{
-			$ship = new Ship($row['shp_id']);
+			$ship = Ship::getByID($row['shp_id']);
 			$shipclass = $ship->getClass();
 			$shipclass->getName();
 
@@ -29,7 +28,7 @@ class TopTable_Ship
 				'rank' => false,
 				'name' => $ship->getName(),
 				'subname' => $shipclass->getName(),
-				'uri' => edkURI::build($arg, array('id', $ship->getExternalID(), true)),
+				'uri' => edkURI::page('invtype', $ship->getID()),
 				'portrait' => $ship->getImage(32),
 				'count' => $row['cnt']);
 		}

@@ -113,19 +113,18 @@ class MapView
 	function setSystemID($systemid)
 	{
 		$sql = 'select reg.reg_id, reg.reg_name, con.con_id, con.con_name,
-			sys.sys_name, sys.sys_sec, sys.sys_eve_id
+			sys.sys_name, sys.sys_sec, sys.sys_id
 			from kb3_regions reg, kb3_constellations con, kb3_systems sys
 			where reg.reg_id = con.con_reg_id
 			and con.con_id = sys.sys_con_id
-			and (sys.sys_eve_id = '.intval($systemid).' OR sys.sys_id = '
-				.intval($systemid).')';
+			and  sys.sys_id = '.intval($systemid);
 
 		$qry = DBFactory::getDBQuery();
 		$qry->execute($sql);
 		if(!$qry->recordCount()) die;
 		$row = $qry->getRow();
 
-		$this->systemid_ = $row['sys_eve_id'];
+		$this->systemid_ = $row['sys_id'];
 		$this->conid_ = $row['con_id'];
 		$this->regionid_ = $row['reg_id'];
 		$this->conname_ = $row['con_name'];
@@ -163,9 +162,9 @@ class MapView
 
 		if ($this->mode_ == "map")
 		{
-			$sql = 'SELECT sys.sys_x, sys.sys_y, sys.sys_z, sys.sys_sec, sys.sys_eve_id, sjp.sjp_to, reg.reg_id
+			$sql = 'SELECT sys.sys_x, sys.sys_y, sys.sys_z, sys.sys_sec, sys.sys_id, sjp.sjp_to, reg.reg_id
 					FROM (kb3_systems sys, kb3_constellations con, kb3_regions reg)
-					LEFT JOIN kb3_system_jumps sjp on sjp.sjp_from = sys.sys_eve_id
+					LEFT JOIN kb3_system_jumps sjp on sjp.sjp_from = sys.sys_id
 					WHERE con.con_id = sys.sys_con_id
 					AND reg.reg_id = con.con_reg_id';
 
@@ -173,27 +172,27 @@ class MapView
 		}
 		elseif ($this->mode_ == "region")
 		{
-			$sql = 'SELECT sys.sys_x, sys.sys_y, sys.sys_z, sys.sys_sec, sys.sys_name, sys.sys_eve_id, sjp.sjp_to, con_id
+			$sql = 'SELECT sys.sys_x, sys.sys_y, sys.sys_z, sys.sys_sec, sys.sys_name, sys.sys_id, sjp.sjp_to, con_id
 					FROM (kb3_systems sys, kb3_constellations con)
-					LEFT JOIN kb3_system_jumps sjp ON sjp.sjp_from = sys.sys_eve_id
+					LEFT JOIN kb3_system_jumps sjp ON sjp.sjp_from = sys.sys_id
 					WHERE con.con_id = sys.sys_con_id
 					AND con.con_reg_id = '.$this->regionid_;
 			$caption = $this->conname_;
 		}
 		elseif ($this->mode_ == "cons")
 		{
-			$sql = 'SELECT sys.sys_x, sys.sys_y, sys.sys_z, sys.sys_sec, sys.sys_name, sys.sys_eve_id, sjp.sjp_to, con.con_name
+			$sql = 'SELECT sys.sys_x, sys.sys_y, sys.sys_z, sys.sys_sec, sys.sys_name, sys.sys_id, sjp.sjp_to, con.con_name
 					FROM (kb3_systems sys, kb3_constellations con)
-					LEFT JOIN kb3_system_jumps sjp ON sjp.sjp_from = sys.sys_eve_id
+					LEFT JOIN kb3_system_jumps sjp ON sjp.sjp_from = sys.sys_id
 					WHERE con.con_id = sys.sys_con_id
 					AND con.con_id = '.$this->conid_;
 			$caption = $this->sysname_." (".roundsec($this->syssec_).")";
 		}
 		
 		if ($this->systemid_ >= 31000007)
-            $sql .= " AND sys.sys_eve_id >= 31000007";
+            $sql .= " AND sys.sys_id >= 31000007";
         else
-            $sql .= " AND sys.sys_eve_id < 31000007";
+            $sql .= " AND sys.sys_id < 31000007";
 
 		$qry = DBFactory::getDBQuery();
 		$qry->execute($sql) or die($qry->getErrorMsg());
@@ -219,7 +218,7 @@ class MapView
 		$sc = 0;
 		while ($row = $qry->getRow())
 		{
-			$i = $row['sys_eve_id'];
+			$i = $row['sys_id'];
 			if ($i < $mini || $mini == 0)
 				$mini = $i;
 			if ($i > $maxi || $maxi == 0)

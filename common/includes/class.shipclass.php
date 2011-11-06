@@ -6,7 +6,6 @@
  * @package EDK
  */
 
-
 /**
  * Contains the attributes of a Ship Class.
  * @package EDK
@@ -21,8 +20,7 @@ class ShipClass extends Cacheable
 
 	function ShipClass($id = 0)
 	{
-		if (!$id) $id = 0;
-		$this->id = intval($id);
+		$this->id = (int) $id;
 	}
 
 	/**
@@ -34,6 +32,7 @@ class ShipClass extends Cacheable
 	{
 		return $this->id;
 	}
+
 	/**
 	 * Return the name of this ship class object.
 	 *
@@ -41,7 +40,9 @@ class ShipClass extends Cacheable
 	 */
 	public function getName()
 	{
-		if (!$this->name) $this->execQuery();
+		if (!$this->name) {
+			$this->execQuery();
+		}
 		return $this->name;
 	}
 
@@ -52,9 +53,12 @@ class ShipClass extends Cacheable
 	 */
 	public function getValue()
 	{
-		if (is_null($this->value)) $this->execQuery();
+		if (is_null($this->value)) {
+			$this->execQuery();
+		}
 		return round($this->value / 1000000, 2);
 	}
+
 	/**
 	 * Get value for this ship class object in ISK.
 	 *
@@ -62,9 +66,12 @@ class ShipClass extends Cacheable
 	 */
 	public function getActualValue()
 	{
-		if (is_null($this->value)) $this->execQuery();
+		if (is_null($this->value)) {
+			$this->execQuery();
+		}
 		return $this->value;
 	}
+
 	/**
 	 * Get the point value of this ship class.
 	 *
@@ -72,9 +79,12 @@ class ShipClass extends Cacheable
 	 */
 	public function getPoints()
 	{
-		if (is_null($this->points)) $this->execQuery();
+		if (is_null($this->points)) {
+			$this->execQuery();
+		}
 		return $this->points;
 	}
+
 	/**
 	 * Set the name of this ship class object.
 	 *
@@ -84,6 +94,7 @@ class ShipClass extends Cacheable
 	{
 		$this->name = $name;
 	}
+
 	/**
 	 * Set the value of this ship class object.
 	 *
@@ -93,6 +104,7 @@ class ShipClass extends Cacheable
 	{
 		$this->value = $value;
 	}
+
 	/**
 	 * Return the URL to a colour coded value indicator image.
 	 *
@@ -102,28 +114,28 @@ class ShipClass extends Cacheable
 	{
 		$value = $this->getValue();
 
-		if ($value >= 0 && $value <= 1)
+		if ($value >= 0 && $value <= 1) {
 			$color = "gray";
-		elseif ($value > 1 && $value <= 15)
+		} else if ($value > 1 && $value <= 15) {
 			$color = "blue";
-		elseif ($value > 15 && $value <= 25)
+		} else if ($value > 15 && $value <= 25) {
 			$color = "green";
-		elseif ($value > 25 && $value <= 40)
+		} else if ($value > 25 && $value <= 40) {
 			$color = "yellow";
-		elseif ($value > 40 && $value <= 80)
+		} else if ($value > 40 && $value <= 80) {
 			$color = "red";
-		elseif ($value > 80 && $value <= 250)
+		} else if ($value > 80 && $value <= 250) {
 			$color = "orange";
-		elseif ($value > 250)
+		} else if ($value > 250) {
 			$color = "purple";
+		}
 
 		return config::get('cfg_img')."/ships/ship-".$color.".gif";
 	}
 
 	private function execQuery()
 	{
-		if (!$this->executed)
-		{
+		if (!$this->executed) {
 			if ($this->isCached()) {
 				$cache = $this->getCache();
 				$this->name = $cache->name;
@@ -132,8 +144,9 @@ class ShipClass extends Cacheable
 				$this->executed = true;
 				return;
 			}
-			$sql = "SELECT * FROM kb3_ship_classes ".
-  	         "WHERE scl_id = ".$this->id;
+			$sql = "SELECT scl_class, scl_value, scl_points"
+					." FROM kb3_ship_classes"
+					." WHERE scl_id = ".$this->id;
 
 			$qry = DBFactory::getDBQuery();
 
@@ -141,8 +154,8 @@ class ShipClass extends Cacheable
 			$row = $qry->getRow();
 
 			$this->name = $row['scl_class'];
-			$this->value = $row['scl_value'];
-			$this->points = $row['scl_points'];
+			$this->value = (float)$row['scl_value'];
+			$this->points = (int)$row['scl_points'];
 			$this->executed = true;
 			$this->putCache();
 		}

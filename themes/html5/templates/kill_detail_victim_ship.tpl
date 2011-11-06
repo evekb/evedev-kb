@@ -7,7 +7,7 @@
 		<tr class="{cycle name="ccl"}" >
 			<td class="logo" rowspan="3"><img src="{$victimShipImage}" alt="{$victimShipName}"/> </td>
 			<td>Ship:</td>
-			<td><a href="{$kb_host}/?a=invtype&amp;id={$victimShipID}">{$victimShipName}</a> ({$victimShipClassName})</td>
+			<td><a href="{$victimShipURL}">{$victimShipName}</a> ({$victimShipClassName})</td>
 		</tr>
 		<tr class="{cycle name="ccl"}">
 			<td>Location:</td>

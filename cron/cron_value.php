@@ -65,8 +65,6 @@ $fetch = new valueFetcher($url);
 
 // Fetch
 $count = $fetch->fetch_values();
-// Ship values (Default)
-$fetch->updateShips();
 
 // Echo result
 echo $count." Items updated\n";

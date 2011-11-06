@@ -459,7 +459,7 @@ class Kill extends Cacheable
 	 */
 	function getVictimShipExternalID()
 	{
-		return $this->getVictimShip()->getExternalID();
+		return $this->getVictimShip()->getID();
 	}
 
 	/**
@@ -1359,7 +1359,7 @@ class Kill extends Cacheable
 	protected function realadd($id = null)
 	{
 		if ( $this->timestamp == "" || !$this->getVictim()->getID()
-				|| !$this->victimship->getID() || !$this->solarsystem->getID()
+				|| !$this->victimship->getName() || !$this->solarsystem->getID()
 				|| !$this->victimallianceid || !$this->victimcorpid
 				|| !$this->getFBPilotID() || !$this->getHash(false, false)) {
 			return 0;
@@ -1373,7 +1373,7 @@ class Kill extends Cacheable
 //		foreach ($this->destroyeditems_ as $dest) {
 //			$locations[$dest->getLocationID()] += $dest->getQuantity();
 //		}
-//		$dogma = Cacheable::factory('dogma', $this->victimship->getExternalID());
+//		$dogma = Cacheable::factory('dogma', $this->victimship->getID());
 //		$lowcount = (int)$dogma->attrib['lowSlots']['value'];
 //		$medcount = (int)$dogma->attrib['medSlots']['value'];
 //		$hicount = (int)$dogma->attrib['hiSlots']['value'];
@@ -1456,7 +1456,7 @@ class Kill extends Cacheable
 			$weapon = $inv->getWeapon();
 			if (!$inv->getPilotID() || $inv->getSecStatus() == ""
 					|| !$inv->getAllianceID() || !$inv->getCorpID()
-					|| !$ship->getID() || !$weapon->getID()) {
+					|| !$ship->getName() || !$weapon->getID()) {
 				$this->remove();
 				return 0;
 			}

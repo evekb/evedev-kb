@@ -9,7 +9,7 @@
 define('SVN_REV', "Dev");
 
 if (!defined('LATEST_DB_UPDATE')) {
-	define('LATEST_DB_UPDATE', "024");
+	define('LATEST_DB_UPDATE', "026");
 }
 
 define('KB_CACHEDIR', 'cache');
@@ -24,7 +24,7 @@ define("APIVERSION", "V3.3");
 
 // current version: major.minor.sub
 // even numbers for minor = development version
-define('KB_VERSION', '3.3beta');
+define('KB_VERSION', '4.0.0 beta');
 define('KB_RELEASE', '(Incursion)');
 
 define('KB_APIKEY_LEGACY', 1);
@@ -111,12 +111,11 @@ function get_tpl($name)
 			} else if (is_file('./themes/default/templates/igb_'.$name.'.tpl')) {
 				return '../../default/templates/igb_'.$name.'.tpl';
 			}
-		} else {
-			if (is_file('./themes/'.$themename.'/templates/'.$name.'.tpl')) {
-				return $name.'.tpl';
-			} else if (is_file('./themes/default/templates/'.$name.'.tpl')) {
-				return '../../default/templates/'.$name.'.tpl';
-			}
+		}
+		if (is_file('./themes/'.$themename.'/templates/'.$name.'.tpl')) {
+			 return $name.'.tpl';
+		} else if (is_file('./themes/default/templates/'.$name.'.tpl')) {
+			return '../../default/templates/'.$name.'.tpl';
 		}
 	}
 	return $name.'.tpl';
