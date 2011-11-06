@@ -158,47 +158,41 @@ if ($_POST['import'] || isset($_GET['Process']))
         $processindex = 1;
     }
 
-    if ($keycount > 0 )
-	{
-		if (config::get("API_MultipleMode") == 0 )
-		{ // save output to file and load when complete
-            $i = $processindex;
-            $myEveAPI->Output_ .= "Importing Mails for " . config::get("API_Name_" . $i) . "<br />";
-            $keystring = 'userID=' . config::get('API_UserID_' . $i) . '&apiKey=' . config::get('API_Key_' . $i) . '&characterID=' . config::get('API_CharID_' . $i);
-            $typestring = config::get("API_Type_" . $i);
-            $outputdata .= $myEveAPI->Import($keystring, $typestring, $i);
+	if (config::get("API_MultipleMode") == 0 )
+	{ // save output to file and load when complete
+		$i = $processindex;
+		$myEveAPI->Output_ .= "Importing Mails for " . config::get("API_Name_" . $i) . "<br />";
+		$keystring = 'userID=' . config::get('API_UserID_' . $i) . '&apiKey=' . config::get('API_Key_' . $i) . '&characterID=' . config::get('API_CharID_' . $i);
+		$typestring = config::get("API_Type_" . $i);
+		$outputdata .= $myEveAPI->Import($keystring, $typestring, $i);
+		$apicachetime[$i] = $myEveAPI->CachedUntil_;
+
+		$file = @fopen(KB_CACHEDIR.'/data/report.txt', 'a');
+		fwrite($file, $outputdata);
+		fclose($file);
+
+		//ApiCache::set('API_CachedUntil_' . $keyindex, $myEveAPI->cachetext_);
+		$processindex++;
+		if ($processindex <= $keycount)
+		{
+			//$html .= "<a href=\"http:?a=admin_apimod&Process=" . $processindex . "\">Click to process next Key</a>";
+			$html .= "<script type=\"text/javascript\">window.location = \"?a=admin_apimod&Process=" .$processindex . "\"</script>"; //*/
+		} else { // load report.txt to $html
+			$fp = @fopen(KB_CACHEDIR.'/data/report.txt', 'r');
+			$html .= fread($fp, filesize(KB_CACHEDIR.'/data/report.txt'));
+			fclose($fp);
+			@unlink(KB_CACHEDIR.'/data/report.txt'); // delete file, it was temporary
+
+		}
+	} else {
+		$qry = new DBQuery();
+		$qry->execute("SELECT * FROM kb3_api_keys WHERE key_kbsite = '" . KB_SITE . "' ORDER BY key_name");
+		while ($row = $qry->getRow()) {
+			$myEveAPI->Output_ .= "Importing Mails for " . $row['key_name'] . "<br />";
+			$html .= $myEveAPI->Import($row['key_name'], $row['key_id'], $row['key_key'], $row['key_flags']);
 			$apicachetime[$i] = $myEveAPI->CachedUntil_;
-
-			$file = @fopen(KB_CACHEDIR.'/data/report.txt', 'a');
-        	fwrite($file, $outputdata);
-       		fclose($file);
-
-			//ApiCache::set('API_CachedUntil_' . $keyindex, $myEveAPI->cachetext_);
-			$processindex++;
-			if ($processindex <= $keycount)
-			{
-			    //$html .= "<a href=\"http:?a=admin_apimod&Process=" . $processindex . "\">Click to process next Key</a>";
-				$html .= "<script type=\"text/javascript\">window.location = \"?a=admin_apimod&Process=" .$processindex . "\"</script>"; //*/
-			} else { // load report.txt to $html
-				$fp = @fopen(KB_CACHEDIR.'/data/report.txt', 'r');
-        		$html .= fread($fp, filesize(KB_CACHEDIR.'/data/report.txt'));
-        		fclose($fp);
-				@unlink(KB_CACHEDIR.'/data/report.txt'); // delete file, it was temporary
-
-			}
-		} else {
-			for ( $i = 1; $i <= $keycount; $i++ )
-			{
-			    $myEveAPI->Output_ .= "Importing Mails for " . config::get("API_Name_" . $i) . "<br />";
-                $keystring = 'userID=' . config::get('API_UserID_' . $i) . '&apiKey=' . config::get('API_Key_' . $i) . '&characterID=' . config::get('API_CharID_' . $i);
-                $typestring = config::get("API_Type_" . $i);
-				//$myEveAPI->cachetext_ = "";
-				//$myEveAPI->cacheflag_ = false;
-                $html .= $myEveAPI->Import($keystring, $typestring, $i);
-				$apicachetime[$i] = $myEveAPI->CachedUntil_;
-		    }
-        }
-    }
+		}
+	}
 }
 
 // calculate cache size
@@ -348,7 +342,6 @@ while ($row = $qry->getRow()) {
 	$flags = $row['key_flags'];
 
 	if ($flags == 0 ) {
-		echo $row['key_name'];
 		$act = new API_Account();
 		if ($act->CheckAccess($row['key_id'], $row['key_key'],256)) {
 			// valid new style key with valid access
