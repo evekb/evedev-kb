@@ -447,9 +447,6 @@ class pKillRelated extends pageAssembly
 	private function is_destroyed($pilot)
 	{
 		if ($result = array_search((string) $pilot, $this->destroyed)) {
-			global $smarty;
-
-			$smarty->assign('kll_id', $result);
 			return true;
 		}
 		return false;
@@ -462,9 +459,6 @@ class pKillRelated extends pageAssembly
 	private function podded($pilot)
 	{
 		if ($result = array_search((string) $pilot, $this->pods)) {
-			global $smarty;
-
-			$smarty->assign('pod_kll_id', $result);
 			return true;
 		}
 		return false;
@@ -532,11 +526,21 @@ class pKillRelated extends pageAssembly
 					}
 				}
 			}
-			$shipimage = imageURL::getURL('Ship', $row['ind_shp_id'], 32);
-			$this->pilots[$side][$row['ind_plt_id']][] = array('name' => $row['plt_name'], 'sid' => $row['ind_shp_id'],
-				'spic' => $shipimage, 'aid' => $row['ind_all_id'], 'ts' => strtotime($kill->getTimeStamp()),
-				'corp' => $row['crp_name'], 'alliance' => $row['all_name'], 'scl' => $row['scl_points'],
-				'ship' => ($row['ind_shp_id'] ? $row['shp_name'] : Language::get("Unknown")), 'weapon' => $row['itm_name'], 'cid' => $row['ind_crp_id'],
+			$this->pilots[$side][$row['ind_plt_id']][] = array(
+				'name' => $row['plt_name'],
+				'plt_url' => edkURI::page('pilot_detail', $row['ind_plt_id']),
+				'corp' => $row['crp_name'],
+				'cid' => $row['ind_crp_id'],
+				'crp_url' => edkURI::page('corp_detail', $row['ind_crp_id']),
+				'alliance' => $row['all_name'],
+				'aid' => $row['ind_all_id'],
+				'all_url' => edkURI::page('alliance_detail', $row['ind_all_id']),
+				'ts' => strtotime($kill->getTimeStamp()),
+				'weapon' => $row['itm_name'],
+				'sid' => $row['ind_shp_id'],
+				'spic' => imageURL::getURL('Ship', $row['ind_shp_id'], 32),
+				'ship' => ($row['ind_shp_id'] ? $row['shp_name'] : Language::get("Unknown")),
+				'scl' => $row['scl_points'],
 				'shpclass' => $row['scl_id']);
 		}
 	}
@@ -574,16 +578,30 @@ class pKillRelated extends pageAssembly
 
 					if (!isset($this->pilots[$side][$kill->getVictimId()][$id]['kll_id'])) {
 						$this->pilots[$side][$kill->getVictimId()][$id]['kll_id'] = $kill->getID();
+						$this->pilots[$side][$kill->getVictimId()][$id]['url'] = edkURI::page('kill_detail', $kill->getID());
 					}
 					return;
 				}
 			}
 		}
 
-		$this->pilots[$side][$kill->getVictimId()][] = array('name' => $kill->getVictimName(), 'kll_id' => $kill->getID(),
-			'spic' => $ship->getImage(32), 'scl' => $shipc->getPoints(), 'destroyed' => true,
-			'corp' => $kill->getVictimCorpName(), 'alliance' => $kill->getVictimAllianceName(), 'aid' => $kill->getVictimAllianceID(),
-			'ship' => $kill->getVictimShipname(), 'sid' => $ship->getID(), 'cid' => $kill->getVictimCorpID(), 'ts' => $ts);
+		$this->pilots[$side][$kill->getVictimId()][] = array(
+			'kll_id' => $kill->getID(),
+			'kll_url' => edkURI::page('kill_detail', $kill->getID()),
+			'name' => $kill->getVictimName(),
+			'plt_url' => edkURI::page('pilot_detail', $kill->getVictimId()),
+			'destroyed' => true,
+			'corp' => $kill->getVictimCorpName(),
+			'cid' => $kill->getVictimCorpID(),
+			'crp_url' => edkURI::page('corp_detail', $kill->getVictimCorpID()),
+			'alliance' => $kill->getVictimAllianceName(),
+			'aid' => $kill->getVictimCorpID(),
+			'all_url' => edkURI::page('alliance_detail', $kill->getVictimCorpID()),
+			'ship' => $kill->getVictimShipname(),
+			'sid' => $ship->getID(),
+			'spic' => $ship->getImage(32),
+			'scl' => $shipc->getPoints(),
+			'ts' => $ts);
 	}
 
 	public function menuSetup()

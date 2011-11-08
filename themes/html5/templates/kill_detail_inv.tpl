@@ -8,13 +8,13 @@
 		<tr class="{cycle name="ccl"}">
 			<td rowspan="5" class="logo">
 				<a href="{$i.pilotURL}">
-					<img {if $i.finalBlow == "true"} class="finalblow" {/if} src="{$i.portrait}" alt="inv portrait" />
+					<img {if $i.finalBlow} class="finalblow" {/if} src="{$i.portrait}" alt="inv portrait" />
 				</a>
 			</td>
 			<td rowspan="5" class="logo">
-				<a href="{$i.shipURL}">
-					<img {if $i.finalBlow == "true"} class="finalblow"{/if} src='{$i.shipImage}' alt='{$i.shipName}' title='{$i.shipName}' />
-				</a>
+				{if $i.shipURL}<a href="{$i.shipURL}">{/if}
+					<img {if $i.finalBlow} class="finalblow"{/if} src='{$i.shipImage}' alt='{$i.shipName}' title='{$i.shipName}' />
+				{if $i.shipURL}</a>{/if}
 			</td>
 			<td><a href="{$i.pilotURL}">{$i.pilotName}</a></td>
 		</tr>
@@ -22,10 +22,11 @@
 			<td><a href="{$i.corpURL}">{$i.corpName}</a></td>
 		</tr>
 		<tr class="{cycle name="ccl"}">
-			<td><a href="{$i.alliURL}">{$i.alliName}</a></td>
+			<td>{if $i.alliURL}<a href="{$i.alliURL}">{$i.alliName}</a>{else}{$i.alliName}{/if}</td>
 		</tr>
 		<tr class="{cycle name="ccl"}">
-			<td><a href="{$i.shipURL}">{$i.shipName}</a> ({$i.shipClass})</td>
+			{if $i.shipURL}<td><a href="{$i.shipURL}">{$i.shipName}</a> ({$i.shipClass})</td>
+			{else}<td>{$i.shipName}</td>{/if}
 		</tr>
 		<tr class="{cycle name="ccl"}">
 			<td>{if $i.weaponID}<a href="{$i.weaponURL}">{$i.weaponName}</a>{else}{$i.weaponName}{/if}</td>

@@ -249,6 +249,16 @@ textarea.killmail
 	background: #222222;
 }
 
+.kb-table-rows > tbody > tr:nth-child(even)
+{
+	background: #292929;
+}
+
+.kb-table-rows > tbody > tr:nth-child(odd)
+{
+	background: #222222;
+}
+
 .kb-table-row-slot
 {
 	background: #292929;
@@ -266,7 +276,8 @@ textarea.killmail
 /* over Kill in home */
 .kb-table-row-hover,
 .contractlist tr:hover,
-.kb-kl-table .kb-table-row-even:hover,
+.kb-table-rows > tbody > tr:hover,
+.kb-kl-table tbody .kb-table-row-even:hover,
 .kb-kl-table .kb-table-row-odd:hover
 {
 	color: #222222;
@@ -529,32 +540,37 @@ input.kb-input
 	font-size: 10px;
 }
 
-a:link {
+a:link
+{
 	color: #FFA500;
 	font-size: 10px;
 	font-weight: bold;
 	text-decoration: none;
 }
 
-a.kb-table-row-hover:link {
+a.kb-table-row-hover:link
+{
 	color: #333333;
 }
 
-a:visited {
+a:visited
+{
 	color: #FFA500;
 	font-size: 10px;
 	font-weight: bold;
 	text-decoration: none;
 }
 
-a:active {
+a:active
+{
 	color: #FFA500;
 	font-size: 10px;
 	font-weight: bold;
 	text-decoration: none;
 }
 
-a:hover {
+a:hover
+{
 	color: #FFA500;
 	font-size: 10px;
 	font-weight: bold;
@@ -574,7 +590,8 @@ a:hover {
 	padding-bottom: 5px;
 	text-decoration: none;
 }
-.comment {
+.comment
+{
 	background-color: #292929;
 	border: 1px solid;
 	border-color: #292929;
@@ -590,10 +607,12 @@ a:hover {
 	-moz-border-radius-bottomright: 10px;
 }
 
-.comment:focus {
+.comment:focus
+{
 	border-color: #FFFFFF;
 }
-.comment-button {
+.comment-button
+{
 	background-color: #292929;
 	border: 1px solid;
 	border-color: #292929;
@@ -606,10 +625,12 @@ a:hover {
 	-moz-border-radius-bottomleft: 10px;
 	-moz-border-radius-bottomright: 10px;
 }
-.comment-button:focus {
+.comment-button:focus
+{
 	border-color: #FFFFFF;
 }
-#comments-wrap {
+#comments-wrap
+{
 	border-top:#333333 thin solid;
 	width:250px;
 	margin-top:15px;
@@ -618,14 +639,16 @@ a:hover {
 	color: #cccccc;
 	font-size: 12px;
 }
-.comment-text {
+.comment-text
+{
 	padding:5px;
 	border-bottom-width:thin;
 	border-bottom-style:solid;
 	border-bottom-color: #333333;
 	overflow: hidden;
 }
-#countdown {
+#countdown
+{
 	border:0px;
 	background-color:#000000;
 	color: #cccccc;
@@ -660,48 +683,31 @@ a:hover {
 {
 	text-align: right;
 }
-.kb-table-row-even-kill
+.kb-table-rows > tbody > tr.kb-table-row-kill:nth-child(even)
 {
 	background: #005000;
 }
-
-.kb-table-row-odd-kill
+.kb-table-rows > tbody > tr.kb-table-row-kill:nth-child(odd)
 {
 	background: #004000;
 }
-
-.kb-table-row-even-loss
+.kb-table-rows > tbody > tr.kb-table-row-loss:nth-child(even)
 {
 	background: #a00000;
 }
-
-.kb-table-row-odd-loss
+.kb-table-rows > tbody > tr.kb-table-row-loss:nth-child(odd)
 {
 	background: #900000;
 }
 
-.kb-table-row-even-kill:hover
+.kb-table-rows > tbody > tr.kb-table-row-kill:hover
 {
 	color: #FFFFFF;
 	background: #0083CC;
 	cursor: pointer;
 }
 
-.kb-table-row-odd-kill:hover
-{
-	color: #FFFFFF;
-	background: #0083CC;
-	cursor: pointer;
-}
-
-.kb-table-row-odd-loss:hover
-{
-	color: #222222;
-	background: #DD9300;
-	cursor: pointer;
-}
-
-.kb-table-row-even-loss:hover
+.kb-table-rows > tbody > tr.kb-table-row-loss:hover
 {
 	color: #222222;
 	background: #DD9300;
@@ -727,43 +733,52 @@ td.kb-shipfilter
 	font-size: 12px;
 }
 
-a.kb-shipclass:visited {
+a.kb-shipclass:visited
+{
 	color: #dddddd;
 }
 
-a.kb-shipclass:link {
+a.kb-shipclass:link
+{
 	color: #dddddd;
 }
 
-a.kb-shipclass-hl:link {
+a.kb-shipclass-hl:link
+{
 	color: #FFA500;
 	text-decoration: underline;
 }
 
-a.kb-shipclass-hl:active {
+a.kb-shipclass-hl:active
+{
 	color: #FFA500;
 	text-decoration: underline;
 }
 
-a.kb-shipclass-hl:visited {
+a.kb-shipclass-hl:visited
+{
 	color: #FFA500;
 	text-decoration: underline;
 }
 
-a.kb-shipclass:active {
+a.kb-shipclass:active
+{
 	color: #dddddd;
 }
 
-a.kb-shipclass:hover {
+a.kb-shipclass:hover
+{
 	color: #dddddd;
 	text-decoration: underline;
 }
 
-a.kb-contract:link {
+a.kb-contract:link
+{
 	font-size: 12px;
 }
 
-a.kb-contract:visited {
+a.kb-contract:visited
+{
 	font-size: 12px;
 }
 #content
@@ -1235,6 +1250,46 @@ table.awardbox table
 	table-layout: fixed;
 }
 
+.alliance-detail-corps td
+{
+	text-align: center;
+}
+
+.alliance-detail-corpname
+{
+	width:200px;
+}
+
+.alliance-detail-ticker
+{
+	width:60px;
+}
+
+.alliance-detail-members
+{
+	width:60px;
+}
+
+.alliance-detail-joined
+{
+	width:90px;
+}
+
+.alliance-detail-tax
+{
+	width:60px;
+}
+
+.alliance-detail-site
+{
+	width:257px;
+}
+
+.alliance-detail-corps tr.kb-table-header td
+{
+	font-weight: bold;
+}
+
 .toplist-table
 {
 	border-spacing: 1px;
@@ -1530,6 +1585,49 @@ td.finalblow
 	height: 398px;
 	z-index:1;
 }
+.kill-related-friendly,
+.kill-related-hostile
+{
+	display: inline-block;
+	width: 378px
+}
+.kill-related-friendly > table.kb-table,
+.kill-related-hostile > table.kb-table
+{
+	width: 376px
+}
+.kill-related-friendly .destroyed,
+.kill-related-hostile .destroyed
+{
+	background-color: #E44 !important;
+}
+.kill-related-friendly tr.kb-table-header > td,
+.kill-related-hostile tr.kb-table-header > td
+{
+	 text-align: center;
+}
+.kill-related-friendly tr.kb-table-header > td:last-child,
+.kill-related-hostile tr.kb-table-header > td:last-child
+{
+	 width: 200px;
+}
+.kill-related-stats > table.kb-table
+{
+	width:100%;
+}
+.kill-related-stats > table.kb-table th
+{
+	width:200px;
+	text-align: left;
+}
+.kill-related-stats > table.kb-table td
+{
+	text-align: left;
+}
+.kill-related-subsection
+{
+	font-weight: normal !important;
+}
 /* Disable default styles that are in the way.
 TODO: remove when this is default */
 .killcount, .losscount
@@ -1540,6 +1638,7 @@ TODO: remove when this is default */
 {
 	margin-top: 0;
 }
-.comment-button {
+.comment-button
+{
 	padding-left: 0;
 }
