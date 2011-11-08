@@ -92,15 +92,13 @@ class KillSummaryTablePublic extends KillSummaryTable
             $qry->execute($sql) or die($qry->getErrorMsg());
             while ($row = $qry->getRow())
             {
-                if (!$row['scl_id'])
+                if (!$row['scl_id']) {
                     continue;
+				}
 
-                $shipclass = new ShipClass($row['scl_id']);
-                $shipclass->setName($row['scl_class']);
-
-                $entry[$shipclass->getName()]['id'] = $row['scl_id'];
-                $entry[$shipclass->getName()]['kills'] = 0;
-                $entry[$shipclass->getName()]['kills_isk'] = 0;
+                $entry[$row['scl_class']]['id'] = $row['scl_id'];
+                $entry[$row['scl_class']]['kills'] = 0;
+                $entry[$row['scl_class']]['kills_isk'] = 0;
             }
 
             while ($kill = $this->klist->getKill())
@@ -118,8 +116,6 @@ class KillSummaryTablePublic extends KillSummaryTable
             $entry = &$this->entry;
         }
 
-        $odd = false;
-        $prevdate = "";
 		// Don't count noobships.
 		$num = count($entry) - 1;
 		$summary = array();
