@@ -183,7 +183,7 @@ function getWeeks($year = null)
  * @param integer $month
  * @param integer $startweek
  * @param integer $startdate
- * @return integer 
+ * @return integer
  */
 function makeStartDate($week = 0, $year = 0, $month = 0, $startweek = 0,
 		$startdate = 0)
@@ -249,4 +249,50 @@ function makeEndDate($week = 0, $year = 0, $month = 0, $enddate = 0)
 	}
 
 	return $qenddate;
+}
+
+// Hacky fix to add a get_called_class for php 5.2
+if (!function_exists('get_called_class')) {
+	function get_called_class($bt = false, $l = 1)
+	{
+		if (!$bt) {
+			$bt = debug_backtrace();
+		}
+		if (!isset($bt[$l])) {
+			trigger_error("Cannot find called class -> stack level too deep.",
+					E_USER_ERROR);
+		}
+		if (!isset($bt[$l]['type'])) {
+			trigger_error("type not set.", E_USER_ERROR);
+		} else {
+			switch ($bt[$l]['type']) {
+				case '::':
+					$lines = file($bt[$l]['file']);
+					$i = 0;
+					$callerLine = '';
+					do {
+						$i++;
+						$callerLine = $lines[$bt[$l]['line'] - $i].$callerLine;
+					} while (stripos($callerLine, $bt[$l]['function'])
+							=== false);
+					preg_match('/([a-zA-Z0-9\_]+)::'.$bt[$l]['function'].'/',
+							$callerLine, $matches);
+					if (!isset($matches[1])) {
+						// must be an edge case.
+						trigger_error("Could not find caller class: originating"
+								."  method call is obscured.", E_USER_ERROR);
+					}
+					switch ($matches[1]) {
+						case 'self':
+						case 'parent':
+							return get_called_class($bt, $l + 1);
+						default:
+							return $matches[1];
+					}
+				default:
+					trigger_error("Unknown backtrace method type",
+							E_USER_ERROR);
+			}
+		}
+	}
 }
