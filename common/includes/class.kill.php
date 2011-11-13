@@ -1454,11 +1454,10 @@ class Kill extends Cacheable
 		foreach ($this->involvedparties_ as $inv) {
 			$ship = $inv->getShip();
 			$weapon = $inv->getWeapon();
-			if (!$inv->getPilotID() || $inv->getSecStatus() == ""
+			if (!$inv->getPilotID() 
 					|| !$inv->getAllianceID() || !$inv->getCorpID()
 					|| !$ship->getName() || !$weapon->getID()) {
-				$this->remove();
-				return 0;
+				return $this->rollback();
 			}
 
 			if($notfirstd) $involveddsql .= ", ";
@@ -1674,6 +1673,16 @@ class Kill extends Cacheable
 	}
 	private function rollback(&$qry)
 	{
+		// Since MyISAM doesn't support transactions, let's try to remove
+		// anything that made it in.
+		if ($this->id) {
+			$qry->execute("DELETE FROM kb3_inv_detail WHERE ind_kll_id = ".$this->id);
+			$qry->execute("DELETE FROM kb3_inv_all WHERE ina_kll_id = ".$this->id);
+			$qry->execute("DELETE FROM kb3_inv_crp WHERE inc_kll_id = ".$this->id);
+			$qry->execute("DELETE FROM kb3_items_destroyed WHERE itd_kll_id = ".$this->id);
+			$qry->execute("DELETE FROM kb3_items_dropped WHERE itd_kll_id = ".$this->id);
+			$qry->execute("DELETE FROM kb3_kills WHERE kll_id = ".$this->id);
+		}
 		$qry->rollback();
 		$qry->autocommit(true);
 		$this->id = 0;
