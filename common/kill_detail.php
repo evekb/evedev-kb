@@ -16,6 +16,37 @@ if (config::get('comments')) {
 class pKillDetail extends pageAssembly
 {
 
+	/** @var integer The id of the kill this page is for. */
+	protected $kll_id;
+	/** @var integer The external id of the kill this page is for. */
+	protected $kll_external_id;
+	/** @var Kill The Kill for the page's kill. */
+	protected $kill;
+	/** @var Page The Page used to create this page.*/
+	public $page;
+	/** @var array */
+	private $menuOptions = array();
+	/** @var boolean */
+	protected $nolimit = false;
+	/** @var array Array of all involved Alliances*/
+	protected $invAllies = array();
+	/** @var array Array of all involved Ships */
+	protected $invShips = array();
+	/** @var array */
+	protected $ammo_array = array();
+	/** @var array */
+	protected $fitting_array = array();
+	/** @var float */
+	protected $dropvalue = 0;
+	/** @var float */
+	protected $totalValue = 0;
+	/** @var float */
+	protected $bp_value = 0;
+	/** @var array Array of destroyed items*/
+	protected $dest_array = array();
+	/** @var array Array of dropped items*/
+	protected $drop_array = array();
+	
 	/**
 	 * Construct the Pilot Details object.
 	 * Add the functions to the build queue.
@@ -103,7 +134,6 @@ class pKillDetail extends pageAssembly
 					."' />");
 		}
 
-		$this->system = $this->kill->getSystem();
 		$this->finalblow = false;
 
 		$this->commenthtml = '';
@@ -172,7 +202,7 @@ class pKillDetail extends pageAssembly
 
 				if (config::get('item_values')) {
 					$value = $destroyed->getValue();
-					$this->TotalValue+=$value * $i_qty;
+					$this->totalValue += $value * $i_qty;
 					$formatted = $destroyed->getFormattedValue();
 
 					if (strpos($item->getName(), 'Blueprint') !== false)
@@ -342,24 +372,24 @@ class pKillDetail extends pageAssembly
 			$ship = Ship::getByID( $inv->getShipID());
 
 			$alliance_name = $alliance->getName();
-			if (!isset($this->InvAllies[$alliance_name])) {
-				$this->InvAllies[$alliance_name] = Array('quantity' => 1,
+			if (!isset($this->invAllies[$alliance_name])) {
+				$this->invAllies[$alliance_name] = Array('quantity' => 1,
 					'corps' => Array());
 			} else {
-				$this->InvAllies[$alliance_name]["quantity"] += 1;
+				$this->invAllies[$alliance_name]["quantity"] += 1;
 			}
 			$corp_name = $corp->getName();
-			if (!isset($this->InvAllies[$alliance_name]["corps"][$corp_name])) {
-				$this->InvAllies[$alliance_name]["corps"][$corp_name] = 1;
+			if (!isset($this->invAllies[$alliance_name]["corps"][$corp_name])) {
+				$this->invAllies[$alliance_name]["corps"][$corp_name] = 1;
 			} else {
-				$this->InvAllies[$alliance_name]["corps"][$corp_name] += 1;
+				$this->invAllies[$alliance_name]["corps"][$corp_name] += 1;
 			}
 
 			$ship_name = $ship->getName();
-			if (!isset($this->InvShips[$ship_name])) {
-				$this->InvShips[$ship_name] = 1;
+			if (!isset($this->invShips[$ship_name])) {
+				$this->invShips[$ship_name] = 1;
 			} else {
-				$this->InvShips[$ship_name] += 1;
+				$this->invShips[$ship_name] += 1;
 			}
 			if (config::get('cfg_allianceid')
 					&& in_array($alliance->getID(),
@@ -552,9 +582,9 @@ class pKillDetail extends pageAssembly
 	function involvedSummary()
 	{
 		global $smarty;
-		$smarty->assignByRef('invAllies', $this->InvAllies);
-		$smarty->assignByRef('invShips', $this->InvShips);
-		$smarty->assign('alliesCount', count($this->InvAllies));
+		$smarty->assignByRef('invAllies', $this->invAllies);
+		$smarty->assignByRef('invShips', $this->invShips);
+		$smarty->assign('alliesCount', count($this->invAllies));
 		$smarty->assign('kill', $this->ownKill);
 		$smarty->assign('involvedPartyCount', $this->kill->getInvolvedPartyCount());
 		$smarty->assign('showext', config::get('kd_showext'));
@@ -744,18 +774,18 @@ class pKillDetail extends pageAssembly
 		$smarty->assignByRef('destroyed', $this->dest_array);
 		$smarty->assignByRef('dropped', $this->drop_array);
 
-		if ($this->TotalValue >= 0) {
-			$Formatted = number_format($this->TotalValue, 2);
+		if ($this->totalValue >= 0) {
+			$Formatted = number_format($this->totalValue, 2);
 		}
 
 		// Get Ship Value
 		$this->ShipValue = $this->kill->getVictimShip()->getPrice();
 
 		if (config::get('kd_droptototal')) {
-			$this->TotalValue+=$this->dropvalue;
+			$this->totalValue += $this->dropvalue;
 		}
 
-		$TotalLoss = number_format($this->TotalValue + $this->ShipValue, 2);
+		$TotalLoss = number_format($this->totalValue + $this->ShipValue, 2);
 		$this->ShipValue = number_format($this->ShipValue, 2);
 		$this->dropvalue = number_format($this->dropvalue, 2);
 		$this->bp_value = number_format($this->bp_value, 2);
@@ -798,27 +828,28 @@ class pKillDetail extends pageAssembly
 		if ($this->kill->isClassified()) {
 			//Admin is able to see classified Systems
 			if ($this->page->isAdmin()) {
-				$smarty->assign('systemID', $this->system->getID());
-				$smarty->assign('system', $this->system->getName()
+				$smarty->assign('systemID', $this->kill->getSystem()->getID());
+				$smarty->assign('system', $this->kill->getSystem()->getName()
 						.' (Classified)');
 				$smarty->assign('systemURL', KB_HOST
 						."/?a=system_detail&amp;sys_id="
-						.$this->system->getID());
+						.$this->kill->getSystem()->getID());
 				$smarty->assign('systemSecurity',
-						$this->system->getSecurity(true));
+						$this->kill->getSystem()->getSecurity(true));
 			} else {
 				$smarty->assign('system', 'Classified');
 				$smarty->assign('systemURL', "");
 				$smarty->assign('systemSecurity', '0.0');
 			}
 		} else {
-			$smarty->assign('systemID', $this->system->getID());
-			$smarty->assign('system', $this->system->getName());
+			$smarty->assign('systemID', $this->kill->getSystem()->getID());
+			$smarty->assign('system', $this->kill->getSystem()->getName());
 			$smarty->assign('systemURL',
 					edkURI::build(
-							array('a', 'system_detail', true),
-							array('sys_id', $this->system->getID(), true)));
-			$smarty->assign('systemSecurity', $this->system->getSecurity(true));
+					array('a', 'system_detail', true),
+					array('sys_id', $this->kill->getSystem()->getID(), true)));
+			$smarty->assign('systemSecurity',
+					$this->kill->getSystem()->getSecurity(true));
 		}
 
 		$smarty->assign('timeStamp', $this->kill->getTimeStamp());
@@ -1195,26 +1226,25 @@ class pKillDetail extends pageAssembly
 		if ((!$this->kill->isClassified()) || ($this->page->isAdmin())) {
 			$mapbox = new Box("Map");
 			if (IS_IGB) {
-				$mapbox->addOption("img",
-						imageURL::getURL('map', $this->system->getID(), 145),
+				$mapbox->addOption("img", imageURL::getURL('map',
+						$this->kill->getSystem()->getID(), 145),
 						"javascript:CCPEVE.showInfo(3, "
-								.$this->system->getRegionID().")");
-				$mapbox->addOption("img",
-						imageURL::getURL('region', $this->system->getID(), 145),
+						.$this->kill->getSystem()->getRegionID().")");
+				$mapbox->addOption("img", imageURL::getURL('region',
+						$this->kill->getSystem()->getID(), 145),
 						"javascript:CCPEVE.showInfo(4, "
-								.$this->system->getConstellationID().")");
-				$mapbox->addOption("img",
-						imageURL::getURL('cons', $this->system->getID(), 145),
+						.$this->kill->getSystem()->getConstellationID().")");
+				$mapbox->addOption("img", imageURL::getURL('cons',
+						$this->kill->getSystem()->getID(), 145),
 						"javascript:CCPEVE.showInfo(5, "
-								.$this->system->getExternalID().")");
+						.$this->kill->getSystem()->getExternalID().")");
 			} else {
-				$mapbox->addOption("img",
-						imageURL::getURL('map', $this->system->getID(), 145));
-				$mapbox->addOption("img",
-						imageURL::getURL('region', $this->system->getID(),
-								145));
-				$mapbox->addOption("img",
-						imageURL::getURL('cons', $this->system->getID(), 145));
+				$mapbox->addOption("img", imageURL::getURL('map',
+						$this->kill->getSystem()->getID(), 145));
+				$mapbox->addOption("img", imageURL::getURL('region',
+						$this->kill->getSystem()->getID(), 145));
+				$mapbox->addOption("img", imageURL::getURL('cons',
+						$this->kill->getSystem()->getID(), 145));
 			}
 			return $mapbox->generate();
 		}

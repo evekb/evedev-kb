@@ -13,6 +13,27 @@
 class pKillRelated extends pageAssembly
 {
 
+	/** @var array */
+	protected $systems = array();
+	/** @var boolean */
+	protected $adjacent = false;
+	/** @var array */
+	protected $victimAll = array();
+	/** @var array */
+	protected $invAll = array();
+	/** @var array */
+	protected $victimCorp = array();
+	/** @var array */
+	protected $invCorp = array();
+	/** @var integer */
+	protected $kll_id;
+	/** @var Kill */
+	protected $kill;
+	/** @var Page */
+	public $page;
+	/** @var array */
+	private $menuOptions = array();
+	
 	function __construct()
 	{
 		parent::__construct();

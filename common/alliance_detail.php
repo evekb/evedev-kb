@@ -24,7 +24,7 @@ class pAllianceDetail extends pageAssembly
 	/** @var Alliance */
 	public $alliance = null;
 	/** @var string */
-	private $view = null;
+	protected $view = null;
 	/** @var array */
 	private $viewList = array();
 	/** @var array */
@@ -32,9 +32,9 @@ class pAllianceDetail extends pageAssembly
 	/** @var array */
 	private $allianceCorps = array();
 	/** @var integer */
-	private $month = '';
+	protected $month = '';
 	/** @var integer */
-	private $year = '';
+	protected $year = '';
 	/** @var integer */
 	private $nmonth = '';
 	/** @var integer */

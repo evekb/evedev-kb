@@ -21,22 +21,24 @@ class pHome extends pageAssembly
 	/** @var array */
 	private $viewList = array();
 	/** @var integer */
-	private $week;
+	protected $day;
 	/** @var integer */
-	private $month;
+	protected $week;
 	/** @var integer */
-	private $year;
+	protected $month;
+	/** @var integer */
+	protected $year;
 
 	/** @var string */
-	private $view;
+	protected $view;
 	/** @var integer */
-	private $scl_id;
+	protected $scl_id;
 	/** @var boolean */
-	private $currentTime;
+	protected $currentTime;
 	/** @var Page */
 	public $page;
 	/** @var boolean */
-	private $showcombined;
+	protected $showcombined;
 	/** @var boolean */
 	private $dateSet = false;
 
@@ -623,39 +625,6 @@ class pHome extends pageAssembly
 	function getCurrentPeriod()
 	{
 		return $this->period;
-	}
-
-	/**
-	 * Return a string to add to a url to generate the current time period.
-	 *
-	 * @return string
-	 * @deprecated
-	 */
-	function getCurrentPeriodLink()
-	{
-		return '';
-	}
-
-	/**
-	 * Return a string to add to a url to generate the next time period.
-	 *
-	 * @return string
-	 * @deprecated
-	 */
-	function getNextPeriodLink()
-	{
-		return '';
-	}
-
-	/**
-	 * Return a string to add to a url to generate the previous time period.
-	 *
-	 * @return string
-	 * @deprecated
-	 */
-	function getPreviousPeriodLink()
-	{
-		return '';
 	}
 
 	/**

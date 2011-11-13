@@ -11,6 +11,27 @@
  */
 class pAwards extends pageAssembly
 {
+	/** @var array */
+	private $menuOptions = array();
+	/** @var array */
+	private $viewList = array();
+	/** @var integer */
+	protected $week;
+	/** @var integer */
+	protected $month;
+	/** @var integer */
+	protected $year;
+
+	public $page;
+	
+	private $nmonth;
+	private $pmonth;
+	private $nyear;
+	private $pyear;
+	private $monthname;
+
+	protected $view;
+
 	/**
 	 * Construct the Alliance Details object.
 	 * Set up the basic variables of the class and add the functions to the
