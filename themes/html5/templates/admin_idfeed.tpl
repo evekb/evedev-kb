@@ -8,6 +8,9 @@ function checkAll(checkname, exby)
 {if $results}{$results}{/if}
 <form id="options" name="options" method="post" action="{$kb_host}/?a=admin_idfeedsyndication">
 	<div class='block-header2'>Feeds</div>
+	<input type='submit' id='submitFetch' name='fetch' value="Fetch!" /> 
+	<br />
+	<br />
 	<table>
 		<tr style='text-align: left;'>
 			<th>Feed URL</th>
@@ -53,6 +56,4 @@ function checkAll(checkname, exby)
 	</table>
 	<br />
 	<br />
-	<br />
-	<input type='submit' id='submitFetch' name='fetch' value="Fetch!" />
-</form>
+	<input type='submit' id='submitOptions' name='submit' value="Save" /></form>
