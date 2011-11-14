@@ -404,7 +404,12 @@ class IDFeed
 		$skip = false;
 		$internalID = (int)$row['killInternalID'];
 		$externalID = (int)$row['killID'];
-		if (!$id = $this->killExists($row)) {
+		$id = 0;
+		if (config::get('filter_apply') && config::get('filter_date')
+				> strtotime(strval($row['killTime']))) {
+			$skip = true;
+		}
+		if (!$skip && !$id = $this->killExists($row)) {
 			$qry = DBFactory::getDBQuery();
 
 			$kill = new Kill();
