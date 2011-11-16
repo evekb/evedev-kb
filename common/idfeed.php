@@ -60,7 +60,11 @@ if (isset($_GET['allkills']) && $_GET['allkills'] == 0 ) {
 } else {
 	$list->setOrderBy(' kll.kll_id ASC ');
 }
-$list->setLimit($maxkillsreturned);
+if (isset($_GET['limit'])) {
+	$list->setLimit(min($maxkillsreturned, (int)$_GET['limit']));
+} else {
+	$list->setLimit($maxkillsreturned);
+}
 
 $qry = DBFactory::getDBQuery();
 
@@ -172,8 +176,6 @@ if (isset($_GET['startdate']))
 		$list->setStartDate(gmdate('Y-m-d H:i:s', intval($_GET['startdate'])));
 if (isset($_GET['enddate']))
 		$list->setEndDate(gmdate('Y-m-d H:i:s', intval($_GET['startdate'])));
-if (isset($_GET['limit']))
-		$list->setLimit(intval($_GET['limit']));
 
 header("Content-Type: text/xml");
 echo IDFeed::killListToXML($list);
