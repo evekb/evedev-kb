@@ -20,8 +20,8 @@ class Alliance extends Entity
 	private $executed = false;
 	/** @var string */
 	private $name = null;
-	/** @var string */
-	private $imgurl = null;
+	/** @var array Array of URLs for each size of portrait requested. */
+	private $imgurl = array();
 
 	/**
 	 * Create a new Alliance object from the given $id.
@@ -290,38 +290,40 @@ class Alliance extends Entity
 	}
 
 	/**
-	 * Return the URL for the alliance's portrait.
+	 * Return the URL for the alliance's portrait. If the alliance has a
+	 * portrait in the board's img/alliances directory, that portrait will be
+	 * used
 	 *
 	 * @param integer $size The desired portrait size.
 	 * @return string URL for a portrait.
 	 */
 	function getPortraitURL($size = 128)
 	{
-		if (isset($this->imgurl)) {
-			return $this->imgurl;
+		if (isset($this->imgurl[$size])) {
+			return $this->imgurl[$size];
 		}
 		if (file_exists("img/alliances/".$this->getUnique().".png")) {
 			if ($size == 128) {
-				$this->imgurl = IMG_HOST."/img/alliances/"
+				$this->imgurl[$size] = IMG_HOST."/img/alliances/"
 						.$this->getUnique().".png";
 			} else if (CacheHandler::exists(
 					$this->getUnique()."_$size.png",'img')) {
-				$this->imgurl = KB_HOST."/"
+				$this->imgurl[$size] = KB_HOST."/"
 						.CacheHandler::getExternal($this->getUnique()
 						."_$size.png", 'img');
 			} else {
-				$this->imgurl = KB_HOST.'/?a=thumb&amp;type=alliance&amp;id='
+				$this->imgurl[$size] = KB_HOST.'/?a=thumb&amp;type=alliance&amp;id='
 						.$this->getUnique().'&amp;size='.$size;
 			}
 			$this->putCache();
 		} else if ($this->getExternalID()) {
-			$this->imgurl = imageURL::getURL('Alliance', $this->getExternalID(),
+			$this->imgurl[$size] = imageURL::getURL('Alliance', $this->getExternalID(),
 					$size);
 			$this->putCache();
 		} else {
-			$this->imgurl = imageURL::getURL('Alliance', 1, $size);
+			$this->imgurl[$size] = imageURL::getURL('Alliance', 1, $size);
 		}
-		return $this->imgurl;
+		return $this->imgurl[$size];
 	}
 
 	/**
