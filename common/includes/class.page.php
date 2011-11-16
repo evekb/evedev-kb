@@ -254,8 +254,11 @@ class Page
 	public function setAdmin()
 	{
 		if (!Session::isAdmin()) {
-			header("Location: ".KB_HOST."/?a=login");
-			echo '<a href="'.KB_HOST.'/?a=login">Login</a>';
+			$page = edkURI::getArg("a");
+			$link = edkURI::page("login", $page, "page");
+
+			header("Location: $link");
+			echo '<a href="'.$link.'">Login</a>';
 			exit;
 		}
 	}

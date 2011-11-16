@@ -34,7 +34,7 @@ if (trim($_POST['usrpass']))
 			session::create(true);
 
 			session_write_close();
-			header('Location: '.KB_HOST.'/?a=admin');
+			header('Location: '.edkURI::page('admin'));
 			die;
 		}
 	}
@@ -43,7 +43,8 @@ if (trim($_POST['usrpass']))
 		session::create(true);
 
 		session_write_close();
-		header('Location: '.KB_HOST.'/?a=admin');
+		$link = preg_replace('/[^a-zA-Z0-9-_]/', '', edkURI::getArg("page", 1));
+		header('Location: '.edkURI::page($link));
 		die;
 	}
 	else
@@ -51,7 +52,7 @@ if (trim($_POST['usrpass']))
 		$result = user::login($_POST['usrlogin'], $_POST['usrpass']);
 		if ($result)
 		{
-			header('Location: '.KB_HOST.'/?a=home');
+			header('Location: '.edkURI::page('home'));
 			die;
 		}
 		else
