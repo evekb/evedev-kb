@@ -11,6 +11,9 @@
  */
 class pAbout extends pageAssembly
 {
+	/** @var Page The Page object used to display this page. */
+	public $page;
+
 	function __construct()
 	{
 		parent::__construct();

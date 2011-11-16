@@ -17,9 +17,9 @@ class pHome extends pageAssembly
 	/** @var array */
 	private $cargs = array();
 	/** @var array */
-	private $menuOptions = array();
+	protected $menuOptions = array();
 	/** @var array */
-	private $viewList = array();
+	protected $viewList = array();
 	/** @var integer */
 	protected $day;
 	/** @var integer */

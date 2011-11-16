@@ -32,7 +32,7 @@ class pKillRelated extends pageAssembly
 	/** @var Page */
 	public $page;
 	/** @var array */
-	private $menuOptions = array();
+	protected $menuOptions = array();
 	
 	function __construct()
 	{

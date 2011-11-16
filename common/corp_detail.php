@@ -11,15 +11,39 @@
  */
 class pCorpDetail extends pageAssembly
 {
-		private $viewList = array();
-		private $menuOptions = array();
-		public $corp = null;
-		public $crp_id = 0;
-		public $crp_external_id = 0;
-		public $scl_id = 0;
-		public $alliance = 0;
-		public $kill_summary = null;
+	/** @var Page */
+	public $page = null;
+	/** @var integer */
+	public $crp_id = 0;
+	/** @var integer */
+	public $crp_external_id = 0;
+	/** @var Corporation */
+	public $corp = null;
+	
+	/** @var Alliance */
+	protected $alliance = null;
+	/** @var string The selected view. */
+	protected $view = null;
+	/** @var array The list of views and their callbacks. */
+	protected $viewList = array();
+	/** @var array The list of menu options to display. */
+	protected $menuOptions = array();
+	/** @var integer */
+	protected $month;
+	/** @var integer */
+	protected $year;
 
+	/** @var integer */
+	private $nmonth;
+	/** @var integer */
+	private $nyear;
+	/** @var integer */
+	private $pmonth;
+	/** @var integer */
+	private $pyear;
+	/** @var KillSummaryTable */
+	private $kill_summary = null;
+	
 	/**
 	 * Construct the Pilot Details object.
 	 * Set up the basic variables of the class and add the functions to the

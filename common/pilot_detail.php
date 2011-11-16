@@ -11,13 +11,21 @@
  */
 class pPilotDetail extends pageAssembly
 {
-	private $viewList = array();
-	private $menuOptions = array();
-
-	// TODO: Make these private and add access functions for mods to use.
-	public $scl_id = false;
-	public $plt_id = false;
+	/** @var Page */
 	public $page = null;
+	/** @var integer */
+	public $plt_id = false;
+
+	/** @var string The selected view. */
+	protected $view = null;
+	/** @var array The list of views and their callbacks. */
+	protected $viewList = array();
+	/** @var array The list of menu options to display. */
+	protected $menuOptions = array();
+	/** @var integer */
+	protected $lpoints = 0;
+	/** @var integer */
+	protected $points = 0;
 
 	/**
 
@@ -59,7 +67,6 @@ class pPilotDetail extends pageAssembly
 	{
 		$this->page = new Page();
 
-		$this->scl_id = (int)edkURI::getArg('scl_id');
 		$this->plt_id = (int)edkURI::getArg('plt_id');
 		if (!$this->plt_id) {
 			$this->plt_external_id = (int)edkURI::getArg('plt_ext_id');
@@ -194,7 +201,11 @@ class pPilotDetail extends pageAssembly
 	function killList()
 	{
 		global $smarty;
-		if(isset($this->viewList[$this->view])) return call_user_func_array($this->viewList[$this->view], array(&$this));
+		if(isset($this->viewList[$this->view])) {
+			return call_user_func_array($this->viewList[$this->view],
+					array(&$this));
+		}
+		$scl_id = (int)edkURI::getArg('scl_id');
 
 		switch ($this->view)
 		{
@@ -202,7 +213,7 @@ class pPilotDetail extends pageAssembly
 				$list = new KillList();
 				$list->setOrdered(true);
 				$list->addInvolvedPilot($this->pilot);
-				if ($this->scl_id) $list->addVictimShipClass($this->scl_id);
+				if ($scl_id) $list->addVictimShipClass($scl_id);
 				$list->setPageSplit(config::get('killcount'));
 				$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 				$table = new KillListTable($list);
@@ -218,7 +229,7 @@ class pPilotDetail extends pageAssembly
 				$list->setOrdered(true);
 				$list->setPodsNoobships(config::get('podnoobs'));
 				$list->addVictimPilot($this->pilot);
-				if ($this->scl_id) $list->addVictimShipClass($this->scl_id);
+				if ($scl_id) $list->addVictimShipClass($scl_id);
 				$list->setPageSplit(config::get('killcount'));
 				$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 
@@ -252,7 +263,7 @@ class pPilotDetail extends pageAssembly
 				$list->setLimit(10);
 				$list->setPodsNoobships(config::get('podnoobs'));
 				$list->addInvolvedPilot($this->pilot);
-				if ($this->scl_id) $list->addVictimShipClass($this->scl_id);
+				if ($scl_id) $list->addVictimShipClass($scl_id);
 
 				$table = new KillListTable($list);
 				$table->setDayBreak(false);
@@ -265,7 +276,7 @@ class pPilotDetail extends pageAssembly
 				$list->setLimit(10);
 				$list->setPodsNoobships(config::get('podnoobs'));
 				$list->addVictimPilot($this->pilot);
-				if ($this->scl_id) $list->addVictimShipClass($this->scl_id);
+				if ($scl_id) $list->addVictimShipClass($scl_id);
 
 				$table = new KillListTable($list);
 				$table->setDayBreak(false);
@@ -367,6 +378,15 @@ class pPilotDetail extends pageAssembly
 	function addView($view, $callback)
 	{
 		$this->viewList[$view] = $callback;
+	}
+
+	/**
+	 * Return the set view.
+	 * @return string
+	 */
+	function getView()
+	{
+		return $this->view;
 	}
 }
 

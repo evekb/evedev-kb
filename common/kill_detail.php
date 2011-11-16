@@ -17,15 +17,15 @@ class pKillDetail extends pageAssembly
 {
 
 	/** @var integer The id of the kill this page is for. */
-	protected $kll_id;
+	public $kll_id;
 	/** @var integer The external id of the kill this page is for. */
-	protected $kll_external_id;
+	public $kll_external_id;
 	/** @var Kill The Kill for the page's kill. */
 	protected $kill;
 	/** @var Page The Page used to create this page.*/
 	public $page;
 	/** @var array */
-	private $menuOptions = array();
+	protected $menuOptions = array();
 	/** @var boolean */
 	protected $nolimit = false;
 	/** @var array Array of all involved Alliances*/

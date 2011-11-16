@@ -12,7 +12,7 @@
 class pInvtype extends pageAssembly
 {
 	/** @var integer */
-	protected $typeID;
+	public $typeID;
 	/** @var Page */
 	public $page;
 		

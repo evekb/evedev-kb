@@ -11,6 +11,21 @@
  */
 class pContractDetail extends pageAssembly
 {
+	/** @var Page The Page object used to display this page. */
+	public $page;
+	/** @var integer The ID for this page's Contract. */
+	public $ctr_id;
+	
+	/** @var string The selected view. */
+	protected $view = null;
+	/** @var Contract The Contract this page is built from. */
+	protected $contract;
+
+	/** @var array The list of views and their callbacks. */
+	protected $viewList = array();
+	/** @var array The list of menu options to display. */
+	protected $menuOptions = array();
+
 	/**
 	 * Construct the Contract Details object.
 	 * Set up the basic variables of the class and add the functions to the
@@ -44,7 +59,6 @@ class pContractDetail extends pageAssembly
 	function start()
 	{
 		$this->page = new Page();
-		$this->scl_id = (int)edkURI::getArg('scl_id');
 		$this->ctr_id = (int)edkURI::getArg('ctr_id', 1);
 		$this->view = preg_replace('/[^a-zA-Z0-9_-]/','', edkURI::getArg('view', 2));
 
@@ -153,8 +167,13 @@ class pContractDetail extends pageAssembly
 	 */
 	function killList()
 	{
-		if(isset($this->viewList[$this->view])) return call_user_func_array($this->viewList[$this->view], array(&$this));
+		if(isset($this->viewList[$this->view])) {
+			return call_user_func_array($this->viewList[$this->view],
+					array(&$this));
+		}
 
+		$scl_id = (int)edkURI::getArg('scl_id');
+		
 		global $smarty;
 
 		$html = '';
@@ -206,8 +225,8 @@ class pContractDetail extends pageAssembly
 				$this->contract = new Contract($this->ctr_id);
 				$klist = $this->contract->getKillList();
 				$klist->setOrdered(true);
-				if ($this->scl_id)
-					$klist->addVictimShipClass($this->scl_id);
+				if ($scl_id)
+					$klist->addVictimShipClass($scl_id);
 				else
 					$klist->setPodsNoobShips(config::get('podnoobs'));
 
@@ -218,8 +237,8 @@ class pContractDetail extends pageAssembly
 
 				$llist = $this->contract->getLossList();
 				$llist->setOrdered(true);
-				if ($this->scl_id)
-					$llist->addVictimShipClass($this->scl_id);
+				if ($scl_id)
+					$llist->addVictimShipClass($scl_id);
 				else
 					$llist->setPodsNoobShips(config::get('podnoobs'));
 
@@ -233,8 +252,8 @@ class pContractDetail extends pageAssembly
 				$this->contract = new Contract($this->ctr_id);
 				$list = $this->contract->getKillList();
 				$list->setOrdered(true);
-				if ($this->scl_id)
-					$list->addVictimShipClass($this->scl_id);
+				if ($scl_id)
+					$list->addVictimShipClass($scl_id);
 				else
 					$list->setPodsNoobShips(config::get('podnoobs'));
 
@@ -250,8 +269,8 @@ class pContractDetail extends pageAssembly
 				$this->contract = new Contract($this->ctr_id);
 				$llist = $this->contract->getLossList();
 				$llist->setOrdered(true);
-				if ($this->scl_id)
-					$llist->addVictimShipClass($this->scl_id);
+				if ($scl_id)
+					$llist->addVictimShipClass($scl_id);
 				else
 					$llist->setPodsNoobShips(config::get('podnoobs'));
 
@@ -313,9 +332,7 @@ class pContractDetail extends pageAssembly
 	}
 
 	/**
-
 	 * Add a type of view to the options.
-
 	 *
 	 * @param string $view The name of the view to recognise.
 	 * @param mixed $callback The method to call when this view is used.
@@ -323,6 +340,15 @@ class pContractDetail extends pageAssembly
 	function addView($view, $callback)
 	{
 		$this->viewList[$view] = $callback;
+	}
+
+	/**
+	 * Return the set view.
+	 * @return string
+	 */
+	function getView()
+	{
+		return $this->view;
 	}
 }
 

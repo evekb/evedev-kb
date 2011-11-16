@@ -8,4 +8,4 @@
 
 $session = new Session();
 $session->destroy();
-header('Location: '.KB_HOST.'/?a=admin');
+header('Location: '.edkURI::page("admin"));

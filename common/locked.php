@@ -11,6 +11,9 @@
  */
 class pLocked extends pageAssembly
 {
+	/** @var Page */
+	public $page = null;
+
 	function __construct()
 	{
 		parent::__construct();
