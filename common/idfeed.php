@@ -27,6 +27,7 @@
  * region = restrict kills to a specific region
  * kll_id = show one kill only.
  * kll_ext_id = show one kill only.
+ * limit = maximum number of kills to return.
  *
  */
 
@@ -171,6 +172,8 @@ if (isset($_GET['startdate']))
 		$list->setStartDate(gmdate('Y-m-d H:i:s', intval($_GET['startdate'])));
 if (isset($_GET['enddate']))
 		$list->setEndDate(gmdate('Y-m-d H:i:s', intval($_GET['startdate'])));
+if (isset($_GET['limit']))
+		$list->setLimit(intval($_GET['limit']));
 
 header("Content-Type: text/xml");
 echo IDFeed::killListToXML($list);
