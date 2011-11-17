@@ -1718,6 +1718,10 @@ div#owners div.owner-title
 	height:70px;
 	margin: 0.5em 0;
 }
+div#searchresults > table
+{
+	width: 450px;
+}
 /* Disable default styles that are in the way.
 TODO: remove when this is default */
 .killcount, .losscount
