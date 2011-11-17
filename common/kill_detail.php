@@ -1022,7 +1022,8 @@ class pKillDetail extends pageAssembly
 					if (!($found)) {
 						$midammo[] = array(
 							'show' => $smarty->fetch(get_tpl('ammo')),
-							'type' => $smarty->fetch(get_tpl('noicon'))
+							'type' => "<img src='".IMG_URL
+									."/items/24_24/icon09_13.png' alt='' />"
 						);
 					}
 				} else {
