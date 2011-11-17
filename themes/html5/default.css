@@ -1722,6 +1722,11 @@ div#searchresults > table
 {
 	width: 450px;
 }
+
+div.login table td:first-child
+{
+	width: 160px; font-weight: bold;
+}
 /* Disable default styles that are in the way.
 TODO: remove when this is default */
 .killcount, .losscount
