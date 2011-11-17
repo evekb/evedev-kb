@@ -141,11 +141,9 @@
 			</td>
 		</tr>
         {/if}
-		<tr class="{cycle name="ccl"}" style="background-color: #600000;">
-			<td style="border: 1px solid #600000;" colspan="3">
-				<div style="text-align:right; font-weight: bold;">Total Loss at current prices:</div>
-			</td>
-			<td style="border: 1px solid #C00000; text-align:right">{$totalLoss}</td>
+		<tr class="{cycle name="ccl"} summary totalloss">
+			<td colspan="3">Total Loss at current prices:</td>
+			<td>{$totalLoss}</td>
 		</tr>
 {/if}
 	</table>

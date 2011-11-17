@@ -1489,7 +1489,7 @@ td.finalblow
 
 .invtype td.description
 {
-	text-align:left!important;
+	text-align:left !important;
 }
 
 .invtype table.kb-table td:first-child
@@ -1530,6 +1530,24 @@ td.finalblow
 .kl-detail-shipdetails tr.dropped
 {
 	background-color: #060;
+}
+
+.kl-detail-shipdetails tr.totalloss
+{
+	background-color: #600;
+}
+
+.kl-detail-shipdetails tr.totalloss > td:first-child
+{
+	border: 1px solid #600;
+	font-weight: bold;
+	text-align:right;
+}
+
+.kl-detail-shipdetails tr.totalloss > td:last-child
+{
+	border: 1px solid #C00;
+	text-align:right
 }
 
 .kl-detail-shipdetails tr.summary.bpo td,
@@ -1675,6 +1693,31 @@ td.finalblow
 	font-weight:normal!important;
 }
 
+div#owners > div
+{
+	border:2px red solid;
+	display: inline-block;
+	height:228px;
+	margin: 5px;
+	text-align:center;
+	vertical-align:top;
+	width:360px;
+}
+
+div#owners > div > img
+{
+	height:128px;
+	width:128px;
+}
+
+div#owners div.owner-title
+{
+	display: block;
+	font-size: 2em;
+	font-weight: bold;
+	height:70px;
+	margin: 0.5em 0;
+}
 /* Disable default styles that are in the way.
 TODO: remove when this is default */
 .killcount, .losscount
