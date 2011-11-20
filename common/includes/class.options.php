@@ -295,8 +295,8 @@ class options
 				$menubox->addOption('link', $subfield,
 						edkURI::build(
 								array(array('a', 'admin', true),
-									array('field', $field, true),
-									array('sub', $subfield, true))));
+									array('field', urlencode($field), true),
+									array('sub', urlencode($subfield), true))));
 			}
 			$lastfield = $field;
 		}
