@@ -10,6 +10,11 @@
  */
 class pInvtype extends pageAssembly
 {
+	/** @var Page */
+	public $page = null;
+	/** @var integer */
+	public $groupID = 0;
+
 	function __construct()
 	{
 		parent::__construct();
@@ -20,7 +25,7 @@ class pInvtype extends pageAssembly
 
 	function start()
 	{
-		$this->groupID = edkURI::getArg('id', 1);
+		$this->groupID = (int)edkURI::getArg('id', 1);
 		$this->page = new Page('Item Database');
 
 	}

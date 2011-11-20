@@ -12,6 +12,16 @@ $page = new Page('Campaigns');
  */
 class pCampaignList extends pageAssembly
 {
+	/** @var Page The Page object used to display this page. */
+	public $page;
+	
+	/** @var string The selected view. */
+	protected $view = null;
+	/** @var array The list of views and their callbacks. */
+	protected $viewList = array();
+	/** @var array The list of menu options to display. */
+	protected $menuOptions = array();
+
 	/**
 	 * Construct the Contract Details object.
 	 * Set up the basic variables of the class and add the functions to the
@@ -22,9 +32,6 @@ class pCampaignList extends pageAssembly
 		parent::__construct();
 
 		$this->view = preg_replace('/[^a-zA-Z0-9_-]/','', edkURI::getArg('view', 1));
-		$this->viewList = array();
-		$this->pageNum = (int)edkURI::getArg('page');
-		$this->menuOptions = array();
 
 		$this->queue("start");
 		$this->queue("listCampaigns");
@@ -53,7 +60,10 @@ class pCampaignList extends pageAssembly
 	 */
 	function listCampaigns()
 	{
-		if(isset($this->viewList[$this->view])) return call_user_func_array($this->viewList[$this->view], array(&$this));
+		if(isset($this->viewList[$this->view])) {
+			return call_user_func_array($this->viewList[$this->view], array(&$this));
+		}
+		$pageNum = (int)edkURI::getArg('page');
 
 		switch ($this->view)
 		{
@@ -62,7 +72,7 @@ class pCampaignList extends pageAssembly
 				$activelist->setActive('yes');
 				$this->page->setTitle('Active campaigns');
 				$table = new ContractListTable($activelist);
-				$table->paginate(10, $this->pageNum);
+				$table->paginate(10, $pageNum);
 				return $table->generate();
 				break;
 			case 'past':
@@ -70,7 +80,7 @@ class pCampaignList extends pageAssembly
 				$pastlist->setActive('no');
 				$this->page->setTitle('Past campaigns');
 				$table = new ContractListTable($pastlist);
-				$table->paginate(10, $this->pageNum);
+				$table->paginate(10, $pageNum);
 				return $table->generate();
 				break;
 		}
@@ -129,6 +139,33 @@ class pCampaignList extends pageAssembly
 	function addView($view, $callback)
 	{
 		$this->viewList[$view] = $callback;
+	}
+
+	/**
+	 * Return the set month.
+	 * @return integer
+	 */
+	function getMonth()
+	{
+		return $this->month;
+	}
+
+	/**
+	 * Return the set year.
+	 * @return integer
+	 */
+	function getYear()
+	{
+		return $this->year;
+	}
+
+	/**
+	 * Return the set view.
+	 * @return string
+	 */
+	function getView()
+	{
+		return $this->view;
 	}
 }
 

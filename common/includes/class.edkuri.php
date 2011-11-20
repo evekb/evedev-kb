@@ -297,7 +297,7 @@ class edkURI {
 	 */
 	public static function page($page = null, $id = 0, $idname = 'id')
 	{
-		$id = (int)$id;
+		$id = htmlentities($id);
 
 		if (is_null($page)) {
 			return self::$kb_host;

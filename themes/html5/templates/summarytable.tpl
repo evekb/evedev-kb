@@ -7,7 +7,8 @@
 	<table class="kb-subtable">
 		<tr>
 			<td style="width:{$width}%;">
-				<table class="kb-table summarysubtable">
+				<table class="kb-table summarysubtable kb-table-rows">
+					<thead>
 					<tr class="kb-table-header">
 						<td class="summarytable-class">Ship class</td>
 {if $verbose}
@@ -20,13 +21,16 @@
 	{if $losses}					<td class="summarytable-brief">L</td>
 	{/if}
 {/if}				</tr>
-{cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
+					</thead>
+					<tbody>
 {assign var=classcount value=0}{foreach from=$summary item=i}{assign var=classcount value=$classcount+1}
-{if $classcount > ceil($count/$columns)}{assign var=classcount value=1}{cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
+{if $classcount > ceil($count/$columns)}{assign var=classcount value=1}
+					</tbody>
 				</table>
 			</td>
 			<td style="width:{$width}%;">
-				<table class="kb-table summarysubtable">
+				<table class="kb-table summarysubtable kb-table-rows">
+					<thead>
 					<tr class="kb-table-header">
 						<td>Ship class</td>
 	{if $verbose}					<td class="summarytable-verbose">Kills</td>
@@ -38,8 +42,10 @@
 		{if $losses}					<td class="summarytable-brief">L</td>
 		{/if}
 	{/if}				</tr>
+					</thead>
+					<tbody>
 {/if}
-					<tr class="{cycle name=ccl}">
+					<tr>
 						<td><b><a class="kb-shipclass{if $i.hl}-hl{/if}" href="{$i.qry}scl_id={$i.id}">{$i.name}</a></b></td>
 						<td class="kl-kill{if $i.kills == 0}-null{/if}">{$i.kills}</td>
 {if $verbose}				<td class="kl-kill{if $i.kills == 0}-null{/if}">{$i.kisk}</td>
@@ -49,6 +55,7 @@
 	{/if}
 {/if}	</tr>
 {/foreach}
+					</tbody>
 				</table>
 			</td>
 		</tr>

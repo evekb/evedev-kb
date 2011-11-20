@@ -401,9 +401,15 @@ class IDFeed
 	 */
 	private function processKill($row)
 	{
+		$skip = false;
 		$internalID = (int)$row['killInternalID'];
 		$externalID = (int)$row['killID'];
-		if (!$id = $this->killExists($row)) {
+		$id = 0;
+		if (config::get('filter_apply') && config::get('filter_date')
+				> strtotime(strval($row['killTime']))) {
+			$skip = true;
+		}
+		if (!$skip && !$id = $this->killExists($row)) {
 			$qry = DBFactory::getDBQuery();
 
 			$kill = new Kill();
@@ -424,26 +430,24 @@ class IDFeed
 			$kill->setSolarSystem($sys);
 
 			if (!$this->processVictim($row, $kill, strval($row['killTime']))) {
-				$this->skipped[] = array($externalID, $internalID, 0);
-				if ($this->lastReturned < $externalID) {
-					$this->lastReturned = $externalID;
-				}
-				if ($this->lastInternalReturned < $internalID) {
-					$this->lastInternalReturned = $internalID;
-				}
-
-				return;
+				$skip = true;
 			}
-
+			
 			$this->npcOnly = true;
-			foreach ($row->rowset[0]->row as $inv) {
-				$this->processInvolved($inv, $kill, strval($row['killTime']));
+			if (!$skip) {
+				foreach ($row->rowset[0]->row as $inv) {
+					if (!$this->processInvolved($inv, $kill,
+							strval($row['killTime']))) {
+						$skip = true;
+						break;
+					}
+				}
 			}
-
 			// Don't post NPC only kills if configured.
 			if ($this->npcOnly && Config::get('post_no_npc_only')) {
-				$this->skipped[] = array($externalID, $internalID, 0);
-			} else {
+				$skip = true;
+			}
+			if (!$skip) {
 				if (isset($row->rowset[1]->row[0])) {
 					foreach ($row->rowset[1]->row as $item) {
 						$this->processItem($item, $kill);
@@ -451,15 +455,30 @@ class IDFeed
 				}
 				$id = $kill->add();
 				if ($id == 0) {
-					echo htmlentities($row->asXML());
-					var_dump($kill);
-					trigger_error("Kill not added.", E_USER_ERROR);
-					die;
-				}
+					if ($internalID) {
+						$errorstring = "Kill not added. External ID ="
+								." $externalID, Internal ID = $internalID";
+					} else {
+						$errorstring = "Kill not added. ID = $externalID";
+					}
+					trigger_error($errorstring, E_USER_ERROR);
+					$skip = true;
+				} else if ($id < 0) {
+					$id = $kill->getDupe(true);
+					if ($externalID && (int)$row['trust'] >= $this->trust) {
+						 $qry = DBFactory::getDBQuery(true);
+						 $qry->execute("UPDATE kb3_kills"
+							." JOIN kb3_mails ON kb3_kills.kll_id ="
+							." kb3_mails.kll_id SET kb3_mails.kll_external_id="
+							.$externalID.", kb3_kills.kll_external_id="
+							.$externalID." WHERE kb3_mails.kll_id = $id AND"
+							." kb3_mails.kll_external_id IS NULL");
+				   }
 
-				if ($id > 0) {
+				} else {
 					$this->posted[] = array($kill->getExternalID(), $internalID,
 						$id);
+					// Prepare text for the log.
 					if($this->url) {
 						$logaddress = "ID:".$this->url;
 						if (strpos($logaddress, "?")) {
@@ -485,24 +504,14 @@ class IDFeed
 					}
 
 					logger::logKill($id, $logaddress);
-				} else {
-					$dupeid = $kill->getDupe(true);
-					$this->skipped[] = array($externalID,
-						$internalID, $dupeid);
-					if ($externalID && (int)$row['trust'] >= $this->trust) {
-						 $qry = DBFactory::getDBQuery(true);
-						 $qry->execute("UPDATE kb3_kills"
-							." JOIN kb3_mails ON kb3_kills.kll_id ="
-							." kb3_mails.kll_id SET kb3_mails.kll_external_id="
-							.$externalID.", kb3_kills.kll_external_id="
-							.$externalID." WHERE kb3_mails.kll_id = $dupeid AND"
-							." kb3_mails.kll_external_id IS NULL");
-				   }				
 				}
 			}
+		} else {
+			$skip = true;
 		}
-		else $this->skipped[] = array($externalID, $internalID, $id);
-
+		if ($skip) {
+			$this->skipped[] = array($externalID, $internalID, $id);
+		}
 		if ($this->lastReturned < $externalID) {
 			$this->lastReturned = $externalID;
 		}
@@ -590,6 +599,13 @@ class IDFeed
 	 */
 	private function processInvolved($inv, &$kill, $time)
 	{
+		if (!(int)$inv['shipTypeID']
+				&& !(int)$inv['weaponTypeID']
+				&& !(int)$inv['characterID']
+				&& !(string)$inv['characterName']) {
+			trigger_error("Involved party blank.", E_USER_WARNING);
+			return false;
+		}
 		$npc = false;
 		$ship = Ship::getByID((int)$inv['shipTypeID']);
 		$weapon = Cacheable::factory('Item', (int)$inv['weaponTypeID']);
@@ -624,7 +640,7 @@ class IDFeed
 		} else if ($charname == "" && !$charid) {
 			// NPC ship
 			$ship = Ship::lookup("Unknown");
-			$weapon = Cacheable::factory('Item', (int) $inv['shipTypeID']);
+			$weapon = Item::getByID((int) $inv['shipTypeID']);
 			$charname = $weapon->getName();
 			$npc = true;
 			$charid = $weapon->getID();
@@ -643,6 +659,7 @@ class IDFeed
 			$kill->setFBPilotID($pilot->getID());
 		}
 		$this->npcOnly = $this->npcOnly && $npc;
+		return true;
 	}
 
 	/**
@@ -682,6 +699,7 @@ class IDFeed
 				$this->processItem($subitem, $kill);
 			}
 		}
+		return true;
 	}
 
 	/**

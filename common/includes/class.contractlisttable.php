@@ -246,9 +246,13 @@ class ContractListTable
 			$bar = new BarGraph($efficiency, 100, 75);
 
 			$tbldata[] = array_merge(array('name' => $contract->getName(),
-				'startdate' => $contract->getStartDate(), 'bar' => $bar->generate(),
-				'enddate' => $contract->getEndDate(), 'efficiency' => $efficiency,
-				'id' => $contract->getID()), $kdata, $ldata);
+				'startdate' => $contract->getStartDate(),
+				'bar' => $bar->generate(),
+				'enddate' => $contract->getEndDate(),
+				'efficiency' => $efficiency,
+				'id' => $contract->getID(),
+				'url' => edkURI::page('cc_detail', $contract->getID())),
+				$kdata, $ldata);
 		}
 		$this->contractlist->rewind();
 		return $tbldata;

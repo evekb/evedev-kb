@@ -14,6 +14,14 @@ require_once('common/includes/xajax.functions.php');
  */
 class pSearch extends pageAssembly
 {
+	/** @var Page */
+	public $page;
+	/** @var string The phrase to search for. */
+	public $searchphrase;
+	/** @var string The type of result to search for. Valid types are 
+	 * alliance, corp, pilot, system, or item
+	 */
+	public $searchtype;
     /**
      * Construct the Alliance Details object.
      *

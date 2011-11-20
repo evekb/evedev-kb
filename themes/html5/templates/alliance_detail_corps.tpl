@@ -1,28 +1,35 @@
-{cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
-<br />
-<table class='kb-table' width="100%" border="0" cellspacing='1'>
-	<tr class='kb-table-header'>
-		<td width="200"><b>Corporation Name</b></td>
-		<td width="60" align='center'><b>Ticker</b></td>
-		<td width="50" align='center'><b>Members</b></td>
-		<td width="90" align='center'><b>Join Date</b></td>
-		<td width="50" align='center'><b>Tax Rate</b></td>
-		<td width="250"><b>Website</b></td>
-	</tr>
-{section name=sys loop=$corps}
-	{assign var="c" value=$corps[sys]}
-	<tr class='kb-table-row-even'>
-		<td><a href="{$kb_host}/?a=corp_detail&amp;crp_ext_id={$c.corpExternalID}">{$c.corpName}</a></td>
-		<td align='center'>{$c.ticker}</td>
-		<td align='center'>{$c.members}</td>
-		<td align='center'>{$c.joinDate}</td>
-		<td align='center'>{$c.taxRate}</td>
-{if $c.url}
-		<td><span style="overflow: hidden; width: 200px"><a href="{$c.url}">{$c.url|truncate:40}</a></span></td>
-{else}
-		<td></td>
-{/if}
-	</tr>
-{/section}
-</table>
-<br />
+<div class="alliance-detail-corps">
+	<table class='kb-table kb-table-rows'>
+		<thead>
+			<tr class='kb-table-header'>
+				<td class="alliance-detail-corpname">Corporation Name</td>
+				<td class="alliance-detail-ticker">Ticker</td>
+				<td class="alliance-detail-members">Members</td>
+				<td class="alliance-detail-joined">Join Date</td>
+				<td class="alliance-detail-tax">Tax Rate</td>
+				<td class="alliance-detail-site">Website</td>
+			</tr>
+		</thead>
+		<tbody>
+			{section name=sys loop=$corps}
+				{assign var="c" value=$corps[sys]}
+				<tr>
+					<td><a href="{$kb_host}/?a=corp_detail&amp;crp_ext_id={$c.corpExternalID}">{$c.corpName}</a></td>
+					<td>{$c.ticker}</td>
+					<td>{$c.members}</td>
+					<td>{$c.joinDate}</td>
+					<td>{$c.taxRate}</td>
+					{if $c.url}
+						<td>
+							<div class="no_stretch alliance-detail-site" >
+								<a href="{$c.url}">{$c.url}</a>
+							</div>
+						</td>
+					{else}
+						<td></td>
+					{/if}
+				</tr>
+			{/section}
+		</tbody>
+	</table>
+</div>

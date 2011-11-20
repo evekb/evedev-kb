@@ -16,6 +16,37 @@ if (config::get('comments')) {
 class pKillDetail extends pageAssembly
 {
 
+	/** @var integer The id of the kill this page is for. */
+	public $kll_id;
+	/** @var integer The external id of the kill this page is for. */
+	public $kll_external_id;
+	/** @var Kill The Kill for the page's kill. */
+	protected $kill;
+	/** @var Page The Page used to create this page.*/
+	public $page;
+	/** @var array */
+	protected $menuOptions = array();
+	/** @var boolean */
+	protected $nolimit = false;
+	/** @var array Array of all involved Alliances*/
+	protected $invAllies = array();
+	/** @var array Array of all involved Ships */
+	protected $invShips = array();
+	/** @var array */
+	protected $ammo_array = array();
+	/** @var array */
+	protected $fitting_array = array();
+	/** @var float */
+	protected $dropvalue = 0;
+	/** @var float */
+	protected $totalValue = 0;
+	/** @var float */
+	protected $bp_value = 0;
+	/** @var array Array of destroyed items*/
+	protected $dest_array = array();
+	/** @var array Array of dropped items*/
+	protected $drop_array = array();
+	
 	/**
 	 * Construct the Pilot Details object.
 	 * Add the functions to the build queue.
@@ -103,7 +134,6 @@ class pKillDetail extends pageAssembly
 					."' />");
 		}
 
-		$this->system = $this->kill->getSystem();
 		$this->finalblow = false;
 
 		$this->commenthtml = '';
@@ -172,7 +202,7 @@ class pKillDetail extends pageAssembly
 
 				if (config::get('item_values')) {
 					$value = $destroyed->getValue();
-					$this->TotalValue+=$value * $i_qty;
+					$this->totalValue += $value * $i_qty;
 					$formatted = $destroyed->getFormattedValue();
 
 					if (strpos($item->getName(), 'Blueprint') !== false)
@@ -337,30 +367,29 @@ class pKillDetail extends pageAssembly
 		$invlimit = config::get('kd_involvedlimit');
 		if (!is_numeric($invlimit)) $this->nolimit = 1;
 		foreach ($this->kill->getInvolved() as $inv) {
-			$pilot = Cacheable::factory('Pilot', $inv->getPilotID());
-			$corp = Cacheable::factory('Corporation', $inv->getCorpID());
-			$alliance = Cacheable::factory('Alliance', $inv->getAllianceID());
-			$ship = Cacheable::factory('Ship', $inv->getShipID());
+			$corp = Corporation::getByID($inv->getCorpID());
+			$alliance = Alliance::getByID($inv->getAllianceID());
+			$ship = Ship::getByID( $inv->getShipID());
 
 			$alliance_name = $alliance->getName();
-			if (!isset($this->InvAllies[$alliance_name])) {
-				$this->InvAllies[$alliance_name] = Array('quantity' => 1,
+			if (!isset($this->invAllies[$alliance_name])) {
+				$this->invAllies[$alliance_name] = Array('quantity' => 1,
 					'corps' => Array());
 			} else {
-				$this->InvAllies[$alliance_name]["quantity"] += 1;
+				$this->invAllies[$alliance_name]["quantity"] += 1;
 			}
 			$corp_name = $corp->getName();
-			if (!isset($this->InvAllies[$alliance_name]["corps"][$corp_name])) {
-				$this->InvAllies[$alliance_name]["corps"][$corp_name] = 1;
+			if (!isset($this->invAllies[$alliance_name]["corps"][$corp_name])) {
+				$this->invAllies[$alliance_name]["corps"][$corp_name] = 1;
 			} else {
-				$this->InvAllies[$alliance_name]["corps"][$corp_name] += 1;
+				$this->invAllies[$alliance_name]["corps"][$corp_name] += 1;
 			}
 
 			$ship_name = $ship->getName();
-			if (!isset($this->InvShips[$ship_name])) {
-				$this->InvShips[$ship_name] = 1;
+			if (!isset($this->invShips[$ship_name])) {
+				$this->invShips[$ship_name] = 1;
 			} else {
-				$this->InvShips[$ship_name] += 1;
+				$this->invShips[$ship_name] += 1;
 			}
 			if (config::get('cfg_allianceid')
 					&& in_array($alliance->getID(),
@@ -370,7 +399,7 @@ class pKillDetail extends pageAssembly
 					&& in_array($corp->getID(), config::get('cfg_corpid'))) {
 				$this->ownKill = true;
 			} else if (config::get('cfg_pilotid')
-					&& in_array($pilot->getID(), config::get('cfg_pilotid'))) {
+					&& in_array($inv->getPilotID(), config::get('cfg_pilotid'))) {
 				$this->ownKill = true;
 			}
 
@@ -387,40 +416,40 @@ class pKillDetail extends pageAssembly
 
 				// include the final blow pilot
 				if (!config::get('kd_showbox')
-						|| $pilot->getID() != $this->kill->getFBPilotID()) {
+						|| $inv->getPilotID() != $this->kill->getFBPilotID()) {
 					continue;
 				}
 			}
-
-			$weapon = Cacheable::factory('Item', $inv->getWeaponID());
+			$pilot = Pilot::getByID($inv->getPilotID());
+			$weapon = Item::getByID($inv->getWeaponID());
 
 			$this->involved[$i]['shipImage'] = $ship->getImage(64);
 			$this->involved[$i]['shipTechLevel'] = $ship->getTechLevel();
 			$this->involved[$i]['shipIsFaction'] = $ship->isFaction();
-			if ($pilot->getExternalID(true)) {
-				$this->involved[$i]['pilotURL'] = edkURI::build(
-						array('a', 'pilot_detail', true),
-						array('plt_ext_id', $pilot->getExternalID(), true));
+			$this->involved[$i]['shipName'] = $ship->getName();
+			$this->involved[$i]['shipID'] = $ship->getID();
+			if($ship->getID()) {
+				$this->involved[$i]['shipURL'] = edkURI::page('invtype', $ship->getID());
+				$this->involved[$i]['shipClass'] = $ship->getClass()->getName();
 			} else {
-				$this->involved[$i]['pilotURL'] =
-						edkURI::build(array('a', 'pilot_detail', true),
-								array('plt_id', $pilot->getID(), true));
+				$this->involved[$i]['shipURL'] = false;
+				$this->involved[$i]['shipClass'] = false;
 			}
-			$this->involved[$i]['pilotName'] = $pilot->getName();
-			$this->involved[$i]['secStatus'] = $inv->getSecStatus();
+
 			$this->involved[$i]['corpURL'] =
 					edkURI::build(array('a', 'corp_detail', true),
 							array('crp_id', $corp->getID(), true));
 			$this->involved[$i]['corpName'] = $corp->getName();
-			$this->involved[$i]['alliURL'] =
-					edkURI::build(array('a', 'alliance_detail', true),
-							array('all_id', $alliance->getID(), true));
+
+			if($alliance && strcasecmp($alliance->getName(), "None") != 0) {
+				$this->involved[$i]['alliURL'] =
+						edkURI::build(array('a', 'alliance_detail', true),
+								array('all_id', $alliance->getID(), true));
+			} else {
+				$this->involved[$i]['alliURL'] = false;
+			}
 			$this->involved[$i]['alliName'] = $alliance->getName();
-			$this->involved[$i]['shipName'] = $ship->getName();
-			$this->involved[$i]['shipID'] = $ship->getID();
-			$this->involved[$i]['shipURL'] = edkURI::page('invtype', $ship->getID());
 			$this->involved[$i]['damageDone'] = $inv->getDamageDone();
-			$this->involved[$i]['shipClass'] = $ship->getClass()->getName();
 
 			//detects NPC type things and runs a few conversions (Rats, Towers, Bubbles)
 			$tpilot = $pilot->getName();
@@ -431,7 +460,11 @@ class pKillDetail extends pageAssembly
 			}
 
 
-			if ($tpilot == $weapon->getName()) {
+			if (!$pilot->getID() || $tpilot == $weapon->getName()) {
+				$this->involved[$i]['pilotURL'] =
+						edkURI::page('invtype', $weapon->getID());
+				$this->involved[$i]['pilotName'] = $weapon->getName();
+				$this->involved[$i]['secStatus'] = 0;
 				$this->involved[$i]['portrait'] = $corp->getPortraitURL(64);
 				$this->involved[$i]['externalID'] = $corp->getExternalID(true);
 
@@ -445,8 +478,27 @@ class pKillDetail extends pageAssembly
 				$this->involved[$i]['pilotURL'] =
 						edkURI::page('invtype', $weapon->getID());
 				$this->involved[$i]['shipImage'] = imageURL::getURL('Ship',
-								$weapon->getID(), 64);
+						$weapon->getID(), 64);
+				$this->involved[$i]['shipURL'] = false;
+				$this->involved[$i]['shipName'] = $weapon->getName();
+				$this->involved[$i]['weaponURL'] = false;
+				$this->involved[$i]['weaponID'] = false;
+				$this->involved[$i]['weaponName'] = "Unknown";
 			} else {
+				if ($pilot->getExternalID(true)) {
+					$this->involved[$i]['pilotURL'] = edkURI::build(
+							array('a', 'pilot_detail', true),
+							array('plt_ext_id', $pilot->getExternalID(), true));
+				} else {
+					$this->involved[$i]['pilotURL'] =
+							edkURI::build(array('a', 'pilot_detail', true),
+									array('plt_id', $pilot->getID(), true));
+				}
+				$this->involved[$i]['typeID'] = 1377; //type number for characters.
+
+				$this->involved[$i]['pilotName'] = $pilot->getName();
+				$this->involved[$i]['secStatus'] = $inv->getSecStatus();
+
 				$this->involved[$i]['portrait'] = $pilot->getPortraitURL(64);
 				$this->involved[$i]['externalID'] = $pilot->getExternalID(true);
 
@@ -457,27 +509,27 @@ class pKillDetail extends pageAssembly
 					$fetchExternalIDs[] = $pilotname;
 				}
 
-				$this->involved[$i]['typeID'] = 1377; //type number for characters.
+				if ($weapon->getName() != "Unknown"
+						&& $weapon->getName() != $ship->getName()) {
+					$this->involved[$i]['weaponName'] = $weapon->getName();
+					$this->involved[$i]['weaponID'] = $weapon->getID();
+					$this->involved[$i]['weaponURL'] = edkURI::page('invtype', $weapon->getID());
+				} else {
+					$this->involved[$i]['weaponName'] = "Unknown";
+				}
 			}
 
-			if ($weapon->getName() != "Unknown"
-					&& $weapon->getName() != $ship->getName()) {
-				$this->involved[$i]['weaponName'] = $weapon->getName();
-				$this->involved[$i]['weaponID'] = $weapon->getID();
-				$this->involved[$i]['weaponURL'] = edkURI::page('invtype', $weapon->getID());
-			}
-			else $this->involved[$i]['weaponName'] = "Unknown";
 
-			if (!$this->finalblow
-					&& $pilot->getID() == $this->kill->getFBPilotID()) {
-				$this->involved[$i]['finalBlow'] = "true";
+			if (!$this->finalblow && ($pilot->getID()
+					&& $pilot->getID() == $this->kill->getFBPilotID()
+					|| $this->kill->getInvolvedPartyCount() == 1)) {
+				$this->involved[$i]['finalBlow'] = true;
 				$this->finalblow = $this->involved[$i];
 				// If we're only here to get the final blow box details then remove this pilot.
 				if (!$this->nolimit && $i > $invlimit && $i == $invlimit + 1)
 						array_pop($this->involved);
-			}
-			else {
-				$this->involved[$i]['finalBlow'] = "false";
+			} else {
+				$this->involved[$i]['finalBlow'] = false;
 			}
 			++$i;
 		}
@@ -530,14 +582,10 @@ class pKillDetail extends pageAssembly
 	function involvedSummary()
 	{
 		global $smarty;
-		$smarty->assignByRef('invAllies', $this->InvAllies);
-		$smarty->assignByRef('invShips', $this->InvShips);
-		$smarty->assign('alliesCount', count($this->InvAllies));
-		if ($this->ownKill) {
-			$smarty->assign('kill', true);
-		} else {
-			$smarty->assign('kill', false);
-		}
+		$smarty->assignByRef('invAllies', $this->invAllies);
+		$smarty->assignByRef('invShips', $this->invShips);
+		$smarty->assign('alliesCount', count($this->invAllies));
+		$smarty->assign('kill', $this->ownKill);
 		$smarty->assign('involvedPartyCount', $this->kill->getInvolvedPartyCount());
 		$smarty->assign('showext', config::get('kd_showext'));
 
@@ -726,18 +774,18 @@ class pKillDetail extends pageAssembly
 		$smarty->assignByRef('destroyed', $this->dest_array);
 		$smarty->assignByRef('dropped', $this->drop_array);
 
-		if ($this->TotalValue >= 0) {
-			$Formatted = number_format($this->TotalValue, 2);
+		if ($this->totalValue >= 0) {
+			$Formatted = number_format($this->totalValue, 2);
 		}
 
 		// Get Ship Value
 		$this->ShipValue = $this->kill->getVictimShip()->getPrice();
 
 		if (config::get('kd_droptototal')) {
-			$this->TotalValue+=$this->dropvalue;
+			$this->totalValue += $this->dropvalue;
 		}
 
-		$TotalLoss = number_format($this->TotalValue + $this->ShipValue, 2);
+		$TotalLoss = number_format($this->totalValue + $this->ShipValue, 2);
 		$this->ShipValue = number_format($this->ShipValue, 2);
 		$this->dropvalue = number_format($this->dropvalue, 2);
 		$this->bp_value = number_format($this->bp_value, 2);
@@ -780,27 +828,28 @@ class pKillDetail extends pageAssembly
 		if ($this->kill->isClassified()) {
 			//Admin is able to see classified Systems
 			if ($this->page->isAdmin()) {
-				$smarty->assign('systemID', $this->system->getID());
-				$smarty->assign('system', $this->system->getName()
+				$smarty->assign('systemID', $this->kill->getSystem()->getID());
+				$smarty->assign('system', $this->kill->getSystem()->getName()
 						.' (Classified)');
 				$smarty->assign('systemURL', KB_HOST
 						."/?a=system_detail&amp;sys_id="
-						.$this->system->getID());
+						.$this->kill->getSystem()->getID());
 				$smarty->assign('systemSecurity',
-						$this->system->getSecurity(true));
+						$this->kill->getSystem()->getSecurity(true));
 			} else {
 				$smarty->assign('system', 'Classified');
 				$smarty->assign('systemURL', "");
 				$smarty->assign('systemSecurity', '0.0');
 			}
 		} else {
-			$smarty->assign('systemID', $this->system->getID());
-			$smarty->assign('system', $this->system->getName());
+			$smarty->assign('systemID', $this->kill->getSystem()->getID());
+			$smarty->assign('system', $this->kill->getSystem()->getName());
 			$smarty->assign('systemURL',
 					edkURI::build(
-							array('a', 'system_detail', true),
-							array('sys_id', $this->system->getID(), true)));
-			$smarty->assign('systemSecurity', $this->system->getSecurity(true));
+					array('a', 'system_detail', true),
+					array('sys_id', $this->kill->getSystem()->getID(), true)));
+			$smarty->assign('systemSecurity',
+					$this->kill->getSystem()->getSecurity(true));
 		}
 
 		$smarty->assign('timeStamp', $this->kill->getTimeStamp());
@@ -973,7 +1022,8 @@ class pKillDetail extends pageAssembly
 					if (!($found)) {
 						$midammo[] = array(
 							'show' => $smarty->fetch(get_tpl('ammo')),
-							'type' => $smarty->fetch(get_tpl('noicon'))
+							'type' => "<img src='".IMG_URL
+									."/items/24_24/icon09_13.png' alt='' />"
 						);
 					}
 				} else {
@@ -1177,26 +1227,25 @@ class pKillDetail extends pageAssembly
 		if ((!$this->kill->isClassified()) || ($this->page->isAdmin())) {
 			$mapbox = new Box("Map");
 			if (IS_IGB) {
-				$mapbox->addOption("img",
-						imageURL::getURL('map', $this->system->getID(), 145),
+				$mapbox->addOption("img", imageURL::getURL('map',
+						$this->kill->getSystem()->getID(), 145),
 						"javascript:CCPEVE.showInfo(3, "
-								.$this->system->getRegionID().")");
-				$mapbox->addOption("img",
-						imageURL::getURL('region', $this->system->getID(), 145),
+						.$this->kill->getSystem()->getRegionID().")");
+				$mapbox->addOption("img", imageURL::getURL('region',
+						$this->kill->getSystem()->getID(), 145),
 						"javascript:CCPEVE.showInfo(4, "
-								.$this->system->getConstellationID().")");
-				$mapbox->addOption("img",
-						imageURL::getURL('cons', $this->system->getID(), 145),
+						.$this->kill->getSystem()->getConstellationID().")");
+				$mapbox->addOption("img", imageURL::getURL('cons',
+						$this->kill->getSystem()->getID(), 145),
 						"javascript:CCPEVE.showInfo(5, "
-								.$this->system->getExternalID().")");
+						.$this->kill->getSystem()->getExternalID().")");
 			} else {
-				$mapbox->addOption("img",
-						imageURL::getURL('map', $this->system->getID(), 145));
-				$mapbox->addOption("img",
-						imageURL::getURL('region', $this->system->getID(),
-								145));
-				$mapbox->addOption("img",
-						imageURL::getURL('cons', $this->system->getID(), 145));
+				$mapbox->addOption("img", imageURL::getURL('map',
+						$this->kill->getSystem()->getID(), 145));
+				$mapbox->addOption("img", imageURL::getURL('region',
+						$this->kill->getSystem()->getID(), 145));
+				$mapbox->addOption("img", imageURL::getURL('cons',
+						$this->kill->getSystem()->getID(), 145));
 			}
 			return $mapbox->generate();
 		}

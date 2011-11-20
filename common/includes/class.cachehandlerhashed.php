@@ -29,6 +29,9 @@ class CacheHandlerHashed extends CacheHandler
 		$path = self::getPathHashed($key, $location, true);
 
 		$zp = gzopen(self::$internalroot."/".$path, "wb1");
+		if (!$zp) {
+			return false;
+		}
 		gzwrite($zp, serialize($object));
 		return gzclose($zp);
 	}

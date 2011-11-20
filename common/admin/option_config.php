@@ -16,7 +16,7 @@ options::fadd('Main Webpage Link', 'cfg_mainsite', 'edit:size:50');
 options::fadd('Killboard Host', 'cfg_kbhost', 'edit:size:50', '', array('admin_config', 'checkHost'));
 options::fadd('Image base URL', 'cfg_img', 'edit:size:50', '', array('admin_config', 'checkImg'));
 options::fadd('Use CCP imageserver', 'cfg_ccpimages', 'checkbox');
-options::fadd('Use simple URLs', 'cfg_pathinfo', 'checkbox', '', '', 'Beware, untested and may break mods. Have fun!');
+options::fadd('Use simple URLs', 'cfg_pathinfo', 'checkbox');
 options::fadd('Allow Masterfeed', 'feed_allowmaster', 'checkbox');
 options::fadd('Compress pages', 'cfg_compress', 'checkbox', '', '', 'Enable unless you encounter errors');
 options::fadd('Display profiling information', 'cfg_profile', 'checkbox');

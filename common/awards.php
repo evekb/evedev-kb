@@ -11,6 +11,23 @@
  */
 class pAwards extends pageAssembly
 {
+	/** @var array The array of menu options */
+	protected $menuOptions;
+	/** @var array The array of possible views */
+	protected $viewList;
+	/** @var array The array of TopLists to display */
+	private $listList;
+
+	/** @var integer The currently selected month */
+	protected $month;
+	/** @var integer The currently selected year */
+	protected $year;
+	/** @var string The current user-selected view */
+	protected $view;
+
+	/** @var Page The Page object used to display this page. */
+	public $page;
+
 	/**
 	 * Construct the Alliance Details object.
 	 * Set up the basic variables of the class and add the functions to the
@@ -49,36 +66,37 @@ class pAwards extends pageAssembly
 			$this->year = $this->year - 1;
 		}
 
-		if ($this->month == 12) {
-			$this->nmonth = 1;
-			$this->nyear = $this->year + 1;
-		} else {
-			$this->nmonth = $this->month + 1;
-			$this->nyear = $this->year;
-		}
-		if ($this->month == 1) {
-			$this->pmonth = 12;
-			$this->pyear = $this->year - 1;
-		} else {
-			$this->pmonth = $this->month - 1;
-			$this->pyear = $this->year;
-		}
-
-		$this->monthname = kbdate("F", strtotime("2000-".$this->month."-2"));
-
 		if (!edkURI::getArg('y', 1)) {
 			$this->view = edkURI::getArg('view', 1);
 		} else {
 			$this->view = edkURI::getArg('view', 3);
 		}
-
-		$this->viewList = array();
-
-		$this->menuOptions = array();
-
+		$this->listList = $this->listSetup();
 	}
+	
+	private function listSetup()
+	{
+		// Add each toplist in order.
+		
+		// Do mods add at the end? replace like page elements?
+	}
+
+	/**
+	 *
+	 * @param callback $callback A valid callback to generate a toplist.
+	 */
+	function addTopList($callback)
+	{
+		
+	}
+
 	function awards()
 	{
+		if (isset($this->viewList[$this->view])) {
+			return call_user_func_array($this->viewList[$this->view],
+					array(&$this));
+		}
+
 		global $smarty;
 		$awardboxes = array();
 		// top killers
@@ -177,12 +195,14 @@ class pAwards extends pageAssembly
 		$tkbox = new AwardBox($tklist, Language::get('top_isk_kill'), Language::get('top_isk_kill_desc'), "kills", "wing2");
 		$awardboxes[] = $tkbox->generate();
 
+		$monthname = kbdate("F", strtotime("2000-".$this->month."-2"));
+
 		$smarty->assignByRef('awardboxes', $awardboxes);
-		$smarty->assign('month', $this->monthname);
+		$smarty->assign('month', $monthname);
 		$smarty->assign('year', $this->year);
 		$smarty->assign('boxcount', count($awardboxes));
 
-		$smarty->assign('page_title', Language::get('page_awards_for')." ".$this->monthname." ".$this->year);
+		$smarty->assign('page_title', Language::get('page_awards_for')." ".$monthname." ".$this->year);
 		return $smarty->fetch(get_tpl('awards'));
 	}
 	/**
@@ -219,10 +239,25 @@ class pAwards extends pageAssembly
 	 */
 	function menuSetup()
 	{
+		if ($this->month == 12) {
+			$nmonth = 1;
+			$nyear = $this->year + 1;
+		} else {
+			$nmonth = $this->month + 1;
+			$nyear = $this->year;
+		}
+		if ($this->month == 1) {
+			$pmonth = 12;
+			$pyear = $this->year - 1;
+		} else {
+			$pmonth = $this->month - 1;
+			$pyear = $this->year;
+		}
+
 		$this->addMenuItem("caption", "Navigation");
-		$this->addMenuItem("link", "Previous month ", edkURI::build(array('y', $this->pyear, true), array('m', $this->pmonth, true)));
+		$this->addMenuItem("link", "Previous month ", edkURI::build(array('y', $pyear, true), array('m', $pmonth, true)));
 		if (! ($this->month == kbdate("m") - 1 && $this->year == kbdate("Y")))
-			$this->addMenuItem("link", "Next month", edkURI::build(array('y', $this->nyear, true), array('m', $this->nmonth, true)));
+			$this->addMenuItem("link", "Next month", edkURI::build(array('y', $nyear, true), array('m', $nmonth, true)));
 	}
 	/**
 	 * Add an item to the menu in standard box format.
@@ -246,6 +281,33 @@ class pAwards extends pageAssembly
 	function addView($view, $callback)
 	{
 		$this->viewList[$view] = $callback;
+	}
+
+	/**
+	 * Return the set month.
+	 * @return integer
+	 */
+	function getMonth()
+	{
+		return $this->month;
+	}
+
+	/**
+	 * Return the set year.
+	 * @return integer
+	 */
+	function getYear()
+	{
+		return $this->year;
+	}
+
+	/**
+	 * Return the set view.
+	 * @return string
+	 */
+	function getView()
+	{
+		return $this->view;
 	}
 }
 

@@ -10,7 +10,22 @@
  */
 class pSystemDetail extends pageAssembly
 {
-	private $args = array();
+	/** @var Page */
+	public $page = null;
+	/** @var integer */
+	public $sys_id = 0;
+
+	/** @var System */
+	protected $system;
+	/** @var string The selected view. */
+	protected $view = null;
+	/** @var array The list of views and their callbacks. */
+	protected $viewList = array();
+	/** @var array The list of menu options to display. */
+	protected $menuOptions = array();
+
+	/** @var KillSummaryTable */
+	private $kill_summary = null;
 
 	function __construct()
 	{
@@ -34,10 +49,6 @@ class pSystemDetail extends pageAssembly
 		$this->sys_id = (int)edkURI::getArg('sys_id', 1, true);
 		$this->view = preg_replace('/[^a-zA-Z0-9_-]/', '',
 						edkURI::getArg('view', 2, true));
-
-		$this->args[] = array('a', 'system_detail', true);
-		$this->args[] = array('sys_id', $this->sys_id, true);
-		$this->scl_id = (int)edkURI::getArg('scl_id');
 
 		global $smarty;
 		$this->smarty = $smarty;
@@ -105,6 +116,7 @@ class pSystemDetail extends pageAssembly
 			return call_user_func_array(
 					$this->viewList[$this->view], array(&$this));
 		}
+		$scl_id = (int)edkURI::getArg('scl_id');
 
 		$klist = new KillList();
 		$klist->setOrdered(true);
@@ -118,8 +130,8 @@ class pSystemDetail extends pageAssembly
 			$klist->setEndDate(gmdate('Y-m-d H:i', strtotime('now - '
 					.(config::get('kill_classified')).' hours')));
 		}
-		if ($this->scl_id) {
-			$klist->addVictimShipClass(intval($this->scl_id));
+		if ($scl_id) {
+			$klist->addVictimShipClass(intval($scl_id));
 		} else {
 			$klist->setPodsNoobShips(config::get('podnoobs'));
 		}
@@ -162,13 +174,16 @@ class pSystemDetail extends pageAssembly
 	 */
 	function menuSetup()
 	{
+		$args = array();
+		$args[] = array('a', 'system_detail', true);
+		$args[] = array('sys_id', $this->sys_id, true);
 		$this->addMenuItem("caption", "Navigation");
 		$this->addMenuItem("link", "All kills",
-				edkURI::build($this->args, array('view', 'kills', true)));
+				edkURI::build($args, array('view', 'kills', true)));
 		$this->addMenuItem("link", "All losses",
-				edkURI::build($this->args, array('view', 'losses', true)));
+				edkURI::build($args, array('view', 'losses', true)));
 		$this->addMenuItem("link", "Recent Activity",
-				edkURI::build($this->args, array('view', 'recent', true)));
+				edkURI::build($args, array('view', 'recent', true)));
 		return "";
 	}
 
@@ -215,6 +230,14 @@ class pSystemDetail extends pageAssembly
 		$this->viewList[$view] = $callback;
 	}
 
+	/**
+	 * Return the set view.
+	 * @return string
+	 */
+	function getView()
+	{
+		return $this->view;
+	}
 }
 $systemDetail = new pSystemDetail();
 event::call("systemdetail_assembling", $systemDetail);

@@ -27,6 +27,7 @@
  * region = restrict kills to a specific region
  * kll_id = show one kill only.
  * kll_ext_id = show one kill only.
+ * limit = maximum number of kills to return.
  *
  */
 
@@ -59,7 +60,11 @@ if (isset($_GET['allkills']) && $_GET['allkills'] == 0 ) {
 } else {
 	$list->setOrderBy(' kll.kll_id ASC ');
 }
-$list->setLimit($maxkillsreturned);
+if (isset($_GET['limit'])) {
+	$list->setLimit(min($maxkillsreturned, (int)$_GET['limit']));
+} else {
+	$list->setLimit($maxkillsreturned);
+}
 
 $qry = DBFactory::getDBQuery();
 

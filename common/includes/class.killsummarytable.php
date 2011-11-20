@@ -528,19 +528,16 @@ class KillSummaryTable
 			$qry->execute($sql) or die($qry->getErrorMsg());
 			while ($row = $qry->getRow())
 			{
-				if (!$row['scl_id'])
+				if (!$row['scl_id']) {
 					continue;
-
-				$shipclass = new ShipClass($row['scl_id']);
-				$shipclass->setName($row['scl_class']);
-
-				$entry[$shipclass->getName()]['id'] = $row['scl_id'];
-				$entry[$shipclass->getName()]['kills'] = 0;
-				$entry[$shipclass->getName()]['kills_isk'] = 0;
-				$entry[$shipclass->getName()]['losses'] = 0;
-				$entry[$shipclass->getName()]['losses_isk'] = 0;
+				}
+				$entry[$row['scl_class']]['id'] = $row['scl_id'];
+				$entry[$row['scl_class']]['kills'] = 0;
+				$entry[$row['scl_class']]['kills_isk'] = 0;
+				$entry[$row['scl_class']]['losses'] = 0;
+				$entry[$row['scl_class']]['losses_isk'] = 0;
 			}
-			$sql = "SELECT shp_id, scl_class, scl_class FROM kb3_ships ".
+			$sql = "SELECT shp_id, scl_class FROM kb3_ships ".
 					"INNER JOIN kb3_ship_classes ON scl_id = shp_class";
 			$qry->execute($sql);
 			$shipscl = array();
@@ -572,8 +569,6 @@ class KillSummaryTable
 			$entry = &$this->entry;
 		}
 
-		$odd = false;
-		$prevdate = "";
 		// Don't count noobships.
 		$num = count($entry) - 1;
 		$summary = array();

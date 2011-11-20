@@ -11,6 +11,11 @@
  */
 class pInvtype extends pageAssembly
 {
+	/** @var integer */
+	public $typeID;
+	/** @var Page */
+	public $page;
+		
 	function __construct()
 	{
 		parent::__construct();

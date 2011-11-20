@@ -27,7 +27,7 @@ $permt = array();
 while ($row = $qry->getRow()) {
 	$typ = $row['sta_to_type'];
 	$val = sprintf("%01.1f", $row['sta_value']);
-	$id = $row['sta_to'];
+	$id = (int) $row['sta_to'];
 
 	if ($row['sta_value'] > 5) {
 		$icon = 'high';
@@ -40,18 +40,35 @@ while ($row = $qry->getRow()) {
 	}
 
 	if ($typ == 'a') {
-		$alliance = Alliance::getByID((int) $row['sta_to']);
+		$alliance = Alliance::getByID($id);
 		$text = $alliance->getName();
 		$pid = $alliance->getUnique();
 		$link = edkURI::page('admin_standings', $typ . $row['sta_to'], 'del');
-		$permt[$typ][] = array('text' => $text, 'link' => $link, 'value' => $val, 'comment' => $row['sta_comment'],
-			'id' => $id, 'pid' => $pid, 'typ' => $row['sta_to'], 'icon' => $icon);
+		$permt[$typ][] = array(
+			'text' => $text,
+			'link' => $link,
+			'all_url' => $alliance->getDetailsURL(),
+			'all_img' => $alliance->getPortraitURL(32),
+			'value' => $val,
+			'comment' => $row['sta_comment'],
+			'id' => $id,
+			'pid' => $pid,
+			'typ' => $row['sta_to'],
+			'icon' => $icon);
 	} else if ($typ == 'c') {
 		$corp = Corporation::getByID((int) $row['sta_to']);
 		$text = $corp->getName();
 		$link = edkURI::page('admin_standings', $typ . $row['sta_to'], 'del');
-		$permt[$typ][] = array('text' => $text, 'link' => $link, 'value' => $val, 'comment' => $row['sta_comment'],
-			'id' => $id, 'typ' => $typ, 'icon' => $icon);
+		$permt[$typ][] = array(
+			'text' => $text,
+			'link' => $link,
+			'crp_url' => $corp->getDetailsURL(),
+			'crp_img' => $corp->getPortraitURL(32),
+			'value' => $val,
+			'comment' => $row['sta_comment'],
+			'id' => $id,
+			'typ' => $typ,
+			'icon' => $icon);
 	}
 }
 $perm = array();

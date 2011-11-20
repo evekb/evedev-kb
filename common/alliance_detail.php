@@ -15,26 +15,24 @@ class pAllianceDetail extends pageAssembly
 {
 	/** @var Page */
 	public $page = null;
-	/** @var integer Filter killlists by this ship class ID. */
-	public $scl_id = 0;
 	/** @var integer */
 	public $all_id = 0;
 	/** @var integer */
 	public $all_external_id = 0;
 	/** @var Alliance */
 	public $alliance = null;
-	/** @var string */
-	private $view = null;
-	/** @var array */
-	private $viewList = array();
-	/** @var array */
-	private $menuOptions = array();
+	/** @var string The selected view. */
+	protected $view = null;
+	/** @var array The list of views and their callbacks. */
+	protected $viewList = array();
+	/** @var array The list of menu options to display. */
+	protected $menuOptions = array();
 	/** @var array */
 	private $allianceCorps = array();
 	/** @var integer */
-	private $month = '';
+	protected $month = '';
 	/** @var integer */
-	private $year = '';
+	protected $year = '';
 	/** @var integer */
 	private $nmonth = '';
 	/** @var integer */
@@ -71,7 +69,6 @@ class pAllianceDetail extends pageAssembly
 	{
 		$this->page = new Page();
 
-		$this->scl_id = (int) edkURI::getArg('scl_id');
 		$this->all_id = (int) edkURI::getArg('all_id');
 		$this->all_external_id = (int) edkURI::getArg('all_ext_id');
 
@@ -259,7 +256,7 @@ class pAllianceDetail extends pageAssembly
 		}
 		// The summary table is also used by the stats. Whichever is called
 		// first generates the table.
-		$smarty->assign('all_img', $this->alliance->getPortraitURL());
+		$smarty->assign('all_img', $this->alliance->getPortraitURL(128));
 		$smarty->assign('totalkills', $this->kill_summary->getTotalKills());
 		$smarty->assign('totallosses', $this->kill_summary->getTotalLosses());
 		$smarty->assign('totalkisk',
@@ -333,6 +330,7 @@ class pAllianceDetail extends pageAssembly
 			return call_user_func_array($this->viewList[$this->view],
 					array(&$this));
 		}
+		$scl_id = (int) edkURI::getArg('scl_id');
 
 		switch ($this->view) {
 			default:
@@ -347,8 +345,8 @@ class pAllianceDetail extends pageAssembly
 				$list->setLimit(10);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->addInvolvedAlliance($this->alliance);
-				if ($this->scl_id) {
-					$list->addVictimShipClass($this->scl_id);
+				if ($scl_id) {
+					$list->addVictimShipClass($scl_id);
 				}
 				$ktab = new KillListTable($list);
 				$ktab->setLimit(10);
@@ -366,8 +364,8 @@ class pAllianceDetail extends pageAssembly
 				$list->setLimit(10);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->addVictimAlliance($this->alliance);
-				if ($this->scl_id) {
-					$list->addVictimShipClass($this->scl_id);
+				if ($scl_id) {
+					$list->addVictimShipClass($scl_id);
 				}
 
 				$ltab = new KillListTable($list);
@@ -382,8 +380,8 @@ class pAllianceDetail extends pageAssembly
 				$list = new KillList();
 				$list->setOrdered(true);
 				$list->addInvolvedAlliance($this->alliance);
-				if ($this->scl_id) {
-					$list->addVictimShipClass($this->scl_id);
+				if ($scl_id) {
+					$list->addVictimShipClass($scl_id);
 				}
 				$list->setPageSplit(config::get('killcount'));
 				$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
@@ -400,8 +398,8 @@ class pAllianceDetail extends pageAssembly
 				$list->setOrdered(true);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->addVictimAlliance($this->alliance);
-				if ($this->scl_id) {
-					$list->addVictimShipClass($this->scl_id);
+				if ($scl_id) {
+					$list->addVictimShipClass($scl_id);
 				}
 				$list->setPageSplit(config::get('killcount'));
 				$pagesplitter = new PageSplitter($list->getCount(),
@@ -925,6 +923,33 @@ class pAllianceDetail extends pageAssembly
 	function addView($view, $callback)
 	{
 		$this->viewList[$view] = $callback;
+	}
+
+	/**
+	 * Return the set month.
+	 * @return integer
+	 */
+	function getMonth()
+	{
+		return $this->month;
+	}
+
+	/**
+	 * Return the set year.
+	 * @return integer
+	 */
+	function getYear()
+	{
+		return $this->year;
+	}
+
+	/**
+	 * Return the set view.
+	 * @return string
+	 */
+	function getView()
+	{
+		return $this->view;
 	}
 }
 

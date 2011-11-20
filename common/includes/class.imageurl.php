@@ -13,10 +13,31 @@
  */
 class imageURL
 {
+	private static $callbacks = array();
+	
+	/**
+	 * Get the URL for an image of the specified type.
+	 * 
+	 * @param string $type Type of image - e.g. Character, Corporation,
+	 * Alliance, InventoryType, Render.
+	 * 
+	 * @param integer $id ID for the image.
+	 * @param integer $size Size of the image in pixels.
+	 * @param boolean $internal true if the image should be handled internally.
+	 * e.g. Pilots with no external ID.
+	 * 
+	 * @return string URL to an image.
+	 */
 	static function getURL($type, $id, $size, $internal = false)
 	{
-		$id = intval($id);
-		$size = intval($size);
+		$id = (int)$id;
+		$size = (int)$size;
+	
+		foreach(self::$callbacks as $callback) {
+			if ($result = call_user_func_array($callback, func_get_args())) {
+				return $result;
+			}
+		}
 
 		if ($id == 0) {
 			if ($size == 32 || $size == 64 || $size == 128 || $size == 256) {
@@ -75,9 +96,29 @@ class imageURL
 			$url .= "?type=$type&amp;id=$id&amp;size=$size";
 		}
 		if ($internal) {
-			$url .= "&amp;int=1";
+			if(strpos($url, "?") !== false) {
+				$url .= "&amp;int=1";
+			} else {
+				$url .= "?amp;int=1";
+			}
 		}
 		return $url;
 	}
 
+	/**
+	 * Register a handler for images. Handler should take arguments as per
+	 * getURL and return either an image URL or false. If false is returned the
+	 * next handler, or default handler, will be called.
+	 * 
+	 * @param callback $callback A valid callback.
+	 */
+	static function registerHandler($callback)
+	{
+		if (!is_callable($callback)) {
+			trigger_error('The supplied callback has to be callable.', E_USER_WARNING);
+			return;
+		}
+		
+		self::$callbacks[] = $callback;
+	}
 }
