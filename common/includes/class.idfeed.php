@@ -492,7 +492,7 @@ class IDFeed
 							$logaddress .= "?a=kill_detail&kll_id=".$internalID;
 						}
 					} else if ($this->name) {
-						$logaddress = "ID:".$this->name;
+						$logaddress = $this->name;
 						if ($kill->getExternalID()) {
 							$logaddress .= ":kll_ext_id="
 									.$kill->getExternalID();
