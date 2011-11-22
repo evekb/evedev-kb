@@ -309,9 +309,8 @@ class Pilot extends Entity
 				$qry->execute("SELECT * FROM kb3_pilots WHERE plt_externalid = "
 						.$externalID);
 				if ($qry->recordCount()) {
-					$pilot = Cacheable::factory('Pilot', $row['plt_id']);
-
 					$row = $qry->getRow();
+					$pilot = Pilot::getByID($row['plt_id']);
 					$qryI->execute("UPDATE kb3_pilots SET plt_name = '".$name
 							."' WHERE plt_externalid = ".$externalID);
 					if ($qryI->affectedRows() > 0) {
