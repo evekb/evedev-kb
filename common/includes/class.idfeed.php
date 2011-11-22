@@ -388,7 +388,7 @@ class IDFeed
 		// We need raw mails for the mailhash so temporarily disable
 		// classification
 		config::put('kill_classified', 0);
-		if (!is_null($sxe->result->row)) {
+		if (!is_null($sxe->result->rowset->row)) {
 			foreach ($sxe->result->rowset->row as $row) {
 				$this->processKill($row);
 			}
