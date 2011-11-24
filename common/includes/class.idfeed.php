@@ -438,6 +438,15 @@ class IDFeed
 				foreach ($row->rowset[0]->row as $inv) {
 					if (!$this->processInvolved($inv, $kill,
 							strval($row['killTime']))) {
+						if ($internalID) {
+							$errorstring = "Involved Party error in kill:"
+									." External ID = $externalID, Internal ID"
+									." = $internalID";
+						} else {
+							$errorstring = "Involved Party error in kill: ID = "
+									.$externalID;
+						}
+						trigger_error($errorstring, E_USER_WARNING);
 						$skip = true;
 						break;
 					}
@@ -461,7 +470,7 @@ class IDFeed
 					} else {
 						$errorstring = "Kill not added. ID = $externalID";
 					}
-					trigger_error($errorstring, E_USER_ERROR);
+					trigger_error($errorstring, E_USER_WARNING);
 					$skip = true;
 				} else if ($id < 0) {
 					$id = $kill->getDupe(true);
@@ -476,7 +485,7 @@ class IDFeed
 				   }
 
 				} else {
-					$this->posted[] = array($kill->getExternalID(), $internalID,
+					$this->posted[] = array($externalID, $internalID,
 						$id);
 					// Prepare text for the log.
 					if($this->url) {
