@@ -46,7 +46,7 @@ class pKillDetail extends pageAssembly
 	protected $dest_array = array();
 	/** @var array Array of dropped items*/
 	protected $drop_array = array();
-	
+
 	/**
 	 * Construct the Pilot Details object.
 	 * Add the functions to the build queue.
@@ -1331,26 +1331,34 @@ class pKillDetail extends pageAssembly
 	{
 		global $smarty;
 		$qry = DBFactory::getDBQuery();
-		$sql = "SELECT log_ip_address, log_timestamp FROM kb3_log WHERE log_kll_id = ".$this->kll_id;
+		$sql = "SELECT log_ip_address, log_timestamp FROM kb3_log WHERE"
+				." log_kll_id = ".$this->kll_id;
 		$qry->execute($sql);
-		if (!$row = $qry->getRow()) return "";
+		if (!$row = $qry->getRow()) {
+			return "";
+		}
 		$source = $row['log_ip_address'];
 		$posteddate = $row['log_timestamp'];
 
-		if (preg_match("/^\d+/", $source)) {
+		if (preg_match("/^\d+/", $source)
+				|| preg_match("/^IP/", $source)) {
 			$type = "IP";
+			$source = substr($source, 3);
 			// No posting IPs publicly.
-			if (!$this->page->isAdmin()) $source = "";
-		}
-		elseif (preg_match("/^API/", $source)) {
+			if (!$this->page->isAdmin()) {
+				$source = "";
+			}
+		} else if (preg_match("/^API/", $source)) {
 			$type = "API";
 			$source = $this->kill->getExternalID();
-		} elseif (preg_match("/^http/", $source)) $type = "URL";
-		elseif (preg_match("/^ID:http/", $source)) {
+		} else if (preg_match("/^http/", $source)) {
+			$type = "URL";
+		} else if (preg_match("/^ID:http/", $source)) {
 			$type = "URL";
 			$source = substr($source, 3);
+		} else {
+			$type = "unknown";
 		}
-		else $type = "unknown";
 
 		$smarty->assign("source", htmlentities($source));
 		$smarty->assign("type", $type);
