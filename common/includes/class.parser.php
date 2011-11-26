@@ -761,6 +761,8 @@ class Parser
 
 		while ($i < $num) {
 			$destroyed[$i] = trim($destroyed[$i]);
+			// TODO: Find a nicer way to do this. Then rewrite the rest of the parser.
+			$destroyed[$i] = str_replace("(Copy) (Cargo)", "(Copy)", $destroyed[$i]);
 
 			$itemname = substr($destroyed[$i], 0, strlen($destroyed[$i]));
 			//API mod will return null when it can't lookup an item, so filter these

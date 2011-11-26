@@ -213,6 +213,16 @@ class pKillDetail extends pageAssembly
 				$i_location = $destroyed->getLocationID();
 				$i_id = $item->getID();
 				$i_usedgroup = $item->get_used_launcher_group();
+				
+				// BPCs
+				if($i_location == 9) {
+					$i_location = 4;
+					$i_name = $i_name." (Copy)";
+					$value = $formatted = 0;
+					$bpc = true;
+				} else {
+					$bpc = false;
+				}
 
 				$this->dest_array[$i_location][] = array
 					(
@@ -223,7 +233,8 @@ class pKillDetail extends pageAssembly
 					'Value' => $formatted,
 					'single_unit' => $value,
 					'itemID' => $i_id,
-					'slotID' => $i_location
+					'slotID' => $i_location,
+					'bpc' => $bpc
 				);
 
 				//Fitting, KE - add destroyed items to an array of all fitted items.
@@ -296,6 +307,16 @@ class pKillDetail extends pageAssembly
 				$i_id = $item->getID();
 				$i_usedgroup = $item->get_used_launcher_group();
 
+				// BPCs
+				if($i_location == 9) {
+					$i_location = 4;
+					$i_name = $i_name." (Copy)";
+					$value = $formatted = 0;
+					$bpc = true;
+				} else {
+					$bpc = false;
+				}
+
 				$this->drop_array[$i_location][] = array(
 					'Icon' => $item->getIcon(32),
 					'Name' => $i_name,
@@ -304,7 +325,8 @@ class pKillDetail extends pageAssembly
 					'Value' => $formatted,
 					'single_unit' => $value,
 					'itemID' => $i_id,
-					'slotID' => $i_location
+					'slotID' => $i_location,
+					'bpc' => $bpc
 				);
 
 				//Fitting -KE, add dropped items to the list
