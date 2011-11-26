@@ -1727,20 +1727,3 @@ div.login table td:first-child
 {
 	width: 160px; font-weight: bold;
 }
-/* Disable default styles that are in the way.
-TODO: remove when this is default */
-.killcount, .losscount
-{
-	float: none;
-}
-
-#context, .context_element
-{
-	margin-top: 0;
-}
-
-.comment-button
-{
-	padding-left: 0;
-}
-
