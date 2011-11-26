@@ -21,6 +21,7 @@
  * 		Kills are logged with source board's id.
  * 1.0.7 Better CCP API handling
  * 1.0.8 Handle NPC ships in API feeds.
+ * 1.0.9 Add Implant location
  * @package EDK
  */
 class IDFeed
@@ -38,7 +39,7 @@ class IDFeed
 	private $errormsg = '';
 	private $errorcode = 0;
 	private $npcOnly = true;
-	const version = "1.08";
+	const version = "1.09";
 
 	/**
 	 * Construct the Fetcher class and initialise variables.
@@ -683,7 +684,7 @@ class IDFeed
 			$location = 4;
 		} else if ((int)$item['flag'] == 89) {
 			// Implant
-			$location = 4;
+			$location = 8;
 		} else if ((int)$item['flag'] == 87) {
 			// Drone Bay
 			$location = 6;
