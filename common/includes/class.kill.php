@@ -527,6 +527,15 @@ class Kill extends Cacheable
 					.round($this->getClassifiedTime()/3600, 2).' hrs.';
 		}
 
+		static $locations;
+		if(!isset($locations)) {
+			$qry = DBFactory::getDBQuery();
+			$qry->execute("SELECT itl_id, itl_location FROM kb3_item_locations");
+			while($row = $qry->getRow()) {
+				$locations[$row['itl_id']] = $row['itl_location'];
+			}
+		}
+
 		$ship = $this->getVictimShip();
 		$shipclass = $ship->getClass();
 		if(!$this->getVictimCorpName()) {
@@ -655,12 +664,18 @@ class Kill extends Cacheable
 			foreach($this->destroyeditems_ as $destroyed) {
 				$item = $destroyed->getItem();
 				$mail .= $item->getName();
-				if ($destroyed->getQuantity() > 1)
+				if ($destroyed->getQuantity() > 1) {
 					$mail .= ", Qty: ".$destroyed->getQuantity();
-				if ($destroyed->getLocationID() == 4) // cargo
+				}
+				if ($destroyed->getLocationID() == 4) {
 					$mail .= " (Cargo)";
-				if ($destroyed->getLocationID() == 6) // drone
+				} else if ($destroyed->getLocationID() == 6) {
 					$mail .= " (Drone Bay)";
+				} else if ($destroyed->getLocationID() == 8) {
+					$mail .= " (Implant)";
+				} else if ($destroyed->getLocationID() == 9) {
+					$mail .= " (Copy)";
+				}
 				$mail .= "\r\n";
 			}
 		}
@@ -679,6 +694,10 @@ class Kill extends Cacheable
 					$mail .= " (Cargo)";
 				} else if ($dropped->getLocationID() == 6) {
 					$mail .= " (Drone Bay)";
+				} else if ($dropped->getLocationID() == 8) {
+					$mail .= " (Implant)";
+				} else if ($dropped->getLocationID() == 9) {
+					$mail .= " (Copy) (Cargo)";
 				}
 				$mail .= "\r\n";
 			}
@@ -1450,11 +1469,11 @@ class Kill extends Cacheable
 
 		// Make sure involved parties are ordered by damage done.
 		usort($this->involvedparties_, array('Kill','involvedComparator'));
-		
+
 		foreach ($this->involvedparties_ as $inv) {
 			$ship = $inv->getShip();
 			$weapon = $inv->getWeapon();
-			if (!$inv->getPilotID() 
+			if (!$inv->getPilotID()
 					|| !$inv->getAllianceID() || !$inv->getCorpID()
 					|| !$ship->getName() || !$weapon->getID()) {
 				return $this->rollback();
@@ -1552,15 +1571,15 @@ class Kill extends Cacheable
 
 	function remove($delcomments = true, $permanent = true)
 	{
-		if (!$this->id)
+		if (!$this->id) {
 			return;
+		}
 		$qry = DBFactory::getDBQuery();
 		$qry->autocommit(false);
-		summaryCache::delKill($this);
 
 		event::call('killmail_delete', $this);
+		summaryCache::delKill($this);
 
-		$qry->execute("delete from kb3_kills where kll_id = ".$this->id);
 		$qry->execute("delete from kb3_inv_detail where ind_kll_id = ".$this->id);
 		$qry->execute("delete from kb3_inv_all where ina_kll_id = ".$this->id);
 		$qry->execute("delete from kb3_inv_crp where inc_kll_id = ".$this->id);
@@ -1575,6 +1594,7 @@ class Kill extends Cacheable
 			else
 				$qry->execute("DELETE FROM kb3_mails WHERE kll_id = ".$this->id);
 		}
+		$qry->execute("delete from kb3_kills where kll_id = ".$this->id);
 		$qry->autocommit(true);
 
 		$this->valid = false;

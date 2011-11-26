@@ -21,6 +21,7 @@
  * 		Kills are logged with source board's id.
  * 1.0.7 Better CCP API handling
  * 1.0.8 Handle NPC ships in API feeds.
+ * 1.0.9 Add Implant location
  * @package EDK
  */
 class IDFeed
@@ -38,7 +39,7 @@ class IDFeed
 	private $errormsg = '';
 	private $errorcode = 0;
 	private $npcOnly = true;
-	const version = "1.08";
+	const version = "1.09";
 
 	/**
 	 * Construct the Fetcher class and initialise variables.
@@ -388,7 +389,7 @@ class IDFeed
 		// We need raw mails for the mailhash so temporarily disable
 		// classification
 		config::put('kill_classified', 0);
-		if (!is_null($sxe->result->row)) {
+		if (!is_null($sxe->result->rowset->row)) {
 			foreach ($sxe->result->rowset->row as $row) {
 				$this->processKill($row);
 			}
@@ -438,6 +439,15 @@ class IDFeed
 				foreach ($row->rowset[0]->row as $inv) {
 					if (!$this->processInvolved($inv, $kill,
 							strval($row['killTime']))) {
+						if ($internalID) {
+							$errorstring = "Involved Party error in kill:"
+									." External ID = $externalID, Internal ID"
+									." = $internalID";
+						} else {
+							$errorstring = "Involved Party error in kill: ID = "
+									.$externalID;
+						}
+						trigger_error($errorstring, E_USER_WARNING);
 						$skip = true;
 						break;
 					}
@@ -461,7 +471,7 @@ class IDFeed
 					} else {
 						$errorstring = "Kill not added. ID = $externalID";
 					}
-					trigger_error($errorstring, E_USER_ERROR);
+					trigger_error($errorstring, E_USER_WARNING);
 					$skip = true;
 				} else if ($id < 0) {
 					$id = $kill->getDupe(true);
@@ -476,7 +486,7 @@ class IDFeed
 				   }
 
 				} else {
-					$this->posted[] = array($kill->getExternalID(), $internalID,
+					$this->posted[] = array($externalID, $internalID,
 						$id);
 					// Prepare text for the log.
 					if($this->url) {
@@ -492,7 +502,7 @@ class IDFeed
 							$logaddress .= "?a=kill_detail&kll_id=".$internalID;
 						}
 					} else if ($this->name) {
-						$logaddress = "ID:".$this->name;
+						$logaddress = $this->name;
 						if ($kill->getExternalID()) {
 							$logaddress .= ":kll_ext_id="
 									.$kill->getExternalID();
@@ -674,7 +684,7 @@ class IDFeed
 			$location = 4;
 		} else if ((int)$item['flag'] == 89) {
 			// Implant
-			$location = 4;
+			$location = 8;
 		} else if ((int)$item['flag'] == 87) {
 			// Drone Bay
 			$location = 6;

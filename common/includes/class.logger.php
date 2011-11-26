@@ -37,10 +37,10 @@ class logger
 			return $_SERVER["HTTP_FORWARDED"];
 		} else if (logger::validip($_SERVER["HTTP_X_FORWARDED"])) {
 			return $_SERVER["HTTP_X_FORWARDED"];
-		} else if (logger::validip($_SERVER["REMOTE_ADDR"])) {
+		} else if ($_SERVER["REMOTE_ADDR"]) {
 			return $_SERVER["REMOTE_ADDR"];
 		} else {
-			return "0.0.0.0";
+			return "127.0.0.1";
 		}
 	}
 
@@ -86,7 +86,7 @@ class logger
 	public static function logKill($killid, $note = null)
 	{
 		if (is_null($note)) {
-			$note = logger::getip();
+			$note = "IP:".logger::getip();
 		}
 
 		$qry = DBFactory::getDBQuery(true);

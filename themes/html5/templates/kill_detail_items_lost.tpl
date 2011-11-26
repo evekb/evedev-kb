@@ -20,7 +20,7 @@
 			<td>{$i.Value}</td>
         {/if}
 		</tr>
-        {if $admin and $config->get('item_values') and !$fixSlot}
+        {if $admin && $config->get('item_values') && !$fixSlot && !$i.bpc}
 		<tr class="kb-table-row-even">
 			<td colspan="4">
 				<form method="post" action="{$formURL}">
@@ -65,7 +65,7 @@
 			<td>{$i.Value}</td>
         {/if}
 		</tr>
-        {if $admin and $config->get('item_values') and !$fixSlot}
+        {if $admin && $config->get('item_values') && !$fixSlot && !$i.bpc}
 		<tr class="kb-table-row-even">
 			<td colspan="4">
 				<form method="post" action="{$formURL}">

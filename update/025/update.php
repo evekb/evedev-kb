@@ -12,7 +12,7 @@ function update025()
 	{
 		$qry = DBFactory::getDBQuery(true);
 
-		$qry->execute("INSERT IGNORE INTO  `kb3_item_locations` ("
+		$qry->execute("INSERT IGNORE INTO `kb3_item_locations` ("
 			."`itl_id` , `itl_location`)"
 			." VALUES ('8',  'Implant');");
 
