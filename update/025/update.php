@@ -14,7 +14,7 @@ function update025()
 
 		$qry->execute("INSERT IGNORE INTO `kb3_item_locations` ("
 			."`itl_id` , `itl_location`)"
-			." VALUES ('8',  'Implant'), ('9', 'Copy');");
+			." VALUES ('8',  'Implant');");
 
 		killCache();
 		config::set("DBUpdate", "025");
