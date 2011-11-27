@@ -51,9 +51,8 @@ require_once ('common/includes/class.edkerror.php');
 set_error_handler(array('EDKError', 'handler'), E_ERROR );
 
 $config = new Config(KB_SITE);
-$ApiCache = new ApiCache(KB_SITE);
 
-$outhead = "Running Cron_Cache - with API Mod ". APIVERSION . " on " . gmdate("M d Y H:i") . "\n\n";
+$outhead = "Running Cron_Cache on " . gmdate("M d Y H:i") . "\n\n";
 $out = '';
 
 // Alliance

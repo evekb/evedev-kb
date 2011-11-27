@@ -52,9 +52,7 @@ if ($_POST['clearapicache'])
 			$deld++;
 		}
 	}
-	// drop table
-	$db = DBFactory::getDBQuery(true);
-	$db->execute("TRUNCATE TABLE `kb3_apicache`");
+
 	$html .= "Cache cleared.<br />";
 	$html .= "<script type=\"text/javascript\">window.location = \"?a=admin_apimod\"</script>"; //*/
 }

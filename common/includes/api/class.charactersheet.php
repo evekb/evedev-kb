@@ -275,8 +275,6 @@ class API_CharacterSheet
 		if ($name == "CACHEDUNTIL")
 		{
 			$this->CachedUntil_ = $this->characterDataValue;
-			//ApiCache::set('API_eve_RefTypes' , $this->characterDataValue);
-			ApiCache::set( $this->CharName_ . '_CharacterSheet' , $this->characterDataValue);
 		}
     }
 

@@ -354,7 +354,6 @@ class API_Standings
 		if ($name == "CACHEDUNTIL")
 		{
 			$this->CachedUntil_ = $this->characterDataValue;
-			ApiCache::set( $this->API_characterID_ . '_Standings' , $this->characterDataValue);
 		}
     }
 
@@ -367,17 +366,10 @@ class API_Standings
     {
 		$configvalue = $this->API_characterID_ . '_Standings';
 
-		$CachedTime = ApiCache::get($configvalue);
 		$UseCaching = config::get('API_UseCache');
 
         $url = API_SERVER."/" . $typestring . "/Standings.xml.aspx" . $keystring;
         $path = "/" . $typestring . "/Standings.xml.aspx";
-
-		// API Caching system, If we're still under cachetime reuse the last XML, if not download the new one. Helps with Bug hunting and just better all round.
-		if ($CachedTime == "")
-    	{
-        	$CachedTime = "2005-01-01 00:00:00"; // fake date to ensure that it runs first time.
-    	}
 
 		if (is_file(KB_CACHEDIR.'/api/'.$configvalue.'.xml'))
 			$cacheexists = true;
