@@ -548,20 +548,20 @@ class Kill extends Cacheable
 		}
 
 		if (!$this->getVictimName()) {
-			trigger_error("Invalid mail", E_USER_ERROR);
+			trigger_error("Invalid mail, victim name blank", E_USER_ERROR);
 			return "";
 		} else if (!$this->getVictimCorpName()) {
-			trigger_error("Invalid mail", E_USER_ERROR);
+			trigger_error("Invalid mail, victim corporation blank", E_USER_ERROR);
 			return "";
 		} else if (!$this->getVictimAllianceName()
 				&& !$this->getVictimFactionName()) {
-			trigger_error("Invalid mail", E_USER_ERROR);
+			trigger_error("Invalid mail, victim alliance blank", E_USER_ERROR);
 			return "";
 		} else if (!$ship->getName()) {
-			trigger_error("Invalid mail", E_USER_ERROR);
+			trigger_error("Invalid mail, ship blank", E_USER_ERROR);
 			return "";
 		} else if (!$this->getSystem()->getName()) {
-			trigger_error("Invalid mail", E_USER_ERROR);
+			trigger_error("Invalid mail, system blank", E_USER_ERROR);
 			return "";
 		}
 
@@ -609,19 +609,20 @@ class Kill extends Cacheable
 			// Split these into multiple ifs so the error tells us where the
 			// problem was.
 			if (!$pilot->getName()) {
-				trigger_error("Invalid mail", E_USER_ERROR);
+				trigger_error("Invalid mail, invalid involved pilot", E_USER_ERROR);
+				var_dump($pilot);
 				return "";
 			} else if (!$corp->getName()) {
-				trigger_error("Invalid mail", E_USER_ERROR);
+				trigger_error("Invalid mail, invalid involved corporation", E_USER_ERROR);
 				return "";
 			} else if (!$alliance->getName()) {
-				trigger_error("Invalid mail", E_USER_ERROR);
+				trigger_error("Invalid mail, invalid involved alliance", E_USER_ERROR);
 				return "";
 			} else if (!$weapon->getName()) {
-				trigger_error("Invalid mail", E_USER_ERROR);
+				trigger_error("Invalid mail, invalid involved weapon", E_USER_ERROR);
 				return "";
 			} else if (!$ship->getName()) {
-				trigger_error("Invalid mail", E_USER_ERROR);
+				trigger_error("Invalid mail, invalid involved ship", E_USER_ERROR);
 				return "";
 			}
 			if ($pilot->getName() == $weapon->getName()) {
