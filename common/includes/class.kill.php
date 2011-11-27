@@ -565,7 +565,7 @@ class Kill extends Cacheable
 			return "";
 		}
 
-		$mail .= substr(str_replace('-', '.' , $this->getTimeStamp()), 0, 16)."\r\n\r\n";
+		$mail = substr(str_replace('-', '.' , $this->getTimeStamp()), 0, 16)."\r\n\r\n";
 		// Starbase (so this is a POS mail)
 		if ( in_array($shipclass->getID(), array(35, 36, 37, 38)) ) {
 			$mail .= "Corp: ".$this->getVictimCorpName()."\r\n";
