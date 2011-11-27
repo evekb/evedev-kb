@@ -62,7 +62,10 @@ function update027()
 						KEY date (endtime))';
 			$qry->execute($sql);
 			
-			$sql = 'ALTER TABLE kb3_kills ADD COLUMN kll_eng_id int(11) NOT NULL DEFAULT 0';
+			$qry->execute("SHOW COLUMNS FROM kb3_kills LIKE 'kll_eng_id'");
+			if(!$qry->recordCount()) {
+				$sql = 'ALTER TABLE kb3_kills ADD COLUMN kll_eng_id int(11) NOT NULL DEFAULT 0';
+			}
 			$qry->execute($sql);
 		}
 
