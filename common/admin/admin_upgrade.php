@@ -285,6 +285,9 @@ $smarty->assign('codeList', $codeList);
 $smarty->assign('page_error', $page_error);
 $smarty->assign('DBmessage', $parser->getLatestDBMessage());
 $smarty->assign('codemessage', $parser->getLatestCodeMessage());
+$smarty->assign('dbversion', Config::get('upd_dbVersion'));
+$smarty->assign('codeversion', Config::get('upd_codeVersion'));
+
 
 $page->addContext($menubox->generate());
 $page->setContent($smarty->fetch(get_tpl('admin_upgrade')));

@@ -6,7 +6,7 @@
     {/section}
     <br/>
 {/if}
-<div class="block-header2">Code</div>
+<div class="block-header2">Code [This Killboard is Version {$codeversion}]</div>
 {if $codemessage != ''}
     <div class="block-header">Message from the devs</div>
     <p>{$codemessage}</p>
@@ -61,7 +61,7 @@
     <br/>
 {/if}
 <br/>
-<div class="block-header2">Database</div>
+<div class="block-header2">Database [This Killboard is Database Version {$dbversion}]</div>
 {if $DBmessage != ''}
     <div class="block-header">Message from the devs</div>
     <p>{$DBmessage}</p>
