@@ -98,8 +98,8 @@ class DestroyedItem
 		if ($this->item_->getAttribute('price')) {
 			$this->value = (float) $this->item_->getAttribute('price');
 			return $this->value;
-		} else if ($this->item_->getAttribute('baseprice')) {
-			$this->value = (float) $this->item_->getAttribute('baseprice');
+		} else if ($this->item_->getAttribute('basePrice')) {
+			$this->value = (float) $this->item_->getAttribute('basePrice');
 			return $this->value;
 		}
 
