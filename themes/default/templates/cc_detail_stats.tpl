@@ -1,30 +1,31 @@
-<table align="center" class="kb-table" width="100%" border="0" cellspacing="1">
+<!-- cc_detail_stats.tpl -->
+<table class="kb-table contract-stats">
 	<tr class="kb-table-row-even">
-		<td rowspan="5" align="center" width="80" height="80">
-			<img src="{$img_url}/campaign-big.png" align="middle" alt="" />
+		<td class="contract-logo" rowspan="4">
+			<img src="{$img_url}/campaign-big.png" alt="" />
 		</td>
-		<td class="kb-table-cell"><b>Start date:</b></td>
-		<td class="kb-table-cell" width="120"><b>{$contract_startdate}</b></td>
-		<td class="kb-table-cell"><b>End date:</b></td>
-		<td class="kb-table-cell" width="120"><b>{$contract_enddate}</b></td>
+		<td class="contract-data-name">Start date:</td>
+		<td class="kb-date">{$contract_startdate}</td>
+		<td class="contract-data-name">End date:</td>
+		<td class="kb-date">{$contract_enddate}</td>
 	</tr>
 	<tr class="kb-table-row-even">
-		<td class="kb-table-cell"><b>Kills:</b></td>
+		<td>Kills:</td>
 		<td class="kl-kill">{$kill_count}</td>
-		<td class="kb-table-cell"><b>Losses:</b></td>
+		<td>Losses:</td>
 		<td class="kl-loss">{$loss_count}</td>
 	</tr>
 	<tr class="kb-table-row-even">
-		<td class="kb-table-cell"><b>Damage done (ISK):</b></td>
+		<td>Damage done (ISK):</td>
 		<td class="kl-kill">{$kill_isk}B</td>
-		<td class="kb-table-cell"><b>Damage received (ISK):</b></td>
+		<td>Damage received (ISK):</td>
 		<td class="kl-loss">{$loss_isk}B</td>
-</tr>
-<tr class="kb-table-row-even">
-		<td class="kb-table-cell"><b>Runtime:</b></td>
-		<td class="kb-table-cell"><b>{$contract_runtime} days</b></td>
-		<td class="kb-table-cell"><b>Efficiency:</b></td>
-		<td class="kb-table-cell"><b>{$contract_efficiency}%</b></td>
+	</tr>
+	<tr class="kb-table-row-even">
+		<td>Runtime:</td>
+		<td>{$contract_runtime} days</td>
+		<td>Efficiency:</td>
+		<td>{$contract_efficiency}%</td>
 	</tr>
 </table>
-<br />
+<!-- cc_detail_stats.tpl -->

@@ -1,9 +1,9 @@
-<div id="kl-detail-comments">
+<div class="kl-detail-comments">
 	<div class="block-header">Comments</div>
-	<table class="kb-table" width="100%" border="0" cellspacing="1">
+	<table class="kb-table">
 		<tr>
-			<td style="width:100%; text-align:left; vertical-align:top">
-				<table width="100%" border="0" cellspacing="0">
+			<td class="kl-detail-comments-outer" >
+				<table class="kl-detail-comments-inner">
 					<tr>
 						<td>
 							<div id="kl-detail-comment-list">
@@ -24,10 +24,10 @@
 					</tr>
 					<tr>
 						<td>
-							<form id="postform" method="post" action="">
+							<form id="postform" method="post" action="{$formURL}">
 								<table>
 									<tr>
-										<td align="center">
+										<td>
 											<textarea class="comment" name="comment" cols="55" rows="5" style="width:97%" onkeyup="limitText(this.form.comment,document.getElementById('countdown'),500);" onkeypress="limitText(this.form.comment,document.getElementById('countdown'),500);"></textarea>
 										</td>
 									</tr>

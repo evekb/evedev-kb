@@ -1,23 +1,46 @@
 html, body
 {
-	margin: 0px;
+	background-color: #222;
 	color: #dfdfdf;
-	padding: 0px;
 	height: 100%;
-	background-color: #222222;
+	margin: 0;
+	padding: 0;
 }
 
-.navigation
+div.navigation
 {
-	background: #111111;
-	padding: 0px;
+	background: #111;
 	border-collapse: separate;
 	border-spacing: 1px;
+	padding: 0;
 }
 
-font,th,td,p,a,div
+div.navigation > table
 {
-	font-family: Verdana, "Bitstream Vera Sans", Arial, Helvetica;
+	border: 0;
+	height: 25px;
+	table-layout: fixed;
+	width: 100%;
+}
+
+div.navigation tr
+{
+	background: #292929;
+}
+
+div.navigation td
+{
+	text-align: center;
+}
+
+div.navigation a
+{
+	display: block;
+}
+
+font, th, td, p, a, div
+{
+	font-family:Verdana,"Bitstream Vera Sans",Arial,Helvetica;
 }
 
 td
@@ -27,100 +50,118 @@ td
 
 .main-table
 {
-	width: 950px;
-	height: 100%;
-
-	border-left: 1px solid #555555;
-	border-right: 1px solid #555555;
-	border-top: 0px solid #555555;
-	border-bottom: 0px solid #555555;
-	padding: 0px;
+	border-bottom: 0 solid #555;
 	border-collapse: separate;
-	border-spacing: 0px;
+	border-left: 1px solid #555;
+	border-right: 1px solid #555;
+	border-spacing: 0;
+	border-top: 0 solid #555;
+	height: 100%;
+	padding: 0;
+	width: 950px;
 }
 
 .kill-points
 {
-	font-weight: bold;
 	font-size: 18px;
+	font-weight: bold;
 	text-align: center;
 }
 
 input, button, select
 {
-	border: 1px solid #eeeeee;
+	border: 1px solid #eee;
 	font-size: 9px;
 }
 
 #content
 {
+	background: #111;
+	font-size: 11px;
 	margin-top: 10px;
 	padding: 10px;
 	width: 760px;
-
-	background: #111111;
-
-	font-size: 11px;
 }
 
 #context, .context_element
 {
-	margin-top: 10px;
 	padding: 10px;
+	width: 145px;
+}
+
+.context_element
+{
+	margin-bottom: 10px;
 	width: 145px;
 }
 
 div.bar
 {
-	height: 6px;
 	background: #ffa500;
 	border-bottom: 1px #ac7000 solid;
 	border-right: 1px #ac7000 solid;
 	font-size: 4px;
+	height: 6px;
 }
 
 div.bar-background
 {
-    height: 6px;
-    background: #7F0F1E;
-    font-size: 4px;
+	background: #7F0F1E;
+	font-size: 4px;
+	height: 6px;
 }
+
+.awardbox-list div.bar-background
+{
+	width: 60px;
+}
+
+.contractlist div.bar-background
+{
+	width: 75px;
+}
+
+.contract-list-efficiency div.bar-background
+{
+	width: 120px;
+}
+
 
 div.bar-red
 {
+	background: #300;
+	border-bottom: 1px #200 solid;
+	border-right: 1px #200 solid;
 	height: 8px;
-	background: #330000;
-	border-bottom: 1px #220000 solid;
-	border-right: 1px #220000 solid;
 }
 
 .box-title
 {
-	background: #333333;
-	text-align: center;
+	background: #333;
 	font-size: 12px;
 	font-weight: bold;
 	height: 20px;
+	text-align: center;
 }
 
 .box-content
 {
-	padding: 10px;
 	margin-bottom: 20px;
+	padding: 10px;
 	width: 150px;
 }
 
 .menu-wrapper
 {
-	padding-top: 5px;
 	padding-bottom: 5px;
+	padding-top: 5px;
 }
 
 .menu-caption
 {
-	margin-top: 5px;
-	margin-bottom: 5px;
 	font-weight: bold;
+	margin-bottom: 5px;
+	margin-top: 5px;
 	padding-left: 5px;
 }
 
@@ -132,41 +173,37 @@ div.bar-red
 
 #page-title
 {
+	border-bottom: 1px solid #777;
+	color: #ccc;
+	font-size: 16px;
+	font-weight: bold;
+	height: 25px;
 	margin-left: 5px;
 	margin-right: 5px;
 	margin-top: 10px;
 	padding-top: 3px;
-
-	height: 25px;
-	color: #cccccc;
-	border-bottom: 1px solid #777777;
-
-	font-size: 16px;
-	font-weight: bold;
 }
+
 /* caption over boxes - Involved parties */
 .block-header
 {
-	margin-top: 10px;
-	margin-bottom: 10px;
-
-	color: #cccccc;
-
+	color: #ccc;
 	font-size: 12px;
 	font-weight: bold;
+	margin-bottom: 10px;
+	margin-top: 10px;
 }
+
 /* for exampe Awards for April 2007 */
 .block-header2
 {
-	margin-top: 10px;
-	margin-bottom: 10px;
-
-	color: #cccccc;
-
+	border-bottom: 1px solid #777;
+	color: #ccc;
 	font-size: 12px;
 	font-weight: bold;
+	margin-bottom: 10px;
+	margin-top: 10px;
 	padding-bottom: 5px;
-	border-bottom: 1px solid #777777;
 }
 
 .f_killmail
@@ -186,29 +223,30 @@ textarea.killmail
 
 .kb-table, .kb-subtable
 {
-	font-size: 10px;
 	color: #e0e0e0;
-	padding: 0px;
+	font-size: 10px;
+	padding: 0;
 }
 
 .kb-table
 {
-	border: 1px solid #444444;
 	border-collapse: separate;
 	border-spacing: 1px;
+	border: 1px solid #444;
 }
 
 .kb-table-title
 {
 	height: 10px;
 }
+
 /* Ship type */
 .kb-table-header
 {
-	height: 15px;
-	background: #555555;
+	background: #555;
 	font-size: 10px;
 	font-weight: bold;
+	height: 15px;
 	padding: 4px;
 }
 
@@ -219,7 +257,17 @@ textarea.killmail
 
 .kb-table-row-even
 {
-	background: #222222;
+	background: #222;
+}
+
+.kb-table-rows > tbody > tr:nth-child(even)
+{
+	background: #292929;
+}
+
+.kb-table-rows > tbody > tr:nth-child(odd)
+{
+	background: #222;
 }
 
 .kb-table-row-slot
@@ -229,594 +277,621 @@ textarea.killmail
 
 .kb-table-row-destroyed
 {
-	background: #222222;
+	background: #222;
 }
 
 .kb-table-row-dropped
 {
 	background: green;
 }
-/* over Kill in home */
+
 .kb-table-row-hover,
-.kb-kl-table .kb-table-row-even:hover,
+.contractlist tr:hover,
+.kb-table-rows > tbody > tr:hover,
+.kb-kl-table tbody .kb-table-row-even:hover,
 .kb-kl-table .kb-table-row-odd:hover
 {
-	color: #222222;
 	background: #DD9300;
+	color: #222;
 	cursor: pointer;
 }
 
 img.finalblow
 {
 	border: 1px solid #FFA500;
+	height: 64px;
+	width: 64px;
 }
 
 img.avatar
 {
-  border: 1px solid #333333;
+	border: 1px solid #333;
 }
 
 img.icon
 {
-  border: 1px solid #333333;
+	border: 1px solid #333;
 }
 
-td.item-icon
+td.item-icon,
+th.item-icon
 {
-  border: 1px solid #333333;
+	border: 1px solid #333;
+	height: 32px;
+	width: 32px;
+}
+
+div.item-icon
+{
+	border: none;
+	height: 32px;
+	position: absolute;
+	text-align: left;
+	width: 32px;
 }
 
 img.icon-hover
 {
-  border: 1px solid #DD9300;
-  cursor: pointer;
+	border: 1px solid #DD9300;
+	cursor: pointer;
 }
 
 td.avatar-name
 {
-  font-size: 10px;
-  font-weight: bold;
-  color: #cccccc;
+	color: #ccc;
+	font-size: 10px;
+	font-weight: bold;
 }
 
 td.killmail
 {
-  font-family: "Courier New", Courier;
-  font-size: 11px;
-  color: #dddddd;
+	color: #ddd;
+	font-family:"Courier New", Courier;
+	font-size: 11px;
 }
 
 td.battleship
 {
-  background: #DD9300;
+	background: #DD9300;
 }
 
-td.kb-table-cell
+.kb-table td,
+.kb-table th
 {
-  padding: 2px;
+	padding: 2px;
 }
 
 td.kb-table-imgcell
 {
-  padding: 0px;
-  width: 32px;
-  vertical-align: top;
+	height: 32px;
+	padding: 0;
+	vertical-align: middle;
+	width: 32px;
+}
+
+td.kb-table-imgcell > img
+{
+	margin-bottom: -3px;
 }
 
 .kb-date-header
 {
-  background-image: url("../../img/day.gif");
-  background-repeat: no-repeat;
-  background-position: 0px 16px;
-
-  color: #cccccc;
-
-  font-size: 13px;
-  font-weight: bold;
-
-  padding-left: 20px;
-  padding-top: 15px;
-}
-
-.kb-contracts-header
-{
-  background-image: url("../../img/contract.gif");
-  background-repeat: no-repeat;
-  background-position: 0px -3px;
-
-  margin-top: 10px;
-  margin-bottom: 15px;
-
-  color: #cccccc;
-
-  font-size: 12px;
-  font-weight: bold;
-  padding-left: 25px;
-  padding-bottom: 5px;
-  border-bottom: 1px solid #777777;
-
+	background-image:url("../../img/day.gif");
+	background-position: 0 16px;
+	background-repeat: no-repeat;
+	color: #ccc;
+	font-size: 13px;
+	font-weight: bold;
+	padding-left: 20px;
+	padding-top: 15px;
 }
 
 .kb-campaigns-header
 {
-  background-image: url("../../img/campaign.png");
-  background-repeat: no-repeat;
-  background-position: 0px -3px;
-
-  margin-top: 10px;
-  margin-bottom: 10px;
-
-  color: #cccccc;
-
-  font-size: 12px;
-  font-weight: bold;
-  padding-left: 25px;
-  padding-bottom: 5px;
-  border-bottom: 1px solid #777777;
-
+	background-image:url("../../img/campaign.png");
+	background-position: 0 -3px;
+	background-repeat: no-repeat;
+	border-bottom: 1px solid #777;
+	color: #ccc;
+	font-size: 12px;
+	font-weight: bold;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	padding-bottom: 5px;
+	padding-left: 25px;
 }
 
 .kb-kills-header
 {
-  background-image: url("../../img/kills.png");
-  background-repeat: no-repeat;
-  background-position: 0px -3px;
-
-  margin-top: 10px;
-  margin-bottom: 10px;
-
-  color: #cccccc;
-
-  font-size: 12px;
-  font-weight: bold;
-  padding-left: 25px;
-  padding-bottom: 5px;
-  border-bottom: 1px solid #777777;
+	background-image:url("../../img/kills.png");
+	background-position: 0 -3px;
+	background-repeat: no-repeat;
+	border-bottom: 1px solid #777;
+	color: #ccc;
+	font-size: 12px;
+	font-weight: bold;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	padding-bottom: 5px;
+	padding-left: 25px;
 }
 
 .kb-losses-header
 {
-  background-image: url("../../img/losses.png");
-  background-repeat: no-repeat;
-  background-position: 0px -3px;
-
-  margin-top: 10px;
-  margin-bottom: 10px;
-
-  color: #cccccc;
-
-  font-size: 12px;
-  font-weight: bold;
-  padding-left: 25px;
-  padding-bottom: 5px;
-  border-bottom: 1px solid #777777;
+	background-image:url("../../img/losses.png");
+	background-position: 0 -3px;
+	background-repeat: no-repeat;
+	border-bottom: 1px solid #777;
+	color: #ccc;
+	font-size: 12px;
+	font-weight: bold;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	padding-bottom: 5px;
+	padding-left: 25px;
 }
 
 .kb-contract-target-header
 {
-  background-image: url("../../img/contract-target.gif");
-  background-repeat: no-repeat;
-  background-position: 0px -3px;
+	background-image:url("../../img/contract-target.gif");
+	background-position: 0 -3px;
+	background-repeat: no-repeat;
+	border-bottom: 1px solid #777;
+	color: #ccc;
+	font-size: 12px;
+	font-weight: bold;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	padding-bottom: 5px;
+	padding-left: 25px;
+}
 
-  margin-top: 10px;
-  margin-bottom: 10px;
-
-  color: #cccccc;
-
-  font-size: 12px;
-  font-weight: bold;
-  padding-left: 25px;
-  padding-bottom: 5px;
-  border-bottom: 1px solid #777777;
+.kl-kill, .kl-loss, .kl-kill-null, .kl-loss-null
+{
+	text-align: center;
 }
 
 .kl-kill-null, .kl-loss-null
 {
-  color: #aaaaaa;
+	color: #aaa;
 }
 
 td.kl-kill-null-bg
 {
-  color: #999999;
-  background: #003300;
+	background: #030;
+	color: #999;
 }
 
 td.kl-loss-null-bg
 {
-  color: #999999;
-  background: #330000;
+	background: #300;
+	color: #999;
 }
 
 td.kl-kill
 {
-  color: #00aa00;
-  font-weight: bold;
+	color: #0a0;
+	font-weight: bold;
 }
 
 .kl-loss
 {
-  color: #aa0000;
-  font-weight: bold;
+	color: #a00;
+	font-weight: bold;
 }
 
 td.kl-kill-bg
 {
-  background: #003300;
-  color: #00bb00;
-  font-weight: bold;
+	background: #030;
+	color: #0b0;
+	font-weight: bold;
 }
 
 td.kl-loss-bg
 {
-  background: #330000;
-  color: #bb0000;
-  font-weight: bold;
+	background: #300;
+	color: #b00;
+	font-weight: bold;
 }
 
 #weeknav
 {
-  right: 0px;
-  top: 20px;
+	right: 0;
+	top: 20px;
 }
 
 td.weeknav
 {
-  color: #666666;
-  font-size: 9px;
-  font-weight: bold;
+	color: #666;
+	font-size: 9px;
+	font-weight: bold;
 }
 
 select.kb-select
 {
-  font-size: 10px;
-  width: 210px;
+	font-size: 10px;
+	width: 210px;
 }
 
 input.kb-input
 {
-  font-size: 10px;
+	font-size: 10px;
 }
 
-a:link {
-  color: #FFA500;
-  font-size: 10px;
-  font-weight: bold;
-  text-decoration: none;
-}
-
-a.kb-table-row-hover:link {
-  color: #333333;
-}
-
-a:visited {
-  color: #FFA500;
-  font-size: 10px;
-  font-weight: bold;
-  text-decoration: none;
-}
-
-a:active {
-  color: #FFA500;
-  font-size: 10px;
-  font-weight: bold;
-  text-decoration: none;
-}
-
-a:hover {
-  color: #FFA500;
-  font-size: 10px;
-  font-weight: bold;
-  text-decoration: underline;
-}
-.counter
+a:link
 {
-	border-top:solid 1px;
-	border-color:#666666;
-	display: block;
-	text-align:right;
-	padding-right:5px;
-	padding-top:5px;
-	margin-top: 10px;
-	margin-left: 5px;
-	margin-right: 5px;
-	padding-bottom: 5px;
+	color: #FFA500;
+	font-size: 10px;
+	font-weight: bold;
 	text-decoration: none;
 }
-.comment {
-	background-color: #292929;
-	border: 1px solid;
-	border-color: #292929;
-	margin-top: 5px;
-	padding-top: 8px;
-	padding-left: 8px;
-	color: #cccccc;
-	font-size: 12px;
-	font-family: Arial, Helvetica, sans-serif;
-	-moz-border-radius-topleft: 10px;
-	-moz-border-radius-topright: 10px;
-	-moz-border-radius-bottomleft: 10px;
-	-moz-border-radius-bottomright: 10px;
-	}
 
-.comment:focus {
-	border-color: #FFFFFF;
+a.kb-table-row-hover:link
+{
+	color: #333;
 }
-.comment-button {
+
+a:visited
+{
+	color: #FFA500;
+	font-size: 10px;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+a:active
+{
+	color: #FFA500;
+	font-size: 10px;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+a:hover
+{
+	color: #FFA500;
+	font-size: 10px;
+	font-weight: bold;
+	text-decoration: underline;
+}
+
+.counter
+{
+	border-color: #666;
+	border-top: solid 1px;
+	display: block;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-top: 10px;
+	padding-bottom: 5px;
+	padding-right: 5px;
+	padding-top: 5px;
+	text-align: right;
+	text-decoration: none;
+}
+
+.comment
+{
+	border-radius: 10px;
 	background-color: #292929;
-	border: 1px solid;
-	border-color: #292929;
-	color: #cccccc;
+	border: 0;
+	color: #ccc;
+	font-family:Arial,Helvetica,sans-serif;
 	font-size: 12px;
 	margin-top: 5px;
 	padding-left: 8px;
-	font-family: Arial, Helvetica, sans-serif;
-	-moz-border-radius-topleft: 10px;
-	-moz-border-radius-topright: 10px;
-	-moz-border-radius-bottomleft: 10px;
-	-moz-border-radius-bottomright: 10px;
-	}
-.comment-button:focus {
-	border-color: #FFFFFF;
+	padding-top: 8px;
 }
-#comments-wrap {
-	border-top:#333333 thin solid;
-	width:250px;
-	margin-top:15px;
-	float:left;
-	clear:left;
-	color: #cccccc;
+
+.comment:focus
+{
+	border-color: #FFF;
+}
+
+.comment-button
+{
+	border-radius: 10px;
+	background-color: #292929;
+	border: 0;
+	color: #ccc;
+	font-family:Arial,Helvetica,sans-serif;
 	font-size: 12px;
-	}
-.comment-text {
-	padding:5px;
-	border-bottom-width:thin;
- 	border-bottom-style:solid;
-	border-bottom-color: #333333;
+	margin-top: 5px;
+}
+
+.comment-button:focus
+{
+	border-color: #FFF;
+}
+
+#comments-wrap
+{
+	border-top: #333 thin solid;
+	clear: left;
+	color: #ccc;
+	float: left;
+	font-size: 12px;
+	margin-top: 15px;
+	width: 250px;
+}
+
+.comment-text
+{
+	border-bottom-color: #333;
+	border-bottom-style: solid;
+	border-bottom-width: thin;
 	overflow: hidden;
-	}
-#countdown {
-	border:0px;
-	background-color:#000000;
-	color: #cccccc;
+	padding: 5px;
+}
+
+#countdown
+{
+	background-color: #000;
+	border: 0;
+	color: #ccc;
+	font-family:Arial,Helvetica,sans-serif;
 	font-size: 12px;
-	font-family: Arial, Helvetica, sans-serif;
-	}
+}
+
 .popup-table
 {
-filter: alpha(opacity=90);
--moz-opacity: 0.9;
-background-color:#333333;
+	-moz-opacity:.9;
+	background-color: #333;
+	filter:alpha(opacity=90)
 }
+
 .killcount
 {
-  color: #ffffff;
-  float:right;
-  font-weight: bold;
-  font-size:9px;
-  padding-right:4px;
+	color: #fff;
+	font-size: 9px;
+	font-weight: bold;
+	padding-right: 4px;
 }
+
 .losscount
 {
-  color: #dd0000;
-  float:left;
-  font-weight: bold;
-  font-size:9px;
-}
-.kb-table-row-even-kill
-{
-  background: #005000;
+	color: #d00;
+	font-size: 9px;
+	font-weight: bold;
 }
 
-.kb-table-row-odd-kill
+.kb-summary-summary > .losscount
 {
-  background: #004000;
+	text-align: left;
 }
 
-.kb-table-row-even-loss
+.kb-summary-summary > .killcount
 {
-  background: #a00000;
+	text-align: right;
 }
 
-.kb-table-row-odd-loss
+.kb-table-rows > tbody > tr.kb-table-row-kill:nth-child(even)
 {
-  background: #900000;
+	background: #005000;
 }
 
-.kb-table-row-even-kill:hover
+.kb-table-rows > tbody > tr.kb-table-row-kill:nth-child(odd)
 {
-  color: #FFFFFF;
-  background: #0083CC;
-  cursor: pointer;
+	background: #004000;
 }
 
-.kb-table-row-odd-kill:hover
+.kb-table-rows > tbody > tr.kb-table-row-loss:nth-child(even)
 {
-  color: #FFFFFF;
-  background: #0083CC;
-  cursor: pointer;
+	background: #a00000;
 }
 
-.kb-table-row-odd-loss:hover
+.kb-table-rows > tbody > tr.kb-table-row-loss:nth-child(odd)
 {
-  color: #222222;
-  background: #DD9300;
-  cursor: pointer;
+	background: #900000;
 }
 
-.kb-table-row-even-loss:hover
+.kb-table-rows > tbody > tr.kb-table-row-kill:hover
 {
-  color: #222222;
-  background: #DD9300;
-  cursor: pointer;
+	background: #0083CC;
+	color: #FFF;
+	cursor: pointer;
+}
+
+.kb-table-rows > tbody > tr.kb-table-row-loss:hover
+{
+	background: #DD9300;
+	color: #222;
+	cursor: pointer;
 }
 
 div.kb-shiptype
 {
-  float: left;
-  margin-top: 3px;
-  padding-left: 3px;
+	float: left;
+	margin-top: 3px;
+	padding-left: 3px;
 }
 
 div.kb-shipicon
 {
-  float: right;
-  height: 32px;
+	float: right;
+	height: 32px;
 }
 
 td.kb-shipfilter
 {
-  font-family: Verdana, Tahoma;
-  font-size: 12px;
+	font-family:Verdana,Tahoma;
+	font-size: 12px;
 }
 
-a.kb-shipclass:visited {
-  color: #dddddd;
+a.kb-shipclass:visited
+{
+	color: #ddd;
 }
 
-a.kb-shipclass:link {
-  color: #dddddd;
+a.kb-shipclass:link
+{
+	color: #ddd;
 }
 
-a.kb-shipclass-hl:link {
-  color: #FFA500;
-  text-decoration: underline;
+a.kb-shipclass-hl:link
+{
+	color: #FFA500;
+	text-decoration: underline;
 }
 
-a.kb-shipclass-hl:active {
-  color: #FFA500;
-  text-decoration: underline;
+a.kb-shipclass-hl:active
+{
+	color: #FFA500;
+	text-decoration: underline;
 }
 
-a.kb-shipclass-hl:visited {
-  color: #FFA500;
-  text-decoration: underline;
+a.kb-shipclass-hl:visited
+{
+	color: #FFA500;
+	text-decoration: underline;
 }
 
-a.kb-shipclass:active {
-  color: #dddddd;
+a.kb-shipclass:active
+{
+	color: #ddd;
 }
 
-a.kb-shipclass:hover {
-  color: #dddddd;
-  text-decoration: underline;
+a.kb-shipclass:hover
+{
+	color: #ddd;
+	text-decoration: underline;
 }
 
-a.kb-contract:link {
-  font-size: 12px;
+a.kb-contract:link
+{
+	font-size: 12px;
 }
 
-a.kb-contract:visited {
-  font-size: 12px;
+a.kb-contract:visited
+{
+	font-size: 12px;
 }
+
 #content
 {
-  float: left;
+	float: left;
 }
 
 #context, .context_element
 {
-  float: right;
+	float: right;
+}
+
+.context_element > *
+{
+	margin-bottom: 10px;
+	width: 150px;
 }
 
 #main
 {
-  width: 950px;
-
-  background: #111111;
-  border-left: 1px solid #555555;
-  border-right: 1px solid #555555;
-  border-top: 0px solid #555555;
-  border-bottom: 0px solid #555555;
-  padding: 0px;
-  border-collapse: separate;
-  border-spacing: 0px;
-  margin: auto;
+	background: #111;
+	border-bottom: 0 solid #555;
+	border-collapse: separate;
+	border-left: 1px solid #555;
+	border-right: 1px solid #555;
+	border-spacing: 0;
+	border-top: 0 solid #555;
+	margin: auto;
+	padding: 0;
+	width: 950px;
 }
 
 .stats
 {
 	margin-bottom: 5px;
 }
+
 .summarytable
 {
 	margin-bottom: 5px;
 }
+
 .klsplitter
 {
 	margin-bottom: 5px;
 	margin-top: 5px;
 }
+
 .kltable
 {
 	text-align: center;
 }
+
 #profile
 {
 	clear: both;
-	padding: 0;
-	margin: 0;
-	font-size: 10px;
 	color: #e0e0e0;
 	float: right;
-
+	font-size: 10px;
+	margin: 0;
+	padding: 0;
 }
-.kb-kl-table a:link, .kb-kl-table a:visited
+
+.kb-kl-table a:link,
+.kb-kl-table a:visited
 {
 	color: #e0e0e0;
 	font-size: inherit;
 	font-weight: inherit;
 }
+
 .counter
 {
 	clear: both;
 }
-#kl-detail-victim, #kl-detail-invsum, #kl-detail-inv, #kl-detail-comments,
-  #kl-detail-vicship, #kl-detail-shipdetails, #kl-detail-fitting
+
+.kl-detail-victim, .kl-detail-invsum, .kl-detail-inv, .kl-detail-comments,
+.kl-detail-vicship, .kl-detail-shipdetails, .kl-detail-fitting
 {
 	margin-bottom: 10px;
-}
-#kl-detail-left, #kl-detail-right
-{
-	text-align:left;
-	vertical-align:top;
-	margin-bottom: 10px;
-}
-#kl-detail-left
-{
-	width:340px;
-	float:left;
-}
-#kl-detail-right
-{
-	width:398px;
-	float:right;
-}
-#popup
-{
-	display:none;
-	position:absolute;
-	top:217px;
-	left:350px;
-	width:99%;
-	z-index:5;
-	padding: 5px;
-	text-align:center;
-}
-.mod_name
-{
-	margin-top: 5px;
-	font-weight: bold;
 }
 
-.award_box
+#kl-detail-left, #kl-detail-right
 {
-	vertical-align:top;
-	text-align:center;
-	float:left;
-	width:150px;
-	height:460px;
-	margin-left:20px;
-	margin-right:20px;
+	margin-bottom: 10px;
+	text-align: left;
+	vertical-align: top;
+}
+
+#kl-detail-left
+{
+	display: inline-block;
+	width: 340px;
+}
+
+#kl-detail-right
+{
+	display: inline-block;
+	width: 398px;
+}
+
+#popup
+{
+	display: none;
+	left: 350px;
+	padding: 5px;
+	position: absolute;
+	text-align: center;
+	top: 217px;
+	width: 99%;
+	z-index: 5;
+}
+
+.mod_name
+{
+	font-weight: bold;
+	margin-top: 5px;
+}
+
+div.awardbox
+{
+	float: left;
+	height: 480px;
+	margin: 0 20px 10px 20px;
+	text-align: center;
+	vertical-align: top;
+	width: 150px;
 }
 
 .no_stretch
@@ -825,3 +900,846 @@ a.kb-contract:visited {
 	white-space: nowrap;
 }
 
+.contractlist
+{
+	border-spacing: 1px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	width: 98%;
+}
+
+.contractlist tr td:first-child
+{
+	text-align: left;
+}
+
+.contractlist tr.kb-table-header td.kb-date
+{
+	width: 80px;
+}
+
+.contractlist tr.kb-table-header td.killcount
+{
+	width: 50px;
+}
+
+.contractlist tr.kb-table-header td.iskcount
+{
+	width: 70px;
+}
+
+.contractlist tr.kb-table-header td.efficiency
+{
+	width: 120px;
+}
+
+.contractlist td.kb-date
+{
+	text-align: center;
+}
+
+.contractlist efficiency
+{
+	text-align: left;
+	width: 75px;
+}
+
+.contractlist .efficiency_percent
+{
+	width: 40px;
+}
+
+.contractlist .name
+{
+	font-weight: bold;
+}
+
+.contract-stats
+{
+	border-spacing: 1px;
+	font-weight: bold;
+	margin-bottom: 10px;
+	table-layout: fixed;
+	width: 100%;
+}
+
+.contract-stats td
+{
+	text-align: left;
+}
+
+.contract-stats .kb-date
+{
+	width: 120px;
+}
+
+.contract-stats .contract-data-name
+{
+	width: 206px;
+}
+
+td.contract-logo
+{
+	height: 80px;
+	text-align: center;
+	width: 80px;
+}
+
+.contract-list-summary td.kl-kill-bg,
+.contract-list-summary td.kl-loss-bg
+{
+	text-align: center;
+	width: 60px;
+}
+
+.contract-summary-name
+{
+	font-weight: bold;
+	width: 112px;
+}
+
+.contract-list-efficiency .efficiency_percent,
+.contract-list-efficiency .efficiency_bar
+{
+	font-weight: bold;
+	width: 120px;
+}
+
+.kb-box
+{
+	border-spacing: 1px;
+	margin-bottom: 10px;
+	width: 150px;
+}
+
+.kb-box > tr > td
+{
+	text-align: left;
+}
+
+.kb-box .kb-table-header
+{
+	text-align: center;
+}
+
+img
+{
+	border: 0;
+}
+
+.summarytable td
+{
+	vertical-align: top;
+}
+
+.kb-summary-summary
+{
+	text-align: center;
+	width: 100%;
+}
+
+.kb-summary-summary > div
+{
+	display: inline-block;
+	width: 48%;
+}
+
+.kb-summary-clear
+{
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+}
+
+.summarysubtable
+{
+	border-spacing: 1px;
+	width: 100%;
+}
+
+.summarytable > table
+{
+	border-collapse: collapse;
+	width: 760px;
+}
+
+.summarytable-verbose
+{
+	text-align: center;
+	width: 60px;
+}
+
+.summarytable-brief
+{
+	text-align: center;
+	width: 30px;
+}
+
+.kb-kl-table
+{
+	margin-left: auto;
+	margin-right: auto;
+	text-align: left;
+	width: 760px;
+}
+
+.kl-shiptype
+{
+	width: 190px;
+}
+
+.kl-victim
+{
+	width: 208px;
+}
+
+.kl-finalblow
+{
+	width: 175px;
+}
+
+.kl-location
+{
+	height: auto;
+	text-align: left;
+	width: 164px;
+}
+
+.kl-shiptype-text
+{
+	width: 157px;
+}
+
+.kl-victim-text
+{
+	width: 175px;
+}
+
+.kb-kl-table tr.kb-table-header > td
+{
+	text-align: center;
+}
+
+.kb-kl-table td
+{
+	vertical-align: middle;
+}
+
+.kl-inv-comm
+{
+	float: left;
+	vertical-align: middle;
+}
+
+.kl-inv-comm img
+{
+	vertical-align: middle;
+}
+
+.kl-date
+{
+	float: right;
+}
+
+table.awardbox td.kb-table-header
+{
+	text-align: center;
+}
+
+table.awardbox table
+{
+	border-collapse: collapse;
+	text-align: left;
+	width: 100%;
+}
+
+.awardbox-top td
+{
+	font-weight: bold;
+	text-align: center;
+}
+
+.awardbox-num
+{
+	width: 15px;
+}
+
+.awardbox-count
+{
+	text-align: right;
+}
+
+.awardbox-comment
+{
+	text-align: center;
+}
+
+.awardbox .kb-table-header
+{
+	text-align: center;
+}
+
+.kb-clock
+{
+	text-align: center;
+}
+
+.kb-clock .kb-subtable
+{
+	border-collapse: collapse;
+	width: 100%;
+}
+
+#clock
+{
+	font-weight: bold;
+}
+
+.alliance-detail .logo,
+.corp-detail .logo,
+.pilot-detail .logo
+{
+	background-color: black;
+	height: 128px;
+	text-align: center;
+	width: 128px;
+}
+
+.alliance-detail .attribute-name,
+.corp-detail .attribute-name
+{
+	width: 130px;
+}
+
+.pilot-detail .attribute-name
+{
+	width: 180px;
+}
+
+.alliance-detail .attribute-data-short,
+.corp-detail .attribute-data-short
+{
+	width: 90px;
+}
+
+.alliance-detail .attribute-data-long,
+.corp-detail .attribute-data-long
+{
+	width: 270px;
+}
+
+.alliance-detail td,
+.corp-detail td,
+.pilot-detail td
+{
+	font-weight: bold;
+	text-align: left;
+}
+
+.alliance-detail td:last-child,
+.corp-detail td:last-child
+{
+	font-weight: normal;
+}
+
+.corp-detail .description
+{
+	height: 100px;
+	overflow: auto;
+	width: 100%;
+}
+
+.pilot-detail.stats > table
+{
+	table-layout: fixed;
+	width: 100%;
+}
+
+.alliance-detail-corps td
+{
+	text-align: center;
+}
+
+.alliance-detail-corpname
+{
+	width: 200px;
+}
+
+.alliance-detail-ticker
+{
+	width: 60px;
+}
+
+.alliance-detail-members
+{
+	width: 60px;
+}
+
+.alliance-detail-joined
+{
+	width: 90px;
+}
+
+.alliance-detail-tax
+{
+	width: 60px;
+}
+
+.alliance-detail-site
+{
+	width: 257px;
+}
+
+.alliance-detail-corps tr.kb-table-header td
+{
+	font-weight: bold;
+}
+
+.toplist-table
+{
+	border-spacing: 1px;
+	width: 306px;
+}
+
+.toplist-table td:first-child
+{
+	padding: 0;
+}
+
+.toplist-table tr
+{
+	height: 32px;
+}
+
+.toplist-table .kb-table-header
+{
+	height: 16px;
+	text-align: center;
+}
+
+.toplist-name
+{
+	width: 200px;
+}
+
+.toplist-rank
+{
+	width: 60px;
+}
+
+.toplist-table td:nth-child(3)
+{
+	text-align: center;
+}
+
+.toplist-table .kb-table-header
+{
+	text-align: center;
+}
+
+.kl-detail-victim > table,
+.kl-detail-vicship > table,
+.kl-detail-inv > table,
+.kl-detail-comments > table
+{
+	border-collapse: separate;
+	width: 100%;
+}
+
+.kl-detail-victim .logo
+{
+	text-align: center;
+	width: 68px;
+}
+
+.kl-detail-victim .logo > img,
+.kl-detail-vicship .logo > img
+{
+	height: 64px;
+	width: 64px;
+}
+
+.kl-detail-victim .attribute-name
+{
+	font-weight: bold;
+	width: 68px;
+}
+
+.kl-detail-victim .attribute-data
+{
+	width: 198px;
+}
+
+.kl-detail-victim td
+{
+	font-weight: bold;
+}
+
+.kl-detail-vicship .logo
+{
+	text-align: center;
+	width: 68px;
+}
+
+.kl-detail-vicship td.logo
+{
+	height: 64px;
+	text-align: center;
+	width: 64px;
+}
+
+.kl-detail-vicship .attribute-name
+{
+	font-weight: bold;
+	width: 118px;
+}
+
+.kl-detail-vicship .attribute-data
+{
+	width: 206px;
+}
+
+.kl-detail-vicship td
+{
+	font-weight: bold;
+}
+
+.kl-detail-vicship td:last-child
+{
+	font-weight: normal;
+}
+
+.kl-detail-inv .logo
+{
+	text-align: center;
+	width: 70px;
+}
+
+.kl-detail-inv .attribute-data
+{
+	width: 194px;
+}
+
+.kl-detail-inv td.logo
+{
+	height: 66px;
+	vertical-align: middle;
+	width: 66px;
+}
+
+.kl-detail-inv td
+{
+	padding: 1px 2px;
+}
+
+.kl-detail-comments-outer
+{
+	text-align: left;
+	vertical-align: top;
+	width: 100%;
+}
+
+.kl-detail-comments-inner
+{
+	border-collapse: collapse;
+	width: 100%;
+}
+
+td.finalblow
+{
+	text-align: center;
+	width: 64px;
+}
+
+.violentsystems td:first-child
+{
+	font-weight: bold;
+	width: 25px;
+}
+
+.violentsystems td:nth-child(2)
+{
+	width: 215px;
+}
+
+.violentsystems td:last-child
+{
+	text-align: center;
+	width: 60px;
+}
+
+.invtype > div
+{
+	display: inline-block;
+	text-align: left;
+	vertical-align: top;
+	width: 360px;
+}
+
+.invtype > div:first-child
+{
+	margin-left: 5px;
+	margin-right: 30px;
+}
+
+.invtype img.logo
+{
+	float: left;
+	height: 64px;
+	margin-right: 10px;
+	width: 64px;
+}
+
+.invtype img.icon
+{
+	height: 32px;
+	width: 32px;
+}
+
+.invtype table.kb-table,
+.kl-detail-shipdetails table.kb-table
+{
+	width: 100%;
+}
+
+.invtype td.description
+{
+	text-align:left !important;
+}
+
+.invtype table.kb-table td:first-child
+{
+	height: 32px;
+	width: 32px;
+}
+
+.invtype table.kb-table td:nth-child(2)
+{
+	font-weight: bold;
+}
+
+.invtype table.kb-table td:last-child
+{
+	text-align: right;
+	width: 100px;
+}
+
+.kl-detail-shipdetails tr.kb-table-row-odd > td:nth-child(3)
+{
+	text-align: center;
+	width: 30px;
+}
+
+.kl-detail-shipdetails tr.kb-table-row-odd > td:last-child
+{
+	text-align: right;
+}
+
+.kl-detail-shipdetails tr.summary
+{
+	text-align: right;
+}
+
+.kl-detail-shipdetails tr.summary.bpo,
+.kl-detail-shipdetails tr.summary.itemdrop,
+.kl-detail-shipdetails tr.dropped
+{
+	background-color: #060;
+}
+
+.kl-detail-shipdetails tr.totalloss
+{
+	background-color: #600;
+}
+
+.kl-detail-shipdetails tr.totalloss > td:first-child
+{
+	border: 1px solid #600;
+	font-weight: bold;
+	text-align:right;
+}
+
+.kl-detail-shipdetails tr.totalloss > td:last-child
+{
+	border: 1px solid #C00;
+	text-align:right
+}
+
+.kl-detail-shipdetails tr.summary.bpo td,
+.kl-detail-shipdetails tr.summary.itemdrop td
+{
+	border: 1px solid green;
+}
+
+.kl-detail-shipdetails tr.summary td:first-child
+{
+	font-weight: bold;
+}
+
+.kl-detail-invsum > table.kb-table
+{
+	width: 100%;
+}
+
+.kl-detail-invsum td
+{
+	vertical-align: top;
+}
+
+.kl-detail-invsum td.invcorps,
+.kl-detail-invsum td.invcorps > div.no_stretch
+{
+	width: 210px;
+}
+
+.kl-detail-invsum td.invships,
+.kl-detail-invsum td.invships > div.no_stretch
+{
+	width: 117px;
+}
+
+.fitting-panel > div.fit-module
+{
+	height: 32px;
+	width: 32px;
+	z-index: 2;
+}
+
+.fitting-panel > div.fit-ammo
+{
+	height: 24px;
+	width: 24px;
+	z-index: 3;
+}
+
+.fitting-panel > div
+{
+	position: absolute;
+}
+
+.fitting-panel div.bigship
+{
+	height: 256px;
+	left: 72px;
+	top: 71px;
+	width: 256px;
+	z-index: 0;
+}
+
+.fitting-panel img.bigship
+{
+	height: 256px;
+	width: 256px;
+}
+
+.fitting-panel div.verified
+{
+	height: 16px;
+	left: 382px;
+	top: 0;
+	width: 16px;
+	z-index: 4;
+}
+
+.fitting-panel div.verified > img
+{
+	height: 16px;
+	width: 16px;
+}
+
+.fitting-panel div.fit-slot-bg
+{
+	height: 398px;
+	left: 0;
+	top: 0;
+	width: 398px;
+	z-index: 1;
+}
+
+.kill-related-friendly,
+.kill-related-hostile
+{
+	display: inline-block;
+	width: 378px;
+}
+
+.kill-related-friendly > table.kb-table,
+.kill-related-hostile > table.kb-table
+{
+	width: 376px;
+}
+
+.kill-related-friendly .destroyed,
+.kill-related-hostile .destroyed
+{
+	background-color:#E44!important;
+}
+
+.kill-related-friendly tr.kb-table-header > td,
+.kill-related-hostile tr.kb-table-header > td
+{
+	text-align: center;
+}
+
+.kill-related-friendly tr.kb-table-header > td:last-child,
+.kill-related-hostile tr.kb-table-header > td:last-child
+{
+	width: 200px;
+}
+
+.kill-related-stats > table.kb-table
+{
+	width: 100%;
+}
+
+.kill-related-stats > table.kb-table th
+{
+	text-align: left;
+	width: 200px;
+}
+
+.kill-related-stats > table.kb-table td
+{
+	text-align: left;
+}
+
+.kill-related-subsection
+{
+	font-weight:normal!important;
+}
+
+div#owners > div
+{
+	border:2px red solid;
+	display: inline-block;
+	height:228px;
+	margin: 5px;
+	text-align:center;
+	vertical-align:top;
+	width:360px;
+}
+
+div#owners > div > img
+{
+	height:128px;
+	width:128px;
+}
+
+div#owners div.owner-title
+{
+	display: block;
+	font-size: 2em;
+	font-weight: bold;
+	height:70px;
+	margin: 0.5em 0;
+}
+div#searchresults > table
+{
+	width: 450px;
+}
+
+div.login table td:first-child
+{
+	width: 160px; font-weight: bold;
+}

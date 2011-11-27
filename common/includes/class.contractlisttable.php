@@ -243,7 +243,7 @@ class ContractListTable
 			} else {
 				$efficiency = 0;
 			}
-			$bar = new BarGraph($efficiency, 100, 75);
+			$bar = new BarGraph($efficiency, 100);
 
 			$tbldata[] = array_merge(array('name' => $contract->getName(),
 				'startdate' => $contract->getStartDate(),

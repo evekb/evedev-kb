@@ -570,8 +570,8 @@ class Parser
 				if (strcmp($iwname, 'Unknown') == 0)
 				{
 					$this->error('No weapon found for pilot "'.$ipname .'"');
-				} elseif (!$iweapon->getID())
-				{
+					$iweapon = new Item();
+				} else if (!$iweapon->getID()) {
 					$this->error('Weapon not found.', $iwname);
 				}
 
@@ -874,7 +874,7 @@ class Parser
 	}
 	/**
 	 * Return alliance from cached list or look up a new name.
-	 * 
+	 *
 	 * @param string $alliancename Alliance name to look up.
 	 * @return Alliance Alliance object matching input name.
 	 */
@@ -897,17 +897,26 @@ class Parser
 	 */
 	private static function fetchCorp($corpname, $alliance = null, $timestamp = null)
 	{
-		if(isset(self::$corps[$corpname]))
-		{
-			if(!is_null($timestamp) && self::$corps[$corpname]->isUpdatable($timestamp))
-				self::$corps[$corpname]->add($corpname, $alliance, $timestamp, 0, self::$loadExternals);
+		if (isset(self::$corps[$corpname])) {
+			if (!is_null($timestamp)
+							&& self::$corps[$corpname]->isUpdatable($timestamp)) {
+				self::$corps[$corpname]->add($corpname, $alliance, $timestamp, 0,
+								self::$loadExternals);
+			}
 			$corp = self::$corps[$corpname];
-		}
-		else
-		{
+		} else {
 			$corp = new Corporation();
-			if($alliance == null) {
+			if ($alliance == null) {
 				$corp = Corporation::lookup($corpname);
+				// If the corporation is new and the alliance unknown (structure)
+				// fetch the alliance from the API.
+				if (!$corp) {
+					$corp = new Corporation();
+					$corp->add($corpname, Alliance::add("None"), $timestamp);
+					if (!$corp->getExternalID()) {
+						$corp = false;
+					}
+				}
 			} else {
 				$corp->add($corpname, $alliance, $timestamp, 0, self::$loadExternals);
 				self::$corps[$corpname] = $corp;
@@ -923,15 +932,15 @@ class Parser
 	 */
 	private static function fetchPilot($pilotname, $corp, $timestamp)
 	{
-		if(isset(self::$pilots[$pilotname]))
-		{
-			if(self::$pilots[$pilotname]->isUpdatable($timestamp))
-				self::$pilots[$pilotname]->add($pilotname, $corp, $timestamp, 0, self::$loadExternals);
+		if (isset(self::$pilots[$pilotname])) {
+			if (self::$pilots[$pilotname]->isUpdatable($timestamp)) {
+				self::$pilots[$pilotname] = Pilot::add($pilotname, $corp, $timestamp,
+								0, self::$loadExternals);
+			}
 			$pilot = self::$pilots[$pilotname];
-		}
-		else
-		{
-			$pilot = Pilot::add($pilotname, $corp, $timestamp, 0, self::$loadExternals);
+		} else {
+			$pilot = Pilot::add($pilotname, $corp, $timestamp,
+							0, self::$loadExternals);
 			self::$pilots[$pilotname] = $pilot;
 		}
 		return $pilot;

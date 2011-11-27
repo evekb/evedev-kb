@@ -1,27 +1,30 @@
-<div id="kl-detail-vicship">
+<div class="kl-detail-vicship">
 {cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
-	<table class="kb-table" width="100%" cellspacing="1">
+	<table class="kb-table">
+		<col class="logo"/>
+		<col class="attribute-name"/>
+		<col class="attribute-data"/>
 		<tr class="{cycle name="ccl"}" >
-			<td style="width:64px; height:64px; vertical-align:top" rowspan="3"><img src="{$victimShipImage}" alt="{$victimShipName}"/> </td>
-			<td class="kb-table-cell" style="height:17px"><b>Ship:</b></td>
-			<td class="kb-table-cell"><b><a href="{$kb_host}/?a=invtype&amp;id={$victimShipID}">{$victimShipName}</a></b> ({$victimShipClassName})</td>
+			<td class="logo" rowspan="3"><img src="{$victimShipImage}" alt="{$victimShipName}"/> </td>
+			<td>Ship:</td>
+			<td><a href="{$victimShipURL}">{$victimShipName}</a> ({$victimShipClassName})</td>
 		</tr>
 		<tr class="{cycle name="ccl"}">
-			<td class="kb-table-cell" style="height:17px"><b>Location:</b></td>
-			<td class="kb-table-cell"><b><a href="{$systemURL}">{$system}</a></b> ({$systemSecurity})</td>
+			<td>Location:</td>
+			<td><a href="{$systemURL}">{$system}</a> ({$systemSecurity})</td>
 		</tr>
 		<tr class="{cycle name="ccl"}">
-			<td class="kb-table-cell"><b>Date:</b></td>
-			<td class="kb-table-cell">{$timeStamp}</td>
+			<td>Date:</td>
+			<td>{$timeStamp}</td>
 		</tr>
 	{if $showiskd}
 		<tr class="{cycle name="ccl"}">
-			<td colspan="2" class="kb-table-cell"><b>ISK Loss at time of kill:</b></td>
-			<td class="kb-table-cell">{$totalLoss}</td>
+			<td colspan="2">ISK Loss at time of kill:</td>
+			<td>{$totalLoss}</td>
 		</tr>
 		<tr class="{cycle name="ccl"}">
-			<td colspan="2" class="kb-table-cell"><b>Total Damage Taken:</b></td>
-			<td class="kb-table-cell">{$victimDamageTaken|number_format}</td>
+			<td colspan="2">Total Damage Taken:</td>
+			<td>{$victimDamageTaken|number_format}</td>
 		</tr>
 	{/if}
 	</table>
