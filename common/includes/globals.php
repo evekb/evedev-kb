@@ -9,7 +9,7 @@
 define('SVN_REV', "Dev");
 
 if (!defined('LATEST_DB_UPDATE')) {
-	define('LATEST_DB_UPDATE', "026");
+	define('LATEST_DB_UPDATE', "027");
 }
 
 define('KB_CACHEDIR', 'cache');
