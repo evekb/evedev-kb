@@ -570,8 +570,8 @@ class Parser
 				if (strcmp($iwname, 'Unknown') == 0)
 				{
 					$this->error('No weapon found for pilot "'.$ipname .'"');
-				} elseif (!$iweapon->getID())
-				{
+					$iweapon = new Item();
+				} else if (!$iweapon->getID()) {
 					$this->error('Weapon not found.', $iwname);
 				}
 
