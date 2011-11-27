@@ -111,6 +111,22 @@ div.bar-background
 	height: 6px;
 }
 
+.awardbox-list div.bar-background
+{
+	width: 60px;
+}
+
+.contractlist div.bar-background
+{
+	width: 75px;
+}
+
+.contract-list-efficiency div.bar-background
+{
+	width: 120px;
+}
+
+
 div.bar-red
 {
 	background: #300;

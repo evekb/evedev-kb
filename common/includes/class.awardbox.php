@@ -34,10 +34,10 @@ class AwardBox
 		$rows = array();
 		$max = 0;
 
-		for ($i = 1; $i < 11; $i++) {
+		for ($i = 1; $i <= 10; $i++) {
 			$row = $this->toplist_->getRow();
 			if ($row) {
-				array_push($rows, $row);
+				$rows[] = $row;
 			}
 			if ($row['cnt'] > $max) {
 				$max = $row['cnt'];
@@ -57,7 +57,7 @@ class AwardBox
 						array('plt_id', $rows[0]['plt_id'], true)));
 		$smarty->assign('name', $pilot->getName());
 
-		$bar = new BarGraph($rows[0]['cnt'], $max, 60);
+		$bar = new BarGraph($rows[0]['cnt'], $max);
 		$smarty->assign('bar', $bar->generate());
 		$smarty->assign('cnt', $rows[0]['cnt']);
 
@@ -70,7 +70,7 @@ class AwardBox
 			} else {
 				$pilotname = $rows[$i - 1]['plt_name'];
 			}
-			$bar = new BarGraph($rows[$i - 1]['cnt'], $max, 60);
+			$bar = new BarGraph($rows[$i - 1]['cnt'], $max);
 			$top[$i] = array(
 				'url' => edkURI::build(array('a', 'pilot_detail', true),
 						array('plt_id', $rows[$i-1]['plt_id'], true)),

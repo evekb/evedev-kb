@@ -1,3 +1,3 @@
 <!-- bargraph.tpl -->
-<div class="{$class}-background" style="width: {$maxwidth}px;"><div class="{$class}" style="width: {$width}px;">{$text}</div></div>
+<div class="{$class}-background"><div class="{$class}" style="width: {$width}%;">{$text}</div></div>
 <!-- /bargraph.tpl -->
