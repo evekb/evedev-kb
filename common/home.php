@@ -122,7 +122,7 @@ class pHome extends pageAssembly
 		if (edkURI::getArg('scl_id') === false
 				|| edkURI::getArg('y', 1) === false) {
 			$this->page->addHeader(
-					'<meta name="robots" content="index, nofollow" />');
+					'<meta name="robots" content="index, follow" />');
 		}
 
 		$this->scl_id = (int) edkURI::getArg('scl_id');
