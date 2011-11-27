@@ -116,5 +116,4 @@ The upgrade description file will be retrieved again at: <b>{$update_time} GMT</
 You can force the update description file to retrieved now by clicking on the <a href="{$kb_host}/?a=admin_upgrade&amp;refresh">link</a>.<br/>
 Alternatively, you can refresh the page by clicking on the <a href="{$kb_host}/?a=admin_upgrade">link</a>.<br/><br />
 
-<a href="{$kb_host}/?a=admin_upgrade&amp;reset_code">Reset stored code level.</a><br />
 <a href="{$kb_host}/?a=admin_upgrade&amp;reset_db">Reset stored database level.</a><br />
