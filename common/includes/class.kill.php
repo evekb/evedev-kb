@@ -30,7 +30,9 @@ class Kill extends Cacheable
 	private $iskloss = 0;
 	private $killpoints = null;
 	private $victimid = null;
+	private $victimcorp = null;
 	private $victimcorpid = null;
+	private $victimalliance = null;
 	private $victimallianceid = null;
 	private $victimshipid = null;
 	private $fbpilotid = null;
@@ -1322,6 +1324,7 @@ class Kill extends Cacheable
 		$shipclass = $ship->getClass();
 		$vicpoints = $shipclass->getPoints();
 		$maxpoints = round($vicpoints * 1.2);
+		$invpoints = 0;
 
 		foreach ($this->involvedparties_ as $inv) {
 			$shipinv = $inv->getShip();
