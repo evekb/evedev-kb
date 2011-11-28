@@ -34,6 +34,7 @@ class IDFeed
 	private $lastInternalReturned = 0;
 	private $posted = array();
 	private $skipped = array();
+	private $duplicate = array();
 	private $time = '';
 	private $cachedTime = '';
 	private $errormsg = '';
@@ -60,6 +61,7 @@ class IDFeed
 
 		$this->posted = array();
 		$this->skipped = array();
+		$this->duplicate = array();
 		$this->lastReturned = 0;
 		$this->time = '';
 		$this->cachedTime = '';
@@ -90,6 +92,7 @@ class IDFeed
 					." while fetching feed from ".$this->url.$options.".", E_USER_WARNING);
 			return false;
 		}
+
 		if ($this->xml) {
 			return true;
 		} else {
@@ -484,7 +487,7 @@ class IDFeed
 							.$externalID." WHERE kb3_mails.kll_id = $id AND"
 							." kb3_mails.kll_external_id IS NULL");
 				   }
-
+					$this->duplicate[] = array($externalID, $internalID, $id);
 				} else {
 					$this->posted[] = array($externalID, $internalID,
 						$id);
@@ -728,6 +731,16 @@ class IDFeed
 	function getSkipped()
 	{
 		return $this->skipped;
+	}
+
+	/**
+	 * Return an array of duplicate kill IDs
+	 *
+	 * @return array
+	 */
+	function getDuplicate()
+	{
+		return $this->duplicate;
 	}
 
 	function getTime()
