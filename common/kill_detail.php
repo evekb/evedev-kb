@@ -491,8 +491,7 @@ class pKillDetail extends pageAssembly
 				$this->involved[$i]['externalID'] = $corp->getExternalID(true);
 
 				if ($this->involved[$i]['externalID'] == 0) {
-					$corpname = str_replace(" ", "%20", $corp->getName());
-					$fetchExternalIDs[] = $corpname;
+					$fetchExternalIDs[] = $corp->getName();
 				}
 
 				$this->involved[$i]['typeID'] = 2; //type number for corporations.
@@ -527,8 +526,7 @@ class pKillDetail extends pageAssembly
 				//get the external ID from the pilot class - if not found then add it to a list of pilots
 				//and check the api in bulk
 				if (!$this->involved[$i]['externalID']) {
-					$pilotname = str_replace(" ", "%20", $pilot->getName());
-					$fetchExternalIDs[] = $pilotname;
+					$fetchExternalIDs[] = $pilot->getName();
 				}
 
 				if ($weapon->getName() != "Unknown"
