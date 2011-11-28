@@ -187,6 +187,7 @@ class Corporation extends Entity
 	function add($name, $alliance, $timestamp, $externalid = 0, $loadExternals = true)
 	{
 		$name = slashfix($name);
+
 		$qry = DBFactory::getDBQuery(true);
 		$qry->execute("select * from kb3_corps
 		               where crp_name = '".$name."'");
@@ -197,9 +198,8 @@ class Corporation extends Entity
 			// If no external id is given then look it up.
 			if(!$externalid && $loadExternals)
 			{
-				$corpname = str_replace(" ", "%20", $name );
 				$myID = new API_NametoID();
-				$myID->setNames($corpname);
+				$myID->setNames($name);
 				$myID->fetchXML();
 				$myNames = $myID->getNameData();
 				$externalid = $myNames[0]['characterID'];
