@@ -186,11 +186,9 @@ class Corporation extends Entity
 	 */
 	function add($name, $alliance, $timestamp, $externalid = 0, $loadExternals = true)
 	{
-		$name = slashfix($name);
-
 		$qry = DBFactory::getDBQuery(true);
 		$qry->execute("select * from kb3_corps
-		               where crp_name = '".$name."'");
+		               where crp_name = '".slashfix($name)."'");
 		// If the corp name is not present in the db add it.
 		if ($qry->recordCount() == 0)
 		{
@@ -213,7 +211,7 @@ class Corporation extends Entity
 				if ($qry->recordCount() > 0)
 				{
 					$row = $qry->getRow();
-					$qry->execute("UPDATE kb3_corps SET crp_name = '".$name."' WHERE crp_external_id = ".$externalid);
+					$qry->execute("UPDATE kb3_corps SET crp_name = '".slashfix($name)."' WHERE crp_external_id = ".$externalid);
 
 					$this->id = $row['crp_id'];
 					$this->name = stripslashes($name);
@@ -239,12 +237,12 @@ class Corporation extends Entity
 			// Neither corp name or external id was found so add this corp as new
 			if($externalid) $qry->execute("insert into kb3_corps ".
 					"(crp_name, crp_all_id, crp_external_id, crp_updated) ".
-					"values ('".$name."',".$alliance->getID().
+					"values ('".slashfix($name)."',".$alliance->getID().
 					", ".$externalid.", date_format('".$timestamp.
 					"','%Y.%m.%d %H:%i:%s'))");
 			else $qry->execute("insert into kb3_corps ".
 					"(crp_name, crp_all_id, crp_updated) ".
-					"values ('".$name."',".$alliance->getID().
+					"values ('".slashfix($name)."',".$alliance->getID().
 					",date_format('".$timestamp."','%Y.%m.%d %H:%i:%s'))");
 			$this->id = $qry->getInsertID();
 			$this->name = $name;

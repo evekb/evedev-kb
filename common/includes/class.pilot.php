@@ -286,18 +286,17 @@ class Pilot extends Entity
 	{
 		// Check if pilot exists with a non-cached query.
 		$qry = DBFactory::getDBQuery(true);
-		$name = $qry->escape(stripslashes($name));
+		$name = stripslashes($name);
 		// Insert or update a pilot with a cached query to update cache.
 		$qryI = DBFactory::getDBQuery(true);
-		$qry->execute("SELECT * FROM kb3_pilots WHERE plt_name = '".$name."'");
+		$qry->execute("SELECT * FROM kb3_pilots WHERE plt_name = '".$qry->escape($name)."'");
 
 		if (!$qry->recordCount()) {
 			$externalID = (int)$externalID;
 			// If no external id is given then look it up.
 			if (!$externalID && $loadExternals) {
-				$pilotname = str_replace(" ", "%20", $name);
 				$myID = new API_NametoID();
-				$myID->setNames($pilotname);
+				$myID->setNames($name);
 				$myID->fetchXML();
 				$myNames = $myID->getNameData();
 				$externalID = (int)$myNames[0]['characterID'];
@@ -311,7 +310,7 @@ class Pilot extends Entity
 				if ($qry->recordCount()) {
 					$row = $qry->getRow();
 					$pilot = Pilot::getByID($row['plt_id']);
-					$qryI->execute("UPDATE kb3_pilots SET plt_name = '".$name
+					$qryI->execute("UPDATE kb3_pilots SET plt_name = '".$qry->escape($name)
 							."' WHERE plt_externalid = ".$externalID);
 					if ($qryI->affectedRows() > 0) {
 						Cacheable::delCache($pilot);
@@ -330,7 +329,7 @@ class Pilot extends Entity
 				}
 			}
 			$qry->execute("INSERT INTO kb3_pilots (plt_name, plt_crp_id, "
-					."plt_externalid, plt_updated) values ('".$name."', "
+					."plt_externalid, plt_updated) values ('".$qry->escape($name)."', "
 					.$corp->getID().",	".$externalID.",
 					date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s'))
 					ON DUPLICATE KEY UPDATE plt_crp_id=".$corp->getID().",
@@ -351,7 +350,7 @@ class Pilot extends Entity
 					&& $corp->getID() != $row['plt_crp_id']) {
 				$qryI->execute("UPDATE kb3_pilots SET plt_crp_id = "
 						.$corp->getID().", plt_updated = '".$timestamp
-						."' WHERE plt_name = '".$name."'"
+						."' WHERE plt_name = '".$qry->escape($name)."'"
 						." AND plt_crp_id <> ".$corp->getID()
 						." AND ( plt_updated < '".$timestamp
 						."' OR plt_updated is null )");
