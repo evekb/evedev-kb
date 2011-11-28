@@ -166,9 +166,8 @@ class Alliance extends Entity
 		if (!$qry->recordCount()) {
 			$externalid = (int) $externalid;
 			if (!$externalid && strcasecmp($name, 'None') != 0) {
-				$allname = str_replace(" ", "%20", $name);
 				$myID = new API_NametoID();
-				$myID->setNames($allname);
+				$myID->setNames($name);
 				$myID->fetchXML();
 				$myNames = $myID->getNameData();
 				$externalid = (int) $myNames[0]['characterID'];
