@@ -36,6 +36,7 @@ class IDFeed
 	private $skipped = array();
 	private $time = '';
 	private $cachedTime = '';
+	private $parsemsg = array();
 	private $errormsg = '';
 	private $errorcode = 0;
 	private $npcOnly = true;
@@ -360,6 +361,11 @@ class IDFeed
 		return $this->errormsg;
 	}
 
+	function getParseMessages()
+	{
+		return $this->parsemsg;
+	}
+
 	function processFeed()
 	{
 		// Remove error messages at the top.
@@ -447,7 +453,7 @@ class IDFeed
 							$errorstring = "Involved Party error in kill: ID = "
 									.$externalID;
 						}
-						trigger_error($errorstring, E_USER_WARNING);
+						$this->parsemsg[] = $errorstring;
 						$skip = true;
 						break;
 					}
@@ -471,7 +477,7 @@ class IDFeed
 					} else {
 						$errorstring = "Kill not added. ID = $externalID";
 					}
-					trigger_error($errorstring, E_USER_WARNING);
+					$this->parsemsg[] = $errorstring;
 					$skip = true;
 				} else if ($id < 0) {
 					$id = $kill->getDupe(true);
@@ -613,7 +619,7 @@ class IDFeed
 				&& !(int)$inv['weaponTypeID']
 				&& !(int)$inv['characterID']
 				&& !(string)$inv['characterName']) {
-			trigger_error("Involved party blank.", E_USER_WARNING);
+			$this->parsemsg[] = "Involved party blank.";
 			return false;
 		}
 		$npc = false;
