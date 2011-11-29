@@ -213,13 +213,14 @@ class Pilot extends Entity
 				return;
 			}
 			$qry = DBFactory::getDBQuery();
-			$sql = 'select * from kb3_pilots plt, kb3_corps crp, kb3_alliances ali
-            	  	       where crp.crp_id = plt.plt_crp_id
-            		       and ali.all_id = crp.crp_all_id ';
+			$sql = 'SELECT * FROM kb3_pilots plt'
+					.' LEFT JOIN kb3_corps crp ON plt_crp_id = crp_id'
+					.' LEFT JOIN kb3_alliances ali ON crp_all_id = all_id'
+					." WHERE";
 			if ($this->id) {
-				$sql .= 'and plt.plt_id = '.$this->id;
+				$sql .= ' plt.plt_id = '.$this->id;
 			} else {
-				$sql .= 'and plt.plt_externalid = '.$this->externalid;
+				$sql .= ' plt.plt_externalid = '.$this->externalid;
 			}
 			$qry->execute($sql) or die($qry->getErrorMsg());
 			if ($this->externalid && !$qry->recordCount()) {
@@ -284,6 +285,15 @@ class Pilot extends Entity
 	public static function add($name, $corp, $timestamp, $externalID = 0,
 			$loadExternals = true)
 	{
+		if (!$name) {
+			trigger_error("Attempt to add a pilot with no name. Aborting.", E_USER_ERROR);
+			// If things are going this wrong, it's safer to die and prevent more harm
+			die;
+		} else if (!$corp->getID()) {
+			trigger_error("Attempt to add a pilot with no corp. Aborting.", E_USER_ERROR);
+			// If things are going this wrong, it's safer to die and prevent more harm
+			die;
+		}
 		// Check if pilot exists with a non-cached query.
 		$qry = DBFactory::getDBQuery(true);
 		$name = $qry->escape(stripslashes($name));
@@ -358,6 +368,7 @@ class Pilot extends Entity
 			}
 			$plt = new Pilot($id, $externalID, $name, $corp);
 			if (!$row['plt_externalid'] && $externalID) {
+				$plt->executed = true;
 				$plt->setCharacterID($externalID);
 			}
 			return $plt;
@@ -474,20 +485,21 @@ class Pilot extends Entity
 		if (!$this->externalid) {
 			return false;
 		}
+			$apiInfo = new API_CharacterInfo();
+			$apiInfo->setID($this->externalid);
+			$result .= $apiInfo->fetchXML();
 
-		$myID = new API_IDtoName();
-		$myID->setIDs($this->externalid);
-		$myID->fetchXML();
-		$myNames = $myID->getIDData();
-
-		$alliance = new Alliance();
-		$alliance->add("Unknown");
-
-		$corp = new Corporation();
-		$corp->add("Unknown", $alliance, '2000-01-01 00:00:00');
-
-		Pilot::add($myNames[0]['name'], $corp, $myID->getCurrentTime(),
-				intval($myNames[0]['characterID']));
-		$this->name = $myNames[0]['name'];
+			if($result == "") {
+				$data = $apiInfo->getData();
+				$this->alliance = Alliance::add($data['alliance'],
+					$data['allianceID']);
+				$this->corp = Corporation::add($data['corporation'],
+					$this->alliance, $apiInfo->getCurrentTime(),
+					$data['corporationID']);
+				$this->name = $data['characterName'];
+				Pilot::add($data['characterName'], $this->corp, $apiInfo->getCurrentTime(), $data['characterID']);
+			} else {
+				return false;
+			}
 	}
 }

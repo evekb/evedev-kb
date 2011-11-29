@@ -187,7 +187,7 @@ class API_Alliance
 					$myCorpAPI->setCorpID(intval($corpRow['corporationID']));
 					$result .= $myCorpAPI->fetchXML();
 
-					$tempMyCorp->add($myCorpAPI->getCorporationName(), $alliance , gmdate("Y-m-d H:i:s"));
+					$tempMyCorp = Corporation::add($myCorpAPI->getCorporationName(), $alliance , gmdate("Y-m-d H:i:s"));
 				}
 
 		}

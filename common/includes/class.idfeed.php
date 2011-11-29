@@ -555,8 +555,6 @@ class IDFeed
 			return false;
 		}
 
-		$alliance = new Alliance();
-		$corp = new Corporation();
 		if ((int)$victim['allianceID']) {
 			$alliance = Alliance::add(strval($victim['allianceName']),
 					(int)$victim['allianceID']);
@@ -566,7 +564,7 @@ class IDFeed
 		} else {
 			$alliance = Alliance::add("None");
 		}
-		$corp->add(strval($victim['corporationName']), $alliance, $time,
+		$corp = Corporation::add(strval($victim['corporationName']), $alliance, $time,
 					(int)$victim['corporationID']);
 
 		if (!strval($victim['characterName'])) {
@@ -627,7 +625,6 @@ class IDFeed
 		$weapon = Cacheable::factory('Item', (int)$inv['weaponTypeID']);
 
 		$alliance = new Alliance();
-		$corp = new Corporation();
 
 		if ((int)$inv['allianceID']) {
 			$alliance = Alliance::add(strval($inv['allianceName']),
@@ -638,7 +635,7 @@ class IDFeed
 		} else {
 			$alliance = Alliance::add("None");
 		}
-		$corp->add(strval($inv['corporationName']), $alliance, $time,
+		$corp = Corporation::add(strval($inv['corporationName']), $alliance, $time,
 					(int)$inv['corporationID']);
 
 		$charid = (int)$inv['characterID'];

@@ -166,9 +166,8 @@ class Alliance extends Entity
 		if (!$qry->recordCount()) {
 			$externalid = (int) $externalid;
 			if (!$externalid && strcasecmp($name, 'None') != 0) {
-				$allname = str_replace(" ", "%20", $name);
 				$myID = new API_NametoID();
-				$myID->setNames($allname);
+				$myID->setNames($name);
 				$myID->fetchXML();
 				$myNames = $myID->getNameData();
 				$externalid = (int) $myNames[0]['characterID'];
@@ -199,15 +198,15 @@ class Alliance extends Entity
 						"(all_id, all_name) values ".
 						"(null, '".$name."')");
 			}
-			$all = Cacheable::factory('Alliance', (int) $qry->getInsertID());
+			$all = Alliance::getByID($qry->getInsertID());
 			$all->name = $name;
 			$all->externalid = (int) $externalid;
 			$all->executed = true;
 		} else {
 			$row = $qry->getRow();
-			$all = Cacheable::factory('Alliance', (int)$row['all_id']);
+			$all = Alliance::getByID((int)$row['all_id']);
 			$all->name = $row['all_name'];
-			$all->externalid = $row['all_external_id'];
+			$all->externalid = (int) $row['all_external_id'];
 			$all->executed = true;
 		}
 		return $all;
@@ -353,8 +352,14 @@ class Alliance extends Entity
 		$myID = new API_IDtoName();
 		$myID->setIDs($this->externalid);
 		$myID->fetchXML();
+		if ($myID != "") {
+			return false;
+		}
 		$myNames = $myID->getIDData();
 
-		$this->add($myNames[0]['name'], (int) $myNames[0]['characterID']);
+		// Use ::add to make sure names are updated in the db and clashes are fixed.
+		$alliance = Alliance::add($myNames[0]['name'],
+						(int) $myNames[0]['characterID']);
+		$this->name = $alliance->name;
 	}
 }

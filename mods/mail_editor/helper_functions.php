@@ -101,29 +101,26 @@ function setVictimEnt($name, $corp, $all, $kill_id, $ov_n, $ov_c, $ov_a, $time) 
 
 
     if(strlen($all) > 0) { //determine all we know about the pilot, and change if needed
-        $al = new Alliance();
-        $al->add($all);
+        $al = Alliance::add($all);
     }
     else $al = new Alliance($ov_a);
 
     if(strlen($corp) > 0) { //same again for corp
-        $crp = new Corporation();
-        $crp->add($corp, $al, $time);
+        $crp = Corporation::add($corp, $al, $time);
     }
     else {
         $crp = new Corporation($ov_c);
         $co = $crp->getName();
-        $crp->add($co, $al, $time);
+        $crp = Corporation::add($co, $al, $time);
     }
 
     if(strlen($name) > 0) {
-        $plt = new Pilot();
-        $plt->add($name, $crp, $time);
+        $plt = Pilot::add($name, $crp, $time);
     }
     else {
         $plt = new Pilot($ov_n); //get the name from the id, and add again
         $na = $plt->getName();
-        $plt->add($na, $crp, $time);
+        $plt = Pilot::add($na, $crp, $time);
     }
 
     if(strlen($name) > 0) {
@@ -211,29 +208,26 @@ function setInvEnt($name, $corp, $all, $kill_id, $i, $old_n, $old_c, $old_a, $ti
     }
 
     if(strlen($all) > 0) {
-        $al = new Alliance();
-        $al->add($all);
+        $al = Alliance::add($all);
     }
     else $al = new Alliance($old_a);
 
     if(strlen($corp) > 0) {
-        $crp = new Corporation();
-        $crp->add($corp, $al, $time);
+        $crp = Corporation::add($corp, $al, $time);
     }
     else {
         $crp = new Corporation($old_c);
         $corp = $crp->getName();
-        $crp->add($corp, $al, $time);
+        $crp = Corporation::add($corp, $al, $time);
     }
 
     if(strlen($name) > 0) {
-        $plt = new Pilot();
-        $plt->add($name, $crp, $time);
+        $plt = Pilot::add($name, $crp, $time);
     }
     else {
         $plt = new Pilot($old_p); //get the name from the id, and add again
         $name = $plt->getName();
-        $plt = new Pilot($name, $crp, $time);
+        $plt = Pilot::add($name, $crp, $time);
     }
 
     if(strlen($name) > 0) {

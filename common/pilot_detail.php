@@ -154,10 +154,11 @@ class pPilotDetail extends pageAssembly
 				$data = $apiInfo->getData();
 				$this->alliance = Alliance::add($data['alliance'],
 					$data['allianceID']);
-				$this->corp->add($data['corporation'],
+				$this->corp = Corporation::add($data['corporation'],
 					$this->alliance, $apiInfo->getCurrentTime(),
 					$data['corporationID']);
-				$this->pilot = Pilot::add($data['characterName'], $this->corp, $apiInfo->getCurrentTime(), $data['characterID']);
+				$this->pilot = Pilot::add($data['characterName'], $this->corp,
+								$apiInfo->getCurrentTime(), $data['characterID']);
 			}
 		}
 		global $smarty;
