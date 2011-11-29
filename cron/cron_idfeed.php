@@ -19,6 +19,10 @@ else
 $cronStartTime = microtime(true);
 @error_reporting(E_ERROR);
 
+if( php_sapi_name() == 'cli' ) {
+	ob_implicit_flush(true);
+}
+
 // Has to be run from the KB main directory for nested includes to work
 if(file_exists(getcwd().'/cron_idfeed.php'))
 {
@@ -47,44 +51,78 @@ $config = new Config(KB_SITE);
 getID();
 
 $feeds = config::get("fetch_idfeeds");
-$html = '';
 
 foreach($feeds as $key => &$val)
 {
 	// Just in case, check for empty urls.
-	if(empty($val['url'])) continue;
+	if(empty($val['url']))
+		continue;
+
+	printlog("Checking Feed URL: ".$val['url'] . " [Last Kill: " . $val['lastkill'] . "]");
+
+	while( ($result = FetchKills($val)) !== false ) {
+		$val['lastkill'] = $result[0];
+		config::set("fetch_idfeeds", unserialize(serialize($feeds))); // ensure we get a 'clone' of feeds sub-arrays
+		if($result[1] < 200 ) {
+			break;
+		}
+	}
+}
+
+printlog("Time taken = ".(microtime(true) - $cronStartTime)." seconds.");
+
+function FetchKills($val) {
 	$feedfetch = new IDFeed();
 	$feedfetch->setID();
-	if($val['apikills']) $feedfetch->setAllKills(0);
-	else $feedfetch->setAllKills(1);
+	if($val['apikills'])
+		$feedfetch->setAllKills(0);
+	else
+		$feedfetch->setAllKills(1);
+
 	$feedfetch->setTrust($val['trusted']);
-	if(!$val['lastkill']) $feedfetch->setStartDate(time() - 60*60*24*7);
-	else if($val['apikills']) $feedfetch->setStartKill($val['lastkill'] + 1);
-	else $feedfetch->setStartKill($val['lastkill'] + 1, true);
+
+	if(!$val['lastkill'])
+		$feedfetch->setStartDate(time() - 60*60*24*7);
+	else if($val['apikills'])
+		$feedfetch->setStartKill($val['lastkill'] + 1);
+	else
+		$feedfetch->setStartKill($val['lastkill'] + 1, true);
 
 	if($feedfetch->read($val['url']) !== false)
 	{
 		if($val['apikills'] && intval($feedfetch->getLastReturned()) > $val['lastkill'])
-			$val['lastkill'] = intval($feedfetch->getLastReturned());
-		else if(!$val['apikills'] && intval($feedfetch->getLastInternalReturned()) > $val['lastkill'])
-			$val['lastkill'] = intval($feedfetch->getLastInternalReturned());
-		$html .= "Feed: ".$val['url']."<br />\n";
-		$html .= count($feedfetch->getPosted())." kills were posted and ".
-			count($feedfetch->getSkipped())." were skipped.<br />\n";
-		$html .= "Last kill ID returned was ".$val['lastkill']."<br />\n";
-		config::set("fetch_idfeeds", $feeds);
+			$id = intval($feedfetch->getLastReturned());
+		else if(!$val['apikills'] && intval($feedfetch->getLastInternalReturned()) > $val['lastkill']) {
+			$id = intval($feedfetch->getLastInternalReturned());
+		} else {
+			$id = $val['lastkill'];
+		}
+		$posted = count($feedfetch->getPosted());
+		$skipped = count($feedfetch->getSkipped());
+		$duplicate = count($feedfetch->getDuplicate());
+		printlog( $posted." kills were posted, ".$duplicate." duplicate kills and ".$skipped." were skipped.");
+		printlog( "Last kill ID returned was ".$id);
+		return array($id, $skipped+$posted+$duplicate);
 	}
 	else
 	{
-		$html .= "Error reading feed: ".$val['url'];
-		if(!$val['lastkill']) $html .= ", Start time = ".(time() - 60*60*24*7);
-		else if($val['apikills']) $html .= ", Start kill = ".($val['lastkill']);
-		$html .= $feedfetch->errormsg();
+		printlog( "Error reading feed: ".$val['url']);
+		if(!$val['lastkill'])
+			printlog(", Start time = ".(time() - 60*60*24*7));
+		else if($val['apikills'])
+			printlog(", Start kill = ".($val['lastkill']));
+		printlog($feedfetch->errormsg());
+		return false;
 	}
 }
-echo $html."<br />\n";
 
-echo "Time taken = ".(microtime(true) - $cronStartTime)." seconds.";
+function printlog($string) {
+	if( php_sapi_name() != 'cli' ) {
+		echo $string . "<br />\n";
+	} else {
+		echo $string . "\n";
+	}
+}
 
 function getID()
 {
