@@ -682,7 +682,10 @@ class IDFeed
 	 */
 	private function processItem($item, &$kill)
 	{
-		if ((int)$item['flag'] == 5) {
+		if ((int)$item['singleton'] == 2) {
+			// Blueprint copy - in the cargohold
+			$location = 9;
+		} else if ((int)$item['flag'] == 5) {
 			// Cargo
 			$location = 4;
 		} else if ((int)$item['flag'] == 89) {
@@ -939,7 +942,10 @@ class IDFeed
 				while ($iRow = $qry->getRow()) {
 					$itemRow = $items->addChild('row');
 					$itemRow->addAttribute('typeID', $iRow['itd_itm_id']);
-					if ($iRow['itd_itl_id'] == 4) {
+					if ($iRow['itd_itl_id'] == 9) {
+						// BPC in cargo
+						$itemRow->addAttribute('flag', 5);
+					} else if ($iRow['itd_itl_id'] == 4) {
 						// cargo
 						$itemRow->addAttribute('flag', 5);
 					} else if ($iRow['itd_itl_id'] == 6) {
@@ -951,6 +957,13 @@ class IDFeed
 					} else {
 						$itemRow->addAttribute('flag', 0);
 					}
+
+					if ($iRow['itd_itl_id'] == 9) {
+						$itemRow->addAttribute('singleton', 2);
+					} else {
+						$itemRow->addAttribute('singleton', 0);
+					}
+
 					$itemRow->addAttribute('qtyDropped', 0);
 					$itemRow->addAttribute('qtyDestroyed', $iRow['itd_quantity']);
 				}
@@ -959,7 +972,10 @@ class IDFeed
 				while ($iRow = $qry2->getRow()) {
 					$itemRow = $items->addChild('row');
 					$itemRow->addAttribute('typeID', $iRow['itd_itm_id']);
-					if ($iRow['itd_itl_id'] == 4) {
+					if ($iRow['itd_itl_id'] == 9) {
+						// BPC in cargo
+						$itemRow->addAttribute('flag', 5);
+					} else if ($iRow['itd_itl_id'] == 4) {
 						// cargo
 						$itemRow->addAttribute('flag', 5);
 					} else if ($iRow['itd_itl_id'] == 6) {
@@ -968,6 +984,13 @@ class IDFeed
 					} else {
 						$itemRow->addAttribute('flag', 0);
 					}
+
+					if ($iRow['itd_itl_id'] == 9) {
+						$itemRow->addAttribute('singleton', 2);
+					} else {
+						$itemRow->addAttribute('singleton', 0);
+					}
+
 					$itemRow->addAttribute('qtyDropped', $iRow['itd_quantity']);
 					$itemRow->addAttribute('qtyDestroyed', 0);
 				}
