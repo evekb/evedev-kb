@@ -85,7 +85,7 @@ if(isset($_GET['package']))
 	}
 	die;
 }
-$qry=new DBQuery(true);
+$qry=DBFactory::getDBQuery(true);
 define('CURRENT_DB_UPDATE', config::get("DBUpdate"));
 if (CURRENT_DB_UPDATE >= LATEST_DB_UPDATE )
 {
@@ -129,7 +129,7 @@ function updateDB()
 
 function update_slot_of_group($id,$oldSlot = 0 ,$newSlot)
 {
-	$qry  = new DBQuery(true);
+	$qry  = DBFactory::getDBQuery(true);
 	$query = "UPDATE kb3_item_types
 				SET itt_slot = $newSlot WHERE itt_id = $id and itt_slot = $oldSlot;";
 	$qry->execute($query);
@@ -148,7 +148,7 @@ function update_slot_of_group($id,$oldSlot = 0 ,$newSlot)
 
 function move_item_to_group($id,$oldGroup ,$newGroup)
 {
-	$qry  = new DBQuery(true);
+	$qry  = DBFactory::getDBQuery(true);
 	$query = "UPDATE kb3_invtypes
 				SET groupID = $newGroup
 				WHERE typeID = $id AND groupID = $oldGroup;";

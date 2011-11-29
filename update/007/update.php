@@ -9,7 +9,7 @@ function update007()
 	//Checking if this Update already done
 	if (CURRENT_DB_UPDATE < "007" )
 	{
-		$qry = new DBQuery(true);
+		$qry = DBFactory::getDBQuery(true);
 		if(is_null(config::get('007updatestatus')))
 			config::set('007updatestatus',0);
 		if(config::get('007updatestatus') <1)
@@ -309,7 +309,7 @@ function update007()
 		if(config::get('007updatestatus') <16)
 		{
 			$qry->execute('SHOW TABLES');
-			$qry2 = new DBQuery(true);
+			$qry2 = DBFactory::getDBQuery(true);
 			while($row = $qry->getRow())
 			{
 				$tablename = implode($row);

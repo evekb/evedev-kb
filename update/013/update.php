@@ -11,7 +11,7 @@ function update013()
 	if (CURRENT_DB_UPDATE < "013" )
 	{
 		if(is_null(config::get('013updatestatus'))) config::set('013updatestatus',0);
-		$qry = new DBQuery(true);
+		$qry = DBFactory::getDBQuery(true);
 
 		if(config::get('013updatestatus') <1)
 		{

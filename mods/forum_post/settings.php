@@ -39,7 +39,7 @@ if(isset($_POST['submit'])) //workings
 		   where scl_class not in ( 'Drone', 'Unknown' )
 		  order by scl_class";
 
-	$qry = new DBQuery();
+	$qry = DBFactory::getDBQuery();
 	$qry->execute($sql) or die($qry->getErrorMsg());
 	
 	$forum_post_colours = array();
@@ -83,7 +83,7 @@ $miss_empty_class = config::get('forum_post_miss_empty_class');
 		   where scl_class not in ( 'Drone', 'Unknown' )
 		  order by scl_class";
 
-	$qry = new DBQuery();
+	$qry = DBFactory::getDBQuery();
 	$qry->execute($sql) or die($qry->getErrorMsg());
 	
 	$html .='<form action="" method="post"><table name="settings"><tr><td>Ship Class</td><td>Colour</td><td>Style</td></tr>';

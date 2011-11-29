@@ -12,7 +12,7 @@ function update022()
 	if (CURRENT_DB_UPDATE < "022" )
 	{
 		if(is_null(config::get('022updatestatus'))) config::set('022updatestatus',0);
-		$qry = new DBQuery(true);
+		$qry = DBFactory::getDBQuery(true);
 
 		if(config::get('022updatestatus') <1)
 		{

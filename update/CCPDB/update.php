@@ -60,7 +60,7 @@ if ((!empty($_GET['do']) && $_GET['do'] == 'reset')
 $i = 0;
 $did = false;
 $errors = false;
-$qry = new DBQuery(true);
+$qry = DBFactory::getDBQuery(true);
 foreach ($data as $table => $files)
 {
 	foreach ($files as $file)

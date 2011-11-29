@@ -21,7 +21,7 @@ if(isset($_GET['kll_id']))
 {
 $kll_id = intval($_GET['kll_id']);
 // this is a fast query to get the system and timestamp
-$rqry = new DBQuery();
+$rqry = DBFactory::getDBQuery();
 $rsql = 'SELECT kll_timestamp, kll_system_id from kb3_kills where kll_id = '.$kll_id;
 $rqry->execute($rsql);
 $rrow = $rqry->getRow();
@@ -32,7 +32,7 @@ $query = 'SELECT kll.kll_timestamp AS ts FROM kb3_kills kll WHERE kll.kll_system
             AND kll.kll_timestamp <= date_add( \''.$rrow['kll_timestamp'].'\', INTERVAL \'12\' HOUR )
             AND kll.kll_timestamp >= date_sub( \''.$rrow['kll_timestamp'].'\', INTERVAL \'12\' HOUR )
             ORDER BY kll.kll_timestamp ASC';
-$qry = new DBQuery();
+$qry = DBFactory::getDBQuery();
 $qry->execute($query);
 $ts = array();
 while ($row = $qry->getRow())

@@ -11,7 +11,7 @@ require_once( "common/admin/admin_menu.php" );
 
 function itemThinger($type, $kid) {//just fetches the items of a mail
     $html_f = "";
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $sql = "SELECT * FROM `kb3_items_".$type."` WHERE `itd_kll_id` = ".$kid.";";
     $qry->execute($sql);
     $count = $qry->recordCount();
@@ -81,7 +81,7 @@ function setDateTime($timeString, $kill_id) {
     if($time > $now)
         return "Date: Can't set timestamp to a future date.<br/>";
 
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $sql = "UPDATE `kb3_kills` SET `kll_timestamp` = '".$timeString."' WHERE `kll_id` = '".$kill_id."';";
     $qry->execute($sql);
     return;    
@@ -124,19 +124,19 @@ function setVictimEnt($name, $corp, $all, $kill_id, $ov_n, $ov_c, $ov_a, $time) 
     }
 
     if(strlen($name) > 0) {
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();
         $sql = "UPDATE `kb3_kills` SET `kll_victim_id` = '".$plt->getID()."' WHERE `kll_id` = '".$kill_id."'";
         $qry->execute($sql);
     }
 
     if(strlen($corp) > 0) {
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();
         $sql = "UPDATE `kb3_kills` SET `kll_crp_id` = '".$crp->getID()."' WHERE `kll_id` = '".$kill_id."'";
         $qry->execute($sql);
     }
 
     if(strlen($all) > 0) {
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();
         $sql = "UPDATE `kb3_kills` SET `kll_all_id` = '".$al->getID()."' WHERE `kll_id` = '".$kill_id."'";
         $qry->execute($sql);
     }
@@ -144,14 +144,14 @@ function setVictimEnt($name, $corp, $all, $kill_id, $ov_n, $ov_c, $ov_a, $time) 
 }
 
 function setVictimShip($name, $kill_id) {
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $sql = "SELECT `shp_id` FROM `kb3_ships` WHERE `shp_name` = '".$name."';";
     $qry->execute($sql);
     if($qry->recordCount() < 1)
         return "Ship '".$name."' doesn't exist in the database.<br/>";
     $row = $qry->getRow();
 
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $sql = "UPDATE `kb3_kills` SET `kll_ship_id` = '".$row['shp_id']
         ."' WHERE `kll_id` = '".$kill_id."'";
     $qry->execute($sql);
@@ -159,14 +159,14 @@ function setVictimShip($name, $kill_id) {
 }
 
 function setSolarSystem($name, $kill_id) {
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $sql = "SELECT `sys_id` FROM `kb3_systems` WHERE `sys_name` = '".$name."';";
     $qry->execute($sql);
     if($qry->recordCount() < 1)
         return "Solar system: '".$name."' doesn't exist in the database.<br/>";
     $row = $qry->getRow();
 
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $sql = "UPDATE `kb3_kills` SET `kll_system_id` = '".$row['sys_id']
         ."' WHERE `kll_id` = '".$kill_id."'";
     $qry->execute($sql);
@@ -176,7 +176,7 @@ function setSolarSystem($name, $kill_id) {
 
 function setDamageTaken($name, $kill_id) {
 
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $sql = "UPDATE `kb3_kills` SET `kll_dmgtaken` = '".$name
         ."' WHERE `kll_id` = '".$kill_id."'";
     $qry->execute($sql);
@@ -186,7 +186,7 @@ function setDamageTaken($name, $kill_id) {
 
 function getFBSlot($fb_id, $kill_id) {
 
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $sql = "SELECT `ind_order` FROM `kb3_inv_detail` WHERE `ind_kll_id` = '"
         .$kill_id."' AND `ind_plt_id` = '".$fb_id."'";
     $qry->execute($sql);
@@ -232,23 +232,23 @@ function setInvEnt($name, $corp, $all, $kill_id, $i, $old_n, $old_c, $old_a, $ti
 
     if(strlen($name) > 0) {
         $hold_row = $plt->getID();
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();
         $sql = "UPDATE `kb3_inv_detail` SET `ind_plt_id` = '".$hold_row
             ."' WHERE `ind_kll_id` = '".$kill_id."' AND `ind_order` = '".$i."'";
         $qry->execute($sql);
 
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();
         $sql = "DELETE FROM `kb3_inv_plt` WHERE `inp_kll_id` ='".$kill_id
             ."' AND `inp_plt_id` = '".$old_n."';";
         $qry->execute($sql);
 
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();
         $sql = "INSERT INTO `kb3_inv_plt` (`inp_kll_id`, `inp_plt_id`) VALUES("
             .$kill_id.",".$hold_row.");";
         $qry->execute($sql);
 
         if($i == $fb) {
-            $qry = new DBQuery();
+            $qry = DBFactory::getDBQuery();
             $sql = "UPDATE `kb3_kills` SET `kll_fb_plt_id` = '".$hold_row
                 ."' WHERE `kll_id` = '".$kill_id."'";
             $qry->execute($sql);
@@ -257,13 +257,13 @@ function setInvEnt($name, $corp, $all, $kill_id, $i, $old_n, $old_c, $old_a, $ti
 
     if(strlen($corp) > 0) {
         $hold_row = $crp->getID();
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();
         $sql = "UPDATE `kb3_inv_detail` SET `ind_crp_id` = '".$hold_row
             ."' WHERE `ind_kll_id` = '".$kill_id."' AND `ind_order` = '".$i."'";
         $qry->execute($sql);
 
         if($i == $fb) {
-            $qry = new DBQuery();
+            $qry = DBFactory::getDBQuery();
             $sql = "UPDATE `kb3_kills` SET `kll_fb_crp_id` = '".$hold_row
                 ."' WHERE `kll_id` = '".$kill_id."'";
             $qry->execute($sql);
@@ -273,13 +273,13 @@ function setInvEnt($name, $corp, $all, $kill_id, $i, $old_n, $old_c, $old_a, $ti
     if(strlen($all) > 0) {
         $hold_row = $al->getID();
 
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();
         $sql = "UPDATE `kb3_inv_detail` SET `ind_all_id` = '".$hold_row
             ."' WHERE `ind_kll_id` = '".$kill_id."' AND `ind_order` = '".$i."'";
         $qry->execute($sql);
 
         if($i == $fb) {
-            $qry = new DBQuery();
+            $qry = DBFactory::getDBQuery();
             $sql = "UPDATE `kb3_kills` SET `kll_fb_all_id` = '".$hold_row
                 ."' WHERE `kll_id` = '".$kill_id."'";
             $qry->execute($sql);
@@ -289,14 +289,14 @@ function setInvEnt($name, $corp, $all, $kill_id, $i, $old_n, $old_c, $old_a, $ti
 }
 
 function setInvShip($name, $kill_id, $i) {
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $sql = "SELECT `shp_id` FROM `kb3_ships` WHERE `shp_name` = '".$name."';";
     $qry->execute($sql);
     if($qry->recordCount() < 1)
         return "Ship'".$name."' doesn't exist in the database.<br/>";
     $row = $qry->getRow();
 
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $sql = "UPDATE `kb3_inv_detail` SET `ind_shp_id` = '".$row['shp_id']
         ."' WHERE `ind_kll_id` = '".$kill_id."' AND `ind_order` = '".$i."';";
     $qry->execute($sql);
@@ -304,7 +304,7 @@ function setInvShip($name, $kill_id, $i) {
 }
 
 function setInvWep($name, $kill_id, $i) {
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $sql = "SELECT `typeID` FROM `kb3_invtypes` WHERE `typeName` = '".$name."';";
     $qry->execute($sql);
 
@@ -312,7 +312,7 @@ function setInvWep($name, $kill_id, $i) {
         return "Weapon '".$name."' doesn't exist in the database.<br/>";
     $row = $qry->getRow();
 
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $sql = "UPDATE `kb3_inv_detail` SET `ind_wep_id` = '".$row['typeID']
         ."' WHERE `ind_kll_id` = '".$kill_id."' AND `ind_order` = '".$i."';";
     $qry->execute($sql);
@@ -327,7 +327,7 @@ function setInvSec($name, $kill_id, $i) {
     }
     else return "Involved pilot sec value is not a number. You wrote, '".$name."'.";
 
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $sql = "UPDATE `kb3_inv_detail` SET `ind_sec_status` = '".$name
         ."' WHERE `ind_kll_id` = '".$kill_id."' AND `ind_order` = '".$i."';";
     $qry->execute($sql);
@@ -339,7 +339,7 @@ function setInvDmg($name, $kill_id, $i) {
         return "Involved pilot damage done is not a number. You wrote, '".$name."'.";
     }
 
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $sql = "UPDATE `kb3_inv_detail` SET `ind_dmgdone` = '".$name
         ."' WHERE `ind_kll_id` = '".$kill_id."' AND `ind_order` = '".$i."';";
     $qry->execute($sql);
@@ -394,7 +394,7 @@ function setItm($name, $kill_id, $i, $type, $old) {
     }
 
     //usual DB stuff
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $sql = "SELECT `typeID` FROM `kb3_invtypes` WHERE `typeName` = '".$justName."';";
     $qry->execute($sql);
     if($qry->recordCount() < 1)
@@ -403,21 +403,21 @@ function setItm($name, $kill_id, $i, $type, $old) {
     $iid = $row['typeID'];
 
     if($quantity > 0) { //update quantity
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();
         $sql = "UPDATE `kb3_items_".$type."` SET `itd_quantity` = '".$quantity
             ."' WHERE `itd_kll_id` = '".$kill_id."' AND `itd_itm_id` = '".$old."'";
         $qry->execute($sql);
     }
 
     if($location > 0) { //update location
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();
         $sql = "UPDATE `kb3_items_".$type."` SET `itd_itl_id` = '".$location
             ."' WHERE `itd_kll_id` = '".$kill_id."' AND `itd_itm_id` = '".$old."'";
         $qry->execute($sql);
     }
 
     //set the id last, so the other properties can be set first with copy paste code.
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $sql = "UPDATE `kb3_items_".$type."` SET `itd_itm_id` = '".$iid
         ."' WHERE `itd_kll_id` = '".$kill_id."' AND `itd_itm_id` = '".$old."'";
     $qry->execute($sql);
@@ -428,33 +428,33 @@ function setItm($name, $kill_id, $i, $type, $old) {
 function recalcInvData($kill_id) {
     //this table will have to be rebuilt, updating will be problematic.
     //each corp reference must be unique, so only select one of each corp.
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $sql = "DELETE FROM `kb3_inv_crp` WHERE `inc_kll_id` ='".$kill_id."';";
     $qry->execute($sql);
 
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $sql = "SELECT DISTINCT `ind_crp_id` FROM `kb3_inv_detail`
         WHERE `ind_kll_id` = '".$kill_id."';";
     $qry->execute($sql);
 
     while($row = $qry->getRow()) {
-        $qry2 = new DBQuery();
+        $qry2 = DBFactory::getDBQuery();
         $sql2 = "INSERT INTO `kb3_inv_crp` (`inc_kll_id`, `inc_crp_id`)
             VALUES (".$kill_id.",".$row['ind_crp_id'].");";
         $qry2->execute($sql2);
     }
     //same again, but now with more alliance flavour
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $sql = "DELETE FROM `kb3_inv_all` WHERE `ina_kll_id` ='".$kill_id."';";
     $qry->execute($sql);
 
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $sql = "SELECT DISTINCT `ind_all_id` FROM `kb3_inv_detail` WHERE `ind_kll_id` = '"
         .$kill_id."' AND `ind_all_id` != '14';"; //filter out 'None' (we don't love None like the other children)
     $qry->execute($sql);
 
     while($row = $qry->getRow()) {
-        $qry2 = new DBQuery();
+        $qry2 = DBFactory::getDBQuery();
         $sql2 = "INSERT INTO `kb3_inv_all` (`ina_kll_id`, `ina_all_id`)
             VALUES (".$kill_id.",".$row['ind_all_id'].");";
         $qry2->execute($sql2);

@@ -25,7 +25,7 @@ class DBUpdater
     function runQueries()
     {
 	$fp = gzopen($this->fileName, 'r');
-	$qry = new DBQuery(true);
+	$qry = DBFactory::getDBQuery(true);
 	while(!feof($fp))
 	{
 	    $line = fgets($fp);
