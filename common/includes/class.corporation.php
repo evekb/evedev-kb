@@ -186,6 +186,7 @@ class Corporation extends Entity
 	 */
 	function add($name, $alliance, $timestamp, $externalid = 0, $loadExternals = true)
 	{
+		$name = stripslashes($name);
 		$qry = DBFactory::getDBQuery(true);
 		$qry->execute("select * from kb3_corps
 		               where crp_name = '".slashfix($name)."'");

@@ -159,9 +159,9 @@ class Alliance extends Entity
 	static function add($name, $externalid = 0)
 	{
 		$qry = DBFactory::getDBQuery();
-		$name = $qry->escape(stripslashes($name));
+		$name = stripslashes($name);
 		$qry->execute("select all_id, all_name, all_external_id"
-				." from kb3_alliances where all_name = '".$name."'");
+				." from kb3_alliances where all_name = '".$qry->escape($name)."'");
 
 		if (!$qry->recordCount()) {
 			$externalid = (int) $externalid;
@@ -179,7 +179,7 @@ class Alliance extends Entity
 				$qry->execute("SELECT * FROM kb3_alliances WHERE all_external_id = ".$externalid);
 				if ($qry->recordCount() > 0) {
 					$row = $qry->getRow();
-					$qry->execute("UPDATE kb3_alliances SET all_name = '".$name
+					$qry->execute("UPDATE kb3_alliances SET all_name = '".$qry->escape($name)
 							."' WHERE all_external_id = ".$externalid);
 
 					$all = Cacheable::factory('Alliance', (int) $qry->getInsertID());
@@ -191,12 +191,12 @@ class Alliance extends Entity
 				} else {
 					$qry->execute("insert into kb3_alliances ".
 							"(all_id, all_name, all_external_id) values ".
-							"(null, '".$name."', ".$externalid.")");
+							"(null, '".$qry->escape($name)."', ".$externalid.")");
 				}
 			} else {
 					$qry->execute("insert into kb3_alliances ".
 						"(all_id, all_name) values ".
-						"(null, '".$name."')");
+						"(null, '".$qry->escape($name)."')");
 			}
 			$all = Cacheable::factory('Alliance', (int) $qry->getInsertID());
 			$all->name = $name;
