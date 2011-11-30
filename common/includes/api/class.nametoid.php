@@ -6,21 +6,12 @@
  * @package EDK
  */
 
+require_once("class.api.php");
 // **********************************************************************************************************************************************
 // ****************                                   API Name -> ID Conversion /eve/CharacterID.xml.aspx 	                     ****************
 // **********************************************************************************************************************************************
-class API_NametoID
+class API_NametoID extends API
 {
-	function getCachedUntil()
-	{
-		return $this->CachedUntil_;
-	}
-
-	function getCurrentTime()
-	{
-		return $this->CurrentTime_;
-	}
-
 	function setNames($names)
 	{
 		$this->API_Names_ = $names;
@@ -38,31 +29,19 @@ class API_NametoID
 
 	public function fetchXML()
 	{
-		if ($this->API_Names_ != "") $data = $this->loaddata($this->API_Names_);
-		else return "No Names have been input.";
+		if ($this->API_Names_ == "")
+			return "No Names have been input.";
 
-		if(!$data) return "Error fetching names";
+		$data = self::CallAPI( "eve", "CharacterID", array( "names" => $this->API_Names_ ) , null, null );
 
-		$sxe = @simplexml_load_string($data);
+		if($data == false) return "Error fetching names";
 
-		if(!$sxe || strval($sxe->error)) return strval("Error code ".$sxe->error['code'].": ".$sxe->error);
-
-		foreach($sxe->result->rowset->row as $row)
-			$this->NameData_[] = array('name'=>strval($row['name']),
-				'characterID'=>intval($row['characterID']));
-
-		$this->CurrentTime_ = strval($sxe->currentTime);
-		$this->CachedUntil_ = strval($sxe->cachedUntil);
+		foreach($data->characters as $character) {
+			$this->NameData_[] = array(
+					'name'=>strval($character->name),
+					'characterID'=>intval($character->characterID));
+		}
 
 		return "";
-	}
-
-	private function loaddata($names)
-    {
-        $url = API_SERVER."/eve/CharacterID.xml.aspx?names=".urlencode($names);
-
-		$http = new http_request($url);
-		$http->set_useragent("PHPApi");
-		return $http->get_content();
 	}
 }
