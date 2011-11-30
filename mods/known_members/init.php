@@ -52,7 +52,7 @@ class known_members
 		else
 		{
 			$query = "SELECT * FROM `kb3_pilots`  WHERE plt_crp_id =".$home->crp_id." ORDER BY `plt_name` ASC";
-			$qry = new DBQuery();
+			$qry = DBFactory::getDBQuery();
 			$qry->execute($query);
 			$cnt = $qry->recordCount();
 

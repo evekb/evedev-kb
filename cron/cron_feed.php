@@ -120,6 +120,9 @@ function getIDFeed(&$key, &$val)
 		$html .= count($feedfetch->getPosted())." kills were posted and ".
 			count($feedfetch->getSkipped())." were skipped.<br />\n";
 		$html .= "Last kill ID returned was ".$val['lastkill']."<br />\n";
+		if ($feedfetch->getParseMessages()) {
+			$html .= implode("<br />", $feedfetch->getParseMessages());
+		}
 	} else {
 		$html .= "Error reading feed: ".$val['url'];
 		if(!$val['lastkill']) $html .= ", Start time = ".(time() - 60*60*24*7);

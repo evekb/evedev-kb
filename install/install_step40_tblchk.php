@@ -7,7 +7,7 @@ if(!$installrunning) {header('Location: index.php');die();}
 
 function check_commenttable()
 {
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $query = 'SELECT count(*) FROM kb3_comments';
     $result = $qry->execute($query);
     if ($result)
@@ -37,7 +37,7 @@ function check_navigationtable()
 	    $statlink = '?a=alliance_detail';
 	}
 
-	$qry = new DBQuery();
+	$qry = DBFactory::getDBQuery();
 	$query = 'SELECT count(*) FROM kb3_navigation';
 	$result = mysql_query($query);
 	if ($result)
@@ -121,7 +121,7 @@ function check_navigationtable()
 
 function check_commenttablerow()
 {
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $query = 'SELECT posttime FROM kb3_comments LIMIT 1';
     $result = mysql_query($query);
     if ($result)
@@ -136,7 +136,7 @@ function check_commenttablerow()
 
 function check_shipvaltable()
 {
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $query = 'SELECT count(*) FROM kb3_ships_values';
     $result = mysql_query($query);
     if ($result)
@@ -153,7 +153,7 @@ PRIMARY KEY ( `shp_id` )
 
 function check_invdetail()
 {
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $query = 'SELECT ind_sec_status FROM kb3_inv_detail LIMIT 1';
     $qry->execute($query);
     $len = mysql_field_len($qry->resid_,0);
@@ -166,7 +166,7 @@ function check_invdetail()
 
 function check_pilots()
 {
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $query = 'SELECT plt_name FROM kb3_pilots LIMIT 1';
     $qry->execute($query);
     $len = mysql_field_len($qry->resid_,0);
@@ -179,7 +179,7 @@ function check_pilots()
 
 function check_contracts()
 {
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $query = 'SELECT ctd_sys_id FROM kb3_contract_details LIMIT 1';
     $result = mysql_query($query);
     if ($result)
@@ -201,7 +201,7 @@ function check_index()
 {
     check_index_invcrp();
     check_index_invall();
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $qry->execute('SHOW columns FROM kb3_item_types LIKE \'itt_id\'');
     $arr = $qry->getRow();
     if ($arr['Key'] == 'PRI')
@@ -213,7 +213,7 @@ function check_index()
 
 function check_index_invcrp()
 {
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $qry->execute('SHOW columns FROM kb3_inv_crp like \'inc_kll_id\'');
     $arr = $qry->getRow();
     if ($arr['Key'] == 'MUL')
@@ -225,7 +225,7 @@ function check_index_invcrp()
 
 function check_index_invall()
 {
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $qry->execute('SHOW columns FROM kb3_inv_all like \'ina_kll_id\'');
     $arr = $qry->getRow();
     if ($arr['Key'] == 'MUL')
@@ -237,7 +237,7 @@ function check_index_invall()
 
 function check_tblstrct1()
 {
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $query = 'SELECT shp_description FROM kb3_ships LIMIT 1';
     $result = mysql_query($query);
     if (!$result)
@@ -249,7 +249,7 @@ function check_tblstrct1()
 }
 function check_tblstrct5()
 {
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $query = 'SELECT count(*) FROM kb3_standings';
     $result = mysql_query($query);
     if ($result)
@@ -277,7 +277,7 @@ $query = 'CREATE TABLE `kb3_standings` (
 
 function check_tblstrct6()
 {
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $query = 'SELECT all_img FROM kb3_alliances LIMIT 1';
     $result = mysql_query($query);
     if (!$result)
@@ -290,7 +290,7 @@ function check_tblstrct6()
 
 function check_killtables()
 {
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $query = 'SELECT kll_dmgtaken FROM kb3_kills LIMIT 1';
     $result = mysql_query($query);
     if ($result)
@@ -299,7 +299,7 @@ function check_killtables()
     }
     $qry->execute('ALTER TABLE `kb3_kills` ADD `kll_dmgtaken` INT(11) NOT NULL DEFAULT \'0\'');
 
-    $qry = new DBQuery();
+    $qry = DBFactory::getDBQuery();
     $query = 'SELECT ind_dmgdone FROM kb3_inv_detail LIMIT 1';
     $result = mysql_query($query);
     if ($result)

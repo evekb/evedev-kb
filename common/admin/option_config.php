@@ -488,8 +488,7 @@ class admin_config
 			if ($set == 'p') {
 				$all = Alliance::add('Unknown');
 
-				$crp = new Corporation();
-				$crp->add('Unknown', $all, $timestamp, 0, false);
+				$crp = Corporation::add('Unknown', $all, $timestamp, 0, false);
 
 				$plt = Pilot::add($char_info[0]['name'], $crp, $timestamp,
 						$char_info[0]['characterID'], false);

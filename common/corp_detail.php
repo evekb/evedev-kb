@@ -198,7 +198,7 @@ class pCorpDetail extends pageAssembly
 		{
 			$this->alliance = Alliance::add($myAPI->getAllianceName(),
 				$myAPI->getAllianceID());
-			$this->corp->add($myAPI->getCorporationName(),
+			$this->corp = Corporation::add($myAPI->getCorporationName(),
 				$this->alliance, $myAPI->getCurrentTime(),
 				$externalid = $this->corp->getExternalID());
 		}

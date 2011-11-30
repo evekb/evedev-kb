@@ -161,11 +161,17 @@ function getIDFeed(&$key, &$val)
 		}
 		$html .= "IDFeed: ".$val['url']."<br />\n";
 		$html .= count($feedfetch->getPosted())." kills were posted and ".
-			count($feedfetch->getSkipped())." were skipped.<br />\n";
+						count($feedfetch->getSkipped())." were skipped.<br />\n";
+		if ($feedfetch->getParseMessages()) {
+			$html .= implode("<br />", $feedfetch->getParseMessages());
+		}
 	} else {
 		$html .= "Error reading feed: ".$val['url'];
-		if(!$val['lastkill']) $html .= ", Start time = ".(time() - 60*60*24*7);
-		else if($val['apikills']) $html .= ", Start kill = ".($val['lastkill']);
+		if (!$val['lastkill']) {
+			$html .= ", Start time = ".(time() - 60 * 60 * 24 * 7);
+		} else if ($val['apikills']) {
+			$html .= ", Start kill = ".($val['lastkill']);
+		}
 		$val['url'] = preg_replace('/a=idfeed/', 'a=feed', $val['url']);
 		$html .= $feedfetch->errormsg();
 	}

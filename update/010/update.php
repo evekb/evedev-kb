@@ -10,7 +10,7 @@ function update010()
 	//Checking if this Update already done
 	if (CURRENT_DB_UPDATE < "010" )
 	{
-		$qry = new DBQuery(true);
+		$qry = DBFactory::getDBQuery(true);
 		$sql = "CREATE TABLE IF NOT EXISTS `kb3_sum_pilot` (
 		  `psm_plt_id` int(11) NOT NULL DEFAULT '0',
 		  `psm_shp_id` int(3) NOT NULL DEFAULT '0',

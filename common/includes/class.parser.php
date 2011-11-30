@@ -905,20 +905,18 @@ class Parser
 			}
 			$corp = self::$corps[$corpname];
 		} else {
-			$corp = new Corporation();
 			if ($alliance == null) {
 				$corp = Corporation::lookup($corpname);
 				// If the corporation is new and the alliance unknown (structure)
 				// fetch the alliance from the API.
 				if (!$corp) {
-					$corp = new Corporation();
-					$corp->add($corpname, Alliance::add("None"), $timestamp);
+					$corp = Corporation::add($corpname, Alliance::add("None"), $timestamp);
 					if (!$corp->getExternalID()) {
 						$corp = false;
 					}
 				}
 			} else {
-				$corp->add($corpname, $alliance, $timestamp, 0, self::$loadExternals);
+				$corp = Corporation::add($corpname, $alliance, $timestamp, 0, self::$loadExternals);
 				self::$corps[$corpname] = $corp;
 			}
 		}

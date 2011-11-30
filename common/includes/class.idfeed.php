@@ -37,6 +37,7 @@ class IDFeed
 	private $duplicate = array();
 	private $time = '';
 	private $cachedTime = '';
+	private $parsemsg = array();
 	private $errormsg = '';
 	private $errorcode = 0;
 	private $npcOnly = true;
@@ -363,6 +364,11 @@ class IDFeed
 		return $this->errormsg;
 	}
 
+	function getParseMessages()
+	{
+		return $this->parsemsg;
+	}
+
 	function processFeed()
 	{
 		// Remove error messages at the top.
@@ -450,7 +456,7 @@ class IDFeed
 							$errorstring = "Involved Party error in kill: ID = "
 									.$externalID;
 						}
-						trigger_error($errorstring, E_USER_WARNING);
+						$this->parsemsg[] = $errorstring;
 						$skip = true;
 						break;
 					}
@@ -474,7 +480,7 @@ class IDFeed
 					} else {
 						$errorstring = "Kill not added. ID = $externalID";
 					}
-					trigger_error($errorstring, E_USER_WARNING);
+					$this->parsemsg[] = $errorstring;
 					$skip = true;
 				} else if ($id < 0) {
 					$id = $kill->getDupe(true);
@@ -552,8 +558,6 @@ class IDFeed
 			return false;
 		}
 
-		$alliance = new Alliance();
-		$corp = new Corporation();
 		if ((int)$victim['allianceID']) {
 			$alliance = Alliance::add(strval($victim['allianceName']),
 					(int)$victim['allianceID']);
@@ -563,7 +567,7 @@ class IDFeed
 		} else {
 			$alliance = Alliance::add("None");
 		}
-		$corp->add(strval($victim['corporationName']), $alliance, $time,
+		$corp = Corporation::add(strval($victim['corporationName']), $alliance, $time,
 					(int)$victim['corporationID']);
 
 		if (!strval($victim['characterName'])) {
@@ -616,7 +620,7 @@ class IDFeed
 				&& !(int)$inv['weaponTypeID']
 				&& !(int)$inv['characterID']
 				&& !(string)$inv['characterName']) {
-			trigger_error("Involved party blank.", E_USER_WARNING);
+			$this->parsemsg[] = "Involved party blank.";
 			return false;
 		}
 		$npc = false;
@@ -624,7 +628,6 @@ class IDFeed
 		$weapon = Cacheable::factory('Item', (int)$inv['weaponTypeID']);
 
 		$alliance = new Alliance();
-		$corp = new Corporation();
 
 		if ((int)$inv['allianceID']) {
 			$alliance = Alliance::add(strval($inv['allianceName']),
@@ -635,7 +638,7 @@ class IDFeed
 		} else {
 			$alliance = Alliance::add("None");
 		}
-		$corp->add(strval($inv['corporationName']), $alliance, $time,
+		$corp = Corporation::add(strval($inv['corporationName']), $alliance, $time,
 					(int)$inv['corporationID']);
 
 		$charid = (int)$inv['characterID'];
@@ -682,7 +685,10 @@ class IDFeed
 	 */
 	private function processItem($item, &$kill)
 	{
-		if ((int)$item['flag'] == 5) {
+		if ((int)$item['singleton'] == 2) {
+			// Blueprint copy - in the cargohold
+			$location = 9;
+		} else if ((int)$item['flag'] == 5) {
 			// Cargo
 			$location = 4;
 		} else if ((int)$item['flag'] == 89) {
@@ -949,7 +955,10 @@ class IDFeed
 				while ($iRow = $qry->getRow()) {
 					$itemRow = $items->addChild('row');
 					$itemRow->addAttribute('typeID', $iRow['itd_itm_id']);
-					if ($iRow['itd_itl_id'] == 4) {
+					if ($iRow['itd_itl_id'] == 9) {
+						// BPC in cargo
+						$itemRow->addAttribute('flag', 5);
+					} else if ($iRow['itd_itl_id'] == 4) {
 						// cargo
 						$itemRow->addAttribute('flag', 5);
 					} else if ($iRow['itd_itl_id'] == 6) {
@@ -961,6 +970,13 @@ class IDFeed
 					} else {
 						$itemRow->addAttribute('flag', 0);
 					}
+
+					if ($iRow['itd_itl_id'] == 9) {
+						$itemRow->addAttribute('singleton', 2);
+					} else {
+						$itemRow->addAttribute('singleton', 0);
+					}
+
 					$itemRow->addAttribute('qtyDropped', 0);
 					$itemRow->addAttribute('qtyDestroyed', $iRow['itd_quantity']);
 				}
@@ -969,7 +985,10 @@ class IDFeed
 				while ($iRow = $qry2->getRow()) {
 					$itemRow = $items->addChild('row');
 					$itemRow->addAttribute('typeID', $iRow['itd_itm_id']);
-					if ($iRow['itd_itl_id'] == 4) {
+					if ($iRow['itd_itl_id'] == 9) {
+						// BPC in cargo
+						$itemRow->addAttribute('flag', 5);
+					} else if ($iRow['itd_itl_id'] == 4) {
 						// cargo
 						$itemRow->addAttribute('flag', 5);
 					} else if ($iRow['itd_itl_id'] == 6) {
@@ -978,6 +997,13 @@ class IDFeed
 					} else {
 						$itemRow->addAttribute('flag', 0);
 					}
+
+					if ($iRow['itd_itl_id'] == 9) {
+						$itemRow->addAttribute('singleton', 2);
+					} else {
+						$itemRow->addAttribute('singleton', 0);
+					}
+
 					$itemRow->addAttribute('qtyDropped', $iRow['itd_quantity']);
 					$itemRow->addAttribute('qtyDestroyed', 0);
 				}

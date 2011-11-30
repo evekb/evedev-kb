@@ -10,63 +10,76 @@ function update027()
 	if (CURRENT_DB_UPDATE < "027" )
 	{
 		if(is_null(config::get('027updatestatus'))) config::set('027updatestatus',0);
-		$qry = new DBQuery(true);
+		$qry = DBFactory::getDBQuery(true);
 
 		if(config::get('027updatestatus') <1)
 		{
 			// create table
-			$sql = 'CREATE TABLE IF NOT EXISTS kb3_engagement_all (
-						starttime datetime NOT NULL,
-						endtime datetime NOT NULL,
-						all_id int(11) NOT NULL,
-						eng_id int(11) NOT NULL,
-						losses int(11) NOT NULL DEFAULT 0,
-						kills int(11) NOT NULL DEFAULT 0,
-						lossisk bigint(20) NOT NULL DEFAULT 0,
-						killisk bigint(20) NOT NULL DEFAULT 0,
-						UNIQUE KEY btl_id (eng_id,all_id),
-						KEY endtime (endtime))';
+			$sql = 'CREATE TABLE IF NOT EXISTS kb3_api_keys (
+						key_name VARCHAR( 50 ) NOT NULL,
+						key_id INT(11) NOT NULL,
+						key_key VARCHAR( 64 ) NOT NULL,
+						key_kbsite VARCHAR( 16 ) NOT NULL,
+						key_flags TINYINT NOT NULL,
+						PRIMARY KEY (key_name, key_id, key_key, key_kbsite))';
 			$qry->execute($sql);
 			
-			$sql = 'CREATE TABLE IF NOT EXISTS kb3_engagement_crp (
-						starttime datetime NOT NULL,
-						endtime datetime NOT NULL,
-						crp_id int(11) NOT NULL,
-						eng_id int(11) NOT NULL,
-						losses int(11) NOT NULL DEFAULT 0,
-						kills int(11) NOT NULL DEFAULT 0,
-						lossisk bigint(20) NOT NULL DEFAULT 0,
-						killisk bigint(20) NOT NULL DEFAULT 0,
-						UNIQUE KEY btl_id (eng_id,crp_id),
-						KEY endtime (endtime))';
-			$qry->execute($sql);
-			
-			$sql = 'CREATE TABLE IF NOT EXISTS kb3_engagement_eng (
-						eng_id int(11) NOT NULL AUTO_INCREMENT,
-						endtime datetime NOT NULL,
-						starttime datetime NOT NULL,
-						sys_id int(11) NOT NULL,
-						btl_id int(11) NOT NULL,
-						PRIMARY KEY (eng_id),
-						KEY date (endtime))';
+			// get a list of keys for each site to migrate
+			$sql = "SELECT * FROM kb3_config where cfg_key = 'API_Key_count'";
 			$qry->execute($sql);
 
-			$sql = 'CREATE TABLE IF NOT EXISTS kb3_battle_btl (
-						btl_id int(11) NOT NULL AUTO_INCREMENT,
-						involved int(11) NOT NULL DEFAULT 0,
-						name char(36) DEFAULT NULL,
-						description int(11) DEFAULT NULL,
-						endtime datetime NOT NULL,
-						starttime datetime NOT NULL,
-						PRIMARY KEY (btl_id),
-						KEY date (endtime))';
-			$qry->execute($sql);
-			
-			$qry->execute("SHOW COLUMNS FROM kb3_kills LIKE 'kll_eng_id'");
-			if(!$qry->recordCount()) {
-				$sql = 'ALTER TABLE kb3_kills ADD COLUMN kll_eng_id int(11) NOT NULL DEFAULT 0';
+			$qry2 = DBFactory::getDBQuery(true);
+
+			while($ret = $qry->getRow()) {
+				$key_kbsite = $ret['cfg_site'];
+				$keycnt = $ret['cfg_value'];
+								
+				for( $i = 1; $i <= $keycnt; $i++ ) {
+					$sql = "SELECT cfg_value FROM kb3_config where cfg_site = '$key_kbsite' AND cfg_key = 'API_UserID_$i' ";
+					$qry2->execute($sql);
+					$ret = $qry2->getRow();
+					$key_id = $ret['cfg_value'];
+					
+					$sql = "SELECT cfg_value FROM kb3_config where cfg_site = '$key_kbsite' AND cfg_key = 'API_Key_$i' ";
+					$qry2->execute($sql);
+					$ret = $qry2->getRow();
+					$key_key = $ret['cfg_value'];
+
+					$sql = "SELECT cfg_value FROM kb3_config where cfg_site = '$key_kbsite' AND cfg_key = 'API_Name_$i' ";
+					$qry2->execute($sql);
+					$ret = $qry2->getRow();
+					$key_name = $ret['cfg_value'];
+
+					$sql = "SELECT cfg_value FROM kb3_config where cfg_site = '$key_kbsite' AND cfg_key = 'API_Type_$i' ";
+					$qry2->execute($sql);
+					$ret = $qry2->getRow();
+					$type = $ret['cfg_value'];
+
+					// need to set appropriate flags
+					// a) legacy key
+					// b) corp/char
+					$key_flags = KB_APIKEY_LEGACY;
+					if ( $type == 'corp' ) {
+						$key_flags |= KB_APIKEY_CORP;
+					}				
+					if ( $type == 'char' ) {
+						$key_flags |= KB_APIKEY_CHAR;
+					}
+
+					if ( $key_id != '' ) {
+						$sql = "INSERT INTO kb3_api_keys( key_name, key_id, key_key, key_kbsite, key_flags ) VALUES ( '$key_name', '$key_id', '$key_key', '$key_kbsite', '$key_flags' )";
+						$qry2->execute($sql);
+					}
+					
+					// remove legacy config items
+					$sql = "DELETE FROM kb3_config where cfg_site = '$key_kbsite' AND ( cfg_key = 'API_UserID_$i' OR cfg_key = 'API_CharID_$i' OR cfg_key = 'API_Key_$i' OR cfg_key = 'API_Name_$i' OR cfg_key = 'API_Type_$i' ) ";
+					$qry2->execute($sql);
+				}
 			}
-			$qry->execute($sql);
+			
+			// remove legacy api config items
+			$sql = "DELETE FROM kb3_config where cfg_key = 'API_Key_count'";
+			$qry->execute($sql);			
 		}
 
 		config::set("DBUpdate", "027");

@@ -489,12 +489,11 @@ class Fetcher
 			if(!is_array($tempNames)) continue;
 			$myNames = array_merge($myNames, $tempNames);
 		}
-		$newcorp = new Corporation();
 		foreach($myNames as $name)
 		{
 			if(isset($names[slashfix($name['name'])]) && $name['characterID'])
 			{
-				$newcorp->add(slashfix($name['name']), $names[slashfix($name['name'])], '0000-00-00', $name['characterID']);
+				$newcorp = Corporation::add(slashfix($name['name']), $names[slashfix($name['name'])], '0000-00-00', $name['characterID']);
 // Adding all at once is faster but skips checks for name/id clashes.
 //if($sql == '') $sql = "INSERT INTO kb3_corps (crp_name, crp_all_id, crp_updated, crp_external_id) VALUES ('".slashfix($name['name'])."', ".$names[slashfix($name['name'])]->getID().", '0000-00-00', ".$name['characterID'].")";
 //else $sql .= ",\n ('".slashfix($name['name'])."', ".$names[slashfix($name['name'])]->getID().", '0000-00-00', ".$name['characterID'].")";

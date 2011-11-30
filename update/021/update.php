@@ -10,7 +10,7 @@ function update021()
 	//Checking if this Update already done
 	if (CURRENT_DB_UPDATE < "021" )
 	{
-		$qry = new DBQuery(true);
+		$qry = DBFactory::getDBQuery(true);
 		if(is_null(config::get('021updatestatus'))) config::set('021updatestatus',0);
 		
 

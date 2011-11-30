@@ -69,7 +69,7 @@ class API_Char extends API
 				if ( !$pilotscorp->getID() )
 				{
 					$ialliance = Alliance::add('None');
-					$pilotscorp->add($char['corpName'], $ialliance, gmdate("Y-m-d H:i:s"));
+					$pilotscorp = Corporation::add($char['corpName'], $ialliance, gmdate("Y-m-d H:i:s"));
 				}
 				Pilot::add($char['Name'], $pilotscorp, gmdate("Y-m-d H:i:s"), intval($char['charID']));
 			}

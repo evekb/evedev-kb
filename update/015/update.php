@@ -9,7 +9,7 @@ function update015()
 	//Checking if this Update already done
 	if (CURRENT_DB_UPDATE < "015" )
 	{
-		$qry = new DBQuery(true);
+		$qry = DBFactory::getDBQuery(true);
 		$sql = "ALTER TABLE `kb3_contracts` ADD `ctr_comment` VARCHAR( 255 ) NULL DEFAULT NULL ";
 		$qry->execute("SHOW COLUMNS FROM kb3_contracts LIKE 'ctr_comment'");
 		if(!$qry->recordCount()) $qry->execute($sql);

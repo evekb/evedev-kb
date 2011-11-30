@@ -13,7 +13,7 @@ function update023()
 		if(is_null(config::get('023updatestatus'))) {
 			config::set('023updatestatus',0);
 		}
-		$qry = new DBQuery(true);
+		$qry = DBFactory::getDBQuery(true);
 
 		if(config::get('023updatestatus') <1)
 		{

@@ -97,7 +97,7 @@ class KillSummaryTable
         $sql = "select scl_id, scl_class from kb3_ship_classes
                where scl_class not in ('Drone','Unknown') order by scl_class";
 
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();
         $qry->execute($sql);
         while ($row = $qry->getRow())
         {
@@ -121,7 +121,7 @@ class KillSummaryTable
         }
         $sql .= 'GROUP BY scl_class order by scl_class';
 
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();
         $qry->execute($sql);
         while ($row = $qry->getRow())
         {
@@ -147,7 +147,7 @@ class KillSummaryTable
         }
         $sql .= 'GROUP BY scl_class order by scl_class';
 
-        $qry = new DBQuery();
+        $qry = DBFactory::getDBQuery();
         $qry->execute($sql);
         while ($row = $qry->getRow())
         {
@@ -170,7 +170,7 @@ class KillSummaryTable
                    where scl_class not in ( 'Drone', 'Unknown' )
                   order by scl_class";
 
-            $qry = new DBQuery();
+            $qry = DBFactory::getDBQuery();
             $qry->execute($sql) or die($qry->getErrorMsg());
             while ($row = $qry->getRow())
             {
@@ -341,7 +341,7 @@ class KillSummaryTable
                    where scl_class not in ( 'Drone', 'Unknown' )
                   order by scl_class";
 
-            $qry = new DBQuery();
+            $qry = DBFactory::getDBQuery();
             $qry->execute($sql) or die($qry->getErrorMsg());
             while ($row = $qry->getRow())
             {

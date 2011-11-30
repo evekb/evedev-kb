@@ -249,7 +249,7 @@ class ajcron
         // job done, clean up
         // we need to refresh our variable to prevent overwriting of
         // other running jobs
-        $db = new DBQuery(true);
+        $db = DBFactory::getDBQuery(true);
         $db->execute('select * from kb3_config where cfg_site=\''.KB_SITE.'\' and cfg_key=\'ajcron_running\'');
         $row = $db->getRow();
         $state = unserialize($row['cfg_value']);
