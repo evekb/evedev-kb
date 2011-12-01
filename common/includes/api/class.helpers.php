@@ -146,18 +146,13 @@ class API_Helpers
 		if ($id != 0)
 		{
 			$qry = DBFactory::getDBQuery();
-			$sql = "SHOW TABLES LIKE 'kb3_moons'";
-			$qry->execute($sql);
-			if(!$qry->recordCount()) return false;
-
-			$sql = 'select moon.itemID, moon.itemName from kb3_moons moon where moon.itemID = '.$id;
+			$sql = 'select itemName FROM kb3_moons WHERE itemID = '.$id;
 
 			$qry->execute($sql);
 			$row = $qry->getRow();
 
 			return $row['itemName'];
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
