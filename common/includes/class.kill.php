@@ -1740,4 +1740,15 @@ class Kill extends Cacheable
 	{
 		return $b->getDamageDone() - $a->getDamageDone();
 	}
+
+	/**
+	 * Return a new object by ID. Will fetch from cache if enabled.
+	 *
+	 * @param mixed $id ID to fetch
+	 * @return Kill
+	 */
+	static function getByID($id)
+	{
+		return Cacheable::factory(get_class(), $id);
+	}
 }

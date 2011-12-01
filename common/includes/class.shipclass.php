@@ -160,4 +160,15 @@ class ShipClass extends Cacheable
 			$this->putCache();
 		}
 	}
+
+	/**
+	 * Return a new object by ID. Will fetch from cache if enabled.
+	 *
+	 * @param mixed $id ID to fetch
+	 * @return ShipClass
+	 */
+	static function getByID($id)
+	{
+		return Cacheable::factory(get_class(), $id);
+	}
 }

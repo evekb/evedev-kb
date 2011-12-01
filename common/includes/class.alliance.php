@@ -362,4 +362,15 @@ class Alliance extends Entity
 						(int) $myNames[0]['characterID']);
 		$this->name = $alliance->name;
 	}
+
+	/**
+	 * Return a new object by ID. Will fetch from cache if enabled.
+	 *
+	 * @param mixed $id ID to fetch
+	 * @return Alliance
+	 */
+	static function getByID($id)
+	{
+		return Cacheable::factory(get_class(), $id);
+	}
 }

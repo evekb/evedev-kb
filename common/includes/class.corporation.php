@@ -412,4 +412,15 @@ class Corporation extends Entity
 		$this->updated = $crp->updated;
 		return true;
 	}
+
+	/**
+	 * Return a new object by ID. Will fetch from cache if enabled.
+	 *
+	 * @param mixed $id ID to fetch
+	 * @return Corporation
+	 */
+	static function getByID($id)
+	{
+		return Cacheable::factory(get_class(), $id);
+	}
 }
