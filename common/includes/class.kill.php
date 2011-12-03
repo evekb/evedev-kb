@@ -755,15 +755,21 @@ class Kill extends Cacheable
 				return $row['kll_id'];
 			}
 		}
-		$sql = "SELECT kll_id
-                    FROM kb3_kills
-                    WHERE kll_timestamp ='".$this->timestamp."'
-                    AND kll_victim_id = ".$this->victimid."
-                    AND kll_ship_id = ".$this->victimship->getID()."
-                    AND kll_system_id = ".$this->solarsystem->getID()."
-                    AND kll_fb_plt_id = ".$this->fbpilotid."
-                    AND kll_dmgtaken = ".intval($this->dmgtaken);
-		$sql .= "             AND kll_id != ".$this->id;
+		$sql = "SELECT kll_id"
+				." FROM kb3_kills"
+				." WHERE kll_timestamp ='".$this->timestamp."'";
+		// use corp id for pos to catch all the old mails with missing moons.
+		if($this->getVictimShip()->getClass()->getID() >= 35
+						&& $this->getVictimShip()->getClass()->getID() <= 38) {
+			$sql .= " AND kll_crp_id = ".$this->victimcorpid;
+		} else {
+			$sql .= " AND kll_victim_id = ".$this->victimid;
+		}
+		$sql .= " AND kll_ship_id = ".$this->victimship->getID()
+					." AND kll_system_id = ".$this->solarsystem->getID()
+					." AND kll_fb_plt_id = ".$this->fbpilotid
+					." AND kll_dmgtaken = ".intval($this->dmgtaken)
+					." AND kll_id != ".$this->id;
 		$qry->execute($sql);
 		$qryinv = DBFactory::getDBQuery(true);
 
