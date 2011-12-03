@@ -67,25 +67,29 @@ class Parser
 		 * In addition, we always want to process strtotime in eve's time i.e. UTC/GMT.
 		 */
 		$timestamp_int = strtotime($timestamp . ' UTC');
-		$dom11_release = strtotime('2010-01-21 12:00:00 UTC');
-		if($timestamp_int < $dom11_release) {
-			$dom_release = strtotime('2009-12-03 12:00:00 UTC');
-			if($timestamp_int < $dom_release) {
-				$apoc_release = strtotime('2009-03-10 03:00:00 UTC');
-				if($timestamp_int < $apoc_release) {
-					$apoc15_release = strtotime('2009-08-20 12:00:00 UTC');
-					if($timestamp_int < $apoc15_release) {
-						$qr_release = strtotime('2008-11-11 00:00:00 UTC');
-						if($timestamp_int < $qr_release) {
-							$this->preparse('preqr');
-						}
-						$this->preparse('apoc15');
-					}
-					$this->preparse('apoc');
-				}
-				$this->preparse('dominion');
-			}
-			$this->preparse('dom11');
+        $cru11_release = strtotime("2011-11-29 12:00:00 UTC");
+        if($timestamp_int < $cru11_release) {
+            $dom11_release = strtotime('2010-01-21 12:00:00 UTC');
+            if($timestamp_int < $dom11_release) {
+                $dom_release = strtotime('2009-12-03 12:00:00 UTC');
+                if($timestamp_int < $dom_release) {
+                    $apoc_release = strtotime('2009-03-10 03:00:00 UTC');
+                    if($timestamp_int < $apoc_release) {
+                        $apoc15_release = strtotime('2009-08-20 12:00:00 UTC');
+                        if($timestamp_int < $apoc15_release) {
+                            $qr_release = strtotime('2008-11-11 00:00:00 UTC');
+                            if($timestamp_int < $qr_release) {
+                                $this->preparse('preqr');
+                            }
+                            $this->preparse('apoc15');
+                        }
+                        $this->preparse('apoc');
+                    }
+                    $this->preparse('dominion');
+                }
+                $this->preparse('dom11');
+            }
+            $this->preparse('cru10');
 		}
 
 		if (strpos($this->killmail_, '**** Truncated - mail is too large ****') > 0)
