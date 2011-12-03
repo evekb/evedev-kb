@@ -52,8 +52,8 @@ summarytable	1
 cfg_qcache	0
 cache_update	*
 cache_time	10
-DBUpdate	022
-upd_dbVersion	1.1.0
+DBUpdate	026
+upd_dbVersion	1.2.0
 upd_codeVersion	3.2.0
 cfg_log	1
 cfg_sqlhalt	1
