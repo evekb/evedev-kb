@@ -187,7 +187,7 @@ class Alliance extends Entity
 					$all->externalid = (int) $externalid;
 					$all->executed = true;
 
-					return;
+					return $all;
 				} else {
 					$qry->execute("insert into kb3_alliances ".
 							"(all_id, all_name, all_external_id) values ".
