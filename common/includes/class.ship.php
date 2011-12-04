@@ -281,4 +281,15 @@ class Ship extends Cacheable
 		$cache_name[$name] = new Ship($id, null, $typeName, $shipclass);
 		return $cache_name[$name];
 	}
+
+	/**
+	 * Return a new object by ID. Will fetch from cache if enabled.
+	 *
+	 * @param mixed $id ID to fetch
+	 * @return Ship
+	 */
+	static function getByID($id)
+	{
+		return Cacheable::factory(get_class(), $id);
+	}
 }

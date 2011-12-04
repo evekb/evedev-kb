@@ -849,7 +849,6 @@ a.kb-contract:visited
 
 #kl-detail-left, #kl-detail-right
 {
-	margin-bottom: 10px;
 	text-align: left;
 	vertical-align: top;
 }
@@ -857,12 +856,14 @@ a.kb-contract:visited
 #kl-detail-left
 {
 	display: inline-block;
+	margin: 0 18px 10px 0;
 	width: 340px;
 }
 
 #kl-detail-right
 {
 	display: inline-block;
+	margin: 0 0 10px 0;
 	width: 398px;
 }
 

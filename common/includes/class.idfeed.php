@@ -660,6 +660,10 @@ class IDFeed
 			$charname = $weapon->getName();
 			$npc = true;
 			$charid = $weapon->getID();
+		} else if ($charname == "" && $charid) {
+			// Bugged kill
+			$this->parsemsg[] = "Involved party has blank pilot name.";
+			return false;
 		}
 
 		$pilot = Pilot::add((string)$charname, $corp, $time,

@@ -119,15 +119,26 @@ class SolarSystem extends Cacheable
 	 */
     static function lookup($name)
     {
-        $qry = DBFactory::getDBQuery();
-        $qry->execute("SELECT sys_id FROM kb3_systems "
-				." WHERE sys_name = '".$qry->escape($name)."'");
+			$qry = DBFactory::getDBQuery();
+			$qry->execute("SELECT sys_id FROM kb3_systems "
+			." WHERE sys_name = '".$qry->escape($name)."'");
 
-        if (!$qry->recordCount()) {
-            return false;
-        } else {
-	        $row = $qry->getRow();
-			return Cacheable::factory('SolarSystem', (int)$row['sys_id']);
-		}
+			if (!$qry->recordCount()) {
+					return false;
+			} else {
+				$row = $qry->getRow();
+				return Cacheable::factory('SolarSystem', (int)$row['sys_id']);
+			}
     }
+
+	/**
+	 * Return a new object by ID. Will fetch from cache if enabled.
+	 *
+	 * @param mixed $id ID to fetch
+	 * @return Alliance
+	 */
+	static function getByID($id)
+	{
+		return Cacheable::factory(get_class(), $id);
+	}
 }

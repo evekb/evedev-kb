@@ -501,4 +501,15 @@ class Pilot extends Entity
 				return false;
 			}
 	}
+
+	/**
+	 * Return a new object by ID. Will fetch from cache if enabled.
+	 *
+	 * @param mixed $id ID to fetch $id
+	 * @return Pilot
+	 */
+	static function getByID($id)
+	{
+		return Cacheable::factory(get_class(), $id);
+	}
 }
