@@ -1262,6 +1262,12 @@ table.awardbox table
 	text-align: center;
 }
 
+.alliance-detail-corps td:first-child,
+.alliance-detail-corps td:last-child
+{
+	text-align: left;
+}
+
 .alliance-detail-corpname
 {
 	width: 200px;
