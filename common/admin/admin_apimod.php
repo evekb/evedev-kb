@@ -78,67 +78,10 @@ if ($_POST['add'] ) {
 
 if ($_POST['submit'] || $_POST['import']  )
 {
-    if ($_POST['API_Comment'])
-        config::set('API_Comment', $_POST['API_Comment']);
-    else
-        config::set('API_Comment', '');
-
-    if ($_POST['API_Update'])
-        config::set('API_Update', '0');
-    else
-        config::set('API_Update', '1');
-
-    if ($_POST['API_IgnoreNPC'])
-        config::set('API_IgnoreNPC', '0');
-    else
-        config::set('API_IgnoreNPC', '1');
-
-    if ($_POST['API_IgnoreCorpFF'])
-        config::set('API_IgnoreCorpFF', '0');
-    else
-        config::set('API_IgnoreCorpFF', '1');
-
-    if ($_POST['API_IgnoreAllianceFF'])
-        config::set('API_IgnoreAllianceFF', '0');
-    else
-        config::set('API_IgnoreAllianceFF', '1');
-
-    if ($_POST['API_IgnoreFriendPos'])
-        config::set('API_IgnoreFriendPos', '0');
-    else
-        config::set('API_IgnoreFriendPos', '1');
-
-    if ($_POST['API_IgnoreEnemyPos'])
-        config::set('API_IgnoreEnemyPos', '0');
-    else
-        config::set('API_IgnoreEnemyPos', '1');
-
-    if ($_POST['API_NoSpam'])
-        config::set('API_NoSpam', '0');
-    else
-        config::set('API_NoSpam', '1');
-
-	if ($_POST['API_UseCache'])
-        config::set('API_UseCache', '0');
-    else
-        config::set('API_UseCache', '1');
-
-    if ($_POST['API_MultipleMode'])
+	if ($_POST['API_MultipleMode'])
         config::set('API_MultipleMode', '0');
     else
         config::set('API_MultipleMode', '1');
-
-	if ($_POST['API_extendedtimer_sovereignty'])
-        config::set('API_extendedtimer_sovereignty', '0');
-    else
-        config::set('API_extendedtimer_sovereignty', '1');
-
-
-
-	if ($_POST['API_ConvertTimestamp'])
-        config::set('API_ConvertTimestamp', '0');
-    else
-        config::set('API_ConvertTimestamp', '1');
 
     $html .= "Settings Saved.<br />";
 }
@@ -163,7 +106,6 @@ if ($_POST['import'] || isset($_GET['Process']))
 		$keystring = 'userID=' . config::get('API_UserID_' . $i) . '&apiKey=' . config::get('API_Key_' . $i) . '&characterID=' . config::get('API_CharID_' . $i);
 		$typestring = config::get("API_Type_" . $i);
 		$outputdata .= $myEveAPI->Import($keystring, $typestring, $i);
-		$apicachetime[$i] = $myEveAPI->CachedUntil_;
 
 		$file = @fopen(KB_CACHEDIR.'/data/report.txt', 'a');
 		fwrite($file, $outputdata);
@@ -188,7 +130,6 @@ if ($_POST['import'] || isset($_GET['Process']))
 		while ($row = $qry->getRow()) {
 			$myEveAPI->Output_ .= "Importing Mails for " . $row['key_name'] . "<br />";
 			$html .= $myEveAPI->Import($row['key_name'], $row['key_id'], $row['key_key'], $row['key_flags']);
-			$apicachetime[$i] = $myEveAPI->CachedUntil_;
 		}
 	}
 }
@@ -428,17 +369,6 @@ $html .= "</table>";
 	// API Caching Options
 	$html .= "<div class='block-header2'>API XML Caching Options</div><table>";
 
-	$html .= "<tr><td height='30' width='150'>Enable API XML Caching?</td>";
-	$html .= "<td><input type='checkbox' name='API_UseCache' id='API_UseCache'";
-	if (!config::get('API_UseCache'))
-    	$html .= " checked=\"checked\"";
-	$html .= " /></td></tr>";
-
-	$html .= "<tr><td height='30' width='150'>Convert Cache Times to local time?</td>";
-	$html .= "<td><input type='checkbox' name='API_ConvertTimestamp' id='API_ConvertTimestamp'";
-	if (!config::get('API_ConvertTimestamp'))
-    	$html .= " checked=\"checked\"";
-	$html .= " /></td></tr>";
 
 	$html .= "<tr><td height=\"10\"></td></tr>"; // spacer
 	$html .= "<tr><td>(" . $deld . " files with a total size of " . number_format($dsize,"0",".",",") . " bytes)</td></tr>";
@@ -450,47 +380,6 @@ $html .= "</table>";
 
 	// Killmail Parser Options
 	$html .= "<div class='block-header2'>Killmail API Parsing Options</div><table>";
-	$html .= "<tr><td height='50' width='150'>Comment for automatically parsed killmails?</td>";
-	$html .= "<td><input type='text' size='50' class='password' name='API_Comment' id='API_Comment' value=\"";
-	if (config::get('API_Comment'))
-    	$html .= config::get('API_Comment');
-	$html .= "\" /><br /><i> (leave blank for none)</i><br /></td></tr>";
-
-	$html .= "<tr><td height='30' width='150'>Update Portraits?</td>";
-	$html .= "<td><input type='checkbox' name='API_Update' id='API_Update'";
-	if (!config::get('API_Update'))
-    	$html .= " checked=\"checked\"";
-	$html .= " /></td></tr>";
-
-	$html .= "<tr><td height='30' width='150'>Ignore NPC only deaths? <i>(This includes kills by POSs)</i></td>";
-	$html .= "<td><input type='checkbox' name='API_IgnoreNPC' id='API_IgnoreNPC'";
-	if (!config::get('API_IgnoreNPC'))
-    	$html .= " checked=\"checked\"";
-	$html .= " /></td></tr>";
-
-	$html .= "<tr><td height='30' width='150'>Ignore Friendly Fire? </td>";
-	$html .= "<td><input type='checkbox' name='API_IgnoreCorpFF' id='API_IgnoreCorpFF'";
-	if (!config::get('API_IgnoreCorpFF'))
-    	$html .= " checked=\"checked\"";
-	$html .= " /> Corps <input type='checkbox' name='API_IgnoreAllianceFF' id='API_IgnoreAllianceFF'";
-	if (!config::get('API_IgnoreAllianceFF'))
-    	$html .= " checked=\"checked\"";
-	$html .= " /> Alliance</td></tr>";
-
-	$html .= "<tr><td height='30' width='150'>Ignore POS Structures? </td>";
-	$html .= "<td><input type='checkbox' name='API_IgnoreFriendPos' id='API_IgnoreFriendPos'";
-	if (!config::get('API_IgnoreFriendPos'))
-    	$html .= " checked=\"checked\"";
-	$html .= " /> Friend <input type='checkbox' name='API_IgnoreEnemyPos' id='API_IgnoreEnemyPos'";
-	if (!config::get('API_IgnoreEnemyPos'))
-    	$html .= " checked=\"checked\"";
-	$html .= " /> Enemy</td></tr>";
-
-	$html .= "<tr><td height='30' width='150'>Concise cronjob e-mail? </td>";
-	$html .= "<td><input type='checkbox' name='API_NoSpam' id='API_NoSpam'";
-	if (!config::get('API_NoSpam'))
-   	 	$html .= " checked=\"checked\"";
-	$html .= " /></td></tr>";
 
 	$html .= "<tr><td height='30' width='150'>Import multiple keys one at a time? </td>";
 	$html .= "<td><input type='checkbox' name='API_MultipleMode' id='API_MultipleMode'";
