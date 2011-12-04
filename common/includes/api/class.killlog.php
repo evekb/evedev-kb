@@ -6,17 +6,15 @@
  * @package EDK
  */
 
-// **********************************************************************************************************************************************
-// ****************                                    API KillLog - /corp/Killlog.xml.aspx                                      ****************
-// **********************************************************************************************************************************************
-
-require_once("class.api.php");
-require_once("class.account.php");
-
+/**
+ * API KillLog - /corp/Killlog.xml.aspx
+ */
 class API_KillLog extends API
 {
     function Import($name, $id, $key, $flags)
 	{
+		$output = "";
+
 		// Skip bad keys
 		if ( $flags & KB_APIKEY_BADAUTH || $flags & KB_APIKEY_EXPIRED ) {
 			return; // skip bad keys
@@ -29,19 +27,21 @@ class API_KillLog extends API
 		// reduces strain on DB
 		if(function_exists("set_time_limit"))
       		set_time_limit(0);
-		
-        $lastdatakillid = 1;
-        $currentdatakillid = 0;
+
+		$lastdatakillid = 1;
+		$currentdatakillid = 0;
 
 		$logsource = "New XML";
 		// Load new XML
-		$this->Output_ = "<i>Downloading latest XML file for $name</i><br><br>";
+		$output = "<i>Downloading latest XML file for $name</i><br><br>";
 		
 		$accts = new API_Account();
 		$characters = $accts->fetch($id, $key);
+		$posted = array();
+		$skipped = array();
 
 		foreach($characters as $char) {
-			$this->Output_ .= "Processing " . $char['charID'] . "<br><br>";
+			$output .= "Processing " . $char['charID'] . "<br><br>";
 			$currentkill = 0;
 			$lastkill = -1;
 			while ($lastkill != $currentkill) {
@@ -95,7 +95,7 @@ class API_KillLog extends API
 								."Cron Job','"
 								. self::GetError() . "', "
 								."UTC_TIMESTAMP() )");						
-						return $this->Output_;
+						return $output;
 					} else {
 						// We found kills!
 						$qry = DBFactory::getDBQuery();
@@ -113,18 +113,7 @@ class API_KillLog extends API
 								. (self::GetError() == 119 ? 0: self::GetError()) . "', "
 								."UTC_TIMESTAMP() )");
 
-						echo "<div class='block-header2'>".count($posted)
-								." kill".(count($posted) == 1 ? "" : "s")." posted, ".count($skipped)." skipped from feed: "
-								.$keyID.".<br></div>";
-						if($posted) {
-							echo "<div class='block-header2'>Posted</div>\n";
-							foreach($posted as $id) {
-								echo "<div><a href='"
-										.edkURI::page('kill_detail', $id[2], 'kll_id')
-										."'>Kill ".$id[0]."</a></div>";
-							}
-						}
-						return $this->Output_;
+						return $output;
 					}
 				}
 
@@ -133,12 +122,20 @@ class API_KillLog extends API
 				$feedfetch->setTrust(-1);
 				$feedfetch->read();
 
-				$posted += sizeof($feedfetch->getPosted());
-				$skipped += sizeof($feedfetch->getSkipped());
-
-				$this->Output_ .= "<div class=block-header2>" . $posted ." kills, ". $skipped . " skipped  from feed: $name<br></div>";
+				$posted = array_merge($posted, $feedfetch->getPosted());
+				$skipped = array_merge($skipped, $feedfetch->getSkipped());
+ 
+				$output .= "<div class='block-header2'>"
+						.count($posted)." kill".(count($posted) == 1 ? "" : "s")." posted, "
+						.count($skipped)." skipped from feed: ".$id.".<br></div>";
+				$output .= "<div class='block-header2'>Posted</div>\n";
+				foreach($posted as $killid) {
+					$output .= "<div><a href='"
+							.edkURI::page('kill_detail', $killid[2], 'kll_id')
+							."'>Kill ".$killid[0]."</a></div>";
+				}
 			}
 		}			
-        return $this->Output_;
+        return $output;
     }
 }

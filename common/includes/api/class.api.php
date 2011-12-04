@@ -18,9 +18,9 @@ class API {
 		// KeepAliveTimeout in seconds
 		PhealConfig::getInstance()->http_timeout = 60;
 		//PhealConfig::getInstance()->cache = new PhealMemcache(array('port' => 11211));
-		PhealConfig::getInstance()->cache = new PhealFileCache('cache/pheal/');
+		PhealConfig::getInstance()->cache = new PhealFileCache('cache/api/');
 		PhealConfig::getInstance()->api_customkeys = true;
-		PhealConfig::getInstance()->log = new PhealFileLog('cache/');
+		PhealConfig::getInstance()->log = new PhealFileLog('cache/api');
 	}
 
 	function IsCached() {
@@ -41,8 +41,7 @@ class API {
 				$result = $this->pheal->{$call}();
 			}
 		} catch(PhealException $e) {
-			//echo 'error: ' . $e->code . ' message: ' . $e->getMessage();
-			$this->error = $e->code;
+			$this->error = $e->getCode();
 			return false;
 		}
 		

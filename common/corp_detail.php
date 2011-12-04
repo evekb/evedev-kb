@@ -194,7 +194,7 @@ class pCorpDetail extends pageAssembly
 		$myAPI->setCorpID($this->corp->getExternalID());
 		$result .= $myAPI->fetchXML();
 		// Update the name if it has changed.
-		if($result == "")
+		if($result == "" && $myAPI->getCorporationName())
 		{
 			$this->alliance = Alliance::add($myAPI->getAllianceName(),
 				$myAPI->getAllianceID());

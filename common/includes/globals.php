@@ -41,6 +41,7 @@ spl_autoload_register('edkloader::load');
 edkloader::register('Smarty', 'common/smarty/Smarty.class.php');
 
 // Ugly hacks to make things work until other changes are made with the file structure
+edkloader::register('API', 'common/includes/api/class.api.php');
 edkloader::register('TopList', 'common/includes/class.toplist.php');
 edkloader::register('TopKillsList', 'common/includes/class.toplist.php');
 edkloader::register('TopCorpKillsList', 'common/includes/class.toplist.php');

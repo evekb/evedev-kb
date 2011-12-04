@@ -6,13 +6,9 @@
  * @package EDK
  */
 
-//
-// Eve-Dev API Killmail parser by Captain Thunk! (ISK donations are all gratefully received)
-//
-
 require_once("common/admin/admin_menu.php");
 
-$page = new Page("Settings - API Mod " . APIVERSION);
+$page = new Page("Settings - Kill Log API");
 $page->setCachable(false);
 $page->setAdmin();
 
@@ -22,6 +18,11 @@ $isupdated = false;
 if (config::get('API_DBUpdate') != 1)
 	checkDBforAPI();
 
+if ($key_id = (int)edkURI::getArg('delete')) {
+	$qry2 = new DBQuery();
+	$sql = "DELETE from kb3_api_keys WHERE key_id = '".$key_id."' AND key_kbsite = '" . KB_SITE . "'";
+	$qry2->execute($sql);
+}
 if ($_GET['CharID'])
 {
     if ($_GET['SetNum'])
@@ -57,12 +58,12 @@ function clearcache($pattern) {
 
 if ($_POST['clearapicache'])
 {
-	$cachepath = KB_CACHEDIR.'/pheal/';
+	$cachepath = KB_CACHEDIR.'/api/';
 
 	clearcache($cachepath);
 
 	$html .= "Cache cleared.<br />";
-	$html .= "<script type=\"text/javascript\">window.location = \"?a=admin_apimod\"</script>"; //*/
+	$html .= "<script type=\"text/javascript\">window.location = \"?a=admin_api\"</script>"; //*/
 }
 
 if ($_POST['add'] ) {
@@ -111,12 +112,10 @@ if ($_POST['import'] || isset($_GET['Process']))
 		fwrite($file, $outputdata);
 		fclose($file);
 
-		//ApiCache::set('API_CachedUntil_' . $keyindex, $myEveAPI->cachetext_);
 		$processindex++;
 		if ($processindex <= $keycount)
 		{
-			//$html .= "<a href=\"http:?a=admin_apimod&Process=" . $processindex . "\">Click to process next Key</a>";
-			$html .= "<script type=\"text/javascript\">window.location = \"?a=admin_apimod&Process=" .$processindex . "\"</script>"; //*/
+			$html .= "<script type=\"text/javascript\">window.location = \"?a=admin_api&Process=" .$processindex . "\"</script>"; //*/
 		} else { // load report.txt to $html
 			$fp = @fopen(KB_CACHEDIR.'/data/report.txt', 'r');
 			$html .= fread($fp, filesize(KB_CACHEDIR.'/data/report.txt'));
@@ -137,7 +136,7 @@ if ($_POST['import'] || isset($_GET['Process']))
 // calculate cache size
 $deld = 0;
 $dsize = 0;
-$cachepath = KB_CACHEDIR.'/pheal/*';
+$cachepath = KB_CACHEDIR.'/api/*';
 $match = "*";
 
 dirsize($cachepath.$match);
@@ -166,7 +165,7 @@ if ($_POST['clearlog'])
 if ($_POST['apilog'])
 {
 	$html .= "<div class='block-header2'>API Log</div>";
-	$html .= "<form id='options' name='options' method='post' action='".KB_HOST."/?a=admin_apimod'>";
+	$html .= "<form id='options' name='options' method='post' action='".KB_HOST."/?a=admin_api'>";
 
 	$sql = 'SELECT *
 			FROM kb3_apilog
@@ -210,17 +209,17 @@ if ($_POST['apilog'])
 		$datasource = $row['log_source'];
 
 		if ( $numposted > 0 )
-			$numposted = "<font color = \"#00FF00\">" . $numposted . "</font>";
+			$numposted = "<span style='color:00FF00'>" . $numposted . "</span>";
 		if ( $numverified > 0 )
-			$numverified = "<font color = \"#00FF00\">" . $numverified . "</font>";
+			$numverified = "<span style='color:00FF00'>" . $numverified . "</span>";
 		if ( $numerrors > 0 )
-			$numerrors = "<font color = \"#FF0000\">" . $numerrors . "</font>";
+			$numerrors = "<span style='color:FF0000'>" . $numerrors . "</span>";
 		if ( $numignored > 0 )
-			$numignored = "<font color = \"#FF0000\">" . $numignored . "</font>";
+			$numignored = "<span style='color:FF0000'>" . $numignored . "</span>";
 		if ( $datasource == "Error" )
-			$datasource = "<font color = \"#FF0000\">" . $datasource . "</font>";
+			$datasource = "<span style='color:FF0000'>" . $datasource . "</span>";
 		if ( $datasource == "New XML" )
-			$datasource = "<font color = \"#00FF00\">" . $datasource . "</font>";
+			$datasource = "<span style='color:00FF00'>" . $datasource . "</span>";
 
     	$html .= "<tr class='" . $class . "'>";
     	$html .= "<td align='center'><b>" . stripslashes($row['log_keyname']) . "</b></td>";
@@ -244,161 +243,171 @@ if ($_POST['apilog'])
 } else {
 	// API Settings
 	$html .= "<div class='block-header2'>API Key Details (must be CEO/Director to retrieve corp mails)</div>";
-	$html .= "<form id='options' name='options' method='post' action='".KB_HOST."/?a=admin_apimod'>";
+	$html .= "<form id='options' name='options' method='post' action='".KB_HOST."/?a=admin_api'>";
 
 	// show current server time
-	$html .= "Servers current time: <font color = \"#00FF00\">" . date("M d Y H:i") . "</font><br /><br />";
+	$html .= "Servers current time: <span style='color:00FF00'>" . date("M d Y H:i") . "</span><br /><br />";
 
-function cmp($a, $b) {
-    if ($a == $b) {
-        return 0;
-    }
-    return ($a < $b) ? -1 : 1;
-}
+	function cmp($a, $b) {
+		if ($a == $b) {
+			return 0;
+		}
+		return ($a < $b) ? -1 : 1;
+	}
 
-$order = array();
-for ($i = 1; $i <= $keycount; $i++ )
-{
-        $corpName = config::get("API_Name_$i");
-        $order[$i] = $corpName;
-}
-uasort($order, "cmp");
+	$order = array();
+	for ($i = 1; $i <= $keycount; $i++ )
+	{
+			$corpName = config::get("API_Name_$i");
+			$order[$i] = $corpName;
+	}
+	uasort($order, "cmp");
 
-// Remove blank entries from the beginning
-foreach($order as $key => $value ) {
-	if ($order[$key] == "" ) unset ($order[$key]);
-}
+	// Remove blank entries from the beginning
+	foreach($order as $key => $value ) {
+		if ($order[$key] == "" ) unset ($order[$key]);
+	}
 
-$html .= "<i> Your UserID and API FULL Key can be obtained <a href=\"http://support.eveonline.com/api/Key/CreatePredefined/256\">here</a></i><br /><br />";
+	$html .= "<table style='width: 100%' class='kb-subtable'>";
+	$html .= "<thead><tr><td>Name</td><td>ID</td><td>Owner</td><td>Corp</td><td>Char</td><td>Status</td><td></td></tr></thead>";
 
-$html .= "<table style='width: 100%' class='kb-subtable'>";
-$html .= "<tr><td>Name</td><td>ID</td><td>Verification Code</td><td>Corp</td><td>Char</td><td>Status</td></tr>";
 
-$html .= "<tr class='kb-table-row-even'>";
-$html .= "<td><input type='text' name='keyname' id='keyname' size='20' /></td>";
-$html .= "<td><input type='text' name='keyid' id='keyid' size='10' maxlength='64' /></td>";
-$html .= "<td><input type='text' name='keycode' id='keycode' size='32' maxlength='64' /></td><td colspan='3'><input id='add' name='add' type='submit' value='Add' /></td></tr>";
-$html .= "<tr><td colspan='6'>&nbsp;</td></tr>";
-$qry = new DBQuery();
-$qry->execute("SELECT * FROM kb3_api_keys WHERE key_kbsite = '" . KB_SITE . "' ORDER BY key_name");
-while ($row = $qry->getRow()) {
-	$html .= ($cycle) ? "<tr class='kb-table-row-even'>" : "<tr class='kb-table-row-odd'>";
-	$html .= "<td>".$row['key_name']."</td>";
-	$html .= "<td>".$row['key_id']."</td>";
-	$html .= "<td>".$row['key_key']."</td>";
+	$qry = new DBQuery();
+	$qry->execute("SELECT * FROM kb3_api_keys WHERE key_kbsite = '" . KB_SITE . "' ORDER BY key_name");
+	while ($row = $qry->getRow()) {
+		$html .= ($cycle) ? "<tr class='kb-table-row-even'>" : "<tr class='kb-table-row-odd'>";
+		$html .= "<td>".$row['key_name']."</td>";
+		$html .= "<td title='".$row['key_key']."'>".$row['key_id']."</td>";
 
-	$flags = $row['key_flags'];
+		$flags = $row['key_flags'];
 
-	if ($flags == 0 ) {
-		$act = new API_Account();
-		if ($act->CheckAccess($row['key_id'], $row['key_key'],256)) {
-			// valid new style key with valid access
-			switch( $act->GetType($row['key_id'], $row['key_key']) ) {
-				case "Account":
-					$flags |= KB_APIKEY_CHAR;
-					break;
-				case "Corporation":
-					$flags |= KB_APIKEY_CORP;
-					break;
-			}
-		} else {
-			if( $act->getError() !== null ) {
-				switch ( $act->getError() ) {
-					case 203:
-						if( $act->isOldKey($row['key_id'], $row['key_key']) ) {
-							$flags |= KB_APIKEY_LEGACY;
-							break;
-						}
-						$flags |= KB_APIKEY_BADAUTH;
+		if ($flags == 0 ) {
+			$act = new API_Account();
+			if ($act->CheckAccess($row['key_id'], $row['key_key'],256)) {
+				// valid new style key with valid access
+				switch( $act->GetType($row['key_id'], $row['key_key']) ) {
+					case "Account":
+						$flags |= KB_APIKEY_CHAR;
 						break;
-					case 222:
-						if( $act->isOldKey($row['key_id'], $row['key_key']) ) {
-							$flags |= KB_APIKEY_LEGACY;
-							break;
-						}
-						$flags |= KB_APIKEY_EXPIRED;
+					case "Corporation":
+						$flags |= KB_APIKEY_CORP;
 						break;
-					default:
 				}
 			} else {
-				// no error so user didn't have '256' access
+				if( $act->getError() !== null ) {
+					switch ( $act->getError() ) {
+						case 203:
+							if( $act->isOldKey($row['key_id'], $row['key_key']) ) {
+								$flags |= KB_APIKEY_LEGACY;
+								break;
+							}
+							$flags |= KB_APIKEY_BADAUTH;
+							break;
+						case 222:
+							if( $act->isOldKey($row['key_id'], $row['key_key']) ) {
+								$flags |= KB_APIKEY_LEGACY;
+								break;
+							}
+							$flags |= KB_APIKEY_EXPIRED;
+							break;
+						default:
+					}
+				} else {
+					// no error so user didn't have '256' access
+				}
+			}
+			$qry2 = new DBQuery();
+			$sql = "UPDATE kb3_api_keys SET key_flags = $flags WHERE key_name='".$row['key_name']."' AND key_id='".$row['key_id']."' AND key_key='".$row['key_key']."' AND key_kbsite = '" . KB_SITE . "'";
+			$qry2->execute($sql);
+		}
+
+		if ($flags & KB_APIKEY_LEGACY) {
+			$html .= "<td></td><td>-</td><td>-</td>";
+		} else {
+			$html .= "<td>";
+			$chars = array();
+			$act = new API_Account();
+			foreach ($act->fetch($row['key_id'], $row['key_key']) as $character) {
+				$chars[] = $character["characterName"].", ".$character["corporationName"];
+			}
+			$html .= join('<br />', $chars);
+			$html .= "</td>";	
+			if ($flags & KB_APIKEY_CORP) {
+				$html .= "<td>X</td>";
+			} else {
+				$html .= "<td></td>";
+			}
+
+			if ($flags & KB_APIKEY_CHAR) {
+				$html .= "<td>X</td>";
+			} else {
+				$html .= "<td></td>";
 			}
 		}
-		$qry2 = new DBQuery();
-		$sql = "UPDATE kb3_api_keys SET key_flags = $flags WHERE key_name='".$row['key_name']."' AND key_id='".$row['key_id']."' AND key_key='".$row['key_key']."' AND key_kbsite = '" . KB_SITE . "'";
-		$qry2->execute($sql);
-	}
 
-	if ($flags & KB_APIKEY_LEGACY) {
-		$html .= "<td>-</td><td>-</td>";
-	} else {
-		if ($flags & KB_APIKEY_CORP) {
-			$html .= "<td>X</td>";
+		// status column
+		$html .= "<td>";
+		if ($flags == 0 ) {
+			$html .= "No Status";
 		} else {
-			$html .= "<td></td>";
+			if ($flags & KB_APIKEY_LEGACY) {
+				$html .= "Requires Updated Key";
+			}
+			if ($flags & KB_APIKEY_BADAUTH) {
+				$html .= "Bad Authentication";
+			}
+			if ($flags & KB_APIKEY_EXPIRED) {
+				$html .= "Expired Key";
+			}
 		}
-
-		if ($flags & KB_APIKEY_CHAR) {
-			$html .= "<td>X</td>";
-		} else {
-			$html .= "<td></td>";
-		}
+		$html .= "</td>";
+		$html .= "<td><a href='?delete=".$row['key_id']."'>Del</a></td>";
+		$html .= "</tr>";
+		$cycle = !$cycle;
 	}
-
-	// status column
-	$html .= "<td>";
-	if ($flags == 0 ) {
-		$html .= "No Status";
-	} else {
-		if ($flags & KB_APIKEY_LEGACY) {
-			$html .= "Requires Updated Key";
-		}
-		if ($flags & KB_APIKEY_BADAUTH) {
-			$html .= "Bad Authentication";
-		}
-		if ($flags & KB_APIKEY_EXPIRED) {
-			$html .= "Expired Key";
-		}
-	}
-	$html .= "</td>";
-	$html .= "</tr>";
-	$cycle = !$cycle;
-}
-$html .= "</table>";
-
-	// API Caching Options
-	$html .= "<div class='block-header2'>API XML Caching Options</div><table>";
-
-
-	$html .= "<tr><td height=\"10\"></td></tr>"; // spacer
-	$html .= "<tr><td>(" . $deld . " files with a total size of " . number_format($dsize,"0",".",",") . " bytes)</td></tr>";
-
-	$html .= "<tr><td height=\"10\"></td></tr>"; // spacer
-	$html .= "<tr><td colspan=\"2\"><input type='submit' id='submitCache' name='clearapicache' value=\"Clear Cache\" /></td></tr>";
 
 	$html .= "</table>";
 
-	// Killmail Parser Options
-	$html .= "<div class='block-header2'>Killmail API Parsing Options</div><table>";
+	$html .= "<div class='block-header2'>Add a new API Key</div>";	
+	$html .= "<i> Your UserID and API FULL Key can be obtained <a href=\"http://support.eveonline.com/api/Key/CreatePredefined/256\">here</a></i><br /><br />";
 
-	$html .= "<tr><td height='30' width='150'>Import multiple keys one at a time? </td>";
+	$html .= "<table style='width: 100%' class='kb-subtable'>";
+	$html .= "<thead><tr><td>Name</td><td>ID</td><td>Verification Code</td><td></td></tr></thead>";
+
+	$html .= "<tbody><tr>";
+	$html .= "<td><input type='text' name='keyname' id='keyname' size='20' /></td>";
+	$html .= "<td><input type='text' name='keyid' id='keyid' size='10' maxlength='64' /></td>";
+	$html .= "<td><input type='text' name='keycode' id='keycode' size='64' maxlength='64' /></td><td colspan='3'><input id='add' name='add' type='submit' value='Add' /></td></tr>";
+	$html .= "<tr><td colspan='6'>&nbsp;</td></tr></tbody></table>";
+
+	$html .= "<div class='block-header2'>Options</div><table>";
+
+	$html .= "<tr><td  style='padding: 10px 0' colspan='2'>(" . $deld . " files with a total size of " . number_format($dsize,"0",".",",") . " bytes)</td></tr>";
+
+	$html .= "<tr><td style='padding: 10px 0' colspan='2'><input type='submit' id='submitCache' name='clearapicache' value=\"Clear Cache\" /></td></tr>";
+	$html .= "</table>";
+
+	$html .= "<table><tr><td style='height:30px; width:150px'>Ignore NPC only deaths?</td>";
+	$html .= "<td><input type='checkbox' name='post_no_npc_only' id='post_no_npc_only'";
+	if (config::get('post_no_npc_only'))
+    	$html .= " checked=\"checked\"";
+	$html .= " /></td></tr>";
+
+	$html .= "<tr><td style='height:30px; width:150px'>Import multiple keys one at a time? </td>";
 	$html .= "<td><input type='checkbox' name='API_MultipleMode' id='API_MultipleMode'";
 	if (!config::get('API_MultipleMode'))
     	$html .= " checked=\"checked\"";
 	$html .= " /></td></tr>";
 
 	// Import
-	$html .= "<tr><td height=\"10\"></td></tr>"; // spacer
-	$html .= "<tr><td colspan=\"2\"><input type='submit' id='submitMails' name='import' value=\"Import Mails\" /></td></tr>";
+	$html .= "<tr><td style='padding: 10px 0' colspan=\"2\"><input type='submit' id='submitMails' name='import' value=\"Import Mails\" /></td></tr>";
 	$html .= "</table>";
 	// Save
 	$html .= "<div class='block-header2'></div>";
-	$html .= "<table><tr><td colspan=\"2\"><input type=\"submit\" name=\"submit\" value=\"Save Settings\" /></td><td>&nbsp;</td><td colspan=\"2\"><input type=\"submit\" name=\"apilog\" value=\"View Log\" /></td></tr>";
+	$html .= "<table><tr><td><input type=\"submit\" name=\"submit\" value=\"Save Settings\" /></td><td>&nbsp;</td><td><input type=\"submit\" name=\"apilog\" value=\"View Log\" /></td></tr>";
 	$html .= "</table>";
 	$html .= "</form>";
 }
-$html .= "<div class='block-header2'></div>";
-$html .= "<div>Written by " . API_Helpers::FindThunk() . " (<a href=\"http://eve-id.net/forum/viewtopic.php?f=505&amp;t=8827\" >Support</a>)</div>";
 
 $page->setContent($html);
 $page->addContext($menubox->generate());

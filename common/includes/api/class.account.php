@@ -13,25 +13,15 @@
  */
 class API_Account extends API
 {
-	private $error = false;
-	private $chars = array();
+	protected static $data = array();
 
 	public function fetch($userID, $APIKey)
 	{
-		$data = self::CallAPI( "account", "Characters", null, $userID, $APIKey );
-		
-		foreach($data->characters as $character) {
-			$this->chars[] = array(
-					'Name'=>strval($character->name),
-					'corpName'=>strval($character->corporationName),
-					'charID'=>strval($character->characterID),
-					'corpID'=>strval($character->corporationID));
-
-			// add any characters not already in the kb
-			$this->updateChars();
-					
-			}
-		return $this->chars;
+		if(!isset($data[$userID][$APIKey])) {
+			self::$data[$userID][$APIKey] = self::CallAPI( "account", "APIKeyInfo", null,
+					$userID, $APIKey );
+		}
+		return self::$data[$userID][$APIKey]->key->characters->toArray();
 	}
 
 	public function isOldKey($userID, $APIKey) {

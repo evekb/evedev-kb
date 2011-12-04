@@ -53,19 +53,19 @@ set_error_handler(array('EDKError', 'handler'), E_ERROR );
 $config = new Config(KB_SITE);
 
 $outhead = "Running Cron_Cache on " . gmdate("M d Y H:i") . "\n\n";
-$out = '';
+$html = '';
 
 // Alliance
 $myAlliAPI = new API_Alliance();
 $Allitemp .= $myAlliAPI->initXML();
-$out .= "Caching Alliance XML - cached until:" . API_Helpers::ConvertTimestamp($myAlliAPI->getCachedUntil()) . "\n";
+$html .= "Caching Alliance XML \n";
 
-if ($out)
+if ($html)
 {
-    $out = str_replace("<div class=block-header2>","",$out);
-    $out = str_replace("</div>","\n",$out);
-    $out = str_replace("<br>","\n",$out);
-
-    //print $outhead . strip_tags($out, '<a>');
-    print $outhead . strip_tags($out);
+	$html = str_replace("<div class=block-header2>","",$html);
+	$html = str_replace("</div>","\n",$html);
+	$html = str_replace("<br>","\n",$html);
+ 
+	//print $outhead . strip_tags($out, '<a>');
+    print $outhead . strip_tags($html);
 }
