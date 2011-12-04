@@ -40,6 +40,7 @@ class pAbout extends pageAssembly
 			'Hon Kovell', // Various stuff (EDK2-3)
 			'mastergamer', // Different various stuff
 			'FriedRoadKill', // Parser, db updates and image packs
+			'Mini Mooo',
 		);
 
 		// Inactive developers
