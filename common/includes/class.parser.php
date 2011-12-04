@@ -333,9 +333,10 @@ class Parser
 
 		$ship = Ship::lookup($shipname);
 
-		if (!$ship->getID())
+		if (!$ship || !$ship->getID())
 		{
 			$this->error('Ship not found.', $shipname);
+			$ship = new Ship();
 		}
 
 		$kill = new Kill();
@@ -842,7 +843,7 @@ class Parser
 			}
 
 			$item = Item::lookup(trim($itemname));
-			if (!$item->getID()) {
+			if (!$item || !$item->getID()) {
 				$this->error('Item not found.', trim($itemname));
 			}
 			if ($location == 'In Container') {
