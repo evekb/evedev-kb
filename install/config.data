@@ -50,8 +50,8 @@ cfg_memcache_port	0
 km_cache_dir	cache/mails
 summarytable	1
 cfg_qcache	0
-cache_update	*
-cache_time	10
+cache_update	home
+cache_time	1440
 DBUpdate	026
 upd_dbVersion	1.2.0
 cfg_log	1

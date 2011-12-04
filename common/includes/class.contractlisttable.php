@@ -251,7 +251,7 @@ class ContractListTable
 				'enddate' => $contract->getEndDate(),
 				'efficiency' => $efficiency,
 				'id' => $contract->getID(),
-				'url' => edkURI::page('cc_detail', $contract->getID())),
+				'url' => edkURI::page('cc_detail', $contract->getID(), 'ctr_id')),
 				$kdata, $ldata);
 		}
 		$this->contractlist->rewind();

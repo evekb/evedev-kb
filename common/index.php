@@ -47,7 +47,10 @@ else if(file_exists("install") && !file_exists("install/install.lock"))
 {
 	$html = "<html><head><title>Installation in progress</title></head>";
 	$html .= "<body><p>Installation folder must be removed or locked to proceed.</p>";
-	$html .= "<p>Go to <a href='".$url."'>Install</a> to install a new killboard.</p>";
+	$url = $_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
+	$url = substr($url, 0, strrpos($url, '/',1)).'/install/';
+	$url = preg_replace('/\/{2,}/','/',$url);
+	$html .= "<p>Go to <a href='http://".$url."'>Install</a> to install a new killboard.</p>";
 	$html .= "</body></html>";
 	die($html);
 }

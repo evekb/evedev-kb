@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.0.0 beta
+Eve Development Network Killboard v4.0.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -36,6 +36,9 @@ ajcron admin panel display fix
 various other internal fixes
 Added html5 theme
 New API support
+Support Implants on pod mails
+Support BPC flag
+Updated with Crucible database
 More stuff
 -------------------------------------------
 v3.2.3

@@ -24,8 +24,8 @@ define("APIVERSION", "V3.3");
 
 // current version: major.minor.sub
 // even numbers for minor = development version
-define('KB_VERSION', '4.0.0 beta');
-define('KB_RELEASE', '(Incursion)');
+define('KB_VERSION', '4.0.0');
+define('KB_RELEASE', '(Crucible)');
 
 define('KB_APIKEY_LEGACY', 1);
 define('KB_APIKEY_CORP', 2);
@@ -64,9 +64,6 @@ edkloader::register('TopShipListTable', 'common/includes/class.toplist.php');
 edkloader::register('TopWeaponList', 'common/includes/class.toplist.php');
 edkloader::register('TopWeaponListTable', 'common/includes/class.toplist.php');
 edkloader::register('thumbInt', 'common/includes/class.thumb.php');
-
-//include_once('common/pheal/Pheal.php');
-//spl_autoload_register("Pheal::classload");
 
 require_once('common/includes/db.php');
 
