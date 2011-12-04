@@ -20,7 +20,7 @@ class API {
 		//PhealConfig::getInstance()->cache = new PhealMemcache(array('port' => 11211));
 		PhealConfig::getInstance()->cache = new PhealFileCache('cache/api/');
 		PhealConfig::getInstance()->api_customkeys = true;
-		PhealConfig::getInstance()->log = new PhealFileLog('cache/api');
+		PhealConfig::getInstance()->log = new PhealFileLog('cache/api/');
 	}
 
 	function IsCached() {

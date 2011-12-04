@@ -21,6 +21,9 @@ class API_Account extends API
 			self::$data[$userID][$APIKey] = self::CallAPI( "account", "APIKeyInfo", null,
 					$userID, $APIKey );
 		}
+		if( self::$data[$userID][$APIKey] == false ) {
+			return false;
+		}
 		return self::$data[$userID][$APIKey]->key->characters->toArray();
 	}
 

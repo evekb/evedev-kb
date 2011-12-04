@@ -326,9 +326,11 @@ if ($_POST['apilog'])
 		} else {
 			$html .= "<td>";
 			$chars = array();
-			$act = new API_Account();
-			foreach ($act->fetch($row['key_id'], $row['key_key']) as $character) {
-				$chars[] = $character["characterName"].", ".$character["corporationName"];
+			if (!($flags & KB_APIKEY_BADAUTH || $flags & KB_APIKEY_EXPIRED)) {
+				$act = new API_Account();
+				foreach ($act->fetch($row['key_id'], $row['key_key']) as $character) {
+					$chars[] = $character["characterName"].", ".$character["corporationName"];
+				}
 			}
 			$html .= join('<br />', $chars);
 			$html .= "</td>";	
