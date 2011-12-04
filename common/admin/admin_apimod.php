@@ -36,22 +36,30 @@ if (config::get('API_Key_count'))
 else
     $keycount = 1;
 
-if ($_POST['clearapicache'])
-{
-	$deld = 0;
-	$dsize = 0;
-	$cachepath = KB_CACHEDIR.'/api/*';
-	$match = "*";
-
-	//$dirs = glob($cachepath."*");
-	$files = glob($cachepath.$match);
+function clearcache($pattern) {
+	$files = glob($pattern . "*.xml");
 	foreach((array)$files as $file){
+		if( $file == '..' || $file == '.' )
+			continue;
 		if(is_file($file)){
-			$dsize += filesize($file);
 			unlink($file);
-			$deld++;
 		}
 	}
+	$dirs = glob($pattern . "*");
+	foreach((array)$dirs as $dir){
+		if( $dir == '..' || $dir == '.' )
+			continue;
+		if( is_dir($dir)){
+			clearcache($dir . '/');
+		}
+	}
+}
+
+if ($_POST['clearapicache'])
+{
+	$cachepath = KB_CACHEDIR.'/pheal/';
+
+	clearcache($cachepath);
 
 	$html .= "Cache cleared.<br />";
 	$html .= "<script type=\"text/javascript\">window.location = \"?a=admin_apimod\"</script>"; //*/
@@ -125,15 +133,7 @@ if ($_POST['submit'] || $_POST['import']  )
     else
         config::set('API_extendedtimer_sovereignty', '1');
 
-	if ($_POST['API_extendedtimer_alliancelist'])
-        config::set('API_extendedtimer_alliancelist', '0');
-    else
-        config::set('API_extendedtimer_alliancelist', '1');
 
-	if ($_POST['API_extendedtimer_conq'])
-        config::set('API_extendedtimer_conq', '0');
-    else
-        config::set('API_extendedtimer_conq', '1');
 
 	if ($_POST['API_ConvertTimestamp'])
         config::set('API_ConvertTimestamp', '0');
@@ -196,14 +196,23 @@ if ($_POST['import'] || isset($_GET['Process']))
 // calculate cache size
 $deld = 0;
 $dsize = 0;
-$cachepath = KB_CACHEDIR.'/api/*';
+$cachepath = KB_CACHEDIR.'/pheal/*';
 $match = "*";
 
-$files = glob($cachepath.$match);
-foreach((array)$files as $file){
-	if(is_file($file)){
-		$dsize += filesize($file);
-		$deld++;
+dirsize($cachepath.$match);
+
+function dirsize($pattern) {
+	global $dsize, $deld;
+	$files = glob($pattern);
+	foreach((array)$files as $file){
+		if( $file == '..' || $file == '.' )
+			continue;
+		if(is_file($file)){
+			$dsize += filesize($file);
+			$deld++;
+		} else if (is_dir($file) ) {
+			dirsize($file . '/*');
+		}
 	}
 }
 
@@ -430,48 +439,6 @@ $html .= "</table>";
 	if (!config::get('API_ConvertTimestamp'))
     	$html .= " checked=\"checked\"";
 	$html .= " /></td></tr>";
-
-	$html .= "<tr><td height='30' width='150'>Use Extended 24hr cache timer for AllianceList.xml?</td>";
-	$html .= "<td><input type='checkbox' name='API_extendedtimer_alliancelist' id='API_extendedtimer_alliancelist'";
-	if (!config::get('API_extendedtimer_alliancelist'))
-    	$html .= " checked=\"checked\"";
-	$html .= " />";
-	//$tempcachetime =  date("Y-m-d H:i:s",  strtotime(ApiCache::get('API_eve_AllianceList')) + $gmoffset);
-	$tempcachetime = API_Helpers::ConvertTimestamp(ApiCache::get('API_eve_AllianceList'));
-	if ($tempcachetime == "")
-	{
-		$html .= "</td></tr>";
-	} else {
-		if (strtotime(gmdate("M d Y H:i:s")) - strtotime(ApiCache::get('API_eve_AllianceList')) > 0)
-		{
-		$txtcolour = "<font color = \"#00FF00\">";
-		//$txtcolour = "<style=\"color:green\">";
-    	} else {
-    		$txtcolour = "<font color = \"#FF0000\">";
-    	}
-		$html .= "Data is cached until:</td><td>" . $txtcolour . $tempcachetime . "</font></td></tr>";
-	}
-
-	$html .= "<tr><td height='30' width='150'>Use Extended 24hr cache timer for ConquerableStationList.xml?</td>";
-	$html .= "<td><input type='checkbox' name='API_extendedtimer_conq' id='API_extendedtimer_conq'";
-	if (!config::get('API_extendedtimer_conq'))
-    	$html .= " checked=\"checked\"";
-	$html .= " />";
-	//$tempcachetime =  date("Y-m-d H:i:s",  strtotime(ApiCache::get('API_eve_ConquerableStationList')) + $gmoffset);
-	$tempcachetime = API_Helpers::ConvertTimestamp(ApiCache::get('API_eve_ConquerableStationList'));
-	if ($tempcachetime == "")
-	{
-		$html .= "</td></tr>";
-	} else {
-		if (strtotime(gmdate("M d Y H:i:s")) - strtotime(ApiCache::get('API_eve_ConquerableStationList')) > 0)
-		{
-		$txtcolour = "<font color = \"#00FF00\">";
-		//$txtcolour = "<style=\"color:green\">";
-    	} else {
-    		$txtcolour = "<font color = \"#FF0000\">";
-    	}
-		$html .= "Data is cached until:</td><td>" . $txtcolour . $tempcachetime . "</font></td></tr>";
-	}
 
 	$html .= "<tr><td height=\"10\"></td></tr>"; // spacer
 	$html .= "<tr><td>(" . $deld . " files with a total size of " . number_format($dsize,"0",".",",") . " bytes)</td></tr>";
