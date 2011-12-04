@@ -26,7 +26,7 @@ options::fadd('Halt on SQLError', 'cfg_sqlhalt', 'checkbox');
 
 options::cat('Advanced', 'Cache', 'Even More Caching');
 options::fadd('Killmail Caching enabled','km_cache_enabled','checkbox');
-options::fadd('Object Caching enabled','cfg_objcache','checkbox');
+options::fadd('Object Caching enabled','cfg_objcache','checkbox','','','Advisable for memcached boards.');
 
 options::cat('Advanced', 'Cache', 'Clear Caches');
 options::fadd('File Cache', 'none', 'custom', array('admin_acache', 'optionClearCaches'), array('admin_acache', 'clearCaches'));
