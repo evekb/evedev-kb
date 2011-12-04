@@ -363,7 +363,7 @@ if ($_POST['apilog'])
 			}
 		}
 		$html .= "</td>";
-		$html .= "<td><a href='?delete=".$row['key_id']."'>Del</a></td>";
+		$html .= "<td><a href='?a=admin_api&amp;delete=".$row['key_id']."'>Del</a></td>";
 		$html .= "</tr>";
 		$cycle = !$cycle;
 	}
