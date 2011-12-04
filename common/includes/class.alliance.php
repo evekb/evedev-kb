@@ -183,11 +183,6 @@ class Alliance extends Entity
 							."' WHERE all_external_id = ".$externalid);
 
 					$all = Cacheable::factory('Alliance', (int) $qry->getInsertID());
-					$all->name = $name;
-					$all->externalid = (int) $externalid;
-					$all->executed = true;
-
-					return;
 				} else {
 					$qry->execute("insert into kb3_alliances ".
 							"(all_id, all_name, all_external_id) values ".
