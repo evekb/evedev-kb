@@ -38,22 +38,22 @@ function update027()
 					$sql = "SELECT cfg_value FROM kb3_config where cfg_site = '$key_kbsite' AND cfg_key = 'API_UserID_$i' ";
 					$qry2->execute($sql);
 					$ret = $qry2->getRow();
-					$key_id = $ret['cfg_value'];
+					$key_id = $qry->escape($ret['cfg_value']);
 					
 					$sql = "SELECT cfg_value FROM kb3_config where cfg_site = '$key_kbsite' AND cfg_key = 'API_Key_$i' ";
 					$qry2->execute($sql);
 					$ret = $qry2->getRow();
-					$key_key = $ret['cfg_value'];
+					$key_key = $qry->escape($ret['cfg_value']);
 
 					$sql = "SELECT cfg_value FROM kb3_config where cfg_site = '$key_kbsite' AND cfg_key = 'API_Name_$i' ";
 					$qry2->execute($sql);
 					$ret = $qry2->getRow();
-					$key_name = $ret['cfg_value'];
+					$key_name = $qry->escape($ret['cfg_value']);
 
 					$sql = "SELECT cfg_value FROM kb3_config where cfg_site = '$key_kbsite' AND cfg_key = 'API_Type_$i' ";
 					$qry2->execute($sql);
 					$ret = $qry2->getRow();
-					$type = $ret['cfg_value'];
+					$type = $qry->escape($ret['cfg_value']);
 
 					// need to set appropriate flags
 					// a) legacy key
