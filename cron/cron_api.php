@@ -29,16 +29,14 @@ else
 
 $cronStartTime = microtime(true);
 
-if(file_exists(getcwd().'/cron_import.php'))
-{
+if  (file_exists(getcwd().'/cron_api.php')) {
 	// current working directory minus last 5 letters of string ("/cron")
 	$KB_HOME = preg_replace('/[\/\\\\]cron$/', '', getcwd());
+} else if (file_exists(__FILE__)) {
+	$KB_HOME = preg_replace('/[\/\\\\]cron[\/\\\\]cron_api.php$/', '', __FILE__);
+} else {
+	die("Set \$KB_HOME to the killboard root in cron/cron_api.php.");
 }
-elseif(file_exists(__FILE__))
-{
-	$KB_HOME = preg_replace('/[\/\\\\]cron[\/\\\\]cron_import\.php$/', '', __FILE__);
-}
-else die("Set \$KB_HOME to the killboard root in cron/cron_import.php.");
 
 // If the above doesn't work - place your working directory path to killboard root below - comment out the above two lines and uncomment the two below
 
