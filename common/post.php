@@ -114,8 +114,8 @@ function post()
 			}
 
 			logger::logKill($killid);
-
-			header("Location: ".edkURI::page('kill_detail', $killid, 'kll_id'));
+			header("Location: ".html_entity_decode(edkURI::page('kill_detail',
+							$killid, 'kll_id')));
 			exit;
 		}
 	} else {

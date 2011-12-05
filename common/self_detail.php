@@ -164,7 +164,7 @@ elseif(config::get('cfg_pilotid'))
 }
 else
 {
-	header("Location: ".edkURI::page('about'));
+	header("Location: ".htmlspecialchars_decode(edkURI::page('about')));
 	die;
 }
 

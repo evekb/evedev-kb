@@ -8,4 +8,4 @@
 
 $session = new Session();
 $session->destroy();
-header('Location: '.edkURI::page("admin"));
+header('Location: '.html_entity_decode(edkURI::page("login")));

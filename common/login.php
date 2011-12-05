@@ -31,7 +31,7 @@ if (trim($_POST['usrpass'])) {
 			session::create(true);
 
 			session_write_close();
-			header('Location: '.edkURI::page('admin'));
+			header('Location: '.html_entity_decode(edkURI::page('admin')));
 			die;
 		}
 	} elseif ($_POST['usrlogin'] == ''
@@ -41,12 +41,12 @@ if (trim($_POST['usrpass'])) {
 		session_write_close();
 		$page = preg_replace('/[^a-zA-Z0-9-_]/', '', edkURI::getArg("page", 1));
 		$page = $page ? $page : "admin";
-		header('Location: '.edkURI::page($page));
+		header('Location: '.html_entity_decode(edkURI::page($page)));
 		die;
 	} else {
 		$result = user::login($_POST['usrlogin'], $_POST['usrpass']);
 		if ($result) {
-			header('Location: '.edkURI::page('home'));
+			header('Location: '.html_entity_decode(edkURI::page('home')));
 			die;
 		} else {
 			$smarty->assign('error', 'Login error, please check your username'

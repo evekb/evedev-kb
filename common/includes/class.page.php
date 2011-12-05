@@ -255,7 +255,7 @@ class Page
 	{
 		if (!Session::isAdmin()) {
 			$page = edkURI::getArg("a");
-			$link = edkURI::page("login", $page, "page");
+			$link = html_entity_decode(edkURI::page("login", $page, "page"));
 
 			header("Location: $link");
 			echo '<a href="'.$link.'">Login</a>';
