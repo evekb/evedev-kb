@@ -30,7 +30,7 @@ class Translate
         {
             $this->killmail_ = str_replace(array(chr(195).chr(182), chr(195).chr(164)), array(chr(246), chr(228)), $this->killmail_);
 
-            $search = array('Ziel:','Allianz: KEINE','Allianz: keine','Allianz: Keine',
+            $search = array('Opfer','Ziel:','Allianz: KEINE','Allianz: keine','Allianz: Keine',
                      'Allianz: NICHTS','Allianz: nichts','Allianz: Nichts','Allianz:',
                             'Fraktion: KEINE','Fraktion: keine','Fraktion: Keine',
                      'Fraktion: NICHTS','Fraktion: nichts','Fraktion: Nichts','Fraktion:',
@@ -40,7 +40,7 @@ class Translate
                             'Hinterlassene Gegenst'.chr(228).'nde:', 'Anz.:', 'Unbekannt', 'Dronenhangar', 'Drohnenhangar', 
 			    'Mond:', 'Kapsel');
 
-            $replace = array('Victim:','Alliance: None','Alliance: None','Alliance: None',
+            $replace = array('Victim:','Victim:','Alliance: None','Alliance: None','Alliance: None',
                      'Alliance: None','Alliance: None','Alliance: None','Alliance:',
                             'Faction: None','Faction: None','Faction: None',
                      'Faction: None','Faction: None','Faction: None','Faction:',
