@@ -360,7 +360,7 @@ if ($_POST['apilog']) {
 	$html .= "</table>";
 
 	$html .= "<div class='block-header2'>Add a new API Key</div>";
-	$html .= "<i> Your UserID and API FULL Key can be obtained <a href=\"http://support.eveonline.com/api/Key/CreatePredefined/256\">here</a></i><br /><br />";
+	$html .= "<i> Your API key ID and verification Code can be obtained <a href=\"http://support.eveonline.com/api/Key/CreatePredefined/256\">here</a></i><br /><br />";
 
 	$html .= "<table style='width: 100%' class='kb-subtable'>";
 	$html .= "<thead><tr><td>Name</td><td>ID</td><td>Verification Code</td><td></td></tr></thead>";
