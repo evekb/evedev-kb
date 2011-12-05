@@ -286,7 +286,7 @@ $smarty->assign('page_error', $page_error);
 $smarty->assign('DBmessage', $parser->getLatestDBMessage());
 $smarty->assign('codemessage', $parser->getLatestCodeMessage());
 $smarty->assign('dbversion', Config::get('upd_dbVersion'));
-$smarty->assign('codeversion', Config::get('upd_codeVersion'));
+$smarty->assign('codeversion', KB_VERSION);
 
 
 $page->addContext($menubox->generate());
