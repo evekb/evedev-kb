@@ -23,7 +23,8 @@ if(file_exists(getcwd().'/cron_feed.php')) {
 } else if(file_exists(__FILE__)) {
 	$KB_HOME = preg_replace('/[\/\\\\]cron[\/\\\\]cron_feed\.php$/', '', __FILE__);
 } else {
-	die("Set \$KB_HOME to the killboard root in cron/cron_feed.php.");
+	echo "Set \$KB_HOME to the killboard root in cron/cron_feed\.php.";
+	die;
 }
 
 // If the above doesn't work - place your working directory path to killboard root below - comment out the above two lines and uncomment the two below

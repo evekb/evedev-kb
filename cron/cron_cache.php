@@ -25,16 +25,15 @@ else
 if(function_exists("set_time_limit"))
 	@set_time_limit(0);
 
-if(file_exists(getcwd().'/cron_cache.php'))
-{
+if(file_exists(getcwd().'/cron_cache.php')) {
 	// current working directory minus last 5 letters of string ("/cron")
 	$KB_HOME = preg_replace('/[\/\\\\]cron$/', '', getcwd());
-}
-elseif(file_exists(__FILE__))
-{
+} else if(file_exists(__FILE__)) {
 	$KB_HOME = preg_replace('/[\/\\\\]cron[\/\\\\]cron_cache\.php$/', '', __FILE__);
+} else {
+	echo "Set \$KB_HOME to the killboard root in cron/cron_cache.php.";
+	die;
 }
-else die("Set \$KB_HOME to the killboard root in cron/cron_cache.php.");
 
 // If the above doesn't work - place your working directory path to killboard root below - comment out the above two lines and uncomment the two below
 
