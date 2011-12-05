@@ -23,6 +23,7 @@ class TopTable_Pilot
 		$rows = array();
 		while ($row = $this->toplist->getRow())
 		{
+			$pilot = Pilot::getByID($row['plt_id']);
 			if($row['plt_externalid']) {
 				$uri = edkURI::build(array('a', 'pilot_detail', true),
 						array('plt_ext_id', $row['plt_externalid'], true));
@@ -31,12 +32,11 @@ class TopTable_Pilot
 				$uri = edkURI::build(array('a', 'pilot_detail', true),
 						array('plt_id', $row['plt_id'], true));
 
-				$pilot = new Pilot($row['plt_id']);
 				$img = $pilot->getPortraitURL(32);
 			}
 			$rows[] = array(
 				'rank' => $i,
-				'name' => $row['plt_name'],
+				'name' => $pilot->getName(),
 				'uri' => $uri,
 				'portrait' => $img,
 				'count' => $row['cnt']);
