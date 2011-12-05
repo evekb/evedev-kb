@@ -45,11 +45,11 @@ if ($_POST['clearapicache']) {
 }
 
 if ($_POST['add'] ) {
-	$key_name = $_POST['keyname'];
-	$key_id = $_POST['keyid'];
-	$key_key = $_POST['keycode'];
-
 	$qry = DBFactory::getDBQuery(true);
+	$key_name = $qry->escape($_POST['keyname']);
+	$key_id = $qry->escape($_POST['keyid']);
+	$key_key = $qry->escape($_POST['keycode']);
+
 	$sql = "INSERT INTO kb3_api_keys( key_name, key_id, key_key, key_kbsite, key_flags ) VALUES ( '$key_name', '$key_id', '$key_key', '".KB_SITE."', 0 )";
 	$qry->execute($sql);
 }
@@ -303,7 +303,10 @@ if ($_POST['apilog']) {
 				}
 			}
 			$qry2 = new DBQuery();
-			$sql = "UPDATE kb3_api_keys SET key_flags = $flags WHERE key_name='".$row['key_name']."' AND key_id='".$row['key_id']."' AND key_key='".$row['key_key']."' AND key_kbsite = '".KB_SITE."'";
+			$sql = "UPDATE kb3_api_keys SET key_flags = $flags WHERE key_name='"
+					.$qry->escape($row['key_name'])."' AND key_id='"
+					.$qry->escape($row['key_id'])."' AND key_key='"
+					.$qry->escape($row['key_key'])."' AND key_kbsite = '".KB_SITE."'";
 			$qry2->execute($sql);
 		}
 
@@ -402,7 +405,8 @@ $page->generate();
 
 function getPlayerDetails($characteridentitifier)
 {
-	$sql = 'select plts.plt_id, plts.plt_name from kb3_pilots plts where plts.plt_externalid = "'.$characteridentitifier.'"';
+	$sql = 'select plts.plt_id, plts.plt_name from kb3_pilots plts where plts.plt_externalid = "'
+			.$qry->escape($characteridentitifier).'"';
 
 	$qry = DBFactory::getDBQuery();
 	$qry->execute($sql);
