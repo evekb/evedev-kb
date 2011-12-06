@@ -264,8 +264,8 @@ class pCorpDetail extends pageAssembly
 			$args[] = array('crp_id', $this->crp_id, true);
 		}
 
-		$pyear = array('m', $this->pyear, true);
-		$nyear = array('m', $this->nyear, true);
+		$pyear = array('y', $this->pyear, true);
+		$nyear = array('y', $this->nyear, true);
 		$pmonth = array('m', $this->pmonth, true);
 		$nmonth = array('m', $this->nmonth, true);
 		switch ($this->view)
