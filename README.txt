@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.0.0
+Eve Development Network Killboard v4.0.1
 -------------------------------------------
 
 // REQUIREMENTS
@@ -24,6 +24,22 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
+v4.0.1
+Fixes:
+API static methods under 5.2
+Name display on self details page cleaned.
+BPCs in quantities greater than 1 found
+API kills show API as source.
+search redirectes to correct page.
+Classified mails fixed.
+previous month selection in corp details corrected.
+german translation of mails updated.
+pilot names shown on some awards where they were missing
+better escaping of old killlog API names.
+moons table created if it does not exist.
+URL redirects with non-simple urls no longer escaped.
+filename fixed in renamed cron files.
+-------------------------------------------
 v4.0.0
 Cleaner URLs: kburl/home/2011/23/kills/
 More caching! Objects can now be filecached(meh)/memcached(yay!)

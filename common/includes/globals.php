@@ -22,7 +22,7 @@ define("APIVERSION", "V3.3");
 
 // current version: major.minor.sub
 // even numbers for minor = development version
-define('KB_VERSION', '4.0.0');
+define('KB_VERSION', '4.0.1');
 define('KB_RELEASE', '(Crucible)');
 
 define('KB_APIKEY_LEGACY', 1);
