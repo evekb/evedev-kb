@@ -767,15 +767,8 @@ class Parser
 		while ($i < $num) {
 			$destroyed[$i] = trim($destroyed[$i]);
 			// TODO: Find a nicer way to do this. Then rewrite the rest of the parser.
-			$destroyed[$i] = str_replace("(Copy) (Cargo)", "(Copy)", $destroyed[$i]);
-
+			$destroyed[$i] = preg_replace("/ \(Copy\)(.*)\(Cargo\)/", "$1(Copy)", $destroyed[$i]);
 			$itemname = substr($destroyed[$i], 0, strlen($destroyed[$i]));
-			//API mod will return null when it can't lookup an item, so filter these
-			if($itemname == '(Cargo)' || (strpos($itemname, ', Qty:') === 0)) {
-				$this->error('Item name missing, yet item has quantity. If you have used the API mod for this kill, you are missing items from your dabase.',$itemname);
-				$i++;
-				continue; //continue to get rest of the mail's possible errors
-			}
 
 			if ($destroyed[$i] == "") {
 				$i++;
