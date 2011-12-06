@@ -15,7 +15,6 @@ $ship = $kill->getVictimShip();
 $pilotname = $kill->getVictimName();
 $shipclass = $ship->getClass();
 $shipname = $ship->getName();
-$system = $kill->getSystem();
 $killtitle .= $pilotname."'s ".$shipname;
 
 $fitting_array[1] = array();    // high slots
