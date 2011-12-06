@@ -109,25 +109,25 @@ class pSearch extends pageAssembly
                     switch ($this->searchtype)
                     {
                         case "pilot":
-                            $result['link'] = edkURI::page('pilot_detail', $row['plt_id']);
+                            $result['link'] = edkURI::page('pilot_detail', $row['plt_id'], 'plt_id');
                             $result['name'] = $row['plt_name'];
                             $result['type'] = $row['crp_name'];
                             $results[] = $result;
                             break;
                         case "corp":
-                            $result['link'] = edkURI::page('corp_detail', $row['crp_id']);
+                            $result['link'] = edkURI::page('corp_detail', $row['crp_id'], 'crp_id');
                             $result['name'] = $row['crp_name'];
                             $result['type'] = $row['all_name'];
                             $results[] = $result;
                             break;
                         case "alliance":
-                            $result['link'] = edkURI::page('alliance_detail', $row['all_id']);
+                            $result['link'] = edkURI::page('alliance_detail', $row['all_id'], 'all_id');
                             $result['name'] = $row['all_name'];
                             $result['type'] = '';
                             $results[] = $result;
                             break;
                         case "system":
-                            $result['link'] = edkURI::page('system_detail', $row['sys_id']);
+                            $result['link'] = edkURI::page('system_detail', $row['sys_id'], 'sys_id');
                             $result['name'] = $row['sys_name'];
                             $result['type'] = '';
                             $results[] = $result;
