@@ -6,8 +6,6 @@
  * $HeadURL$
  * @package EDK
  */
-define('SVN_REV', "Dev");
-
 if (!defined('LATEST_DB_UPDATE')) {
 	define('LATEST_DB_UPDATE', "028");
 }

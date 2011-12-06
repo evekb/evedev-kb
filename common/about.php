@@ -117,9 +117,7 @@ class pAbout extends pageAssembly
 	function top()
 	{
 		global $smarty;
-		if(SVN_REV != "") $svn_rev = " rev ".SVN_REV;
-		else $svn_rev = "";
-		$smarty->assign('version', KB_VERSION." ".KB_RELEASE.$svn_rev);
+		$smarty->assign('version', KB_VERSION." ".KB_RELEASE);
 		return $smarty->fetch(get_tpl('about'));
 	}
 
