@@ -273,8 +273,8 @@ class Ship extends Cacheable
 		} else {
 			$pqry->fetch();
 		}
-		if ($scl_id == null) {
-			$qry->execute("INSERT INTO kb3_ships values(shp_id, shp_class) ($typeID, 18)");
+		if ($scl_id == null && $id) {
+			$qry->execute("INSERT INTO kb3_ships values(shp_id, shp_class) ($id, 18)");
 			$scl_id = 18; // "Unknown"
 		}
 		$shipclass = ShipClass::getByID($scl_id);
