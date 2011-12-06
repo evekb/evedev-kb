@@ -18,7 +18,7 @@ class API_Char extends API
 
 	public function fetch($userID, $APIKey)
 	{
-		$data = self::CallAPI( "account", "Characters", null, $userID, $APIKey );
+		$data = $this->CallAPI( "account", "Characters", null, $userID, $APIKey );
 		
 		foreach($data->characters as $character) {
 			$this->chars[] = array(

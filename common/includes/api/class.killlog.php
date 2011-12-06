@@ -52,13 +52,13 @@ class API_KillLog extends API
 				}
 				
 				if ( $flags & KB_APIKEY_CORP ) {
-					$killLog = self::CallAPI( "corp", "KillLog", $args, $id, $key );
+					$killLog = $this->CallAPI( "corp", "KillLog", $args, $id, $key );
 				}
 				if ( $flags & KB_APIKEY_CHAR ) {
-					$killLog = self::CallAPI( "char", "KillLog", $args, $id, $key );
+					$killLog = $this->CallAPI( "char", "KillLog", $args, $id, $key );
 				}
 
-				if (self::GetError() === null) {
+				if ($this->getError() === null) {
 					// Get oldest kill
 					$currentkill = 0;
 					$sxe = simplexml_load_string($this->pheal->xml);					
@@ -69,8 +69,8 @@ class API_KillLog extends API
 					}
 				}
 
-				if (self::GetError() !== null) {
-					if (self::GetError() == 120 && $this->pheal->xml) {
+				if ($this->getError() !== null) {
+					if ($this->getError() == 120 && $this->pheal->xml) {
 						// Check if we just need to skip back a few kills
 						// i.e. first page of kills is already fetched.
 						$pos = strpos($this->pheal->xml, "Expected beforeKillID [");
@@ -93,7 +93,7 @@ class API_KillLog extends API
 								."0, '"
 								."Error','"
 								."Cron Job','"
-								. self::GetError() . "', "
+								. $this->getError() . "', "
 								."UTC_TIMESTAMP() )");						
 						return $output;
 					} else {
@@ -110,7 +110,7 @@ class API_KillLog extends API
 								.(count($posted) + count($skipped)).",'"
 								."New XML','"
 								."Cron Job','"
-								. (self::GetError() == 119 ? 0: self::GetError()) . "', "
+								. ($this->getError() == 119 ? 0: $this->getError()) . "', "
 								."UTC_TIMESTAMP() )");
 
 						return $output;

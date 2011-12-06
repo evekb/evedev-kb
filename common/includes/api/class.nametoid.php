@@ -32,7 +32,7 @@ class API_NametoID extends API
 		if ($this->API_Names_ == "")
 			return "No Names have been input.";
 
-		$data = self::CallAPI( "eve", "CharacterID", array( "names" => $this->API_Names_ ) , null, null );
+		$data = $this->CallAPI( "eve", "CharacterID", array( "names" => $this->API_Names_ ) , null, null );
 
 		if($data == false) return "Error fetching names";
 

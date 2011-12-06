@@ -204,7 +204,7 @@ class API_CorporationSheet extends API
 			}
 		}
 
-		$this->_result = self::CallAPI( "corp", "CorporationSheet", array( 'corporationID' => $myKeyString['corporationID'] ), $this->API_userID_, $this->API_apiKey_ );
+		$this->_result = $this->CallAPI( "corp", "CorporationSheet", array( 'corporationID' => $myKeyString['corporationID'] ), $this->API_userID_, $this->API_apiKey_ );
 		if( $this->_result == false ) {
 			return false;
 		}

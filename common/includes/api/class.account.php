@@ -18,7 +18,7 @@ class API_Account extends API
 	public function fetch($userID, $APIKey)
 	{
 		if(!isset($data[$userID][$APIKey])) {
-			self::$data[$userID][$APIKey] = self::CallAPI( "account", "APIKeyInfo", null,
+			self::$data[$userID][$APIKey] = $this->CallAPI( "account", "APIKeyInfo", null,
 					$userID, $APIKey );
 		}
 		if( self::$data[$userID][$APIKey] == false ) {
@@ -29,7 +29,7 @@ class API_Account extends API
 
 	public function isOldKey($userID, $APIKey) {
 		PhealConfig::getInstance()->api_customkeys = false;
-		$data = self::CallAPI( "account", "Characters", null, $userID, $APIKey );
+		$data = $this->CallAPI( "account", "Characters", null, $userID, $APIKey );
 		if( $data == false ) {
 			return false;
 		}
@@ -37,14 +37,14 @@ class API_Account extends API
 	}
 	
 	public function CheckAccess($userID, $APIKey, $mask) {
-		$data = self::CallAPI( "account", "APIKeyInfo", null, $userID, $APIKey );
+		$data = $this->CallAPI( "account", "APIKeyInfo", null, $userID, $APIKey );
 		if (($data->key->accessMask & $mask)) 
 			return true;
 		return false;
 	}
 	
 	public function GetType($userID, $APIKey) {
-		$data = self::CallAPI( "account", "APIKeyInfo", null, $userID, $APIKey );
+		$data = $this->CallAPI( "account", "APIKeyInfo", null, $userID, $APIKey );
 		return $data->key->type;
 	}
 }

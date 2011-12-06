@@ -30,7 +30,7 @@ class API_Alliance extends API
 
 	function fetchalliances($overide=false)
 	{
-		$this->data = self::CallAPI( "eve", "AllianceList", null, null, null );
+		$this->data = $this->CallAPI( "eve", "AllianceList", null, null, null );
 	}
 
 	function LocateAlliance($name)
