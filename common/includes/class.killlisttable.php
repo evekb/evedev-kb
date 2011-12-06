@@ -95,15 +95,19 @@ class KillListTable
 			$kll['victimiskloss'] = $kill->getISKLoss();
 			$kll['fb'] = $kill->getFBPilotName();
 			$kll['fbcorp'] = $kill->getFBCorpName();
-			$kll['system'] = $kill->getSolarSystemName();
-			if (config::get('killlist_regionnames'))
-			{
-				if ($kill->isClassified() && !Session::isAdmin())
-					$kll['region'] = "Classified";
-				else
+			if ($kill->isClassified() && !Session::isAdmin()) {
+				if (config::get('killlist_regionnames')) {
+					$kll['region'] = Language::get("classified");
+				}
+				$kll['systemsecurity'] = "-";
+				$kll['system'] = Language::get("classified");
+			} else {
+				if (config::get('killlist_regionnames')) {
 					$kll['region'] = $kill->getSystem()->getRegionName();
+				}
+				$kll['systemsecurity'] = $kill->getSolarSystemSecurity();
+				$kll['system'] = $kill->getSolarSystemName();
 			}
-			$kll['systemsecurity'] = $kill->getSolarSystemSecurity();
 			$kll['victimid'] = $kill->getVictimID();
 			$kll['victimcorpid'] = $kill->getVictimCorpID();
 			$kll['victimallianceid'] = $kill->getVictimAllianceID();

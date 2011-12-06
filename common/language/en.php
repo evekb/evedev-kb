@@ -87,6 +87,7 @@ $language['en']['inv_ship'] = "Ship";
 $language['en']['inv_weapon'] = "Weapon";
 $language['en']['destroyed'] = "Destroyed Items";
 $language['en']['dropped'] = "Dropped Items";
+$language['en']['classified'] = "Classified";
 
 $language['en']['weapon'] = "Weapon";
 $language['en']['ship'] = "Ship";
