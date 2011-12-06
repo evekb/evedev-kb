@@ -50,7 +50,6 @@ abstract class Cacheable {
 	 */
 	public static function getByID($id)
 	{
-		die("TT");
 		return Cacheable::factory(get_called_class(), (int) $id);
 	}
 
