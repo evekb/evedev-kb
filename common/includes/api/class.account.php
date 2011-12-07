@@ -17,7 +17,7 @@ class API_Account extends API
 
 	public function fetch($userID, $APIKey)
 	{
-		if(!isset($data[$userID][$APIKey])) {
+		if(!isset(self::$data[$userID][$APIKey])) {
 			self::$data[$userID][$APIKey] = $this->CallAPI( "account", "APIKeyInfo", null,
 					$userID, $APIKey );
 		}
