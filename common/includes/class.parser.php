@@ -55,7 +55,6 @@ class Parser
 			// this converts the killmail internally from pre-rmr to kali format
 			$this->preparse('prermr');
 		}
-
 		//get the mail's timestamp - if older than QR, then preparse for scrambler translation
 		$timestamp = substr($this->killmail_, 0, 16);
 		$timestamp = str_replace('.', '-', $timestamp);
@@ -561,12 +560,12 @@ class Parser
 				}
 
 				$iship = Ship::lookup($isname);
-				if (!$iship->getName())
+				if (!$iship || !$iship->getName())
 				{
 					$this->error('Ship not found.', $isname);
 				}
 
-				if (strcmp($iwname, 'Unknown') == 0 && $iship->getID())
+				if (strcmp($iwname, 'Unknown') == 0 && $iship && $iship->getID())
 				{
 					$iwname = $iship->getName();
 				}
@@ -576,8 +575,9 @@ class Parser
 				{
 					$this->error('No weapon found for pilot "'.$ipname .'"');
 					$iweapon = new Item();
-				} else if (!$iweapon->getID()) {
+				} else if (!$iweapon || !$iweapon->getID()) {
 					$this->error('Weapon not found.', $iwname);
+					$iweapon = new Item();
 				}
 
 				if (config::get('cfg_allianceid') && in_array($ialliance->getID(), config::get('cfg_allianceid')))
