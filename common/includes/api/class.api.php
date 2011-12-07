@@ -42,6 +42,7 @@ class API {
 			}
 		} catch(PhealException $e) {
 			$this->error = $e->getCode();
+			$this->message = $e->getMessage();
 			return false;
 		}
 		
@@ -49,10 +50,21 @@ class API {
 	}
 
 	/**
-	* Return any errors encountered or false if none.
-	*/
+	* Return any error codes encountered or null if none.
+	 *
+	 * @return integer
+	 */
 	function getError()
 	{
 		return $this->error;
+	}
+	/**
+	* Return any error messages encountered or null if none.
+	 *
+	 * @return string
+	 */
+	function getMessage()
+	{
+		return $this->message;
 	}
 }
