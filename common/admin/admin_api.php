@@ -93,7 +93,7 @@ if ($_POST['import'] || isset($_GET['Process'])) {
 				$myEveAPI->Output_ .= "Importing Mails for ".$row['key_name']."<br />";
 				$out = $myEveAPI->Import($row['key_name'], $row['key_id'], $row['key_key'],
 								$row['key_flags']);
-				$file = @fopen(KB_CACHEDIR.'/data/report.txt', 'a');
+				$file = @fopen(KB_CACHEDIR.'/api/report.txt', 'a');
 				fwrite($file, $out);
 				fclose($file);
 
@@ -102,10 +102,10 @@ if ($_POST['import'] || isset($_GET['Process'])) {
 					$html .= "<script type=\"text/javascript\">window.location = \"?a=admin_api&Process=".$processindex."\"</script>"; //*/
 					break;
 				} else { // load report.txt to $html
-					$fp = @fopen(KB_CACHEDIR.'/data/report.txt', 'r');
-					$html .= fread($fp, filesize(KB_CACHEDIR.'/data/report.txt'));
+					$fp = @fopen(KB_CACHEDIR.'/api/report.txt', 'r');
+					$html .= fread($fp, filesize(KB_CACHEDIR.'/api/report.txt'));
 					fclose($fp);
-					@unlink(KB_CACHEDIR.'/data/report.txt'); // delete file, it was temporary
+					@unlink(KB_CACHEDIR.'/api/report.txt'); // delete file, it was temporary
 				}
 			}
 		}
