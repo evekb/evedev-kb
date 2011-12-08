@@ -825,3 +825,7 @@ a.kb-contract:visited {
 	white-space: nowrap;
 }
 
+div.item-icon
+{
+	position: relative;
+}
