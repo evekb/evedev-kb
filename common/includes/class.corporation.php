@@ -399,8 +399,12 @@ class Corporation extends Entity
 			return false;
 		}
 
-		$alliance = new Alliance($myAPI->getAllianceID(), true);
+		$alliance = Alliance::add($myAPI->getAllianceName(),
+						$myAPI->getAllianceID());
 
+		if (!$alliance) {
+			return false;
+		}
 		$crp = Corporation::add(slashfix($myAPI->getCorporationName()), $alliance,
 				$myAPI->getCurrentTime(), intval($myAPI->getCorporationID()));
 
