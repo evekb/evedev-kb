@@ -205,12 +205,14 @@ class pAllianceDetail extends pageAssembly
 					."]");
 		}
 
-		$myCorpAPI = new API_CorporationSheet();
-
 		if ($myAlliance) {
+			$myCorpAPI = new API_CorporationSheet();
+
 			foreach ((array) $myAlliance["memberCorps"] as $tempcorp) {
 				$myCorpAPI->setCorpID($tempcorp["corporationID"]);
-				$result .= $myCorpAPI->fetchXML();
+				if ($myCorpAPI->fetchXML() === false) {
+					continue;
+				}
 
 				if ($tempcorp["corporationID"] == $myAlliance["executorCorpID"]) {
 					$myAlliance["executorCorpName"] = $myCorpAPI->getCorporationName();
