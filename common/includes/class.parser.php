@@ -55,6 +55,10 @@ class Parser
 			// this converts the killmail internally from pre-rmr to kali format
 			$this->preparse('prermr');
 		}
+		// Swap , for . in numbers to fix CCP localisation problems.
+		$this->killmail_ = preg_replace('/: (\d+),00/', ': $1', $this->killmail_);
+		$this->killmail_ = preg_replace('/(\d),(\d)/', '$1.$2', $this->killmail_);
+
 		//get the mail's timestamp - if older than QR, then preparse for scrambler translation
 		$timestamp = substr($this->killmail_, 0, 16);
 		$timestamp = str_replace('.', '-', $timestamp);
@@ -238,13 +242,13 @@ class Parser
 			elseif (preg_match("/Security: (.*)/", $victim[$counter], $matches))
 			{
 				if($matches[1])
-					$systemsec = $matches[1];
+					$systemsec = (float) $matches[1];
 			}
 			elseif (preg_match("/Damage Taken: (.*)/", $victim[$counter], $matches))
 			{
 				if($matches[1])
 				{
-					$dmgtaken = $matches[1];
+					$dmgtaken = (int) $matches[1];
 					$this->dmgtaken = $dmgtaken;
 				}
 			}
@@ -497,12 +501,12 @@ class Parser
 					else if(preg_match("/Security: (.*)/", $involved[$counter], $matches))
 					{
 						if($matches[1])
-							$secstatus = $matches[1];
+							$secstatus = (float) $matches[1];
 					}
 					else if(preg_match("/Damage Done: (.*)/", $involved[$counter], $matches))
 					{
 						if($matches[1])
-							$idmgdone = $matches[1];
+							$idmgdone = (int) $matches[1];
 					}
 					else if($involved[$counter] == '')
 					{ //allows us to process the involved party. This is the empty line after the
@@ -511,7 +515,7 @@ class Parser
 						$i = $counter;
 						break;
 					}
-                    else { //skip over this entry, it could read anything, we don't care. Handy if/when
+					else { //skip over this entry, it could read anything, we don't care. Handy if/when
 						//new mail fields get added and we aren't handling them yet.
 						$counter++;
 						$i = $counter;
@@ -765,6 +769,7 @@ class Parser
 		}
 
 		while ($i < $num) {
+			$container = false;
 			$destroyed[$i] = trim($destroyed[$i]);
 			// TODO: Find a nicer way to do this. Then rewrite the rest of the parser.
 			$destroyed[$i] = preg_replace("/ \(Copy\)(.*)\(Cargo\)/", "$1(Copy)", $destroyed[$i]);
@@ -843,8 +848,13 @@ class Parser
 				$location = 'Cargo';
 			}
 
+			if ($location) {
+				$locid = $locations[$location];
+			} else {
+				$locid = 0;
+			}
 			$items[] = array('item' => $item, 'quantity' => $quantity,
-				'location' => $locations[$location]);
+				'location' => $locid);
 			$i++;
 		}
 
