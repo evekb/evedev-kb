@@ -275,7 +275,7 @@ class Ship extends Cacheable
 		}
 		if ($scl_id == null && $id) {
 			$qry = DBFactory::getDBQuery();
-			$qry->execute("INSERT INTO kb3_ships values(shp_id, shp_class) ($id, 18)");
+			$qry->execute("INSERT INTO kb3_ships (shp_id, shp_class) values($id, 18)");
 			$scl_id = 18; // "Unknown"
 		}
 		$shipclass = ShipClass::getByID($scl_id);
