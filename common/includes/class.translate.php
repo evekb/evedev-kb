@@ -30,7 +30,7 @@ class Translate
         {
             $this->killmail_ = str_replace(array(chr(195).chr(182), chr(195).chr(164)), array(chr(246), chr(228)), $this->killmail_);
 
-            $search = array('Opfer','Ziel:','Allianz: KEINE','Allianz: keine','Allianz: Keine',
+            $search = array('Opfer:','Ziel:','Allianz: KEINE','Allianz: keine','Allianz: Keine',
                      'Allianz: NICHTS','Allianz: nichts','Allianz: Nichts','Allianz:',
                             'Fraktion: KEINE','Fraktion: keine','Fraktion: Keine',
                      'Fraktion: NICHTS','Fraktion: nichts','Fraktion: Nichts','Fraktion:',
@@ -38,7 +38,7 @@ class Translate
                             'Beteiligte Parteien:','Anz:','Corporation:','(Fracht)', 'Schiff:','Waffe:','(Im Container)',
                             'Verursachter Schaden:','Erlittener Schaden:', '(gab den letzten Schuss ab)',
                             'Hinterlassene Gegenst'.chr(228).'nde:', 'Anz.:', 'Unbekannt', 'Dronenhangar', 'Drohnenhangar', 
-			    'Mond:', 'Kapsel');
+			    'Mond:', 'Kapsel', 'Menge:');
 
             $replace = array('Victim:','Victim:','Alliance: None','Alliance: None','Alliance: None',
                      'Alliance: None','Alliance: None','Alliance: None','Alliance:',
@@ -48,7 +48,7 @@ class Translate
                             'Involved parties:', 'Qty:', 'Corp:', '(Cargo)', 'Ship:', 'Weapon:','(In Container)',
                             'Damage Done:', 'Damage Taken:', '(laid the final blow)',
                             'Dropped items:', 'Qty:', 'Unknown', 'Drone Bay', 'Drone Bay', 
-			    'Moon:', 'Capsule');
+			    'Moon:', 'Capsule', 'Qty:');
 
             $this->killmail_ = str_replace($search, $replace, $this->killmail_);
             return  $this->killmail_;
@@ -352,5 +352,3 @@ class Translate
         return $this->killmail_;
     }
 }
-
-?>
