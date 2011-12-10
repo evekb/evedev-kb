@@ -7,4 +7,4 @@
  * @package EDK
  */
 
-$themeInfo = array("name" => "EDK default", "info"=>"The default theme for EDK.");
+$themeInfo = array("name" => "EDK XHTML", "info"=>"XHTML theme to support older browsers.");
