@@ -598,8 +598,10 @@ class pKillRelated extends pageAssembly
 					$this->pilots[$side][$kill->getVictimId()][$id]['destroyed'] = true;
 
 					if (!isset($this->pilots[$side][$kill->getVictimId()][$id]['kll_id'])) {
-						$this->pilots[$side][$kill->getVictimId()][$id]['kll_id'] = $kill->getID();
-						$this->pilots[$side][$kill->getVictimId()][$id]['url'] = edkURI::page('kill_detail', $kill->getID());
+						$this->pilots[$side][$kill->getVictimId()][$id]['kll_id']
+								= $kill->getID();
+						$this->pilots[$side][$kill->getVictimId()][$id]['kll_url']
+								= edkURI::page('kill_detail', $kill->getID(), 'kll_id');
 					}
 					return;
 				}
@@ -608,7 +610,7 @@ class pKillRelated extends pageAssembly
 
 		$this->pilots[$side][$kill->getVictimId()][] = array(
 			'kll_id' => $kill->getID(),
-			'kll_url' => edkURI::page('kill_detail', $kill->getID()),
+			'kll_url' => edkURI::page('kill_detail', $kill->getID(), "kll_id"),
 			'name' => $kill->getVictimName(),
 			'plt_url' => edkURI::page('pilot_detail', $kill->getVictimId()),
 			'destroyed' => true,

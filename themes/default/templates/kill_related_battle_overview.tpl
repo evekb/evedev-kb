@@ -67,7 +67,7 @@
 						<tr {if $i.destroyed} class="destroyed"{/if}>
 							<td class="kb-table-imgcell">
 								{if $i.destroyed}
-									<a href="{$i.url}"><img src="{$i.spic}" alt="" /></a>
+									<a href="{$i.kll_url}"><img src="{$i.spic}" alt="" /></a>
 									{else}
 									<img src="{$i.spic}" alt="" />
 								{/if}
