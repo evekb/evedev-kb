@@ -95,36 +95,38 @@ if ($_REQUEST['del']) {
 	}
 }
 
-$qry = DBFactory::getDBQuery();
-$ent = array();
-if (config::get("cfg_corpid")) {
-	$ent[] = 'sta_from IN (' . join(',', config::get("cfg_corpid"))
-			. ') AND sta_from_type=\'c\'';
-}
-if (config::get("cfg_allianceid")) {
-	$ent[] = 'sta_from IN (' . join(',', config::get("cfg_allianceid"))
-			. ') AND sta_from_type=\'a\'';
-}
-$qry->execute('SELECT * FROM kb3_standings WHERE ('
-		. join(') OR (', $ent)
-		. ') ORDER BY sta_value DESC');
-
 $permt = array();
-while ($row = $qry->getRow()) {
-	$typ = $row['sta_to_type'];
-	$val = sprintf("%01.1f", $row['sta_value']);
-	$id = $typ . $row['sta_to'];
-	if ($typ == 'a') {
-		$alliance = Alliance::getByID($row['sta_to']);
-		$text = $alliance->getName();
-		$link = edkURI::page('admin_standings', $typ . $row['sta_to'], 'del');
-		$permt[$typ][] = array('text' => $text, 'link' => $link, 'value' => $val, 'comment' => $row['sta_comment'], 'id' => $id);
+if (config::get("cfg_corpid") || config::get("cfg_allianceid")) {
+	$qry = DBFactory::getDBQuery();
+	$ent = array();
+	if (config::get("cfg_corpid")) {
+		$ent[] = 'sta_from IN (' . join(',', config::get("cfg_corpid"))
+				. ') AND sta_from_type=\'c\'';
 	}
-	if ($typ == 'c') {
-		$corp = Corporation::getByID($row['sta_to']);
-		$text = $corp->getName();
-		$link = edkURI::page('admin_standings', $typ . $row['sta_to'], 'del');
-		$permt[$typ][] = array('text' => $text, 'link' => $link, 'value' => $val, 'comment' => $row['sta_comment'], 'id' => $id);
+	if (config::get("cfg_allianceid")) {
+		$ent[] = 'sta_from IN (' . join(',', config::get("cfg_allianceid"))
+				. ') AND sta_from_type=\'a\'';
+	}
+	$qry->execute('SELECT * FROM kb3_standings WHERE ('
+			. join(') OR (', $ent)
+			. ') ORDER BY sta_value DESC');
+
+	while ($row = $qry->getRow()) {
+		$typ = $row['sta_to_type'];
+		$val = sprintf("%01.1f", $row['sta_value']);
+		$id = $typ . $row['sta_to'];
+		if ($typ == 'a') {
+			$alliance = Alliance::getByID($row['sta_to']);
+			$text = $alliance->getName();
+			$link = edkURI::page('admin_standings', $typ . $row['sta_to'], 'del');
+			$permt[$typ][] = array('text' => $text, 'link' => $link, 'value' => $val, 'comment' => $row['sta_comment'], 'id' => $id);
+		}
+		if ($typ == 'c') {
+			$corp = Corporation::getByID($row['sta_to']);
+			$text = $corp->getName();
+			$link = edkURI::page('admin_standings', $typ . $row['sta_to'], 'del');
+			$permt[$typ][] = array('text' => $text, 'link' => $link, 'value' => $val, 'comment' => $row['sta_comment'], 'id' => $id);
+		}
 	}
 }
 $perm = array();
