@@ -1296,25 +1296,20 @@ class pKillDetail extends pageAssembly
 			if (isset($_POST['submit']) && $_POST['submit'] == 'UpdateValue') {
 				// Send new value for item to the database
 				$qry = DBFactory::getDBQuery();
-				;
 				$qry->autocommit(false);
 				if (isset($_POST['SID'])) {
 					$SID = intval($_POST['SID']);
 					$Val = preg_replace('/[^0-9]/', '', $_POST[$SID]);
 					$qry->execute("INSERT INTO kb3_item_price (typeID, price) VALUES ('".$SID."', '".$Val."') ON DUPLICATE KEY UPDATE price = '".$Val."'");
+					Ship::delCache($this->kill->getVictimShip());
 				} else {
 					$IID = intval($_POST['IID']);
 					$Val = preg_replace('/[^0-9]/', '', $_POST[$IID]);
 					$qry->execute("INSERT INTO kb3_item_price (typeID, price) VALUES ('".$IID."', '".$Val."') ON DUPLICATE KEY UPDATE price = '".$Val."'");
-					foreach ($this->kill->destroyeditems_ as $i => $ditem) {
-						if ($ditem->getItem()->getID() == $IID)
-								$this->kill->destroyeditems_[$i]->value = $Val;
-					}
-					foreach ($this->kill->droppeditems_ as $i => $ditem) {
-						if ($ditem->getItem()->getID() == $IID)
-								$this->kill->droppeditems_[$i]->value = $Val;
-					}
+					Item::delCache(Item::getByID($IID));
 				}
+				Kill::delCache($this->kill);
+				$this->kill = Kill::getByID($this->kill->getID());
 				$this->kill->calculateISKLoss(true);
 				$qry->autocommit(true);
 			}
