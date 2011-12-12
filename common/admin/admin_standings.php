@@ -51,10 +51,10 @@ if ($_REQUEST['searchphrase'] != "" && strlen($_REQUEST['searchphrase']) >= 3) {
 	$smarty->assign('search', true);
 }
 if ($val = $_REQUEST['standing']) {
-	$fields = array();
 	$qry = DBFactory::getDBQuery();
 	foreach (config::get('cfg_corpid') as $id) {
 		$fromtyp = 'c';
+		$fields = array();
 		$fields[] = $id;
 		$fields[] = intval(substr($_REQUEST['sta_id'], 1));
 		$fields[] = $fromtyp;
@@ -66,6 +66,7 @@ if ($val = $_REQUEST['standing']) {
 	}
 	foreach (config::get('cfg_allianceid') as $id) {
 		$fromtyp = 'a';
+		$fields = array();
 		$fields[] = $id;
 		$fields[] = intval(substr($_REQUEST['sta_id'], 1));
 		$fields[] = $fromtyp;
@@ -90,7 +91,7 @@ if ($_REQUEST['del']) {
 	if (config::get('cfg_allianceid')) {
 		$qry->execute('DELETE FROM kb3_standings WHERE sta_from IN ('
 				. join(',', config::get('cfg_allianceid'))
-				. ') AND sta_from_type=\'' . $fromtyp . '\' AND sta_to=' . $toid
+				. ') AND sta_from_type=\'a\' AND sta_to=' . $toid
 				. ' AND sta_to_type=\'' . $totyp . '\'');
 	}
 }
@@ -119,13 +120,13 @@ if (config::get("cfg_corpid") || config::get("cfg_allianceid")) {
 			$alliance = Alliance::getByID($row['sta_to']);
 			$text = $alliance->getName();
 			$link = edkURI::page('admin_standings', $typ . $row['sta_to'], 'del');
-			$permt[$typ][] = array('text' => $text, 'link' => $link, 'value' => $val, 'comment' => $row['sta_comment'], 'id' => $id);
+			$permt[$typ][$row['sta_to']] = array('text' => $text, 'link' => $link, 'value' => $val, 'comment' => $row['sta_comment'], 'id' => $id);
 		}
 		if ($typ == 'c') {
 			$corp = Corporation::getByID($row['sta_to']);
 			$text = $corp->getName();
 			$link = edkURI::page('admin_standings', $typ . $row['sta_to'], 'del');
-			$permt[$typ][] = array('text' => $text, 'link' => $link, 'value' => $val, 'comment' => $row['sta_comment'], 'id' => $id);
+			$permt[$typ][$row['sta_to']] = array('text' => $text, 'link' => $link, 'value' => $val, 'comment' => $row['sta_comment'], 'id' => $id);
 		}
 	}
 }

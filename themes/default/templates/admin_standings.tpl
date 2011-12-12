@@ -54,22 +54,19 @@ function checkinput(object,value,oldvalue,id)
 <div class="block-header2">Standings</div>
 <form id="search" action="{$kb_host}/?a=admin_standings" method="POST">
 <table class="kb-table">
-{section name=opt loop=$standings}
-  <tr class="kb-table-header"><td colspan="5">{$standings[opt].name}</td></tr>
+{foreach from=$standings item=standing}
+  <tr class="kb-table-header"><td colspan="5">{$standing.name}</td></tr>
   <tr class="kb-table-header"><td>Name</td><td>Standing</td><td>Comment</td><td>&nbsp;</td></tr>
-{section name=idx loop=$standings[opt].list}
+{foreach from=$standing.list item=item}
   <tr class="kb-table-row-even">
-    <td><b>{$standings[opt].list[idx].text}</b>{$standings[opt].list[idx].descr}</td>
-    <td align="right">{$standings[opt].list[idx].value}</td>
-    <td align="center">{$standings[opt].list[idx].comment}</td>
-    <td><a href="{$standings[opt].list[idx].link}">Delete</a></td>
-<!--
-    <td width="180" align="right" id="tbrid_{$standings[opt].list[idx].id}" onClick="geninput(this,'{$standings[opt].list[idx].id}','{$standings[opt].list[idx].value}','{$standings[opt].list[idx].value}');">{$standings[opt].list[idx].value}</td>
--->
-{/section}
-{sectionelse}
+    <td><b>{$item.text}</b>{$item.descr}</td>
+    <td align="right">{$item.value}</td>
+    <td align="center">{$item.comment}</td>
+    <td><a href="{$item.link}">Delete</a></td>
+{/foreach}
+{foreachelse}
   <tr><td>None.</td></tr>
-{/section}
+{/foreach}
 </table>
 <input type="submit" name="submit" value="Save">
 </form>
