@@ -26,7 +26,7 @@ class pKillRelated extends pageAssembly
 	/** @var array */
 	protected $invCorp = array();
 	/** @var integer */
-	protected $kll_id;
+	public $kll_id;
 	/** @var Kill */
 	protected $kill;
 	/** @var Page */
