@@ -23,29 +23,37 @@ class cache
 	 * Check the server load using /proc/loadavg.
 	 * 
 	 * Changes reinforced statust depending on load where supported.
+	 *
+	 * @return bool true if the server is reinforced, false if not or not
+	 * supported
 	 */
 	public static function checkLoad()
 	{
 		if (PHP_OS != 'Linux') {
-			return;
+			return false;
 		}
 
+		static $load = null;
+		if (null != $load) {
+			return !!config::get('is_reinforced');
+		}
 		$load = @file_get_contents('/proc/loadavg');
 		if (false === $load) {
 			return;
 		}
 		$array = explode(' ', $load);
-		// If load is high put killboard into RF
 		if ((float)$array[0] > self::$reinforced_enable_threshold) {
+			// If load is high put killboard into RF
 			config::set('is_reinforced', true);
-		}
-		// If load is consistently low cancel reinforced
-		else if (config::get('is_reinforced')
+			return true;
+		} else if (config::get('is_reinforced')
 				&& (float)$array[0] < self::$reinforced_disable_threshold
 				&& rand(1, self::$reinforced_prob) == 1) {
+			// If load is consistently low cancel reinforced
 			config::set('is_reinforced', false);
+			return false;
 		}
-		return true;
+		return !!config::get('is_reinforced');
 	}
 	/**
 	 * Check if the current page should be cached.
