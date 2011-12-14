@@ -15,10 +15,9 @@ define('KB_PAGECACHEDIR', KB_CACHEDIR.'/page');
 define('KB_MAILCACHEDIR', KB_CACHEDIR.'/mails');
 define('KB_QUERYCACHEDIR', KB_CACHEDIR.'/SQL');
 define('KB_UPDATE_URL', 'http://evedev-kb.googlecode.com/files');
-define('API_SERVER', "https://api.eveonline.com");
+define('API_SERVER', "http://api.eveonline.com");
 //define('API_SERVER', "http://apitest.eveonline.com");
 define('IMG_SERVER', "image.eveonline.com");
-define("APIVERSION", "V3.3");
 
 // current version: major.minor.sub
 // even numbers for minor = development version
@@ -93,6 +92,11 @@ function get_tpl($name)
 {
 	global $themename;
 	event::call('get_tpl', $name);
+
+	// If a specific tempate file is already asked for then simply return it.
+	if (substr($name, -3) == 'tpl') {
+		return $name;
+	}
 
 	if ($themename == 'default') {
 		if (IS_IGB && file_exists('./themes/default/templates/igb_'.$name
@@ -229,6 +233,7 @@ function makeStartDate($week = 0, $year = 0, $month = 0, $startweek = 0,
  */
 function makeEndDate($week = 0, $year = 0, $month = 0, $enddate = 0)
 {
+	$qenddate = PHP_INT_MAX;
 	if ($year) {
 		if ($week) {
 			if ($week < 10) {
