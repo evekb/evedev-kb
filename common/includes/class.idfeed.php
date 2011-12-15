@@ -630,6 +630,8 @@ class IDFeed
 		if (!strval($victim['characterName'])
 				&& (int)$victim['characterID']) {
 			return false;
+		} else if (!strval($victim['corporationName'])) {
+			return false;
 		}
 
 		if ((int)$victim['allianceID']) {
