@@ -12,22 +12,18 @@ require_once('common/admin/admin_menu.php');
 $page = new Page();
 $page->setAdmin();
 
-if (!$_GET['field'] && !$_GET['sub'])
-{
-    $_GET['field'] = 'Advanced';
-    $_GET['sub'] = 'Configuration';
+if ($_POST) {
+		options::handlePost();
 }
-if ($_GET['field'] && $_GET['sub'])
-{
-    if ($_POST)
-    {
-        options::handlePost();
-    }
-    $page->setContent(options::genOptionsPage());
-    $page->addContext(options::genAdminMenu());
-    if ($_GET['sub'] == 'Configuration' && $_GET['field'] == 'Advanced')
-    {
-        $page->setTitle('Administration - Board Configuration (Current version: '.KB_VERSION.' '.KB_RELEASE.' Build '.SVN_REV.')');
-    }
-    $page->generate();
+$page->setContent(options::genOptionsPage());
+$page->addContext(options::genAdminMenu());
+
+if (!edkURI::getArg('field', 1)
+		|| !edkURI::getArg('sub', 1)
+		|| edkURI::getArg('field', 1) == 'Advanced'
+				&& edkURI::getArg('sub', 2) == 'Configuration') {
+	$page->setTitle('Administration - Board Configuration (Current version: '
+			.KB_VERSION.' '.KB_RELEASE.')');
 }
+$page->generate();
+

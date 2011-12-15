@@ -134,11 +134,9 @@ class options
 	public static function genOptionsPage()
 	{
 		$field = urldecode(edkURI::getArg('field', 1));
-		if (!$field) {
-			$field = "Advanced";
-		}
 		$sub = urldecode(edkURI::getArg('sub', 2));
-		if (!$sub) {
+		if (!$field || !$sub) {
+			$field = "Advanced";
 			$sub = "Configuration";
 		}
 
