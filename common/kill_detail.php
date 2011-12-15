@@ -413,15 +413,11 @@ class pKillDetail extends pageAssembly
 			} else {
 				$this->invShips[$ship_name] += 1;
 			}
-			if (config::get('cfg_allianceid')
-					&& in_array($alliance->getID(),
-							config::get('cfg_allianceid'))) {
+			if (in_array($alliance->getID(), config::get('cfg_allianceid'))) {
 				$this->ownKill = true;
-			} else if (config::get('cfg_corpid')
-					&& in_array($corp->getID(), config::get('cfg_corpid'))) {
+			} else if (in_array($corp->getID(), config::get('cfg_corpid'))) {
 				$this->ownKill = true;
-			} else if (config::get('cfg_pilotid')
-					&& in_array($inv->getPilotID(), config::get('cfg_pilotid'))) {
+			} else if (in_array($inv->getPilotID(), config::get('cfg_pilotid'))) {
 				$this->ownKill = true;
 			}
 
@@ -446,8 +442,6 @@ class pKillDetail extends pageAssembly
 			$weapon = Item::getByID($inv->getWeaponID());
 
 			$this->involved[$i]['shipImage'] = $ship->getImage(64);
-			$this->involved[$i]['shipTechLevel'] = $ship->getTechLevel();
-			$this->involved[$i]['shipIsFaction'] = $ship->isFaction();
 			$this->involved[$i]['shipName'] = $ship->getName();
 			$this->involved[$i]['shipID'] = $ship->getID();
 			if($ship->getID()) {
@@ -973,30 +967,22 @@ class pKillDetail extends pageAssembly
 
 							if (($temp["usedgroupID"] == $group)
 									&& ($temp["size"] == $size)) {
-								$hiammo[] = array(
-									'show' => $smarty->fetch(get_tpl('ammo')),
-									'type' => $temp["Icon"]
-								);
+								$hiammo[] = array('type' => $temp["Icon"]	);
 
 								$found = 1;
 							}
 
-							array_push($this->ammo_array[1], $temp);
+							$this->ammo_array[1][] = $temp;
 							$i++;
 						}
 					}
 
 					if (!($found)) {
-						$hiammo[] = array(
-							'show' => $smarty->fetch(get_tpl('ammo')),
-							'type' => $smarty->fetch(get_tpl('noicon'))
-						);
+						$hiammo[] = array('type' => "<img src='".IMG_URL
+									."/items/24_24/icon09_13.png' alt='' />");
 					}
 				} else {
-					$hiammo[] = array(
-						'show' => $smarty->fetch(get_tpl('blank')),
-						'type' => $smarty->fetch(get_tpl('blank'))
-					);
+					$hiammo[] = array('type' => $smarty->fetch(get_tpl('blank')));
 				}
 			}
 		}
@@ -1022,35 +1008,26 @@ class pKillDetail extends pageAssembly
 					if (is_array($this->ammo_array[2])) {
 						$i = 0;
 
-						while (!($found) && $i < $length) {
+						while (!$found && $i < $length) {
 							$temp = array_shift($this->ammo_array[2]);
 
 							if ($temp["usedgroupID"] == $group) {
-								$midammo[] = array(
-									'show' => $smarty->fetch(get_tpl('ammo')),
-									'type' => $temp["Icon"]
-								);
+								$midammo[] = array('type' => $temp["Icon"]);
 
 								$found = 1;
 							}
 
-							array_push($this->ammo_array[2], $temp);
+							$this->ammo_array[2][] = $temp;
 							$i++;
 						}
 					}
 
-					if (!($found)) {
-						$midammo[] = array(
-							'show' => $smarty->fetch(get_tpl('ammo')),
-							'type' => "<img src='".IMG_URL
-									."/items/24_24/icon09_13.png' alt='' />"
-						);
+					if (!$found) {
+						$midammo[] = array('type' => "<img src='".IMG_URL
+									."/items/24_24/icon09_13.png' alt='' />");
 					}
 				} else {
-					$midammo[] = array(
-						'show' => $smarty->fetch(get_tpl('blank')),
-						'type' => $smarty->fetch(get_tpl('blank'))
-					);
+					$midammo[] = array('type' => $smarty->fetch(get_tpl('blank')));
 				}
 			}
 		}
