@@ -58,7 +58,7 @@
     {/foreach}
     {foreach from=$dropped.$slotindex item="i"}
 		<tr class="kb-table-row-odd dropped">
-			<td><a href="{$i.url}">{$i.Icon}</a></td>
+			<td class="item-icon"><a href="{$i.url}">{$i.Icon}</a></td>
 			<td>{$i.Name}</td>
 			<td>{$i.Quantity}</td>
         {if $config->get('item_values')}
