@@ -280,10 +280,19 @@ class Parser
 		//report the errors for the things that make sense.
 		//we need pilot names, corp names, ship types, and the system to be sure
 		//the rest aren't required but for completeness, you'd want them in :)
+		
+		// Customs Offices don't have names. Hack a fix in by accepting mails with
+		// no victim name but that do have a system.
 		if (strcmp($victimname, 'Unknown') == 0)
 		{
-			$this->error('Victim has no name.');
-			unset($victimname); //we unset the variable so that it fails the next check
+			if (strcmp($systemname, 'Unknown') == 0){
+				$this->error('Victim has no name.');
+				unset($victimname); //we unset the variable so that it fails the next check
+				$this->error('Killmail lacks solar system information.');
+				unset($systemname);
+			} else {
+				$victimname = $systemname;
+			}
 		}
 
 		if (strcmp($corpname, 'Unknown') == 0)
