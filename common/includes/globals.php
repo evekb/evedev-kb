@@ -188,7 +188,8 @@ function getWeeks($year = null)
  * @param integer $year
  * @param integer $month
  * @param integer $startweek
- * @param integer $startdate
+ * @param string $startdate String representation of a date readable by
+ * strtotime ('UTC' is added to all dates passed in)
  * @return integer
  */
 function makeStartDate($week = 0, $year = 0, $month = 0, $startweek = 0,
@@ -219,7 +220,7 @@ function makeStartDate($week = 0, $year = 0, $month = 0, $startweek = 0,
 /**
  * Return end date for the given week, month, year or date.
  *
- *  Priority order of date filters:
+ * Priority order of date filters:
  * weekno > monthno > startWeek > yearno
  * weekno > monthno > yearno
  * startDate and endDate are used if they restrict the date range further
@@ -228,12 +229,13 @@ function makeStartDate($week = 0, $year = 0, $month = 0, $startweek = 0,
  * @param integer $week
  * @param integer $year
  * @param integer $month
- * @param integer $enddate
- * @return integer
+ * @param string $enddate String representation of a date readable by strtotime
+ * ('UTC' is added to all dates passed in)
+ * @return integer unix timestamp for the calculated date or 0 if no input.
  */
-function makeEndDate($week = 0, $year = 0, $month = 0, $enddate = 0)
+function makeEndDate($week = 0, $year = 0, $month = 0, $enddate = '')
 {
-	$qenddate = PHP_INT_MAX;
+	$qenddate = 0;
 	if ($year) {
 		if ($week) {
 			if ($week < 10) {
@@ -242,12 +244,12 @@ function makeEndDate($week = 0, $year = 0, $month = 0, $enddate = 0)
 			$qenddate = strtotime($year.'W'.$week.' +7days -1second UTC');
 		} else if ($month) {
 			if ($month == 12) {
-				$qenddate = strtotime(($year).'-12-31 23:59 UTC');
+				$qenddate = strtotime($year.'-12-31 23:59 UTC');
 			} else {
-				$qenddate = strtotime(($year).'-'.($month + 1).'-1 00:00 - 1 minute UTC');
+				$qenddate = strtotime($year.'-'.($month + 1).'-1 00:00 - 1 minute UTC');
 			}
 		} else {
-			$qenddate = strtotime(($year).'-12-31 23:59 UTC');
+			$qenddate = strtotime($year.'-12-31 23:59 UTC');
 		}
 	}
 	//If set use the earliest enddate.
