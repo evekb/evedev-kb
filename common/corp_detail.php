@@ -19,9 +19,9 @@ class pCorpDetail extends pageAssembly
 	public $crp_external_id = 0;
 	/** @var Corporation */
 	public $corp = null;
-	
 	/** @var Alliance */
-	protected $alliance = null;
+	public $alliance = null;
+
 	/** @var string The selected view. */
 	protected $view = null;
 	/** @var array The list of views and their callbacks. */
