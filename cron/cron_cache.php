@@ -56,7 +56,7 @@ $html = '';
 
 // Alliance
 $myAlliAPI = new API_Alliance();
-$Allitemp .= $myAlliAPI->initXML();
+$Allitemp .= $myAlliAPI->fetchalliances();
 $html .= "Caching Alliance XML \n";
 
 if ($html)
