@@ -898,6 +898,7 @@ class IDFeed
 	 */
 	public static function killListToXML($killList)
 	{
+		$qry = DBFactory::getDBQuery();
 		$date = gmdate('Y-m-d H:i:s');
 		$xml = "<?xml version='1.0' encoding='UTF-8'?>
 		<eveapi version='2' edkapi='".$idfeedversion."'>
@@ -925,14 +926,22 @@ class IDFeed
 
 			$count++;
 			if ($kill->isClassified()) continue;
-			$kill = Cacheable::factory('Kill', $kill->getID());
+			//$kill = Kill::getByID($kill->getID());
 			$row = $kills->addChild('row');
 			$row->addAttribute('killID', intval($kill->getExternalID()));
 			$row->addAttribute('killInternalID', intval($kill->getID()));
 			$row->addAttribute('solarSystemID', $kill->getSystem()->getExternalID());
 			$row->addAttribute('killTime', $kill->getTimeStamp());
 			$row->addAttribute('moonID', '0');
-			$row->addAttribute('hash', bin2hex($kill->getHash()));
+			$qry->execute("SELECT kll_hash FROM kb3_mails WHERE kll_id = "
+					.$kill->getID());
+			if ($qry->recordCount()) {
+				$qrow = $qry->getRow();
+				$row->addAttribute('hash', bin2hex($qrow['kll_hash']));
+			} else {
+				$kill = Kill::getByID($kill->getID());
+				$row->addAttribute('hash', bin2hex($kill->getHash()));
+			}
 			$row->addAttribute('trust', $kill->getTrust());
 			$victim = Pilot::getByID($kill->getVictimID());
 			$victimCorp = Corporation::getByID($kill->getVictimCorpID());
@@ -965,7 +974,6 @@ class IDFeed
 			$involved->addAttribute('columns',
 					'characterID,characterName,corporationID,corporationName,allianceID,allianceName,factionID,factionName,securityStatus,damageDone,finalBlow,weaponTypeID,shipTypeID');
 
-			$qry = DBFactory::getDBQuery();
 			$sql = "SELECT ind_sec_status, ind_all_id, ind_crp_id,
 				ind_shp_id, ind_wep_id, ind_order, ind_dmgdone, plt_id, plt_name,
 				plt_externalid, crp_name, crp_external_id,
@@ -1031,9 +1039,6 @@ class IDFeed
 			$sql = "SELECT * FROM kb3_items_dropped WHERE itd_kll_id = ".$kill->getID();
 			$qry2->execute($sql);
 
-
-			$droppedItems = $kill->getDroppedItems();
-			$destroyedItems = $kill->getDestroyedItems();
 			if ($qry->recordCount() || $qry2->recordCount()) {
 				$items = $row->addChild('rowset');
 				$items->addAttribute('name', 'items');
