@@ -233,7 +233,7 @@ class Corporation extends Entity
 					}
 					// Now check if the alliance needs to be updated.
 					if ($row['crp_all_id'] != $alliance->getID()
-									&& $this->isUpdatable($timestamp)) {
+									&& $crp->isUpdatable($timestamp)) {
 						$sql = 'update kb3_corps
 									   set crp_all_id = '.$alliance->getID().', ';
 						$sql .= "crp_updated = date_format( '".
