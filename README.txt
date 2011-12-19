@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.0.1
+Eve Development Network Killboard v4.0.2
 -------------------------------------------
 
 // REQUIREMENTS
@@ -24,6 +24,21 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
+v4.0.2
+Fixes:
+Unknown ships are added with correct id.
+Installer finds http class when curl is not enabled.
+Killlog error messages are clearer.
+Parser fails less dramatically on unknown ships and weapons.
+Add new, unknown, alliances when adding new corps.
+Add server status class.
+Fix CCP's latest killmail bugs.
+Fix for updated german killmail translations.
+Fix kill related links.
+Item values can be updated on kills.
+Forum post and known members mods fixed.
+CSS fixes for kill_details
+-------------------------------------------
 v4.0.1
 Fixes:
 API static methods under 5.2
