@@ -36,7 +36,7 @@ if (file_exists('../kbconfig.php'))
 	if($cid) insertConfig('cfg_corpid', serialize(array($cid)));
 	else insertConfig('cfg_corpid', serialize(array()));
 	if($pid) insertConfig('cfg_pilotid', serialize(array($pid)));
-	else insertConfig('cfg_cilotid', serialize(array()));
+	else insertConfig('cfg_pilotid', serialize(array()));
 
 	insertConfig('cfg_img', $img);
 	insertConfig('cfg_kbhost', $host);
