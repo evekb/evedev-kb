@@ -759,11 +759,12 @@ class IDFeed
 	}
 
 	/**
-	 * @param SimpleXMLElement $item
-	 * @param Kill $kill
+	 * @param SimpleXMLElement $item The element containing an Item.
+	 * @param Kill $kill The Kill to add the item to.
+	 * @param int $slot Set a default slot if none is specified.
 	 * @return boolean false on error
 	 */
-	private function processItem($item, &$kill)
+	private function processItem($item, &$kill, $slot = null)
 	{
 		if ((int)$item['singleton'] == 2) {
 			// Blueprint copy - in the cargohold
@@ -777,6 +778,8 @@ class IDFeed
 		} else if ((int)$item['flag'] == 87) {
 			// Drone Bay
 			$location = 6;
+		} else if ($slot != null) {
+			$location = $slot;
 		} else {
 			$litem = new Item((int)$item['typeID']);
 			$location = $litem->getSlot();
@@ -795,7 +798,7 @@ class IDFeed
 		// Check for containers.
 		if (isset($item->rowset)) {
 			foreach ($item->rowset->row as $subitem) {
-				$this->processItem($subitem, $kill);
+				$this->processItem($subitem, $kill, $location);
 			}
 		}
 		return true;
