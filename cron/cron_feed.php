@@ -167,7 +167,7 @@ function isIDFeed(&$url)
 		if(strpos($url, '?a=feed')) {
 			$url = preg_replace('/\?a=feed/', '?a=idfeed', $url);
 		} else if(strpos($url, '?')) {
-			$url = preg_replace('/\?/', 'a=idfeed&', $url);
+			$url = preg_replace('/\?/', '?a=idfeed&', $url);
 		} else if (substr($url, -1) == '/') {
 			$url = $url."?a=idfeed";
 		} else {
