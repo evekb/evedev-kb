@@ -174,7 +174,6 @@ function getIDFeed(&$key, &$val)
 		} else if ($val['apikills']) {
 			$html .= ", Start kill = ".($val['lastkill']);
 		}
-		$val['url'] = preg_replace('/a=idfeed/', 'a=feed', $val['url']);
 		$html .= $feedfetch->errormsg();
 	}
 	return $html;

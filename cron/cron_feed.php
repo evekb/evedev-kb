@@ -130,7 +130,6 @@ function getIDFeed(&$key, &$val)
 		$html .= "Error reading feed: ".$val['url'];
 		if(!$val['lastkill']) $html .= ", Start time = ".(time() - 60*60*24*7);
 		else if($val['apikills']) $html .= ", Start kill = ".($val['lastkill']);
-		$val['url'] = preg_replace('/a=idfeed/', 'a=feed', $val['url']);
 		$html .= $feedfetch->errormsg();
 	}
 	return $html;
