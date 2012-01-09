@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @package EDK555555555555555
+ * @package EDK
  */
 function update029()
 {
@@ -9,15 +9,47 @@ function update029()
 	//Checking if this Update already done
 	if (CURRENT_DB_UPDATE < "029") {
 		$qry = DBFactory::getDBQuery(true);
+		$qry2 = DBFactory::getDBQuery(true);
 
 		$newrows = array();
-		$sql = 'SELECT cfg_site, cfg_key, cfg_value FROM kb3_config WHERE cfg_key'
-				.' IN ("cfg_pilotid", "cfg_corpid", "cfg_allianceid")';
+		$sql = 'SELECT cfg_site FROM kb3_config GROUP BY cfg_site';
 		$qry->execute($sql);
 		while ($row = $qry->getRow()) {
-			if (is_numeric($row['cfg_value'])) {
-				$newrows[] = '"'.$row['cfg_site'].'", "'.$row['cfg_key'].'", "'.
-				serialize(array((int)$row['cfg_value'])).'"';
+			$qry2->execute("SELECT cfg_value FROM kb3_config WHERE cfg_site = '"
+					.$row['cfg_site']."' AND cfg_key = 'cfg_pilotid'");
+			if($row2 = $qry2->getRow()) {
+				if (is_null($row2['cfg_value']) 
+								|| is_numeric($row2['cfg_value'])) {
+					$newrows[] = '"'.$row['cfg_site'].'", "cfg_pilotid", "'.
+							serialize(array((int)$row['cfg_value'])).'"';
+				}
+			} else {
+					$newrows[] = '"'.$row['cfg_site'].'", "cfg_pilotid", "'.
+							serialize(array()).'"';
+			}
+			$qry2->execute("SELECT cfg_value FROM kb3_config WHERE cfg_site = '"
+					.$row['cfg_site']."' AND cfg_key = 'cfg_corpid'");
+			if($row2 = $qry2->getRow()) {
+				if (is_null($row2['cfg_value']) 
+								|| is_numeric($row2['cfg_value'])) {
+					$newrows[] = '"'.$row['cfg_site'].'", "cfg_corpid", "'.
+							serialize(array((int)$row['cfg_value'])).'"';
+				}
+			} else {
+					$newrows[] = '"'.$row['cfg_site'].'", "cfg_corpid", "'.
+							serialize(array()).'"';
+			}
+			$qry2->execute("SELECT cfg_value FROM kb3_config WHERE cfg_site = '"
+					.$row['cfg_site']."' AND cfg_key = 'cfg_allianceid'");
+			if($row2 = $qry2->getRow()) {
+				if (is_null($row2['cfg_value']) 
+								|| is_numeric($row2['cfg_value'])) {
+					$newrows[] = '"'.$row['cfg_site'].'", "cfg_allianceid", "'.
+							serialize(array((int)$row['cfg_value'])).'"';
+				}
+			} else {
+					$newrows[] = '"'.$row['cfg_site'].'", "cfg_allianceid", "'.
+							serialize(array()).'"';
 			}
 		}
 		if($newrows) {
