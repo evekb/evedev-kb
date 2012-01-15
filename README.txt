@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.0.2
+Eve Development Network Killboard v4.0.3
 -------------------------------------------
 
 // REQUIREMENTS
@@ -24,6 +24,13 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
+v4.0.3
+Fixes:
+Updates old owner ids to new format
+idfeeds no longer fall back to old feed on error
+items inside containers are stored correctly
+blueprint copies inside containers work
+-------------------------------------------
 v4.0.2
 Fixes:
 Unknown ships are added with correct id.
