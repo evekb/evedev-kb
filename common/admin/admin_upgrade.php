@@ -178,7 +178,7 @@ if (count($page_error) == 0) {
 				if ($deleteList) {
 					foreach ($deleteList as $curFile) {
 						if ($curFile && substr($curFile, 0, 1) != "/") {
-							if (!@unlink($curFile)) {
+							if (file_exists($curFile) && !@unlink($curFile)) {
 								$page_error[] = "Could not unlink ".$curFile;
 							}
 						}
