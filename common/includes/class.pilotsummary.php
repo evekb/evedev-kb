@@ -211,7 +211,7 @@ select $plt_id as psm_plt_id, losses.psm_shp_id, ifnull(kills.knb,0), ifnull(kil
 
 			$sql = "UPDATE kb3_pilots SET plt_kpoints = plt_kpoints - "
 					.$kill->getKillPoints()
-					." WHERE plt_id = ".$kill->getVictimID();
+					." WHERE plt_id = ".$inv->getPilotID();
 			$qry->execute($sql);
 		}
 	}
