@@ -347,6 +347,8 @@ class Translate
             "Mining Foreman Link - Laser Optimization I Blueprint", "Omnidirectional Tracking Link II", "Omnidirectional Tracking Link II Blueprint", 
             "Capital EM Pulse Generator", "Capital EM Pulse Generator Blueprint", "Wrecked Caldari Station", "Indestructible Minmatar Starbase");
         $this->killmail_ = str_replace($search, $replace, $this->killmail_);
+				// Reverse the MWD change from 'Monopropellant Hydrazine Boosters' above.
+        $this->killmail_ = str_replace("Phased Monopropellant Hydrazine Boosters", "Phased Monopropellant I Hydrazine Boosters", $this->killmail_);
     }
 
         return $this->killmail_;
