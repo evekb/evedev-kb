@@ -40,7 +40,7 @@ class KillSummaryTablePublic extends KillSummaryTable
 
 		$sql .= ' sum(kll_isk_loss) AS kisk FROM kb3_kills kll
                     INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )';
-		
+
         $sql .= ' INNER JOIN kb3_ship_classes scl ON ( scl.scl_id = shp.shp_class )';
 
         if ($this->inv_crp)
@@ -120,20 +120,31 @@ class KillSummaryTablePublic extends KillSummaryTable
 		$num = count($entry) - 1;
 		$summary = array();
 		$count = 0;
+
+		$args = edkURI::parseURI();
+		if (edkURI::getArg('scl_id')) {
+			foreach ($args as $key => $value) {
+				if ($value[0] == 'scl_id') {
+					unset($args[$key]);
+					break;
+				}
+			}
+		}
+		$qrystring = edkURI::build($args);
+		$clearfilter = $qrystring;
+		if (strpos($qrystring, '?') === false) {
+			$qrystring .= "?";
+		} else {
+			$qrystring .= "&amp;";
+		}
+
 		foreach ($entry as $k => $v)
 		{
 			if($v['id'] == 3) continue;
 			$v['break'] = 0;
 			if($_GET['scl_id'] && $_GET['scl_id'] == $v['id']) $v['hl'] = 1;
 			else $v['hl'] = 0;
-			$qrystring = preg_replace("/&scl_id=([0-9]?[0-9])/", "", $_SERVER['QUERY_STRING']);
-			$qrystring = preg_replace("/&page=([0-9]?[0-9])/", "", $qrystring);
-			$qrystring = preg_replace("/&/", "&amp;", $qrystring);
-			if ($this->view)
-			{
-				$qrystring .= '&view='.$this->view;
-			}
-			$v['url'] = $querystring;
+			$v['qry'] = $qrystring;
 			$v['kisk'] = round($v['kills_isk']/1000000, 2);
 			$v['name'] = $k;
 
@@ -159,11 +170,8 @@ class KillSummaryTablePublic extends KillSummaryTable
 			$smarty->assign('kcount', $this->tkcount);
 		}
 
-		if (!empty($_GET['scl_id']))
-		{
-			$qrystring = preg_replace("/&scl_id=([0-9]?[0-9])/", "", '?'.$_SERVER['QUERY_STRING']);
-			$qrystring = preg_replace("/&/", "&amp;", $qrystring);
-			$smarty->assign('clearfilter',$qrystring);
+		if (edkURI::getArg('scl_id')){
+			$smarty->assign('clearfilter',$clearfilter);
 		}
 
 		$html .= $smarty->fetch(get_tpl('summarytable'));
