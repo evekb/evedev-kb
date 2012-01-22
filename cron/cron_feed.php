@@ -100,7 +100,7 @@ function getIDFeed(&$key, &$val)
 		$feedfetch->setAllKills(1);
 	}
 	if ($val['trusted']) {
-		$feedfetch->setAcceptedTrust(0);
+		$feedfetch->setAcceptedTrust(1);
 	}
 	if(!$val['lastkill']) {
 		$feedfetch->setStartDate(time() - 60*60*24*7);

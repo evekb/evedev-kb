@@ -347,13 +347,34 @@ class IDFeed
 	}
 
 	/**
-	 * Set level of trust to accept. If the remote kill has a trust level below
-	 * this, it will not be verified.
+	 * Set level of trust to accept. Kills with a trust level greater than or
+	 * equal to this will be accepted as verified. If the remote kill has a trust
+	 * level below this, it will not be verified.
 	 * 
-	 * @param int $trust
+	 * e.g.
+	 * We fetch a KillLog from the API and use setKillTrust to force it to a 
+	 * trust level of 3. Another board then fetches from us, and is willing to 
+	 * accept a trust level of 1, so the kills are fetched and accepted as
+	 * verified. The trust level is reduced to 2 by that board. The next board
+	 * will also accept them as verified and set trust to 1, and the next 0.
+	 * 
+	 * If a board accepts all kills with a trust level of 1 it will accept the
+	 * kill from the first three boards (3, 2, 1) as verified. The fourth
+	 * board trusts the kill itself , but the level of trust is too low for other
+	 * boards to accept that kill as verified from the fourth board.
+	 * 
+	 * Untrusted kills are still accepted, but not marked as verified. (Future
+	 * versions may also have minimum standards to accept unverified kills.) Note
+	 * that it is possible for trust levels to change. e.g. A kill is manually
+	 * posted so has a trust level of 0 but then the same kill is fetched from
+	 * the API and the trust level changed to 3. Thus a kill may be untrusted
+	 * when a remote board fetches but become trusted later on. 
+	 * 
+	 * @param int $trust Accept kills with greater than or equal to this level
+	 * of trust.
 	 * @return int 
 	 */
-	function setAcceptedTrust($trust = 0)
+	function setAcceptedTrust($trust = 1)
 	{
 		$this->trust = (int)$trust;
 		return $this->trust;
@@ -485,7 +506,7 @@ class IDFeed
 
 			$kill = new Kill();
 			if ($externalID
-					&& ($this->killtrust || (int)$row['trust'] > $this->trust)) {
+					&& ($this->killtrust || (int)$row['trust'] >= $this->trust)) {
 				$kill->setExternalID($externalID);
 			}
 			if ((int)$row['trust'] || $this->killtrust) {
@@ -548,7 +569,7 @@ class IDFeed
 				} else if ($id < 0) {
 					$id = $kill->getDupe(true);
 					if ($externalID  && $id
-							&& ($this->killtrust || (int)$row['trust'] > $this->trust)) {
+							&& ($this->killtrust || (int)$row['trust'] >= $this->trust)) {
 						$qry = DBFactory::getDBQuery(true);
 						$trust = min($this->maxtrust,
 								max((int)$row['trust'] - 1, $this->killtrust));
@@ -860,7 +881,7 @@ class IDFeed
 			if ($qry->recordCount()) {
 				$qrow = $qry->getRow();
 				$id = (int)$qrow['kll_id'];
-				if ((int)$row['trust'] > $this->trust
+				if ((int)$row['trust'] >= $this->trust
 						&& (int)$row['killID']
 						&& !(int)$qrow['kll_external_id']) {
 					$qry->execute("UPDATE kb3_kills JOIN kb3_mails ON kb3_kills.kll_id = ".
