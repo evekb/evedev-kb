@@ -58,7 +58,7 @@ foreach($feeds as $key => &$val) {
 }
 echo $html."<br />\n";
 
-echo "Time taken = ".(microtime(true) - $cronStartTime)." seconds.";
+echo "Time taken = ".(microtime(true) - $cronStartTime)." seconds.\n";
 
 /**
  * Fetch the board owners.
@@ -132,7 +132,7 @@ function getIDFeed(&$key, &$val)
 		else if($val['apikills']) $html .= ", Start kill = ".($val['lastkill']);
 		$html .= $feedfetch->errormsg();
 	}
-	return $html;
+	return $html."\n";
 }
 
 /**

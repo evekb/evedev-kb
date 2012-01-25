@@ -89,4 +89,4 @@ if (php_sapi_name() == 'cli') {
 	$html = str_replace("<br />","\n",$html);
 	$html = strip_tags($html);
 }
-echo $html;
+echo $html."\n";
