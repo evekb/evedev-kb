@@ -58,7 +58,7 @@ foreach($feeds as $key => &$val) {
 }
 echo $html."<br />\n";
 
-echo "Time taken = ".(microtime(true) - $cronStartTime)." seconds.";
+echo "Time taken = ".(microtime(true) - $cronStartTime)." seconds.\n";
 
 /**
  * Fetch the board owners.
@@ -100,7 +100,7 @@ function getIDFeed(&$key, &$val)
 		$feedfetch->setAllKills(1);
 	}
 	if ($val['trusted']) {
-		$feedfetch->setAcceptedTrust(0);
+		$feedfetch->setAcceptedTrust(1);
 	}
 	if(!$val['lastkill']) {
 		$feedfetch->setStartDate(time() - 60*60*24*7);
@@ -130,10 +130,9 @@ function getIDFeed(&$key, &$val)
 		$html .= "Error reading feed: ".$val['url'];
 		if(!$val['lastkill']) $html .= ", Start time = ".(time() - 60*60*24*7);
 		else if($val['apikills']) $html .= ", Start kill = ".($val['lastkill']);
-		$val['url'] = preg_replace('/a=idfeed/', 'a=feed', $val['url']);
 		$html .= $feedfetch->errormsg();
 	}
-	return $html;
+	return $html."\n";
 }
 
 /**
@@ -167,7 +166,7 @@ function isIDFeed(&$url)
 		if(strpos($url, '?a=feed')) {
 			$url = preg_replace('/\?a=feed/', '?a=idfeed', $url);
 		} else if(strpos($url, '?')) {
-			$url = preg_replace('/\?/', 'a=idfeed&', $url);
+			$url = preg_replace('/\?/', '?a=idfeed&', $url);
 		} else if (substr($url, -1) == '/') {
 			$url = $url."?a=idfeed";
 		} else {

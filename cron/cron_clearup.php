@@ -11,6 +11,8 @@
 $maxStoreSize = 512;
 /** @var integer Maximum image age in days. */
 $maxImageAge = 30;
+/** @var integer Maximum API cache age in days. */
+$maxAPIAge = 1;
 /** @var integer Maximum SQL query age in days. */
 $maxSQLAge = 2;
 /** @var integer Maximum cache age for everything else in days. */
@@ -68,6 +70,7 @@ echo "Removed ".CacheHandler::removeByAge('img/', $maxImageAge * 24)." files fro
 //echo "Removed ".CacheHandler::removeBySize('img/', 512 * 24)." files from img/<br />\n";
 //echo "Removed ".CacheHandler::removeByAge('store/', 7 * 24)." files from store/<br />\n";
 echo "Removed ".CacheHandler::removeBySize('store/', $maxStoreSize)." files from store/<br />\n";
+echo "Removed ".CacheHandler::removeByAge('api/', $maxAPIAge * 24)." files from api/<br />\n";
 
 //echo "Removed ".CacheHandler::removeByAge('/', 30 * 24, false)." files from entire cache<br />\n";
 

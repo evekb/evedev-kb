@@ -1292,6 +1292,8 @@ class Kill extends Cacheable
 	 */
 	function calculateISKLoss($update = true)
 	{
+		// Make sure the kill is initialised before we change anything.
+		$this->execQuery();
 		$value = 0;
 		foreach($this->destroyeditems_ as $itd) {
 			$item = $itd->getItem();

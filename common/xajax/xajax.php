@@ -14,7 +14,7 @@ event::register('page_assembleheader', 'edk_xajax::insertHTML');
 event::register('mods_initialised', 'edk_xajax::lateProcess');
 //event::register('page_initialisation', 'edk_xajax::lateProcess');
 
-$uri = edkURI::build(edkURI::parseURI());
+$uri = html_entity_decode(edkURI::build(edkURI::parseURI()));
 if(strpos($uri, "?") === false) $uri .= "?xajax=1";
 else $uri .= "&xajax=1";
 $xajax->configure('requestURI', $uri);

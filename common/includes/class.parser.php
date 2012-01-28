@@ -785,7 +785,7 @@ class Parser
 			$container = false;
 			$destroyed[$i] = trim($destroyed[$i]);
 			// TODO: Find a nicer way to do this. Then rewrite the rest of the parser.
-			$destroyed[$i] = preg_replace("/ \(Copy\)(.*)\(Cargo\)/", "$1(Copy)", $destroyed[$i]);
+			$destroyed[$i] = preg_replace("/ \(Copy\)(.*)\([\w ]*\)/", "$1(Copy)", $destroyed[$i]);
 			$itemname = substr($destroyed[$i], 0, strlen($destroyed[$i]));
 
 			if ($destroyed[$i] == "") {

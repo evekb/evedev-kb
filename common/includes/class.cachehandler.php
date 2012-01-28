@@ -221,6 +221,40 @@ class CacheHandler
 	}
 
 	/**
+	 * Remove files in a cache directory to reduce total file count to that given.
+	 * Oldest files are removed first.
+	 *
+	 * @param string $dir The directory to remove files from.
+	 * @param integer $maxsize The maximum count of files in the cache.
+	 *
+	 * @return integer|false The count of files removed or false on error.
+	 */
+	public static function removeByCount($dir, $maxsize = 0)
+	{
+		$maxsize = (int) $maxsize;
+
+		$files = self::getFiles($dir);
+		usort($files, array('CacheHandler', 'compareAge'));
+
+		$cursize = 0;
+		$delcount = 0;
+		$cursize = count($files);
+		
+		foreach ($files as $key => $file) {
+			if ($cursize < $maxsize) {
+				break;
+			}
+			if (unlink($file[1])) {
+				$cursize--;
+				unset($files[$key]);
+				$delcount++;
+			}
+		}
+		self::removeDir($dir);
+		return $delcount;
+	}
+
+	/**
 	 * Return an array of all files under the given dir.
 	 *
 	 * @param string $dir Root directory to search in.

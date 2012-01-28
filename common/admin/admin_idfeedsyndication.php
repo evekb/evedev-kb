@@ -142,7 +142,7 @@ function getIDFeed(&$key, &$val)
 	$feedfetch->setID();
 	$feedfetch->setAllKills(1);
 	if ($val['trusted']) {
-		$feedfetch->setAcceptedTrust(0);
+		$feedfetch->setAcceptedTrust(1);
 	}
 	if(!$val['lastkill']) {
 		$feedfetch->setStartDate(time() - 60*60*24*7);
@@ -174,7 +174,6 @@ function getIDFeed(&$key, &$val)
 		} else if ($val['apikills']) {
 			$html .= ", Start kill = ".($val['lastkill']);
 		}
-		$val['url'] = preg_replace('/a=idfeed/', 'a=feed', $val['url']);
 		$html .= $feedfetch->errormsg();
 	}
 	return $html;
@@ -188,9 +187,28 @@ function getIDFeed(&$key, &$val)
  */
 function isIDFeed(&$url)
 {
-	// Believe the user ...
-	if (strpos($url, 'idfeed')) return true;
+	// If the url has idfeed or p=ed_feed in it then assume the URL is correct
+	// and return immediately.
+	if (strpos($url, 'idfeed')) {
+		// Believe the user ...
+		return true;
+	} else if (strpos($url, 'p=ed_feed')) {
+		// Griefwatch feed.
+		return false;
+	}
 
+	// With no extension standard EDK will divert the idfeed fetcher to the idfeed
+	if(strpos($url, '?') === false) {
+		$urltest = $url.'?kll_id=-1';
+		if (checkIDFeed($urltest)) {
+			return true;
+		}
+	}
+
+	// Either the bare url didn't work or we don't have a bare url.
+	// Either add 'a=idfeed' to the url or change 'a=feed'.
+	// If we find an idfeed then make the url change permanent and return true
+	// Otherwise we have an old feed, return false.
 	if(strpos($url, '?')) {
 		$urltest = preg_replace('/\?.*/', '?a=idfeed&kll_id=-1', $url);
 	} else if (substr($url, -1) == '/') {
@@ -198,15 +216,11 @@ function isIDFeed(&$url)
 	} else {
 		$urltest = $url."/?a=idfeed&kll_id=-1";
 	}
-	$http = new http_request($urltest);
-	$http->set_useragent("EDK IDFeedfetcher Check");
-	$http->set_timeout(10);
-	$res = $http->get_content();
-	if ($res && strpos($res, 'edkapi')) {
+	if (checkIDFeed($urltest)) {
 		if(strpos($url, '?a=feed')) {
 			$url = preg_replace('/\?a=feed/', '?a=idfeed', $url);
 		} else if(strpos($url, '?')) {
-			$url = preg_replace('/\?/', 'a=idfeed&', $url);
+			$url = preg_replace('/\?/', '?a=idfeed&', $url);
 		} else if (substr($url, -1) == '/') {
 			$url = $url."?a=idfeed";
 		} else {
@@ -283,4 +297,21 @@ function getOldFeed(&$key, &$val)
 		}
 	}
 	return $html;
+}
+
+/**
+ * @param string $url 
+ * @return boolean True if this is an IDFeed, false if not.
+ */
+function checkIDFeed( $url) {
+	$http = new http_request($url);
+	$http->set_useragent("EDK IDFeedfetcher Check");
+	$http->set_timeout(0.5);
+	$res = $http->get_content();
+	if ($http->status['timed_out']) {
+		return false;
+	} else if ($res && strpos($res, 'edkapi')) {
+		return true;
+	}
+	return false;
 }

@@ -7,7 +7,7 @@
  * @package EDK
  */
 if (!defined('LATEST_DB_UPDATE')) {
-	define('LATEST_DB_UPDATE', "028");
+	define('LATEST_DB_UPDATE', "029");
 }
 
 define('KB_CACHEDIR', 'cache');
@@ -21,7 +21,7 @@ define('IMG_SERVER', "image.eveonline.com");
 
 // current version: major.minor.sub
 // even numbers for minor = development version
-define('KB_VERSION', '4.0.1');
+define('KB_VERSION', '4.0.3');
 define('KB_RELEASE', '(Crucible)');
 
 define('KB_APIKEY_LEGACY', 1);

@@ -36,7 +36,7 @@ if (file_exists('../kbconfig.php'))
 	if($cid) insertConfig('cfg_corpid', serialize(array($cid)));
 	else insertConfig('cfg_corpid', serialize(array()));
 	if($pid) insertConfig('cfg_pilotid', serialize(array($pid)));
-	else insertConfig('cfg_cilotid', serialize(array()));
+	else insertConfig('cfg_pilotid', serialize(array()));
 
 	insertConfig('cfg_img', $img);
 	insertConfig('cfg_kbhost', $host);
@@ -63,16 +63,22 @@ $smarty->display('install_step7.tpl');
 
 function insertConfig($key, $value)
 {
+	$localvars = array();
+	$localvars[] = 'cfg_kbhost';
+	$localvars[] = 'cfg_img';
+	$localvars[] = 'cfg_kbtitle';
 	$result = mysql_query('SELECT * FROM kb3_config WHERE cfg_site=\''.KB_SITE.'\' AND cfg_key=\''.$key.'\'');
 	if (!$row = mysql_fetch_row($result))
 	{
 		$sql = "INSERT INTO kb3_config VALUES ('".KB_SITE."','".$key."','".$value."')";
 		mysql_query($sql);
 	}
-	$result = mysql_query('SELECT * FROM kb3_config WHERE cfg_site=\'\' AND cfg_key=\''.$key.'\'');
-	if (!$row = mysql_fetch_row($result))
-	{
-		$sql = "INSERT INTO kb3_config VALUES ('','".$key."','".$value."')";
-		mysql_query($sql);
+	if (!in_array($key, $localvars)) {
+		$result = mysql_query('SELECT * FROM kb3_config WHERE cfg_site=\'\' AND cfg_key=\''.$key.'\'');
+		if (!$row = mysql_fetch_row($result))
+		{
+			$sql = "INSERT INTO kb3_config VALUES ('','".$key."','".$value."')";
+			mysql_query($sql);
+		}
 	}
 }

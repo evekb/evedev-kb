@@ -34,8 +34,7 @@
 $starttime = microtime(true);
 $idfeedversion = "1.04";
 
-$maxkillsreturned = 200;
-
+$maxkillsreturned = cache::checkLoad() ? 20 : 200;
 $xml = "<?xml version='1.0' encoding='UTF-8'?>
 <eveapi version='2' edkapi='".$idfeedversion."'>
 </eveapi>";
@@ -162,12 +161,12 @@ if (isset($_GET['system'])) {
 	$list->addRegion($row['reg_id']);
 }
 
-if (isset($_GET['lastID'])) {
+if (isset($_GET['lastID']) && isset($_GET['allkills'])
+		&& $_GET['allkills'] == 0) {
 	$list->setMinExtID(intval($_GET['lastID']));
 	if (isset($_GET['range']))
 			$list->setMaxExtID(intval($_GET['lastID'] + $_GET['range']));
-}
-else if (isset($_GET['lastintID']) && isset($_GET['allkills']) && $_GET['allkills']) {
+} else if (isset($_GET['lastintID'])) {
 	$list->setMinKllID(intval($_GET['lastintID']));
 	if (isset($_GET['range']))
 			$list->setMaxKllID(intval($_GET['lastintID'] + $_GET['range']));
