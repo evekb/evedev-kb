@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.0.3
+Eve Development Network Killboard v4.0.4
 -------------------------------------------
 
 // REQUIREMENTS
@@ -24,6 +24,17 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
+v4.0.4
+Fixes:
+Add Crucible 1.1 DB packages.
+Add \n to cronjobs.
+Ship class links for public summary tables fixed.
+fix parser translation for pre-crucible 1.0 ABs.
+Page cache timing fixes - respects admin settings.
+Setting prices on kill details works with unitialised Kills
+Neaten update errors for unlinking missing files.
+Remove kill points from killer rather than victim on deletion.
+-------------------------------------------
 v4.0.3
 Fixes:
 Updates old owner ids to new format
