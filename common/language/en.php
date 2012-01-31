@@ -7,6 +7,7 @@ $language['en']['Alliance'] = 'Alliance';
 $language['en']['Corporation'] = 'Corporation';
 $language['en']['Pilot'] = 'Pilot';
 $language['en']['page_about'] = 'About';
+$language['en']['page_login'] = 'Login';
 //alliance_detail
 $language['en']['alliance_invalid'] = 'No valid alliance id specified.';
 $language['en']['page_all_det'] = 'Alliance Details';
