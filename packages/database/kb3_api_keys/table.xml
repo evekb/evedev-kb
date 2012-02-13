@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+  <name>kb3_api_keys</name>
+  <rows>0</rows>
+  <structure>CREATE TABLE `kb3_api_keys` (
+	`key_name` VARCHAR( 50 ) NOT NULL,
+	`key_id` INT(11) NOT NULL,
+	`key_key` VARCHAR( 64 ) NOT NULL,
+	`key_kbsite` VARCHAR( 16 ) NOT NULL,
+	`key_flags` TINYINT NOT NULL,
+	PRIMARY KEY (`key_name`, `key_id`, `key_key`, `key_kbsite`)
+) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>
+ 
