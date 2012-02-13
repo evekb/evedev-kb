@@ -5,6 +5,10 @@
     <version>1.1</version>
   </table>
   <table>
+    <name>kb3_api_keys</name>
+    <version>1.1</version>
+  </table>
+  <table>
     <name>kb3_apicache</name>
     <version>1.1</version>
   </table>
