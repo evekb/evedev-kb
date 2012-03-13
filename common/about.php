@@ -39,7 +39,6 @@ class pAbout extends pageAssembly
 		$currentDeveloper = array(
 			'Hon Kovell', // Various stuff (EDK2-3)
 			'mastergamer', // Different various stuff
-			'FriedRoadKill', // Parser, db updates and image packs
 			'Mini Mooo',
 		);
 
@@ -48,6 +47,7 @@ class pAbout extends pageAssembly
 			'exi', // Various stuff (EDK <2)
 			'Beansman',
 			'Ralle030583',
+			'FriedRoadKill', // Parser, db updates and image packs
 			'Captain Thunk' // API mod
 		);
 
