@@ -33,7 +33,7 @@ class Pheal
     /**
      * Version container
      */
-    public static $version = "0.0.14-dev";
+    public static $version = "0.1.0";
 
     /**
      * resource handler for curl
@@ -292,7 +292,7 @@ class Pheal
             
             // attach url parameters
             if(count($opts))
-            $url .= "?" . http_build_query($opts);
+            $url .= "?" . http_build_query($opts, '', '&');
         }
         
         // additional headers
@@ -369,12 +369,12 @@ class Pheal
         if(count($opts) && PhealConfig::getInstance()->http_post)
         {
             $options['http']['method'] = 'POST';
-            $options['http']['content'] = http_build_query($opts);
+            $options['http']['content'] = http_build_query($opts, '', '&');
         }
         // else build url parameters
         elseif(count($opts))
         {
-            $url .= "?" . http_build_query($opts);
+            $url .= "?" . http_build_query($opts, '', '&');
         }
 
         // set track errors. needed for $php_errormsg

@@ -128,11 +128,11 @@ class PhealFileLog implements PhealLogInterface
 
         // add post data
         if(PhealConfig::getInstance()->http_post)
-            $url .= " DATA: ".http_build_query($opts);
+            $url .= " DATA: ".http_build_query($opts, '', '&');
 
         // add data to url
         elseif(count($opts))
-            $url .= '?' . http_build_query($opts);
+            $url .= '?' . http_build_query($opts, '', '&');
 
         return $url;
     }
