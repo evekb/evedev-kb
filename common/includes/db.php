@@ -14,13 +14,6 @@ if(!defined('DB_HOST'))
 	die("Database has not been configured. Exiting.");
 }
 
-$value = (float) mysqli_get_server_info(DBConnection::id());
-
-if ($value < 5)
-{
-	die("EDK 3 requires MySQL version 5.0+. Your version is ".$value);
-}
-
 // Check if caching has been configured already.
 if(defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE == true)
 {
