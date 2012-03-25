@@ -70,34 +70,38 @@ class Parser
 		 * In addition, we always want to process strtotime in eve's time i.e. UTC/GMT.
 		 */
 		$timestamp_int = strtotime($timestamp . ' UTC');
-        $cru11_release = strtotime("2012-01-24 12:00:00 UTC");
-        if($timestamp_int < $cru11_release) {
-            $cru10_release = strtotime("2011-11-29 12:00:00 UTC");
-            if($timestamp_int < $cru10_release) {
-                $dom11_release = strtotime('2010-01-21 12:00:00 UTC');
-                if($timestamp_int < $dom11_release) {
-                    $dom_release = strtotime('2009-12-03 12:00:00 UTC');
-                    if($timestamp_int < $dom_release) {
-                        $apoc_release = strtotime('2009-03-10 03:00:00 UTC');
-                        if($timestamp_int < $apoc_release) {
-                            $apoc15_release = strtotime('2009-08-20 12:00:00 UTC');
-                            if($timestamp_int < $apoc15_release) {
-                                $qr_release = strtotime('2008-11-11 00:00:00 UTC');
-                                if($timestamp_int < $qr_release) {
-                                    $this->preparse('preqr');
-                                }
-                                $this->preparse('apoc15');
-                            }
-                            $this->preparse('apoc');
-                        }
-                        $this->preparse('dominion');
-                    }
-                    $this->preparse('dom11');
-                }
-                $this->preparse('cru10');
-            }
-            $this->preparse('cru11');
-        }
+		$cru15_release = strtotime("2012-03-13 12:00:00 UTC");
+		if($timestamp_int < $cru15_release) {
+			$cru11_release = strtotime("2012-01-24 12:00:00 UTC");
+			if($timestamp_int < $cru11_release) {
+				$cru10_release = strtotime("2011-11-29 12:00:00 UTC");
+				if($timestamp_int < $cru10_release) {
+					$dom11_release = strtotime('2010-01-21 12:00:00 UTC');
+					if($timestamp_int < $dom11_release) {
+						$dom_release = strtotime('2009-12-03 12:00:00 UTC');
+						if($timestamp_int < $dom_release) {
+							$apoc_release = strtotime('2009-03-10 03:00:00 UTC');
+							if($timestamp_int < $apoc_release) {
+								$apoc15_release = strtotime('2009-08-20 12:00:00 UTC');
+								if($timestamp_int < $apoc15_release) {
+									$qr_release = strtotime('2008-11-11 00:00:00 UTC');
+									if($timestamp_int < $qr_release) {
+										$this->preparse('preqr');
+									}
+									$this->preparse('apoc15');
+								}
+								$this->preparse('apoc');
+							}
+							$this->preparse('dominion');
+						}
+						$this->preparse('dom11');
+					}
+					$this->preparse('cru10');
+				}
+				$this->preparse('cru11');
+			}
+			$this->preparse('cru15');
+		}
 
 		if (strpos($this->killmail_, '**** Truncated - mail is too large ****') > 0)
 			$this->killmail_ = str_replace('**** Truncated - mail is too large ****', '', $this->killmail_);

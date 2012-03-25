@@ -378,6 +378,7 @@ class Translate
 				"Prototype 100MN MicroWarpdrive I", "Experimental 10MN Afterburner I", 
 				"Experimental 10MN MicroWarpdrive I");
 			$this->killmail_ = str_replace($search, $replace, $this->killmail_);
+		} else if( $this->language_ == 'cru15') {
 		}
 		return $this->killmail_;
 	}
