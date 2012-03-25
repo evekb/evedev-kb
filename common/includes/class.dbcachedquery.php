@@ -338,7 +338,7 @@ class DBCachedQuery extends DBBaseQuery
 	{
 		$t1 = microtime(true);
 
-		$this->sql = trim($sql);
+		$this->sql = $sql;
 		unset($this->cache);
 		$this->cache = array();
 		$this->cached = false;
