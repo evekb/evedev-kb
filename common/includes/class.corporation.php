@@ -238,7 +238,7 @@ class Corporation extends Entity
 									   set crp_all_id = '.$alliance->getID().', ';
 						$sql .= "crp_updated = date_format( '".
 										$timestamp."','%Y.%m.%d %H:%i:%s') ".
-										"where crp_id = ".$this->id;
+										"where crp_id = ".$crp->id;
 						$qry->execute($sql);
 						$crp->alliance = $alliance;
 					}
