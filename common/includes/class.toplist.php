@@ -66,24 +66,6 @@ class TopSoloKillerList extends TopList_SoloKiller
 /**
  * @package EDK
  */
-class TopPodKillerList extends TopList_PodKiller
-{}
-
-/**
- * @package EDK
- */
-class TopGrieferList extends TopList_Griefer
-{}
-
-/**
- * @package EDK
- */
-class TopCapitalShipKillerList extends TopList_CapitalShipKiller
-{}
-
-/**
- * @package EDK
- */
 class TopContractKillsList extends TopList_ContractKills
 {}
 

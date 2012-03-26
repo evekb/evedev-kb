@@ -973,13 +973,6 @@ class Kill extends Cacheable
 	}
 
 	/**
-	 * @deprecated
-	 */
-	function setDetailedInvolved()
-	{
-	}
-
-	/**
 	 * Return true if this kill exists and is valid.
 	 * @return boolean
 	 */

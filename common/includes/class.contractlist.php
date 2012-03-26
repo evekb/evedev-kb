@@ -58,14 +58,6 @@ class ContractList
 	}
 
 	/**
-	 * Legacy stub
-	 * @deprecated
-	 */
-	function setCampaigns()
-	{
-	}
-
-	/**
 	 * Set a limit of campaigns to show on each page.
 	 * @param integer $limit
 	 */

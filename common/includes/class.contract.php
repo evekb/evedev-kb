@@ -189,15 +189,6 @@ class Contract
 	}
 
 	/**
-	 * @deprecated
-	 * @return boolean
-	 */
-	function getCampaign()
-	{
-		return true;
-	}
-
-	/**
 	 * Returns a comment string for this campaign.
 	 * @return string
 	 */
