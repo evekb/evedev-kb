@@ -22,15 +22,4 @@ class Killboard
 		$qry->execute($sql);
 		return ($qry->recordCount() > 0);
 	}
-
-	/**
-	 * Looooong deprecated function. Really, stop using this.
-	 * @deprecated
-	 * @return boolean
-	 */
-	public static function hasContracts()
-	{
-		trigger_error("Deprecated. Stop calling me.", E_USER_NOTICE);
-		return false;
-	}
 }
