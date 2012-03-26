@@ -66,41 +66,10 @@ class UpdateXMLParser
 
 	private function validateSchema()
 	{
-		//the validation - should it sit on the google SVN or locally, I wonder...
-		$xsdURL = KB_UPDATE_URL . "/update.xsd";
 		$this->dom = new DOMDocument('1.0', 'utf-8');
 		$this->dom->load($this->domFileLocation);
-		//check if cURL exists, else use fsocket open
-		if (function_exists('curl_init'))
-		{
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, $xsdURL);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			$content = curl_exec($ch);
-			curl_close($ch);
-		}
-		else
-		{
-			$file = fopen($xsdURL, 'r');
-			if (!$file)
-			{
-				$content = "";
-			} else
-			{
-				$content = stream_get_contents($file);
-				fclose($file);
-			}
-		}
-		if (!$content)
-		{
-			trigger_error("XSD could not be retrieved", E_USER_WARNING);
-			return false;
-		} else
-		{
-			file_put_contents(KB_CACHEDIR . "/update/update.xsd", $content);
-		}
 
-		if ($this->dom->schemaValidate(KB_CACHEDIR . "/update/update.xsd"))
+		if ($this->dom->schemaValidate( "update/CCPDB/update.xsd"))
 		{
 			return true;
 		}
