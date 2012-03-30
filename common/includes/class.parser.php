@@ -70,6 +70,7 @@ class Parser
 		 * In addition, we always want to process strtotime in eve's time i.e. UTC/GMT.
 		 */
 		$timestamp_int = strtotime($timestamp . ' UTC');
+		$cru16_release = strtotime("2012-03-28 12:00:00 UTC");
 		$cru15_release = strtotime("2012-03-13 12:00:00 UTC");
 		if($timestamp_int < $cru15_release) {
 			$cru11_release = strtotime("2012-01-24 12:00:00 UTC");
