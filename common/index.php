@@ -4,9 +4,6 @@
  * The EVE-Development Network Killboard
  * based on eve-killboard.net created by rig0r
  *
- * $Date$
- * $Revision$
- * $HeadURL$
  * @package EDK
  * 
  * This program is free software; you can redistribute it and/or modify

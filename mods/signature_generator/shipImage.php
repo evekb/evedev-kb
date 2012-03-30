@@ -1,12 +1,8 @@
 <?php
 /**
- * $Date$
- * $Revision$
- * $HeadURL$
  *
  * @package EDK
  */
-
 
 class shipImage
 {

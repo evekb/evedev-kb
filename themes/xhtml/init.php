@@ -1,9 +1,5 @@
 <?php
 /**
- * $Date$
- * $Revision$
- * $HeadURL$
- *
  * @package EDK
  */
 

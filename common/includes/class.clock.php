@@ -1,13 +1,5 @@
 <?php
 /**
- * $Date$
- * $Revision$
- * $HeadURL$
- * @package EDK
- */
-
-
-/**
  * A simple clock implementation
  * @package EDK
  */

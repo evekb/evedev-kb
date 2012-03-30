@@ -1,12 +1,4 @@
 <?php
-
-/**
- * $Date$
- * $Revision$
- * $HeadURL$
- * @package EDK
- */
-
 /**
  * Page caching class
  *

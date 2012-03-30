@@ -1,11 +1,4 @@
 <?php
-/*
- * $Date$
- * $Revision$
- * $HeadURL$
- * @package EDK
- */
-
 /**
  * Wrapper class to pick the correct language from config settings and return
  * a translation. English is the default language.

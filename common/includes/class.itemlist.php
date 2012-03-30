@@ -1,12 +1,5 @@
 <?php
 /**
- * $Date$
- * $Revision$
- * $HeadURL$
- * @package EDK
- */
-
-/**
  * Fetches a information for each item in a list.
  *
  * The list is based on dropped items for given kill ids, dropped items for

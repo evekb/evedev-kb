@@ -1,8 +1,5 @@
 <?php
 /**
- * $Date: 2010-05-29 20:59:20 +1000 (Sat, 29 May 2010) $
- * $Revision: 705 $
- * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/thumb.php $
  *
  * @package EDK
  */

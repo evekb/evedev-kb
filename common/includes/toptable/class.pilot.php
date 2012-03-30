@@ -1,11 +1,7 @@
 <?php
 /**
- * $Date$
- * $Revision$
- * $HeadURL$
  * @package EDK
  */
-
 class TopTable_Pilot
 {
 	function TopTable_Pilot($toplist, $entity)

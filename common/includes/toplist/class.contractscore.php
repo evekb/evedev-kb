@@ -1,13 +1,9 @@
 <?php
 /**
- * $Date$
- * $Revision$
- * $HeadURL$
+ * Create a box to display the top pilots at something. Subclasses of TopList
+ * define the something.
  * @package EDK
  */
-
-// Create a box to display the top pilots at something. Subclasses of TopList
-// define the something.
 
 class TopList_ContractScore extends TopList_Score
 {

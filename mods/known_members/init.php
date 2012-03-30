@@ -1,10 +1,4 @@
 <?php
-/*
- * $Date$
- * $Revision$
- * $HeadURL$
- * @package EDK
- */
 
 $modInfo['known_members']['name'] = "Known Members";
 $modInfo['known_members']['abstract'] = "Add an option for a list of known members to the corp details page.";

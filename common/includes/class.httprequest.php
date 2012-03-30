@@ -1,12 +1,5 @@
 <?php
 /**
- * $Date$
- * $Revision$
- * $HeadURL$
- * @package EDK
- */
-
-/*
  * http_request class
  *
  * useful to avoid allow_url_fopen_wrapper issues

@@ -1,11 +1,5 @@
 <?php
 /**
- * $Date$
- * $Revision$
- * $HeadURL$
- * @package EDK
- */
-/*
  * @package EDK
  */
 class pHome extends pageAssembly

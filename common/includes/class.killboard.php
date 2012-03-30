@@ -1,12 +1,5 @@
 <?php
 /**
- * $Date$
- * $Revision$
- * $HeadURL$
- * @package EDK
- */
-
-/**
  * @todo This whole class will go away.
  * @package EDK
  */

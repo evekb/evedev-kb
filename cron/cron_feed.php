@@ -1,9 +1,6 @@
 #!/usr/bin/php
 <?php
 /**
- * $Date$
- * $Revision$
- * $HeadURL$
  * @package EDK
  */
 

@@ -1,12 +1,5 @@
 <?php
 /**
- * $Date$
- * $Revision$
- * $HeadURL$
- * @package EDK
- */
-
-/*
  * @package EDK
  */
 class pContractDetail extends pageAssembly

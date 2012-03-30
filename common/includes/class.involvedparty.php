@@ -1,12 +1,5 @@
 <?php
 /**
- * $Date$
- * $Revision$
- * $HeadURL$
- * @package EDK
- */
-
-/**
  * A simple wrapper for involved party information.
  * @package EDK
  */

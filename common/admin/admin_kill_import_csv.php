@@ -1,14 +1,8 @@
 <?php
 /**
- * $Date$
- * $Revision$
- * $HeadURL$
- * @package EDK
- */
-
-/**
  * Import kills from a csv formatted text
  * Used together with export tool!
+ * @package EDK
  */
 
 $page = new Page('Administration - Killmail import');

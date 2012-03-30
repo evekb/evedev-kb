@@ -1,12 +1,5 @@
 <?php
-
 /**
- * $Date$
- * $Revision$
- * $HeadURL$
- * @package EDK
- */
-/*
  * Create a syndication feed of kills stored on this board.
  *
  * Flags
@@ -29,6 +22,7 @@
  * kll_ext_id = show one kill only.
  * limit = maximum number of kills to return.
  *
+ * @package EDK
  */
 
 $starttime = microtime(true);

@@ -1,10 +1,4 @@
 <?php
-/**
- * $Date$
- * $Revision$
- * $HeadURL$
- * @package EDK
- */
 
 if (config::get('comments')) {
 	require_once('common/includes/xajax.functions.php');

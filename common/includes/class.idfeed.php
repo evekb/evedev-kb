@@ -1,12 +1,4 @@
 <?php
-
-/**
- * $Date$
- * $Revision$
- * $HeadURL$
- * @package EDK
- */
-
 /**
  * EDK IDFeed Syndication reader class.
  * This class is used to fetch and read the feed from another EDK board. It

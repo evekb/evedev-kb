@@ -1,12 +1,4 @@
 <?php
-/*
- * $Date$
- * $Revision$
- * $HeadURL$
- * @package EDK
- */
-
-
 $modInfo['mail_forward']['name'] = "Mail Forwarder";
 $modInfo['mail_forward']['abstract'] = "Forward all posted mails to another board.";
 $modInfo['mail_forward']['about'] = "Core distribution mod.";

@@ -1,11 +1,7 @@
 <?php
-/*
- * $Date$
- * $Revision$
- * $HeadURL$
+/**
  * @package EDK
  */
-
 
 $modInfo['rss_feed']['name'] = "RSS Feed";
 $modInfo['rss_feed']['abstract'] = "Generates an RSS feed for most recent kills or losses.";

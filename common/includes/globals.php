@@ -1,9 +1,5 @@
 <?php
-
 /**
- * $Date$
- * $Revision$
- * $HeadURL$
  * @package EDK
  */
 if (!defined('LATEST_DB_UPDATE')) {

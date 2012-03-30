@@ -1,15 +1,10 @@
 <?php
 /**
- * $Date$
- * $Revision$
- * $HeadURL$
+ * This file contains the generic admin options in the new format
+ * look here for some examples.
  * @package EDK
  */
 
-/*
-* This file contains the generic admin options in the new format
-* look here for some examples.
-*/
 options::cat('Advanced', 'Cache', 'Page Cache');
 options::fadd('Enable Page Cache', 'cache_enabled', 'checkbox','', array('admin_acache', 'clearPCache'), "Cache created webpages");
 options::fadd('Global lifetime', 'cache_time', 'edit:size:4','','','minutes');

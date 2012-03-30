@@ -1,13 +1,7 @@
 <?php
 /**
- * $Date$
- * $Revision$
- * $HeadURL$
- * @package EDK
- */
-
-/**
  *	Verify that the EVE central tracking table exists.
+ * @package EDK
  */
 function verify_sync_table() {
 	$query = DBFactory::getDBQuery();;

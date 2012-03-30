@@ -1,13 +1,5 @@
 <?php
 /**
- * $Date$
- * $Revision$
- * $HeadURL$
- * @package EDK
- */
-
-
-/**
  * Factory class to create dbquery objects.
  * @package EDK
  */

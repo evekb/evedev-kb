@@ -1,13 +1,4 @@
 <?php
-/*
- * $Date$
- * $Revision$
- * $HeadURL$
- *
- * @package EDK
- */
-
-
 /**
  * Base class for entities - pilot/corp/alliance/items
  *

@@ -1,13 +1,5 @@
 <?php
 /**
- * $Date$
- * $Revision$
- * $HeadURL$
- * @package EDK
- */
-
-
-/*
 * This class handles the roles.
 * Roles are the basic principle for limiting and
 * granting access to certain functions and areas.

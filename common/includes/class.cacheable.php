@@ -1,15 +1,7 @@
 <?php
-/*
- * $Date$
- * $Revision$
- * $HeadURL$
- *
- * @package EDK
- */
-
-
 /**
  * Cache objects between page loads.
+ * @package EDK
  */
 abstract class Cacheable {
 	/** @var CacheHandlerHashed */

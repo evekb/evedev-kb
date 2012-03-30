@@ -1,9 +1,6 @@
 <?php
 
 /**
- * $Date$
- * $Revision$
- * $HeadURL$
  * @package EDK
  */
 options::cat('Advanced', 'Configuration', 'Available updates');

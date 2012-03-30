@@ -1,12 +1,4 @@
 <?php
-
-/**
- * $Date$
- * $Revision$
- * $HeadURL$
- * @package EDK
- */
-
 /**
  * Display alliance details.
  * @package EDK

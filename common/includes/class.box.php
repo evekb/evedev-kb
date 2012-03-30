@@ -1,12 +1,5 @@
 <?php
 /**
- * $Date$
- * $Revision$
- * $HeadURL$
- * @package EDK
- */
-
-/**
  * Create a box to display information in.
  *
  * Box will contain a title, an icon and an array of items.

@@ -1,12 +1,5 @@
 <?php
 /**
- * $Date$
- * $Revision$
- * $HeadURL$
- * @package EDK
- */
-
-/**
  * Store and retrieve comments for each killmail.
  *
  * This class is used when the details of a kill are viewed.
