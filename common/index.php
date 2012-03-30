@@ -89,9 +89,7 @@ if (defined('KB_PHP')) edkURI::setRoot(KB_PHP);
 if(isset($_GET['xajax'])) require_once('common/includes/xajax.functions.php');
 
 // Serve feeds to feed fetchers.
-if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK Feedfetcher') !== false) {
-	$page = 'feed';
-} else if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK IDFeedfetcher') !== false) {
+if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK IDFeedfetcher') !== false) {
 // Serve idfeeds to idfeed fetchers.
 	$page = 'idfeed';
 } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'EVE-IGB') !== false) {

@@ -16,6 +16,10 @@ if (!substr_compare(PHP_OS, 'win', 0, 3, true)) {
 $cronStartTime = microtime(true);
 @error_reporting(E_ERROR);
 
+if( php_sapi_name() == 'cli' ) {
+	ob_implicit_flush(true);
+}
+
 // Has to be run from the KB main directory for nested includes to work
 if(file_exists(getcwd().'/cron_feed.php')) {
 	// current working directory minus last 5 letters of string ("/cron")
@@ -41,24 +45,25 @@ $config = new Config(KB_SITE);
 $feeds = config::get("fetch_idfeeds");
 $html = '';
 
-foreach($feeds as $key => &$val) {
+$qry = new DBQuery();
+$qry->execute("SELECT * FROM kb3_feeds WHERE feed_kbsite = '".KB_SITE."'");
+while ($row = $qry->getRow()) {
 	$tmphtml = '';
-	if (isIDFeed($val['url'])) {
-		if ($tmphtml = getIDFeed($key, $val)) {
-			$html .= "Fetching IDFeed: ".$key."<br />\n".$tmphtml;
-		}
+	$id = $row["feed_id"];
+	$url = $row["feed_url"];
+	$trusted = (bool)($row["feed_flags"] & FEED_TRUSTED);
+	$active = (bool)($row["feed_flags"] & FEED_ACTIVE);
+	$lastkill = (int) $row["feed_lastkill"];
+
+	if ( $active ) {
+		printlog( "Processing Feed ($id) - " . $url);
+		getIDFeed($id, $url, $trusted, $lastkill);
 	} else {
-		if ($tmphtml = getOldFeed($key, $val)) {
-			$html .= "Fetching RSS Feed: ".$key."<br />\n".$tmphtml;
-		}
-	}
-	if ($tmphtml ) {
-		config::set("fetch_idfeeds", $feeds);
+		printlog( "Skipping Feed ($id) - " . $url);
 	}
 }
-echo $html."<br />\n";
 
-echo "Time taken = ".(microtime(true) - $cronStartTime)." seconds.\n";
+printlog("Time taken = ".(microtime(true) - $cronStartTime)." seconds.");
 
 /**
  * Fetch the board owners.
@@ -85,163 +90,64 @@ function getOwners()
 	return $myids;
 }
 
-function getIDFeed(&$key, &$val)
+function getIDFeed($id, $url, $trusted, $lastkill)
 {
-	$html = '';
 	// Just in case, check for empty urls.
-	if(empty($val['url'])) {
+	if(empty($url)) {
 		return '';
 	}
+
+	$qry2 = new DBQuery();
 	$feedfetch = new IDFeed();
 	$feedfetch->setID();
-	if($val['apikills']) {
-		$feedfetch->setAllKills(0);
-	} else {
-		$feedfetch->setAllKills(1);
-	}
-	if ($val['trusted']) {
+	$feedfetch->setAllKills(1);
+
+	if ($trusted) {
 		$feedfetch->setAcceptedTrust(1);
-	}
-	if(!$val['lastkill']) {
-		$feedfetch->setStartDate(time() - 60*60*24*7);
-	} else if($val['apikills']) {
-		$feedfetch->setStartKill($val['lastkill'] + 1);
 	} else {
-		$feedfetch->setStartKill($val['lastkill'] + 1, true);
+		$feedfetch->setAcceptedTrust(0);
+	}
+	if(!$lastkill) {
+		$feedfetch->setStartDate(time() - 60*60*24*7);
+	} else {
+		$feedfetch->setStartKill($lastkill + 1, true);
 	}
 
-	if($feedfetch->read($val['url']) !== false) {
-		if($val['apikills'] 
-				&& intval($feedfetch->getLastReturned()) > $val['lastkill']) {
-			$val['lastkill'] = intval($feedfetch->getLastReturned());
-		} else if(!$val['apikills']
-				&& intval($feedfetch->getLastInternalReturned())
-						> $val['lastkill']) {
-			$val['lastkill'] = intval($feedfetch->getLastInternalReturned());
+	if($feedfetch->read($url) !== false) {
+		$posted = count($feedfetch->getPosted());
+		$skipped = count($feedfetch->getSkipped());
+		$duplicate = count($feedfetch->getDuplicate());
+
+		if( $posted+$skipped+$duplicate == 0 ) {
+			$qry2->execute("UPDATE kb3_feeds SET feed_flags=0 WHERE feed_kbsite = '".KB_SITE."' AND feed_id = $id");
+ 		}
+		if( intval($feedfetch->getLastInternalReturned()) > $lastkill) {
+			$qry2->execute("UPDATE kb3_feeds SET feed_lastkill=".
+							intval($feedfetch->getLastInternalReturned()) .", feed_updated=NOW()
+							WHERE feed_kbsite = '".KB_SITE."' AND feed_id = $id");
 		}
-		$html .= "Feed: ".$val['url']."<br />\n";
-		$html .= count($feedfetch->getPosted())." kills were posted and ".
-			count($feedfetch->getSkipped())." were skipped.<br />\n";
-		$html .= "Last kill ID returned was ".$val['lastkill']."<br />\n";
+		printlog( $posted." kills were posted, ".$duplicate." duplicate kills and ".$skipped." were skipped.");
+		printlog("Last kill ID returned was ".intval($feedfetch->getLastInternalReturned()));
 		if ($feedfetch->getParseMessages()) {
-			$html .= implode("<br />", $feedfetch->getParseMessages());
-		}
-	} else {
-		$html .= "Error reading feed: ".$val['url'];
+			foreach( $feedfetch->getParseMessages() as $msg) {
+				printlog($msg);
+			}
+ 		}
+ 	} else {
+		printlog("Error reading feed: ".$val['url']);
+		printlog($feedfetch->errormsg());die;
+		$qry2->execute("UPDATE kb3_feeds SET feed_flags=0 WHERE feed_kbsite = '".KB_SITE."' AND feed_id = $id");
 		if(!$val['lastkill']) $html .= ", Start time = ".(time() - 60*60*24*7);
 		else if($val['apikills']) $html .= ", Start kill = ".($val['lastkill']);
-		$html .= $feedfetch->errormsg();
-	}
-	return $html."\n";
-}
-
-/**
- * Check if this is an IDFeed.
- * The url parameter is modified if needed to refer directly to the IDFeed.
- * @param string $url
- * @return string HTML describing the fetch result.
- */
-function isIDFeed(&$url)
-{
-	if (!$url) {
-		// No point checking further.
-		return false;
-	} else if (strpos($url, 'idfeed')) {
-		// Believe the user ...
-		return true;
-	}
-
-	if(strpos($url, '?')) {
-		$urltest = preg_replace('/\?.*/', '?a=idfeed&kll_id=-1', $url);
-	} else if (substr($url, -1) == '/') {
-		$urltest = $url."?a=idfeed&kll_id=-1";
-	} else {
-		$urltest = $url."/?a=idfeed&kll_id=-1";
-	}
-	$http = new http_request($urltest);
-	$http->set_useragent("EDK IDFeedfetcher Check");
-	$http->set_timeout(10);
-	$res = $http->get_content();
-	if ($res && strpos($res, 'edkapi')) {
-		if(strpos($url, '?a=feed')) {
-			$url = preg_replace('/\?a=feed/', '?a=idfeed', $url);
-		} else if(strpos($url, '?')) {
-			$url = preg_replace('/\?/', '?a=idfeed&', $url);
-		} else if (substr($url, -1) == '/') {
-			$url = $url."?a=idfeed";
-		} else {
-			$url = $url."/?a=idfeed";
-		}
-		return true;
-	} else {
-		return false;
-	}
-}
-
-function getOldFeed(&$key, &$val)
-{
-	$html = '';
-	// Just in case, check for empty urls.
-	if(empty($val['url'])) {
-		return '';
-	}
-
-	$url = $val['url'];
-	if (!strpos($url, 'a=feed')) {
-		if (strpos($url, '?')) {
-			$url = str_replace('?', '?a=feed&', $url);
-		} else {
-			$url .= "?a=feed";
-		}
-	}
-	$feedfetch = new Fetcher();
-
-	$myids = getOwners();
-	$lastkill = 0;
-	foreach($myids as $myid) {
-		// If a last kill id is specified fetch all kills since then
-		if($val['lastkill'] > 0) {
-			$urltmp = $url.'&combined=1&lastkllid='.$val['lastkill'];
-			$html .= preg_replace('/<div.+No kills added from feed.+<\/div>/',
-				'', $feedfetch->grab($urltmp, $myid, $val['trust']))."\n";
-			if(intval($feedfetch->lastkllid_) < $lastkill || !$lastkill)
-					$lastkill = intval($feedfetch->lastkllid_);
-			// Check if feed used combined list. get losses if not
-			if(!$feedfetch->combined_) {
-				$html .= preg_replace('/<div.+No kills added from feed.+<\/div>/',
-					'', $feedfetch->grab($urltmp, $myid."&losses=1", $val['trust']))."\n";
-				if(intval($feedfetch->lastkllid_) < $lastkill || !$lastkill)
-						$lastkill = intval($feedfetch->lastkllid_);
-			}
-			// Store most recent kill id fetched
-			if($lastkill > $val['lastkill']) {
-				$val['lastkill'] = $lastkill;
-			}
-		} else {
-			// If no last kill is specified then fetch by week
-			// Fetch for current and previous weeks, both kills and losses
-			for($l = $week - 1; $l <= $week; $l++)
-			{
-				$html .= preg_replace('/<div.+No kills added from feed.+<\/div>/',
-					'', $feedfetch->grab($url . "&year=" . $year . "&week=" . $l,
-						$myid, $val['trust'])) . "\n";
-				if(intval($feedfetch->lastkllid_) < $lastkill
-						|| !$lastkill) {
-					$lastkill = intval($feedfetch->lastkllid_);
-				}
-				$html .= preg_replace('/<div.+No kills added from feed.+<\/div>/',
-					'', $feedfetch->grab($url . "&year=" . $year . "&week=" . $l,
-						$myid . "&losses=1", $val['trust'])) . "\n";
-				if(intval($feedfetch->lastkllid_) < $lastkill
-						|| !$lastkill) {
-					$lastkill = intval($feedfetch->lastkllid_);
-				}
-			}
-			// Store most recent kill id fetched
-			if($lastkill > $val['lastkill']) {
-				$val['lastkill'] = $lastkill;
-			}
-		}
+		printlog($feedfetch->errormsg());
 	}
 	return $html;
+}
+
+function printlog($string) {
+	if( php_sapi_name() != 'cli' ) {
+		echo $string . "<br />\n";
+	} else {
+		echo $string . "\n";
+	}
 }

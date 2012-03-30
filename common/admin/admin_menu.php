@@ -63,7 +63,6 @@ options::oldMenu('Features', "Modules", array('a', 'admin_mods', true));
 
 options::oldMenu('Features', "Feed Syndication", array('a', 'admin_idfeedsyndication', true));
 options::oldMenu('Features', "API Killlog", array('a', 'admin_api', true));
-options::oldMenu('Features', "Old Feed", array('a', 'admin_feedsyndication', true));
 
 options::oldMenu('Maintenance', "Auditing", array('a', 'admin_audit', true));
 options::oldMenu('Maintenance', "Troubleshooting", array('a', 'admin_troubleshooting', true));

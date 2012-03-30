@@ -7,311 +7,114 @@
  */
 
 /*
- * EDK IDFeed Syndication v0.90
- *
+ * EDK IDFeed Syndication Admin Page
  */
-
 require_once('common/admin/admin_menu.php');
 
-$page = new Page("Administration - IDFeed Syndication " . IDFeed::version);
+$page = new Page("Administration - Feed Syndication " . IDFeed::version);
 $page->setCachable(false);
 $page->setAdmin();
 
-$feeds = config::get("fetch_idfeeds");
-// Add an empty feed to the list, or create with one empty feed.
-if(is_null($feeds)) {
-	$feeds[] = array('url'=>"", 'apikills'=>0, 'trusted'=>0, 'lastkill'=>0);
-	config::set("fetch_idfeeds", $feeds);
-} else {
-	$feeds[] = array('url'=>"", 'apikills'=>0, 'trusted'=>0, 'lastkill'=>0);
+$qry = new DBQuery();
+
+// Delete any old feeds first
+if ($_POST['submit']) {
+	if ($_POST['delete']) {
+		foreach( $_POST['delete'] as $id ) {
+			$id = intval($id);
+			$qry->execute("DELETE FROM kb3_feeds WHERE feed_kbsite = '".KB_SITE."' AND feed_id = $id");
+			unset( $_POST["feed"][$id] );
+		}
+	}
 }
 
-$feedcount = count($feeds);
+// Retrieve feeds from Database
+$qry->execute("SELECT * FROM kb3_feeds WHERE feed_kbsite = '".KB_SITE."'");
+while ($row = $qry->getRow()) {
+	$trusted = (bool)($row["feed_flags"] & FEED_TRUSTED);
+	$active = (bool)($row["feed_flags"] & FEED_ACTIVE);
 
-// saving urls and options
-if ($_POST['submit'] || $_POST['fetch'])
+	$feeds[$row["feed_id"]] = array('id'=>$row["feed_id"], 'updated'=>$row["feed_updated"],'active'=>$active, 'uri'=>$row["feed_url"], 'trusted'=>$trusted, 'lastkill'=>$row["feed_lastkill"]);
+}
+
+// updating/saving urls and options
+if ($_POST['submit'])
 {
-	if(is_null($feeds)) {
-		$feeds = array();
-	}
-    foreach($feeds as $key => &$val) {
-		// Use the md5 of the url as a key for each feed.
-        $url = md5($val['url']);
+    foreach($_POST["feed"] as $key => $val) {
+		if ($key == "new" ) {
+			// new
+			$uri = $val["url"];
+			if( $uri === "") {
+				continue;
+			}
 
-        if ($_POST[$url]) {
-            if ($_POST['trusted'] && in_array ($url, $_POST['trusted'])) {
-				$val['trusted'] = 1;
-			} else {
-				$val['trusted'] = 0;
+			$active = (isset($val["active"]) ? 1 : 0);
+			$trusted = (isset($val["trusted"]) ? 1 : 0);
+			$lastkill = intval($val["lastkill"]);
+
+			// check feed doesn't already exist
+			foreach( $feeds as $fid => $fval ) {
+				if ( $fval['uri'] == $uri ) {
+					$html .= "<br />Not Adding Duplicate Feed with URL: " . $uri;
+					continue 2;
+				}
 			}
-			$val['apikills'] = 0;
-			if($_POST['lastkill'.$url] != $val['lastkill']) {
-				$val['lastkill'] = intval($_POST['lastkill'.$url]);
+
+			$feed_flags = 0;
+			if( $active) {
+				$feed_flags |= FEED_ACTIVE;
 			}
-            // reset the feed lastkill details if the URL or api status has changed
-            if($_POST[$url] != $val['url'] ) {
-				$val['url'] = $_POST[$url];
-				$val['lastkill'] = 0;
+			if ( $trusted ) {
+				$feed_flags |= FEED_TRUSTED;
 			}
-			if ($_POST['delete'] && in_array ($url, $_POST['delete'])) {
-				unset($feeds[$key]);
+			$sql = "INSERT INTO kb3_feeds( feed_url, feed_lastkill, feed_kbsite, feed_flags ) VALUES ( '" . $qry->escape($uri) . "', $lastkill, '" . KB_SITE . "', '$feed_flags' )";
+			$qry->execute($sql);
+
+			$qry->execute("SELECT * FROM kb3_feeds WHERE feed_kbsite = '".KB_SITE."' AND feed_url='" . $qry->escape($uri) . "'");
+			while ($row = $qry->getRow()) {
+				$trusted = (bool)($row["feed_flags"] & FEED_TRUSTED);
+				$active = (bool)($row["feed_flags"] & FEED_ACTIVE);
+				$feeds[$row["feed_id"]] = array('id'=>$row["feed_id"], 'updated'=>$row["feed_updated"],'active'=>$active, 'uri'=>$row["feed_url"], 'trusted'=>$trusted, 'lastkill'=>$row["feed_lastkill"]);
 			}
-        } else {
-			unset($feeds[$key]);
+
+		} else {
+			// update
+			$id = intval($key);
+			$uri = $val["url"];
+			$active = (isset($val["active"]) ? 1 : 0);
+			$trusted = (isset($val["trusted"]) ? 1 : 0);
+			$lastkill = intval($val["lastkill"]);
+			if( $feeds[$id]['active'] != $active ||
+				$feeds[$id]['trusted'] != $trusted ) {
+				// flags have changed
+				$feed_flags = 0;
+				if( $active) {
+					$feed_flags |= FEED_ACTIVE;
+				}
+				if ( $trusted ) {
+					$feed_flags |= FEED_TRUSTED;
+				}
+
+				$qry->execute("UPDATE kb3_feeds SET feed_flags=$feed_flags WHERE feed_kbsite = '".KB_SITE."' AND feed_id = $id");
+				$feeds[$id]['active'] = (bool)($feed_flags & FEED_ACTIVE);
+				$feeds[$id]['trusted'] = (bool)($feed_flags & FEED_TRUSTED);
+			}
+
+			if ( $feeds[$id]['lastkill'] != $lastkill || $feeds[$id]['uri'] != $uri ) {
+				$qry->execute("UPDATE kb3_feeds SET feed_lastkill=$lastkill, feed_url='" . $qry->escape($uri) . "' WHERE feed_kbsite = '".KB_SITE."' AND feed_id = $id");
+				$feeds[$id]['lastkill'] = $lastkill;
+				$feeds[$id]['uri'] = $uri;
+			}
 		}
     }
-	$newlist = array();
-	foreach($feeds as $key => &$val) {
-		if ($val['url']) {
-			$newlist[$val['url']] = $val;
-		}
-	}
-	$feeds = &$newlist;
-	config::set("fetch_idfeeds", $feeds);
-	$feeds[] = array('url'=>"", 'apikills'=>0, 'trusted'=>0, 'lastkill'=>0);
 }
 
-// building the request query and fetching of the feeds
-if ($_POST['fetch'])
-{
-    foreach($feeds as $key => &$val)
-    {
-		if(!($_POST['fetch_feed'] && in_array (md5($val['url']), $_POST['fetch_feed']))
-			|| empty($val['url'])) continue;
+// Add an empty feed to the list, or create with one empty feed.
+$feeds[] = array('id'=>'new', 'updated'=>'', 'active'=>'', 'uri'=>"", 'trusted'=>0, 'lastkill'=>0);
 
-		if (isIDFeed($val['url'])) {
-			$html .= getIDFeed($key, $val);
-		} else {
-			$html .= getOldFeed($key, $val);
-		}
-		config::set("fetch_idfeeds", $feeds);
-	}
-}
-// generating the html
-$rows = array();
-foreach($feeds as $key => &$val) {
-	$key = md5($val['url']);
-    if (!isset($_POST['fetch_feed'][$key])
-			|| $_POST['fetch_feed'][$key]) {
-		$fetch=false;
-	} else {
-		$fetch = true;
-	}
-	$rows[] = array('name'=>$key, 'uri'=>$val['url'], 'lastkill'=>$val['lastkill'], 'trusted'=>$val['trusted'], 'fetch'=>!$fetch);
-}
-$smarty->assignByRef('rows', $rows);
+$smarty->assignByRef('rows', $feeds);
 
 $smarty->assign('results', $html);
 $page->addContext($menubox->generate());
 $page->setContent($smarty->fetch(get_tpl('admin_idfeed')));
 $page->generate();
-
-/**
- * Fetch the board owners.
- * @return array Array of id strings to add to URLS
- */
-function getOwners()
-{
-	$myids = array();
-	if(!defined('MASTER') || !MASTER) {
-		foreach(config::get('cfg_pilotid') as $entity) {
-			$pilot = new Pilot($entity);
-			$myids[] = '&pilot=' . urlencode($pilot->getName());
-		}
-
-		foreach(config::get('cfg_corpid') as $entity) {
-			$corp = new Corporation($entity);
-			$myids[] = '&corp=' . urlencode($corp->getName());
-		}
-		foreach(config::get('cfg_allianceid') as $entity) {
-			$alli = new Alliance($entity);
-			$myids[] = '&alli=' . urlencode($alli->getName());
-		}
-	}
-	return $myids;
-}
-
-function getIDFeed(&$key, &$val)
-{
-	$html = '';
-	// Just in case, check for empty urls.
-	if(empty($val['url'])) {
-		return 'No URL given<br />';
-	}
-	$feedfetch = new IDFeed();
-	$feedfetch->setID();
-	$feedfetch->setAllKills(1);
-	if ($val['trusted']) {
-		$feedfetch->setAcceptedTrust(1);
-	}
-	if(!$val['lastkill']) {
-		$feedfetch->setStartDate(time() - 60*60*24*7);
-	} else if($val['apikills']) {
-		$feedfetch->setStartKill($val['lastkill'] + 1);
-	} else {
-		$feedfetch->setStartKill($val['lastkill'] + 1, true);
-	}
-
-	if($feedfetch->read($val['url']) !== false) {
-		if($val['apikills']
-				&& intval($feedfetch->getLastReturned()) > $val['lastkill']) {
-			$val['lastkill'] = intval($feedfetch->getLastReturned());
-		} else if(!$val['apikills']
-				&& intval($feedfetch->getLastInternalReturned())
-						> $val['lastkill']) {
-			$val['lastkill'] = intval($feedfetch->getLastInternalReturned());
-		}
-		$html .= "IDFeed: ".$val['url']."<br />\n";
-		$html .= count($feedfetch->getPosted())." kills were posted and ".
-						count($feedfetch->getSkipped())." were skipped.<br />\n";
-		if ($feedfetch->getParseMessages()) {
-			$html .= implode("<br />", $feedfetch->getParseMessages());
-		}
-	} else {
-		$html .= "Error reading feed: ".$val['url'];
-		if (!$val['lastkill']) {
-			$html .= ", Start time = ".(time() - 60 * 60 * 24 * 7);
-		} else if ($val['apikills']) {
-			$html .= ", Start kill = ".($val['lastkill']);
-		}
-		$html .= $feedfetch->errormsg();
-	}
-	return $html;
-}
-
-/**
- * Check if this is an IDFeed.
- * The url parameter is modified if needed to refer directly to the IDFeed.
- * @param string $url
- * @return string HTML describing the fetch result.
- */
-function isIDFeed(&$url)
-{
-	// If the url has idfeed or p=ed_feed in it then assume the URL is correct
-	// and return immediately.
-	if (strpos($url, 'idfeed')) {
-		// Believe the user ...
-		return true;
-	} else if (strpos($url, 'p=ed_feed')) {
-		// Griefwatch feed.
-		return false;
-	}
-
-	// With no extension standard EDK will divert the idfeed fetcher to the idfeed
-	if(strpos($url, '?') === false) {
-		$urltest = $url.'?kll_id=-1';
-		if (checkIDFeed($urltest)) {
-			return true;
-		}
-	}
-
-	// Either the bare url didn't work or we don't have a bare url.
-	// Either add 'a=idfeed' to the url or change 'a=feed'.
-	// If we find an idfeed then make the url change permanent and return true
-	// Otherwise we have an old feed, return false.
-	if(strpos($url, '?')) {
-		$urltest = preg_replace('/\?.*/', '?a=idfeed&kll_id=-1', $url);
-	} else if (substr($url, -1) == '/') {
-		$urltest = $url."?a=idfeed&kll_id=-1";
-	} else {
-		$urltest = $url."/?a=idfeed&kll_id=-1";
-	}
-	if (checkIDFeed($urltest)) {
-		if(strpos($url, '?a=feed')) {
-			$url = preg_replace('/\?a=feed/', '?a=idfeed', $url);
-		} else if(strpos($url, '?')) {
-			$url = preg_replace('/\?/', '?a=idfeed&', $url);
-		} else if (substr($url, -1) == '/') {
-			$url = $url."?a=idfeed";
-		} else {
-			$url = $url."/?a=idfeed";
-		}
-		return true;
-	} else {
-		return false;
-	}
-}
-
-function getOldFeed(&$key, &$val)
-{
-	$html = 'RSS Feed: ';
-	// Just in case, check for empty urls.
-	if(empty($val['url'])) return 'No URL given<br />';
-
-	$url = $val['url'];
-	if (!strpos($url, 'a=feed')) {
-		if (strpos($url, '?')) {
-			$url = str_replace('?', '?a=feed&', $url);
-		} else {
-			$url .= "?a=feed";
-		}
-	}
-	$feedfetch = new Fetcher();
-
-	$myids = getOwners();
-	$lastkill = 0;
-	foreach($myids as $myid) {
-		// If a last kill id is specified fetch all kills since then
-		if($val['lastkill'] > 0) {
-			$urltmp = $url.'&combined=1&lastkllid='.$val['lastkill'];
-			//TODO: Put some methods into the fetcher to get this more neatly.
-			$html .= preg_replace('/(<div class=\'block-header2\'>|<\/div>)/',
-				'', $feedfetch->grab($urltmp, $myid, $val['trust']))."\n";
-			if(intval($feedfetch->lastkllid_) < $lastkill || !$lastkill)
-					$lastkill = intval($feedfetch->lastkllid_);
-			// Check if feed used combined list. get losses if not
-			if(!$feedfetch->combined_) {
-				$html .= preg_replace('/(<div class=\'block-header2\'>|<\/div>)/',
-					'', $feedfetch->grab($urltmp, $myid."&losses=1", $val['trust']))."\n";
-				if(intval($feedfetch->lastkllid_) < $lastkill || !$lastkill)
-						$lastkill = intval($feedfetch->lastkllid_);
-			}
-			// Store most recent kill id fetched
-			if($lastkill > $val['lastkill']) {
-				$val['lastkill'] = $lastkill;
-			}
-		} else {
-			// If no last kill is specified then fetch by week
-			// Fetch for current and previous weeks, both kills and losses
-			for($l = $week - 1; $l <= $week; $l++)
-			{
-				$html .= preg_replace('/(<div class=\'block-header2\'>|<\/div>)/',
-					'', $feedfetch->grab($url . "&year=" . $year . "&week=" . $l,
-						$myid, $val['trust'])) . "\n";
-				if(intval($feedfetch->lastkllid_) < $lastkill
-						|| !$lastkill) {
-					$lastkill = intval($feedfetch->lastkllid_);
-				}
-				$html .= preg_replace('/(<div class=\'block-header2\'>|<\/div>)/',
-					'', $feedfetch->grab($url . "&year=" . $year . "&week=" . $l,
-						$myid . "&losses=1", $val['trust'])) . "\n";
-				if(intval($feedfetch->lastkllid_) < $lastkill
-						|| !$lastkill) {
-					$lastkill = intval($feedfetch->lastkllid_);
-				}
-			}
-			// Store most recent kill id fetched
-			if($lastkill > $val['lastkill']) {
-				$val['lastkill'] = $lastkill;
-			}
-		}
-	}
-	return $html;
-}
-
-/**
- * @param string $url 
- * @return boolean True if this is an IDFeed, false if not.
- */
-function checkIDFeed( $url) {
-	$http = new http_request($url);
-	$http->set_useragent("EDK IDFeedfetcher Check");
-	$http->set_timeout(0.5);
-	$res = $http->get_content();
-	if ($http->status['timed_out']) {
-		return false;
-	} else if ($res && strpos($res, 'edkapi')) {
-		return true;
-	}
-	return false;
-}

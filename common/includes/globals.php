@@ -7,7 +7,7 @@
  * @package EDK
  */
 if (!defined('LATEST_DB_UPDATE')) {
-	define('LATEST_DB_UPDATE', "030");
+	define('LATEST_DB_UPDATE', "031");
 }
 
 define('KB_CACHEDIR', 'cache');
@@ -29,6 +29,9 @@ define('KB_APIKEY_CORP', 2);
 define('KB_APIKEY_CHAR', 4);
 define('KB_APIKEY_BADAUTH', 8);
 define('KB_APIKEY_EXPIRED', 16);
+
+define('FEED_TRUSTED', 1);
+define('FEED_ACTIVE', 2);
 
 // Make sure the core functions are loaded.
 require_once('common/includes/class.edkloader.php');

@@ -1,40 +1,34 @@
-{literal}<script language="JavaScript" type='text/javascript'>
-function checkAll(checkname, exby)
-{
-	var elements = document.getElementsByName(checkname);
-	for (i = 0; i < elements.length; i++) elements[i].checked = exby.checked? true:false
-}
-</script>{/literal}
 {if $results}{$results}{/if}
 <form id="options" name="options" method="post" action="{$kb_host}/?a=admin_idfeedsyndication">
 	<div class='block-header2'>Feeds</div>
-	<input type='submit' id='submitFetch' name='fetch' value="Fetch!" /> 
-	<br />
-	<br />
 	<table>
 		<tr style='text-align: left;'>
 			<th>Feed URL</th>
 			<th>Last Kill</th>
 			<th>Trusted</th>
-			<th>Fetch</th>
+			<th>Active</th>
+			<th>Last Updated</th>
 			<th>Delete</th>
 		</tr>
 {foreach from=$rows key=key item=i}
 		<tr>
 			<td>
-				<input type='text' name='{$i.name}' size='50' class='password' value="{$i.uri}" />
+				<input type='text' name='feed[{$i.id}][url]' size='50' class='password' value="{$i.uri}" />
 			</td>
 			<td>
-				<input type='text' name='lastkill{$i.name}' class='lastkill' size='10' value='{$i.lastkill}' />
+				<input type='text' name='feed[{$i.id}][lastkill]' class='lastkill' size='10' value='{$i.lastkill}' />
 			</td>
 			<td>
-				<input type='checkbox' name='trusted[]' class='trusted' value='{$i.name}' {if $i.trusted}checked="checked"{/if} />
+				<input type='checkbox' name='feed[{$i.id}][trusted]' class='trusted' value='1' {if $i.trusted}checked="checked"{/if} />
 			</td>
 			<td>
-				<input type='checkbox' name='fetch_feed[]' class='fetch' value='{$i.name}' {if $i.fetch}checked="checked"{/if} />
+				<input type='checkbox' name='feed[{$i.id}][active]' class='active' value='1' {if $i.active}checked="checked"{/if} />
 			</td>
 			<td>
-				<input type='checkbox' name='delete[]' class='delete' value='{$i.name}' />
+				{$i.updated}
+			</td>
+			<td>
+				<input type='checkbox' name='delete[]' class='delete' value='{$i.id}' />
 			</td>
 		</tr>
 {/foreach}
@@ -43,12 +37,8 @@ function checkAll(checkname, exby)
 				<i>Example: http://killboard.domain.com/?a=idfeed</i>
 			</td>
 			<td>
-				<input type='checkbox' name='allt' onclick='checkAll("trusted[]",this)' />
-				<i>all/none</i>
 			</td>
 			<td>
-				<input type='checkbox' name='allf' onclick='checkAll("fetch_feed[]",this)' />
-				<i>all/none</i>
 			</td>
 			<td>
 			</td>
