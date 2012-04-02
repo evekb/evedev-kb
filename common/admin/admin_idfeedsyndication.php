@@ -28,6 +28,8 @@ if ($_POST['submit']) {
 	}
 }
 
+$feeds = array();
+
 // Retrieve feeds from Database
 $qry->execute("SELECT * FROM kb3_feeds WHERE feed_kbsite = '".KB_SITE."'");
 while ($row = $qry->getRow()) {
