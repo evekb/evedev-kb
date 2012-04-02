@@ -119,9 +119,8 @@ if(!file_exists("themes/".$themename."/".$stylename.".css")) {
 
 define('THEME_URL', config::get('cfg_kbhost').'/themes/'.$themename);
 
-// set up titles/roles
-role::init();
-//title::init();
+// set up roles
+//role::init();
 
 // start session management
 session::init();
