@@ -110,69 +110,6 @@ class API_Helpers
 	}
 
 	// **********************************************************************************************************************************************
-	// ****************                         			    		Find Thunky          		 					             ****************
-	// **********************************************************************************************************************************************
-	public static function FindThunk()
-	{ // round about now would probably be a good time for apologising about my sense of humour :oD
-		$sql = 'select plts.plt_id, plts.plt_externalid from kb3_pilots plts where plts.plt_name = "Captain Thunk"';
-
-		$qry = DBFactory::getDBQuery();
-		$qry->execute($sql);
-		$row = $qry->getRow();
-
-		$pilot_id = $row['plt_id'];
-		$pilot_charid = $row['plt_externalid'];
-
-		if ( $pilot_id != 0 )	{
-			return '<a href="'.KB_HOST.'/?a=pilot_detail&amp;plt_id=' . $pilot_id . '" ><font size="2">Captain Thunk</font></a>';
-		} else {
-			return "Captain Thunk";
-		}
-	}
-
-	// **********************************************************************************************************************************************
-	// ****************                         			         Update  CCP CorpID              					             ****************
-	// **********************************************************************************************************************************************
-	public static function Update_CorpID($corpName, $corpID)
-	{
-		if ( (strlen($corpName) != 0) && ($corpID != 0) )
-		{
-			$qry = DBFactory::getDBQuery();
-			$qry->execute( "SELECT * FROM `kb3_corps` WHERE `crp_name` = '" . slashfix($corpName) . "'");
-
-			if ($qry->recordCount() != 0)
-			{
-				$row = $qry->getRow();
-				if ($row['crp_external_id'] == NULL)
-				{
-					$qry->execute("update kb3_corps set crp_external_id = " . $corpID . " where `crp_id` = " . $row['crp_id']);
-				}
-			}
-		}
-	}
-
-	// **********************************************************************************************************************************************
-	// ****************                         			        Update CCP AllianceID            					             ****************
-	// **********************************************************************************************************************************************
-	public static function Update_AllianceID($allianceName, $allianceID)
-	{
-		if ( ($allianceName != "NONE") && ($allianceID != 0) )
-		{
-			$qry = DBFactory::getDBQuery();
-			$qry->execute( "SELECT * FROM `kb3_alliances` WHERE `all_name` = '" . slashfix($allianceName) . "'");
-
-			if ($qry->recordCount() != 0)
-			{
-				$row = $qry->getRow();
-				if ($row['all_external_id'] == NULL)
-				{
-					$qry->execute("update kb3_alliances set all_external_id = " . $allianceID . " where `all_id` = " . $row['all_id']);
-				}
-			}
-		}
-	}
-
-	// **********************************************************************************************************************************************
 	// ****************                         		Convert GMT Timestamp to local time            					             ****************
 	// **********************************************************************************************************************************************
 	public static function ConvertTimestamp($timeStampGMT)
