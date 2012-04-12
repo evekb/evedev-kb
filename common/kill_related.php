@@ -24,8 +24,6 @@ class pKillRelated extends pageAssembly
 	protected $kill;
 	/** @var Page */
 	public $page;
-	/** @var array */
-	protected $menuOptions = array();
 	
 	function __construct()
 	{
@@ -648,20 +646,6 @@ class pKillRelated extends pageAssembly
 
 		return $menubox->generate();
 	}
-
-	/**
-	 * Add an item to the menu in standard box format.
-	 *
-	 * Only links need all 3 attributes
-	 * @param string $type Types can be caption, img, link, points.
-	 * @param string $name The name to display.
-	 * @param string $url Only needed for URLs.
-	 */
-	function addMenuItem($type, $name, $url = '')
-	{
-		$this->menuOptions[] = array($type, $name, $url);
-	}
-
 }
 $killRelated = new pKillRelated();
 event::call("killRelated_assembling", $killRelated);

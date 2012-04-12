@@ -14,11 +14,6 @@ class pContractDetail extends pageAssembly
 	/** @var Contract The Contract this page is built from. */
 	protected $contract;
 
-	/** @var array The list of views and their callbacks. */
-	protected $viewList = array();
-	/** @var array The list of menu options to display. */
-	protected $menuOptions = array();
-
 	/**
 	 * Construct the Contract Details object.
 	 * Set up the basic variables of the class and add the functions to the
@@ -310,38 +305,6 @@ class pContractDetail extends pageAssembly
 				$menubox->addOption($options[0],$options[1]);
 		}
 		return $menubox->generate();
-	}
-	/**
-	 * Add an item to the menu in standard box format.
-	 *
-	 *  Only links need all 3 attributes
-	 * @param string $type Types can be caption, img, link, points.
-	 * @param string $name The name to display.
-	 * @param string $url Only needed for URLs.
-	 */
-	function addMenuItem($type, $name, $url = '')
-	{
-		$this->menuOptions[] = array($type, $name, $url);
-	}
-
-	/**
-	 * Add a type of view to the options.
-	 *
-	 * @param string $view The name of the view to recognise.
-	 * @param mixed $callback The method to call when this view is used.
-	 */
-	function addView($view, $callback)
-	{
-		$this->viewList[$view] = $callback;
-	}
-
-	/**
-	 * Return the set view.
-	 * @return string
-	 */
-	function getView()
-	{
-		return $this->view;
 	}
 }
 

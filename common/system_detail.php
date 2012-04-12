@@ -198,40 +198,7 @@ class pSystemDetail extends pageAssembly
 		return $menubox->generate();
 	}
 
-	/**
-	 * Add an item to the menu in standard box format.
-	 *
-	 *  Only links need all 3 attributes
-	 * @param string $type Types can be caption, img, link, points.
-	 * @param string $name The name to display.
-	 * @param string $url Only needed for URLs.
-	 */
-	function addMenuItem($type, $name, $url = '')
-	{
-		$this->menuOptions[] = array($type, $name, $url);
-	}
 
-	/**
-
-	 * Add a type of view to the options.
-
-	 *
-	 * @param string $view The name of the view to recognise.
-	 * @param mixed $callback The method to call when this view is used.
-	 */
-	function addView($view, $callback)
-	{
-		$this->viewList[$view] = $callback;
-	}
-
-	/**
-	 * Return the set view.
-	 * @return string
-	 */
-	function getView()
-	{
-		return $this->view;
-	}
 }
 $systemDetail = new pSystemDetail();
 event::call("systemdetail_assembling", $systemDetail);

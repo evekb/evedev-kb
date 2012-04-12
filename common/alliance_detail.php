@@ -15,10 +15,6 @@ class pAllianceDetail extends pageAssembly
 	public $alliance = null;
 	/** @var string The selected view. */
 	protected $view = null;
-	/** @var array The list of views and their callbacks. */
-	protected $viewList = array();
-	/** @var array The list of menu options to display. */
-	protected $menuOptions = array();
 	/** @var array */
 	private $allianceCorps = array();
 	/** @var integer */
@@ -894,32 +890,6 @@ class pAllianceDetail extends pageAssembly
 	}
 
 	/**
-	 * Add an item to the menu in standard box format.
-	 *
-	 *  Only links need all 3 attributes
-	 * @param string $type Types can be caption, img, link, points.
-	 * @param string $name The name to display.
-	 * @param string $url Only needed for URLs.
-	 */
-	function addMenuItem($type, $name, $url = '')
-	{
-		$this->menuOptions[] = array($type, $name, $url);
-	}
-
-	/**
-
-	 * Add a type of view to the options.
-
-	 *
-	 * @param string $view The name of the view to recognise.
-	 * @param mixed $callback The method to call when this view is used.
-	 */
-	function addView($view, $callback)
-	{
-		$this->viewList[$view] = $callback;
-	}
-
-	/**
 	 * Return the set month.
 	 * @return integer
 	 */
@@ -935,15 +905,6 @@ class pAllianceDetail extends pageAssembly
 	function getYear()
 	{
 		return $this->year;
-	}
-
-	/**
-	 * Return the set view.
-	 * @return string
-	 */
-	function getView()
-	{
-		return $this->view;
 	}
 }
 

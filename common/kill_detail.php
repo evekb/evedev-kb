@@ -1244,19 +1244,6 @@ class pKillDetail extends pageAssembly
 	}
 
 	/**
-	 * Add an item to the menu in standard box format.
-	 *
-	 *  Only links need all 3 attributes
-	 * @param string $type Types can be caption, img, link, points.
-	 * @param string $name The name to display.
-	 * @param string $url Only needed for URLs.
-	 */
-	function addMenuItem($type, $name, $url = '')
-	{
-		$this->menuOptions[] = func_get_args();
-	}
-
-	/**
 	 * Update the stored value of an item and the total value of this kill.
 	 *
 	 *  Input values are taken from the query string.
