@@ -17,7 +17,6 @@ if ($_GET['op'] == 'view')
 		$campaign = 1;
 	}
 	$list = new ContractList();
-	if ($type == 'campaign') $list->setCampaigns(true);
 	$html = "[<a href=\"?a=admin_cc&amp;op=add&amp;type=".$type."\">Add ".$type."</a>]<br />";
 	if ($list->getCount() > 0)
 	{

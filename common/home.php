@@ -168,7 +168,6 @@ class pHome extends pageAssembly
 			$html = "<div class='kb-campaigns-header'>Active campaigns</div>";
 			$list = new ContractList();
 			$list->setActive("yes");
-			$list->setCampaigns(true);
 			$table = new ContractListTable($list);
 			$html .= $table->generate();
 			return $html;
