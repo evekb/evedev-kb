@@ -17,7 +17,6 @@ options::fadd('Image base URL', 'cfg_img', 'edit:size:50', '',
 options::fadd('Use CCP imageserver', 'cfg_ccpimages', 'checkbox');
 options::fadd('Use simple URLs', 'cfg_pathinfo', 'checkbox', '', '',
 		'e.g. '.KB_HOST.'/index.php/kill_details/1234/');
-options::fadd('Allow Masterfeed', 'feed_allowmaster', 'checkbox');
 options::fadd('Compress pages', 'cfg_compress', 'checkbox', '', '',
 		'Enable unless you encounter errors');
 options::fadd('Display profiling information', 'cfg_profile', 'checkbox');
