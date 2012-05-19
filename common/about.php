@@ -71,20 +71,8 @@ class pAbout extends pageAssembly
 		$qry->execute("SELECT COUNT(*) AS cnt FROM kb3_kills");
 		$row = $qry->getRow();
 		$kills = $row['cnt'];
-		$qry->execute("SELECT COUNT(*) AS cnt FROM kb3_pilots");
-		$row = $qry->getRow();
-		$pilots = $row['cnt'];
-		$qry->execute("SELECT COUNT(*) AS cnt FROM kb3_corps");
-		$row = $qry->getRow();
-		$corps = $row['cnt'];
-		$qry->execute("SELECT COUNT(*) AS cnt FROM kb3_alliances");
-		$row = $qry->getRow();
-		$alliances = $row['cnt'];
 
 		$smarty->assign('kills', $kills);
-		$smarty->assign('pilots', $pilots);
-		$smarty->assign('corps', $corps);
-		$smarty->assign('alliances', $alliances);
 		return $smarty->fetch(get_tpl("about_stats"));
 	}
 
