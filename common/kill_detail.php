@@ -184,6 +184,23 @@ class pKillDetail extends pageAssembly
 		$this->fittingSetup();
 	}
 
+	// Function to implode the fittings array for ShipDNA, remove keys and add separators
+	function array_implode( $glue, $separator, $array )
+	{
+		if ( !is_array( $array ) ) {
+			return $array;
+		}
+		$string = array();
+		foreach ( $array as $key => $val )
+		{
+			if ( is_array( $val ) )
+				$val = implode( ';', $val );
+			$string[] = "{$val}";
+		}
+
+		return implode( $separator, $string );
+	}
+
 	function fittingSetup()
 	{
 		// ship fitting
@@ -229,6 +246,12 @@ class pKillDetail extends pageAssembly
 					'itemID' => $i_id,
 					'slotID' => $i_location,
 					'bpc' => $bpc
+				);
+
+				// Generate Ship DNA array
+				$this->items[$i_location][] = array (
+				'item' => $i_id,
+				'qty' => $i_qty
 				);
 
 				//Fitting, KE - add destroyed items to an array of all fitted items.
@@ -323,6 +346,12 @@ class pKillDetail extends pageAssembly
 					'bpc' => $bpc
 				);
 
+				// Generate Ship DNA array
+				$this->items[$i_location][] = array (
+				'item' => $i_id,
+				'qty' => $i_qty
+				);
+
 				//Fitting -KE, add dropped items to the list
 				if (($i_location != 4) && ($i_location != 6)) {
 					if (($i_usedgroup != 0)) {
@@ -368,6 +397,20 @@ class pKillDetail extends pageAssembly
 				//fitting thing end
 			}
 		}
+	}
+
+	function generateShipDNA()
+	{
+		$high = $this->array_implode(';', ':', $this->items[1]);
+		$subs = $this->array_implode(';', ':', $this->items[7]);
+		$mid = $this->array_implode(';', ':', $this->items[2]);
+		$low = $this->array_implode(';', ':', $this->items[3]);
+		$rigs = $this->array_implode(';', ':', $this->items[5]);
+		$drones = $this->array_implode(';', ':', $this->items[6]);
+		$ship = $this->kill->getVictimShipID();
+
+		$link = $ship . ":" . $subs . ":" . $high . ":" . $mid . ":" . $low . ":" . $rigs . ":" . $drones . "::";
+		return $link;
 	}
 
 	function involvedSetup()
@@ -1148,6 +1191,12 @@ class pKillDetail extends pageAssembly
 					.$this->kill->relatedLossCount().")",
 					edkURI::build(array('a', 'kill_related', true),
 							array('kll_id', $this->kill->getID(), true)));
+		}
+
+		if (!IS_IGB) {
+			$this->addMenuItem("link", "Ship DNA", "javascript:alert('You need to use the EVE In Game Browser to use this feature')");
+		} else {
+			$this->addMenuItem("link", "Ship DNA", "javascript:CCPEVE.showFitting('" . $this->generateShipDNA() . "')");
 		}
 
 		if ($this->page->isAdmin()) {
