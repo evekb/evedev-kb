@@ -14,7 +14,6 @@ options::fadd('Killboard Host', 'cfg_kbhost', 'edit:size:50', '',
 		array('admin_config', 'checkHost'));
 options::fadd('Image base URL', 'cfg_img', 'edit:size:50', '',
 		array('admin_config', 'checkImg'));
-options::fadd('Use CCP imageserver', 'cfg_ccpimages', 'checkbox');
 options::fadd('Use simple URLs', 'cfg_pathinfo', 'checkbox', '', '',
 		'e.g. '.KB_HOST.'/index.php/kill_details/1234/');
 options::fadd('Compress pages', 'cfg_compress', 'checkbox', '', '',

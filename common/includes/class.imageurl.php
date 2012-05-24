@@ -45,8 +45,7 @@ class imageURL
 		}
 		// Images are handled by the killboard if they are maps or we specify
 		// (globally or just this instance)
-		if ($type == 'map' || $type == 'region' || $type == 'cons'
-				|| !config::get('cfg_ccpimages') || $internal) {
+		if ($type == 'map' || $type == 'region' || $type == 'cons' || $internal) {
 			$ccp = false;
 			$url = KB_HOST."/thumb.php";
 		} else {
