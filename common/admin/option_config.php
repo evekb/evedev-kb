@@ -19,7 +19,6 @@ options::fadd('Use simple URLs', 'cfg_pathinfo', 'checkbox', '', '',
 options::fadd('Compress pages', 'cfg_compress', 'checkbox', '', '',
 		'Enable unless you encounter errors');
 options::fadd('Display profiling information', 'cfg_profile', 'checkbox');
-options::fadd('Log errors', 'cfg_log', 'checkbox');
 options::fadd('Lock board', 'cfg_locked', 'checkbox');
 
 options::cat('Advanced', 'Configuration', 'Public-Mode');
