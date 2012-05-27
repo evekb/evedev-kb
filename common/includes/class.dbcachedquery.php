@@ -120,18 +120,7 @@ class DBCachedQuery extends DBBaseQuery
 					DBDebug::recordError("Database error: ".self::$dbconn->id()->error);
 					DBDebug::recordError("SQL: ".$this->sql);
 				}
-				trigger_error("SQL error (".self::$dbconn->id()->error, E_USER_WARNING);
-
-				if (DB_HALTONERROR === true)
-				{
-					echo "Database error: ".self::$dbconn->id()->error."<br/>";
-					echo "SQL: ".$this->sql."<br/>";
-					exit;
-				}
-				else
-				{
-					return false;
-				}
+				throw new Exception( "SQL error (".self::$dbconn->id()->error );
 			}
 
 			$this->exectime = microtime(true) - $t1;
@@ -322,8 +311,6 @@ class DBCachedQuery extends DBBaseQuery
 	/**
 	 * Execute an SQL string.
 	 *
-     * If DB_HALTONERROR is set then this will exit on an error.
-	 *
 	 * @param string $sql
 	 * @return boolean false on error or true if successful.
 	 */
@@ -358,18 +345,7 @@ class DBCachedQuery extends DBBaseQuery
 				DBDebug::recordError("Database error: ".self::$dbconn->id()->error);
 				DBDebug::recordError("SQL: ".$this->sql);
 			}
-			if (defined('DB_HALTONERROR') && DB_HALTONERROR)
-			{
-				echo "Database error: ".self::$dbconn->id()->error."<br />";
-				echo "SQL: " . $this->sql . "<br />";
-				trigger_error("SQL error (".self::$dbconn->id()->error, E_USER_ERROR);
-				exit;
-			}
-			else
-			{
-				trigger_error("SQL error (".self::$dbconn->id()->error, E_USER_WARNING);
-				return false;
-			}
+			throw new Exception( "SQL Execution error: " . self::$dbconn->id()->error . " Query: " . $this->sql );
 		}
 
 		$this->exectime = microtime(true) - $t1;

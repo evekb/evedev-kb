@@ -63,7 +63,6 @@ class DBPreparedQuery
 	 */
 
     /*
-     * If DB_HALTONERROR is set then this will exit on an error.
      * @return mixed false on error or true if successful.
      */
 	public function execute()
@@ -86,17 +85,7 @@ class DBPreparedQuery
 				DBDebug::recordError("SQL execution error: ".$this->stmt->error);
 				DBDebug::recordError("SQL: ".$this->sql);
 			}
-			if (defined('DB_HALTONERROR') && DB_HALTONERROR)
-			{
-				echo "SQL execution error: " . $this->stmt->error . "<br>";
-				echo "SQL: " . $this->sql . "<br>";
-				trigger_error("SQL execution error.", E_USER_ERROR);
-				exit;
-			}
-			else
-			{
-				return false;
-			}
+			throw new Exception( "SQL Execution error: " . $this->stmt->error . " Query: " . $this->sql );
 		}
 		$this->stmt->store_result();
 		$this->exectime = microtime(true) - $t1;
@@ -165,22 +154,7 @@ class DBPreparedQuery
 		$this->stmt = self::$dbconn->id()->prepare($sql);
 		if(!$this->stmt)
 		{
-			if(defined('KB_PROFILE'))
-			{
-				DBDebug::recordError("Prepare Statement error: ". self::$dbconn->id()->error);
-				DBDebug::recordError("SQL: ".$sql);
-			}
-			if (defined('DB_HALTONERROR') && DB_HALTONERROR)
-			{
-				echo "Prepare Statement error: " . self::$dbconn->id()->error . "<br>";
-				echo "SQL: " . $sql . "<br>";
-				trigger_error("Prepare Statement error.", E_USER_ERROR);
-				exit;
-			}
-			else
-			{
-				return false;
-			}
+			throw new Exception( "Prepare Statement error: " . self::$dbconn->id()->error );
 		}
 		return true;
 	}

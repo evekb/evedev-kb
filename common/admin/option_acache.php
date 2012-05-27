@@ -17,7 +17,6 @@ options::fadd('Enable SQL-Query File Cache', 'cfg_qcache', 'checkbox', '', '','S
 options::fadd('Enable SQL-Query MemCache', 'cfg_memcache', 'checkbox','','','Requires a separate memcached installation');
 options::fadd('Memcached server', 'cfg_memcache_server', 'edit:size:50');
 options::fadd('Memcached port', 'cfg_memcache_port', 'edit:size:8');
-options::fadd('Halt on SQLError', 'cfg_sqlhalt', 'checkbox');
 
 options::cat('Advanced', 'Cache', 'Even More Caching');
 options::fadd('Killmail Caching enabled','km_cache_enabled','checkbox');

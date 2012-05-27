@@ -35,7 +35,6 @@ insertConfig('cfg_kbtitle', KB_TITLE);
 
 insertConfig('cfg_profile', KB_PROFILE);
 insertConfig('cfg_qcache', DB_USE_QCACHE);
-insertConfig('cfg_sqlhalt', DB_HALTONERROR);
 
 insertConfig('cfg_mainsite', MAIN_SITE);
 

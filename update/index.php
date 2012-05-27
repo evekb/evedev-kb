@@ -14,7 +14,6 @@ if(function_exists("set_time_limit"))
 ini_set('display_errors', 1);
 
 define('LATEST_DB_UPDATE', "031");
-define('DB_HALTONERROR', true);
 define('DB_USE_QCACHE', false);
 define('DB_USE_MEMCACHE',false);
 define('KB_CACHEDIR', "cache");

@@ -64,7 +64,6 @@ abstract class DBBaseQuery
 
 	/** Execute an SQL string.
 	 *
-	 * If DB_HALTONERROR is set then this will exit on an error.
 	 * @return boolean false on error or true if successful.
 	 */
 	abstract public function execute($sql);

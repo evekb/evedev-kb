@@ -26,7 +26,6 @@ class DBNormalQuery extends DBBaseQuery
 	/**
 	 * Execute an SQL string.
 	 *
-	 * If DB_HALTONERROR is set then this will exit on an error.
 	 * @return boolean false on error or true if successful.
 	 */
 	function execute($sql)
@@ -40,15 +39,7 @@ class DBNormalQuery extends DBBaseQuery
 				DBDebug::recordError("Database error: " . self::$dbconn->id()->error);
 				DBDebug::recordError("SQL: " . $sql);
 			}
-			if (defined('DB_HALTONERROR') && DB_HALTONERROR) {
-				echo "Database error: " . self::$dbconn->id()->error . "<br />";
-				echo "SQL: " . $sql . "<br />";
-				trigger_error("SQL error (" . self::$dbconn->id()->error, E_USER_ERROR);
-				exit;
-			} else {
-				trigger_error("SQL error (" . self::$dbconn->id()->error, E_USER_WARNING);
-				return false;
-			}
+			throw new Exception( "Database Error: " . self::$dbconn->id()->error );
 		}
 
 		$this->exectime = microtime(true) - $t1;

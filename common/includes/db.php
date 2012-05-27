@@ -58,6 +58,3 @@ else
 		define("DB_USE_MEMCACHE", false);
 	}
 }
-
-// DB_HALTONERROR may have been defined externally for sensitive operations.
-if(!defined('DB_HALTONERROR')) define('DB_HALTONERROR', (bool)config::get('cfg_sqlhalt'));
