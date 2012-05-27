@@ -203,8 +203,6 @@ if (!$settingsPage && !file_exists('common/'.$page.'.php') && !$modOverrides)
 	$page = 'home';
 }
 
-cache::check($page);
-
 /**
  * Smarty templating.
  * 
