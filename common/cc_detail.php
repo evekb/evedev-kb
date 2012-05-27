@@ -169,16 +169,6 @@ class pContractDetail extends pageAssembly
 		switch ($this->view)
 		{
 			case "":
-				$qrylength=DBFactory::getDBQuery();
-				// set break at half of the number of valid classes - excludes noob ships, drones and unknown
-				$qrylength->execute("SELECT count(*) - 3 AS cnt FROM kb3_ship_classes");
-				if($qrylength->recordCount())
-				{
-					$res = $qrylength->getRow();
-					$breaklen =$res['cnt']/2;
-				}
-				else $breaklen = 15;
-				unset($qrylength);
 				$targets = array();
 				$curtarget = array();
 				while ($target = &$this->contract->getContractTarget())
