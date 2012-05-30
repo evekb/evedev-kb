@@ -573,11 +573,8 @@ class IDFeed
 								."'".$qry->escape($kill->getHash(false, false))."',"
 								." ".$trust.","
 								." UTC_TIMESTAMP())");
-						 $qry->execute("UPDATE kb3_kills"
-							." JOIN kb3_mails ON kb3_kills.kll_id ="
-							." kb3_mails.kll_id SET kb3_kills.kll_external_id="
-							.$externalID." WHERE kb3_kills.kll_id = $id AND"
-							." kb3_kills.kll_external_id IS NULL");
+						$qry->execute("UPDATE kb3_kills SET kb3_kills.kll_external_id=".$externalID.
+						" WHERE kb3_kills.kll_id = $id AND kb3_kills.kll_external_id IS NULL");
 				   }
 					$this->duplicate[] = array($externalID, $internalID, $id);
 					$skip = true;
