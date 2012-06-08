@@ -1353,8 +1353,7 @@ class pKillDetail extends pageAssembly
 	{
 		global $smarty;
 		$qry = DBFactory::getDBQuery();
-		$sql = "SELECT log_ip_address, log_timestamp FROM kb3_log WHERE"
-				." log_kll_id = ".$this->kll_id;
+		$sql = "SELECT log_ip_address, log_timestamp FROM kb3_log WHERE log_kll_id=".$this->kll_id;
 		$qry->execute($sql);
 		if (!$row = $qry->getRow()) {
 			return "";

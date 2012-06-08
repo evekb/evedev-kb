@@ -66,8 +66,7 @@ if (isset($_GET['alliance'])) {
 	foreach ($arr as &$val) {
 		$val = intval($val);
 	}
-	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_external_id IN (".implode(',',
-					$arr).")");
+	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_external_id IN (".implode(',',$arr).")");
 	if (!$qry->recordCount()) {
 		show($sxe);
 	}
