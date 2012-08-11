@@ -30,13 +30,13 @@ class pAbout extends pageAssembly
 		global $smarty;
 		// Current active developers
 		$currentDeveloper = array(
-			'Hon Kovell', // Various stuff (EDK2-3)
-			'mastergamer', // Different various stuff
+			'mastergamer', // Various stuff
 			'Mini Mooo',
 		);
 
 		// Inactive developers
 		$developer = array(
+			'Hon Kovell', // Various stuff (EDK2-4)
 			'exi', // Various stuff (EDK <2)
 			'Beansman',
 			'Ralle030583',
