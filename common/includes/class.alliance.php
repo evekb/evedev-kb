@@ -5,16 +5,47 @@
  */
 class Alliance extends Entity
 {
-	/** @var integer */
+	/**
+	 * Alliance Internal ID
+	 * @var integer
+	 */
 	private $id = null;
-	/** @var integer */
+	/**
+	 * Alliance External ID
+	 * @var integer
+	 */
 	private $externalid = null;
-	/** @var boolean */
+	/**
+	 * Store whether alliance has been loaded from database
+	 * @var boolean
+	 */
 	private $executed = false;
-	/** @var string */
+	/**
+	 * Alliance Name
+	 * @var string
+	 */
 	private $name = null;
-	/** @var array Array of URLs for each size of portrait requested. */
+	/**
+	 * Image URL
+	 * @var array Array of URLs for each size of portrait requested.
+	 */
 	private $imgurl = array();
+	/**
+	 * Alliance Short name
+	 */
+	private $shortname = null;
+	/**
+	 * Corp Executor ID
+	 */
+	private $executor_id = null;
+	/**
+	 * Member Count
+	 */
+	private $member_count = 0;
+	/**
+	 * Alliance Start Date
+	 */
+	private $start_date = null;
 
 	/**
 	 * Create a new Alliance object from the given $id.
@@ -103,6 +134,59 @@ class Alliance extends Entity
 	}
 
 	/**
+	 * Return the alliance name.
+	 *
+	 * @return string
+	 */
+	function getshortName()
+	{
+		if (is_null($this->shortname)) {
+			$this->execQuery();
+		}
+		return $this->shortname;
+	}
+
+	/**
+	 * Return the alliance name.
+	 *
+	 * @return string
+	 */
+	public function getMemberCount()
+	{
+		if (is_null($this->member_count)) {
+			$this->execQuery();
+		}
+		return $this->member_count;
+	}
+
+	/**
+	 * Return the alliance name.
+	 *
+	 * @return string
+	 */
+	public function getStartDate()
+	{
+		if (is_null($this->start_date)) {
+			$this->execQuery();
+		}
+		return $this->start_date;
+	}
+
+
+	/**
+	 * Return the executor id.
+	 *
+	 * @return string
+	 */
+	public function getExecutorID()
+	{
+		if (is_null($this->executor_id)) {
+			$this->execQuery();
+		}
+		return $this->executor_id;
+	}
+
+	/**
 	 * Fetch the alliance details from the database using the id given on construction.
 	 *
 	 * If no record is found but we have an external ID then the result
@@ -116,9 +200,13 @@ class Alliance extends Entity
 				$this->externalid = $cache->externalid;
 				$this->executed = $cache->executed;
 				$this->name = $cache->name;
+				$this->shortname = $cache->shortname;
+				$this->executor_id = $cache->executor_id;
+				$this->member_count = $cache->member_count;
+				$this->start_date = $cache->start_date;
 			} else {
 				$qry = DBFactory::getDBQuery();
-				$sql = "select all_id, all_name, all_external_id from kb3_alliances where ";
+				$sql = "select all_id, all_name, all_short_name, all_executor_id, all_member_count, all_start_date, all_external_id from kb3_alliances where ";
 				if ($this->externalid) {
 					$sql .= "all_external_id = ".$this->externalid;
 				} else {
@@ -132,6 +220,10 @@ class Alliance extends Entity
 					$this->id = (int) $row['all_id'];
 					$this->name = $row['all_name'];
 					$this->externalid = (int) $row['all_external_id'];
+					$this->shortname = $row['all_short_name'];
+					$this->executor_id = (int) $row['all_executor_id'];
+					$this->member_count = (int) $row['all_member_count'];
+					$this->start_date = $row['all_start_date'];
 					$this->executed = true;
 					$this->putCache();
 				}
@@ -149,7 +241,7 @@ class Alliance extends Entity
 	 * @param integer $externalid External ID if known.
 	 * @return type
 	 */
-	static function add($name, $externalid = 0)
+	static function add($name, $externalid = 0, $shortname = '', $executor_id = null, $member_count = 0, $start_date = null)
 	{
 		$qry = DBFactory::getDBQuery();
 		$name = stripslashes($name);
@@ -172,8 +264,12 @@ class Alliance extends Entity
 				$qry->execute("SELECT * FROM kb3_alliances WHERE all_external_id = ".$externalid);
 				if ($qry->recordCount() > 0) {
 					$row = $qry->getRow();
-					$qry->execute("UPDATE kb3_alliances SET all_name = '".$qry->escape($name)
-							."' WHERE all_external_id = ".$externalid);
+					$qry->execute("UPDATE kb3_alliances SET all_name = '".$qry->escape($name)."',
+															all_short_name = '".$qry->escape($shortname)."',
+															all_executor_id = '".$qry->escape($executor_id)."',
+															all_member_count = '".$qry->escape($member_count)."',
+															all_start_date = '".$qry->escape($start_date)."'"
+							." WHERE all_external_id = ".$externalid);
 
 					$all = Cacheable::factory('Alliance', (int) $qry->getInsertID());
 				} else {
@@ -259,7 +355,10 @@ class Alliance extends Entity
 	 */
 	function isFaction()
 	{
-		$factions = array("Amarr Empire", "Minmatar Republic", "Caldari State", "Gallente Federation");
+		$factions = array("Amarr Empire",
+						  "Minmatar Republic",
+						  "Caldari State",
+						  "Gallente Federation");
 		return (in_array($this->getName(), $factions));
 	}
 
@@ -304,8 +403,7 @@ class Alliance extends Entity
 			}
 			$this->putCache();
 		} else if ($this->getExternalID()) {
-			$this->imgurl[$size] = imageURL::getURL('Alliance', $this->getExternalID(),
-					$size);
+			$this->imgurl[$size] = imageURL::getURL('Alliance', $this->getExternalID(), $size);
 			$this->putCache();
 		} else {
 			$this->imgurl[$size] = imageURL::getURL('Alliance', 1, $size);
@@ -321,8 +419,7 @@ class Alliance extends Entity
 	function getDetailsURL()
 	{
 		if ($this->getExternalID()) {
-			return edkURI::page('alliance_detail', $this->externalid,
-					'all_ext_id');
+			return edkURI::page('alliance_detail', $this->externalid, 'all_ext_id');
 		} else {
 			return edkURI::page('alliance_detail', $this->id, 'all_id');
 		}

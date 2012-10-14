@@ -33,6 +33,10 @@ class API_Alliance extends API
 		$this->data = $this->CallAPI( "eve", "AllianceList", null, null, null );
 	}
 
+	function getAlliances() {
+		return $this->data->alliances;
+	}
+
 	function LocateAlliance($name)
 	{
 		$res = array();

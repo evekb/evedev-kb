@@ -17,6 +17,45 @@ class Corporation extends Entity
 	private $updated = null;
 
 	/**
+	 * Corporation Short name
+	 */
+	private $shortname = null;
+
+	/**
+	 * Corporation CEO ID
+	 */
+	private $ceoid = null;
+	/**
+	 * HQ Station ID
+	 */
+	private $stationid = null;
+	/**
+	 * Description
+	 */
+	private $description = null;
+	/**
+	 * URL
+	 */
+	private $url = null;
+	/**
+	 * Tax Rate
+	 */
+	private $taxrate = null;
+	/**
+	 * Member Count
+	 */
+	private $membercount = null;
+	/**
+	 * Shares
+	 */
+	private $shares = null;
+
+	/**
+	 * Start Date (alliance)
+	 */
+	private $startdate = null;
+
+	/**
 	 * Create a new Corporation object from the given $id.
 	 *
      * @param integer $id The corporation ID.
@@ -27,6 +66,125 @@ class Corporation extends Entity
 		if($externalIDFlag) $this->externalid=intval($id);
 		else $this->id = intval($id);
 	}
+
+
+	/**
+	 * Return the short name.
+	 *
+	 * @return string
+	 */
+	function getStartDate()
+	{
+		if (is_null($this->startdate)) {
+			$this->execQuery();
+		}
+		return $this->startdate;
+	}
+
+	/**
+	 * Return the short name.
+	 *
+	 * @return string
+	 */
+	function getshortName()
+	{
+		if (is_null($this->shortname)) {
+			$this->execQuery();
+		}
+		return $this->shortname;
+	}
+
+	/**
+	 * Return the Ceo ID.
+	 *
+	 * @return string
+	 */
+	function getCeoID()
+	{
+		if (is_null($this->ceoid)) {
+			$this->execQuery();
+		}
+		return $this->ceoid;
+	}
+
+	/**
+	 * Return the Station ID.
+	 *
+	 * @return string
+	 */
+	function getStationID()
+	{
+		if (is_null($this->stationid)) {
+			$this->execQuery();
+		}
+		return $this->stationid;
+	}
+
+	/**
+	 * Return the Description.
+	 *
+	 * @return string
+	 */
+	function getDescription()
+	{
+		if (is_null($this->description)) {
+			$this->execQuery();
+		}
+		return str_replace( "<br>", "<br />", $this->description );
+	}
+
+	/**
+	 * Return the URL
+	 *
+	 * @return string
+	 */
+	function getURL()
+	{
+		if (is_null($this->url)) {
+			$this->execQuery();
+		}
+		return $this->url;
+	}
+	
+	/**
+	 * Return the Station ID.
+	 *
+	 * @return string
+	 */
+	function getTaxRate()
+	{
+		if (is_null($this->taxrate)) {
+			$this->execQuery();
+		}
+		return $this->taxrate;
+	}
+
+	/**
+	 * Return the Member Count.
+	 *
+	 * @return string
+	 */
+	function getMemberCount()
+	{
+		if (is_null($this->membercount)) {
+			$this->execQuery();
+		}
+		return $this->membercount;
+	}
+
+	/**
+	 * Return the Shares
+	 *
+	 * @return string
+	 */
+	function getShares()
+	{
+		if (is_null($this->shares)) {
+			$this->execQuery();
+		}
+		return $this->shares;
+	}
+
 	/**
 	 * Return true if this corporation is an NPC corporation.
 	 *
@@ -131,6 +289,22 @@ class Corporation extends Entity
 		}
 	}
 	/**
+	 * Lookup a corporation by external id and set this object to use the details found.
+	 *
+     * @param int $ext_id The External ID to lookup
+	*/
+	static function lookupByExternalID($ext_id)
+	{
+		$qry = DBFactory::getDBQuery();
+		$qry->execute("select crp_id from kb3_corps where crp_external_id=".(int)$ext_id);
+		if($qry->recordCount()) {
+			$row = $qry->getRow();
+			return Cacheable::factory('Corporation', (int)$row['crp_id']);
+		} else {
+			return false;
+		}
+	}
+	/**
 	 * Search the database for the corporation details for this object.
 	 *
 	 * If no record is found but we have an external ID then the result
@@ -148,6 +322,17 @@ class Corporation extends Entity
 			$this->externalid = $cache->externalid;
 			$this->name = $cache->name;
 			$this->alliance = $cache->alliance;
+			
+			$this->shortname = $cache->shortname;
+			$this->ceoid = $cache->ceoid;
+			$this->stationid = $cache->stationid;
+			$this->description = $cache->description;
+			$this->url = $cache->url;
+			$this->taxrate = $cache->taxrate;
+			$this->membercount = $cache->membercount;
+			$this->shares = $cache->shares;
+			$this->startdate = $cache->startdate;
+
 		} else {
 			$qry = DBFactory::getDBQuery();
 			$sql = "select * from kb3_corps where ";
@@ -163,6 +348,17 @@ class Corporation extends Entity
 				$this->name = $row['crp_name'];
 				$this->externalid = intval($row['crp_external_id']);
 				$this->alliance = $row['crp_all_id'];
+				
+				$this->shortname = $row['crp_short_name'];
+				$this->ceoid = intval($row['crp_ceo_id']);
+				$this->stationid = intval($row['crp_station_id']);
+				$this->description = $row['crp_description'];
+				$this->url = $row['crp_url'];
+				$this->taxrate = intval($row['crp_taxrate']);
+				$this->membercount = intval($row['crp_membercount']);
+				$this->shares = intval($row['crp_shares']);
+				$this->startdate = $row['crp_startdate'];
+
 				$this->putCache();
 			}
 		}

@@ -3,7 +3,7 @@
  * @package EDK
  */
 if (!defined('LATEST_DB_UPDATE')) {
-	define('LATEST_DB_UPDATE', "031");
+	define('LATEST_DB_UPDATE', "034");
 }
 
 define('KB_CACHEDIR', 'cache');

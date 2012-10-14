@@ -179,20 +179,9 @@ class pCorpDetail extends pageAssembly
 		// The summary table is also used by the stats. Whichever is called
 		// first generates the table.
 
-		$myAPI = new API_CorporationSheet();
-		$myAPI->setCorpID($this->corp->getExternalID());
-		$result .= $myAPI->fetchXML();
-		// Update the name if it has changed.
-		if($result == "" && $myAPI->getCorporationName())
-		{
-			$this->alliance = Alliance::add($myAPI->getAllianceName(),
-				$myAPI->getAllianceID());
-			$this->corp = Corporation::add($myAPI->getCorporationName(),
-				$this->alliance, $myAPI->getCurrentTime(),
-				$externalid = $this->corp->getExternalID());
-		}
-		$this->page->setTitle('Corporation details - '.$this->corp->getName() . " [" . $myAPI->getTicker() . "]");
+		$this->page->setTitle('Corporation details - '.$this->corp->getName() . " [" . $this->corp->getShortName() . "]");
 
+		$smarty->registerObject('Corp', $this->corp);
 		$smarty->assign('portrait_url', $this->corp->getPortraitURL(128));
 
 		if($this->alliance->getName() == "None") {
@@ -221,19 +210,13 @@ class pCorpDetail extends pageAssembly
 			$smarty->assign('efficiency', 0);
 		}
 
-		if ($result != "Corporation is not part of alliance.") {
-			$smarty->assign('ceo_url', edkURI::build(
-					array('a', 'pilot_detail', true),
-					array('plt_ext_id', $myAPI->getCeoID(), true)));
-			$smarty->assign('ceo_name', $myAPI->getCeoName());
-			$smarty->assign('HQ_location', $myAPI->getStationName());
-			$smarty->assign('member_count', $myAPI->getMemberCount());
-			$smarty->assign('share_count', $myAPI->getShares());
-			$smarty->assign('tax_rate', $myAPI->getTaxRate());
-			$smarty->assign('external_url', $myAPI->getUrl());
-			$smarty->assign('corp_description', str_replace( "<br>", "<br />",
-					$myAPI->getDescription()));
-		}
+		$smarty->assign('ceo_url', edkURI::build(
+				array('a', 'pilot_detail', true),
+				array('plt_ext_id', $this->corp->getCeoID(), true)));
+
+		$pilot = new Pilot(0, $this->corp->getCeoID());
+		$smarty->assign('ceo_name', $pilot->getName());
+
 		return $smarty->fetch(get_tpl('corp_detail_stats'));
 	}
 
