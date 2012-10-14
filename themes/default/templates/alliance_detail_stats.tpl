@@ -14,20 +14,21 @@
 			<td class="kl-kill" >{$totalkills}</td>
 			<td>Executor:</td>
 			<td>
-			{if $myAlliance.executorCorpID}<a href="{$kb_host}/?a=corp_detail&amp;crp_ext_id={$myAlliance.executorCorpID}">{$myAlliance.executorCorpName}</a>{/if}
+			{if $ExecutorName}
+			<a href="{$kb_host}/?a=corp_detail&amp;crp_ext_id={Alliance->getExecutorID}">{$ExecutorName}</a>{/if}
 			</td>
 		</tr>
 		<tr class="kb-table-row-even">
 			<td>Losses:</td>
 			<td class="kl-loss">{$totallosses}</td>
 			<td>Members:</td>
-			<td>{$myAlliance.memberCount}</td>
+			<td>{Alliance->getMemberCount}</td>
 		</tr>
 		<tr class="kb-table-row-even">
 			<td>ISK destroyed:</td>
 			<td class="kl-kill">{$totalkisk}B</td>
 			<td>Start Date:</td>
-			<td>{$myAlliance.startDate}</td>
+			<td>{Alliance->getStartDate}</td>
 		</tr>
 		<tr class="kb-table-row-even">
 			<td>ISK lost:</td>

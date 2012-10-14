@@ -7,5 +7,8 @@
 	<div style="float: right; width: 310px; margin-right:10px">
 		{$weapons}
 	</div>
+	<div style="float: right; width: 310px; margin-right:10px">
+		{$losses}
+	</div>
 </div>
 <!-- /detail_kl_ships_weapons -->

@@ -30,7 +30,7 @@
 					<td class="kb-table-cell">
 						<b>HQ:</b>
 					</td>
-					<td class="kb-table-cell">{$HQ_location}</td>
+					<td class="kb-table-cell">{Corp->getStationID}</td>
 				</tr>
 				<tr class="kb-table-row-even">
 					<td class="kb-table-cell">
@@ -40,7 +40,7 @@
 					<td class="kb-table-cell">
 						<b>Members:</b>
 					</td>
-					<td class="kb-table-cell">{$member_count}</td>
+					<td class="kb-table-cell">{Corp->getMemberCount}</td>
 				</tr>
 				<tr class="kb-table-row-even">
 					<td class="kb-table-cell">
@@ -50,7 +50,7 @@
 					<td class="kb-table-cell">
 						<b>Shares:</b>
 					</td>
-					<td class="kb-table-cell">{$share_count}</td>
+					<td class="kb-table-cell">{Corp->getShares}</td>
 				</tr>
 				<tr class="kb-table-row-even">
 					<td class="kb-table-cell">
@@ -60,7 +60,7 @@
 					<td class="kb-table-cell">
 						<b>Tax Rate:</b>
 					</td>
-					<td class="kb-table-cell">{$tax_rate}%</td>
+					<td class="kb-table-cell">{Corp->getTaxRate}%</td>
 				</tr>
 				<tr class="kb-table-row-even">
 					<td class="kb-table-cell">
@@ -73,10 +73,10 @@
 						<b>Website:</b>
 					</td>
 					<td class="kb-table-cell">
-						{if {$external_url}}<a href="{$external_url}">{$external_url}</a>{/if}
+						{if {Corp->getURL}}<a href="{Corp->getURL}">{Corp->getURL}</a>{/if}
 					</td>
 				</tr>
 			</table>
-			<div class="kb-table-row-even" style='width:100%;height:100px;overflow:auto'>{$corp_description}</div>
+			<div class="kb-table-row-even" style='width:100%;height:100px;overflow:auto'>{Corp->getDescription}</div>
 			</div>
 <!-- /corp_detail_stats -->
