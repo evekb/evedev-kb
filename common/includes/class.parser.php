@@ -704,7 +704,7 @@ class Parser
 			$destroyed_items = $this->scanForItems($destroyed);
 			foreach ($destroyed_items as $item)
 			{
-				$ditem = new DestroyedItem($item['item'], $item['quantity'], '', $item['location']);
+				$ditem = new DestroyedItem($item['item'], $item['quantity'], '', $item['location'], true);
 				$kill->addDestroyedItem($ditem);
 			}
 		}
@@ -720,7 +720,7 @@ class Parser
 			foreach ($dropped_items as $item)
 			{
 				$ditem = new DestroyedItem($item['item'], $item['quantity'], '',
-						$item['location']);
+						$item['location'], true);
 				$kill->addDroppedItem($ditem);
 			}
 		}

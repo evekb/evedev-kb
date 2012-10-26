@@ -184,6 +184,36 @@ class pKillDetail extends pageAssembly
 		$this->fittingSetup();
 	}
 
+	function collapse_ilocation( $id ) {
+		/*
+		 * High Slots : flags 27 to 34
+		 * Medium Slots : flags 19 to 26
+		 * Low Slots : flags 11 to 18
+		 * Rig Slots : flags 92 to 99
+		 * Sub Systems : 125 to 132 (note current ships only have subsystems ranging from 125 to 129
+		 */
+		if( $id >= 27 && $id <= 34 ) {
+			$id = 27;
+		}
+
+		if( $id >= 19 && $id <= 26 ) {
+			$id = 19;
+		}
+
+		if( $id >= 11 && $id <= 18 ) {
+			$id = 11;
+		}
+
+		if( $id >= 92 && $id <= 99 ) {
+			$id = 92;
+		}
+
+		if( $id >= 125 && $id <= 132 ) {
+			$id = 125;
+		}
+		return $id;
+	}
+
 	// Function to implode the fittings array for ShipDNA, remove keys and add separators
 	function array_implode( $glue, $separator, $array )
 	{
@@ -221,13 +251,13 @@ class pKillDetail extends pageAssembly
 				}
 
 				$i_name = $item->getName();
-				$i_location = $destroyed->getLocationID();
+				$i_location = $this->collapse_ilocation($destroyed->getLocationID());
 				$i_id = $item->getID();
 				$i_usedgroup = $item->get_used_launcher_group();
 				
 				// BPCs
-				if($i_location == 9) {
-					$i_location = 4;
+				if($i_location == -1) {
+					$i_location = 5;
 					$i_name = $i_name." (Copy)";
 					$value = $formatted = 0;
 					$bpc = true;
@@ -255,9 +285,9 @@ class pKillDetail extends pageAssembly
 				);
 
 				//Fitting, KE - add destroyed items to an array of all fitted items.
-				if ($i_location <= 3 || $i_location == 7 || $i_location == 5) {
+				if ($i_location == 27 || $i_location == 19 || $i_location == 11 || $i_location == 125 || $i_location == 92) {
 					if (($i_usedgroup != 0)) {
-						if ($i_location == 1) {
+						if ($i_location == 27) {
 							$i_ammo = $item->get_ammo_size($i_name);
 							if ($i_usedgroup == 481) {
 								$i_ammo = 0;
@@ -280,7 +310,7 @@ class pKillDetail extends pageAssembly
 						// Avoids timeouts on badly faked mails.
 						// TODO: Refuse to show fitting and display an invalid message.
 						for ($count = 0; $count < min($i_qty, 8); $count++) {
-							if ($i_location == 1) {
+							if ($i_location == 27) {
 								$i_charge = $item->get_used_charge_size();
 							} else {
 								$i_charge = 0;
@@ -320,13 +350,13 @@ class pKillDetail extends pageAssembly
 				}
 
 				$i_name = $item->getName();
-				$i_location = $dropped->getLocationID();
+				$i_location = $this->collapse_ilocation($dropped->getLocationID());
 				$i_id = $item->getID();
 				$i_usedgroup = $item->get_used_launcher_group();
 
 				// BPCs
-				if($i_location == 9) {
-					$i_location = 4;
+				if($i_location == -1) {
+					$i_location = 5;
 					$i_name = $i_name." (Copy)";
 					$value = $formatted = 0;
 					$bpc = true;
@@ -353,9 +383,9 @@ class pKillDetail extends pageAssembly
 				);
 
 				//Fitting -KE, add dropped items to the list
-				if (($i_location != 4) && ($i_location != 6)) {
+				if (($i_location != 5) && ($i_location != 87)) {
 					if (($i_usedgroup != 0)) {
-						if ($i_location == 1) {
+						if ($i_location == 27) {
 							$i_ammo = $item->get_ammo_size($i_name);
 
 							if ($i_usedgroup == 481) {
@@ -377,7 +407,7 @@ class pKillDetail extends pageAssembly
 						// Use a max of 8 as a sanity check.
 						// Avoids timeouts on badly faked mails.
 						for ($count = 0; $count < min($i_qty, 8); $count++) {
-							if ($i_location == 1) {
+							if ($i_location == 27) {
 								$i_charge = $item->get_used_charge_size();
 							} else {
 								$i_charge = 0;
@@ -401,12 +431,12 @@ class pKillDetail extends pageAssembly
 
 	function generateShipDNA()
 	{
-		$high = $this->array_implode(';', ':', $this->items[1]);
-		$subs = $this->array_implode(';', ':', $this->items[7]);
-		$mid = $this->array_implode(';', ':', $this->items[2]);
-		$low = $this->array_implode(';', ':', $this->items[3]);
-		$rigs = $this->array_implode(';', ':', $this->items[5]);
-		$drones = $this->array_implode(';', ':', $this->items[6]);
+		$high = $this->array_implode(';', ':', $this->items[27]);
+		$subs = $this->array_implode(';', ':', $this->items[125]);
+		$mid = $this->array_implode(';', ':', $this->items[19]);
+		$low = $this->array_implode(';', ':', $this->items[11]);
+		$rigs = $this->array_implode(';', ':', $this->items[92]);
+		$drones = $this->array_implode(';', ':', $this->items[87]);
 		$ship = $this->kill->getVictimShipID();
 
 		$link = $ship . ":" . $subs . ":" . $high . ":" . $mid . ":" . $low . ":" . $rigs . ":" . $drones . "::";
@@ -773,53 +803,29 @@ class pKillDetail extends pageAssembly
 		// preparing slot layout
 		$slot_array = array();
 
-		$slot_array[1] = array(
-			'img' => 'icon08_11.png',
-			'text' => 'Fitted - High slot',
-			'items' => array()
-		);
+		$slot_array[27] = array( 'img' => 'icon08_11.png', 'text' => 'Fitted - High slot','items' => array() );
+		$slot_array[19] = array( 'img' => 'icon08_10.png', 'text' => 'Fitted - Mid slot', 'items' => array() );
+		$slot_array[11] = array( 'img' => 'icon08_09.png', 'text' => 'Fitted - Low slot', 'items' => array() );
+		$slot_array[92] = array( 'img' => 'icon68_01.png', 'text' => 'Fitted - Rig slot', 'items' => array() );
+		$slot_array[87] = array( 'img' => 'icon02_10.png', 'text' => 'Drone bay', 'items' => array() );
+		$slot_array[5] = array('img' => 'icon03_14.png', 'text' => 'Cargo Bay', 'items' => array() );
+		$slot_array[0] = array( 'img' => 'icon03_14.png', 'text' => 'Corporate Hangar', 'items' => array() );
 
-		$slot_array[2] = array(
-			'img' => 'icon08_10.png',
-			'text' => 'Fitted - Mid slot',
-			'items' => array()
-		);
+		$slot_array[125] = array( 'img' => 'icon76_04.png', 'text' => 'Fitted - Subsystems', 'items' => array() );
+		$slot_array[154] = array( 'img' => 'icon03_14.png', 'text' => 'Quafe Bay', 'items' => array() );
+		$slot_array[90] = array( 'img' => 'icon03_14.png', 'text' => 'Ship Hanger', 'items' => array() );
 
-		$slot_array[3] = array(
-			'img' => 'icon08_09.png',
-			'text' => 'Fitted - Low slot',
-			'items' => array()
-		);
+		$slot_array[133] = array( 'img' => 'icon03_14.png', 'text' => 'Fuel Bay', 'items' => array() );
+		$slot_array[134] = array( 'img' => 'icon03_14.png', 'text' => 'Ore Hold', 'items' => array() );
+		$slot_array[135] = array( 'img' => 'icon03_14.png', 'text' => 'Gas Hold', 'items' => array() );
+		$slot_array[136] = array( 'img' => 'icon03_14.png', 'text' => 'Mineral Hold', 'items' => array() );
+		$slot_array[137] = array( 'img' => 'icon03_14.png', 'text' => 'Salvage Hold', 'items' => array() );
+		$slot_array[138] = array( 'img' => 'icon03_14.png', 'text' => 'Ship Maintanance Bay', 'items' => array() );
+		$slot_array[148] = array( 'img' => 'icon03_14.png', 'text' => 'Command Center Hold', 'items' => array() );
+		$slot_array[149] = array( 'img' => 'icon03_14.png', 'text' => 'Planetary Commodities Hold', 'items' => array() );
+		$slot_array[151] = array( 'img' => 'icon03_14.png', 'text' => 'Material Bay', 'items' => array() );
 
-		$slot_array[5] = array(
-			'img' => 'icon68_01.png',
-			'text' => 'Fitted - Rig slot',
-			'items' => array()
-		);
-
-		$slot_array[7] = array(
-			'img' => 'icon76_04.png',
-			'text' => 'Fitted - Subsystems',
-			'items' => array()
-		);
-
-		$slot_array[6] = array(
-			'img' => 'icon02_10.png',
-			'text' => 'Drone bay',
-			'items' => array()
-		);
-
-		$slot_array[4] = array(
-			'img' => 'icon03_14.png',
-			'text' => 'Cargo Bay',
-			'items' => array()
-		);
-
-		$slot_array[8] = array(
-			'img' => 'icon03_14.png',
-			'text' => 'Implants',
-			'items' => array()
-		);
+		$slot_array[8] = array( 'img' => 'icon03_14.png', 'text' => 'Implants', 'items' => array() );
 		$smarty->assignByRef('slots', $slot_array);
 
 		$smarty->assignByRef('destroyed', $this->dest_array);
@@ -920,61 +926,61 @@ class pKillDetail extends pageAssembly
 	{
 		global $smarty;
 
-		if (is_array($this->fitting_array[1])) {
-			foreach ($this->fitting_array[1] as $array_rowh) {
+		if (is_array($this->fitting_array[27])) {
+			foreach ($this->fitting_array[27] as $array_rowh) {
 				$sort_by_nameh["groupID"][] = $array_rowh["groupID"];
 			}
 
 			array_multisort($sort_by_nameh["groupID"], SORT_ASC,
-					$this->fitting_array[1]);
+					$this->fitting_array[27]);
 		}
 
-		if (is_array($this->fitting_array[2])) {
-			foreach ($this->fitting_array[2] as $array_rowm) {
+		if (is_array($this->fitting_array[19])) {
+			foreach ($this->fitting_array[19] as $array_rowm) {
 				$sort_by_namem["groupID"][] = $array_rowm["groupID"];
 			}
 
 			array_multisort($sort_by_namem["groupID"], SORT_ASC,
-					$this->fitting_array[2]);
+					$this->fitting_array[19]);
 		}
 
-		if (is_array($this->fitting_array[3])) {
-			foreach ($this->fitting_array[3] as $array_rowl) {
+		if (is_array($this->fitting_array[11])) {
+			foreach ($this->fitting_array[11] as $array_rowl) {
 				$sort_by_namel["groupID"][] = $array_rowl["Name"];
 			}
 
 			array_multisort($sort_by_namel["groupID"], SORT_ASC,
-					$this->fitting_array[3]);
+					$this->fitting_array[11]);
 		}
 
-		if (is_array($this->fitting_array[5])) {
-			foreach ($this->fitting_array[5] as $array_rowr) {
+		if (is_array($this->fitting_array[92])) {
+			foreach ($this->fitting_array[92] as $array_rowr) {
 				$sort_by_namer["Name"][] = $array_rowr["Name"];
 			}
 
 			array_multisort($sort_by_namer["Name"], SORT_ASC,
-					$this->fitting_array[5]);
+					$this->fitting_array[92]);
 		}
 
-		if (is_array($this->fitting_array[7])) {
-			foreach ($this->fitting_array[7] as $array_rowr) {
+		if (is_array($this->fitting_array[125])) {
+			foreach ($this->fitting_array[125] as $array_rowr) {
 				$sort_by_namer["groupID"][] = $array_rowr["groupID"];
 			}
 
 			array_multisort($sort_by_namer["groupID"], SORT_ASC,
-					$this->fitting_array[7]);
+					$this->fitting_array[125]);
 		}
 
 		//Fitting - KE, sort the fitted items into name order, so that several of the same item apear next to each other. -end
 
-		$length = count($this->ammo_array[1]);
+		$length = count($this->ammo_array[27]);
 
 		$temp = array();
 
-		if (is_array($this->fitting_array[1])) {
+		if (is_array($this->fitting_array[27])) {
 			$hiammo = array();
 
-			foreach ($this->fitting_array[1] as $highfit) {
+			foreach ($this->fitting_array[27] as $highfit) {
 				$group = $highfit["groupID"];
 				$size = $highfit["chargeSize"];
 
@@ -996,11 +1002,11 @@ class pKillDetail extends pageAssembly
 						$group = 509;
 					} // Assault Missile Lauchers uses same ammo as Standard Missile Lauchers
 
-					if (is_array($this->ammo_array[1])) {
+					if (is_array($this->ammo_array[27])) {
 						$i = 0;
 
 						while (!($found) && $i < $length) {
-							$temp = array_shift($this->ammo_array[1]);
+							$temp = array_shift($this->ammo_array[27]);
 
 							if (($temp["usedgroupID"] == $group)
 									&& ($temp["size"] == $size)) {
@@ -1009,7 +1015,7 @@ class pKillDetail extends pageAssembly
 								$found = 1;
 							}
 
-							$this->ammo_array[1][] = $temp;
+							$this->ammo_array[27][] = $temp;
 							$i++;
 						}
 					}
@@ -1024,12 +1030,12 @@ class pKillDetail extends pageAssembly
 			}
 		}
 
-		$length = count($this->ammo_array[2]);
+		$length = count($this->ammo_array[19]);
 
-		if (is_array($this->fitting_array[2])) {
+		if (is_array($this->fitting_array[19])) {
 			$midammo = array();
 
-			foreach ($this->fitting_array[2] as $midfit) {
+			foreach ($this->fitting_array[19] as $midfit) {
 				$group = $midfit["groupID"];
 
 				if ($group == 76 // Capacitor Boosters
@@ -1042,11 +1048,11 @@ class pKillDetail extends pageAssembly
 				) {
 					$found = 0;
 
-					if (is_array($this->ammo_array[2])) {
+					if (is_array($this->ammo_array[19])) {
 						$i = 0;
 
 						while (!$found && $i < $length) {
-							$temp = array_shift($this->ammo_array[2]);
+							$temp = array_shift($this->ammo_array[19]);
 
 							if ($temp["usedgroupID"] == $group) {
 								$midammo[] = array('type' => $temp["Icon"]);
@@ -1054,7 +1060,7 @@ class pKillDetail extends pageAssembly
 								$found = 1;
 							}
 
-							$this->ammo_array[2][] = $temp;
+							$this->ammo_array[19][] = $temp;
 							$i++;
 						}
 					}
@@ -1068,11 +1074,11 @@ class pKillDetail extends pageAssembly
 				}
 			}
 		}
-		$smarty->assignByRef('fitting_high', $this->fitting_array[1]);
-		$smarty->assignByRef('fitting_med', $this->fitting_array[2]);
-		$smarty->assignByRef('fitting_low', $this->fitting_array[3]);
-		$smarty->assignByRef('fitting_rig', $this->fitting_array[5]);
-		$smarty->assignByRef('fitting_sub', $this->fitting_array[7]);
+		$smarty->assignByRef('fitting_high', $this->fitting_array[27]);
+		$smarty->assignByRef('fitting_med', $this->fitting_array[19]);
+		$smarty->assignByRef('fitting_low', $this->fitting_array[11]);
+		$smarty->assignByRef('fitting_rig', $this->fitting_array[92]);
+		$smarty->assignByRef('fitting_sub', $this->fitting_array[125]);
 		$smarty->assignByRef('fitting_ammo_high', $hiammo);
 		$smarty->assignByRef('fitting_ammo_mid', $midammo);
 		$smarty->assign('showammo', config::get('fp_showammo'));
@@ -1096,11 +1102,11 @@ class pKillDetail extends pageAssembly
 		$hicount = (int) $dogma->attrib['hiSlots']['value'];
 		$rigcount = (int) $dogma->attrib['rigSlots']['value'];
 
-		$subcount = count($this->fitting_array[7]);
+		$subcount = count($this->fitting_array[125]);
 
 		//This code counts the slots granted by subsystem modules for the fitting panel
 		if ($subcount > 0) {
-			foreach ($this->fitting_array[7] as $subfit) {
+			foreach ($this->fitting_array[125] as $subfit) {
 				$lookupRef = $subfit["itemID"];
 				$sql = 'SELECT `attributeID`, `value` FROM `kb3_dgmtypeattributes` WHERE '.
 						'`attributeID` IN (1374, 1375, 1376) AND `typeID` = '.$lookupRef.';';

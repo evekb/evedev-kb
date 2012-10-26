@@ -13,7 +13,7 @@ if(function_exists("set_time_limit"))
 @error_reporting(E_ALL ^ E_NOTICE);
 ini_set('display_errors', 1);
 
-define('LATEST_DB_UPDATE', "034");
+define('LATEST_DB_UPDATE', "035");
 define('DB_USE_QCACHE', false);
 define('DB_USE_MEMCACHE',false);
 define('KB_CACHEDIR', "cache");

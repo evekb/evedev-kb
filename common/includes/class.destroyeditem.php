@@ -14,19 +14,23 @@ class DestroyedItem
 	public $locationID_;
 	/** @var float */
 	private $value;
+	/** @var bool */
+	private $lookupLocation;
 
 	/**
 	 * @param Item $item
 	 * @param integer $quantity
 	 * @param string|integer $location
 	 * @param integer $locationID
+	 * @param bool $lookupLocation
 	 */
-	function DestroyedItem($item, $quantity, $location, $locationID = 0)
+	function DestroyedItem($item, $quantity, $location, $locationID = 0, $lookupLocation = false)
 	{
 		$this->item_ = $item;
 		$this->quantity_ = (int) $quantity;
 		$this->location_ = $location;
 		$this->locationID_ = (int) $locationID;
+		$this->lookupLocation = (bool) $lookupLocation;
 	}
 
 	/**
@@ -118,17 +122,20 @@ class DestroyedItem
 	 */
 	function getLocationID()
 	{
-		if($this->locationID_) {
-			return $this->locationID_;
+		if( $this->lookupLocation == true ) {
+			if($this->locationID_) {
+				return $this->locationID_;
+			}
+			if ($this->location_) {
+				$this->locationID_ = (int) $this->item_->getSlot();
+			} else {
+				$qry = DBFactory::getDBQuery();
+				$qry->execute("select itl_id from kb3_item_locations where itl_location = '".$this->location_."'");
+				$row = $qry->getRow();
+				$this->locationID_ = (int) $row['itl_id'];
+			}
 		}
-		if ($this->location_) {
-			$this->locationID_ = (int) $this->item_->getSlot();
-		} else {
-			$qry = DBFactory::getDBQuery();
-			$qry->execute("select itl_id from kb3_item_locations where itl_location = '".$this->location_."'");
-			$row = $qry->getRow();
-			$this->locationID_ = (int) $row['itl_id'];
-		}
+
 		return $this->locationID_;
 	}
 }
