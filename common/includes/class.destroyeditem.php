@@ -126,7 +126,7 @@ class DestroyedItem
 			if($this->locationID_) {
 				return $this->locationID_;
 			}
-			if ($this->location_) {
+			if ($this->location_ == '' ) {
 				$this->locationID_ = (int) $this->item_->getSlot();
 			} else {
 				$qry = DBFactory::getDBQuery();
