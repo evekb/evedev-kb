@@ -790,7 +790,10 @@ class IDFeed
 			$location = $slot;
 		} else {
 			if( $this->lookupLocation == true ) {
-				if( $item['flag'] == 5 || $item['flag'] == 87 || $item['flag'] == 89 ) {
+				if( $item['flag'] > 10 || $item['flag'] == 5 ) {
+					// item locations in edk only goes up to ~9.
+					// If someone is sending flags > 10 they are probably sending correct ccp flags..
+					// flag 5 is old+new cargo hold so we can also pass in
 					$location = $item['flag'];
 				} else {
 					$litem = new Item((int)$item['typeID']);
