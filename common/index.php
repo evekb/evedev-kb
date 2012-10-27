@@ -284,5 +284,3 @@ else
 {
 	include('common/'.$page.'.php');
 }
-
-cache::generate();

@@ -52,11 +52,7 @@ if($qcache) {
 	echo "<br />\n File query cache disabled <br />\n";
 	config::set('cfg_qcache', 0);
 }
-$pcache = config::get('cache_enabled');
-if($pcache) {
-	echo "Page cache disabled <br />\n";
-	config::set('cache_enabled', 0);
-}
+
 
 echo "<br />Removed ".CacheHandler::removeByAge('SQL/', $maxSQLAge * 24)." files from SQL/<br />\n";
 echo "Removed ".CacheHandler::removeByAge('page/'.KB_SITE.'/', $maxOtherAge * 24)." files from page/<br />\n";
@@ -74,8 +70,4 @@ echo "Removed ".CacheHandler::removeByAge('api/', $maxAPIAge * 24)." files from 
 if($qcache) {
 	echo "<br />\n File query cache re-enabled <br />\n";
 	config::set('cfg_qcache', 1);
-}
-if($pcache) {
-	echo "Page cache re-enabled <br />\n";
-	config::set('cache_enabled', 1);
 }

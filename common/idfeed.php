@@ -28,7 +28,7 @@
 $starttime = microtime(true);
 $idfeedversion = "1.04";
 
-$maxkillsreturned = cache::checkLoad() ? 20 : 200;
+$maxkillsreturned = 200;
 $xml = "<?xml version='1.0' encoding='UTF-8'?>
 <eveapi version='2' edkapi='".$idfeedversion."'>
 </eveapi>";
@@ -184,6 +184,5 @@ function show($sxe)
 {
 	header("Content-Type: text/xml");
 	echo $sxe->asXML();
-	cache::generate(); // We should really be in a class so this isn't needed.
 	die;
 }

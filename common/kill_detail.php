@@ -152,10 +152,7 @@ class pKillDetail extends pageAssembly
 						$name = 'Anonymous';
 					}
 					$comments->addComment($name, $comment);
-					//Remove cached file.
-					if (config::get('cache_enabled')) {
-						cache::deleteCache();
-					}
+
 					//Redirect to avoid refresh reposting comments.
 					header('Location: '.$_SERVER['REQUEST_URI'], TRUE, 303);
 					die();
