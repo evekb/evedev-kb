@@ -317,6 +317,7 @@ class pCorpDetail extends pageAssembly
 				$smarty->assign('url_next', edkURI::build($args, array('view', 'pilot_kills', true), $nyear, $nmonth));
 
 				$list = new TopList_Kills();
+				$list->setLimit(30);
 				$list->addInvolvedCorp($this->crp_id);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
@@ -325,6 +326,7 @@ class pCorpDetail extends pageAssembly
 				$smarty->assign('monthly_stats', $table->generate());
 
 				$list = new TopList_Kills();
+				$list->setLimit(30);
 				$list->addInvolvedCorp($this->crp_id);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$table = new TopTable_Pilot($list, "Kills");

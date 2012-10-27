@@ -557,6 +557,7 @@ class pAllianceDetail extends pageAssembly
 								array('m', $this->nmonth, true)));
 
 				$list = new TopList_Kills();
+				$list->setLimit(30);
 				$list->addInvolvedAlliance($this->alliance);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
@@ -565,6 +566,7 @@ class pAllianceDetail extends pageAssembly
 				$smarty->assign('monthly_stats', $table->generate());
 
 				$list = new TopList_Kills();
+				$list->setLimit(30);
 				$list->addInvolvedAlliance($this->alliance);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$table = new TopTable_Pilot($list, Language::get('kills'));
