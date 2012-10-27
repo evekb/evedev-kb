@@ -21,7 +21,6 @@ class API {
 		PhealConfig::getInstance()->cache = new PhealFileCache('cache/api/');
 		PhealConfig::getInstance()->api_customkeys = true;
 		PhealConfig::getInstance()->log = new PhealFileLog('cache/api/');
-		PhealConfig::getInstance()->api_base = 'http://api.eveonline.com/';
 		PhealConfig::getInstance()->http_ssl_verifypeer = false;
 	}
 
