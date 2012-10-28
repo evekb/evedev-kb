@@ -46,12 +46,6 @@ class KillListTable
 		$smarty->assign('daybreak', $this->daybreak_);
 		$smarty->assign('comments_count', config::get('comments_count'));
 
-		// evil hardcode-hack, don't do this at home kids ! ;)
-		if (config::get('style_name') == 'revelations')
-		{
-			$smarty->assign('comment_white', '_white');
-		}
-
 		$c = 0;
 		$kdpage = array('a', 'kill_detail', true);
 		$krpage = array('a', 'kill_related', true);
