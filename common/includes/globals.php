@@ -25,6 +25,7 @@ define('KB_APIKEY_CORP', 2);
 define('KB_APIKEY_CHAR', 4);
 define('KB_APIKEY_BADAUTH', 8);
 define('KB_APIKEY_EXPIRED', 16);
+define('KB_APIKEY_BADCORP', 32);
 
 define('FEED_TRUSTED', 1);
 define('FEED_ACTIVE', 2);

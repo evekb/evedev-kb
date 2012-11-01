@@ -16,7 +16,7 @@ class API_KillLog extends API
 		$output = "";
 
 		// Skip bad keys
-		if ( $flags & KB_APIKEY_BADAUTH || $flags & KB_APIKEY_EXPIRED ) {
+		if ( $flags & KB_APIKEY_BADAUTH || $flags & KB_APIKEY_EXPIRED || $flags & KB_APIKEY_BADCORP ) {
 			return; // skip bad keys
 		}
 
