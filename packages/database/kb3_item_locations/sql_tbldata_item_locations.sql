@@ -1,2 +1,11 @@
 TRUNCATE `kb3_item_locations`;
-INSERT IGNORE INTO `kb3_item_locations` VALUES('1', 'Fitted - High slot'), ('2', 'Fitted - Medium slot'), ('3', 'Fitted - Low slot'), ('4', 'Cargo'), ('5', 'Rig Slot'), ('6', 'Drone Bay'), ('7', 'Subsystem Slot'), ('8', 'Implant'), ('9', 'Copy');
+INSERT IGNORE INTO `kb3_item_locations` VALUES
+('-1', 'Copy'),
+('5', 'Cargo'),
+('11', 'Fitted - Low slot'),
+('19', 'Fitted - Medium slot'),
+('27', 'Fitted - High slot'),
+('87', 'Drone Bay'),
+('89', 'Implant'),
+('92', 'Rig Slot'),
+('125', 'Subsystem Slot');
