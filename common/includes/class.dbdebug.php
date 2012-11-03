@@ -53,24 +53,6 @@ class DBDebug
 						"\n-- Execution time: " . $time . " --\n", FILE_APPEND);
 			}
 		}
-
 	}
-	public static function killCache()
-	{
-		if(!is_dir(KB_QUERYCACHEDIR)) return;
-		$dir = opendir(KB_QUERYCACHEDIR);
-		while ($line = readdir($dir))
-		{
-			if (strstr($line, 'qcache_qry') !== false)
-			{
-				@unlink(KB_QUERYCACHEDIR.'/'.$line);
-			}
-			elseif (strstr($line, 'qcache_tbl') !== false)
-			{
-				@unlink(KB_QUERYCACHEDIR.'/'.$line);
-			}
-		}
-	}
-
 }
 
