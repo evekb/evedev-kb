@@ -49,10 +49,6 @@ options::fadd('Show Top Damage Dealer/Final Blow Boxes', 'kd_showbox', 'checkbox
 options::fadd('Show involved parties summary', 'kd_showext', 'checkbox');
 options::fadd('Include dropped value in total loss', 'kd_droptototal', 'checkbox');
 
-//options::fadd('Show T2 items tag', 'kd_ttag', 'checkbox');
-//options::fadd('Show Faction items tag', 'kd_ftag', 'checkbox');
-//options::fadd('Show Deadspace items tag', 'kd_dtag', 'checkbox');
-//options::fadd('Show Officer items tag', 'kd_otag', 'checkbox');
 options::fadd('Show Fitting Panel', 'fp_show', 'checkbox');
 options::fadd('Show Fitting Exports', 'kd_EFT', 'checkbox');
 options::fadd('Limit involved parties', 'kd_involvedlimit', 'edit:size:4', '', '', 'Leave blank for no limit.');
@@ -63,10 +59,6 @@ options::fadd('Panel Style', 'fp_style', 'select', array('admin_appearance', 'cr
 options::fadd('Item Highlight Style', 'fp_highstyle', 'select', array('admin_appearance', 'createHighStyle'));
 options::fadd('Ammo Highlight Style', 'fp_ammostyle', 'select', array('admin_appearance', 'createAmmoStyle'));
 options::fadd('Show Ammo, charges, etc', 'fp_showammo', 'checkbox');
-//options::fadd('Highlight Tech II items', 'fp_ttag', 'checkbox');
-//options::fadd('Highlight Faction items', 'fp_ftag', 'checkbox');
-//options::fadd('Highlight Deadspace items', 'fp_dtag', 'checkbox');
-//options::fadd('Highlight Officer items', 'fp_otag', 'checkbox');
 
 class admin_appearance
 {
