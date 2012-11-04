@@ -6,6 +6,8 @@
  * @package EDK
  */
 
+require_once("class.api.php");
+
 /**
  * API Server Status /server/ServerStatus.xml.aspx
  */
@@ -38,7 +40,13 @@ class API_ServerStatus extends API
 
 	function fetchXML()
 	{
-		$data = $this->CallAPI( "server", "ServerStatus", null , null, null );
+		PhealConfig::getInstance()->http_timeout = 5;
+
+		try {
+			$data = $this->CallAPI( "server", "ServerStatus", null , null, null );
+		} catch (Exception $e) {
+			return false;
+		}
 
 		if($data == false) {
 			return false;

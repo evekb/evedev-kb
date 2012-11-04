@@ -231,6 +231,7 @@ class pHome extends pageAssembly
 			$pagesplitter = new PageSplitter($klist->getCount(),
 					config::get('killcount'));
 			$table = new KillListTable($klist);
+			$table->setDayBreak(false);
 			if ($this->showcombined) $table->setCombined(true);
 			$pagesplit = $pagesplitter->generate();
 			$html = $pagesplit.$table->generate().$pagesplit;
@@ -317,10 +318,15 @@ class pHome extends pageAssembly
 	function clock()
 	{
 		// Show the Eve time.
-		if (config::get('show_clock')) {
-			$this->page->addOnLoad("setInterval('updateClock()', 60000 )");
-			$clock = new Clock();
-			return $clock->generate();
+		if (config::get('show_evestatus')) {
+				$sstatus = new ServerStatus();
+				return $sstatus->display();
+		} else {
+			if (config::get('show_clock')) {
+				$this->page->addOnLoad("setInterval('updateClock()', 60000 )");
+				$clock = new Clock();
+				return $clock->generate();
+			}
 		}
 	}
 
