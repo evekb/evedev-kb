@@ -223,7 +223,7 @@ class Pheal
                 PhealConfig::getInstance()->log->stop();
 
                 // parse
-                $element = new SimpleXMLElement($this->xml);
+                $element = @new SimpleXMLElement($this->xml);
 
             // just forward HTTP Errors
             } catch(PhealHTTPException $e) {
