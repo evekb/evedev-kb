@@ -111,14 +111,24 @@ function find_SQL_Version()
 	return $value;
 }
 
-$sections['Server'] = 'Server';
+$sections['PHP'] = 'PHP';
 
-$sqlver = 'MYSQL version: ' . find_SQL_Version();
 $phpver = 'PHP version: ' . phpversion();
 
 $html = "$phpver  <br />";
-if(phpversion() >= "5.1.2") $trouble['Server'][] = array('passed'=>true, 'text'=> $html);
-else $trouble['Server'][] = array('passed'=>false, 'text'=> $html);
+if(phpversion() >= "5.1.2") $trouble['PHP'][] = array('passed'=>true, 'text'=> $html);
+else $trouble['PHP'][] = array('passed'=>false, 'text'=> $html);
+
+$html = 'Checking Magic Quotes Runtime is disabled';
+if(get_magic_quotes_runtime()) {
+	$trouble['PHP'][] = array('passed'=>false, 'text'=> $html);
+} else {
+	$trouble['PHP'][] = array('passed'=>true, 'text'=> $html);
+}
+
+$sections['Server'] = 'Server';
+
+$sqlver = 'MYSQL version: ' . find_SQL_Version();
 
 $html = "  $sqlver";
 if(find_SQL_Version() >= 5) $trouble['Server'][] = array('passed'=>true, 'text'=> $html);
