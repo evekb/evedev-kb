@@ -16,6 +16,8 @@ if ($_POST['submit'])
 	config::checkCheckbox('map_map_security');
 	config::checkCheckbox('map_reg_security');
 	config::checkCheckbox('map_con_security');
+    config::checkCheckbox('map_act_showlines');
+    config::checkCheckbox('map_act_shownames');
 
 	foreach ($_POST as $key => $value)
 	{
@@ -95,6 +97,18 @@ $options[2]['color'][] = array('descr' => 'Captioncolor', 'name' => 'map_con_cl_
 $options[2]['color'][] = array('descr' => 'Backgroundcolor', 'name' => 'map_con_cl_bg');
 $options[2]['color'][] = array('descr' => 'Normalcolor', 'name' => 'map_con_cl_normal');
 $options[2]['color'][] = array('descr' => 'Highlightcolor', 'name' => 'map_con_cl_hl');
+
+$options[3]['name'] = 'Activity Map Options';
+$options[3]['option'][] = array('descr' => 'Show Lines', 'name' => 'map_act_showlines');
+$options[3]['option'][] = array('descr' => 'Show Sytem Names', 'name' => 'map_act_shownames');
+$options[3]['color'][] = array('descr' => 'Backgroundcolor', 'name' => 'map_act_cl_bg');
+$options[3]['color'][] = array('descr' => 'Linecolor', 'name' => 'map_act_cl_line');
+$options[3]['color'][] = array('descr' => 'Normalcolor', 'name' => 'map_act_cl_normal');
+$options[3]['color'][] = array('descr' => 'Textcolor', 'name' => 'map_act_cl_capt');
+$options[3]['color'][] = array('descr' => 'Highlightcolor (1 Kill)', 'name' => 'map_act_cl_hl');
+$options[3]['color'][] = array('descr' => 'Highlightcolor (>1 Kill)', 'name' => 'map_act_cl_hl2');
+
+
 
 $smarty->assignByRef('config', $config);
 $smarty->assignByRef('options', $options);

@@ -31,6 +31,7 @@ options::fadd('Display involved count', 'killlist_involved', 'checkbox');
 options::fadd('Display EVE Time', 'show_clock', 'checkbox');
 options::fadd('Display EVE Status', 'show_evestatus', 'checkbox');
 options::fadd('Display Monthly stats', 'show_monthly', 'checkbox', '', '', 'Default is weekly');
+options::fadd('Show Activity Overview', 'show_activity_overview', 'checkbox');
 
 options::cat('Appearance', 'Front Page', 'Kill Summary Tables');
 options::fadd('Display Summary Table', 'summarytable', 'checkbox');
