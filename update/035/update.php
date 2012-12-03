@@ -15,6 +15,21 @@ function update035()
 		// update item types [in case user does not refresh ccpdb]
 		if(config::get('035updatestatus') <1)
 		{
+			$qry->execute("SELECT * from kb3_items_destroyed WHERE itd_itl_id IN (10,11,12,13) LIMIT 1");
+			if($qry->recordCount()) {
+				$smarty->assign('content', "Database Already has items in custom locations 10, 11, 12 or 13. Update these location IDs as appropriate before continuing");
+				$smarty->display('update.tpl');
+				die();
+			}
+			$qry->execute("SELECT * from kb3_items_dropped WHERE itd_itl_id IN (10,11,12,13) LIMIT 1");
+			if($qry->recordCount()) {
+				$smarty->assign('content', "Database Already has items in custom locations 10, 11, 12 or 13. Update these location IDs as appropriate before continuing");
+				$smarty->display('update.tpl');
+				die();
+			}
+
+		
+		
 			$qry->execute("UPDATE `kb3_item_types` SET `itt_slot` = '92' WHERE `itt_slot` = 5");
 			config::set('035updatestatus',1);
 			$smarty->assign('refresh',1);
@@ -334,8 +349,21 @@ function update035()
 			$smarty->display('update.tpl');
 			die();
 		}
-		
-		
+
+		if(config::get('035updatestatus') <36)
+		{
+			$qry->execute("SELECT max(kll_id) as max FROM kb3_kills");
+			$ret = $qry->getRow();
+			$maxid = $qry->escape($ret['max']);
+			config::set('035killid',$maxid);
+
+			config::set('035updatestatus',36);
+			$smarty->assign('refresh',1);
+			$smarty->assign('content', "Setting Max Kill ID before conversion");
+			$smarty->display('update.tpl');
+			die();
+		}
+
 		config::set("DBUpdate", "035");
 		$qry->execute("INSERT INTO kb3_config (cfg_site, cfg_key, cfg_value) SELECT cfg_site, 'DBUpdate', '035' FROM kb3_config GROUP BY cfg_site ON DUPLICATE KEY UPDATE cfg_value = '035'");
 		config::del("035updatestatus");

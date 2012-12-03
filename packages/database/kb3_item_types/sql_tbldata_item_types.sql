@@ -811,4 +811,5 @@ INSERT IGNORE INTO `kb3_item_types` VALUES
 ('1156', '7', 'Fueled Shield Booster', '19'),
 ('1157', '9', 'Fueled Shield Booster Blueprint', '0'),
 ('1158', '8', 'Heavy Defender Missile', '0'),
-('1159', '18', 'Salvage Drone', '87');
+('1159', '18', 'Salvage Drone', '87'),
+('5001', '7', 'Med Slot Alias Group', '19');
