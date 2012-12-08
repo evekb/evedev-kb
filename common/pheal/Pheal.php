@@ -33,7 +33,7 @@ class Pheal
     /**
      * Version container
      */
-    public static $version = "0.1.5";
+    public static $version = "0.1.7";
 
     /**
      * resource handler for curl
@@ -223,17 +223,20 @@ class Pheal
                 PhealConfig::getInstance()->log->stop();
 
                 // parse
-                $element = @new SimpleXMLElement($this->xml);
+                $element = new SimpleXMLElement($this->xml);
 
             // just forward HTTP Errors
             } catch(PhealHTTPException $e) {
                 throw $e;
-
+            // just forward PhealConnectionException errors
+            } catch(PhealConnectionException $e) {
+                throw $e;
             // other request errors
             } catch(Exception $e) {
                 // log + throw error
                 PhealConfig::getInstance()->log->errorLog($scope,$name,$http_opts,$e->getCode() . ': ' . $e->getMessage());
-                throw new PhealException('API Date could not be read / parsed, original exception: ' . $e->getMessage());
+                // change Exception to PhealException but keep the original error data (easier debugging in client application).
+                throw new PhealException('Original exception: ' . $e->getMessage(), $e->getCode(), $e);
             }
             PhealConfig::getInstance()->cache->save($this->userid,$this->key,$scope,$name,$opts,$this->xml);
             
@@ -273,7 +276,7 @@ class Pheal
             curl_setopt(self::$curl, CURLOPT_INTERFACE, $http_interface_ip);
 
         // ignore ssl peer verification if needed
-        if(substr($url,5) == "https")
+        if(substr($url,0,5) == "https")
             curl_setopt(self::$curl, CURLOPT_SSL_VERIFYPEER, PhealConfig::getInstance()->http_ssl_verifypeer);
             
         // http timeout 
@@ -292,7 +295,7 @@ class Pheal
             
             // attach url parameters
             if(count($opts))
-            $url .= "?" . http_build_query($opts, '', '&');
+                $url .= "?" . http_build_query($opts,'', '&');
         }
         
         // additional headers
@@ -336,7 +339,7 @@ class Pheal
 
         // curl errors
         if($errno)
-            throw new Exception($error, $errno);
+            throw new PhealConnectionException($error, $errno);
         else
             return $result;
     }
@@ -374,7 +377,7 @@ class Pheal
         // else build url parameters
         elseif(count($opts))
         {
-            $url .= "?" . http_build_query($opts, '', '&');
+            $url .= "?" . http_build_query($opts,'','&');
         }
 
         // set track errors. needed for $php_errormsg
@@ -407,7 +410,7 @@ class Pheal
             // set track_errors back to the old value
             ini_set('track_errors',$oldTrackErrors);
 
-            throw new Exception($message);
+            throw new PhealConnectionException($message);
 
         // return result
         } else {
