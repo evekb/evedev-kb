@@ -226,6 +226,10 @@ Pheal will throw an PhealAccessException so you can react on the access limitati
     } catch(PhealAPIException $e) {
        echo 'api error: ' . $e->code . ' message: ' . $e->getMessage();
        /* do something - example: disable key */
+    
+	} catch(PhealConnectionException $e) {
+       echo 'connection error: ' . $e->code . ' message: ' . $e->getMessage();
+       /* do something - example: skip script, for instance EVE servers are down */
 
     } catch(PhealException $e) {
         echo 'generic error: ' . $e->code . ' message: ' . $e->getMessage();
