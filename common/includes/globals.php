@@ -10,14 +10,13 @@ define('KB_CACHEDIR', 'cache');
 define('KB_PAGECACHEDIR', KB_CACHEDIR.'/page');
 define('KB_MAILCACHEDIR', KB_CACHEDIR.'/mails');
 define('KB_UPDATE_URL', 'http://evedev-kb.googlecode.com/files');
-define('API_SERVER', "http://api.eveonline.com");
-//define('API_SERVER', "http://apitest.eveonline.com");
+define('API_SERVER', "https://api.eveonline.com");
 define('IMG_SERVER', "image.eveonline.com");
 
 // current version: major.minor.sub
 // even numbers for minor = development version
-define('KB_VERSION', '4.0.4');
-define('KB_RELEASE', '(Crucible)');
+define('KB_VERSION', '4.1.0-dev');
+define('KB_RELEASE', '(Retribution)');
 
 define('KB_APIKEY_LEGACY', 1);
 define('KB_APIKEY_CORP', 2);
