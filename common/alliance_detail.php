@@ -171,79 +171,46 @@ class pAllianceDetail extends pageAssembly
 	function stats()
 	{
 		global $smarty;
-		$tempMyCorp = new Corporation();
-
-		$myAlliAPI = new API_Alliance();
-		$myAlliAPI->fetchalliances();
-
-		// Use alliance ID if we have it
-		if ($this->alliance->getExternalID()) {
-			$myAlliance = $myAlliAPI->LocateAllianceID($this->alliance->getExternalID());
-		} else {
-			$myAlliance = $myAlliAPI->LocateAlliance($this->alliance->getName());
-		}
 
 		if ($this->alliance->isFaction()) {
 			$this->page->setTitle(Language::get('page_faction_det').' - '
-					.$this->alliance->getName()." [".$myAlliance["shortName"]
+					.$this->alliance->getName()." [".$this->alliance->getshortName()
 					."]");
 		} else {
 			$this->page->setTitle(Language::get('page_all_det').' - '
-					.$this->alliance->getName()." [".$myAlliance["shortName"]
+					.$this->alliance->getName()." [".$this->alliance->getshortName()
 					."]");
 		}
 
-		if ($myAlliance) {
-			$myCorpAPI = new API_CorporationSheet();
-
-			foreach ((array) $myAlliance["memberCorps"] as $tempcorp) {
-				$myCorpAPI->setCorpID($tempcorp["corporationID"]);
-				if ($myCorpAPI->fetchXML() === false) {
-					continue;
-				}
-
-				if ($tempcorp["corporationID"] == $myAlliance["executorCorpID"]) {
-					$myAlliance["executorCorpName"] = $myCorpAPI->getCorporationName();
-					$ExecutorCorp = $myCorpAPI->getCorporationName();
-					$ExecutorCorpID = $myCorpAPI->getCorporationID();
-				}
-				// Build Data array
-				$membercorp["corpExternalID"] = $myCorpAPI->getCorporationID();
-				$membercorp["corpName"] = $myCorpAPI->getCorporationName();
-				$membercorp["ticker"] = $myCorpAPI->getTicker();
-				$membercorp["members"] = $myCorpAPI->getMemberCount();
-				$membercorp["joinDate"] = $tempcorp["startDate"];
-				$membercorp["taxRate"] = $myCorpAPI->getTaxRate()."%";
-				$membercorp["url"] = $myCorpAPI->getUrl();
-
-				$this->allianceCorps[] = $membercorp;
-
-				// Check if corp is known to EDK DB, if not, add it.
-				$tempMyCorp = Corporation::lookup($myCorpAPI->getCorporationName());
-				if ($tempMyCorp) {
-					$tempMyCorp = Corporation::add($myCorpAPI->getCorporationName(), $this->alliance,
-							substr($tempcorp["startDate"], 0, 16), $myCorpAPI->getCorporationID());
-				}
-
-				$membercorp = array();
-				unset($membercorp);
-			}
-
-			if (!isset($this->kill_summary)) {
-				$this->kill_summary = new KillSummaryTable();
-				$this->kill_summary->addInvolvedAlliance($this->alliance);
-				$this->kill_summary->generate();
-			}
-			$smarty->assign('myAlliance', $myAlliance);
-			$smarty->assign('memberCorpCount', count($myAlliance["memberCorps"]));
-
-			if ($this->kill_summary->getTotalKillISK()) {
-				$efficiency = round($this->kill_summary->getTotalKillISK() / ($this->kill_summary->getTotalKillISK() + $this->kill_summary->getTotalLossISK()) * 100,
-						2);
-			} else {
-				$efficiency = 0;
-			}
+		$sql = "select crp_id from kb3_corps WHERE crp_all_id=" . $this->alliance->getID();
+		$qry = DBFactory::getDBQuery();
+		$qry->execute($sql);
+		while ($row = $qry->getRow()) {
+			$this->allianceCorps[] = Corporation::getByID((int)$row['crp_id']);
 		}
+
+		if (!isset($this->kill_summary)) {
+			$this->kill_summary = new KillSummaryTable();
+			$this->kill_summary->addInvolvedAlliance($this->alliance);
+			$this->kill_summary->generate();
+		}
+
+		$execcrp = Corporation::lookupByExternalID($this->alliance->GetExecutorID());
+		if( $execcrp !== false ) {
+			$smarty->assign('ExecutorName', $execcrp->getName());
+		} else {
+			$smarty->assign('ExecutorName', '');
+		}
+		$smarty->registerObject('Alliance', $this->alliance);
+		$smarty->assign('memberCorpCount', count($this->allianceCorps));
+
+		if ($this->kill_summary->getTotalKillISK()) {
+			$efficiency = round($this->kill_summary->getTotalKillISK() / ($this->kill_summary->getTotalKillISK() + $this->kill_summary->getTotalLossISK()) * 100,
+					2);
+		} else {
+			$efficiency = 0;
+		}
+
 		// The summary table is also used by the stats. Whichever is called
 		// first generates the table.
 		$smarty->assign('all_img', $this->alliance->getPortraitURL(128));
@@ -274,13 +241,6 @@ class pAllianceDetail extends pageAssembly
 	function corpList()
 	{
 		global $smarty;
-		foreach ($this->allianceCorps as &$tempcorp) {
-			$tempcorp['url'] = htmlspecialchars(html_entity_decode(
-					urldecode($tempcorp['url'])));
-			if ($tempcorp['url'] == 'http://') $tempcorp['url'] = '';
-			$tempcorp['corpName'] = preg_replace('/(\w{30})\w+/', '$1...',
-					$tempcorp['corpName']);
-		}
 		$smarty->assignByRef('corps', $this->allianceCorps);
 		return $smarty->fetch(get_tpl('alliance_detail_corps'));
 	}
@@ -597,6 +557,7 @@ class pAllianceDetail extends pageAssembly
 								array('m', $this->nmonth, true)));
 
 				$list = new TopList_Kills();
+				$list->setLimit(30);
 				$list->addInvolvedAlliance($this->alliance);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->setMonth($this->month);
@@ -605,6 +566,7 @@ class pAllianceDetail extends pageAssembly
 				$smarty->assign('monthly_stats', $table->generate());
 
 				$list = new TopList_Kills();
+				$list->setLimit(30);
 				$list->addInvolvedAlliance($this->alliance);
 				$list->setPodsNoobShips(config::get('podnoobs'));
 				$table = new TopTable_Pilot($list, Language::get('kills'));

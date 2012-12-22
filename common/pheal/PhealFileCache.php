@@ -1,7 +1,7 @@
 <?php
 /*
  MIT License
- Copyright (c) 2010 Peter Petermann
+ Copyright (c) 2010 - 2012 Peter Petermann
 
  Permission is hereby granted, free of charge, to any person
  obtaining a copy of this software and associated documentation
@@ -128,7 +128,7 @@ class PhealFileCache implements PhealCacheInterface
         $filename = $this->filename($userid, $apikey, $scope, $name, $args);
         if(!file_exists($filename))
             return false;
-        $xml = join('', file($filename));
+        $xml = file_get_contents($filename);
         if($this->validate_cache($xml))
             return $xml;
         return false;

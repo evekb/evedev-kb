@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kb3>
   <name>kb3_invtypes</name>
-  <rows>18714</rows>
+  <rows>20186</rows>
   <structure>CREATE TABLE `kb3_invtypes` (
   `typeID` int(11) NOT NULL default &#039;0&#039;,
   `groupID` int(11) NOT NULL default &#039;0&#039;,
   `typeName` char(100) NOT NULL,
   `description` text NOT NULL,
   `icon` char(5) default NULL,
-  `radius` float NOT NULL default &#039;0&#039;,
   `mass` float NOT NULL default &#039;0&#039;,
   `volume` float NOT NULL default &#039;0&#039;,
   `capacity` float NOT NULL default &#039;0&#039;,

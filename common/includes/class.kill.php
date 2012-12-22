@@ -663,13 +663,13 @@ class Kill extends Cacheable
 				if ($destroyed->getQuantity() > 1) {
 					$mail .= ", Qty: ".$destroyed->getQuantity();
 				}
-				if ($destroyed->getLocationID() == 4) {
+				if ($destroyed->getLocationID() == 5) {
 					$mail .= " (Cargo)";
-				} else if ($destroyed->getLocationID() == 6) {
+				} else if ($destroyed->getLocationID() == 87) {
 					$mail .= " (Drone Bay)";
-				} else if ($destroyed->getLocationID() == 8) {
+				} else if ($destroyed->getLocationID() == 89) {
 					$mail .= " (Implant)";
-				} else if ($destroyed->getLocationID() == 9) {
+				} else if ($destroyed->getLocationID() == -1) {
 					$mail .= " (Copy)";
 				}
 				$mail .= "\r\n";
@@ -686,13 +686,13 @@ class Kill extends Cacheable
 				if ($dropped->getQuantity() > 1) {
 					$mail .= ", Qty: ".$dropped->getQuantity();
 				}
-				if ($dropped->getLocationID() == 4) {
+				if ($dropped->getLocationID() == 5) {
 					$mail .= " (Cargo)";
-				} else if ($dropped->getLocationID() == 6) {
+				} else if ($dropped->getLocationID() == 87) {
 					$mail .= " (Drone Bay)";
-				} else if ($dropped->getLocationID() == 8) {
+				} else if ($dropped->getLocationID() == 89) {
 					$mail .= " (Implant)";
-				} else if ($dropped->getLocationID() == 9) {
+				} else if ($dropped->getLocationID() == -1) {
 					$mail .= " (Copy) (Cargo)";
 				}
 				$mail .= "\r\n";

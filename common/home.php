@@ -36,6 +36,7 @@ class pHome extends pageAssembly
 	{
 		parent::__construct();
 		$this->queue('start');
+		$this->queue('showactivityoverview');
 		$this->queue('summaryTable');
 		$this->queue('campaigns');
 		// Legacy support for mods placing themselves after it.
@@ -129,6 +130,87 @@ class pHome extends pageAssembly
 		} else {
 			$this->page->setTitle($this->getCurrentPeriod());
 		}
+	}
+
+	function showactivityoverview() {
+		$week	= $this->getWeek();
+		$month	= $this->getMonth();
+		$year	= $this->getYear();
+
+		if (config::get('show_activity_overview')) {
+			if (!config::get('show_monthly'))
+			{
+				$weekly=1;
+			} else {
+				$weekly=0;
+			}
+
+			$row_counter=0;
+
+			$html.='<table class=kb-table width="100%" border=0 cellspacing="1">';
+			if ( $weekly==1) {
+				$html.='<tr ><td colspan="3" class=kb-table-header>Activity Map for Week '.$week.'</td></tr>';
+			} else {
+				$html.='<tr ><td colspan="3" class=kb-table-header>Activity Map for '.date('F',mktime(0,1,0,$month,1,$year)).'</td></tr>';
+			}
+
+			$html.='<tr>';
+
+			$sql2 ="select reg.reg_id, count(distinct kll.kll_id) as kills
+						from kb3_systems sys, kb3_kills kll, kb3_inv_detail inv, kb3_constellations con, kb3_regions reg
+						where kll.kll_system_id = sys.sys_id
+						and inv.ind_kll_id = kll.kll_id";
+
+			if(count(config::get('cfg_allianceid'))) {
+				$orargs[] = 'inv.ind_all_id IN ('.implode(",", config::get('cfg_allianceid')).") ";
+			}
+			if(count(config::get('cfg_corpid'))) {
+				$orargs[] = 'inv.ind_crp_id IN ('.implode(",", config::get('cfg_corpid')).") ";
+			}
+			if(count(config::get('cfg_pilotid'))) {
+				$orargs[] = 'inv.ind_plt_id IN ('.implode(",", config::get('cfg_pilotid')).") ";
+			}
+
+			$sql2 .= " AND (".implode(" OR ", $orargs).")";
+
+			if ( $weekly==1) {
+				$sql2 .="		and date_format( kll.kll_timestamp, \"%u\" ) = ".$week." ";
+			}
+			else {
+				$sql2 .="		and date_format( kll.kll_timestamp, \"%m\" ) = ".$month." ";
+			}
+
+			$sql2 .="		and date_format( kll.kll_timestamp, \"%Y\" ) = ".$year."
+						and con.con_id = sys.sys_con_id
+						and reg.reg_id = con.con_reg_id
+						group by reg.reg_id
+						order by kills desc
+						LIMIT 0,3;";
+
+			$qry2 = new DBQuery();
+			$qry2->execute($sql2) or die($qry2->getErrorMsg());
+
+			while ($row2 = $qry2->getRow())
+			{
+				$row_counter++;
+
+				if ( $weekly==1) {
+					$html.='<td align="center"><a href="'.KB_HOST.'?a=detail_view&region_id='.$row2['reg_id'].'"><img src="'.'?a=map&mode=activity&size=250&region_id='.$row2['reg_id'].'&week='.$week.'&year='.$year.'" border=0 /></a></td>';
+				} else {
+					$html.='<td align="center"><a href="'.KB_HOST.'?a=detail_view&region_id='.$row2['reg_id'].'"><img src="'.'?a=map&mode=activity&size=250&region_id='.$row2['reg_id'].'&month='.$month.'&year='.kbdate("Y").'" border=0 /></a></td>';
+
+				}
+			}
+
+			while( $row_counter < 3) {
+				$row_counter++;
+				$html.='<td align="center"><img width="250" height="250" src="?a=map&mode=na&size=250"></td>';
+			}
+
+			$html.='</tr></table><br />';
+		}
+
+		return $html;
 	}
 
 	/**
@@ -231,6 +313,7 @@ class pHome extends pageAssembly
 			$pagesplitter = new PageSplitter($klist->getCount(),
 					config::get('killcount'));
 			$table = new KillListTable($klist);
+			$table->setDayBreak(false);
 			if ($this->showcombined) $table->setCombined(true);
 			$pagesplit = $pagesplitter->generate();
 			$html = $pagesplit.$table->generate().$pagesplit;
@@ -317,10 +400,15 @@ class pHome extends pageAssembly
 	function clock()
 	{
 		// Show the Eve time.
-		if (config::get('show_clock')) {
-			$this->page->addOnLoad("setInterval('updateClock()', 60000 )");
-			$clock = new Clock();
-			return $clock->generate();
+		if (config::get('show_evestatus')) {
+				$sstatus = new ServerStatus();
+				return $sstatus->display();
+		} else {
+			if (config::get('show_clock')) {
+				$this->page->addOnLoad("setInterval('updateClock()', 60000 )");
+				$clock = new Clock();
+				return $clock->generate();
+			}
 		}
 	}
 

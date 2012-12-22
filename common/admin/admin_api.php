@@ -314,8 +314,26 @@ if ($_POST['apilog']) {
 			$chars = array();
 			if (!($flags & KB_APIKEY_BADAUTH || $flags & KB_APIKEY_EXPIRED)) {
 				$act = new API_Account();
-				foreach ($act->fetch($row['key_id'], $row['key_key']) as $character) {
-					$chars[] = $character["characterName"].", ".$character["corporationName"];
+				$characters = $act->fetch($row['key_id'], $row['key_key']);
+
+				if (is_array( $characters ) ) {
+					foreach ($act->fetch($row['key_id'], $row['key_key']) as $character) {
+						$chars[] = $character["characterName"].", ".$character["corporationName"];
+					}
+				} else {
+					if ($act->getError() !== null) {
+						switch ($act->getError()) {
+							case 203:
+								$flags |= KB_APIKEY_BADAUTH;
+								break;
+							case 222:
+								$flags |= KB_APIKEY_EXPIRED;
+								break;
+							case 220:
+								$flags |= KB_APIKEY_BADCORP;
+								break;
+						}
+					}
 				}
 			}
 			$html .= join('<br />', $chars);
@@ -346,6 +364,9 @@ if ($_POST['apilog']) {
 			}
 			if ($flags & KB_APIKEY_EXPIRED) {
 				$html .= "Expired Key";
+			}
+			if ($flags & KB_APIKEY_BADCORP) {
+				$html .= "Bad Corporation Key";
 			}
 		}
 		$html .= "</td>";

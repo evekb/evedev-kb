@@ -58,9 +58,6 @@ header('Content-Type: text/html; charset=UTF-8');
 
 //edkloader::setRoot(getcwd());
 
-// smarty doesnt like it
-if(get_magic_quotes_runtime()) @set_magic_quotes_runtime(0);
-
 // load the config from the database
 $config = new Config();
 if(!config::get('cfg_kbhost'))
@@ -284,5 +281,3 @@ else
 {
 	include('common/'.$page.'.php');
 }
-
-cache::generate();

@@ -1,7 +1,7 @@
 <?php
 /*
  MIT License
- Copyright (c) 2010 Peter Petermann, Daniel Hoffend
+ Copyright (c) 2010 - 2012 Peter Petermann, Daniel Hoffend
 
  Permission is hereby granted, free of charge, to any person
  obtaining a copy of this software and associated documentation
@@ -33,7 +33,7 @@ class Pheal
     /**
      * Version container
      */
-    public static $version = "0.1.0";
+    public static $version = "0.1.5";
 
     /**
      * resource handler for curl
@@ -53,7 +53,7 @@ class Pheal
     private $key;
 
     /**
-     * var @string|null
+     * @var string|null
      */
     private $keyType;
     
@@ -223,7 +223,7 @@ class Pheal
                 PhealConfig::getInstance()->log->stop();
 
                 // parse
-                $element = new SimpleXMLElement($this->xml);
+                $element = @new SimpleXMLElement($this->xml);
 
             // just forward HTTP Errors
             } catch(PhealHTTPException $e) {

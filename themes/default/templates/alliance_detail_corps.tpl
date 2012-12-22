@@ -14,15 +14,15 @@
 			{section name=sys loop=$corps}
 				{assign var="c" value=$corps[sys]}
 				<tr>
-					<td><a href="{$kb_host}/?a=corp_detail&amp;crp_ext_id={$c.corpExternalID}">{$c.corpName}</a></td>
-					<td>{$c.ticker}</td>
-					<td>{$c.members}</td>
-					<td>{$c.joinDate}</td>
-					<td>{$c.taxRate}</td>
-					{if $c.url}
+					<td><a href="{$kb_host}/?a=corp_detail&amp;crp_ext_id={$c->getExternalID()}">{$c->GetName()}</a></td>
+					<td>{$c->getShortName()}</td>
+					<td>{$c->getMemberCount()}</td>
+					<td>{$c->getStartDate}</td>
+					<td>{$c->getTaxRate()}</td>
+					{if $c->GetURL()}
 						<td>
 							<div class="no_stretch alliance-detail-site" >
-								<a href="{$c.url}">{$c.url}</a>
+								<a href="{$c->GetURL()}">{$c->GetURL()}</a>
 							</div>
 						</td>
 					{else}

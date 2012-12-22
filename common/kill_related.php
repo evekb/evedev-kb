@@ -148,9 +148,9 @@ class pKillRelated extends pageAssembly
 
 		// now we get all kills in that system for +-4 hours
 		$query = 'SELECT kll.kll_timestamp AS ts FROM kb3_kills kll WHERE kll.kll_system_id IN ('.implode(',', $this->systems).
-				') AND kll.kll_timestamp <= "'.(date('Y-m-d H:i:s', strtotime($basetime) + 4 * 60 * 60)).'"'.
-				' AND kll.kll_timestamp >= "'.(date('Y-m-d H:i:s', strtotime($basetime) - 4 * 60 * 60)).'"'.
-				' ORDER BY kll.kll_timestamp ASC';
+				') AND kll.kll_timestamp BETWEEN "'. (date('Y-m-d H:i:s', strtotime($basetime) - 4 * 60 * 60)) . '"
+										 AND "'.(date('Y-m-d H:i:s', strtotime($basetime) + 4 * 60 * 60)).'"
+				ORDER BY kll.kll_timestamp ASC';
 		$qry = DBFactory::getDBQuery();
 		$qry->execute($query);
 		$ts = array();

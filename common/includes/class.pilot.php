@@ -283,7 +283,7 @@ class Pilot extends Entity
 			// If things are going this wrong, it's safer to die and prevent more harm
 			die;
 		} else if (!$corp->getID()) {
-			trigger_error("Attempt to add a pilot with no corp. Aborting.", E_USER_ERROR);
+			trigger_error("Attempt to add a pilot ($name) with no corp ($corp). Aborting.", E_USER_ERROR);
 			// If things are going this wrong, it's safer to die and prevent more harm
 			die;
 		}

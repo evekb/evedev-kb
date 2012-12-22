@@ -17,7 +17,8 @@
 			<b>Executor:</b>
 		</td>
 		<td class='kb-table-cell'>
-			{if $myAlliance.executorCorpID}<a href="{$kb_host}/?a=corp_detail&amp;crp_ext_id={$myAlliance.executorCorpID}">{$myAlliance.executorCorpName}</a>{/if}
+			{if $ExecutorName}
+			<a href="{$kb_host}/?a=corp_detail&amp;crp_ext_id={Alliance->getExecutorID}">{$ExecutorName}</a>{/if}
 		</td>
 	</tr>
 	<tr class="kb-table-row-even">
@@ -26,7 +27,7 @@
 		<td class='kb-table-cell'>
 			<b>Members:</b>
 		</td>
-		<td class='kb-table-cell'>{$myAlliance.memberCount}</td>
+		<td class='kb-table-cell'>{Alliance->getMemberCount}</td>
 	</tr>
 	<tr class="kb-table-row-even">
 		<td class="kb-table-cell"><b>Damage done (ISK):</b></td>
@@ -34,7 +35,7 @@
 		<td class='kb-table-cell'>
 			<b>Start Date:</b>
 		</td>
-		<td class='kb-table-cell'>{$myAlliance.startDate}</td>
+		<td class='kb-table-cell'>{Alliance->getStartDate}</td>
 	</tr>
 	<tr class="kb-table-row-even">
 		<td class="kb-table-cell"><b>Damage received (ISK):</b></td>

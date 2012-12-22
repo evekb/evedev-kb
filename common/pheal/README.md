@@ -1,13 +1,9 @@
 # Pheal
 
-Copyright (C) 2010-2011 by Peter Petermann
+Copyright (C) 2010-2012 by Peter Petermann
 All rights reserved.
 
 Pheal is a port of EAAL to PHP
-
-## WARNING
-Pheal is not a stable release yet,
-stuff might or might not work as expected
 
 ## LICENSE
 Pheal is licensed under a MIT style license, see LICENSE.txt
@@ -21,11 +17,15 @@ for further information
 
 
 ## INSTALLATION
+### GIT
 1. `git clone git://github.com/ppetermann/pheal.git`
 2. make sure your autoloader is able to find the classes
    (filename example.php matches classname "example" OR
    `include "../path/to/Pheal.php"; spl_autoload_register("Pheal::classload");`
    in your application, which will use a simple buildin autoloader
+
+### composer
+pheal is available as package pheal/pheal through packagist on composer http://getcomposer.org
 
 ## USAGE
 

@@ -15,6 +15,7 @@
  * 1.0.8 Handle NPC ships in API feeds.
  * 1.0.9 Add Implant location
  * 1.1.0 Fix Trust issues.
+ * 1.2.0 Use CCP's slot numbering
  * @package EDK
  */
 class IDFeed
@@ -48,7 +49,8 @@ class IDFeed
 	private $errormsg = '';
 	private $errorcode = 0;
 	private $npcOnly = true;
-	const version = "1.10";
+	const version = "1.2";
+	private $lookupLocation = false;
 
 	/**
 	 * Fetch a new feed.
@@ -462,6 +464,9 @@ class IDFeed
 		if (floatval($sxe['edkapi']) && $sxe['edkapi'] < 0.91) {
 			return false;
 		}
+		if ($sxe['edkapi'] != null && !($sxe['edkapi'] > 1.2)) {
+			$this->lookupLocation = true;
+		}
 		$this->time = $sxe->currentTime;
 		$this->cachedTime = $sxe->cachedUntil;
 		if (isset($sxe->error)) {
@@ -573,11 +578,8 @@ class IDFeed
 								."'".$qry->escape($kill->getHash(false, false))."',"
 								." ".$trust.","
 								." UTC_TIMESTAMP())");
-						 $qry->execute("UPDATE kb3_kills"
-							." JOIN kb3_mails ON kb3_kills.kll_id ="
-							." kb3_mails.kll_id SET kb3_kills.kll_external_id="
-							.$externalID." WHERE kb3_kills.kll_id = $id AND"
-							." kb3_kills.kll_external_id IS NULL");
+						$qry->execute("UPDATE kb3_kills SET kb3_kills.kll_external_id=".$externalID.
+						" WHERE kb3_kills.kll_id = $id AND kb3_kills.kll_external_id IS NULL");
 				   }
 					$this->duplicate[] = array($externalID, $internalID, $id);
 					$skip = true;
@@ -781,32 +783,36 @@ class IDFeed
 	{
 		if ((int)$item['singleton'] == 2) {
 			// Blueprint copy - in the cargohold
-			$location = 9;
-		} else if ((int)$item['flag'] == 5) {
-			// Cargo
-			$location = 4;
-		} else if ((int)$item['flag'] == 89) {
-			// Implant
-			$location = 8;
-		} else if ((int)$item['flag'] == 87) {
-			// Drone Bay
-			$location = 6;
-		} else if ($slot != null) {
+			$location = -1;
+		}
+
+		if ($slot != null) {
 			$location = $slot;
 		} else {
-			$litem = new Item((int)$item['typeID']);
-			$location = $litem->getSlot();
+			if( $this->lookupLocation == true ) {
+				if( $item['flag'] > 10 || $item['flag'] == 5 ) {
+					// item locations in edk only goes up to ~9.
+					// If someone is sending flags > 10 they are probably sending correct ccp flags..
+					// flag 5 is old+new cargo hold so we can also pass in
+					$location = $item['flag'];
+				} else {
+					$litem = new Item((int)$item['typeID']);
+					$location = $litem->getSlot();
+				}
+			} else {
+				$location = $item['flag'];
+			}
 		}
 
 		if ((int)$item['qtyDropped']) {
 			$kill->addDroppedItem(new DestroyedItem(new Item(
 					(int)$item['typeID']), (int)$item['qtyDropped'], '',
-					$location));
+					$location, $this->lookupLocation));
 		}
 		if ((int)$item['qtyDestroyed']) {
 			$kill->addDestroyedItem(new DestroyedItem(new Item(
 					(int)$item['typeID']), (int)$item['qtyDestroyed'], '',
-					$location));
+					$location, $this->lookupLocation));
 		}
 		// Check for containers.
 		if (isset($item->rowset)) {
@@ -914,6 +920,7 @@ class IDFeed
 	 */
 	public static function killListToXML($killList)
 	{
+		global $idfeedversion;
 		$qry = DBFactory::getDBQuery();
 		$date = gmdate('Y-m-d H:i:s');
 		$xml = "<?xml version='1.0' encoding='UTF-8'?>
@@ -1063,23 +1070,9 @@ class IDFeed
 				while ($iRow = $qry->getRow()) {
 					$itemRow = $items->addChild('row');
 					$itemRow->addAttribute('typeID', $iRow['itd_itm_id']);
-					if ($iRow['itd_itl_id'] == 9) {
-						// BPC in cargo
-						$itemRow->addAttribute('flag', 5);
-					} else if ($iRow['itd_itl_id'] == 4) {
-						// cargo
-						$itemRow->addAttribute('flag', 5);
-					} else if ($iRow['itd_itl_id'] == 6) {
-						// drone
-						$itemRow->addAttribute('flag', 87);
-					} else if ($iRow['itd_itl_id'] == 8) {
-						// implant
-						$itemRow->addAttribute('flag', 89);
-					} else {
-						$itemRow->addAttribute('flag', 0);
-					}
+					$itemRow->addAttribute('flag', $iRow['itd_itl_id'] );
 
-					if ($iRow['itd_itl_id'] == 9) {
+					if ($iRow['itd_itl_id'] == -1) {
 						$itemRow->addAttribute('singleton', 2);
 					} else {
 						$itemRow->addAttribute('singleton', 0);
@@ -1093,20 +1086,9 @@ class IDFeed
 				while ($iRow = $qry2->getRow()) {
 					$itemRow = $items->addChild('row');
 					$itemRow->addAttribute('typeID', $iRow['itd_itm_id']);
-					if ($iRow['itd_itl_id'] == 9) {
-						// BPC in cargo
-						$itemRow->addAttribute('flag', 5);
-					} else if ($iRow['itd_itl_id'] == 4) {
-						// cargo
-						$itemRow->addAttribute('flag', 5);
-					} else if ($iRow['itd_itl_id'] == 6) {
-						// drone
-						$itemRow->addAttribute('flag', 87);
-					} else {
-						$itemRow->addAttribute('flag', 0);
-					}
+					$itemRow->addAttribute('flag', $iRow['itd_itl_id'] );
 
-					if ($iRow['itd_itl_id'] == 9) {
+					if ($iRow['itd_itl_id'] == -1) {
 						$itemRow->addAttribute('singleton', 2);
 					} else {
 						$itemRow->addAttribute('singleton', 0);

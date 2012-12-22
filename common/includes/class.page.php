@@ -181,9 +181,6 @@ class Page
 		event::call('smarty_displayindex', $smarty);
 
 		$html = $smarty->fetch(get_tpl('index'));
-		if (!$this->cachable) {
-			config::put('cache_enabled', false);
-		}
 		event::call('final_content', $html);
 		// Reduce page size by about 10%
 		//TODO: enable for prod

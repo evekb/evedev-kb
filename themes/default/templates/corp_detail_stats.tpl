@@ -25,35 +25,35 @@
 			<td>Kills: </td>
 			<td class="kl-kill">{$kill_count}</td>
 			<td>HQ: </td>
-			<td>{$HQ_location}</td>
+			<td>{Corp->getStationID}</td>
 		</tr>
 		<tr class="kb-table-row-even">
 			<td>Losses: </td>
 			<td class="kl-loss">{$loss_count}</td>
 			<td>Members: </td>
-			<td>{$member_count}</td>
+			<td>{Corp->getMemberCount}</td>
 		</tr>
 		<tr class="kb-table-row-even">
 			<td>ISK destroyed:</td>
 			<td class="kl-kill">{$damage_done}B</td>
 			<td>Shares: </td>
-			<td>{$share_count}</td>
+			<td>{Corp->getShares}</td>
 		</tr>
 		<tr class="kb-table-row-even">
 			<td>ISK lost:</td>
 			<td class="kl-loss">{$damage_received}B</td>
 			<td>Tax Rate: </td>
-			<td>{$tax_rate}%</td>
+			<td>{Corp->getTaxRate}%</td>
 		</tr>
 		<tr class="kb-table-row-even">
 			<td>Efficiency:</td>
 			<td>{$efficiency}%</td>
 			<td>Website:</td>
 			<td>
-				{if {$external_url}}<a href="{$external_url}">{$external_url}</a>{/if}
+				{if {Corp->getURL}}<a href="{Corp->getURL}">{Corp->getURL}</a>{/if}
 			</td>
 		</tr>
 	</table>
-	<div class="kb-table-row-even description">{$corp_description}</div>
+	<div class="kb-table-row-even description">{Corp->getDescription}</div>
 </div>
 <!-- /corp_detail_stats -->
