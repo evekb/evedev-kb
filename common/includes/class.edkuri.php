@@ -191,6 +191,7 @@ class edkURI {
 		if (!is_array($parameters[0])) {
 			$parameters = array($parameters);
 		}
+		$parameters[] = array("akey", session::makeKey(), false);
 		$url = self::$kb_host;
 		$patharr = array();
 		$qryarr = array();
