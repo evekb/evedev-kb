@@ -54,10 +54,10 @@ class pLogin extends pageAssembly
 					&& crypt($_POST['usrpass'], ADMIN_PASSWORD) == ADMIN_PASSWORD) {
 				session::create(true);
 
-				session_write_close();
 				$page = preg_replace('/[^a-zA-Z0-9-_]/', '', edkURI::getArg("page", 1));
 				$page = $page ? $page : "admin";
-				header('Location: '.html_entity_decode(edkURI::page($page)));
+				header('Location: '.html_entity_decode(edkURI::build(array(array("a", "admin", true), array("akey", session::makeKey(), false)))));
+				session_write_close();
 				die;
 			} else {
 				$result = user::login($_POST['usrlogin'], $_POST['usrpass']);

@@ -45,8 +45,8 @@ if (!session::isAdmin())
 	if (isset($_POST['usrpass']) && (crypt($_POST['usrpass'],ADMIN_PASSWORD) == ADMIN_PASSWORD || $_POST['usrpass'] == ADMIN_PASSWORD))
 	{
 		session::create(true);
-
-		header('Location: '.$url);
+		$_SESSION['admin_key'] = session::makeKey();
+		header('Location: '.$url.'&akey='.session::makeKey());
 		die;
 	}
 	else
