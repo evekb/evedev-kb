@@ -46,7 +46,11 @@ if (!session::isAdmin())
 	{
 		session::create(true);
 		$_SESSION['admin_key'] = session::makeKey();
-		header('Location: '.$url.'&akey='.session::makeKey());
+		if (strpos($url, '?') === false) {
+			header('Location: '.$url.'?akey='.session::makeKey());
+		} else {
+			header('Location: '.$url.'&akey='.session::makeKey());
+		}
 		die;
 	}
 	else
