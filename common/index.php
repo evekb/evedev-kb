@@ -79,7 +79,7 @@ define('IMG_URL', config::get('cfg_img'));
 if(substr(IMG_URL, -4) == '/img') define('IMG_HOST', substr(IMG_URL, 0, strpos(IMG_URL, "/img")));
 else  define('IMG_HOST', KB_HOST);
 
-$page = edkURI::getArg('a', 0);
+$page = preg_replace('/[^\w\d_-]/', '', edkURI::getArg('a', 0));
 edkURI::usePath(config::get('cfg_pathinfo'));
 if (defined('KB_PHP')) edkURI::setRoot(KB_PHP);
 
