@@ -169,10 +169,15 @@ class pageAssembly
 	 * @param string $type Types can be caption, img, link, points.
 	 * @param string $name The name to display.
 	 * @param string $url Only needed for URLs.
+	 * @param int $width Only needed for images.
+	 * @param int $height Only needed for images.
+	 * @param string|boolean $onclick false if unused, otherwise javascript code.
 	 */
-	function addMenuItem($type, $name, $url = '')
+	function addMenuItem($type, $name, $url = '', $width = 145, $height = 145,
+			$onclick = false)
 	{
-		$this->menuOptions[] = array($type, $name, $url);
+		$this->menuOptions[] = array($type, $name, $url, (int)$width, (int)$height,
+			$onclick);
 	}
 
 	/**
