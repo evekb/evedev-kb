@@ -98,12 +98,12 @@ class API_Helpers
 		if ($id != 0)
 		{
 			$qry = DBFactory::getDBQuery();
-			$sql = 'select itemName FROM kb3_moons WHERE itemID = '.$id;
+			$sql = 'select moo_name FROM kb3_moons WHERE moo_id = '.$id;
 
 			$qry->execute($sql);
 			$row = $qry->getRow();
 
-			return $row['itemName'];
+			return $row['moo_name'];
 		} else {
 			return false;
 		}
