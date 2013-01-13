@@ -27,7 +27,7 @@ if ($_GET['submit'] == 'Reset')
 	unset($_POST);
 }
 
-$html .= "<form id=\"options\" name=\"options\" method=\"post\" action=\"?a=admin_kill_import\">";
+$html .= '<form id="options" name="options" method="post" action="'.edkURI::page("admin_kill_import").'">';
 
 if ($_POST)
 {
@@ -182,9 +182,9 @@ if (isset($_SESSION['kill_import']['do']))
 
 	if ($_SESSION['kill_import']['count'] - $_SESSION['kill_import']['numcount'] > 0)
 	{
-		$html .= '<meta http-equiv="refresh" content="5; URL=?a=admin_kill_import" />';
+		$html .= '<meta http-equiv="refresh" content="5; URL='.edkURI::page("admin_kill_import").'" />';
 		$html .= 'Automatic refresh in 5s<br/>';
-		$html .= '<a href="'.KB_HOST.'/?a=admin_kill_import">Read next '.$_SESSION['kill_import']['num'].'</a>&nbsp;<a href="'.KB_HOST.'/?a=admin_kill_import&submit=Reset">Reset</a>';
+		$html .= '<a href="'.edkURI::page("admin_kill_import").'">Read next '.$_SESSION['kill_import']['num'].'</a>&nbsp;<a href="'.KB_HOST.'/?a=admin_kill_import&amp;submit=Reset&amp;akey='.session::makeKey().'">Reset</a>';
 		$_SESSION['kill_import']['read'] += $read;
 		$_SESSION['kill_import']['p_all'] += $p_all;
 		$_SESSION['kill_import']['posted_all'] += $posted_all;
@@ -202,7 +202,7 @@ if (isset($_SESSION['kill_import']['do']))
 				$html .= $mal_file.'<br/>';
 			}
 
-		$html .= '<a href="'.KB_HOST.'/?a=admin_kill_import">Ok</a>';
+		$html .= '<a href="'.edkURI::page("admin_kill_import").'">Ok</a>';
 		unset($_SESSION['kill_import']);
 	}
 }

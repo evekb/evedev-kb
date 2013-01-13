@@ -1,5 +1,5 @@
 {if $results}{$results}{/if}
-<form id="options" name="options" method="post" action="{$kb_host}/?a=admin_idfeedsyndication">
+<form id="options" name="options" method="post" action="{$url}">
 	<div class='block-header2'>Feeds</div>
 	<table>
 		<tr style='text-align: left;'>

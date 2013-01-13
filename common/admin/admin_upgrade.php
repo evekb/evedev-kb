@@ -284,7 +284,7 @@ $smarty->assign('DBmessage', $parser->getLatestDBMessage());
 $smarty->assign('codemessage', $parser->getLatestCodeMessage());
 $smarty->assign('dbversion', Config::get('upd_dbVersion'));
 $smarty->assign('codeversion', KB_VERSION);
-
+$smarty->assign('akey', session::makeKey());
 
 $page->addContext($menubox->generate());
 $page->setContent($smarty->fetch(get_tpl('admin_upgrade')));

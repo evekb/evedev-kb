@@ -64,6 +64,7 @@ if ($qry->execute($query)) {
 $smarty->assign('inlinks', $internal);
 $smarty->assign('outlinks', $external);
 $smarty->assign('alllinks', $all);
+$smarty->assign('akey', session::makeKey());
 $html = $smarty->fetch(get_tpl('admin_navmanager'));
 
 $page->addContext($menubox->generate());

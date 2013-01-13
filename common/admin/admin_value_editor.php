@@ -90,6 +90,7 @@ $smarty->assignByRef('item_types', $types);
 $smarty->assign('mod', 'value_editor');
 $smarty->assign('eve_central_exists', $eve_central_exists);
 $smarty->assign('type', $type);
+$smarty->assign('akey', session::makeKey());
 
 $page->addContext($menubox->generate());
 // override the smarty path, get the mod template, set it back.

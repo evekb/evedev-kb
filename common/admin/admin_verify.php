@@ -44,6 +44,7 @@ function ReadDirectory($dir, $ignoreimg = false)
 $html = "";
 if (!isset($_POST['submit']))
 {
+	$smarty->assign('url', edkURI::page("admin_verify"));
 	$html = $smarty->fetch(get_tpl("admin_verify"));
 }
 else

@@ -1,4 +1,4 @@
-<form id="search" action="{$kb_host}/?a=admin_standings" method="post">
+<form id="search" method="post" action="{$url}">
 <table class="kb-subtable">
   <tr><td>Type:</td><td>Text: (3 letters minimum)</td></tr>
   <tr><td><select id="searchtype" name="searchtype">
@@ -15,7 +15,7 @@
   <tr class="kb-table-header"><td>Typ</td><td>Result</td><td>Standing</td><td>Comment</td><td>&nbsp;</td></tr>
 {section name=res loop=$results}
   <tr class="kb-table-row-even">
-    <td><form id="search" action="{$kb_host}/?a=admin_standings" method="post">
+    <td><form id="search" method="post" action="{$url}">
       <input type="hidden" name="sta_id" value="{$results[res].link}">
       {$results[res].typ}</td><td>{$results[res].descr}</td>
     <td align="center"><input type="text" value="" size="3" name="standing"></td>
@@ -52,7 +52,7 @@ function checkinput(object,value,oldvalue,id)
 </script>
 -->
 <div class="block-header2">Standings</div>
-<form id="search" action="{$kb_host}/?a=admin_standings" method="POST">
+<form id="search" method="post" action="{$url}">
 <table class="kb-table">
 {foreach from=$standings item=standing}
   <tr class="kb-table-header"><td colspan="5">{$standing.name}</td></tr>

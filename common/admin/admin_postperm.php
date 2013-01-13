@@ -46,15 +46,15 @@ if ($_POST['searchphrase'] != "" && strlen($_POST['searchphrase']) >= 3)
 		switch ($_POST['searchtype'])
 		{
 			case 'pilot':
-				$link = KB_HOST.'/?a=admin_postperm&amp;add=p'.$row['plt_id'];
+				$link = KB_HOST.'/?a=admin_postperm&amp;add=p'.$row['plt_id'].'&amp;akey='.session::makeKey();
 				$descr = 'Pilot '.$row['plt_name'].' from '.$row['crp_name'];
 				break;
 			case 'corp':
-				$link = KB_HOST."/?a=admin_postperm&amp;add=c".$row['crp_id'];
+				$link = KB_HOST."/?a=admin_postperm&amp;add=c".$row['crp_id'].'&amp;akey='.session::makeKey();
 				$descr = 'Corp '.$row['crp_name'].', member of '.$row['all_name'];
 				break;
 			case 'alliance':
-				$link = KB_HOST.'/?a=admin_postperm&amp;add=a'.$row['all_id'];
+				$link = KB_HOST.'/?a=admin_postperm&amp;add=a'.$row['all_id'].'&amp;akey='.session::makeKey();
 				$descr = 'Alliance '.$row['all_name'];
 				break;
 		}
@@ -139,21 +139,21 @@ if ($string != 'all')
 			{
 				$alliance = new Alliance($id);
 				$text = $alliance->getName();
-				$link = KB_HOST.'/?a=admin_postperm&amp;del='.$typ.$id;
+				$link = KB_HOST.'/?a=admin_postperm&amp;del='.$typ.$id.'&amp;akey='.session::makeKey();
 				$permt[$typ][] = array('text' => $text, 'link' => $link);
 			}
 			if ($typ == 'p')
 			{
 				$pilot = new Pilot($id);
 				$text = $pilot->getName();
-				$link = KB_HOST.'/?a=admin_postperm&amp;del='.$typ.$id;
+				$link = KB_HOST.'/?a=admin_postperm&amp;del='.$typ.$id.'&amp;akey='.session::makeKey();
 				$permt[$typ][] = array('text' => $text, 'link' => $link);
 			}
 			if ($typ == 'c')
 			{
 				$corp = new Corporation($id);
 				$text = $corp->getName();
-				$link = KB_HOST.'/?a=admin_postperm&amp;del='.$typ.$id;
+				$link = KB_HOST.'/?a=admin_postperm&amp;del='.$typ.$id.'&amp;akey='.session::makeKey();
 				$permt[$typ][] = array('text' => $text, 'link' => $link);
 			}
 		}
@@ -174,6 +174,7 @@ if ($string != 'all')
 
 	$smarty->assignByRef('permissions', $perm);
 }
+$smarty->assign('akey', session::makeKey());
 $html = $smarty->fetch(get_tpl('admin_postperm'));
 
 $page->addContext($menubox->generate());

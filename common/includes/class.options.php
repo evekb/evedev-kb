@@ -142,6 +142,7 @@ class options
 		// create the option field
 		$smarty->assign('field', urlencode($field));
 		$smarty->assign('sub', urlencode($sub));
+		$smarty->assign('akey', session::makeKey());
 
 		$html = $smarty->fetch(get_tpl('admin_options_field_head'));
 

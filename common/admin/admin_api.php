@@ -38,7 +38,7 @@ if ($_POST['clearapicache']) {
 	clearcache($cachepath);
 
 	$html .= "Cache cleared.<br />";
-	$html .= "<script type=\"text/javascript\">window.location = \"?a=admin_api\"</script>"; //*/
+	$html .= '<script type="text/javascript">window.location = "'.edkURI::page("admin_api").'"</script>';
 }
 
 if ($_POST['add'] ) {
@@ -96,7 +96,7 @@ if ($_POST['import'] || isset($_GET['Process'])) {
 
 				$processindex++;
 				if ($qry->getRow()) {
-					$html .= "<script type=\"text/javascript\">window.location = \"?a=admin_api&Process=".$processindex."\"</script>"; //*/
+					$html .= "<script type=\"text/javascript\">window.location = \"?a=admin_api&amp;Process=".$processindex."&amp;akey=".session::makeKey()."\"</script>"; //*/
 					break;
 				} else { // load report.txt to $html
 					$fp = @fopen(KB_CACHEDIR.'/api/report.txt', 'r');
@@ -148,7 +148,7 @@ if ($_POST['clearlog']) {
 
 if ($_POST['apilog']) {
 	$html .= "<div class='block-header2'>API Log</div>";
-	$html .= "<form id='options' name='options' method='post' action='".KB_HOST."/?a=admin_api'>";
+	$html .= "<form id='options' name='options' method='post' action='".edkURI::page("admin_api")."'>";
 
 	$sql = 'SELECT *
 			FROM kb3_apilog
@@ -227,7 +227,7 @@ if ($_POST['apilog']) {
 } else {
 	// API Settings
 	$html .= "<div class='block-header2'>API Key Details (must be CEO/Director to retrieve corp mails)</div>";
-	$html .= "<form id='options' name='options' method='post' action='".KB_HOST."/?a=admin_api'>";
+	$html .= "<form id='options' name='options' method='post' action='".edkURI::page("admin_api")."'>";
 
 	// show current server time
 	$html .= "Servers current time: <span style='color:00FF00'>".date("M d Y H:i")."</span><br /><br />";
@@ -370,7 +370,7 @@ if ($_POST['apilog']) {
 			}
 		}
 		$html .= "</td>";
-		$html .= "<td><a href='?a=admin_api&amp;delete=".$row['key_id']."'>Del</a></td>";
+		$html .= "<td><a href='?a=admin_api&amp;delete=".$row['key_id']."&amp;akey=".session::makeKey()."'>Del</a></td>";
 		$html .= "</tr>";
 		$cycle = !$cycle;
 	}

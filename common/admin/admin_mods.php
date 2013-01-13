@@ -36,6 +36,7 @@ if ($handle = opendir('mods')) {
 	closedir($handle);
 }
 $smarty->assign('rows', $rows);
+$smarty->assign('url', edkURI::page("admin_mods"));
 $page->setContent($smarty->fetch(get_tpl('admin_mods')));
 
 $page->addContext($menubox->generate());

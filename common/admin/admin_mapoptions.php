@@ -112,6 +112,7 @@ $options[3]['color'][] = array('descr' => 'Highlightcolor (>1 Kill)', 'name' => 
 
 $smarty->assignByRef('config', $config);
 $smarty->assignByRef('options', $options);
+$smarty->assign('url', edkURI::page("admin_mapoptions"));
 $html = $smarty->fetch(get_tpl('admin_mapoptions'));
 
 $page->addContext($menubox->generate());

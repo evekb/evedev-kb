@@ -1,4 +1,4 @@
-<form action="{$kb_host}/?a=admin_mods" method="post">
+<form method="post" action="{$url}">
 	<input type="hidden" name="set_mods" value="1" />
 	<table class="kb-table" style="width:99%">
 		<tr class="kb-table-header">

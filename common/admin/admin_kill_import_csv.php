@@ -11,7 +11,7 @@ $page->setAdmin();
 if (!$_POST['killmail'])
 {
     $html .= '<b>Killmails in same format as export (Comma Separated - csv):</b><br>';
-    $html .= '<form id=postform name=postform class=f_killmail method=post action="'.KB_HOST.'/?a=admin_kill_import_csv">';
+	$html .= '<form id="postform" name="postform" class="f_killmail" method="post" action="'.edkURI::page("admin_kill_import_csv").'">';
     $html .= '<textarea class=killmail id=killmail name=killmail cols="55" rows="35"></textarea><br><br>';
     $html .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id=submit name=submit type=submit value="Process !"></input>';
     $html .= '</form>';

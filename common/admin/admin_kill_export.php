@@ -33,7 +33,7 @@ elseif ($_GET['sub'] == 'do')
 	$_SESSION['admin_kill_export']['do'] = 1;
 }
 
-$html .= "<form id=\"options\" name=\"options\" method=\"post\" action=\"?a=admin_kill_export\">";
+$html .= '<form id="options" name="options" method="post" action="'.edkURI::page("admin_kill_export").'">';
 $html .= '<input type="hidden" value="" name=""/>';
 
 if ($_POST)
@@ -153,15 +153,15 @@ if (isset($_SESSION['admin_kill_export']['select']))
 			switch ($_POST['searchtype'])
 			{
 				case 'pilot':
-					$link = KB_HOST.'/?a=admin_kill_export&add=p'.$row['plt_id'];
+					$link = KB_HOST.'/?a=admin_kill_export&add=p'.$row['plt_id']."&akey=".session::makeKey();
 					$descr = 'Pilot '.$row['plt_name'].' from '.$row['crp_name'];
 					break;
 				case 'corp':
-					$link = "?a=admin_kill_export&add=c".$row['crp_id'];
+					$link = "?a=admin_kill_export&add=c".$row['crp_id']."&akey=".session::makeKey();
 					$descr = 'Corp '.$row['crp_name'].', member of '.$row['all_name'];
 					break;
 				case 'alliance':
-					$link = KB_HOST.'/?a=admin_kill_export&add=a'.$row['all_id'];
+					$link = KB_HOST.'/?a=admin_kill_export&add=a'.$row['all_id']."&akey=".session::makeKey();
 					$descr = 'Alliance '.$row['all_name'];
 					break;
 			}
@@ -233,21 +233,21 @@ if (isset($_SESSION['admin_kill_export']['select']))
 			{
 				$alliance = new Alliance($id);
 				$text = $alliance->getName();
-				$link = KB_HOST.'/?a=admin_kill_export&del='.$typ.$id;
+				$link = KB_HOST.'/?a=admin_kill_export&del='.$typ.$id."&akey=".session::makeKey();
 				$permt[$typ][] = array('text' => $text, 'link' => $link);
 			}
 			if ($typ == 'p')
 			{
 				$pilot = new Pilot($id);
 				$text = $pilot->getName();
-				$link = KB_HOST.'/?a=admin_kill_export&del='.$typ.$id;
+				$link = KB_HOST.'/?a=admin_kill_export&del='.$typ.$id."&akey=".session::makeKey();
 				$permt[$typ][] = array('text' => $text, 'link' => $link);
 			}
 			if ($typ == 'c')
 			{
 				$corp = new Corporation($id);
 				$text = $corp->getName();
-				$link = KB_HOST.'/?a=admin_kill_export&del='.$typ.$id;
+				$link = KB_HOST.'/?a=admin_kill_export&del='.$typ.$id."&akey=".session::makeKey();
 				$permt[$typ][] = array('text' => $text, 'link' => $link);
 			}
 		}
@@ -267,6 +267,7 @@ if (isset($_SESSION['admin_kill_export']['select']))
 	}
 
 	$smarty->assignByRef('permissions', $perm);
+	$smarty->assign('akey', session::makeKey());
 	$html = $smarty->fetch(get_tpl('admin_export'));
 }
 
@@ -326,7 +327,7 @@ if (isset($_SESSION['admin_kill_export']['do']))
 			fclose($fp);
 		}
 		$html .= $cnt.' mails exported<br/>';
-		$html .= '<a href="'.KB_HOST.'/?a=admin_kill_export">Ok</a>';
+		$html .= '<a href="'.edkURI::page("admin_kill_export").'">Ok</a>';
 		unset($_SESSION['admin_kill_export']);
 	}
 	else
@@ -334,7 +335,7 @@ if (isset($_SESSION['admin_kill_export']['do']))
 		// nothing to export, retry
 		unset($_SESSION['admin_kill_export']['do']);
 		$_SESSION['admin_kill_export']['select'] = 1;
-		header('Location: '.KB_HOST.'/?a=admin_kill_export');
+		header('Location: '.edkURI::page("admin_kill_export"));
 	}
 }
 $page->addContext($menubox->generate());

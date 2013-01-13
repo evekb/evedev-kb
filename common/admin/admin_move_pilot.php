@@ -45,7 +45,7 @@ if($_POST['search'])
 	$html .= "<table class=kb-subtable>";
 		while ($row = $qry->getRow())
 		{
-		$html .= "<tr><td><a href=\"?a=admin_move_pilot&plt_id=".intval($_GET['plt_id'])."&crp=".intval($row['crp_id'])."\">";
+		$html .= '<tr><td><a href="?a=admin_move_pilot&plt_id='.intval($_GET['plt_id']).'&crp='.intval($row['crp_id']).'&akey='.session::makeKey().'">';
 		$html .= $row['crp_name']."<br/>";
 		$html .= "</td><tr>";
 		}

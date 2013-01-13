@@ -136,6 +136,7 @@ if ($permt['c']) {
 }
 
 $smarty->assignByRef('standings', $perm);
+$smarty->assign('url', edkURI::page("admin_standings"));
 
 $page->addContext($menubox->generate());
 $page->setContent($smarty->fetch(get_tpl('admin_standings')));

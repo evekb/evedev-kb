@@ -117,6 +117,8 @@ $feeds[] = array('id'=>'new', 'updated'=>'', 'active'=>'', 'uri'=>"", 'trusted'=
 $smarty->assignByRef('rows', $feeds);
 
 $smarty->assign('results', $html);
+$smarty->assign('url', edkURI::page("admin_idfeedsyndication"));
+
 $page->addContext($menubox->generate());
 $page->setContent($smarty->fetch(get_tpl('admin_idfeed')));
 $page->generate();

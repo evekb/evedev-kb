@@ -15,7 +15,7 @@ require_once('admin_menu.php');
 $page = new Page('Administration - Export searcher');
 $page->setAdmin();
 
-$html .= "<form id=search action=\"?a=admin_kill_export_search\" method=post>";
+$html .= '<form id="search" method="post" action="'.edkURI::page("admin_kill_export_search").'">';
 $html .= "<table class=kb-subtable><tr>";
 $html .= "<td>Type:</td><td>Text: (3 letters minimum)</td>";
 $html .= "</tr><tr>";
@@ -49,7 +49,7 @@ if ($_POST['searchphrase'] != "" && strlen($_POST['searchphrase']) >= 3)
     while ($row = $qry->getRow())
     {
         $html .= "<tr class=kb-table-row-even>";
-        $html .= "<td><a href=\"?a=admin_kill_export_csv&plt_id=".$row['plt_id']."\">".$row['plt_name']."</a></td><td>".$row['crp_name']."</td>";
+		$html .= '<td><a href="?a=admin_kill_export_csv&amp;plt_id='.$row['plt_id'].'&amp;akey='.session::makeKey().'">'.$row['plt_name'].'</a></td><td>'.$row['crp_name'].'</td>';
         $html .= "</tr>";
     }
     if ($qry->recordCount() > 0)

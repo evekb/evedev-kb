@@ -1,6 +1,6 @@
 {cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
 <div class="block-header2">Navigation for intern pages</div>
-<form action ='{$kb_host}/?a=admin_navmanager' method='post'>
+<form method='post' action='{$kb_host}/?a=admin_navmanager&amp;akey={$akey}'>
 	<table class="kb-table">
 		<tr>
 			<th width='100'>
@@ -101,12 +101,12 @@
 				<td align='right'>{$i.pos}</td>
 				<td>{$i.name}</td>
 				<td>
-					<a href='{$kb_host}/?a=admin_navmanager&amp;decPrio={$i.id}'>
+					<a href='{$kb_host}/?a=admin_navmanager&amp;decPrio={$i.id}&amp;akey={$akey}'>
 						<b> move up </b>
 					</a>
 				</td>
 				<td>
-					<a href='{$kb_host}/?a=admin_navmanager&amp;incPrio={$i.id}'>
+					<a href='{$kb_host}/?a=admin_navmanager&amp;incPrio={$i.id}&amp;akey={$akey}'>
 						<b> down </b>
 					</a>
 				</td>

@@ -20,6 +20,7 @@ if ($_POST['action'] == 'search')
 
 	$smarty->assignByRef('role', $_POST['role']);
 	$smarty->assignByRef('user', $hitlist);
+	$smarty->assign('url', edkURI::page("admin_roles"));
 
 	$page->addContext($menubox->generate());
 	$page->setContent($smarty->fetch(get_tpl('admin_roles_assign')));
@@ -45,6 +46,7 @@ else
 
 	$smarty->assignByRef('hroles', $hardcoded);
 	$smarty->assignByRef('sroles', $softcoded);
+	$smarty->assign('url', edkURI::page("admin_roles"));
 
 	$page->addContext($menubox->generate());
 	$page->setContent($smarty->fetch(get_tpl('admin_roles')));

@@ -36,13 +36,13 @@
 		</td>
 		<td>
 		    {if !$codeList[idx].cached || !$codeList[idx].hash_match}
-			<a href="{$kb_host}/?a=admin_upgrade&amp;code_dl_ref={$codeList[idx].version}">Download</a>
+			<a href="{$kb_host}/?a=admin_upgrade&amp;code_dl_ref={$codeList[idx].version}&amp;akey={$akey}">Download</a>
 			{if !$codeList[idx].hash_match}
 			    <span style="text-decoration: blink">!!</span><br/>
 			{/if}
 		    {/if}
 		    {if $codeList[idx].hash_match && $codeList[idx].lowest}
-			<a href="{$kb_host}/?a=admin_upgrade&amp;code_apply_ref={$codeList[idx].version}">Apply</a>
+			<a href="{$kb_host}/?a=admin_upgrade&amp;code_apply_ref={$codeList[idx].version}&amp;akey={$akey}">Apply</a>
 		    {else}
 			^<br/>
 		    {/if}
@@ -87,13 +87,13 @@
 		</td>
 		<td>
 		    {if !$dbList[idx].cached || !$dbList[idx].hash_match}
-			<a href="{$kb_host}/?a=admin_upgrade&amp;db_dl_ref={$dbList[idx].version}">Download</a>
+			<a href="{$kb_host}/?a=admin_upgrade&amp;db_dl_ref={$dbList[idx].version}&amp;akey={$akey}">Download</a>
 			{if !$dbList[idx].hash_match}
 			    <span style="text-decoration: blink">!!</span><br/>
 			{/if}
 		    {/if}
 		    {if $dbList[idx].hash_match && $dbList[idx].lowest}
-			<a href="{$kb_host}/?a=admin_upgrade&amp;db_apply_ref={$dbList[idx].version}">Apply</a>
+			<a href="{$kb_host}/?a=admin_upgrade&amp;db_apply_ref={$dbList[idx].version}&amp;akey={$akey}">Apply</a>
 		    {else}
 			^<br/>
 		    {/if}
@@ -113,7 +113,7 @@
     {/if}
 <br/>
 The upgrade description file will be retrieved again at: <b>{$update_time} GMT</b>.<br/>
-You can force the update description file to retrieved now by clicking on the <a href="{$kb_host}/?a=admin_upgrade&amp;refresh">link</a>.<br/>
-Alternatively, you can refresh the page by clicking on the <a href="{$kb_host}/?a=admin_upgrade">link</a>.<br/><br />
+You can force the update description file to retrieved now by clicking on the <a href="{$kb_host}/?a=admin_upgrade&amp;refresh&amp;akey={$akey}">link</a>.<br/>
+Alternatively, you can refresh the page by clicking on the <a href="{$kb_host}/?a=admin_upgrade&amp;akey={$akey}">link</a>.<br/><br />
 
-<a href="{$kb_host}/?a=admin_upgrade&amp;reset_db">Reset stored database level.</a><br />
+<a href="{$kb_host}/?a=admin_upgrade&amp;reset_db&amp;akey={$akey}">Reset stored database level.</a><br />
