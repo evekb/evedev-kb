@@ -22,6 +22,7 @@ if (isset($html)) {
 $smarty->assign('isadmin', $page->isAdmin());
 $smarty->assign('post_forbid', config::get('post_forbid'));
 $smarty->assign('post_oog_forbid', config::get('post_oog_forbid'));
+$smarty->assign('actionURL', edkURI::build("post"));
 
 $page->setContent($smarty->fetch(get_tpl('post')));
 $page->generate();

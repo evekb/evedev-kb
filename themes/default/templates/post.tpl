@@ -8,7 +8,7 @@ Posting fake or otherwise edited mails is not allowed. All posts are logged.<br 
 Remember to post your losses as well.<br />
 <br />
 <b>Killmail:</b><br />
-<form id="postform" name="postform" class="f_killmail" method="post" action="{$kb_host}/?a=post">
+<form id="postform" name="postform" class="f_killmail" method="post" action="{$actionURL}">
 <textarea name="killmail" id="killmail" class="f_killmail" cols="70" rows="24">
 </textarea>
 {if !$isadmin}

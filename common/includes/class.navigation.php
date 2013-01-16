@@ -71,6 +71,14 @@ class Navigation
 		$menu = new Menu();
 		while ($row = $this->getRow()) {
 			$url = $row['url'];
+			if ($row['intern'] == 1) {
+				if (strpos($url, "?") === false) {
+					$url .= "?";
+				} else {
+					$url .= "&";
+				}
+				$url .= "akey=".session::makeKey();
+			}
 			// Note that changing the standard naming will also remove any
 			// translations.
 			$menu->add($url , Language::get($row['descr']));
