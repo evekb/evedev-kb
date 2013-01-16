@@ -140,7 +140,7 @@ class Item extends Cacheable
 			$query = "select itt_slot from kb3_item_types
 						inner join kb3_dgmtypeattributes d
 						where itt_id = d.value
-						and d.typeID = ".$this->row_['typeID']."
+						and d.typeID = ".(int)$this->row_['typeID']."
 						and d.attributeID in (137,602);";
 			$qry->execute($query);
 			$row = $qry->getRow();
