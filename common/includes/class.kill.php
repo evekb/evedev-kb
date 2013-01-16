@@ -1563,7 +1563,6 @@ class Kill extends Cacheable
 		$qry->autocommit(true);
 		// call the event that we added this mail
 		event::call('killmail_added', $this);
-		cache::notifyKillAdded();
 		return $this->id;
 	}
 
