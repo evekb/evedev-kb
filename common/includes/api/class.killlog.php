@@ -25,7 +25,7 @@ class API_KillLog extends API
 			return;
 
 		// reduces strain on DB
-		if(function_exists("set_time_limit")) {
+		if(function_exists("set_time_limit") && !ini_get('safe_mode')) {
       		set_time_limit(0);
 		}
 		$lastdatakillid = 1;
