@@ -340,9 +340,10 @@ class Parser
 		$victim = $this->fetchPilot($victimname, $corp, $timestamp);
 		$system = SolarSystem::lookup($systemname);
 
-		if (!$system->getID())
+		if (!$system || !$system->getID())
 		{
 			$this->error('System not found.', $systemname);
+			$system = new SolarSystem();
 		}
 
 		$ship = Ship::lookup($shipname);
