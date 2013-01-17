@@ -83,8 +83,9 @@ class pCampaignList extends pageAssembly
 	 */
 	function menuSetup()
 	{
-		$this->addMenuItem('link', 'Active campaigns', KB_HOST.'/?a=campaigns');
-		$this->addMenuItem('link', 'Past campaigns', KB_HOST.'/?a=campaigns&amp;view=past');
+		$this->addMenuItem('link', 'Active campaigns', edkURI::page('campaigns'));
+		$this->addMenuItem('link', 'Past campaigns', edkURI::build(array(array('a', 'campaigns', true),
+			array('view', 'past', true))));
 		return "";
 	}
 	/**
