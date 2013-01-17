@@ -205,7 +205,11 @@ class edkURI {
 					$patharr[] = $param[1];
 				}
 			} else {
-				$qryarr[] = $param[0].'='.$param[1];
+				if ($param[1] === true) {
+					$qryarr[] = $param[0];
+				} else {
+					$qryarr[] = $param[0].'='.$param[1];
+				}
 			}
 		}
 
