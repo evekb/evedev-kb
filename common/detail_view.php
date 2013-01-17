@@ -15,18 +15,22 @@ $page = new Page('TEST');
 $page->setTitle('Region detail view');
 
 if (isset($_GET['big_view'])) {
+	$imgSrc = edkURI::build(array(array('a', 'map', true),
+		array('region_id', intval($_GET['region_id']), true),
+		array('size', '700', true),
+		array('mode', urlencode($_GET['mode']), true)));
 	$html='<table width="700" border="0" cellspacing="1" cellpadding="1" class="kb-table">
 			<tr>
-				<td align="center"><a href="?a=detail_view&region_id='.intval($_GET['region_id']).'">[Back]</a></td>
+				<td align="center"><a href="'.edkURI::build(array('region_id', intval($_GET['region_id']), true)).'">[Back]</a></td>
 			</tr>
 			<tr>
 				<td align="center">
-					<img src="?a=map&region_id='.intval($_GET['region_id']).'&size=700&mode='.$_GET['mode'].'" width="700" height="700">
+					<img src="'.$imgSrc.'" width="700" height="700">
 				</td>
 			</tr>
 		</table>';
 } elseif (isset($_GET['search'])) {
-	$html.='<form id="form1" name="form1" method="post" action="?a=detail_view&search">
+	$html.='<form id="form1" name="form1" method="post" action="'.edkURI::build(array('search', true, true)).'">
 				<input type="text" name="search_string" />
 				<select name="selector">
 					<option value="reg"'; if($_POST['selector']=='reg') { $html.=" selected"; }  $html.='>Region</option>
@@ -39,37 +43,39 @@ if (isset($_GET['big_view'])) {
 
 	if (isset($_POST['search_string']) && $_POST['search_string'] != "") {
 		$html.='<br /><br />';
-			
+		
+		$pqry = new DBPreparedQuery();
 		switch ($_POST['selector']) {
 			case "reg":
 				$sql="	SELECT reg_id, reg_name
 						FROM `kb3_regions`
-						WHERE `reg_name` LIKE '%".$_POST['search_string']."%'";
+						WHERE `reg_name` LIKE '%?%'";
 				break;
 			case "con":
 				$sql="	SELECT con.con_name, reg.reg_id, reg.reg_name
 						FROM kb3_constellations con, kb3_regions reg
 						WHERE reg.reg_id = con.con_reg_id
-						AND con.con_name LIKE '%".$_POST['search_string']."%'";
+						AND con.con_name LIKE '%?%'";
 				break;
 			case "sys":
 				$sql="	SELECT sys.sys_name, reg.reg_id, reg.reg_name
 						FROM kb3_systems sys, kb3_constellations con, kb3_regions reg
 						WHERE con.con_id = sys.sys_con_id
 						AND reg.reg_id = con.con_reg_id
-						AND sys.sys_name LIKE '%".$_POST['search_string']."%'";
+						AND sys.sys_name LIKE '%?%'";
 				break;
 			default: 
 				exit;
 		}
 
-		$qry = new DBQuery();
-		$qry->execute($sql) or die($qry->getErrorMsg());
+		$pqry->prepare($sql);
+		$pqry->bind_param('s', $_POST['search_string']);
+		$pqry->execute();
 
-		if($qry->recordCount()) {
+		if($pqry->recordCount()) {
 			$html .='<table width="250" border="0" cellspacing="1" cellpadding="1">';
 
-			while ($row = $qry->getRow()) {
+			while ($row = $pqry->fetch()) {
 				$html .='<tr>';
 				switch ($_POST['selector']) {
 					case "con":
@@ -82,7 +88,7 @@ if (isset($_GET['big_view'])) {
 						$html .='<td></td>';
 				}
 
-				$html .='<td><a href="?a=detail_view&region_id='.$row['reg_id'].'">'.$row['reg_name'].'</a></td></tr>';
+				$html .='<td><a href="'.edkURI::build(array('region_id', $row['reg_id'], true)).'">'.$row['reg_name'].'</a></td></tr>';
 			}
 
 			$html .='</table>';
@@ -133,6 +139,20 @@ if (isset($_GET['big_view'])) {
 
 	sort($systems);
 
+	$playerKillsLink = edkURI::build(array(array('big_view', true, true),
+			array('region_id', intval($_GET['region_id']), true),
+			array('mode', 'ship', true)));
+	$playerKillsImg = edkURI::build(array(array('a', 'map', true),
+			array('region_id', intval($_GET['region_id']), true),
+			array('size', '300', true),
+			array('mode', 'ship', true)));
+	$npcKillsLink = edkURI::build(array(array('big_view', true, true),
+			array('region_id', intval($_GET['region_id']), true),
+			array('mode', 'faction', true)));
+	$npcKillsImg = edkURI::build(array(array('a', 'map', true),
+		array('region_id', intval($_GET['region_id']), true),
+		array('size', '300', true),
+		array('mode', 'faction', true)));
 	$html .='<table width="98%" border="0" cellspacing="1" cellpadding="1">
 	  <tr>
 		<td colspan="2">&nbsp;</td>
@@ -143,23 +163,28 @@ if (isset($_GET['big_view'])) {
 
 		  <tr>
 			<td align="center"  class="kb-table">Player ship kills in the last hour<br />
-				<a href="?a=detail_view&big_view&region_id='.intval($_GET['region_id']).'&mode=ship"><img src="?a=map&region_id='.$_GET['region_id'].'&size=300&mode=ship" border="0" /></a></td>
+				<a href="'.$playerKillsLink.'"><img src="'.$playerKillsImg.'" border="0" /></a></td>
 		  </tr>
 		  <tr>
 				<td>&nbsp;</td>
 		  </tr>
 		  <tr>
 			<td align="center" class="kb-table">NPC ship kills of the last hour <br />
-				<a href="?a=detail_view&big_view&region_id='.intval($_GET['region_id']).'&mode=faction"><img src="?a=map&region_id='.$_GET['region_id'].'&size=300&mode=faction" width="300" height="300" border="0" /></a></td>
+				<a href="'.$npcKillsLink.'"><img src="'.$npcKillsImg.'" width="300" height="300" border="0" /></a></td>
 		  </tr>
 		  <tr>
 			<td>&nbsp;</td>
 		  </tr>';
 		  
-	if (isset($_GET['sys'])) {	  
-	$html .='	  <tr>
+	if (isset($_GET['sys'])) {
+		$systemImg = edkURI::build(array(array('a', 'map', true),
+				array('mode', 'sys', true),
+				array('sys_id', intval($_GET['sys']), true),
+				array('size', '300', true)));
+		$systemLink = edkURI::build(array('region_id', intval($_GET['region_id']), true));
+		$html .='	  <tr>
 			<td align="center" class="kb-table">System location<br />
-				<img src="?a=map&mode=sys&sys_id='.intval($_GET['sys']).'&size=300" width="300" height="300" border="0" /><br /><a href="?a=detail_view&region_id='.intval($_GET['region_id']).'">Clear Filter</a></td>
+				<img src="'.$systemImg.'" width="300" height="300" border="0" /><br /><a href="'.$systemLink.'">Clear Filter</a></td>
 		  </tr>
 		  <tr>
 			<td>&nbsp;</td>
@@ -178,7 +203,7 @@ if (isset($_GET['big_view'])) {
 		  </tr>
 		  <tr>
 			<td width="50%">Region:</td>
-			<td>'.$region.' <a href="?a=detail_view&search">[Search]</a></td>
+			<td>'.$region.' <a href="'.edkURI::build(array('search', true, true)).'">[Search]</a></td>
 		  </tr>
 		  <tr>
 			<td>&nbsp;</td>
@@ -202,7 +227,9 @@ if (isset($_GET['big_view'])) {
 			<td>'; 
  
 	foreach($systems as $sys) {
-		$html.='<a href="?a=detail_view&region_id='.intval($_GET['region_id']).'&sys='.intval($sys['id']).'">'.$sys['name'].'</a> ( <span style="color:'.$sec_color[$sys['sec']*10].'"> '.$sys['sec'].'</span> )<br>';
+		$systemLink = edkURI::build(array(array('region_id', intval($_GET['region_id']), true),
+			array('sys', intval($sys['id']), true)));
+		$html.='<a href="'.$systemLink.'">'.$sys['name'].'</a> ( <span style="color:'.$sec_color[$sys['sec']*10].'"> '.$sys['sec'].'</span> )<br>';
 	}		
 
 	$html.='</td>

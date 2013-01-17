@@ -554,7 +554,7 @@ class pCorpDetail extends pageAssembly
 
 					$syslist[] = array(
 						"counter"=>$counter,
-						"url"=>"?a=system_detail&amp;sys_id=".$row['sys_id'],
+						"url"=>edkURI::build(array(array('a', 'system_detail', true), array('sys_id', $row['sys_id'], true))),
 						"name"=>$row['sys_name'],
 						"sec"=>roundsec($row['sys_sec']),
 						"kills"=>$row['kills']);
@@ -594,7 +594,7 @@ class pCorpDetail extends pageAssembly
 
 					$syslist[] = array(
 						"counter"=>$counter,
-						"url"=>"?a=system_detail&amp;sys_id=".$row['sys_id'],
+						"url"=>edkURI::build(array(array('a', 'system_detail', true), array('sys_id', $row['sys_id'], true))),
 						"name"=>$row['sys_name'],
 						"sec"=>roundsec($row['sys_sec']),
 						"kills"=>$row['kills']);
