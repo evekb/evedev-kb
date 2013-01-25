@@ -109,6 +109,7 @@ class Navigation
 		if(!$qry->execute($sql)) {
 			return false;
 		}
+		//keep these urls hardcoded, we don't need session IDs in the database
 		$sql = "INSERT INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr`,`page` ,`hidden`,`KBSITE`) VALUES".
 			" ('top',1,'Home','".KB_HOST."?a=home','_self',1,'ALL_PAGES',0,'".$this->site."'),".
 			" ('top',1,'Campaigns','".KB_HOST."?a=campaigns','_self',2,'ALL_PAGES',0,'".$this->site."'),".

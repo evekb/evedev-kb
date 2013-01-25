@@ -21,7 +21,6 @@ class pInvtype extends pageAssembly
 	{
 		$this->typeID = edkURI::getArg('id', 1);
 		$this->page = new Page('Item Details');
-
 	}
 
 	function details()
@@ -29,8 +28,7 @@ class pInvtype extends pageAssembly
 		global $smarty;
 		$item = new dogma($this->typeID);
 
-		if (!$item->isValid())
-		{
+		if (!$item->isValid()) {
 			$this->page->setTitle('Error');
 			return 'This ID is not a valid dogma ID.';
 		}
@@ -39,8 +37,7 @@ class pInvtype extends pageAssembly
 		$this->page->addHeader('<meta name="robots" content="noindex, nofollow" />');
 		$smarty->assignByRef('item', $item);
 
-		if ($item->get('itt_cat') == 6)
-		{
+		if ($item->get('itt_cat') == 6) {
 			//we have a ship, so get it from the db
 			$ship = Ship::getByID($item->get('typeID'));
 			$smarty->assign('shipImage', $ship->getImage(64));
@@ -63,17 +60,15 @@ class pInvtype extends pageAssembly
 				'propulsionIonStrength','propulsionMagpulseStrength',
 				'propulsionPlasmaStrength'));
 			$html = $smarty->fetch(get_tpl('invtype_ship'));
-		}
-		else
-		{
+		} else {
 			$i = new Item($this->typeID);
 			$smarty->assign('itemImage', $i->getIcon(64, false));
+			$smarty->assign('akey', session::isAdmin() ? session::makeKey() : false);
 			$html = $smarty->fetch(get_tpl('invtype_item'));
 		}
 		return $html;
 	}
 }
-
 
 $invtype = new pInvtype();
 event::call("invtype_assembling", $invtype);

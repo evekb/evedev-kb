@@ -105,7 +105,7 @@ $xml = "<?xml version=\"1.0\" ?>
 	<fittings>\n";
 
 $xml .= "\t\t<fitting name=\"".$killtitle."\">\n";
-$xml .= "\t\t\t<description value=\"From ".KB_HOST."?a=kill_detail&amp;kll_id=".$kll_id."\"/>\n";
+$xml .= "\t\t\t<description value=\"From ".KB_HOST."?a=kill_detail&amp;kll_id=".$kll_id."\"/>\n"; //keep hardcoded; we don't need a session key here
 $xml .= "\t\t\t<shipType value=\"".$shipname."\"/>\n";
 
 foreach ($slots as $i => $empty)

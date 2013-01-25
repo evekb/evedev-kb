@@ -561,7 +561,7 @@ class pCorpDetail extends pageAssembly
 					$counter++;
 				}
 				$smarty->assignByRef('syslist', $syslist);
-				$smarty->assign('monthly_stats', $smarty->fetch(get_tpl(violent_systems)));
+				$smarty->assign('monthly_stats', $smarty->fetch(get_tpl('violent_systems')));
 
 				$sql = "select sys.sys_name, sys.sys_id, sys.sys_sec, count(kll.kll_id) as kills
 							from kb3_systems sys, kb3_kills kll, kb3_inv_crp inc
@@ -601,7 +601,7 @@ class pCorpDetail extends pageAssembly
 					$counter++;
 				}
 				$smarty->assignByRef('syslist', $syslist);
-				$smarty->assign('total_stats', $smarty->fetch(get_tpl(violent_systems)));
+				$smarty->assign('total_stats', $smarty->fetch(get_tpl('violent_systems')));
 				return $smarty->fetch(get_tpl('detail_kl_monthly'));
 				break;
 		}

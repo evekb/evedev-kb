@@ -117,8 +117,8 @@ $page->setContent($html);
 $menubox = new box("Menu");
 $menubox->setIcon("menu-item.gif");
 $menubox->addOption("caption","Navigation");
-$menubox->addOption("link","Previous Year", "?a=map_year&y=" . $pyear.$region_nav);
-$menubox->addOption("link","Next Year", "?a=map_year&y=" . $nyear.$region_nav);
+$menubox->addOption("link","Previous Year", edkURI::page('map_year')."&y=" . $pyear.$region_nav);
+$menubox->addOption("link","Next Year", edkURI::page('map_year')."&y=" . $nyear.$region_nav);
 $page->addContext($menubox->generate());
 
 $page->generate();

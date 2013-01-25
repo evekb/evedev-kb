@@ -191,7 +191,7 @@ class edkURI {
 		if (!is_array($parameters[0])) {
 			$parameters = array($parameters);
 		}
-		if (Session::isAdmin()) {
+		if (session::isAdmin()) {
 			$parameters[] = array("akey", session::makeKey(), false);
 		}
 		$url = self::$kb_host;

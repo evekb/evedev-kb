@@ -24,14 +24,14 @@
 							{if $i.podded}
 								{if $config->get('bs_podlink')}
 									<td>
-										<b><a href="{$i.plt_url}">{$i.name}</a>&nbsp;<a href="{$kb_host}/?a=kill_detail&amp;kll_id={$i.podid}">[Pod]</a></b><br/>{$i.ship}
+										<b><a href="{$i.plt_url}">{$i.name}</a>&nbsp;<a href="{$killURL}&amp;kll_id={$i.podid}">[Pod]</a></b><br/>{$i.ship}
 									</td>
 								{else}
 									<td>
 										<div style="position: relative;"><a href="{$i.plt_url}">{$i.name}</a><br/>
 											<span class="kill-related-subsection">{$i.ship}</span>
 											<div style="position: absolute; right:0px; top:-6px; width:32px; height:32px; z-index:1;">
-												<a href="{$kb_host}/?a=kill_detail&amp;kll_id={$i.podid}"><img src="{$podpic}" alt="" /></a>
+												<a href="{$killURL}&amp;kll_id={$i.podid}"><img src="{$podpic}" alt="" /></a>
 											</div>
 										</div>
 									</td>
@@ -75,13 +75,13 @@
 							{if $i.podded}
 								{if $config->get('bs_podlink')}
 									<td>
-										<a href="{$i.plt_url}">{$i.name}</a>&nbsp;<a href="{$kb_host}/?a=kill_detail&amp;kll_id={$i.podid}">[Pod]</a><br/>{$i.ship}
+										<a href="{$i.plt_url}">{$i.name}</a>&nbsp;<a href="{$killURL}&amp;kll_id={$i.podid}">[Pod]</a><br/>{$i.ship}
 									</td>
 								{else}
 									<td>
 										<div style="position: relative;"><a href="{$i.plt_url}">{$i.name}</a><br/>
 											<span class="kill-related-subsection">{$i.ship}</span>
-											<div style="position: absolute; right:0px; top:-6px; width:32px; height:32px; z-index:1;"><a href="{$kb_host}/?a=kill_detail&amp;kll_id={$i.podid}"><img src="{$podpic}" alt="" /></a></div>
+											<div style="position: absolute; right:0px; top:-6px; width:32px; height:32px; z-index:1;"><a href="{$killURL}&amp;kll_id={$i.podid}"><img src="{$podpic}" alt="" /></a></div>
 										</div>
 									</td>
 								{/if}

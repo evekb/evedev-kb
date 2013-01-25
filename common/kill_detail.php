@@ -883,13 +883,10 @@ class pKillDetail extends pageAssembly
 			//Admin is able to see classified Systems
 			if ($this->page->isAdmin()) {
 				$smarty->assign('systemID', $this->kill->getSystem()->getID());
-				$smarty->assign('system', $this->kill->getSystem()->getName()
-						.' (Classified)');
-				$smarty->assign('systemURL', KB_HOST
-						."/?a=system_detail&amp;sys_id="
-						.$this->kill->getSystem()->getID());
-				$smarty->assign('systemSecurity',
-						$this->kill->getSystem()->getSecurity(true));
+				$smarty->assign('system', $this->kill->getSystem()->getName().' (Classified)');
+				$smarty->assign('systemURL', edkuri::build(array(array('a', 'system_detail', true),
+					array('sys_id', $this->kill->getSystem()->getID(), true))));
+				$smarty->assign('systemSecurity', $this->kill->getSystem()->getSecurity(true));
 			} else {
 				$smarty->assign('system', 'Classified');
 				$smarty->assign('systemURL', "");
@@ -898,12 +895,9 @@ class pKillDetail extends pageAssembly
 		} else {
 			$smarty->assign('systemID', $this->kill->getSystem()->getID());
 			$smarty->assign('system', $this->kill->getSystem()->getName());
-			$smarty->assign('systemURL',
-					edkURI::build(
-					array('a', 'system_detail', true),
-					array('sys_id', $this->kill->getSystem()->getID(), true)));
-			$smarty->assign('systemSecurity',
-					$this->kill->getSystem()->getSecurity(true));
+			$smarty->assign('systemURL', edkuri::build(array(array('a', 'system_detail', true),
+				array('sys_id', $this->kill->getSystem()->getID(), true))));
+			$smarty->assign('systemSecurity', $this->kill->getSystem()->getSecurity(true));
 		}
 
 		$smarty->assign('timeStamp', $this->kill->getTimeStamp());
@@ -1080,8 +1074,7 @@ class pKillDetail extends pageAssembly
 		$smarty->assignByRef('fitting_ammo_mid', $midammo);
 		$smarty->assign('showammo', config::get('fp_showammo'));
 
-		$smarty->assign('victimShipBigImage',
-				$this->kill->getVictimShip()->getImage(256));
+		$smarty->assign('victimShipBigImage', $this->kill->getVictimShip()->getImage(256));
 
 		if ($this->kill->getExternalID() != 0) {
 			$this->verification = true;
@@ -1092,8 +1085,7 @@ class pKillDetail extends pageAssembly
 		$smarty->assign('verify_yesno', $this->verification);
 
 		//get the actual slot count for each vessel - for the fitting panel
-		$dogma = Cacheable::factory('dogma',
-				$this->kill->getVictimShipExternalID());
+		$dogma = Cacheable::factory('dogma', $this->kill->getVictimShipExternalID());
 		$lowcount = (int) $dogma->attrib['lowSlots']['value'];
 		$medcount = (int) $dogma->attrib['medSlots']['value'];
 		$hicount = (int) $dogma->attrib['hiSlots']['value'];
@@ -1168,32 +1160,24 @@ class pKillDetail extends pageAssembly
 		$this->addMenuItem("caption", "View");
 		$this->addMenuItem("link", "Killmail", edkURI::page(
 				'kill_mail', $this->kill->getID(), 'kll_id'), 0, 0,
-				"sndReq('".edkURI::page(
-						'kill_mail', $this->kill->getID(), 'kll_id')
+				"sndReq('".edkURI::page('kill_mail', $this->kill->getID(), 'kll_id')
 				."');ReverseContentDisplay('popup')");
 
 		if (config::get('kd_EFT')) {
 			$this->addMenuItem("link", "EFT Fitting", edkURI::page(
-					'eft_fitting', $this->kill->getID(), 'kll_id'), 0, 0,
-					"sndReq('".edkURI::page(
-							'eft_fitting', $this->kill->getID(),'kll_id')
-					."');ReverseContentDisplay('popup')");
-			$this->addMenuItem("link", "EvE Fitting", edkURI::page(
-					'eve_fitting', $this->kill->getID(), 'kll_id'));
+				'eft_fitting', $this->kill->getID(), 'kll_id'), 0, 0,
+				"sndReq('".edkURI::page('eft_fitting', $this->kill->getID(),'kll_id')
+				."');ReverseContentDisplay('popup')");
+			$this->addMenuItem("link", "EvE Fitting", edkURI::page('eve_fitting', $this->kill->getID(), 'kll_id'));
 		}
 
-		if ($this->kill->relatedKillCount() > 1
-				|| $this->kill->relatedLossCount() > 1
-				|| ((config::get('cfg_allianceid')
-						|| config::get('cfg_corpid')
-						|| config::get('cfg_pilotid'))
-				&& $this->kill->relatedKillCount()
-						+ $this->kill->relatedLossCount() > 1)) {
+		if ($this->kill->relatedKillCount() > 1 || $this->kill->relatedLossCount() > 1 ||
+			((config::get('cfg_allianceid') || config::get('cfg_corpid') ||
+			config::get('cfg_pilotid')) && $this->kill->relatedKillCount() + $this->kill->relatedLossCount() > 1)) {
 			$this->addMenuItem("link", "Related kills ("
-					.$this->kill->relatedKillCount()."/"
-					.$this->kill->relatedLossCount().")",
-					edkURI::build(array('a', 'kill_related', true),
-							array('kll_id', $this->kill->getID(), true)));
+				.$this->kill->relatedKillCount()."/"
+				.$this->kill->relatedLossCount().")",
+				edkURI::build(array('a', 'kill_related', true), array('kll_id', $this->kill->getID(), true)));
 		}
 
 		if (!IS_IGB) {
@@ -1205,18 +1189,15 @@ class pKillDetail extends pageAssembly
 		if ($this->page->isAdmin()) {
 			$this->addMenuItem("caption", "Admin");
 			$this->addMenuItem("link", "Delete", edkURI::page(
-					'admin_kill_delete', $this->kill->getID(), 'kll_id'), 0, 0,
-					"openWindow('".edkURI::page(
-						'admin_kill_delete', $this->kill->getID(), 'kll_id')
-					."', null, 420, 300, '' );");
-
+				'admin_kill_delete', $this->kill->getID(), 'kll_id'), 0, 0,
+				"openWindow('".edkURI::page('admin_kill_delete', $this->kill->getID(), 'kll_id')
+				."', null, 420, 300, '' );");
 			if (isset($_GET['view']) && $_GET['view'] == 'FixSlot') {
 				$this->addMenuItem("link", "Adjust Values", edkURI::page(
-						'kill_detail', $this->kill->getID(), 'kll_id'));
+					'kill_detail', $this->kill->getID(), 'kll_id'));
 			} else {
-				$url = edkURI::build(
-						array('kll_id', $this->kill->getID(), true),
-						array('view', 'FixSlot', false));
+				$url = edkURI::build(array(array('kll_id', $this->kill->getID(), true),
+					array('view', 'FixSlot', false)));
 				$this->addMenuItem("link", "Fix Slots", $url);
 			}
 		}

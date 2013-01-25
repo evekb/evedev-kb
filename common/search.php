@@ -152,6 +152,7 @@ class pSearch extends pageAssembly
     function newSearch()
     {
         global $smarty;
+		$smarty->assign('actionURL', edkURI::page('search'));
         return $smarty->fetch(get_tpl('search_new'));
     }
 }

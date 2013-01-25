@@ -52,6 +52,7 @@ class Comments
 		}
 		$smarty->assignByRef('comments', $this->comments_);
 		$smarty->assign('norep', time() % 3700);
+		$smarty->assign('akey', session::isAdmin() ? session::makeKey() : false);
 		if ($commentsOnly) {
 			return $smarty->fetch(get_tpl('comments_comments'));
 		} else {
@@ -129,9 +130,9 @@ class Comments
 		$string = preg_replace('^\[color=(.*?)](.*?)\[/color]^',
 				'<span style="color:\1">\2</span>', $string);
 		$string = preg_replace('^\[kill=(.*?)](.*?)\[/kill]^',
-				'<a href="'.KB_HOST.'/?a=kill_detail&amp;kll_id=\1">\2</a>', $string);
+			'<a href="'.KB_HOST.'/?a=kill_detail&amp;kll_id=\1">\2</a>', $string); //keep hardcoded URLs; we don't want session IDs here
 		$string = preg_replace('^\[pilot=(.*?)](.*?)\[/pilot]^',
-				'<a href="'.KB_HOST.'/?a=pilot_detail&amp;plt_id=\1">\2</a>', $string);
+			'<a href="'.KB_HOST.'/?a=pilot_detail&amp;plt_id=\1">\2</a>', $string); //keep hardcoded URLs; we don't want session IDs here
 		return nl2br($string);
 	}
 	

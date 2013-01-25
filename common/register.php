@@ -53,6 +53,7 @@ if (isset($_POST['submit']))
     }
 }
 
+$smarty->assign('actionURL', edkURI::page('register'));
 
 $page->setContent($smarty->fetch(get_tpl('user_register')));
 $page->generate();

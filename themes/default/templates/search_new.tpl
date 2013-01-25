@@ -1,4 +1,4 @@
-<form id='search' action="{$kb_host}/?a=search" method='post'>
+<form id="search" method="post" action="{$actionURL}">
 	<table class='kb-subtable'>
 		<tr>
 			<td>Type:</td>

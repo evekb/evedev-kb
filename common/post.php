@@ -66,21 +66,19 @@ function post()
 					}
 				}
 			} elseif ($killid == -1) {
-				$html = "That killmail has already been posted <a href=\""
-						."?a=kill_detail&kll_id=".$parser->getDupeID()
-						."\">here</a>.";
+				$url = edkURI::page('kill_detail', $parser->getDupeID(), 'kll_id');
+				$html = "That killmail has already been posted <a href=\"".
+					edkURI::page('kill_detail', $parser->getDupeID(), 'kll_id')."\">here</a>.";
 			} elseif ($killid == -2) {
 				$html = "You are not authorized to post this killmail.";
 			} elseif ($killid == -3) {
 				$filterdate = kbdate("j F Y", config::get("filter_date"));
-				$html = "You are not allowed to post killmails older than"
-						." $filterdate.";
+				$html = "You are not allowed to post killmails older than"." $filterdate.";
 			} elseif ($killid == -4) {
-				$html = "That mail has been deleted. Kill id was "
-						.$parser->getDupeID();
+				$html = "That mail has been deleted. Kill id was ".$parser->getDupeID();
 				if ($page->isAdmin())
 						$html .= '<br />
-<form id="postform" name="postform" class="f_killmail" method="post" action="'.KB_HOST.'/?a=post">
+<form id="postform" name="postform" class="f_killmail" method="post" action="'.edkURI::page('post').'">
 	<input type="hidden" name="killmail" id="killmail" value = "'.htmlentities($_POST['killmail']).'"/>
 	<input type="hidden" name="kll_id" id="kill_id" value = "'.$parser->getDupeID().'"/>
 	<input type="hidden" name="undelete" id="undelete" value = "1"/>
@@ -102,8 +100,7 @@ function post()
 				$mailer->Port = 25;
 				$mailer->Helo = $server;
 				$mailer->Mailer = "smtp";
-				$mailer->AddReplyTo("no_reply@".config::get('post_mailhost'),
-						"No-Reply");
+				$mailer->AddReplyTo("no_reply@".config::get('post_mailhost'), "No-Reply");
 				$mailer->Sender = "mailer@".config::get('post_mailhost');
 				$mailer->Body = $_POST['killmail'];
 				$mailer->AddAddress(config::get('post_mailhost'));
@@ -111,8 +108,7 @@ function post()
 			}
 
 			logger::logKill($killid);
-			header("Location: ".html_entity_decode(edkURI::page('kill_detail',
-							$killid, 'kll_id')));
+			header("Location: ".htmlspecialchars_decode(edkURI::page('kill_detail', $killid, 'kll_id')));
 			exit;
 		}
 	} else {

@@ -13,24 +13,21 @@ $sec_color = array( "10" => '#4cfeff',
 
 $page = new Page('TEST');
 $page->setTitle('Region detail view');
+$regionID = (int)edkURI::getArg('region_id');
 
-if (isset($_GET['big_view'])) {
-	$imgSrc = edkURI::build(array(array('a', 'map', true),
-		array('region_id', intval($_GET['region_id']), true),
-		array('size', '700', true),
-		array('mode', urlencode($_GET['mode']), true)));
+if (isset($_GET['big_view'])) {	
 	$html='<table width="700" border="0" cellspacing="1" cellpadding="1" class="kb-table">
 			<tr>
-				<td align="center"><a href="'.edkURI::build(array('region_id', intval($_GET['region_id']), true)).'">[Back]</a></td>
+				<td align="center"><a href="'.edkURI::build(array('region_id', $regionID, true)).'">[Back]</a></td>
 			</tr>
 			<tr>
 				<td align="center">
-					<img src="'.$imgSrc.'" width="700" height="700">
+					<img src="?a=map&region_id='.$regionID.'&size=700&mode='.preg_replace('/[^a-zA-Z0-9_-]/', '', edkURI::getArg('mode')).'" width="700" height="700">
 				</td>
 			</tr>
 		</table>';
 } elseif (isset($_GET['search'])) {
-	$html.='<form id="form1" name="form1" method="post" action="'.edkURI::build(array('search', true, true)).'">
+	$html.='<form id="form1" name="form1" method="post" action="'.edkURI::build(array('search', true, false)).'">
 				<input type="text" name="search_string" />
 				<select name="selector">
 					<option value="reg"'; if($_POST['selector']=='reg') { $html.=" selected"; }  $html.='>Region</option>
@@ -104,7 +101,7 @@ if (isset($_GET['big_view'])) {
 			FROM kb3_systems sys, kb3_constellations con, kb3_regions reg
 			WHERE con.con_id = sys.sys_con_id
 			AND reg.reg_id = con.con_reg_id
-			AND reg.reg_id =".intval($_GET['region_id'])."
+			AND reg.reg_id = $regionID
 			ORDER BY con.con_name, `sys`.`sys_name` ASC";
 
 	$const="";
@@ -140,18 +137,10 @@ if (isset($_GET['big_view'])) {
 	sort($systems);
 
 	$playerKillsLink = edkURI::build(array(array('big_view', true, true),
-			array('region_id', intval($_GET['region_id']), true),
-			array('mode', 'ship', true)));
-	$playerKillsImg = edkURI::build(array(array('a', 'map', true),
-			array('region_id', intval($_GET['region_id']), true),
-			array('size', '300', true),
-			array('mode', 'ship', true)));
+		array('region_id', $regionID, true),
+		array('mode', 'ship', true)));
 	$npcKillsLink = edkURI::build(array(array('big_view', true, true),
-			array('region_id', intval($_GET['region_id']), true),
-			array('mode', 'faction', true)));
-	$npcKillsImg = edkURI::build(array(array('a', 'map', true),
-		array('region_id', intval($_GET['region_id']), true),
-		array('size', '300', true),
+		array('region_id', $regionID, true),
 		array('mode', 'faction', true)));
 	$html .='<table width="98%" border="0" cellspacing="1" cellpadding="1">
 	  <tr>
@@ -163,28 +152,23 @@ if (isset($_GET['big_view'])) {
 
 		  <tr>
 			<td align="center"  class="kb-table">Player ship kills in the last hour<br />
-				<a href="'.$playerKillsLink.'"><img src="'.$playerKillsImg.'" border="0" /></a></td>
+				<a href="'.$playerKillsLink.'"><img src="?a=map&region_id='.$regionID.'&size=300&mode=ship" border="0" /></a></td>
 		  </tr>
 		  <tr>
 				<td>&nbsp;</td>
 		  </tr>
 		  <tr>
-			<td align="center" class="kb-table">NPC ship kills of the last hour <br />
-				<a href="'.$npcKillsLink.'"><img src="'.$npcKillsImg.'" width="300" height="300" border="0" /></a></td>
+			<td align="center" class="kb-table">NPC ship kills of the last hour<br />
+				<a href="'.$npcKillsLink.'"><img src="?a=map&region_id='.$regionID.'&size=300&mode=faction" width="300" height="300" border="0" /></a></td>
 		  </tr>
 		  <tr>
 			<td>&nbsp;</td>
 		  </tr>';
 		  
 	if (isset($_GET['sys'])) {
-		$systemImg = edkURI::build(array(array('a', 'map', true),
-				array('mode', 'sys', true),
-				array('sys_id', intval($_GET['sys']), true),
-				array('size', '300', true)));
-		$systemLink = edkURI::build(array('region_id', intval($_GET['region_id']), true));
 		$html .='	  <tr>
 			<td align="center" class="kb-table">System location<br />
-				<img src="'.$systemImg.'" width="300" height="300" border="0" /><br /><a href="'.$systemLink.'">Clear Filter</a></td>
+				<img src="?a=map&mode=sys&sys_id='.(int)edkURI::getArg('sys').'&size" width="300" height="300" border="0" /><br /><a href="'.edkURI::build(array('region_id', $regionID, true)).'">Clear Filter</a></td>
 		  </tr>
 		  <tr>
 			<td>&nbsp;</td>
@@ -203,7 +187,7 @@ if (isset($_GET['big_view'])) {
 		  </tr>
 		  <tr>
 			<td width="50%">Region:</td>
-			<td>'.$region.' <a href="'.edkURI::build(array('search', true, true)).'">[Search]</a></td>
+			<td>'.$region.' <a href="'.edkURI::build(array('search', true, false)).'">[Search]</a></td>
 		  </tr>
 		  <tr>
 			<td>&nbsp;</td>
@@ -227,8 +211,7 @@ if (isset($_GET['big_view'])) {
 			<td>'; 
  
 	foreach($systems as $sys) {
-		$systemLink = edkURI::build(array(array('region_id', intval($_GET['region_id']), true),
-			array('sys', intval($sys['id']), true)));
+		$systemLink = edkURI::build(array(array('region_id', $regionID, true), array('sys', intval($sys['id']), false)));
 		$html.='<a href="'.$systemLink.'">'.$sys['name'].'</a> ( <span style="color:'.$sec_color[$sys['sec']*10].'"> '.$sys['sec'].'</span> )<br>';
 	}		
 

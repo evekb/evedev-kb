@@ -50,6 +50,7 @@ class pInvtype extends pageAssembly
 			$rows[] = array('typeID'=>$row['typeID'], 'typeName'=>$row['typeName']);
 		}
 		$smarty->assign('rows', $rows);
+		$smarty->assign('actionURL', edkURI::page('invtype'));
 		return $smarty->fetch(get_tpl('groupdb'));
 	}
 }

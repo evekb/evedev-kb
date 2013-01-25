@@ -178,6 +178,7 @@ class pPilotDetail extends pageAssembly
 
 		$smarty->assign('pilot_survival',$pilot_survival);
 		$smarty->assign('pilot_efficiency',$pilot_efficiency);
+		$smarty->assign('akey', session::isAdmin() ? session::makeKey() : false);
 
 		$this->lpoints = $this->summary->getTotalLossPoints();
 		$this->points = $this->summary->getTotalKillPoints();

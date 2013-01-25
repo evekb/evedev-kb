@@ -83,7 +83,7 @@ class pKillRelated extends pageAssembly
 			exit;
 		}
 		if ($this->kill->isClassified()) {
-			Header("Location: ".KB_HOST."/?a=kill_detail&kll_id=".$this->kll_id);
+			Header("Location: ".htmlspecialchars_decode(edkURI::page('kill_detail', $this->kll_id, 'kll_id')));
 			die();
 		}
 //		$this->getInvolved();
@@ -349,6 +349,7 @@ class pKillRelated extends pageAssembly
 		}
 		$smarty->assign('firstts', $this->firstts);
 		$smarty->assign('lastts', $this->lastts);
+		$smarty->assign('killURL', edkURI::page('kill_detail'));
 
 		return $smarty->fetch(get_tpl('kill_related_battle_overview'));
 	}
@@ -521,7 +522,6 @@ class pKillRelated extends pageAssembly
 				$row['plt_name'] = $item->getName();
 			}
 
-
 			// dont set pods as ships for pilots we already have
 			if (isset($this->pilots[$side][$row['ind_plt_id']])) {
 				if ($row['scl_id'] == 18 || $row['scl_id'] == 2) {
@@ -589,10 +589,9 @@ class pKillRelated extends pageAssembly
 					$this->pilots[$side][$kill->getVictimId()][$id]['destroyed'] = true;
 
 					if (!isset($this->pilots[$side][$kill->getVictimId()][$id]['kll_id'])) {
-						$this->pilots[$side][$kill->getVictimId()][$id]['kll_id']
-								= $kill->getID();
+						$this->pilots[$side][$kill->getVictimId()][$id]['kll_id'] = $kill->getID();
 						$this->pilots[$side][$kill->getVictimId()][$id]['kll_url']
-								= edkURI::page('kill_detail', $kill->getID(), 'kll_id');
+							= edkURI::page('kill_detail', $kill->getID(), 'kll_id');
 					}
 					return;
 				}
@@ -622,16 +621,11 @@ class pKillRelated extends pageAssembly
 	{
 		$this->addMenuItem("caption", "View");
 		if ($this->adjacent) {
-			$this->addMenuItem("link", "Remove adjacent",
-					edkURI::build(array('kll_id', $this->kll_id, true)));
+			$this->addMenuItem("link", "Remove adjacent", edkURI::build(array('kll_id', $this->kll_id, true)));
 		} else {
-			$this->addMenuItem("link", "Include adjacent",
-					edkURI::build(array('kll_id', $this->kll_id, true),
-							array('adjacent', true, true)));
+			$this->addMenuItem("link", "Include adjacent", edkURI::build(array('kll_id', $this->kll_id, true), array('adjacent', true, true)));
 		}
-		$this->addMenuItem("link", "Back to Killmail",
-				edkURI::build(array('a', 'kill_detail', true),
-						array('kll_id', $this->kll_id, true)));
+		$this->addMenuItem("link", "Back to Killmail", edkURI::build(array('a', 'kill_detail', true), array('kll_id', $this->kll_id, true)));
 	}
 
 	public function menu()

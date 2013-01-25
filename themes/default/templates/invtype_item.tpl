@@ -43,8 +43,8 @@
 						<td class="item-icon"><img src="{$img_url}/items/32_32/icon{$key.icon}.png" alt="" /></td>
 						<td>{$key.displayName}</td>
 						<td>
-							{if $key.unit == 'typeID'}<a href="{$kb_host}/?a=invtype&amp;id={$key.value}">{$item->resolveTypeID($key.value)}</a>
-							{elseif $key.unit == 'groupID'}<a href="{$kb_host}/?a=groupdb&amp;id={$key.value}">{$item->resolveGroupID($key.value)}</a>
+							{if $key.unit == 'typeID'}<a href="{$kb_host}/?a=invtype&amp;id={$key.value}{if $akey}&amp;akey={$akey}{/if}">{$item->resolveTypeID($key.value)}</a>
+							{elseif $key.unit == 'groupID'}<a href="{$kb_host}/?a=groupdb&amp;id={$key.value}{if $akey}&amp;akey={$akey}{/if}">{$item->resolveGroupID($key.value)}</a>
 							{elseif $key.unit == 'attributeID'}{$item->resolveAttributeID($key.value)}
 							{else}{$key.value} {$key.unit}{/if}
 						</td>

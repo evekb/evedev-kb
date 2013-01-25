@@ -197,7 +197,7 @@ class pContractDetail extends pageAssembly
 					$targets[] = $curtargets;
 				}
 				$smarty->assignByRef('targets', $targets);
-				$smarty->assign('akey', session::isAdmin() ? session::makeKey() : '');
+				$smarty->assign('akey', session::isAdmin() ? session::makeKey() : false);
 				$html .= $smarty->fetch(get_tpl('cc_detail_lists'));
 				break;
 			case "recent_activity":
@@ -225,7 +225,7 @@ class pContractDetail extends pageAssembly
 				$table->setLimit(10);
 				$table->setDayBreak(false);
 				$smarty->assign('losstable', $table->generate());
-				$smarty->assign('akey', session::isAdmin() ? session::makeKey() : '');
+				$smarty->assign('akey', session::isAdmin() ? session::makeKey() : false);
 				$html .= $smarty->fetch(get_tpl('cc_detail_lists'));
 				break;
 			case "kills":
@@ -243,7 +243,7 @@ class pContractDetail extends pageAssembly
 				$table->setDayBreak(false);
 				$smarty->assign('killtable', $table->generate());
 				$smarty->assign('splitter', $pagesplitter->generate());
-				$smarty->assign('akey', session::isAdmin() ? session::makeKey() : '');
+				$smarty->assign('akey', session::isAdmin() ? session::makeKey() : false);
 				$html .= $smarty->fetch(get_tpl('cc_detail_lists'));
 				break;
 			case "losses":
@@ -261,7 +261,7 @@ class pContractDetail extends pageAssembly
 				$table->setDayBreak(false);
 				$smarty->assign('losstable', $table->generate());
 				$smarty->assign('splitter', $pagesplitter->generate());
-				$smarty->assign('akey', session::isAdmin() ? session::makeKey() : '');
+				$smarty->assign('akey', session::isAdmin() ? session::makeKey() : false);
 				$html .= $smarty->fetch(get_tpl('cc_detail_lists'));
 				break;
 		}
@@ -275,17 +275,13 @@ class pContractDetail extends pageAssembly
 	function menuSetup()
 	{
 		$this->addMenuItem("caption","Overview");
-		$this->addMenuItem("link","Target overview", edkURI::build(array(array('a', 'cc_detail', true),
-			array('ctr_id', $this->ctr_id, true))));
+		$this->addMenuItem("link","Target overview", edkURI::build(array('ctr_id', $this->ctr_id, true)));
 		$this->addMenuItem("caption","Kills &amp; losses");
-		$this->addMenuItem("link","Recent activity", edkURI::build(array(array('a', 'cc_detail', true),
-			array('ctr_id', $this->ctr_id, true),
+		$this->addMenuItem("link","Recent activity", edkURI::build(array(array('ctr_id', $this->ctr_id, true),
 			array('view', 'recent_activity', true))));
-		$this->addMenuItem("link","All kills", edkURI::build(array(array('a', 'cc_detail', true),
-			array('ctr_id', $this->ctr_id, true),
+		$this->addMenuItem("link","All kills", edkURI::build(array(array('ctr_id', $this->ctr_id, true),
 			array('view', 'kills', true))));
-		$this->addMenuItem("link","All losses", edkURI::build(array(array('a', 'cc_detail', true),
-			array('ctr_id', $this->ctr_id, true),
+		$this->addMenuItem("link","All losses", edkURI::build(array(array('ctr_id', $this->ctr_id, true),
 			array('view', 'losses', true))));
 		return "";
 	}

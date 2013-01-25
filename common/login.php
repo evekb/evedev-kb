@@ -56,7 +56,7 @@ class pLogin extends pageAssembly
 
 				$page = preg_replace('/[^a-zA-Z0-9-_]/', '', edkURI::getArg("page", 1));
 				$page = $page ? $page : "admin";
-				header('Location: '.html_entity_decode(edkURI::build(array(array("a", "admin", true), array("akey", session::makeKey(), false)))));
+				header('Location: '.htmlspecialchars_decode(edkURI::page('admin')));
 				session_write_close();
 				die;
 			} else {

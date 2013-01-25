@@ -47,18 +47,16 @@ class pHome extends pageAssembly
 	function start()
 	{
 		$this->page = new Page();
-		$this->page->addHeader(
-				"<link rel='canonical' href='".edkURI::page()."' />");
-		$this->view = preg_replace('/[^a-zA-Z0-9_-]/', '',
-				edkURI::getArg('view', 1));
+		$this->page->addHeader("<link rel='canonical' href='".edkURI::page()."' />");
+		$this->view = preg_replace('/[^a-zA-Z0-9_-]/', '', edkURI::getArg('view', 1));
 		$period = edkURI::getArg('period');
 
 		$day = $week = $month = $year = 0;
 		// First argument is either the view or the year
 		if (is_numeric($this->view) || !$this->view 
-				|| $this->view == 'day'
-				|| $this->view == 'week'
-				|| $this->view == 'month') {
+			|| $this->view == 'day'
+			|| $this->view == 'week'
+			|| $this->view == 'month') {
 			$this->view = '';
 			$datestart = 1;
 		} else {
@@ -110,18 +108,16 @@ class pHome extends pageAssembly
 
 		$this->setTime($week, $year, $month, $day);
 
-		if (edkURI::getArg('scl_id') === false
-				|| edkURI::getArg('y', 1) === false) {
-			$this->page->addHeader(
-					'<meta name="robots" content="index, follow" />');
+		if (edkURI::getArg('scl_id') === false || edkURI::getArg('y', 1) === false) {
+			$this->page->addHeader('<meta name="robots" content="index, follow" />');
 		}
 
 		$this->scl_id = (int) edkURI::getArg('scl_id');
 
 		$this->showcombined = config::get('show_comb_home')
-				&& (count(config::get('cfg_allianceid'))
-						|| count(config::get('cfg_corpid'))
-						|| count(config::get('cfg_pilotid')));
+			&& (count(config::get('cfg_allianceid'))
+			|| count(config::get('cfg_corpid'))
+			|| count(config::get('cfg_pilotid')));
 
 		if ($this->view == 'kills') {
 			$this->page->setTitle('Kills - '.$this->getCurrentPeriod());
@@ -138,8 +134,7 @@ class pHome extends pageAssembly
 		$year	= $this->getYear();
 
 		if (config::get('show_activity_overview')) {
-			if (!config::get('show_monthly'))
-			{
+			if (!config::get('show_monthly')) {
 				$weekly=1;
 			} else {
 				$weekly=0;
@@ -194,11 +189,11 @@ class pHome extends pageAssembly
 			{
 				$row_counter++;
 
+				$link = edkuri::build(array(array('a', 'detail_view', true), array('region_id', $row2['reg_id'], true)));
 				if ( $weekly==1) {
-					$html.='<td align="center"><a href="'.KB_HOST.'?a=detail_view&region_id='.$row2['reg_id'].'"><img src="'.'?a=map&mode=activity&size=250&region_id='.$row2['reg_id'].'&week='.$week.'&year='.$year.'" border=0 /></a></td>';
+					$html.='<td align="center"><a href="'.$link.'"><img src="?a=map&mode=activity&size=250&region_id='.$row2['reg_id'].'&week='.$week.'&year='.$year.'" border=0 /></a></td>';
 				} else {
-					$html.='<td align="center"><a href="'.KB_HOST.'?a=detail_view&region_id='.$row2['reg_id'].'"><img src="'.'?a=map&mode=activity&size=250&region_id='.$row2['reg_id'].'&month='.$month.'&year='.kbdate("Y").'" border=0 /></a></td>';
-
+					$html.='<td align="center"><a href="'.$link.'"><img src="?a=map&mode=activity&size=250&region_id='.$row2['reg_id'].'&month='.$month.'&year='.kbdate("Y").'" border=0 /></a></td>';
 				}
 			}
 
@@ -245,8 +240,7 @@ class pHome extends pageAssembly
 	function campaigns()
 	{
 		// Display campaigns, if any.
-		if (Killboard::hasCampaigns(true) &&
-				$this->isCurrentPeriod()) {
+		if (Killboard::hasCampaigns(true) && $this->isCurrentPeriod()) {
 			$html = "<div class='kb-campaigns-header'>Active campaigns</div>";
 			$list = new ContractList();
 			$list->setActive("yes");
@@ -264,8 +258,7 @@ class pHome extends pageAssembly
 	function killList()
 	{
 		if (isset($this->viewList[$this->view])) {
-			return call_user_func_array($this->viewList[$this->view],
-					array(&$this));
+			return call_user_func_array($this->viewList[$this->view], array(&$this));
 		}
 
 		global $smarty;
@@ -282,8 +275,7 @@ class pHome extends pageAssembly
 		}
 
 		// Select between kills, losses or both.
-		if ($this->view == 'combined'
-				|| ($this->view == '' && $this->showcombined)) {
+		if ($this->view == 'combined' || ($this->view == '' && $this->showcombined)) {
 			involved::load($klist, 'combined');
 		} else if ($this->view == 'losses') {
 			involved::load($klist, 'loss');
@@ -310,8 +302,7 @@ class pHome extends pageAssembly
 			//$klist->setWeek($this->week);
 			//$klist->setYear($this->year);
 			$klist->setPageSplit(config::get('killcount'));
-			$pagesplitter = new PageSplitter($klist->getCount(),
-					config::get('killcount'));
+			$pagesplitter = new PageSplitter($klist->getCount(), config::get('killcount'));
 			$table = new KillListTable($klist);
 			$table->setDayBreak(false);
 			if ($this->showcombined) $table->setCombined(true);
@@ -357,17 +348,14 @@ class pHome extends pageAssembly
 			$lossLink[] = $sclarg;
 			$combinedLink[] = $sclarg;
 		}
-		$this->addMenuItem("link", "Previous ".$this->getPeriodName(),
-				edkURI::build($previous));
+		$this->addMenuItem("link", "Previous ".$this->getPeriodName(), edkURI::build($previous));
 		if (!$this->isCurrentPeriod()) {
-			$this->addMenuItem("link", "Next ".$this->getPeriodName(),
-					edkURI::build($next));
+			$this->addMenuItem("link", "Next ".$this->getPeriodName(), edkURI::build($next));
 		}
 		$this->addMenuItem("link", "Kills", edkURI::build($killLink));
 		$this->addMenuItem("link", "Losses", edkURI::build($lossLink));
 		if (config::get('show_comb_home')) {
-			$this->addMenuItem("link", $weektext."All Kills",
-					edkURI::build($combinedLink));
+			$this->addMenuItem("link", $weektext."All Kills", edkURI::build($combinedLink));
 		}
 		return "";
 	}
@@ -425,8 +413,7 @@ class pHome extends pageAssembly
 			involved::load($tklist, 'kill');
 
 			$tklist->generate();
-			$tkbox = new AwardBox($tklist, "Top killers", "kills in "
-					.$this->getCurrentPeriod(), "kills", "eagle");
+			$tkbox = new AwardBox($tklist, "Top killers", "kills in ".$this->getCurrentPeriod(), "kills", "eagle");
 			$html = $tkbox->generate();
 
 			$tklist = new TopList_Score();
@@ -434,8 +421,7 @@ class pHome extends pageAssembly
 			involved::load($tklist, 'kill');
 
 			$tklist->generate();
-			$tkbox = new AwardBox($tklist, "Top scorers", "points in "
-					.$this->getCurrentPeriod(), "points", "redcross");
+			$tkbox = new AwardBox($tklist, "Top scorers", "points in ".$this->getCurrentPeriod(), "points", "redcross");
 			$html .= $tkbox->generate();
 		} else {
 			$tllist = new TopList_Losses();
@@ -443,8 +429,7 @@ class pHome extends pageAssembly
 			involved::load($tllist, 'loss');
 
 			$tllist->generate();
-			$tlbox = new AwardBox($tllist, "Top losers", "losses in "
-					.$this->getCurrentPeriod(), "losses", "moon");
+			$tlbox = new AwardBox($tllist, "Top losers", "losses in ".$this->getCurrentPeriod(), "losses", "moon");
 			$html = $tlbox->generate();
 		}
 		return $html;
@@ -517,8 +502,7 @@ class pHome extends pageAssembly
 		$this->year = $year;
 		$this->day = $day;
 
-		$cdate = strtotime("{$this->year}-{$this->month}-{$this->day} 00:01"
-				." UTC");
+		$cdate = strtotime("{$this->year}-{$this->month}-{$this->day} 00:01"." UTC");
 		$pdate = $cdate - 24 * 60 * 60;
 		$ndate = $cdate + 24 * 60 * 60;
 
@@ -593,8 +577,7 @@ class pHome extends pageAssembly
 		}
 		$this->periodName = 'Week';
 		$this->period = 'Week '.$this->week.', '.$this->year;
-		$this->currentTime =
-				($this->week == kbdate('W') && $this->year == kbdate('o'));
+		$this->currentTime = ($this->week == kbdate('W') && $this->year == kbdate('o'));
 
 		$this->pargs = $this->nargs = $this->cargs = array();
 		if (config::get('show_monthly')) {
