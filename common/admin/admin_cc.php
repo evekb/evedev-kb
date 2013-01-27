@@ -154,7 +154,7 @@ if (edkURI::getArg('op') == "edit") {
 						$html .= '<td><a href="'.edkURI::page('detail_view', $row['id'], 'region_id').'">'.$row['name']."</td><td align=center><button id=submit name=submit onClick=\"window.location.href='".$editURL."'\">Select</button></td>";
 						break;
 					case 3:
-						$html .= "<td>".$row['name']."</td><td align=center><button id=submit name=submit onClick=\"window.location.href='".$editURL."'\">Select</button></td>";
+						$html .= '<td><a href="'.edkURI::page('system_detail', $row['id'], 'sys_id').'">'.$row['name']."</td><td align=center><button id=submit name=submit onClick=\"window.location.href='".$editURL."'\">Select</button></td>";
 						break;
 				}
 				$html .= "</tr>";
@@ -214,6 +214,7 @@ if (edkURI::getArg('op') == "edit") {
 				case "system":
 					$system = new SolarSystem($ctrTypeID);
 					$name = $system->getName();
+					$typeURL = edkURI::page('system_detail', $ctrTypeID, 'sys_id');
 					break;
 			}
 
