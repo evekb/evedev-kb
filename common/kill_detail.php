@@ -821,6 +821,7 @@ class pKillDetail extends pageAssembly
 		$slot_array[148] = array( 'img' => 'icon03_14.png', 'text' => 'Command Center Hold', 'items' => array() );
 		$slot_array[149] = array( 'img' => 'icon03_14.png', 'text' => 'Planetary Commodities Hold', 'items' => array() );
 		$slot_array[151] = array( 'img' => 'icon03_14.png', 'text' => 'Material Bay', 'items' => array() );
+		$slot_array[155] = array( 'img' => 'icon03_14.png', 'text' => 'Fleet Hangar', 'items' => array() );
 
 		$slot_array[89] = array( 'img' => 'icon03_14.png', 'text' => 'Implants', 'items' => array() );
 		$smarty->assignByRef('slots', $slot_array);
