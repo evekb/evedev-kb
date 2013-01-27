@@ -17,7 +17,7 @@ class Region
 
     function Region($id = 0)
     {
-        $this->id = $id;
+        $this->id = (int)$id;
     }
 
     function getID()

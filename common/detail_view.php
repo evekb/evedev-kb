@@ -40,39 +40,37 @@ if (isset($_GET['big_view'])) {
 
 	if (isset($_POST['search_string']) && $_POST['search_string'] != "") {
 		$html.='<br /><br />';
-		
-		$pqry = new DBPreparedQuery();
+
+		$qry = new DBQuery();
 		switch ($_POST['selector']) {
 			case "reg":
 				$sql="	SELECT reg_id, reg_name
 						FROM `kb3_regions`
-						WHERE `reg_name` LIKE '%?%'";
+						WHERE `reg_name` LIKE '%".$qry->escape($_POST['search_string'], true)."%'";
 				break;
 			case "con":
 				$sql="	SELECT con.con_name, reg.reg_id, reg.reg_name
 						FROM kb3_constellations con, kb3_regions reg
 						WHERE reg.reg_id = con.con_reg_id
-						AND con.con_name LIKE '%?%'";
+						AND con.con_name LIKE '%".$qry->escape($_POST['search_string'], true)."%'";
 				break;
 			case "sys":
 				$sql="	SELECT sys.sys_name, reg.reg_id, reg.reg_name
 						FROM kb3_systems sys, kb3_constellations con, kb3_regions reg
 						WHERE con.con_id = sys.sys_con_id
 						AND reg.reg_id = con.con_reg_id
-						AND sys.sys_name LIKE '%?%'";
+						AND sys.sys_name LIKE '%".$qry->escape($_POST['search_string'], true)."%'";
 				break;
 			default: 
 				exit;
 		}
 
-		$pqry->prepare($sql);
-		$pqry->bind_param('s', $_POST['search_string']);
-		$pqry->execute();
+		$qry->execute($sql) or die($qry->getErrorMsg());
 
-		if($pqry->recordCount()) {
+		if($qry->recordCount()) {
 			$html .='<table width="250" border="0" cellspacing="1" cellpadding="1">';
 
-			while ($row = $pqry->fetch()) {
+			while ($row = $qry->getRow()) {
 				$html .='<tr>';
 				switch ($_POST['selector']) {
 					case "con":

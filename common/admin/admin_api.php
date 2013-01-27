@@ -96,7 +96,7 @@ if ($_POST['import'] || isset($_GET['Process'])) {
 
 				$processindex++;
 				if ($qry->getRow()) {
-					$html .= "<script type=\"text/javascript\">window.location = \"?a=admin_api&amp;Process=".$processindex."&amp;akey=".session::makeKey()."\"</script>"; //*/
+					$html .= '<script type="text/javascript">window.location = "'.edkURI::build(array('Process', $processindex, false)).'"</script>';
 					break;
 				} else { // load report.txt to $html
 					$fp = @fopen(KB_CACHEDIR.'/api/report.txt', 'r');
@@ -227,7 +227,7 @@ if ($_POST['apilog']) {
 } else {
 	// API Settings
 	$html .= "<div class='block-header2'>API Key Details (must be CEO/Director to retrieve corp mails)</div>";
-	$html .= "<form id='options' name='options' method='post' action='".edkURI::page("admin_api")."'>";
+	$html .= '<form id="options" name="options" method="post" action="'.edkURI::page("admin_api").'">';
 
 	// show current server time
 	$html .= "Servers current time: <span style='color:00FF00'>".date("M d Y H:i")."</span><br /><br />";
@@ -370,7 +370,7 @@ if ($_POST['apilog']) {
 			}
 		}
 		$html .= "</td>";
-		$html .= "<td><a href='?a=admin_api&amp;delete=".$row['key_id']."&amp;akey=".session::makeKey()."'>Del</a></td>";
+		$html .= '<td><a href="'.edkURI::build(array('delete', $row['key_id'], false)).'">Del</a></td>';
 		$html .= "</tr>";
 		$cycle = !$cycle;
 	}

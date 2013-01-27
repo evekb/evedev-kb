@@ -337,12 +337,11 @@ class Contract
 	/**
 	 *
 	 * @param string $name Campaign name
-	 * @param string $type unused
 	 * @param string $startdate Campaign starting date.
 	 * @param string $enddate Optional ending date for the campaign
 	 * @param string $comment Optional comment for the campaign
 	 */
-	function add($name, $type, $startdate, $enddate = "", $comment = "")
+	function add($name, $startdate, $enddate = "", $comment = "")
 	{
 		$qry = DBFactory::getDBQuery();
 		// null doesn't work inside the quotes.
