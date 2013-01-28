@@ -25,6 +25,7 @@ cache/img
 cache/update
 cache/pheal_access.log
 cache/pheal_error.log
+cache/EDKprofile.lst
 
 # IDE/Editor temporary files
 *~
@@ -34,6 +35,7 @@ cache/pheal_error.log
 .cache
 .project
 .settings
+.idea
 
 # IIS7 
 web.config
