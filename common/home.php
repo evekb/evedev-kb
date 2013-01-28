@@ -38,6 +38,7 @@ class pHome extends pageAssembly
 		$this->queue('start');
 		$this->queue('showactivityoverview');
 		$this->queue('summaryTable');
+		$this->queue("mostexpensive");
 		$this->queue('campaigns');
 		// Legacy support for mods placing themselves after it.
 		$this->queue('contracts');
@@ -233,6 +234,9 @@ class pHome extends pageAssembly
 		}
 	}
 
+	function mostexpensive() {
+		return mostexpensive::display();
+	}
 	/**
 	 * Returns HTML string for campaigns, if any.
 	 * @return string HTML string for campaigns, if any

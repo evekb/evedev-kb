@@ -41,6 +41,11 @@ options::fadd('Display efficiency in the summary line', 'summarytable_efficiency
 options::cat('Appearance', 'Front Page', 'Kill Lists');
 options::fadd('Amount of kills listed', 'killcount', 'edit:size:2');
 
+options::cat('Appearance', 'Front Page', 'Most Expensive Summary');
+options::fadd('Display Most Expensive Ships', 'exp_showkill', 'checkbox');
+options::fadd('Display Most Expensive Pods', 'exp_showpod', 'checkbox');
+options::fadd('Include Losses', 'exp_incloss', 'checkbox');
+
 options::cat('Appearance', 'Kill Details', 'Kill Details');
 options::fadd('Display killpoints', 'kill_points', 'checkbox');
 options::fadd('Display losspoints', 'loss_points', 'checkbox');

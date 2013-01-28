@@ -1748,3 +1748,67 @@ div.login table td:first-child
 {
 	width: 160px; font-weight: bold;
 }
+
+/* Most Expensive */
+div.kb-mostexpensive-listcontainer {
+	position:relative;
+	width:778px;
+	height:128px;
+	overflow:hidden;
+	left:-6px;
+	margin-bottom:5px;
+}
+
+div.kb-mostexpensive-list {
+	position:absolute;
+	left:0px;
+}
+
+a.kb-mostexpensive-kill {
+	position:absolute;
+	top:0px;
+	width:128px;
+	height:128px;
+}
+
+div.kb-mostexpensive-killinfo {
+	left:0;
+	bottom:0;
+	position:absolute;
+	width:126px;
+	text-align:center;
+	font-size:10px;
+	font-weight:bold;
+}
+
+div.kb-mostexpensive-killinfoicon {
+	left:0px;
+	top:-4px;
+	position:absolute;
+	width:32px;
+	height:32px;
+	background-size:32px;
+}
+div.kb-mostexpensive-killinfoheader {
+	bottom: 0;
+	font-size: 10px;
+	font-weight: bold;
+	left: 32px;
+	overflow: hidden;
+	padding: 1px;
+	position: relative;
+	text-align: center;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 93px;
+}
+div.kb-mostexpensive-killinfodetail {
+	height:0px;
+	padding:2px;
+}
+div.kb-mostexpensive-killinfodetail p {
+	margin:5px 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
