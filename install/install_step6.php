@@ -52,7 +52,7 @@ if (isset($_SESSION['sett']['site']))
 	}
 }
 $settings = array();
-$settings[] = array('descr' => 'Adminpassword', 'name' => 'adminpw', 'value' => $_SESSION['sett']['adminpw']);
+$settings[] = array('descr' => 'Admin Password', 'name' => 'adminpw', 'value' => $_SESSION['sett']['adminpw']);
 $settings[] = array('descr' => 'Title', 'name' => 'title', 'value' => $_SESSION['sett']['title']);
 $settings[] = array('descr' => 'Site', 'name' => 'site', 'value' => $_SESSION['sett']['site']);
 $settings[] = array('descr' => 'Host', 'name' => 'host', 'value' => $_SESSION['sett']['host']);
