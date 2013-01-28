@@ -181,7 +181,7 @@ class Api
 {
     function Api()
     {
-		require_once "../common/Pheal/Pheal.php";
+		require_once "../common/pheal/Pheal.php";
 		spl_autoload_register("Pheal::classload");
 		PhealConfig::getInstance()->http_method = 'curl';
 		PhealConfig::getInstance()->http_post = false;
