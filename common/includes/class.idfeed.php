@@ -21,17 +21,17 @@
 class IDFeed
 {
 	private $url = '';
-	/** 
+	/**
 	 * @var int The level of trust to accept before verifying a mail. Lower
 	 * is more trusting.
 	 */
 	private $trust = 255;
-	/** 
+	/**
 	 * @var int Force a level of trust when verifying kills. Used to set kills
 	 * from the API as trusted.
 	 */
 	private $killtrust = 0;
-	/** 
+	/**
 	 * @var int The maximum level of trust to record, regardless of what a remote
 	 * feed may claim.
 	 */
@@ -94,7 +94,7 @@ class IDFeed
 					." while fetching feed from ".$this->url.$options.".", E_USER_WARNING);
 			return false;
 		}
-		die($this->xml);
+
 		if ($this->xml) {
 			return true;
 		} else {
@@ -129,8 +129,7 @@ class IDFeed
 			trigger_error("Not a valid EVEAPI feed.", E_USER_WARNING);
 			return false;
 		}
-		die ($this->xml);
-		//return $this->processFeed();
+		return $this->processFeed();
 	}
 
 	/**
@@ -329,7 +328,7 @@ class IDFeed
 	 * Set true to include kills with no external ID;
 	 *
 	 * @param boolean $allkills
-	 * @return boolean 
+	 * @return boolean
 	 */
 	function setAllKills($allkills = false)
 	{
@@ -345,29 +344,29 @@ class IDFeed
 	 * Set level of trust to accept. Kills with a trust level greater than or
 	 * equal to this will be accepted as verified. If the remote kill has a trust
 	 * level below this, it will not be verified.
-	 * 
+	 *
 	 * e.g.
-	 * We fetch a KillLog from the API and use setKillTrust to force it to a 
-	 * trust level of 3. Another board then fetches from us, and is willing to 
+	 * We fetch a KillLog from the API and use setKillTrust to force it to a
+	 * trust level of 3. Another board then fetches from us, and is willing to
 	 * accept a trust level of 1, so the kills are fetched and accepted as
 	 * verified. The trust level is reduced to 2 by that board. The next board
 	 * will also accept them as verified and set trust to 1, and the next 0.
-	 * 
+	 *
 	 * If a board accepts all kills with a trust level of 1 it will accept the
 	 * kill from the first three boards (3, 2, 1) as verified. The fourth
 	 * board trusts the kill itself , but the level of trust is too low for other
 	 * boards to accept that kill as verified from the fourth board.
-	 * 
+	 *
 	 * Untrusted kills are still accepted, but not marked as verified. (Future
 	 * versions may also have minimum standards to accept unverified kills.) Note
 	 * that it is possible for trust levels to change. e.g. A kill is manually
 	 * posted so has a trust level of 0 but then the same kill is fetched from
 	 * the API and the trust level changed to 3. Thus a kill may be untrusted
-	 * when a remote board fetches but become trusted later on. 
-	 * 
+	 * when a remote board fetches but become trusted later on.
+	 *
 	 * @param int $trust Accept kills with greater than or equal to this level
 	 * of trust.
-	 * @return int 
+	 * @return int
 	 */
 	function setAcceptedTrust($trust = 1)
 	{
@@ -378,9 +377,9 @@ class IDFeed
 	/**
 	 * Force a level of trust to record for new kills. e.g. API kills have no
 	 * inherent trust mechanism but we do trust them.
-	 * 
+	 *
 	 * @param int $trust
-	 * @return int 
+	 * @return int
 	 */
 	function setKillTrust($trust = 0)
 	{
@@ -524,7 +523,7 @@ class IDFeed
 			if (!$this->processVictim($row, $kill, strval($row['killTime']))) {
 				$skip = true;
 			}
-			
+
 			$this->npcOnly = true;
 			if (!$skip) {
 				foreach ($row->rowset[0]->row as $inv) {
