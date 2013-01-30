@@ -163,7 +163,7 @@ function getComments($kll_id, $message = '')
 
 			$smarty->cache_dir = KB_CACHEDIR.'/data';
 			$smarty->assign('theme_url', THEME_URL);
-			$smarty->assign('style', $stylename);
+			$smarty->assign('theme_name', $themename);
 			$smarty->assign('img_url', config::get('cfg_img'));
 			$smarty->assign('img_host', IMG_HOST);
 			$smarty->assign('kb_host', KB_HOST);

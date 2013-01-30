@@ -100,18 +100,8 @@ if(isset($_GET['theme'])) {
 	$themename = config::get('theme_name');
 }
 
-if(isset($_GET['style'])) {
-	$stylename = preg_replace('/[^0-9a-zA-Z-_]/','',$_GET['style']);
-} else {
-	$stylename = config::get('style_name');
-}
-
 if(!is_dir("themes/".$themename."/templates")) {
 	$themename = 'default';
-}
-
-if(!file_exists("themes/".$themename."/".$stylename.".css")) {
-	$stylename = 'default';
 }
 
 define('THEME_URL', config::get('cfg_kbhost').'/themes/'.$themename);
@@ -218,10 +208,8 @@ if(!is_dir(KB_CACHEDIR.'/templates_c/'.$themename)) {
 $smarty->compile_dir = KB_CACHEDIR.'/templates_c/'.$themename;
 
 $smarty->cache_dir = KB_CACHEDIR.'/data';
+$smarty->assign('theme_name', $themename);
 $smarty->assign('theme_url', THEME_URL);
-if ($stylename != 'default' || $themename != 'default') {
-	$smarty->assign('style', $stylename);
-}
 $smarty->assign('img_url', IMG_URL);
 $smarty->assign('img_host', IMG_HOST);
 $smarty->assign('kb_host', KB_HOST);

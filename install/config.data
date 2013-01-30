@@ -36,7 +36,6 @@ ship_values	0
 show_standing	1
 show_standings	0
 style_banner	default.jpg
-style_name	default
 theme_name	default
 fp_highstyle	tag
 summarytable_summary	1

@@ -94,7 +94,7 @@ class IDFeed
 					." while fetching feed from ".$this->url.$options.".", E_USER_WARNING);
 			return false;
 		}
-
+		die($this->xml);
 		if ($this->xml) {
 			return true;
 		} else {
@@ -129,7 +129,8 @@ class IDFeed
 			trigger_error("Not a valid EVEAPI feed.", E_USER_WARNING);
 			return false;
 		}
-		return $this->processFeed();
+		die ($this->xml);
+		//return $this->processFeed();
 	}
 
 	/**

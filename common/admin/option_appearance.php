@@ -6,7 +6,6 @@
 options::cat('Appearance', 'Global Options', 'Global Look');
 options::fadd('Banner', 'style_banner', 'select', array('admin_appearance', 'createSelectBanner'), array('admin_appearance', 'changeBanner'));
 options::fadd('Theme', 'theme_name', 'select', array('admin_appearance', 'createSelectTheme'), array('admin_appearance', 'changeTheme'));
-options::fadd('Style', 'style_name', 'select', array('admin_appearance', 'createSelectStyle'), array('admin_appearance', 'changeStyle'));
 options::fadd('Language', 'cfg_language', 'select', array('admin_appearance', 'createLanguage'));
 
 options::cat('Appearance', 'Global Options', 'Global Options');
@@ -40,11 +39,6 @@ options::fadd('Display efficiency in the summary line', 'summarytable_efficiency
 
 options::cat('Appearance', 'Front Page', 'Kill Lists');
 options::fadd('Amount of kills listed', 'killcount', 'edit:size:2');
-
-options::cat('Appearance', 'Front Page', 'Most Expensive Summary');
-options::fadd('Display Most Expensive Ships', 'exp_showkill', 'checkbox');
-options::fadd('Display Most Expensive Pods', 'exp_showpod', 'checkbox');
-options::fadd('Include Losses', 'exp_incloss', 'checkbox');
 
 options::cat('Appearance', 'Kill Details', 'Kill Details');
 options::fadd('Display killpoints', 'kill_points', 'checkbox');
@@ -194,36 +188,6 @@ class admin_appearance
 		return $options;
 	}
 
-	/** Create the selection options for available styles in the current theme.
-	 *
-	 * @return string HTML for the style selection dropdown list.
-	 */
-	function createSelectStyle()
-	{
-		$options = array();
-		$dir = "themes/".config::get('theme_name')."/";
-
-		if(is_dir($dir))
-		{
-			if($dh = scandir($dir))
-			{
-				foreach($dh as $file)
-				{
-					if(!is_dir($dir.$file))
-					{
-						if(substr($file, -4) != ".css") continue;
-
-						if(config::get('style_name').'.css' == $file) $state = 1;
-						else $state = 0;
-
-						$options[] = array('value' => substr($file, 0, -4), 'descr' => substr($file, 0, -4), 'state' => $state);
-					}
-				}
-			}
-		}
-		return $options;
-	}
-
 	/** Create the selection options for available themes.
 	 *
 	 * @return string HTML for the theme selection dropdown list.
@@ -268,36 +232,14 @@ class admin_appearance
 		config::set('theme_name', $themename);
 
 		global $smarty;
+		
 		$smarty->assign('theme_url', config::get('cfg_kbhost').'/themes/'.$themename);
+		$smarty->assign('theme_name', $themename);
 		$smarty->template_dir = './themes/'.$themename.'/templates';
 		if(!file_exists(KB_CACHEDIR.'/templates_c/'.$themename.'/'))
 				mkdir(KB_CACHEDIR.'/templates_c/'.$themename.'/', 0755, true);
 		$smarty->compile_dir = KB_CACHEDIR.'/templates_c/'.$themename.'/';
 		CacheHandler::removeByAge('templates_c/'.$themename, 0, false);
-	}
-
-	/**
-	 * Updates style before page is displayed.
-	 */
-	function changeStyle()
-	{
-		global $smarty;
-		if(options::getPrevious('theme_name') != $_POST['option_theme_name'])
-		{
-			$themename = preg_replace('/[^a-zA-Z0-9-_]/', '', $_POST['option_theme_name']);
-			if(!is_dir("themes/$themename")) $themename = 'default';
-
-			$arr = reset(self::createSelectStyle());
-
-			config::set('style_name', $arr['value']);
-			$_POST['option_style_name'] = $arr['value'];
-
-			$smarty->assign('style', $arr['value']);
-		}
-		elseif(options::getPrevious('style_name') != $_POST['option_style_name'])
-		{
-			$smarty->assign('style', preg_replace('/[^a-zA-Z0-9-_]/', '', $_POST['option_style_name']));
-		}
 	}
 
 	/**

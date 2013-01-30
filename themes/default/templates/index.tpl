@@ -6,7 +6,7 @@
 	<meta name="keywords" content="EDK, killboard, {$config->get('cfg_kbtitle')}, {if $kb_owner}{$kb_owner}, {/if}Eve-Online, killmail" />
 	<title>{$kb_title}</title>
 	<link rel="stylesheet" type="text/css" href="{$kb_host}/themes/default/default.css" />
-	{if isset($style)}<link rel="stylesheet" type="text/css" href="{$theme_url}/{$style}.css" />{/if}
+	{if $theme_name != 'default'}<link rel="stylesheet" type="text/css" href="{$theme_url}/default.css" />{/if}
 {$page_headerlines}
 	<script type="text/javascript" src="{$kb_host}/themes/generic.js"></script>
 </head>
