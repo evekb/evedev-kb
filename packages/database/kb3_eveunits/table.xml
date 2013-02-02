@@ -5,7 +5,7 @@
   <structure>CREATE TABLE `kb3_eveunits` (
   `unitID` int(5) NOT NULL default &#039;0&#039;,
   `unitName` char(100) default NULL,
-  `displayName` char(20) default NULL,
+  `displayName` char(25) default NULL,
   `description` text,
   PRIMARY KEY  (`unitID`)
 ) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>

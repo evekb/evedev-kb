@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kb3>
-  <name>kb3_corps</name>
-  <rows>0</rows>
-  <structure>CREATE TABLE `kb3_corps` (
-  `crp_id` int(11) NOT NULL auto_increment,
-  `crp_name` char(64) NOT NULL default &#039;&#039;,
-  `crp_all_id` int(11) NOT NULL default &#039;0&#039;,
-  `crp_external_id` int(11) unsigned default NULL,
-  `crp_updated` datetime default NULL,
-  PRIMARY KEY  (`crp_id`),
-  UNIQUE KEY `crp_name` (`crp_name`),
-  UNIQUE KEY `crp_external_id` (`crp_external_id`)
-) Engine=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;</structure>
+	<name>kb3_corps</name>
+	<rows>0</rows>
+	<structure>CREATE TABLE `kb3_corps` (
+	`crp_id` int(11) NOT NULL auto_increment,
+	`crp_name` char(64) NOT NULL default &#039;&#039;,
+	`crp_all_id` int(11) NOT NULL default &#039;0&#039;,
+	`crp_external_id` int(11) unsigned default NULL,
+	`crp_updated` datetime default NULL,
+	`crp_short_name` CHAR(5) default NULL,
+	`crp_ceo_id` INT(11) unsigned default NULL,
+	`crp_station_id` INT(11) unsigned default NULL,
+	`crp_description` TEXT default NULL,
+	`crp_url` VARCHAR(255) default NULL,
+	`crp_taxrate` SMALLINT default NULL,
+	`crp_membercount` INT(11) unsigned default NULL,
+	`crp_shares` INT(11) unsigned default NULL,
+	`crp_startdate` datetime default NULL,
+	PRIMARY KEY  (`crp_id`),
+	UNIQUE KEY `crp_name` (`crp_name`),
+	UNIQUE KEY `crp_external_id` (`crp_external_id`)
+	) Engine=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;</structure>
 </kb3>

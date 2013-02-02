@@ -69,7 +69,7 @@ function update037()
 			}
 			config::set('037updatestatus',1);
 			$smarty->assign('refresh',1);
-			$smarty->assign('content', "Slot Data Fixes");
+			$smarty->assign('content', "Slot Data Fixes (1 of 8)");
 			$smarty->display('update.tpl');
 			die();
 		}
@@ -131,7 +131,7 @@ function update037()
 			}
 			config::set('037updatestatus',2);
 			$smarty->assign('refresh',1);
-			$smarty->assign('content', "Slot Data Fixes");
+			$smarty->assign('content', "Slot Data Fixes (2 of 8)");
 			$smarty->display('update.tpl');
 			die();
 		}
@@ -159,7 +159,7 @@ function update037()
 			}
 			config::set('037updatestatus',3);
 			$smarty->assign('refresh',1);
-			$smarty->assign('content', "Slot Data Fixes");
+			$smarty->assign('content', "Slot Data Fixes (3 of 8)");
 			$smarty->display('update.tpl');
 			die();
 		}		
@@ -175,7 +175,7 @@ function update037()
 			}
 			config::set('037updatestatus',4);
 			$smarty->assign('refresh',1);
-			$smarty->assign('content', "Slot Data Fixes");
+			$smarty->assign('content', "Slot Data Fixes (4 of 8)");
 			$smarty->display('update.tpl');
 			die();
 		}			
@@ -191,7 +191,7 @@ function update037()
 			}
 			config::set('037updatestatus',5);
 			$smarty->assign('refresh',1);
-			$smarty->assign('content', "Slot Data Fixes");
+			$smarty->assign('content', "Slot Data Fixes (5 of 8)");
 			$smarty->display('update.tpl');
 			die();
 		}	
@@ -208,7 +208,7 @@ function update037()
 			}
 			config::set('037updatestatus',6);
 			$smarty->assign('refresh',1);
-			$smarty->assign('content', "Slot Data Fixes");
+			$smarty->assign('content', "Slot Data Fixes (6 of 8)");
 			$smarty->display('update.tpl');
 			die();
 		}
@@ -223,13 +223,13 @@ function update037()
 			}
 			config::set('037updatestatus',7);
 			$smarty->assign('refresh',1);
-			$smarty->assign('content', "Slot Data Fixes");
+			$smarty->assign('content', "Slot Data Fixes (7 of 8)");
 			$smarty->display('update.tpl');
 			die();
 		}
 		
 		// fix fuel in dread's -> fuel bay
-		if(config::get('037updatestatus') <7)
+		if(config::get('037updatestatus') <8)
 		{
 			$maxid = (int)config::get('035killid' );
 
@@ -239,9 +239,9 @@ function update037()
 						itd_kll_id IN (Select kb3_kills.kll_id from kb3_kills JOIN kb3_ships ON kb3_ships.shp_id = kb3_kills.kll_ship_id  and shp_class IN (26,27,28,29,19))";
 				$qry->execute($sql);
 			}
-			config::set('037updatestatus',7);
+			config::set('037updatestatus',8);
 			$smarty->assign('refresh',1);
-			$smarty->assign('content', "Slot Data Fixes");
+			$smarty->assign('content', "Slot Data Fixes (8 of 8)");
 			$smarty->display('update.tpl');
 			die();
 		}

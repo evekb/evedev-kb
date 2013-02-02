@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kb3>
-  <name>kb3_ships</name>
-  <rows>617</rows>
-  <structure>CREATE TABLE `kb3_ships` (
-  `shp_id` int(11) NOT NULL auto_increment,
-  `shp_class` int(11) NOT NULL default &#039;18&#039;,
-  PRIMARY KEY  (`shp_id`),
-  KEY `shp_class` (`shp_class`)
-) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
+	<name>kb3_ships</name>
+	<rows>618</rows>
+	<structure>CREATE TABLE `kb3_ships` (
+	`shp_id` int(11) NOT NULL auto_increment,
+	`shp_class` int(11) NOT NULL default &#039;18&#039;,
+	PRIMARY KEY  (`shp_id`),
+	KEY `shp_class` (`shp_class`)
+	) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

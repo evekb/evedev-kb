@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kb3>
-  <name>kb3_moons</name>
-  <rows>342170</rows>
-  <structure>CREATE TABLE `kb3_moons` (
-  `itemID` int(11) NOT NULL,
-  `itemName` varchar(127) NOT NULL,
-  PRIMARY KEY (`itemID`),
-  KEY `itemName` (`itemName`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;</structure>
+	<name>kb3_moons</name>
+	<rows>342170</rows>
+	<structure>
+	CREATE TABLE `kb3_moons` (
+	`moo_id` int(11) NOT NULL,
+	`moo_name` varchar(127) NOT NULL,
+	PRIMARY KEY (`moo_id`),
+	KEY `moo_name` (`moo_name`)
+	) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;</structure>
 </kb3>

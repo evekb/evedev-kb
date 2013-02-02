@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kb3>
-  <name>kb3_stations</name>
-  <rows>5181</rows>
+	<name>kb3_stations</name>
+	<rows>5181</rows>
+	<structure>CREATE TABLE IF NOT EXISTS `kb3_stations` (
+	`sta_id` int(10) NOT NULL,
+	`sta_sys_id` int(10) NOT NULL,
+	`sta_con_id` int(10) NOT NULL,
+	`sta_reg_id` int(10) NOT NULL,
+	`sta_name` varchar(100) NOT NULL
+	) Engine=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;</structure>
 </kb3>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kb3>
+	<name>kb3_feeds</name>
+	<rows>0</rows>
+	<structure>CREATE TABLE `kb3_feeds` (
+	`feed_id` INT(11) AUTO_INCREMENT NOT NULL,
+	`feed_url` text NOT NULL,
+	`feed_lastkill` INT(11) NOT NULL,
+	`feed_updated` datetime default &#039;0000-00-00 00:00:00&#039;,
+	`feed_kbsite` VARCHAR(16) NOT NULL,
+	`feed_flags` TINYINT NOT NULL,
+	PRIMARY KEY (`feed_id`)
+	) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
+</kb3>
