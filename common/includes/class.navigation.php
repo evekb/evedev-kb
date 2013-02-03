@@ -71,7 +71,7 @@ class Navigation
 		$menu = new Menu();
 		while ($row = $this->getRow()) {
 			$url = $row['url'];
-			if ($row['intern'] == 1) {
+			if ($row['intern'] == 1 && session::isAdmin()) {
 				if (strpos($url, "?") === false) {
 					$url .= "?";
 				} else {

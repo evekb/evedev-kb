@@ -47,7 +47,7 @@ class pLogin extends pageAssembly
 					session::create(true);
 
 					session_write_close();
-					header('Location: '.html_entity_decode(edkURI::page('admin')));
+					header('Location: '.htmlspecialchars_decode(edkURI::page('admin').'&akey='.session::makeKey())); //session created but not in current page
 					die;
 				}
 			} else if ($_POST['usrlogin'] == ''
@@ -56,7 +56,7 @@ class pLogin extends pageAssembly
 
 				$page = preg_replace('/[^a-zA-Z0-9-_]/', '', edkURI::getArg("page", 1));
 				$page = $page ? $page : "admin";
-				header('Location: '.htmlspecialchars_decode(edkURI::page('admin')));
+				header('Location: '.htmlspecialchars_decode(edkURI::page('admin').'&akey='.session::makeKey())); //session created but not in current page
 				session_write_close();
 				die;
 			} else {
