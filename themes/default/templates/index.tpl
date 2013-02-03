@@ -5,12 +5,29 @@
 	<meta name="description" content="EDK Killboard - {$config->get('cfg_kbtitle')}" />
 	<meta name="keywords" content="EDK, killboard, {$config->get('cfg_kbtitle')}, {if $kb_owner}{$kb_owner}, {/if}Eve-Online, killmail" />
 	<title>{$kb_title}</title>
+	<link rel="stylesheet" type="text/css" href="jquery.dataTables_themeroller.css">
+	<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css">
+	<link rel="stylesheet" type="text/css" href="{$kb_host}/css.php" />
 	<link rel="stylesheet" type="text/css" href="{$kb_host}/themes/default/default.css" />
 	{if $theme_name != 'default'}<link rel="stylesheet" type="text/css" href="{$theme_url}/default.css" />{/if}
 	<link id="edkid_theme" rel="stylesheet" type="text/css" href="{$kb_host}/jquerythemes/{$jqtheme_name}/jquery-ui.css" />
 	<script type='text/javascript' src='{$kb_host}/js/jquery-1.9.0.js'></script>
 	<script type='text/javascript' src='{$kb_host}/js/jquery-ui-1.10.0.custom.js'></script>
 	<script type='text/javascript' src='{$kb_host}/js/ui.js'></script>
+	<script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
+
+
+	<script type="text/javascript" charset="utf-8">
+	$(document).ready(function() {
+		$('.kl-table').dataTable({
+            "bFilter": false,
+            "sPaginationType": "full_numbers",
+            "bJQueryUI": true,
+            "bLengthChange": false,
+			"bSortClasses": false,
+        });
+	} );
+	</script>
 {$page_headerlines}
 	<script type="text/javascript" src="{$kb_host}/themes/generic.js"></script>
 </head>

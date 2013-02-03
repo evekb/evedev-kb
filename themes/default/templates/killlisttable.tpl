@@ -1,16 +1,15 @@
 <!-- killlistable.tpl -->
-<div class="kltable edk-section-main">
+<div class="kltable">
 	{section name=day loop=$killlist}
-		{if $daybreak}
-			<div class="kb-date-header">{"l, F jS"|date:$killlist[day].date}</div><br />
-		{/if}
-		<table class="kb-table kb-kl-table kb-table-rows">
+		<table class="kl-table">
 			<thead>
 				<tr class="kb-table-header ui-widget-header">
-					<td class="kl-shiptype" colspan="2">Ship type</td>
-					<td colspan="2" class="kl-victim">Victim</td>
-					<td class="kl-finalblow">Final blow</td>
-					<td class="kl-location">Location</td>
+                    <th class="kl-timestamp">Timestamp</th>
+					<th class="kl-shiptype">Ship type</th>
+					<th class="kl-victim">Victim</th>
+					<th class="kl-finalblow">Final blow</th>
+					<th class="kl-location">Location</th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -23,68 +22,76 @@
 						{else}
 						<tr onclick="window.location.href='{$k.urldetail}';">
 						{/if}
-						<td class="kb-table-imgcell">
-							<img src='{$k.victimshipimage}' style="width: 32px; height: 32px;" alt="" />
-						</td>
-						<td class="kl-shiptype-text">
-							<div class="no_stretch kl-shiptype-text">
-								<b>{$k.victimshipname}</b>
-								<br />
-								{$k.victimshipclass}
-							</div>
-						</td>
-						{if !$k.allianceexists}
-							<td class="kb-table-imgcell">&nbsp;</td>
-						{else}
-							<td class="kb-table-imgcell"><img src="{$k.victimallianceicon}" style="border: 0px; width: 32px; height: 32px;" title="{$k.victimalliancename}" alt="{$k.victimalliancename}" /></td>
-							{/if}
-						<td class="kl-victim-text">
-							<div class="no_stretch kl-victim-text">
-								{if $k.loss}
-									<a href="{$k.urlvictim}"><b>{$k.victim}</b></a>
+                        <td>
+                            <div class="kl-date">
+                                {if $daybreak}
+                                    {if $k.urlrelated}
+                                        <a href="{$k.urlrelated}"><b>{$k.timestamp|date_format:"%H:%M"}</b></a>
+                                        {else}
+                                        <b>{$k.timestamp|date_format:"%H:%M"}</b>
+                                    {/if}
+                                    {else}
+                                    {if $k.urlrelated}
+                                        <a href="{$k.urlrelated}"><b>{$k.timestamp|date_format:"%y-%m-%d"} {$k.timestamp|date_format:"%H:%M"}</b></a>
+                                        {else}
+                                        <b>{$k.timestamp|date_format:"%y-%m-%d"} {$k.timestamp|date_format:"%H:%M"}</b>
+                                    {/if}
+                                {/if}
+                            </div>
+                        </td>
+						<td>
+							<div>
+								<img src='{$k.victimshipimage}' class="kl-img" alt="" />
+								<div class="no_stretch kl-shiptype-text">
+									<b>{$k.victimshipname}</b>
 									<br />
-									<a href="{$k.urlvictimcorp}">{$k.victimcorp}</a>
-								{else}
-									{if $k.victimalliancename != "None" && $k.victimalliancename != "NONE"}
-										<a href="{$k.urlvictim}"><b>{$k.victim}</b></a><br /><a href="{$k.urlvictimall}">{$k.victimalliancename}</a>
-									{else}
-										<a href="{$k.urlvictim}"><b>{$k.victim}</b></a><br /><a href="{$k.urlvictimcorp}">{$k.victimcorp}</a>
-									{/if}
-								{/if}
+									{$k.victimshipclass}
+								</div>
 							</div>
 						</td>
-						<td class="kl-finalblow">
+
+						<td>
+							<div>
+								{if !$k.allianceexists}
+								&nbsp;
+								{else}
+								<img src="{$k.victimallianceicon}" class="kl-img" title="{$k.victimalliancename}" alt="{$k.victimalliancename}" />
+								{/if}
+								<div class="no_stretch kl-victim-text">
+									{if $k.loss}
+										<a href="{$k.urlvictim}"><b>{$k.victim}</b></a>
+										<br />
+										<a href="{$k.urlvictimcorp}">{$k.victimcorp}</a>
+									{else}
+										{if $k.victimalliancename != "None" && $k.victimalliancename != "NONE"}
+											<a href="{$k.urlvictim}"><b>{$k.victim}</b></a><br /><a href="{$k.urlvictimall}">{$k.victimalliancename}</a>
+										{else}
+											<a href="{$k.urlvictim}"><b>{$k.victim}</b></a><br /><a href="{$k.urlvictimcorp}">{$k.victimcorp}</a>
+										{/if}
+									{/if}
+								</div>
+							</div>
+						</td>
+						<td>
 							<div class="no_stretch kl-finalblow">
 								<a href="{$k.urlfb}"><b>{$k.fb}</b></a>
 								<br />
 								<a href="{$k.urlfbcorp}">{$k.fbcorp}</a>
 							</div>
 						</td>
-						<td class="kb-table-cell kl-location">
+						<td>
 							<div class="no_stretch kl-location">
-								{if $config->get('killlist_regionnames')} {$k.region}, {$k.system}{else}<b>{$k.system}</b>{/if} ({if $k.loss || $k.kill}{$k.systemsecurity|max:0|string_format:"%01.1f"}{else}<span style="color:{if $k.systemsecurity >= 0.5}green{elseif $k.systemsecurity < 0.05}red{else}orange{/if};">{$k.systemsecurity|max:0|string_format:"%01.1f"}</span>{/if})<br /></div>
-								{if $k.inv || $comments_count}
+								{if $config->get('killlist_regionnames')} {$k.region}<br/>{$k.system}{else}<b>{$k.system}</b>{/if} ({if $k.loss || $k.kill}{$k.systemsecurity|max:0|string_format:"%01.1f"}{else}<span style="color:{if $k.systemsecurity >= 0.5}green{elseif $k.systemsecurity < 0.05}red{else}orange{/if};">{$k.systemsecurity|max:0|string_format:"%01.1f"}</span>{/if})
+							</div>
+						</td>
+						{if $k.inv || $comments_count}
+							<td>
 									<div class="kl-inv-comm">
 										{if $k.inv}<img src="{$theme_url}/img/involved10_10.png"  alt="I:" /> {$k.inv}{/if}
 										{if $comments_count}<span {if  !$k.commentcount}style="visibility: hidden"{/if}><img src="{$theme_url}/img/comment_white13_10.gif" alt="C:" /> {$k.commentcount}</span>{/if}
 									</div>
-								{/if}
-							<div class="kl-date">
-								{if $daybreak}
-									{if $k.urlrelated}
-										<a href="{$k.urlrelated}"><b>{$k.timestamp|date_format:"%H:%M"}</b></a>
-									{else}
-										<b>{$k.timestamp|date_format:"%H:%M"}</b>
-									{/if}
-								{else}
-									{if $k.urlrelated}
-										<a href="{$k.urlrelated}"><b>{$k.timestamp|date_format:"%y-%m-%d"} {$k.timestamp|date_format:"%H:%M"}</b></a>
-									{else}
-										<b>{$k.timestamp|date_format:"%y-%m-%d"} {$k.timestamp|date_format:"%H:%M"}</b>
-									{/if}
-								{/if}
-							</div>
-						</td>
+							</td>
+						{/if}
 					</tr>
 				{/section}
 			</tbody>

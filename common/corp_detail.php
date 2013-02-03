@@ -254,7 +254,6 @@ class pCorpDetail extends pageAssembly
 
 				$ktab = new KillListTable($list);
 				$ktab->setLimit(10);
-				$ktab->setDayBreak(false);
 				$smarty->assign('kills', $ktab->generate());
 
 				$list = new KillList();
@@ -268,7 +267,6 @@ class pCorpDetail extends pageAssembly
 
 				$ltab = new KillListTable($list);
 				$ltab->setLimit(10);
-				$ltab->setDayBreak(false);
 				$smarty->assign('losses', $ltab->generate());
 				return $smarty->fetch(get_tpl('detail_kl_default'));
 
@@ -282,7 +280,6 @@ class pCorpDetail extends pageAssembly
 				$list->setPageSplit(config::get('killcount'));
 				$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 				$table = new KillListTable($list);
-				$table->setDayBreak(false);
 				$smarty->assign('splitter',$pagesplitter->generate());
 				$smarty->assign('kills', $table->generate());
 				return $smarty->fetch(get_tpl('detail_kl_kills'));
@@ -298,7 +295,6 @@ class pCorpDetail extends pageAssembly
 				$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 
 				$table = new KillListTable($list);
-				$table->setDayBreak(false);
 				$smarty->assign('splitter',$pagesplitter->generate());
 				$smarty->assign('losses', $table->generate());
 				return $smarty->fetch(get_tpl('detail_kl_losses'));

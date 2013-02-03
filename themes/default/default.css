@@ -57,14 +57,6 @@ td
 	padding: 1px;
 }
 
-.main-table
-{
-	border-spacing: 0;
-	height: 100%;
-	padding: 0;
-	width: 950px;
-}
-
 .kill-points
 {
 	font-size: 18px;
@@ -80,8 +72,9 @@ input, button, select
 
 #content
 {
+	font-size: 11px;
 	padding: 10px;
-	width: 760px;
+	width: 780px;
 }
 
 #context, .context_element
@@ -625,7 +618,7 @@ a.kb-contract:visited
 	border-spacing: 0;
 	margin: auto;
 	padding: 0;
-	width: 950px;
+	width: 990px;
 }
 
 .stats
@@ -915,6 +908,11 @@ img
 	width: 760px;
 }
 
+.kl-timestamp
+{
+	width: 90px;
+}
+
 .kl-shiptype
 {
 	width: 190px;
@@ -937,14 +935,12 @@ img
 	width: 164px;
 }
 
-.kl-shiptype-text
+.kl-img 
 {
-	width: 157px;
-}
-
-.kl-victim-text
-{
-	width: 175px;
+ height: 32px;
+ width: 32px;
+ float: left;
+ margin-right: 4px;
 }
 
 .kb-kl-table tr.kb-table-header > td
@@ -1587,7 +1583,6 @@ div.kb-mostexpensive-listcontainer {
 	width:778px;
 	height:128px;
 	overflow:hidden;
-	left:-6px;
 	margin-bottom:5px;
 }
 

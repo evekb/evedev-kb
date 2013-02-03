@@ -15,7 +15,7 @@
 html, body
 {
 	background-color: <?php echo $bgcolor; ?>;
-	<?php if( $bg != 0 ) { ?>
+	<?php if( $bg !== 0 ) { ?>
 	background-attachment: fixed;
 	background-image: url("<?php echo "background/" . $bg; ?>");
 	background-position: center center;

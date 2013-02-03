@@ -211,7 +211,6 @@ class pContractDetail extends pageAssembly
 
 				$table = new KillListTable($klist);
 				$table->setLimit(10);
-				$table->setDayBreak(false);
 				$smarty->assign('killtable', $table->generate());
 
 				$llist = $this->contract->getLossList();
@@ -223,7 +222,6 @@ class pContractDetail extends pageAssembly
 
 				$table = new KillListTable($llist);
 				$table->setLimit(10);
-				$table->setDayBreak(false);
 				$smarty->assign('losstable', $table->generate());
 				$smarty->assign('akey', session::isAdmin() ? session::makeKey() : false);
 				$html .= $smarty->fetch(get_tpl('cc_detail_lists'));
@@ -240,7 +238,6 @@ class pContractDetail extends pageAssembly
 				$list->setPageSplit(config::get('killcount'));
 				$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 				$table = new KillListTable($list);
-				$table->setDayBreak(false);
 				$smarty->assign('killtable', $table->generate());
 				$smarty->assign('splitter', $pagesplitter->generate());
 				$smarty->assign('akey', session::isAdmin() ? session::makeKey() : false);
@@ -258,7 +255,6 @@ class pContractDetail extends pageAssembly
 				$llist->setPageSplit(config::get('killcount'));
 				$pagesplitter = new PageSplitter($llist->getCount(), config::get('killcount'));
 				$table = new KillListTable($llist);
-				$table->setDayBreak(false);
 				$smarty->assign('losstable', $table->generate());
 				$smarty->assign('splitter', $pagesplitter->generate());
 				$smarty->assign('akey', session::isAdmin() ? session::makeKey() : false);

@@ -306,12 +306,12 @@ class pHome extends pageAssembly
 			//$klist->setWeek($this->week);
 			//$klist->setYear($this->year);
 			$klist->setPageSplit(config::get('killcount'));
-			$pagesplitter = new PageSplitter($klist->getCount(), config::get('killcount'));
+			//$pagesplitter = new PageSplitter($klist->getCount(), config::get('killcount'));
 			$table = new KillListTable($klist);
-			$table->setDayBreak(false);
 			if ($this->showcombined) $table->setCombined(true);
-			$pagesplit = $pagesplitter->generate();
-			$html = $pagesplit.$table->generate().$pagesplit;
+			//$pagesplit = $pagesplitter->generate();
+			//$html = $pagesplit.$table->generate().$pagesplit;
+			$html = $table->generate();
 		}
 		return $html;
 	}

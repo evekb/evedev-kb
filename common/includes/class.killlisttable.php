@@ -9,8 +9,6 @@ class KillListTable
 	/** @var integer */
 	private $limit_;
 	/** @var boolean */
-	private $daybreak_;
-	/** @var boolean */
 	private $combined_;
 
 	/**
@@ -20,12 +18,6 @@ class KillListTable
 	{
 		$this->limit_ = 0;
 		$this->kill_list_ = $kill_list;
-		$this->daybreak_ = true;
-	}
-
-	function setDayBreak($daybreak)
-	{
-		$this->daybreak_ = $daybreak;
 	}
 
 	function setLimit($limit)
@@ -41,9 +33,7 @@ class KillListTable
 	function generate()
 	{
 		global $smarty;
-		$prevdate = "";
 		$this->kill_list_->rewind();
-		$smarty->assign('daybreak', $this->daybreak_);
 		$smarty->assign('comments_count', config::get('comments_count'));
 
 		$c = 0;
@@ -62,15 +52,7 @@ class KillListTable
 			}
 
 			$curdate = substr($kill->getTimeStamp(), 0, 10);
-			if ($curdate != $prevdate)
-			{
-				if (count($kills) && $this->daybreak_)
-				{
-					$kl[] = array('kills' => $kills, 'date' => strtotime($prevdate));
-					$kills = array();
-				}
-				$prevdate = $curdate;
-			}
+
 			$kll = array();
 			$kll['id'] = $kill->getID();
 			$kll['victimshipimage'] = $kill->getVictimShipImage(32);
@@ -181,7 +163,7 @@ class KillListTable
 		event::call('killlist_table_kills', $kills);
 		if (count($kills))
 		{
-			$kl[] = array('kills' => $kills, 'date' => strtotime($prevdate));
+			$kl[] = array('kills' => $kills, 'date' => strtotime($curdate));
 		}
 
 		$smarty->assignByRef('killlist', $kl);

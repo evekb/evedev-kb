@@ -8,7 +8,7 @@
     </head>
 
     <body bgcolor="#222222"  style="height: 100%">
-    <table class="main-table" align="center" bgcolor="#111111" border="0" cellspacing="1" style="height:100%">
+    <table class="main" align="center" bgcolor="#111111" border="0" cellspacing="1" style="height:100%">
     <tr style="height: 100%">
     <td valign="top" style="height: 100%">
     <div id="header">
