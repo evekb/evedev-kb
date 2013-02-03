@@ -3,9 +3,11 @@
  * @package EDK
  */
 
+
 options::cat('Appearance', 'Global Options', 'Global Look');
 options::fadd('Banner', 'style_banner', 'select', array('admin_appearance', 'createSelectBanner'), array('admin_appearance', 'changeBanner'));
 options::fadd('Theme', 'theme_name', 'select', array('admin_appearance', 'createSelectTheme'), array('admin_appearance', 'changeTheme'));
+options::fadd('JQuery UI Theme', 'jqtheme_name', 'select', array('admin_appearance', 'createSelectJQTheme'), array('admin_appearance', 'changeJQTheme'));
 options::fadd('Language', 'cfg_language', 'select', array('admin_appearance', 'createLanguage'));
 
 options::cat('Appearance', 'Global Options', 'Global Options');
@@ -197,10 +199,10 @@ class admin_appearance
 	 *
 	 * @return string HTML for the theme selection dropdown list.
 	 */
-	function createSelectTheme()
+	function createSelectTheme($dir = 'themes', $option = 'theme_name' )
 	{
 		$options = array();
-		$dir = "themes/";
+		$dir = $dir . "/";
 
 		if(is_dir($dir))
 		{
@@ -211,7 +213,7 @@ class admin_appearance
 					if(is_dir($dir.$file))
 					{
 						if($file == "." || $file == ".." || $file == ".svn") continue;
-						if(config::get('theme_name') == $file) $state = 1;
+						if(config::get($option) == $file) $state = 1;
 						else $state = 0;
 
 						$options[] = array('value' => $file, 'descr' => $file, 'state' => $state);
@@ -220,6 +222,10 @@ class admin_appearance
 			}
 		}
 		return $options;
+	}
+
+	function createSelectJQTheme() {
+		return self::createSelectTheme('jquerythemes', 'jqtheme_name');
 	}
 
 	/**
@@ -245,6 +251,18 @@ class admin_appearance
 				mkdir(KB_CACHEDIR.'/templates_c/'.$themename.'/', 0755, true);
 		$smarty->compile_dir = KB_CACHEDIR.'/templates_c/'.$themename.'/';
 		CacheHandler::removeByAge('templates_c/'.$themename, 0, false);
+	}
+
+	function changeJQTheme()
+	{
+		global $themename;
+		if(options::getPrevious('jqtheme_name') == $_POST['option_jqtheme_name']) return;
+
+		$jqthemename = preg_replace('/[^a-zA-Z0-9-_]/', '', $_POST['option_jqtheme_name']);
+		if(!is_dir("jquerythemes/$jqthemename")) $jqthemename = 'base';
+
+		$_POST['option_jqtheme_name'] = $jqthemename;
+		config::set('jqtheme_name', $jqthemename);
 	}
 
 	/**

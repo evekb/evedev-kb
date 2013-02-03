@@ -9,7 +9,7 @@
 			<td style="width:{$width}%;">
 				<table class="kb-table summarysubtable kb-table-rows">
 					<thead>
-					<tr class="kb-table-header">
+					<tr class="kb-table-header ui-widget-header">
 						<td class="summarytable-class">Ship class</td>
 {if $verbose}
 						<td class="summarytable-verbose">Kills</td>
@@ -31,7 +31,7 @@
 			<td style="width:{$width}%;">
 				<table class="kb-table summarysubtable kb-table-rows">
 					<thead>
-					<tr class="kb-table-header">
+					<tr class="kb-table-header ui-widget-header">
 						<td>Ship class</td>
 	{if $verbose}					<td class="summarytable-verbose">Kills</td>
 						<td class="summarytable-verbose">ISK (M)</td>
@@ -45,7 +45,7 @@
 					</thead>
 					<tbody>
 {/if}
-					<tr>
+					<tr class="ui-state-default">
 						<td><b><a class="kb-shipclass{if $i.hl}-hl{/if}" href="{$i.qry}scl_id={$i.id}">{$i.name}</a></b></td>
 						<td class="kl-kill{if $i.kills == 0}-null{/if}">{$i.kills}</td>
 {if $verbose}				<td class="kl-kill{if $i.kills == 0}-null{/if}">{$i.kisk}</td>
@@ -62,7 +62,7 @@
 	</table>
 
 {if $summarysummary}
-	<div class="kb-summary-summary">
+	<div class="kb-summary-summary ui-state-highlight ui-corner-all">
 		<div class="killcount">{$kcount} Ships killed ({if $kiskB > 1 || $liskB > 1}{$kiskB}B{else}{$kiskM}M{/if} ISK)</div>
 		{if $losses}<div class="losscount">{$lcount} Ships lost ({if $kiskB > 1 || $liskB > 1}{$liskB}B{else}{$liskM}M{/if} ISK)</div>{/if}
 		{if $efficiency}<div class="efficiency">{$efficiency}% Efficiency (ISK)</div>{/if}

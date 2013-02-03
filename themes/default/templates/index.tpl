@@ -7,6 +7,10 @@
 	<title>{$kb_title}</title>
 	<link rel="stylesheet" type="text/css" href="{$kb_host}/themes/default/default.css" />
 	{if $theme_name != 'default'}<link rel="stylesheet" type="text/css" href="{$theme_url}/default.css" />{/if}
+	<link id="edkid_theme" rel="stylesheet" type="text/css" href="{$kb_host}/jquerythemes/{$jqtheme_name}/jquery-ui.css" />
+	<script type='text/javascript' src='{$kb_host}/js/jquery-1.9.0.js'></script>
+	<script type='text/javascript' src='{$kb_host}/js/jquery-ui-1.10.0.custom.js'></script>
+	<script type='text/javascript' src='{$kb_host}/js/ui.js'></script>
 {$page_headerlines}
 	<script type="text/javascript" src="{$kb_host}/themes/generic.js"></script>
 </head>
@@ -17,7 +21,7 @@
 	<div id="stuff2"></div>
 	<div id="stuff3"></div>
 	<div id="stuff4"></div>
-	<div id="main">
+	<div id="main" class="ui-widget ui-widget-content">
 {if $banner}
 		<div id="header">
 {if $bannerswf=='true'}
@@ -31,11 +35,11 @@
 {/if}
 		</div>
 {/if}
-		<div class="navigation">
+		<div id="edkid_navigation" class="navigation">
 			<table>
 				<tr>
 		{section name=item loop=$menu}
-					<td><a class="link" href="{$menu[item].link}">{$menu[item].text}</a></td>
+					<td class="ui-state-default"><a class="link" href="{$menu[item].link}">{$menu[item].text}</a></td>
 		{/section}
 				</tr>
 			</table>
@@ -43,7 +47,7 @@
 {if isset($message)}
 		<div id="boardmessage">{$message}</div>
 {/if}
-		<div id="page-title">{$page_title}</div>
+		<div id="page-title"><h2>{$page_title}</h2></div>
 		<div id="content">
 {$content_html}
 		</div>

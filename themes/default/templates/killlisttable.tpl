@@ -1,12 +1,12 @@
 <!-- killlistable.tpl -->
-<div class="kltable">
+<div class="kltable edk-section-main">
 	{section name=day loop=$killlist}
 		{if $daybreak}
 			<div class="kb-date-header">{"l, F jS"|date:$killlist[day].date}</div><br />
 		{/if}
 		<table class="kb-table kb-kl-table kb-table-rows">
 			<thead>
-				<tr class="kb-table-header">
+				<tr class="kb-table-header ui-widget-header">
 					<td class="kl-shiptype" colspan="2">Ship type</td>
 					<td colspan="2" class="kl-victim">Victim</td>
 					<td class="kl-finalblow">Final blow</td>
@@ -17,9 +17,9 @@
 				{section name=kill loop=$killlist[day].kills}
 					{assign var="k" value=$killlist[day].kills[kill]}
 					{if $k.loss}
-						<tr class="kb-table-row-loss" onclick="window.location.href='{$k.urldetail}';">
+						<tr class="kb-table-row-loss ui-state-default" onclick="window.location.href='{$k.urldetail}';">
 						{elseif $k.kill}
-						<tr class="kb-table-row-kill" onclick="window.location.href='{$k.urldetail}';">
+						<tr class="kb-table-row-kill ui-state-default" onclick="window.location.href='{$k.urldetail}';">
 						{else}
 						<tr onclick="window.location.href='{$k.urldetail}';">
 						{/if}

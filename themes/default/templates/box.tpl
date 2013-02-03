@@ -1,7 +1,7 @@
 <!-- box.tpl -->
-<table class="kb-table kb-box">
+<table class="kb-table kb-box ui-widget-content">
 	<tr>
-		<td class="kb-table-header">{$title}</td>
+		<td class="kb-table-header ui-widget-header">{$title}</td>
 	</tr>
 	<tr class="kb-table-row-even">
 		<td>

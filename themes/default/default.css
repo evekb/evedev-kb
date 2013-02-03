@@ -1,15 +1,30 @@
 html, body
 {
-	background-color: #222;
-	color: #dfdfdf;
+	background-color: #222222;
 	height: 100%;
 	margin: 0;
 	padding: 0;
 }
 
+div.edk-section-main {
+	margin: 20px 0;
+}
+
+div.edk-section-main > h3 {
+	margin: 0;
+	padding: 15px;
+}
+
+#page-title {
+	padding:15px;
+}
+
+#page-title h2{
+	margin:0;
+}
+
 div.navigation
 {
-	background: #111;
 	border-collapse: separate;
 	border-spacing: 1px;
 	padding: 0;
@@ -21,11 +36,6 @@ div.navigation > table
 	height: 25px;
 	table-layout: fixed;
 	width: 100%;
-}
-
-div.navigation tr
-{
-	background: #292929;
 }
 
 div.navigation td
@@ -50,12 +60,7 @@ td
 
 .main-table
 {
-	border-bottom: 0 solid #555;
-	border-collapse: separate;
-	border-left: 1px solid #555;
-	border-right: 1px solid #555;
 	border-spacing: 0;
-	border-top: 0 solid #555;
 	height: 100%;
 	padding: 0;
 	width: 950px;
@@ -76,16 +81,13 @@ input, button, select
 
 #content
 {
-	background: #111;
-	font-size: 11px;
-	margin-top: 10px;
 	padding: 10px;
 	width: 760px;
 }
 
 #context, .context_element
 {
-	padding: 10px;
+	padding: 5px;
 	width: 145px;
 }
 
@@ -97,16 +99,12 @@ input, button, select
 
 div.bar
 {
-	background: #ffa500;
-	border-bottom: 1px #ac7000 solid;
-	border-right: 1px #ac7000 solid;
 	font-size: 4px;
 	height: 6px;
 }
 
 div.bar-background
 {
-	background: #7F0F1E;
 	font-size: 4px;
 	height: 6px;
 }
@@ -129,15 +127,11 @@ div.bar-background
 
 div.bar-red
 {
-	background: #300;
-	border-bottom: 1px #200 solid;
-	border-right: 1px #200 solid;
 	height: 8px;
 }
 
 .box-title
 {
-	background: #333;
 	font-size: 12px;
 	font-weight: bold;
 	height: 20px;
@@ -171,23 +165,9 @@ div.bar-red
 	padding-left: 15px;
 }
 
-#page-title
-{
-	border-bottom: 1px solid #777;
-	color: #ccc;
-	font-size: 16px;
-	font-weight: bold;
-	height: 25px;
-	margin-left: 5px;
-	margin-right: 5px;
-	margin-top: 10px;
-	padding-top: 3px;
-}
-
 /* caption over boxes - Involved parties */
 .block-header
 {
-	color: #ccc;
 	font-size: 12px;
 	font-weight: bold;
 	margin-bottom: 10px;
@@ -197,8 +177,6 @@ div.bar-red
 /* for exampe Awards for April 2007 */
 .block-header2
 {
-	border-bottom: 1px solid #777;
-	color: #ccc;
 	font-size: 12px;
 	font-weight: bold;
 	margin-bottom: 10px;
@@ -223,7 +201,6 @@ textarea.killmail
 
 .kb-table, .kb-subtable
 {
-	color: #e0e0e0;
 	font-size: 10px;
 	padding: 0;
 }
@@ -232,7 +209,6 @@ textarea.killmail
 {
 	border-collapse: separate;
 	border-spacing: 1px;
-	border: 1px solid #444;
 }
 
 .kb-table-title
@@ -243,36 +219,10 @@ textarea.killmail
 /* Ship type */
 .kb-table-header
 {
-	background: #555;
 	font-size: 10px;
 	font-weight: bold;
 	height: 15px;
 	padding: 4px;
-}
-
-.kb-table-row-odd
-{
-	background: #292929;
-}
-
-.kb-table-row-even
-{
-	background: #222;
-}
-
-.kb-table-rows > tbody > tr:nth-child(even)
-{
-	background: #292929;
-}
-
-.kb-table-rows > tbody > tr:nth-child(odd)
-{
-	background: #222;
-}
-
-.kb-table-row-slot
-{
-	background: #292929;
 }
 
 .kb-table-row-destroyed
@@ -291,32 +241,20 @@ textarea.killmail
 .kb-kl-table tbody .kb-table-row-even:hover,
 .kb-kl-table .kb-table-row-odd:hover
 {
-	background: #DD9300;
-	color: #222;
+
 	cursor: pointer;
 }
 
 img.finalblow
 {
-	border: 1px solid #FFA500;
 	height: 64px;
 	width: 64px;
 }
 
-img.avatar
-{
-	border: 1px solid #333;
-}
-
-img.icon
-{
-	border: 1px solid #333;
-}
 
 td.item-icon,
 th.item-icon
 {
-	border: 1px solid #333;
 	height: 32px;
 	width: 32px;
 }
@@ -328,30 +266,18 @@ div.item-icon
 	width: 32px;
 }
 
-img.icon-hover
-{
-	border: 1px solid #DD9300;
-	cursor: pointer;
-}
-
 td.avatar-name
 {
-	color: #ccc;
 	font-size: 10px;
 	font-weight: bold;
 }
 
 td.killmail
 {
-	color: #ddd;
 	font-family:"Courier New", Courier;
 	font-size: 11px;
 }
 
-td.battleship
-{
-	background: #DD9300;
-}
 
 .kb-table td,
 .kb-table th
@@ -389,8 +315,6 @@ td.kb-table-imgcell > img
 	background-image:url("../../img/campaign.png");
 	background-position: 0 -3px;
 	background-repeat: no-repeat;
-	border-bottom: 1px solid #777;
-	color: #ccc;
 	font-size: 12px;
 	font-weight: bold;
 	margin-bottom: 10px;
@@ -404,8 +328,6 @@ td.kb-table-imgcell > img
 	background-image:url("../../img/kills.png");
 	background-position: 0 -3px;
 	background-repeat: no-repeat;
-	border-bottom: 1px solid #777;
-	color: #ccc;
 	font-size: 12px;
 	font-weight: bold;
 	margin-bottom: 10px;
@@ -419,8 +341,6 @@ td.kb-table-imgcell > img
 	background-image:url("../../img/losses.png");
 	background-position: 0 -3px;
 	background-repeat: no-repeat;
-	border-bottom: 1px solid #777;
-	color: #ccc;
 	font-size: 12px;
 	font-weight: bold;
 	margin-bottom: 10px;
@@ -434,8 +354,6 @@ td.kb-table-imgcell > img
 	background-image:url("../../img/contract-target.gif");
 	background-position: 0 -3px;
 	background-repeat: no-repeat;
-	border-bottom: 1px solid #777;
-	color: #ccc;
 	font-size: 12px;
 	font-weight: bold;
 	margin-bottom: 10px;
@@ -447,23 +365,6 @@ td.kb-table-imgcell > img
 .kl-kill, .kl-loss, .kl-kill-null, .kl-loss-null
 {
 	text-align: center;
-}
-
-.kl-kill-null, .kl-loss-null
-{
-	color: #aaa;
-}
-
-td.kl-kill-null-bg
-{
-	background: #030;
-	color: #999;
-}
-
-td.kl-loss-null-bg
-{
-	background: #300;
-	color: #999;
 }
 
 td.kl-kill
@@ -500,7 +401,6 @@ td.kl-loss-bg
 
 td.weeknav
 {
-	color: #666;
 	font-size: 9px;
 	font-weight: bold;
 }
@@ -518,20 +418,13 @@ input.kb-input
 
 a:link
 {
-	color: #FFA500;
 	font-size: 10px;
 	font-weight: bold;
 	text-decoration: none;
 }
 
-a.kb-table-row-hover:link
-{
-	color: #333;
-}
-
 a:visited
 {
-	color: #FFA500;
 	font-size: 10px;
 	font-weight: bold;
 	text-decoration: none;
@@ -539,7 +432,6 @@ a:visited
 
 a:active
 {
-	color: #FFA500;
 	font-size: 10px;
 	font-weight: bold;
 	text-decoration: none;
@@ -547,7 +439,6 @@ a:active
 
 a:hover
 {
-	color: #FFA500;
 	font-size: 10px;
 	font-weight: bold;
 	text-decoration: underline;
@@ -640,7 +531,6 @@ a:hover
 
 .killcount
 {
-	color: #fff;
 	font-size: 9px;
 	font-weight: bold;
 	padding-right: 4px;
@@ -648,7 +538,6 @@ a:hover
 
 .losscount
 {
-	color: #d00;
 	font-size: 9px;
 	font-weight: bold;
 }
@@ -661,40 +550,6 @@ a:hover
 .kb-summary-summary > .killcount
 {
 	text-align: right;
-}
-
-.kb-table-rows > tbody > tr.kb-table-row-kill:nth-child(even)
-{
-	background: #005000;
-}
-
-.kb-table-rows > tbody > tr.kb-table-row-kill:nth-child(odd)
-{
-	background: #004000;
-}
-
-.kb-table-rows > tbody > tr.kb-table-row-loss:nth-child(even)
-{
-	background: #a00000;
-}
-
-.kb-table-rows > tbody > tr.kb-table-row-loss:nth-child(odd)
-{
-	background: #900000;
-}
-
-.kb-table-rows > tbody > tr.kb-table-row-kill:hover
-{
-	background: #0083CC;
-	color: #FFF;
-	cursor: pointer;
-}
-
-.kb-table-rows > tbody > tr.kb-table-row-loss:hover
-{
-	background: #DD9300;
-	color: #222;
-	cursor: pointer;
 }
 
 div.kb-shiptype
@@ -716,42 +571,27 @@ td.kb-shipfilter
 	font-size: 12px;
 }
 
-a.kb-shipclass:visited
-{
-	color: #ddd;
-}
-
-a.kb-shipclass:link
-{
-	color: #ddd;
-}
-
 a.kb-shipclass-hl:link
 {
-	color: #FFA500;
 	text-decoration: underline;
 }
 
 a.kb-shipclass-hl:active
 {
-	color: #FFA500;
 	text-decoration: underline;
 }
 
 a.kb-shipclass-hl:visited
 {
-	color: #FFA500;
 	text-decoration: underline;
 }
 
 a.kb-shipclass:active
 {
-	color: #ddd;
 }
 
 a.kb-shipclass:hover
 {
-	color: #ddd;
 	text-decoration: underline;
 }
 
@@ -783,13 +623,7 @@ a.kb-contract:visited
 
 #main
 {
-	background: #111;
-	border-bottom: 0 solid #555;
-	border-collapse: separate;
-	border-left: 1px solid #555;
-	border-right: 1px solid #555;
 	border-spacing: 0;
-	border-top: 0 solid #555;
 	margin: auto;
 	padding: 0;
 	width: 950px;
@@ -829,7 +663,6 @@ a.kb-contract:visited
 .kb-kl-table a:link,
 .kb-kl-table a:visited
 {
-	color: #e0e0e0;
 	font-size: inherit;
 	font-weight: inherit;
 }
@@ -1035,7 +868,7 @@ img
 .kb-summary-summary
 {
 	text-align: center;
-	width: 100%;
+	padding-bottom: 5px;
 }
 
 .kb-summary-summary > div

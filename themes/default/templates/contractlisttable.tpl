@@ -1,6 +1,7 @@
+
 <table class="kb-table contractlist kb-table-rows">
 	<thead>
-	<tr class="kb-table-header">
+	<tr class="kb-table-header ui-widget-header">
 		<td>Name</td>
 		<td class="kb-date">Start date</td>
 {if $contract_getactive == "no"}
@@ -16,7 +17,7 @@
 	<tbody>
 {cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
 {foreach from=$contracts item=i}
-	<tr onclick="window.location.href='{$i.url}';">
+	<tr onclick="window.location.href='{$i.url}';" class="ui-state-default">
 		<td class="name" >{$i.name}</td>
 		<td class='kb-date'>{$i.startdate|date_format:"%Y-%m-%d"}</td>
 {if $contract_getactive == "no"}

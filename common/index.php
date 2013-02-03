@@ -104,6 +104,12 @@ if(!is_dir("themes/".$themename."/templates")) {
 	$themename = 'default';
 }
 
+$jqtheme_name = config::get('jqtheme_name');
+
+if(!is_dir("jquerythemes/".$jqtheme_name)) {
+	$jqtheme_name = 'base';
+}
+
 define('THEME_URL', config::get('cfg_kbhost').'/themes/'.$themename);
 
 // set up roles
@@ -209,6 +215,7 @@ $smarty->compile_dir = KB_CACHEDIR.'/templates_c/'.$themename;
 
 $smarty->cache_dir = KB_CACHEDIR.'/data';
 $smarty->assign('theme_name', $themename);
+$smarty->assign('jqtheme_name', $jqtheme_name);
 $smarty->assign('theme_url', THEME_URL);
 $smarty->assign('img_url', IMG_URL);
 $smarty->assign('img_host', IMG_HOST);

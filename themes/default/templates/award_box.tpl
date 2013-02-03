@@ -1,7 +1,7 @@
 <!-- award_box.tpl -->
-<table class="kb-table awardbox">
+<table class="kb-table awardbox ui-widget-content">
 	<tr>
-		<td class="kb-table-header">{$title}</td>
+		<td class="kb-table-header ui-widget-header">{$title}</td>
 	</tr>
 	<tr class="kb-table-row-even">
 		<td>

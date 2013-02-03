@@ -19,7 +19,7 @@
 			<td><a href="{$i.pilotURL}">{$i.pilotName}</a></td>
 		</tr>
 		<tr class="{cycle name="ccl"}">
-			<td><a href="{$i.corpURL}">{$i.corpName}</a></td>
+			<td class="kb-table-cell" style="padding-top: 1px; padding-bottom: 1px;"><a href="{$i.corpURL}">{$i.corpName}</a></td>
 		</tr>
 		<tr class="{cycle name="ccl"}">
 			<td>{if $i.alliURL}<a href="{$i.alliURL}">{$i.alliName}</a>{else}{$i.alliName}{/if}</td>
