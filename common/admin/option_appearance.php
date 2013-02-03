@@ -6,8 +6,11 @@
 
 options::cat('Appearance', 'Global Options', 'Global Look');
 options::fadd('Banner', 'style_banner', 'select', array('admin_appearance', 'createSelectBanner'), array('admin_appearance', 'changeBanner'));
+options::fadd('Background', 'style_background', 'select', array('admin_appearance', 'createSelectBackground'), array('admin_appearance', 'changeBackground'));
 options::fadd('Theme', 'theme_name', 'select', array('admin_appearance', 'createSelectTheme'), array('admin_appearance', 'changeTheme'));
 options::fadd('JQuery UI Theme', 'jqtheme_name', 'select', array('admin_appearance', 'createSelectJQTheme'), array('admin_appearance', 'changeJQTheme'));
+options::fadd('Background Color', 'style_background_color', 'edit' );
+
 options::fadd('Language', 'cfg_language', 'select', array('admin_appearance', 'createLanguage'));
 
 options::cat('Appearance', 'Global Options', 'Global Options');
@@ -195,6 +198,40 @@ class admin_appearance
 		return $options;
 	}
 
+	/* Create the selection options for available banners
+	 * @return stringHTML for the background selection dropdown list.
+	 */
+	function createSelectBackground()
+	{
+		$options = array();
+
+		if(config::get('style_background') == "0")
+			$state = 1;
+		else
+			$state = 0;
+		$options[] = array('value' => "0", 'descr' => "No background", 'state' => $state);
+
+		$dir = "background/";
+		if(is_dir($dir))
+		{
+			if($dh = scandir($dir))
+			{
+				foreach($dh as $file)
+				{
+					$file = substr($file, 0);
+					if(!is_dir($dir.$file))
+					{
+						if(config::get('style_background') == $file) $state = 1;
+						else $state = 0;
+
+						$options[] = array('value' => $file, 'descr' => $file, 'state' => $state);
+					}
+				}
+			}
+		}
+		return $options;
+	}
+
 	/** Create the selection options for available themes.
 	 *
 	 * @return string HTML for the theme selection dropdown list.
@@ -287,6 +324,23 @@ class admin_appearance
 		$smarty->assign('banner_x', $dimensions[0]);
 		$smarty->assign('banner_y', $dimensions[1]);
 	}
+
+	function changeBackground()
+	{
+		global $smarty;
+		if(options::getPrevious('style_background') == $_POST['option_style_background'])
+				return;
+		if($_POST['option_style_background'] == 0) return;
+
+		$dimensions = getimagesize('background/'.$_POST['option_style_background']);
+		if(!$dimensions) $dimensions = array(0, 0);
+
+		//config::set('style_background_x', $dimensions[0]);
+		//config::set('style_background_y', $dimensions[1]);
+		//$smarty->assign('background_x', $dimensions[0]);
+		//$smarty->assign('background_y', $dimensions[1]);
+	}
+
 	public static function createLanguage()
 	{
 		$options = array();
