@@ -37,8 +37,7 @@
         "sPaginationType": "full_numbers",
         "bJQueryUI": true,
         "bLengthChange": false,
-        "bSortClasses": false,
-		"aaSorting": [[0, 'desc']]
+        "bSortClasses": false
       });
 	  $('.kl-comm').click(function(e) {
         var e = e || window.event;
