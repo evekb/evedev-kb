@@ -11,23 +11,53 @@
 	<link rel="stylesheet" type="text/css" href="{$kb_host}/themes/default/default.css" />
 	{if $theme_name != 'default'}<link rel="stylesheet" type="text/css" href="{$theme_url}/default.css" />{/if}
 	<link id="edkid_theme" rel="stylesheet" type="text/css" href="{$kb_host}/jquerythemes/{$jqtheme_name}/jquery-ui.css" />
-	<script type='text/javascript' src='{$kb_host}/js/jquery-1.9.0.js'></script>
-	<script type='text/javascript' src='{$kb_host}/js/jquery-ui-1.10.0.custom.js'></script>
-	<script type='text/javascript' src='{$kb_host}/js/ui.js'></script>
-	<script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
-
-
+	{if $theme_name == 'default'}<script type="text/javascript" charset="utf8" src="{$kb_host}/themes/default/jquery.js"></script>
+	<script type="text/javascript" charset="utf8" src="{$kb_host}/themes/default/jquery.dataTables.js"></script>
 	<script type="text/javascript" charset="utf-8">
-	$(document).ready(function() {
-		$('.kl-table').dataTable({
-            "bFilter": false,
-            "sPaginationType": "full_numbers",
-            "bJQueryUI": true,
-            "bLengthChange": false,
-			"bSortClasses": false,
-        });
-	} );
-	</script>
+    //<![CDATA[
+    function commentDetails(oTable, nTr) {
+      var aData = oTable.fnGetData(nTr);
+	  
+      $.ajax({
+	    url: '{$kb_host}/?a=commentfeed&html',
+		type: 'GET',
+		data: {
+		  kll_id: aData[0]
+		},
+        success: function(output) {
+		  $('#comment_' + aData[0]).html(output);
+        }
+      });
+	  return '<div id="comment_' + aData[0] + '"></div>';
+    }
+
+    $(document).ready(function() {
+      var oTable = $('.kl-table').dataTable({
+        "bFilter": false,
+        "sPaginationType": "full_numbers",
+        "bJQueryUI": true,
+        "bLengthChange": false,
+        "bSortClasses": false,
+		"aaSorting": [[0, 'desc']]
+      });
+	  $('.kl-comm').click(function(e) {
+        var e = e || window.event;
+        if (e.stopPropagation)
+		  e.stopPropagation();
+        else
+          e.cancelBubble = true;
+        var nTr = $(this).parents('tr')[0];
+        if (oTable.fnIsOpen(nTr)) {
+          $(this).removeClass("kl-comm-overlay");
+          oTable.fnClose(nTr);
+        } else {
+          $(this).addClass("kl-comm-overlay");
+          oTable.fnOpen(nTr, commentDetails(oTable, nTr), 'kl-detail-comment-list');
+        }
+      });
+    });
+    //]]>
+	</script>{/if}
 {$page_headerlines}
 	<script type="text/javascript" src="{$kb_host}/themes/generic.js"></script>
 </head>

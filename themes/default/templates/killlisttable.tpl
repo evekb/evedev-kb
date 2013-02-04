@@ -4,7 +4,8 @@
 		<table class="kl-table">
 			<thead>
 				<tr class="kb-table-header ui-widget-header">
-                    <th class="kl-timestamp">Timestamp</th>
+					<th style="display: none"></th>
+					<th class="kl-timestamp">Timestamp</th>
 					<th class="kl-shiptype">Ship type</th>
 					<th class="kl-victim">Victim</th>
 					<th class="kl-finalblow">Final blow</th>
@@ -22,7 +23,8 @@
 						{else}
 						<tr onclick="window.location.href='{$k.urldetail}';">
 						{/if}
-                        <td>
+						<td style="display: none">{$k.id}</td>
+						<td>
                             <div class="kl-date">
                                 {if $daybreak}
                                     {if $k.urlrelated}
@@ -49,7 +51,6 @@
 								</div>
 							</div>
 						</td>
-
 						<td>
 							<div>
 								{if !$k.allianceexists}
@@ -86,10 +87,10 @@
 						</td>
 						{if $k.inv || $comments_count}
 							<td>
-									<div class="kl-inv-comm">
-										{if $k.inv}<img src="{$theme_url}/img/involved10_10.png"  alt="I:" /> {$k.inv}{/if}
-										{if $comments_count}<span {if  !$k.commentcount}style="visibility: hidden"{/if}><img src="{$theme_url}/img/comment_white13_10.gif" alt="C:" /> {$k.commentcount}</span>{/if}
-									</div>
+								<div class="kl-inv-comm">
+									{if $k.inv}<img src="{$theme_url}/img/involved10_10.png" alt="I:" /> {$k.inv}{/if}
+									{if $comments_count}<span {if !$k.commentcount}style="visibility: hidden"{/if}><img src="{$theme_url}/img/comment_white13_10.gif" alt="C:" class="kl-comm" /> {$k.commentcount}</span>{/if}
+								</div>
 							</td>
 						{/if}
 					</tr>

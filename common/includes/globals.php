@@ -48,8 +48,7 @@ edkloader::register('TopDamageDealerList', 'common/includes/class.toplist.php');
 edkloader::register('TopSoloKillerList', 'common/includes/class.toplist.php');
 edkloader::register('TopPodKillerList', 'common/includes/class.toplist.php');
 edkloader::register('TopGrieferList', 'common/includes/class.toplist.php');
-edkloader::register('TopCapitalShipKillerList',
-		'common/includes/class.toplist.php');
+edkloader::register('TopCapitalShipKillerList', 'common/includes/class.toplist.php');
 edkloader::register('TopContractKillsList', 'common/includes/class.toplist.php');
 edkloader::register('TopContractScoreList', 'common/includes/class.toplist.php');
 edkloader::register('TopPilotTable', 'common/includes/class.toplist.php');
@@ -302,4 +301,16 @@ if (!function_exists('get_called_class')) {
 			}
 		}
 	}
+}
+
+	/**
+	 * Append a SimpleXMLElement to another
+	 * 
+	 * @param SimpleXMLElement $base
+	 * @param SimpleXMLElement $append
+	*/
+	function sxe_append(SimpleXMLElement $base, SimpleXMLElement $append) {
+		$baseDom = dom_import_simplexml($base);
+		$appendDom = dom_import_simplexml($append);
+		$baseDom->appendChild($baseDom->ownerDocument->importNode($appendDom, true));
 }

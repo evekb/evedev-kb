@@ -251,7 +251,7 @@ class pKillDetail extends pageAssembly
 				$i_location = $this->collapse_ilocation($destroyed->getLocationID());
 				$i_id = $item->getID();
 				$i_usedgroup = $item->get_used_launcher_group();
-				
+
 				// BPCs
 				if($i_location == -1) {
 					$i_location = 5;
@@ -781,7 +781,7 @@ class pKillDetail extends pageAssembly
 			$smarty->assignByRef('page', $this->page);
 			$smarty->assign("kll_id", $this->kll_id);
 
-			return $this->commenthtml.$comments->getComments();
+			return $this->commenthtml.$comments->getHtml();
 		}
 	}
 

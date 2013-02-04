@@ -23,8 +23,52 @@ class Comments
 		$this->id_ = (int)$kll_id;
 	}
 
+	private function getComments()
+	{
+		$qry = DBFactory::getDBQuery();
+		// NULL site id is shown on all boards
+		$qry->execute("SELECT *,id FROM kb3_comments WHERE `kll_id` = '".
+			$this->id_."' AND (site = '".KB_SITE
+			."' OR site IS NULL) order by posttime asc");
+		while ($row = $qry->getRow()) {
+			$this->comments_[] = array(
+				'time' => $row['posttime'],
+				'name' => trim($row['name']),
+				'encoded_name' => urlencode(trim($row['name'])),
+				'comment' => $row['comment'],
+				'id' => $row['id'],
+				'ip' => $row['ip']);
+		}
+	}
+	
 	/**
-	 * Retrieve comments for a kill.
+	* Retrieve comments for a kill in xml.
+	*
+	* The kill id is set when the Comments object is constructed.
+	*
+	* @return SimpleXMLElement or false if no comments
+	*/
+	function getXml()
+	{
+		if (empty($this->comments_))
+			$this->getComments();
+		$xml = new SimpleXMLElement('<comments></comments>');
+		$xml->comments = ""; //make node permanent member
+		foreach($this->comments_ as $comment) {
+			$commentNode = $xml->comments->addChild('comment');
+			$commentNode->addChild('time', $comment['time']);
+			$commentNode->addChild('name', htmlspecialchars($comment['name']));
+			$commentNode->addChild('text', htmlspecialchars($comment['comment']));
+			$hasComments = true;
+		}
+		if ($hasComments)
+			return $xml;
+		else
+			return false;
+	}
+	
+	/**
+	 * Retrieve formatted html comments for a kill.
 	 *
 	 * The kill id is set when the Comments object is constructed.
 	 *
@@ -32,24 +76,12 @@ class Comments
 	 * @param boolean $commentsOnly
 	 * @return string
 	 */
-	function getComments($commentsOnly = false)
+	function getHtml($commentsOnly = false)
 	{
 		global $smarty;
 
-		$qry = DBFactory::getDBQuery();
-		// NULL site id is shown on all boards
-		$qry->execute("SELECT *,id FROM kb3_comments WHERE `kll_id` = '".
-				$this->id_."' AND (site = '".KB_SITE
-				."' OR site IS NULL) order by posttime asc");
-		while ($row = $qry->getRow()) {
-			$this->comments_[] = array(
-					'time' => $row['posttime'],
-					'name' => trim($row['name']),
-					'encoded_name' => urlencode(trim($row['name'])),
-					'comment' => $row['comment'],
-					'id' => $row['id'],
-					'ip' => $row['ip']);
-		}
+		if (empty($this->comments_))
+			$this->getComments();
 		$smarty->assignByRef('comments', $this->comments_);
 		$smarty->assign('norep', time() % 3700);
 		$smarty->assign('akey', session::isAdmin() ? session::makeKey() : false);

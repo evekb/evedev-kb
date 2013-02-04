@@ -172,7 +172,7 @@ function getComments($kll_id, $message = '')
 			$smarty->assign('kll_id', $kll_id);
 		}
 		$smarty->assignByRef('page', new Page("Comments"));
-		$message = $message.$comments->getComments(true);
+		$message = $message.$comments->getHtml(true);
 	}
 	else $message = '';
 
@@ -184,7 +184,7 @@ function getComments($kll_id, $message = '')
 
 /**
  * Post a new comment.
- * 
+ *
  * @global Smarty $smarty
  * @param integer $kll_id
  * @param string $author
