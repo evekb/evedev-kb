@@ -8,10 +8,9 @@
 	<link rel="stylesheet" type="text/css" href="jquery.dataTables_themeroller.css">
 	<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css">
 	<link rel="stylesheet" type="text/css" href="{$kb_host}/css.php" />
-	<link rel="stylesheet" type="text/css" href="{$kb_host}/themes/default/default.css" />
-	{if $theme_name != 'default'}<link rel="stylesheet" type="text/css" href="{$theme_url}/default.css" />{/if}
-	<link id="edkid_theme" rel="stylesheet" type="text/css" href="{$kb_host}/jquerythemes/{$jqtheme_name}/jquery-ui.css" />
-	{if $theme_name == 'default'}<script type="text/javascript" charset="utf8" src="{$kb_host}/themes/default/jquery.js"></script>
+	<link rel="stylesheet" type="text/css" href="{$theme_url}/default.css" />
+	<link id="edkid_theme" rel="stylesheet" type="text/css" href="{$theme_url}/jquerythemes/{$jqtheme_name}/jquery-ui.css" />
+	<script type="text/javascript" charset="utf8" src="{$kb_host}/themes/default/jquery.js"></script>
 	<script type="text/javascript" charset="utf8" src="{$kb_host}/themes/default/jquery.dataTables.js"></script>
 	<script type="text/javascript" charset="utf-8">
     //<![CDATA[
@@ -56,7 +55,7 @@
       });
     });
     //]]>
-	</script>{/if}
+	</script>
 {$page_headerlines}
 	<script type="text/javascript" src="{$kb_host}/themes/generic.js"></script>
 </head>

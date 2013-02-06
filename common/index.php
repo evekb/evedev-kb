@@ -104,12 +104,6 @@ if(!is_dir("themes/".$themename."/templates")) {
 	$themename = 'default';
 }
 
-$jqtheme_name = config::get('jqtheme_name');
-
-if(!is_dir("jquerythemes/".$jqtheme_name)) {
-	$jqtheme_name = 'base';
-}
-
 define('THEME_URL', config::get('cfg_kbhost').'/themes/'.$themename);
 
 // set up roles
@@ -154,9 +148,24 @@ if (substr($page, 0, 5) == 'admin') {
 
 $settingsPage = (substr($page, 0, 9) == 'settings_');
 
-if(file_exists("themes/".$themename."/init.php")) {
+/**
+ * @global Smarty $smarty
+ */
+$smarty = new Smarty();
+
+if(!session::isAdmin()) // Disable checking of timestamps for templates to improve performance.
+	$smarty->compile_check = false;
+$smarty->template_dir = "./themes/$themename/templates";
+
+if(!is_dir(KB_CACHEDIR.'/templates_c/'.$themename))
+	mkdir(KB_CACHEDIR.'/templates_c/'.$themename);
+$smarty->compile_dir = KB_CACHEDIR.'/templates_c/'.$themename;
+$smarty->cache_dir = KB_CACHEDIR.'/data';
+
+//initialize theme
+if(file_exists("themes/".$themename."/init.php"))
 	include_once("themes/".$themename."/init.php");
-}
+
 $mods_active = explode(',', config::get('mods_active'));
 $modOverrides = false;
 $modconflicts = array();
@@ -196,26 +205,7 @@ if (!$settingsPage && !file_exists('common/'.$page.'.php') && !$modOverrides)
 	$page = 'home';
 }
 
-/**
- * Smarty templating.
- * 
- * @global Smarty $smarty
- */
-$smarty = new Smarty();
-if(!session::isAdmin()) {
-	// Disable checking of timestamps for templates to improve performance.
-	$smarty->compile_check = false;
-}
-$smarty->template_dir = "./themes/$themename/templates";
-
-if(!is_dir(KB_CACHEDIR.'/templates_c/'.$themename)) {
-	mkdir(KB_CACHEDIR.'/templates_c/'.$themename);
-}
-$smarty->compile_dir = KB_CACHEDIR.'/templates_c/'.$themename;
-
-$smarty->cache_dir = KB_CACHEDIR.'/data';
 $smarty->assign('theme_name', $themename);
-$smarty->assign('jqtheme_name', $jqtheme_name);
 $smarty->assign('theme_url', THEME_URL);
 $smarty->assign('img_url', IMG_URL);
 $smarty->assign('img_host', IMG_HOST);

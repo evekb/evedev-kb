@@ -22,16 +22,16 @@ if (is_dir($dir))
     }
 }
 
-// load all auto-options from mods
+//load all auto-settings from mods
 $mods_active = explode(',', config::get('mods_active'));
 $modOverrides = false;
 foreach ($mods_active as $mod)
-{
     if (file_exists('mods/'.$mod.'/auto_settings.php'))
-    {
         include('mods/'.$mod.'/auto_settings.php');
-    }
-}
+
+//load auto-settings for active theme
+if (file_exists('themes/'.$themename.'/auto_settings.php'))
+	include('themes/'.$themename.'/auto_settings.php');
 
 /**
  * Overload the box object to force every admin page to use the new options menu

@@ -6,10 +6,7 @@
 
 options::cat('Appearance', 'Global Options', 'Global Look');
 options::fadd('Banner', 'style_banner', 'select', array('admin_appearance', 'createSelectBanner'), array('admin_appearance', 'changeBanner'));
-options::fadd('Background', 'style_background', 'select', array('admin_appearance', 'createSelectBackground'), array('admin_appearance', 'changeBackground'));
 options::fadd('Theme', 'theme_name', 'select', array('admin_appearance', 'createSelectTheme'), array('admin_appearance', 'changeTheme'));
-options::fadd('JQuery UI Theme', 'jqtheme_name', 'select', array('admin_appearance', 'createSelectJQTheme'), array('admin_appearance', 'changeJQTheme'));
-options::fadd('Background Color', 'style_background_color', 'edit' );
 
 options::fadd('Language', 'cfg_language', 'select', array('admin_appearance', 'createLanguage'));
 
@@ -18,7 +15,7 @@ options::fadd('Display standings', 'show_standings', 'checkbox');
 options::fadd('Enable lost item values', 'item_values', 'checkbox');
 options::fadd('Display a link instead of POD on Battlesummary', 'bs_podlink', 'checkbox');
 options::fadd('Include Capsules, Shuttles and Noobships in kills', 'podnoobs', 'checkbox');
-options::fadd('Classify kills for hours:', 'kill_classified', 'edit:size:4', '', '', '0 to disable, 1-24hrs');
+options::fadd('Classify kills for hours', 'kill_classified', 'edit:size:4', '', '', '0 to disable, 1-24hrs');
 
 options::cat('Appearance', 'Global Options', 'User Registration');
 options::fadd('Show user-menu on every page', 'user_showmenu', 'checkbox');
@@ -198,40 +195,6 @@ class admin_appearance
 		return $options;
 	}
 
-	/* Create the selection options for available banners
-	 * @return stringHTML for the background selection dropdown list.
-	 */
-	function createSelectBackground()
-	{
-		$options = array();
-
-		if(config::get('style_background') == "0")
-			$state = 1;
-		else
-			$state = 0;
-		$options[] = array('value' => "0", 'descr' => "No background", 'state' => $state);
-
-		$dir = "background/";
-		if(is_dir($dir))
-		{
-			if($dh = scandir($dir))
-			{
-				foreach($dh as $file)
-				{
-					$file = substr($file, 0);
-					if(!is_dir($dir.$file))
-					{
-						if(config::get('style_background') == $file) $state = 1;
-						else $state = 0;
-
-						$options[] = array('value' => $file, 'descr' => $file, 'state' => $state);
-					}
-				}
-			}
-		}
-		return $options;
-	}
-
 	/** Create the selection options for available themes.
 	 *
 	 * @return string HTML for the theme selection dropdown list.
@@ -261,10 +224,6 @@ class admin_appearance
 		return $options;
 	}
 
-	function createSelectJQTheme() {
-		return self::createSelectTheme('jquerythemes', 'jqtheme_name');
-	}
-
 	/**
 	 * Checks if theme has changed and updates page before display.
 	 */
@@ -290,18 +249,6 @@ class admin_appearance
 		CacheHandler::removeByAge('templates_c/'.$themename, 0, false);
 	}
 
-	function changeJQTheme()
-	{
-		global $themename;
-		if(options::getPrevious('jqtheme_name') == $_POST['option_jqtheme_name']) return;
-
-		$jqthemename = preg_replace('/[^a-zA-Z0-9-_]/', '', $_POST['option_jqtheme_name']);
-		if(!is_dir("jquerythemes/$jqthemename")) $jqthemename = 'base';
-
-		$_POST['option_jqtheme_name'] = $jqthemename;
-		config::set('jqtheme_name', $jqthemename);
-	}
-
 	/**
 	 * Checks if banner has changed, updates page before display and resets banner size.
 	 *
@@ -323,22 +270,6 @@ class admin_appearance
 
 		$smarty->assign('banner_x', $dimensions[0]);
 		$smarty->assign('banner_y', $dimensions[1]);
-	}
-
-	function changeBackground()
-	{
-		global $smarty;
-		if(options::getPrevious('style_background') == $_POST['option_style_background'])
-				return;
-		if($_POST['option_style_background'] == 0) return;
-
-		$dimensions = getimagesize('background/'.$_POST['option_style_background']);
-		if(!$dimensions) $dimensions = array(0, 0);
-
-		//config::set('style_background_x', $dimensions[0]);
-		//config::set('style_background_y', $dimensions[1]);
-		//$smarty->assign('background_x', $dimensions[0]);
-		//$smarty->assign('background_y', $dimensions[1]);
 	}
 
 	public static function createLanguage()
