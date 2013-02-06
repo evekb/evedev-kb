@@ -37,6 +37,8 @@ function update039()
 			$qry->execute("UPDATE kb3_kills SET kll_ship_id = 22436 WHERE kll_ship_id = 352"); // Widow
 			$qry->execute("UPDATE kb3_kills SET kll_ship_id = 22440 WHERE kll_ship_id = 354"); // Panther
 
+			$qry->execute("delete from kb3_config where cfg_key = 'style_name'");
+
 			config::set('039updatestatus',2);
 			$smarty->assign('refresh',1);
 			$smarty->assign('content', "39. Update kb3_kills.");
