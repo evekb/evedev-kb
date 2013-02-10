@@ -1,5 +1,6 @@
 {cycle reset=true print=false name=ccl values="kb-table-row-even,kb-table-row-odd"}
 <div class="kl-detail-inv">
+	<div class="block-header">Involved parties: {$involvedPartyCount}</div>
 	<table class="kb-table">
 		<col class="logo" />
 		<col class="logo" />

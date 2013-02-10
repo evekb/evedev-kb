@@ -31,6 +31,9 @@ class Kill extends Cacheable
 	private $fbpilotid = null;
 	private $fbcorpid = null;
 	private $fballianceid = null;
+	private $tdpilotid = null;
+	private $tdcorpid = null;
+	private $tdallianceid = null;
 	private $solarsystemid = null;
 	private $dupeid = 0;
 	private $hash = false;
@@ -356,12 +359,77 @@ class Kill extends Cacheable
 	}
 
 	/**
-	 * Return the Final Blow dealer's Alliance ID.
+	 * Return the Final Blow dealer's Alliance name.
 	 * @return integer
 	 */
 	function getFBAllianceName()
 	{
 		$alliance = Cacheable::factory('Alliance', $this->getFBAllianceID());
+		return $alliance->getName();
+	}
+	
+	/**
+	* @return integer
+	*/
+	function getTDPilotID()
+	{
+		if(!isset($this->tdpilotid)) {
+			$this->execQuery();
+		}
+		return $this->tdpilotid;
+	}
+
+	/**
+	 * Return the Top Damage dealer's name.
+	 * @return string
+	 */
+	function getTDPilotName()
+	{
+		$tdpilot = Cacheable::factory('Pilot', $this->getTDPilotID());
+		return $tdpilot->getName();
+	}
+
+	/**
+	 * Return the Top Damage dealer's Corporation ID.
+	 * @return integer
+	 */
+	function getTDCorpID()
+	{
+		if(!isset($this->tdcorpid)) {
+			$this->execQuery();
+		}
+		return $this->tdcorpid;
+	}
+
+	/**
+	 * Return the Top Damage dealer's Corporation Name.
+	 * @return string
+	 */
+	function getTDCorpName()
+	{
+		$tdcorp = Cacheable::factory('Corporation', $this->getTDCorpID());
+		return $tdcorp->getName();
+	}
+
+	/**
+	 * Return the Top Damage dealer's Alliance ID.
+	 * @return integer
+	 */
+	function getTDAllianceID()
+	{
+		if(!isset($this->tdallianceid)) {
+			$this->execQuery();
+		}
+		return $this->tdallianceid;
+	}
+
+	/**
+	 * Return the Top Damage dealer's Alliance name.
+	 * @return integer
+	 */
+	function getTDAllianceName()
+	{
+		$alliance = Cacheable::factory('Alliance', $this->getTDAllianceID());
 		return $alliance->getName();
 	}
 
@@ -816,6 +884,9 @@ class Kill extends Cacheable
 					$this->fbpilotid = $cache->fbpilotid;
 					$this->fbcorpid = $cache->fbcorpid;
 					$this->fballianceid = $cache->fballianceid;
+					$this->tdpilotid = $cache->tdpilotid;
+					$this->tdcorpid = $cache->tdcorpid;
+					$this->tdallianceid = $cache->tdallianceid;
 					$this->solarsystemid = $cache->solarsystemid;
 					$this->dupeid = $cache->dupeid;
 					$this->hash = $cache->hash;
@@ -835,11 +906,16 @@ class Kill extends Cacheable
 						kll.kll_points, kll.kll_isk_loss, kll_dmgtaken,
 						fb.ind_plt_id as fbplt_id,
 						fb.ind_crp_id as fbcrp_id,
-						fb.ind_all_id as fbali_id
-					from kb3_kills kll, kb3_inv_detail fb
+						fb.ind_all_id as fbali_id,
+						td.ind_plt_id as tdplt_id,
+						td.ind_crp_id as tdcrp_id,
+						td.ind_all_id as tdali_id
+					from kb3_kills kll, kb3_inv_detail fb, kb3_inv_detail td
 					where kll.kll_id = '".$this->id."'
 						and fb.ind_kll_id = kll.kll_id
-						and fb.ind_plt_id = kll.kll_fb_plt_id";
+						and fb.ind_plt_id = kll.kll_fb_plt_id
+						and td.ind_kll_id = kll.kll_id
+						and td.ind_plt_id = kll.kll_td_plt_id";
 
 			$qry->execute($sql);
 			$row = $qry->getRow();
@@ -859,6 +935,9 @@ class Kill extends Cacheable
 			$this->fbpilotid = (int)$row['fbplt_id'];
 			$this->fbcorpid = (int)$row['fbcrp_id'];
 			$this->fballianceid = (int)$row['fbali_id'];
+			$this->tdpilotid = (int)$row['tdplt_id'];
+			$this->tdcorpid = (int)$row['tdcrp_id'];
+			$this->tdallianceid = (int)$row['tdali_id'];
 			$this->externalid = (int)$row['kll_external_id'];
 			$this->iskloss = (float)$row['kll_isk_loss'];
 			$this->dmgtaken = (int)$row['kll_dmgtaken'];
@@ -1246,24 +1325,58 @@ class Kill extends Cacheable
 		$this->fbcorpid = $fbcorpid;
 	}
 
-	function setFBCorpName($fbcorpname)
-	{
-		$this->fbcorpname = $fbcorpname;
-	}
-
 	function setFBAllianceID($fballianceid)
 	{
 		$this->fballianceid = $fballianceid;
 	}
-
-	function setFBAllianceName($fballiancename)
+	
+	function setTDPilot($tdpilot)
 	{
-		$this->fballiancename = $fballiancename;
+		$this->tdpilot = $tdpilot;
 	}
+
+	function setTDPilotID($tdpilotid)
+	{
+		$this->tdpilotid = $tdpilotid;
+	}
+
+	function setTDPilotName($tdpilotname)
+	{
+		$npc = strpos($tdpilotname, "#");
+		if ($npc === false) {
+			$this->tdpilotname = $tdpilotname;
+		} else {
+			$name = explode("#", $tdpilotname);
+			$plt = new Item($name[2]);
+			$this->tdpilotname = $plt->getName();
+		}
+	}
+
+	function setTDCorpID($tdcorpid)
+	{
+		$this->tdcorpid = $tdcorpid;
+	}
+
+	function setTDCorpName($tdcorpname)
+	{
+		$this->tdcorpname = $tdcorpname;
+	}
+
+	function setTDAllianceID($tdallianceid)
+	{
+		$this->tdallianceid = $tdallianceid;
+	}
+
+	function setTDAllianceName($tdalliancename)
+	{
+		$this->tdalliancename = $tdalliancename;
+	}
+	
 	function setKillPoints($killpoints)
 	{
 		$this->killpoints = $killpoints;
 	}
+	
 	/**
 	 * Set the ISK loss value for this kill.
 	 */
@@ -1423,19 +1536,22 @@ class Kill extends Cacheable
 
 		$qry = DBFactory::getDBQuery();
 		$sql = "INSERT INTO kb3_kills
-            (kll_id , kll_timestamp , kll_victim_id , kll_all_id , kll_crp_id , kll_ship_id , kll_system_id , kll_fb_plt_id , kll_points , kll_dmgtaken, kll_external_id, kll_isk_loss)
+            (kll_id , kll_timestamp , kll_victim_id , kll_all_id , kll_crp_id , kll_ship_id , kll_system_id , kll_fb_plt_id , kll_td_plt_id , kll_points , kll_dmgtaken, kll_external_id, kll_isk_loss)
             VALUES (".$qid.",
-                    date_format('".$this->timestamp."', '%Y.%m.%d %H:%i:%s'),
+			date_format('".$this->timestamp."', '%Y.%m.%d %H:%i:%s'),
             ".$this->victimid.",
             ".$this->victimallianceid.",
             ".$this->victimcorpid.",
             ".$this->victimship->getID().",
             ".$this->solarsystem->getID().",
             ".$this->getFBPilotID().",
+			".$this->getTDPilotID().",
             ".$this->calculateKillPoints().",
             ".$this->dmgtaken.", ";
-		if($this->externalid) $sql .= $this->externalid.", ";
-		else $sql .= "NULL, ";
+		if($this->externalid)
+			$sql .= $this->externalid.", ";
+		else
+			$sql .= "NULL, ";
 		$sql .= $this->getISKLoss()." )";
 		$qry->autocommit(false);
 		if(!$qry->execute($sql)) {
@@ -1613,10 +1729,9 @@ class Kill extends Cacheable
 		array_push($this->droppeditems_, $dropped);
 	}
 
-	/** Return the array of involved parties.
+	/** Return the array of involved parties. Includes Final Blow and Top Damage pilots.
 	*
 	* @return mixed InvolvedParty[].
-	*
 	*/
 	function getInvolved()
 	{

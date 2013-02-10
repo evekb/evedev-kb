@@ -399,6 +399,7 @@ class Parser
 
 		$ipilot_count = 0; //allows us to be a bit more specific when errors strike
 		$i = 0;
+		$topdamage = 0;
 
 		$order = 0;
 		while ($i < count($involved))
@@ -519,6 +520,9 @@ class Parser
 					{
 						if($matches[1])
 							$idmgdone = (int) $matches[1];
+						if ($idmgdone > $topdamage) {
+							$topdamage = $idmgdone;
+						}
 					}
 					else if($involved[$counter] == '')
 					{ //allows us to process the involved party. This is the empty line after the
@@ -663,9 +667,13 @@ class Parser
 
 				$kill->addInvolvedParty($iparty);
 
-				if ($finalblow == 1)
-				{
+				if ($finalblow == 1) {
 					$kill->setFBPilotID($ipilot->getID());
+					$kill->setFBCorpID($icorp->getID());
+					$kill->setFBAllianceID($ialliance->getID());
+				}
+				if ($topdamage == $idmgdone) {
+					$kill->setTDPilotID($ipilot->getID());
 					$kill->setFBCorpID($icorp->getID());
 					$kill->setFBAllianceID($ialliance->getID());
 				}
@@ -1048,4 +1056,3 @@ class Parser
 		$this->trust = intval($trust);
 	}
 }
-//Currently maintained by FriedRoadKill

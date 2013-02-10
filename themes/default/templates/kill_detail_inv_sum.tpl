@@ -1,5 +1,4 @@
 <div class="kl-detail-invsum">
-	<div class="block-header">Involved parties: {$involvedPartyCount}</div>
 	{if $showext && $involvedPartyCount > 4}
 		<table class="kb-table">
 			<tr class="kb-table-row-even" >

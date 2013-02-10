@@ -352,6 +352,67 @@ class KillWrapper extends Kill
 	}
 
 	/**
+	 * @return integer
+	 */
+	function getTDPilotID()
+	{
+		return $this->tdpilotid;
+	}
+
+	/**
+	 * @return integer
+	 */
+	function getTDPilotExternalID()
+	{
+		return $this->tdpilotexternalid;
+	}
+
+	/**
+	 * Return the Top Damage dealer's name.
+	 * @return string
+	 */
+	function getTDPilotName()
+	{
+		return $this->tdpilotname;
+	}
+
+	/**
+	 * Return the Top Damage dealer's Corporation ID.
+	 * @return integer
+	 */
+	function getTDCorpID()
+	{
+		return $this->tdcorpid;
+	}
+
+	/**
+	 * Return the Top Damage dealer's Corporation Name.
+	 * @return string
+	 */
+	function getTDCorpName()
+	{
+		return $this->tdcorpname;
+	}
+
+	/**
+	 * Return the Top Damage dealer's Alliance ID.
+	 * @return integer
+	 */
+	function getTDAllianceID()
+	{
+		return $this->tdallianceid;
+	}
+
+	/**
+	 * Return the Top Damage dealer's Alliance ID.
+	 * @return integer
+	 */
+	function getTDAllianceName()
+	{
+		return $this->tdalliancename;
+	}
+	
+	/**
 	 * @return float
 	 */
 	function getISKLoss()
@@ -608,6 +669,18 @@ class KillWrapper extends Kill
 			$this->fbpilotname = $plt->getName();
 		}
 	}
+	
+	function setTDPilotName($tdpilotname)
+	{
+		$npc = strpos($tdpilotname, "#");
+		if ($npc === false) {
+			$this->tdpilotname = $tdpilotname;
+		} else {
+			$name = explode("#", $tdpilotname);
+			$plt = new Item($name[2]);
+			$this->tdpilotname = $plt->getName();
+		}
+	}
 
 	/**
 	 * Calculate the current cost of a ship loss excluding blueprints.
@@ -705,10 +778,9 @@ class KillWrapper extends Kill
 		array_push($this->droppeditems_, $dropped);
 	}
 
-	/** Return the array of involved parties.
+	/** Return the array of involved parties. Includes Final Blow and Top Damage pilots.
 	 *
 	 * @return mixed InvolvedParty[].
-	 *
 	 */
 	function getInvolved()
 	{

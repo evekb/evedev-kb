@@ -84,7 +84,15 @@ class KillList
 			"fbcrp.crp_name as fbcrp_name",
 			"fbali.all_name as fball_name",
 			"fbcrp.crp_id as fbcrp_id",
-			"fbali.all_id as fball_id");
+			"fbali.all_id as fball_id",
+			"tdplt.plt_name as tdplt_name",
+			"tdplt.plt_id as tdplt_id",
+			"tdplt.plt_externalid as tdplt_externalid",
+			"tdcrp.crp_name as tdcrp_name",
+			"tdali.all_name as tdall_name",
+			"tdcrp.crp_id as tdcrp_id",
+			"tdali.all_id as tdall_id");
+
 	}
 
 	private function makeKllQuery($startdate, $enddate)
@@ -318,6 +326,14 @@ class KillList
 								ON ( fbcrp.crp_id = fb.ind_crp_id )
 							STRAIGHT_JOIN kb3_alliances fbali
 								ON ( fbali.all_id = fb.ind_all_id )
+							STRAIGHT_JOIN kb3_pilots tdplt
+								ON ( tdplt.plt_id = kll.kll_td_plt_id )
+							STRAIGHT_JOIN kb3_inv_detail td
+								ON ( td.ind_kll_id = kll.kll_id AND td.ind_plt_id = kll.kll_td_plt_id )
+							STRAIGHT_JOIN kb3_corps tdcrp
+								ON ( tdcrp.crp_id = td.ind_crp_id )
+							STRAIGHT_JOIN kb3_alliances tdali
+								ON ( tdali.all_id = td.ind_all_id )
 						   ";
 			// System
 			if(count($this->systems_) || count($this->regions_))
