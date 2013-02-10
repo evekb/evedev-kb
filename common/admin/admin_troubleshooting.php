@@ -54,7 +54,7 @@ else
 // connectivity
 $sections['Connectivity'] = 'Connectivity';
 
-$url = 'http://www.eve-id.net/logo.png';
+$url = 'http://www.evekb.org/';
 if (ini_get('allow_url_fopen'))
 {
 	if (count(file($url)))

@@ -30,8 +30,8 @@ class pAbout extends pageAssembly
 		global $smarty;
 		// Current active developers
 		$currentDeveloper = array(
-			'mastergamer', // Various stuff
 			'Mini Mooo',
+			'idun',
 		);
 
 		// Inactive developers
@@ -42,6 +42,7 @@ class pAbout extends pageAssembly
 			'Ralle030583',
 			'FriedRoadKill', // Parser, db updates and image packs
 			'Captain Thunk' // API mod
+			'mastergamer', // Various stuff
 		);
 
 		// Other contributors
