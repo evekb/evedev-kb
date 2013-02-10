@@ -72,6 +72,6 @@ $(document).ready(function() {
 	</div>
 
 {else}
-<p>No Data.</p>
+<p class="ui-state-highlight">No Data.</p>
 {/if}
 </div>
