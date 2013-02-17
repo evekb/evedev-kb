@@ -41,7 +41,7 @@ class pAbout extends pageAssembly
 			'Beansman',
 			'Ralle030583',
 			'FriedRoadKill', // Parser, db updates and image packs
-			'Captain Thunk' // API mod
+			'Captain Thunk', // API mod
 			'mastergamer', // Various stuff
 		);
 
@@ -62,7 +62,6 @@ class pAbout extends pageAssembly
 		$smarty->assignByRef('developer', $developer);
 		$smarty->assign('contributor', $contributor);
 		return $smarty->fetch(get_tpl("about_developers"));
-
 	}
 
 	function stats()

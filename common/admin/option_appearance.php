@@ -52,7 +52,6 @@ options::fadd('Display killpoints', 'kill_points', 'checkbox');
 options::fadd('Display losspoints', 'loss_points', 'checkbox');
 options::fadd('Display totalpoints', 'total_points', 'checkbox');
 options::fadd('Show Total ISK Loss, Damage at top', 'kd_showiskd', 'checkbox');
-options::fadd('Show Top Damage Dealer/Final Blow Boxes', 'kd_showbox', 'checkbox');
 options::fadd('Show involved parties summary', 'kd_showext', 'checkbox');
 options::fadd('Include dropped value in total loss', 'kd_droptototal', 'checkbox');
 
