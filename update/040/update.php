@@ -29,10 +29,10 @@ function update040()
 		
 		if(config::get('040updatestatus') <2) {
 			if( config::get('040updatelastkill') > 0 ) {
-				$sql = "select kll_id from kb3_mails where kll_id > " . config::get('040updatelastkill') .
+				$sql = "select kll_id from kb3_mails where kll_trust <> -1 AND kll_id > " . config::get('040updatelastkill') .
 				" AND kll_json is null limit 500";
 			} else {
-				$sql = "select kll_id from kb3_mails where kll_json is null limit 500";
+				$sql = "select kll_id from kb3_mails where kll_trust <> -1 AND kll_json is null limit 500";
 			}
 			$qry->execute($sql);
 			$out = '';	
@@ -43,6 +43,7 @@ function update040()
 				if( $xml === false ) {
 					config::set('040updatelastkill',$killid);
 					$out .= "Corrupt Kill: $killid<br/>";
+					die;
 					continue;
 				}
 				$xml2 = (string)str_replace(array("\r", "\r\n", "\n", " ", '<?xmlversion="1.0"?>'), '', $xml->result->rowset->row->asXML());
@@ -69,7 +70,7 @@ function update040()
 				}
 			}
 			
-			$sql = "select count(kll_id) as cnt from kb3_mails where kll_json is null";
+			$sql = "select count(kll_id) as cnt from kb3_mails where kll_trust <> -1 AND kll_json is null";
 			$qry->execute($sql);
 			$row = $qry->getRow();
 			if( $row['cnt'] == 0 ) {
