@@ -256,7 +256,10 @@ if ($settingsPage)
 		exit;
 	}
 
-	include('mods/'.substr($page, 9, strlen($page)-9).'/settings.php');
+	if( (@include('mods/'.substr($page, 9, strlen($page)-9).'/settings.php')) === false ) {
+		header('Location: '.edkURI::build(array('a', 'error', true)));
+		exit;
+	}
 }
 elseif ($modOverrides)
 {
