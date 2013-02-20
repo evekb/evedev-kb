@@ -588,14 +588,16 @@ class pKillDetail extends pageAssembly
 				}
 			}
 
-			if ($this->kill->getInvolvedPartyCount() == 1) {
+			$setOtherInvolved = true;
+			if ($inv->getPilotID() == $this->kill->getFBPilotID()) { //Final Blow pilot
 				$this->finalblow = $record;
+				$setOtherInvolved = false;
+			}
+			if ($inv->getPilotID() == $this->kill->getTDPilotID()) { //Top Damage pilot
 				$this->topdamage = $record;
-			} else if ($inv->getPilotID() == $this->kill->getFBPilotID()) //Final Blow pilot
-				$this->finalblow = $record;
-			else if ($inv->getPilotID() == $this->kill->getTDPilotID()) //Top Damage pilot
-				$this->topdamage = $record;
-			else //other involved pilot
+				$setOtherInvolved = false;
+			}
+			if ($setOtherInvolved) //other involved pilot
 				$this->involved[] = $record;
 
 			++$i;
