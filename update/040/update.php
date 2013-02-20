@@ -29,13 +29,13 @@ function update040()
 		
 		if(config::get('040updatestatus') <2) {
 			if( config::get('040updatelastkill') > 0 ) {
-				$sql = "select kll_id from kb3_mails where kll_trust <> -1 AND kll_id > " . config::get('040updatelastkill') .
+				$sql = "select kll_id from kb3_mails where kll_trust <> -1 AND kll_id >= " . config::get('040updatelastkill') .
 				" AND kll_json is null limit 500";
 			} else {
 				$sql = "select kll_id from kb3_mails where kll_trust <> -1 AND kll_json is null limit 500";
 			}
 			$qry->execute($sql);
-			$out = '';	
+			$out = '';
 			while ($row = $qry->getRow()) {
 				$killid = (int)$row['kll_id'];
 
@@ -85,6 +85,7 @@ function update040()
 		config::set("DBUpdate", "040");
 		$qry->execute("INSERT INTO kb3_config (cfg_site, cfg_key, cfg_value) SELECT cfg_site, 'DBUpdate', '040' FROM kb3_config GROUP BY cfg_site ON DUPLICATE KEY UPDATE cfg_value = '040'");
 		config::del("040updatestatus");
+		config::del("040updatelastkill");
 
 		$smarty->assign('refresh',1);
 		$smarty->assign('content', "Update 040 completed.");
