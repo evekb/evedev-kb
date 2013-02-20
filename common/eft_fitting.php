@@ -6,6 +6,14 @@
 // Original by TEKAI
 // Ammo addition and little modifications by Wes Lave
 
+define( 'HIGHSLOT', 27);
+define( 'MIDSLOT', 19);
+define( 'LOWSLOT', 11);
+define( 'RIGSLOT', 92);
+define( 'DRONEBAY', 87);
+define( 'SUBSYSTEM', 125);
+define( 'CARGO', 5);
+
 $kll_id = (int)edkURI::getArg('kll_id', 1);
 $kill = Cacheable::factory('Kill', $kll_id);
 $ship = $kill->getVictimShip();
@@ -14,14 +22,14 @@ $shipclass = $ship->getClass();
 $shipname = $ship->getName();
 $killtitle .= $pilotname."'s ".$shipname;
 
-$fitting_array[1] = array();    // high slots
-$fitting_array[2] = array();    // med slots
-$fitting_array[3] = array();    // low slots
-$fitting_array[5] = array();    // rig slots
-$fitting_array[6] = array();    // drone bay
-$fitting_array[7] = array();    // subsystems
-$ammo_array[1] = array();	// high ammo
-$ammo_array[2] = array();	// mid ammo
+$fitting_array[HIGHSLOT] = array();    // high slots
+$fitting_array[MIDSLOT] = array();    // med slots
+$fitting_array[LOWSLOT] = array();    // low slots
+$fitting_array[RIGSLOT] = array();    // rig slots
+$fitting_array[DRONEBAY] = array();    // drone bay
+$fitting_array[SUBSYSTEM] = array();    // subsystems
+$ammo_array[HIGHSLOT] = array();	// high ammo
+$ammo_array[MIDSLOT] = array();	// mid ammo
 
 
 if (count($kill->destroyeditems_) > 0)
@@ -35,11 +43,11 @@ if (count($kill->destroyeditems_) > 0)
 		$i_id = $item->getID();
 		$i_usedgroup = $item->get_used_launcher_group($i_name);
 		//Fitting, KE - add destroyed items to an array of all fitted items.
-		if($i_location != 4)
+		if($i_location != CARGO)
 		{
 			if(($i_usedgroup != 0))
 			{
-				if ($i_location == 1)
+				if ($i_location == HIGHSLOT)
 				{
 					$i_ammo=$item->get_ammo_size($i_name);
 
@@ -53,7 +61,7 @@ if (count($kill->destroyeditems_) > 0)
 			{
 				for ($count = 0; $count < $i_qty; $count++)
 				{
-					if ($i_location == 1)
+					if ($i_location == HIGHSLOT)
 					{
 						$i_charge=$item->get_used_charge_size($i_name);
 					}
@@ -80,11 +88,11 @@ if (count($kill->droppeditems_) > 0)
 		$i_id = $item->getID();
 		$i_usedgroup = $item->get_used_launcher_group($i_name);
 		//Fitting -KE, add dropped items to the list
-		if($i_location != 4)
+		if($i_location != CARGO)
 		{
 			if(($i_usedgroup != 0))
 			{
-				if ($i_location == 1)
+				if ($i_location == HIGHSLOT)
 				{
 					$i_ammo=$item->get_ammo_size($i_name);
 				}
@@ -97,7 +105,7 @@ if (count($kill->droppeditems_) > 0)
 			{
 				for ($count = 0; $count < $i_qty; $count++)
 				{
-					if ($i_location == 1)
+					if ($i_location == HIGHSLOT)
 					{
 						$i_charge=$item->get_used_charge_size($i_name);
 					}
@@ -116,68 +124,68 @@ if (count($kill->droppeditems_) > 0)
 }
 
 //Fitting - KE, sort the fitted items into groupID order, so that several of the same item apear next to each other.
-if(!(empty($fitting_array[1])))
+if(!(empty($fitting_array[HIGHSLOT])))
 {
-	foreach ($fitting_array[1] as $array_rowh)
+	foreach ($fitting_array[HIGHSLOT] as $array_rowh)
 	{
 		$sort_by_nameh["groupID"][] = $array_rowh["groupID"];
 	}
-	array_multisort($sort_by_nameh["groupID"],SORT_ASC,$fitting_array[1]);
+	array_multisort($sort_by_nameh["groupID"],SORT_ASC,$fitting_array[HIGHSLOT]);
 }
 
-if(!(empty($fitting_array[2])))
+if(!(empty($fitting_array[MIDSLOT])))
 {
-	foreach ($fitting_array[2] as $array_rowm)
+	foreach ($fitting_array[MIDSLOT] as $array_rowm)
 	{
 		$sort_by_namem["groupID"][] = $array_rowm["groupID"];
 	}
-	array_multisort($sort_by_namem["groupID"],SORT_ASC,$fitting_array[2]);
+	array_multisort($sort_by_namem["groupID"],SORT_ASC,$fitting_array[MIDSLOT]);
 }
 
-if(!(empty($fitting_array[3])))
+if(!(empty($fitting_array[LOWSLOT])))
 {
-	foreach ($fitting_array[3] as $array_rowl)
+	foreach ($fitting_array[LOWSLOT] as $array_rowl)
 	{
 		$sort_by_namel["groupID"][] = $array_rowl["groupID"];
 	}
-	array_multisort($sort_by_namel["groupID"],SORT_ASC,$fitting_array[3]);
+	array_multisort($sort_by_namel["groupID"],SORT_ASC,$fitting_array[LOWSLOT]);
 }
 
-if(!(empty($fitting_array[5])))
+if(!(empty($fitting_array[RIGSLOT])))
 {
-	foreach ($fitting_array[5] as $array_rowr)
+	foreach ($fitting_array[RIGSLOT] as $array_rowr)
 	{
 		$sort_by_namer["Name"][] = $array_rowr["Name"];
 	}
-	array_multisort($sort_by_namer["Name"],SORT_ASC,$fitting_array[5]);
+	array_multisort($sort_by_namer["Name"],SORT_ASC,$fitting_array[RIGSLOT]);
 }
 
-if(!(empty($fitting_array[6])))
+if(!(empty($fitting_array[DRONEBAY])))
 {
-	foreach ($fitting_array[6] as $array_rowd)
+	foreach ($fitting_array[DRONEBAY] as $array_rowd)
 	{
 		$sort_by_named["Name"][] = $array_rowd["Name"];
 	}
-	array_multisort($sort_by_named["Name"],SORT_ASC,$fitting_array[6]);
+	array_multisort($sort_by_named["Name"],SORT_ASC,$fitting_array[DRONEBAY]);
 }
 
-if(!(empty($fitting_array[7])))
+if(!(empty($fitting_array[SUBSYSTEM])))
 {
-	foreach ($fitting_array[7] as $array_rowd)
+	foreach ($fitting_array[SUBSYSTEM] as $array_rowd)
 	{
 		$sort_by_names["Name"][] = $array_rowd["Name"];
 	}
-	array_multisort($sort_by_names["Name"],SORT_ASC,$fitting_array[7]);
+	array_multisort($sort_by_names["Name"],SORT_ASC,$fitting_array[SUBSYSTEM]);
 }
 
 //Fitting - KE, sort the fitted items into name order, so that several of the same item apear next to each other. -end
 
-$length = count($ammo_array[1]);
+$length = count($ammo_array[HIGHSLOT]);
 $temp = array();
-if(is_array($fitting_array[1]))
+if(is_array($fitting_array[HIGHSLOT]))
 {
 	$hiammo = array();
-	foreach ($fitting_array[1] as $highfit)
+	foreach ($fitting_array[HIGHSLOT] as $highfit)
 	{
 		$group = $highfit["groupID"];
 		$size = $highfit["chargeSize"];
@@ -196,18 +204,18 @@ if(is_array($fitting_array[1]))
 			$found = 0;
 			if ($group == 511)
 			{ $group = 509; } // Assault Missile Lauchers uses same ammo as Standard Missile Lauchers
-			if(is_array($ammo_array[1]))
+			if(is_array($ammo_array[HIGHSLOT]))
 			{
 				$i = 0;
 				while (!($found) && $i<$length)
 				{
-					$temp = array_shift($ammo_array[1]);
+					$temp = array_shift($ammo_array[HIGHSLOT]);
 					if (($temp["usedgroupID"] == $group) && ($temp["size"] == $size))
 					{
 						$hiammo[]=$temp["Name"];
 						$found = 1;
 					}
-					array_push($ammo_array[1],$temp);
+					array_push($ammo_array[HIGHSLOT],$temp);
 					$i++;
 				}
 			}
@@ -222,11 +230,11 @@ if(is_array($fitting_array[1]))
 	}
 }
 
-$length = count($ammo_array[2]);
-if(is_array($fitting_array[2]))
+$length = count($ammo_array[MIDSLOT]);
+if(is_array($fitting_array[MIDSLOT]))
 {
 	$midammo = array();
-	foreach ($fitting_array[2] as $midfit)
+	foreach ($fitting_array[MIDSLOT] as $midfit)
 	{
 		$group = $midfit["groupID"];
 		if($group == 76 // Capacitor Boosters
@@ -239,18 +247,18 @@ if(is_array($fitting_array[2]))
 		)
 		{
 			$found = 0;
-			if(is_array($ammo_array[2]))
+			if(is_array($ammo_array[MIDSLOT]))
 			{
 				$i = 0;
 				while (!($found) && $i<$length)
 				{
-					$temp = array_shift($ammo_array[2]);
+					$temp = array_shift($ammo_array[MIDSLOT]);
 					if ($temp["usedgroupID"] == $group)
 					{
 						$midammo[]=$temp["Name"];
 						$found = 1;
 					}
-					array_push($ammo_array[2],$temp);
+					array_push($ammo_array[MIDSLOT],$temp);
 					$i++;
 				}
 			}
@@ -266,12 +274,12 @@ if(is_array($fitting_array[2]))
 	}
 }
 
-$slots = array(3 => "[empty low slot]",
-	2 => "[empty mid slot]",
-	1 => "[empty high slot]",
-	5 => "[empty rig slot]",
-	7 => "",
-	6 => "");
+$slots = array(LOWSLOT => "[empty low slot]",
+	MIDSLOT => "[empty mid slot]",
+	HIGHSLOT => "[empty high slot]",
+	RIGSLOT => "[empty rig slot]",
+	SUBSYSTEM => "",
+	DRONEBAY => "");
 
 ?>
 popup|<form>
@@ -298,18 +306,18 @@ foreach ($slots as $i => $empty)
 		foreach ($fitting_array[$i] as $k => $a_item)
 		{
 			$item = $a_item['Name'];
-			if ($i == 6)
+			if ($i == DRONEBAY)
 			{
 				$item .= ' x1';
 			}
-			elseif ($i == 1)
+			elseif ($i == HIGHSLOT)
 			{
 				if ($hiammo[$k])
 				{
 					$item .=','.$hiammo[$k];
 				}
 			}
-			elseif ($i == 2)
+			elseif ($i == MIDSLOT)
 			{
 				if ($midammo[$k])
 				{

@@ -6,6 +6,14 @@
 // Original by TEKAI
 // Ammo addition and little modifications by Wes Lave
 
+define( 'HIGHSLOT', 27);
+define( 'MIDSLOT', 19);
+define( 'LOWSLOT', 11);
+define( 'RIGSLOT', 92);
+define( 'DRONEBAY', 87);
+define( 'SUBSYSTEM', 125);
+define( 'CARGO', 5);
+
 $kll_id = (int)edkURI::getArg('kll_id', 1);
 $kill = Cacheable::factory('Kill', $kll_id);
 $ship = $kill->getVictimShip();
@@ -14,15 +22,14 @@ $shipclass = $ship->getClass();
 $shipname = $ship->getName();
 $killtitle .= $pilotname."'s ".$shipname;
 
-$fitting_array[1] = array();    // high slots
-$fitting_array[2] = array();    // med slots
-$fitting_array[3] = array();    // low slots
-$fitting_array[5] = array();    // rig slots
-$fitting_array[6] = array();    // drone bay
-$fitting_array[7] = array();    // subsystems
-$ammo_array[1] = array();	// high ammo
-$ammo_array[2] = array();	// mid ammo
-
+$fitting_array[HIGHSLOT] = array();    // high slots
+$fitting_array[MIDSLOT] = array();    // med slots
+$fitting_array[LOWSLOT] = array();    // low slots
+$fitting_array[RIGSLOT] = array();    // rig slots
+$fitting_array[DRONEBAY] = array();    // drone bay
+$fitting_array[SUBSYSTEM] = array();    // subsystems
+$ammo_array[HIGHSLOT] = array();	// high ammo
+$ammo_array[MIDSLOT] = array();	// mid ammo
 
 if (count($kill->destroyeditems_) > 0)
 {
@@ -35,13 +42,13 @@ if (count($kill->destroyeditems_) > 0)
 		$i_id = $item->getID();
 		$i_usedgroup = $item->get_used_launcher_group($i_name);
 		//Fitting, KE - add destroyed items to an array of all fitted items.
-		if($i_location != 4)
+		if($i_location != CARGO)
 		{
 			if(($i_usedgroup == 0))
 			{
 				for ($count = 0; $count < $i_qty; $count++)
 				{
-					if ($i_location == 1)
+					if ($i_location == HIGHSLOT)
 					{
 						$i_charge=$item->get_used_charge_size($i_name);
 					}
@@ -53,7 +60,6 @@ if (count($kill->destroyeditems_) > 0)
 				}
 			}
 		}
-	//fitting thing end
 	}
 }
 
@@ -68,13 +74,13 @@ if (count($kill->droppeditems_) > 0)
 		$i_id = $item->getID();
 		$i_usedgroup = $item->get_used_launcher_group($i_name);
 		//Fitting -KE, add dropped items to the list
-		if($i_location != 4)
+		if($i_location != CARGO)
 		{
 			if(($i_usedgroup == 0))
 			{
 				for ($count = 0; $count < $i_qty; $count++)
 				{
-					if ($i_location == 1)
+					if ($i_location == HIGHSLOT)
 					{
 						$i_charge=$item->get_used_charge_size($i_name);
 					}
@@ -86,20 +92,17 @@ if (count($kill->droppeditems_) > 0)
 				}
 			}
 		}
-	//fitting thing end
-
-
 	}
 }
 
 
 
-$slots = array(3 => "low slot",
-	2 => "med slot",
-	1 => "hi slot",
-	5 => "rig slot",
-	7 => "subsystem slot",
-	6 => "drone bay");
+$slots = array(LOWSLOT => "low slot",
+	MIDSLOT => "med slot",
+	HIGHSLOT => "hi slot",
+	RIGSLOT => "rig slot",
+	SUBSYSTEM => "subsystem slot",
+	DRONEBAY => "drone bay");
 
 $xml = "<?xml version=\"1.0\" ?>
 	<fittings>\n";
@@ -117,7 +120,7 @@ foreach ($slots as $i => $empty)
 		{
 			$item = $a_item['Name'];
 			$xml .= "\t\t\t<hardware ";
-			if($i == 6)
+			if($i == DRONEBAY)
 			{
 				$xml .= "qty=\"1\" ";
 				$xml .= "slot=\"".$slots[$i]."\" ";
