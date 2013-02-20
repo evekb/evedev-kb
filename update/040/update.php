@@ -153,7 +153,7 @@ function killIDToXML($id)
 	$qry->execute($sql);
 	$ret4 = $qry->getRow();	
 	if (!$ret4) {
-		echo '$id : Missing Ship: ' . $ret['kll_ship_id'] . "<br/>\n";
+		echo "$id : Missing Ship: " . $ret['kll_ship_id'] . "<br/>\n";
 		return false; // bad kill
 	}	
 	$victimrow = $row->addChild('victim');
