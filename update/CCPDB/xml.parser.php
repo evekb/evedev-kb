@@ -46,7 +46,7 @@ class UpdateXMLParser
 	private function retrieve()
 	{
 		$cacheFileName = KB_CACHEDIR . "/update/update.xml";
-		$hostFileName = KB_UPDATE_URL . "/update.xml";
+		$hostFileName = KB_UPDATE_URL;
 		$cachedTime = Config::get('upd_cacheTime');
 
 		//unix time: if a day has passed, reload the xml from the web

@@ -9,7 +9,7 @@ if (!defined('LATEST_DB_UPDATE')) {
 define('KB_CACHEDIR', 'cache');
 define('KB_PAGECACHEDIR', KB_CACHEDIR.'/page');
 define('KB_MAILCACHEDIR', KB_CACHEDIR.'/mails');
-define('KB_UPDATE_URL', 'http://evedev-kb.googlecode.com/files');
+define('KB_UPDATE_URL', 'http://evedev-kb.googlecode.com/files/update.xml');
 define('API_SERVER', "https://api.eveonline.com");
 define('IMG_SERVER', "image.eveonline.com");
 
