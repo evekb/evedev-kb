@@ -5,9 +5,9 @@
 $page = new Page("File Verification");
 $page->setAdmin();
 
-function ReadDirectory($dir, $ignoreimg = false)
+function AdditionalMods($dir, $ignoreimg = false)
 {
-	$ignore = array(".", "..", ".svn", "checksums.sha1", "kbconfig.php");
+	$ignore = array(".", "..", "ajcron", "forum_post", "known_members", "mail_forward", "rss_feed", "signature_generator");
 	if ($ignoreimg)
 		$ignore[] = "img";
 
@@ -17,23 +17,9 @@ function ReadDirectory($dir, $ignoreimg = false)
 	{
 		if (!in_array($file, $ignore))
 		{
-			if (is_file($dir . "/" . $file))
-			{
-				if (strpos($file, ".php") !== false)
-				{
-					$contents = file_get_contents($dir . "/" . $file);
-					$contents = preg_replace('/\$(Date|Revision|HeadURL)[^$]*\$/', '', $contents);
-					$contents = preg_replace('/\r\n/', "\n", $contents);
-					$sha1 = sha1($contents);
-				}
-				else
-					$sha1 = sha1_file($dir . "/" . $file);
-				$file = str_replace("\\", "/", $dir . "/" . $file);
-				$ret[$file] = $sha1;
-			}
 			if (is_dir($dir . "/" . $file))
 			{
-				$ret = array_merge($ret, ReadDirectory($dir . "/" . $file));
+				$ret[$file] = $file;
 			}
 		}
 	}
@@ -57,21 +43,23 @@ else
 	}
 
 	$ignoreImages = ( $_POST['images'] == "on" ? false : true );
-	$localfiles = ReadDirectory(".", $ignoreImages);
 	$missing = array();
 	$invalid = array();
 	$valid = array();
 	foreach ($data as $file => $hash)
 	{
-		if (stristr($file, "./img") && $ignoreImages)
-			continue;
-		if (!isset($localfiles[$file]))
+		if( !file_exists( $file ) ) {
 			$missing[] = $file;
-		elseif ($localfiles[$file] != $hash)
-			$invalid[$file] = array($hash, $localfiles[$file]);
-		else
-			$valid[] = $file;
+		} else {
+			$localhash = sha1_file( $file );
+
+			if ($localhash != $hash)
+				$invalid[$file] = array($hash, $localhash);
+			else
+				$valid[] = $file;
+		}
 	}
+	$smarty->assign("modifications",AdditionalMods('mods'));
 	$smarty->assign("invalid", $invalid);
 	$smarty->assign("missing", $missing);
 	$smarty->assign("count", count($valid) + count($invalid) + count($missing));

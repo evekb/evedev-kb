@@ -1,6 +1,12 @@
-This script is designed to verify your killboard files to make sure that everything is present and correct. This may take a while to run. Verifying the images may cause timeouts if your server isn't fast enough.
+This script is designed to verify your killboard files to make sure that everything is present and correct. <br /><br />
+
+It will report on:<br /><br />
+
+a) Missing Files<br />
+b) Files in the main killboard release that have been modified<br />
+c) In addition, we will list any additional files in the mods/ directory
+
 <br /><br />
 <form method="post" action="{$url}">
-	Include Images: <input type="checkbox" name="images" /><br />
 	<input type="submit" value="Verify" name="submit" />
 </form>
