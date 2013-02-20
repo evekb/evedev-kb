@@ -14,7 +14,6 @@
 <table class="kb-table" style="width:100%">
     <tr class="kb-table-header">
 	<td>Version</td>
-	<td>SVN</td>
 	<td>File</td>
 	<td>Description</td>
 	<td>Action</td>
@@ -24,9 +23,6 @@
 	    <tr class="{cycle name=ccl}" style="height: 20px">
 		<td>
 		    {$codeList[idx].version}<br/>
-		</td>
-		<td>
-		    {$codeList[idx].svnrev}<br/>
 		</td>
 		<td>
 		    {$codeList[idx].short_name}<br/>

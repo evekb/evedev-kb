@@ -106,7 +106,6 @@ class UpdateXMLParser
 					$descriptionTag = $upgrade->item($j)->getElementsByTagName('description');
 
 					$this->codeData[$i][$j]['version'] = $upgrade->item($j)->getAttribute('version');
-					$this->codeData[$i][$j]['svnrev'] = $upgrade->item($j)->getAttribute('svnrev');
 					$this->codeData[$i][$j]['hash'] = strtolower($upgrade->item($j)->getAttribute('hash'));
 					$this->codeData[$i][$j]['url'] = $urlTag->item(0)->nodeValue;
 					$this->codeData[$i][$j]['desc'] = $descriptionTag->item(0)->nodeValue;

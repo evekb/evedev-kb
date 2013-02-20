@@ -252,7 +252,6 @@ if (count($page_error) == 0) {
 				$codeList[$i]['hash'] = $piece['hash'];
 				$codeList[$i]['version'] = $piece['version'];
 				$codeList[$i]['desc'] = $piece['desc'];
-				$codeList[$i]['svnrev'] = $piece['svnrev'];
 
 				$hostFileName = $piece['url'];
 				$lastPart = explode('/', $hostFileName);
