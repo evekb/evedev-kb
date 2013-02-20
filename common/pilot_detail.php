@@ -208,7 +208,6 @@ class pPilotDetail extends pageAssembly
 				$list->setPageSplit(config::get('killcount'));
 				$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 				$table = new KillListTable($list);
-				$table->setDayBreak(false);
 
 				$smarty->assign('splitter',$pagesplitter->generate());
 				$smarty->assign('kills', $table->generate());
@@ -225,7 +224,6 @@ class pPilotDetail extends pageAssembly
 				$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 
 				$table = new KillListTable($list);
-				$table->setDayBreak(false);
 				
 				$smarty->assign('splitter',$pagesplitter->generate());
 				$smarty->assign('losses', $table->generate());
@@ -257,7 +255,6 @@ class pPilotDetail extends pageAssembly
 				if ($scl_id) $list->addVictimShipClass($scl_id);
 
 				$table = new KillListTable($list);
-				$table->setDayBreak(false);
 				$smarty->assign('kills', $table->generate());
 
 				$list = new KillList();
@@ -270,8 +267,6 @@ class pPilotDetail extends pageAssembly
 				if ($scl_id) $list->addVictimShipClass($scl_id);
 
 				$table = new KillListTable($list);
-				$table->setDayBreak(false);
-				$table->setDayBreak(false);
 				$smarty->assign('losses', $table->generate());
 				return $smarty->fetch(get_tpl('detail_kl_default'));
 				
