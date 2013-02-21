@@ -12,24 +12,27 @@ function update035()
 		if(is_null(config::get('035updatestatus'))) config::set('035updatestatus',0);
 		$qry = DBFactory::getDBQuery(true);
 
-		// update item types [in case user does not refresh ccpdb]
+		//update item types [in case user does not refresh ccpdb]
 		if(config::get('035updatestatus') <1)
 		{
-			$qry->execute("SELECT * from kb3_items_destroyed WHERE itd_itl_id IN (10,11,12,13) LIMIT 1");
+			//check for user changes from SMA thread
+			$sql = "SELECT * from kb3_items_destroyed WHERE itd_itl_id NOT IN (0,1,2,3,4,5,6,7,8,9,87,89,90,116,117,118,119,120,121,133,134,135,136,137,138,139,140,141,142,143,148,149,150,151,154,155)";
+			$qry->execute("$sql LIMIT 1");
 			if($qry->recordCount()) {
-				$smarty->assign('content', "Database Already has items in custom locations 10, 11, 12 or 13. Update these location IDs as appropriate before continuing");
+				$smarty->assign('content', "Destroyed items table already has items in custom locations. Update these location IDs as appropriate before continuing (use CCP flags).<br /><br />
+					Use this query in your database to find the offending records:<br /><br />$sql");
 				$smarty->display('update.tpl');
 				die();
 			}
-			$qry->execute("SELECT * from kb3_items_dropped WHERE itd_itl_id IN (10,11,12,13) LIMIT 1");
+			$sql = preg_replace('/kb3_items_destroyed/', 'kb3_items_dropped', $sql);
+			$qry->execute("$sql LIMIT 1");
 			if($qry->recordCount()) {
-				$smarty->assign('content', "Database Already has items in custom locations 10, 11, 12 or 13. Update these location IDs as appropriate before continuing");
+				$smarty->assign('content', "Dropped items table already has items in custom locations. Update these location IDs as appropriate before continuing (use CCP flags).<br /><br />
+					Use this query in your database to find the offending records:<br /><br />$sql");
 				$smarty->display('update.tpl');
 				die();
 			}
 
-		
-		
 			$qry->execute("UPDATE `kb3_item_types` SET `itt_slot` = '92' WHERE `itt_slot` = 5");
 			config::set('035updatestatus',1);
 			$smarty->assign('refresh',1);
