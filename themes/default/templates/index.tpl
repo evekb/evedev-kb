@@ -5,7 +5,7 @@
 	<meta name="description" content="EDK Killboard - {$config->get('cfg_kbtitle')}" />
 	<meta name="keywords" content="EDK, killboard, {$config->get('cfg_kbtitle')}, {if $kb_owner}{$kb_owner}, {/if}Eve-Online, killmail" />
 	<title>{$kb_title}</title>
-	<link rel="stylesheet" type="text/css" href="jquery.dataTables_themeroller.css">
+	<link rel="stylesheet" type="text/css" href="{$kb_host}/themes/default/jquery.dataTables_themeroller.css">
 	<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css">
 	<link rel="stylesheet" type="text/css" href="{$kb_host}/css.php" />
 	<link rel="stylesheet" type="text/css" href="{$theme_url}/default.css" />
