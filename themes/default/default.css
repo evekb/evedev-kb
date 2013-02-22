@@ -4,6 +4,9 @@ html, body
 	margin: 0;
 	padding: 0;
 }
+div.edk-section-main:first-of-type {
+	margin-top: 0;
+}
 
 div.edk-section-main {
 	margin: 20px 0;
@@ -11,11 +14,11 @@ div.edk-section-main {
 
 div.edk-section-main > h3 {
 	margin: 0;
-	padding: 15px;
+	padding: 10px 5px;
 }
 
 #page-title {
-	padding:15px;
+	padding:10px;
 }
 
 #page-title h2{
@@ -73,13 +76,13 @@ input, button, select
 #content
 {
 	font-size: 11px;
-	padding: 10px;
+	padding: 0 10px;
 	width: 780px;
 }
 
 #context, .context_element
 {
-	padding: 5px;
+	padding: 0 10px;
 	width: 145px;
 }
 
@@ -885,7 +888,8 @@ img
 .summarytable > table
 {
 	border-collapse: collapse;
-	width: 760px;
+	width: 778px;
+	margin-bottom: 2px;
 }
 
 .summarytable-verbose
@@ -1594,7 +1598,6 @@ div.kb-mostexpensive-listcontainer {
 	width:778px;
 	height:128px;
 	overflow:hidden;
-	margin-bottom:5px;
 }
 
 div.kb-mostexpensive-list {

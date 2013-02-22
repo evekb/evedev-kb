@@ -106,7 +106,6 @@ table.dataTable tr.even td.sorting_3 { background-color: #F9F9FF; }
 	margin: 0;
 	cursor: pointer;
 	* cursor: hand;
-	color: #333 !important;
 }
 
 /* Two button pagination - previous / next */

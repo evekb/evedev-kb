@@ -3,8 +3,8 @@
 {else}{assign var=columns value=3}{assign var=width value=33}{/if}
 {else}{if $verbose}{assign var=columns value=2}{assign var=width value=50}
 {else}{assign var=columns value=3}{assign var=width value=33}{/if}{/if}
-<div class="summarytable">
-	<table class="kb-subtable">
+<div class="summarytable edk-section-main ui-widget-content ui-helper-reset">
+	<table class="kb-subtable ui-widget ui-helper-reset">
 		<tr>
 			<td style="width:{$width}%;">
 				<table class="kb-table summarysubtable kb-table-rows">
@@ -62,7 +62,7 @@
 	</table>
 
 {if $summarysummary}
-	<div class="kb-summary-summary ui-state-highlight ui-corner-all">
+	<div class="kb-summary-summary ui-state-highlight">
 		<div class="killcount">{$kcount} Ships killed ({if $kiskB > 1 || $liskB > 1}{$kiskB}B{else}{$kiskM}M{/if} ISK)</div>
 		{if $losses}<div class="losscount">{$lcount} Ships lost ({if $kiskB > 1 || $liskB > 1}{$liskB}B{else}{$liskM}M{/if} ISK)</div>{/if}
 		{if $efficiency}<div class="efficiency">{$efficiency}% Efficiency (ISK)</div>{/if}

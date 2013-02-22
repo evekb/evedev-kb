@@ -1,5 +1,5 @@
 <!-- killlistable.tpl -->
-<div class="kltable">
+<div class="kltable edk-section-main ui-widget ui-helper-reset">
 	{section name=day loop=$killlist}
 		<table class="kl-table">
 			<thead>

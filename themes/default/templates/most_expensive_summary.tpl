@@ -25,9 +25,9 @@ $(document).ready(function() {
 {/literal}
 {/if}
 
-<div class="edk-section-main ui-widget ui-helper-reset">
+<div class="summarytable edk-section-main ui-widget ui-widget-content ui-helper-reset">
 {if $header}
-<h3>Most expensive {$displaytype} for {$displaylist}.</h3>
+<h3 class="ui-widget-header">Most expensive {$displaytype} for {$displaylist}.</h3>
 {/if}
 {if $killlist}
 	<div class="kb-mostexpensive-listcontainer">
