@@ -28,10 +28,6 @@ class sxml
             $this->current_line = xml_get_current_line_number($this->parser);
             $this->current_column = xml_get_current_column_number($this->parser);
         }
-        else
-        {
-            $this->data = $this->data;
-        }
         xml_parser_free($this->parser);
 
         return $this->data;
