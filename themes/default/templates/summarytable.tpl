@@ -1,66 +1,90 @@
 <!-- summarytable.tpl -->
+{literal} 
+
+<script type="text/javascript" language="javascript">
+//<![CDATA[
+$(document).ready(function() {
+
+	$('div.kb-summary-summary').hover(
+		function(){
+			$(this).addClass('ui-state-hover');
+			$(this).removeClass('ui-state-highlight');
+		},
+		function(){
+			$(this).addClass('ui-state-highlight');
+			$(this).removeClass('ui-state-hover');
+		}
+	).click(function( event ) {
+		$('div.summerytable-container').slideToggle();		
+    });
+});
+//]]>
+</script> 
+{/literal}
+
 {if $losses}{if $verbose}{assign var=columns value=2}{assign var=width value=50}
 {else}{assign var=columns value=3}{assign var=width value=33}{/if}
 {else}{if $verbose}{assign var=columns value=2}{assign var=width value=50}
 {else}{assign var=columns value=3}{assign var=width value=33}{/if}{/if}
 <div class="summarytable edk-section-main ui-widget-content ui-helper-reset">
-	<table class="kb-subtable ui-widget ui-helper-reset">
-		<tr>
-			<td style="width:{$width}%;">
-				<table class="kb-table summarysubtable kb-table-rows">
-					<thead>
-					<tr class="kb-table-header ui-widget-header">
-						<td class="summarytable-class">Ship class</td>
-{if $verbose}
-						<td class="summarytable-verbose">Kills</td>
-						<td class="summarytable-verbose">ISK (M)</td>
-	{if $losses}					<td class="summarytable-verbose">Losses</td>
-						<td class="summarytable-verbose">ISK (M)</td>
-	{/if}
-{else}					<td class="summarytable-brief">K</td>
-	{if $losses}					<td class="summarytable-brief">L</td>
-	{/if}
-{/if}				</tr>
-					</thead>
-					<tbody>
-{assign var=classcount value=0}{foreach from=$summary item=i}{assign var=classcount value=$classcount+1}
-{if $classcount > ceil($count/$columns)}{assign var=classcount value=1}
-					</tbody>
-				</table>
-			</td>
-			<td style="width:{$width}%;">
-				<table class="kb-table summarysubtable kb-table-rows">
-					<thead>
-					<tr class="kb-table-header ui-widget-header">
-						<td>Ship class</td>
-	{if $verbose}					<td class="summarytable-verbose">Kills</td>
-						<td class="summarytable-verbose">ISK (M)</td>
+	<div class="summerytable-container">
+		<table class="kb-subtable ui-widget ui-helper-reset">
+			<tr>
+				<td style="width:{$width}%;">
+					<table class="kb-table summarysubtable kb-table-rows">
+						<thead>
+						<tr class="kb-table-header ui-widget-header">
+							<td class="summarytable-class">Ship class</td>
+	{if $verbose}
+							<td class="summarytable-verbose">Kills</td>
+							<td class="summarytable-verbose">ISK (M)</td>
 		{if $losses}					<td class="summarytable-verbose">Losses</td>
-						<td class="summarytable-verbose">ISK (M)</td>
+							<td class="summarytable-verbose">ISK (M)</td>
 		{/if}
 	{else}					<td class="summarytable-brief">K</td>
 		{if $losses}					<td class="summarytable-brief">L</td>
 		{/if}
 	{/if}				</tr>
-					</thead>
-					<tbody>
-{/if}
-					<tr class="ui-state-default">
-						<td><b><a class="kb-shipclass{if $i.hl}-hl{/if}" href="{$i.qry}scl_id={$i.id}">{$i.name}</a></b></td>
-						<td class="kl-kill{if $i.kills == 0}-null{/if}">{$i.kills}</td>
-{if $verbose}				<td class="kl-kill{if $i.kills == 0}-null{/if}">{$i.kisk}</td>
-{/if}
-{if $losses}					<td class="kl-loss{if $i.losses == 0}-null{/if}">{$i.losses}</td>
-	{if $verbose}				<td class="kl-loss{if $i.losses == 0}-null{/if}">{$i.lisk}</td>
+						</thead>
+						<tbody>
+	{assign var=classcount value=0}{foreach from=$summary item=i}{assign var=classcount value=$classcount+1}
+	{if $classcount > ceil($count/$columns)}{assign var=classcount value=1}
+						</tbody>
+					</table>
+				</td>
+				<td style="width:{$width}%;">
+					<table class="kb-table summarysubtable kb-table-rows">
+						<thead>
+						<tr class="kb-table-header ui-widget-header">
+							<td>Ship class</td>
+		{if $verbose}					<td class="summarytable-verbose">Kills</td>
+							<td class="summarytable-verbose">ISK (M)</td>
+			{if $losses}					<td class="summarytable-verbose">Losses</td>
+							<td class="summarytable-verbose">ISK (M)</td>
+			{/if}
+		{else}					<td class="summarytable-brief">K</td>
+			{if $losses}					<td class="summarytable-brief">L</td>
+			{/if}
+		{/if}				</tr>
+						</thead>
+						<tbody>
 	{/if}
-{/if}	</tr>
-{/foreach}
-					</tbody>
-				</table>
-			</td>
-		</tr>
-	</table>
-
+						<tr class="ui-state-default">
+							<td><b><a class="kb-shipclass{if $i.hl}-hl{/if}" href="{$i.qry}scl_id={$i.id}">{$i.name}</a></b></td>
+							<td class="kl-kill{if $i.kills == 0}-null{/if}">{$i.kills}</td>
+	{if $verbose}				<td class="kl-kill{if $i.kills == 0}-null{/if}">{$i.kisk}</td>
+	{/if}
+	{if $losses}					<td class="kl-loss{if $i.losses == 0}-null{/if}">{$i.losses}</td>
+		{if $verbose}				<td class="kl-loss{if $i.losses == 0}-null{/if}">{$i.lisk}</td>
+		{/if}
+	{/if}	</tr>
+	{/foreach}
+						</tbody>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
 {if $summarysummary}
 	<div class="kb-summary-summary ui-state-highlight">
 		<div class="killcount">{$kcount} Ships killed ({if $kiskB > 1 || $liskB > 1}{$kiskB}B{else}{$kiskM}M{/if} ISK)</div>

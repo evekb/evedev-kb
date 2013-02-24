@@ -863,7 +863,9 @@ img
 .kb-summary-summary
 {
 	text-align: center;
-	padding-bottom: 5px;
+	padding: 5px;
+	position: relative;
+	cursor: pointer;
 }
 
 .kb-summary-summary > div
@@ -885,7 +887,7 @@ img
 	width: 100%;
 }
 
-.summarytable > table
+.summarytable > div.summerytable-container > table
 {
 	border-collapse: collapse;
 	width: 778px;
