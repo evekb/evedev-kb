@@ -17,30 +17,23 @@ class Navigation
 	private function execQuery()
 	{
 		$this->qry = DBFactory::getDBQuery();
-		$query = "SELECT * FROM kb3_navigation".
-			" WHERE nav_type = '$this->type'";
-
-		$query .= " AND url NOT LIKE '%?a=contracts'";
+		$query = "SELECT * FROM kb3_navigation WHERE nav_type = '$this->type'";
 
 		if (Killboard::hasCampaigns() == false)
 		{
-			$query .= " AND url NOT LIKE '%?a=campaigns'";
-			$query .= " AND url NOT LIKE '%/campaigns/'";
+			$query .= " AND url NOT LIKE '?a=campaigns'";
 		}
 		if (config::get('public_losses'))
 		{
-			$query .= " AND url NOT LIKE '%?a=losses'";
-			$query .= " AND url NOT LIKE '%/losses/'";
+			$query .= " AND url NOT LIKE '?a=losses'";
 		}
 		if (!config::get('show_standings'))
 		{
-			$query .= " AND url NOT LIKE '%a=standings'";
-			$query .= " AND url NOT LIKE '%/standings/'";
+			$query .= " AND url NOT LIKE '?a=standings'";
 		}
 		if (config::get('public_stats')=='remove')
 		{
-			$query .= " AND url NOT LIKE '%?a=self_detail'";
-			$query .= " AND url NOT LIKE '%/self_detail/'";
+			$query .= " AND url NOT LIKE '?a=self_detail'";
 		}
 		$query .= " AND (page = '".$this->page."' OR page = 'ALL_PAGES') AND hidden = 0";
 		$query .= " AND KBSITE = '" . $this->site . "' ORDER BY posnr";
@@ -79,8 +72,7 @@ class Navigation
 				}
 				$url .= "akey=".session::makeKey();
 			}
-			// Note that changing the standard naming will also remove any
-			// translations.
+			// Note that changing the standard naming will also remove any translations.
 			$menu->add($url , Language::get($row['descr']));
 		}
 		return $menu;
@@ -111,15 +103,15 @@ class Navigation
 		}
 		//keep these urls hardcoded, we don't need session IDs in the database
 		$sql = "INSERT INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr`,`page` ,`hidden`,`KBSITE`) VALUES".
-			" ('top',1,'Home','".KB_HOST."?a=home','_self',1,'ALL_PAGES',0,'".$this->site."'),".
-			" ('top',1,'Campaigns','".KB_HOST."?a=campaigns','_self',2,'ALL_PAGES',0,'".$this->site."'),".
-			" ('top',1,'Post Mail','".KB_HOST."?a=post','_self',3,'ALL_PAGES',0,'".$this->site."'),".
-			" ('top',1,'Stats','".KB_HOST."?a=self_detail','_self',4,'ALL_PAGES',0,'".$this->site."'),".
-			" ('top',1,'Awards','".KB_HOST."?a=awards','_self',5,'ALL_PAGES',0,'".$this->site."'),".
-			" ('top',1,'Standings','".KB_HOST."?a=standings','_self',6,'ALL_PAGES',0,'".$this->site."'),".
-			" ('top',1,'Search','".KB_HOST."?a=search','_self',7,'ALL_PAGES',0,'".$this->site."'),".
-			" ('top',1,'Admin','".KB_HOST."?a=admin','_self',8,'ALL_PAGES',0,'".$this->site."'),".
-			" ('top',1,'About','".KB_HOST."?a=about','_self',9,'ALL_PAGES',0,'".$this->site."');";
+			" ('top',1,'Home','?a=home','_self',1,'ALL_PAGES',0,'".$this->site."'),".
+			" ('top',1,'Campaigns','?a=campaigns','_self',2,'ALL_PAGES',0,'".$this->site."'),".
+			" ('top',1,'Post Mail','?a=post','_self',3,'ALL_PAGES',0,'".$this->site."'),".
+			" ('top',1,'Stats','?a=self_detail','_self',4,'ALL_PAGES',0,'".$this->site."'),".
+			" ('top',1,'Awards','?a=awards','_self',5,'ALL_PAGES',0,'".$this->site."'),".
+			" ('top',1,'Standings','?a=standings','_self',6,'ALL_PAGES',0,'".$this->site."'),".
+			" ('top',1,'Search','?a=search','_self',7,'ALL_PAGES',0,'".$this->site."'),".
+			" ('top',1,'Admin','?a=admin','_self',8,'ALL_PAGES',0,'".$this->site."'),".
+			" ('top',1,'About','?a=about','_self',9,'ALL_PAGES',0,'".$this->site."');";
 		$qry->execute($sql);
 		$qry->autocommit(true);
 		return true;
