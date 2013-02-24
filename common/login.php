@@ -65,18 +65,14 @@ class pLogin extends pageAssembly
 					header('Location: '.html_entity_decode(edkURI::page('home')));
 					die;
 				} else {
-					$smarty->assign('error',
-							'Login error, please check your username'
-							.' and password.');
+					$smarty->assign('error', 'Login error, please check your username and password.');
 				}
 			}
 		}
 
 		return $smarty->fetch(get_tpl('user_login'));
 	}
-
 }
-
 
 $login = new pLogin();
 event::call("login_assembling", $about);
