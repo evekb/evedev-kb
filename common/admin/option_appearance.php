@@ -38,6 +38,7 @@ options::cat('Appearance', 'Front Page', 'Kill Summary Tables');
 options::fadd('Display Summary Table', 'summarytable', 'checkbox');
 options::fadd('Display a summary line below a Summary Table', 'summarytable_summary', 'checkbox');
 options::fadd('Display efficiency in the summary line', 'summarytable_efficiency', 'checkbox');
+options::fadd('Display collapsed Summary Table', 'summarytable_collapsed', 'checkbox', '', '', 'Summary line must be activated');
 
 options::cat('Appearance', 'Front Page', 'Kill Lists');
 options::fadd('Amount of kills listed', 'killcount', 'edit:size:2');

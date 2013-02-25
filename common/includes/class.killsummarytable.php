@@ -621,6 +621,10 @@ class KillSummaryTable
 			$smarty->assign('liskM', round($this->tlisk/1000000, 2));
 			$smarty->assign('kcount', $this->tkcount);
 			$smarty->assign('lcount', $this->tlcount);
+			if (config::get('summarytable_collapsed'))
+			{
+				$smarty->assign('summarycollapsed', 1);
+			}
 		}
 
 		if (edkURI::getArg('scl_id')){
