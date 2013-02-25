@@ -862,10 +862,10 @@ img
 
 .kb-summary-summary
 {
-	text-align: center;
+	cursor: pointer;
 	padding: 5px;
 	position: relative;
-	cursor: pointer;
+	text-align: center;
 }
 
 .kb-summary-summary > div
@@ -887,11 +887,11 @@ img
 	width: 100%;
 }
 
-.summarytable > div.summerytable-container > table
+.summarytable > div.summarytable-container > table
 {
 	border-collapse: collapse;
-	width: 778px;
 	margin-bottom: 2px;
+	width: 778px;
 }
 
 .summarytable-verbose
