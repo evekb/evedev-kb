@@ -18,6 +18,18 @@ while($row = $qry->getRow())
 }
 $html .= "</table>";
 
+$qry->execute("SELECT table_name, engine, table_rows, avg_row_length,
+				round(((data_length) / 1024 / 1024), 2) as data_len,
+				round(((index_length) / 1024 / 1024), 2) as index_len,
+		round(((data_length + index_length) / 1024 / 1024), 2) as total FROM information_schema.TABLES
+		WHERE table_schema = \"" . DB_NAME . "\"");
+$html .= "<h2>Database Information</h2>";
+$html .= "<table>";
+while($row = $qry->getRow()) {
+	$html .= "<tr><td>".implode($row, '</td><td>')."</td></tr>";
+}
+$html .= "</table>";
+
 $qry->execute('SHOW TABLES');
 $qry2 = DBFactory::getDBQuery(true);;
 //$html .= '<form><textarea class="indexing" name="indexing" cols="60" rows="30" readonly="readonly">';
