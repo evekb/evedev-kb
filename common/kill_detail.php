@@ -168,11 +168,6 @@ class pKillDetail extends pageAssembly
 				$this->commenthtml = 'Error: Wrong Password';
 			}
 		}
-		// Check admin update options.
-		if ($this->page->isAdmin()) {
-			$this->updatePrices();
-			$this->fixSlots();
-		}
 
 		global $smarty;
 		if (!file_exists('img/panel/'.config::get('fp_theme').'.png')) {
@@ -181,6 +176,12 @@ class pKillDetail extends pageAssembly
 		$smarty->assign('panel_colour', config::get('fp_theme'));
 		$smarty->assign('showiskd', config::get('kd_showiskd'));
 		$smarty->assign('formURL', edkURI::build(edkURI::parseURI()));
+
+		// Check admin update options.
+		if ($this->page->isAdmin()) {
+			$smarty->assign('admin', true);
+			$this->updatePrices();
+		}
 
 		$this->involvedSetup();
 		$this->fittingSetup();
@@ -1192,14 +1193,6 @@ class pKillDetail extends pageAssembly
 				'admin_kill_delete', $this->kill->getID(), 'kll_id'), 0, 0,
 				"openWindow('".edkURI::page('admin_kill_delete', $this->kill->getID(), 'kll_id')
 				."', null, 420, 300, '' );");
-			if (isset($_GET['view']) && $_GET['view'] == 'FixSlot') {
-				$this->addMenuItem("link", "Adjust Values", edkURI::page(
-					'kill_detail', $this->kill->getID(), 'kll_id'));
-			} else {
-				$url = edkURI::build(array(array('kll_id', $this->kill->getID(), true),
-					array('view', 'FixSlot', false)));
-				$this->addMenuItem("link", "Fix Slots", $url);
-			}
 		}
 		return "";
 	}
@@ -1279,7 +1272,7 @@ class pKillDetail extends pageAssembly
 	/**
 	 * Update the stored value of an item and the total value of this kill.
 	 *
-	 *  Input values are taken from the query string.
+	 * Input values are taken from the query string.
 	 */
 	private function updatePrices()
 	{
@@ -1304,27 +1297,6 @@ class pKillDetail extends pageAssembly
 				$this->kill->calculateISKLoss(true);
 				$qry->autocommit(true);
 			}
-		}
-	}
-
-	private function fixSlots()
-	{
-		global $smarty;
-		if (isset($_GET['view']) && $_GET['view'] == 'FixSlot') {
-			$smarty->assign('fixSlot', 'true');
-		}
-
-		$smarty->assign('admin', 'true');
-
-		if (isset($_POST['submit']) && $_POST['submit'] == 'UpdateSlot') {
-			$IID = (int) $_POST['IID'];
-			$KID = (int) $_POST['KID'];
-			$val = (int) $_POST[$IID];
-			$table = ($_POST['TYPE'] == 'dropped' ? 'dropped' : 'destroyed');
-			$old = (int) $_POST['OLDSLOT'];
-			$qry = DBFactory::getDBQuery();
-			$qry->execute("UPDATE kb3_items_".$table." SET itd_itl_id ='".$val."' WHERE itd_itm_id=".$IID
-					." AND itd_kll_id = ".$KID." AND itd_itl_id = ".$old);
 		}
 	}
 
