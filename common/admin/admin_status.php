@@ -25,6 +25,7 @@ $qry->execute("SELECT table_name, engine, table_rows, avg_row_length,
 		WHERE table_schema = \"" . DB_NAME . "\"");
 $html .= "<h2>Database Information</h2>";
 $html .= "<table>";
+$html .= "<tr><th>Table</th><th>Engine</th><th>Rows</th><th>Avg Row Length</th><th>Data Length</th><th>Index Length</th><th>Total</th></tr>";
 while($row = $qry->getRow()) {
 	$html .= "<tr><td>".implode($row, '</td><td>')."</td></tr>";
 }
