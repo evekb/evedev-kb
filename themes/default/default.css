@@ -1,5 +1,6 @@
 html, body
 {
+	font-size: 10px;
 	height: 100%;
 	margin: 0;
 	padding: 0;
@@ -413,29 +414,21 @@ input.kb-input
 
 a:link
 {
-	font-size: 10px;
-	font-weight: bold;
 	text-decoration: none;
 }
 
 a:visited
 {
-	font-size: 10px;
-	font-weight: bold;
 	text-decoration: none;
 }
 
 a:active
 {
-	font-size: 10px;
-	font-weight: bold;
 	text-decoration: none;
 }
 
 a:hover
 {
-	font-size: 10px;
-	font-weight: bold;
 	text-decoration: underline;
 }
 
@@ -526,15 +519,11 @@ a:hover
 
 .killcount
 {
-	font-size: 9px;
-	font-weight: bold;
 	padding-right: 4px;
 }
 
 .losscount
 {
-	font-size: 9px;
-	font-weight: bold;
 }
 
 .kb-summary-summary > .losscount
@@ -916,29 +905,39 @@ img
 
 .kl-timestamp
 {
-	width: 90px;
+	width: 100px;
 }
 
 .kl-shiptype
 {
-	width: 190px;
+	width: 155px;
+}
+
+.kl-shiptype-text
+{
+	text-overflow: ellipsis;
 }
 
 .kl-victim
 {
-	width: 208px;
+	width: 155px;
+}
+
+.kl-victim-text
+{
+	text-overflow: ellipsis;
 }
 
 .kl-finalblow
 {
-	width: 175px;
+	text-overflow: ellipsis;
+	width: 123px;
 }
 
 .kl-location
 {
-	height: auto;
-	text-align: left;
-	width: 164px;
+	text-overflow: ellipsis;
+	width: 100px;
 }
 
 .kl-img 
@@ -961,8 +960,7 @@ img
 
 .kl-inv-comm
 {
-	float: left;
-	vertical-align: middle;
+	width: 50px;
 }
 
 .kl-inv-comm img
@@ -983,7 +981,7 @@ img
 
 .kl-date
 {
-	float: right;
+	width: 75px;
 }
 
 table.awardbox td.kb-table-header

@@ -18,11 +18,11 @@
 					{assign var="k" value=$killlist[day].kills[kill]}
 					{if $k.loss}
 						<tr class="kb-table-row-loss ui-state-default" onclick="window.location.href='{$k.urldetail}';">
-						{elseif $k.kill}
+					{elseif $k.kill}
 						<tr class="kb-table-row-kill ui-state-default" onclick="window.location.href='{$k.urldetail}';">
-						{else}
-						<tr onclick="window.location.href='{$k.urldetail}';">
-						{/if}
+					{else}
+						<tr class="ui-state-default" onclick="window.location.href='{$k.urldetail}';">
+					{/if}
 						<td style="display: none">{$k.id}</td>
 						<td>
                             <div class="kl-date">
@@ -42,7 +42,7 @@
                             </div>
                         </td>
 						<td>
-							<div>
+							<div class="kl-shiptype">
 								<img src='{$k.victimshipimage}' class="kl-img" alt="" />
 								<div class="no_stretch kl-shiptype-text">
 									<b>{$k.victimshipname}</b>
@@ -52,7 +52,7 @@
 							</div>
 						</td>
 						<td>
-							<div>
+							<div class="kl-victim">
 								{if !$k.allianceexists}
 								&nbsp;
 								{else}
@@ -82,13 +82,33 @@
 						</td>
 						<td>
 							<div class="no_stretch kl-location">
-								{if $config->get('killlist_regionnames')} {$k.region}<br/>{$k.system}{else}<b>{$k.system}</b>{/if} ({if $k.loss || $k.kill}{$k.systemsecurity|max:0|string_format:"%01.1f"}{else}<span style="color:{if $k.systemsecurity >= 0.5}green{elseif $k.systemsecurity < 0.05}red{else}orange{/if};">{$k.systemsecurity|max:0|string_format:"%01.1f"}</span>{/if})
+								{if $config->get('killlist_regionnames')}
+									{$k.region}<br />
+									{$k.system}
+								{else}
+									<b>{$k.system}</b><br/>
+								{/if}
+								(
+								{if $k.loss || $k.kill}
+									{$k.systemsecurity|max:0|string_format:"%01.1f"}
+								{else}
+									<span style="color:
+									{if $k.systemsecurity >= 0.5}
+										green
+									{elseif $k.systemsecurity < 0.05}
+										red
+									{else}
+										orange
+									{/if}
+									;">{$k.systemsecurity|max:0|string_format:"%01.1f"}</span>
+								{/if}
+								)
 							</div>
 						</td>
 						{if $k.inv || $comments_count}
 							<td>
 								<div class="kl-inv-comm">
-									{if $k.inv}<img src="{$theme_url}/img/involved10_10.png" alt="I:" /> {$k.inv}{/if}
+									{if $k.inv}<img src="{$theme_url}/img/involved10_10.png" alt="I:" /> {$k.inv}<br />{/if}
 									{if $comments_count}<span {if !$k.commentcount}style="visibility: hidden"{/if}><img src="{$theme_url}/img/comment_white13_10.gif" alt="C:" class="kl-comm" /> {$k.commentcount}</span>{/if}
 								</div>
 							</td>
