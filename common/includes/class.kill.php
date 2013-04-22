@@ -42,6 +42,7 @@ class Kill extends Cacheable
 	private $executed = false;
 	private $involvedcount = null;
 	private $valid = null;
+	private $topDamage = 0;
 
 	/**
 	 * @param integer $id The ID for this kill
@@ -360,7 +361,7 @@ class Kill extends Cacheable
 
 	/**
 	 * Return the Final Blow dealer's Alliance name.
-	 * @return integer
+	 * @return string
 	 */
 	function getFBAllianceName()
 	{
@@ -1716,6 +1717,14 @@ class Kill extends Cacheable
 
 	function addInvolvedParty($involved)
 	{
+		$dmg = $involved->getDamageDone();
+		if ($dmg > $topDamage || $topDamage == 0) { //sets highest dmg dealer or last with 0
+			$this->setTDPilotID($involved->getPilotID());
+			$this->setTDCorpID($involved->getCorpID());
+			$this->setTDAllianceID($involved->getAllianceID());
+			$topDamage = $dmg;
+		}
+		
 		array_push($this->involvedparties_, $involved);
 	}
 
