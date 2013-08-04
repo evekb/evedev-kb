@@ -120,26 +120,6 @@ class KillWrapper extends Kill
 	}
 
 	/**
-	 * Return the dropped items array for this kill.
-	 *
-	 * @return array dropped items array for this kill.
-	 */
-	public function getDroppedItems()
-	{
-		return $this->droppeditems_;
-	}
-
-	/**
-	 * Return the destroyed items array for this kill.
-	 *
-	 * @return array destroyed items array for this kill.
-	 */
-	public function getDestroyedItems()
-	{
-		return $this->destroyeditems_;
-	}
-
-	/**
 	 * @return string
 	 */
 	function getTimeStamp()
@@ -732,6 +712,7 @@ class KillWrapper extends Kill
 		$shipclass = $ship->getClass();
 		$vicpoints = $shipclass->getPoints();
 		$maxpoints = round($vicpoints * 1.2);
+		$invpoints = 0;
 
 		foreach ($this->involvedparties_ as $inv) {
 			$shipinv = $inv->getShip();
