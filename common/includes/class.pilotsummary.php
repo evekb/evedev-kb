@@ -33,16 +33,15 @@ class pilotSummary extends statSummary
 		}
 
 		$qry = DBFactory::getDBQuery();
-		$qry->execute("SELECT 1 FROM kb3_sum_pilot WHERE psm_plt_id = ".$this->plt_id);
-		if (!$qry->recordCount()) {
-			self::buildSummary($this->plt_id);
-		}
-
-		$sql = "SELECT scl_class, scl_id, kb3_sum_pilot.*
+		$sql = "SELECT scl_class, scl_id, psm_shp_id, sum(psm_loss_count) as psm_loss_count, 
+				sum(psm_loss_isk) as psm_loss_isk, sum(psm_kill_count) as psm_kill_count,
+				sum(psm_kill_isk) as psm_kill_isk, sum(psm_kill_loot) as psm_kill_loot,
+				sum(psm_kill_points) as psm_kill_points, sum(psm_loss_points) as psm_loss_points,
+				sum(psm_loss_loot) as psm_loss_loot
 			FROM kb3_ship_classes left join kb3_sum_pilot
 				ON (psm_shp_id = scl_id AND psm_plt_id = ".$this->plt_id.")
 			WHERE scl_class not in ('Drone','Unknown')
-				ORDER BY scl_class";
+				GROUP BY psm_shp_id ORDER BY scl_class";
 		$qry->execute($sql);
 		while ($row = $qry->getRow()) {
 			$this->summary[$row['scl_id']]['class_name'] = $row['scl_class'];
@@ -50,7 +49,12 @@ class pilotSummary extends statSummary
 			$this->summary[$row['scl_id']]['killisk'] = (float) $row['psm_kill_isk'];
 			$this->summary[$row['scl_id']]['losscount'] = (int) $row['psm_loss_count'];
 			$this->summary[$row['scl_id']]['lossisk'] = (float) $row['psm_loss_isk'];
+			$this->summary[$row['scl_id']]['lossloot'] = (float) $row['psm_loss_loot'];
+			$this->summary[$row['scl_id']]['losspoints'] = (int) $row['psm_loss_points'];
+			$this->summary[$row['scl_id']]['killloot'] = (float) $row['psm_kill_loot'];
+			$this->summary[$row['scl_id']]['killpoints'] = (int) $row['psm_kill_points'];
 		}
+
 		$this->executed = true;
 	}
 
@@ -68,37 +72,6 @@ class pilotSummary extends statSummary
 		}
 		$qry = DBFactory::getDBQuery();
 		$qry->autocommit(false);
-
-		// insert into summary ((select all kills) union (select all losses))
-		$sql = "REPLACE INTO kb3_sum_pilot (psm_plt_id, psm_shp_id, psm_kill_count, psm_kill_isk, psm_loss_count, psm_loss_isk)
-select $plt_id as psm_plt_id, losses.psm_shp_id, ifnull(kills.knb,0), ifnull(kills.kisk,0), ifnull(losses.lnb,0), ifnull(losses.lisk,0)
-		FROM (SELECT shp_class as psm_shp_id, 0 as knb,0 as kisk ,count(kll_id) AS lnb, sum(kll_isk_loss) AS lisk
-			FROM kb3_kills kll
-				INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )
-			WHERE  kll.kll_victim_id = $plt_id
-			GROUP BY shp_class) losses left join (SELECT shp_class as psm_shp_id, COUNT(kll.kll_id) AS knb,
-				sum(kll_isk_loss) AS kisk,0 as lnb,0 as lisk
-			FROM kb3_kills kll
-				INNER JOIN kb3_ships shp
-					ON ( shp.shp_id = kll.kll_ship_id )
-				INNER JOIN kb3_inv_detail ind ON (ind.ind_kll_id = kll.kll_id)
-			WHERE ind.ind_plt_id = $plt_id
-			GROUP BY shp_class) kills on (kills.psm_shp_id = losses.psm_shp_id)
-		UNION
-			select $plt_id as psm_plt_id, kills.psm_shp_id, ifnull(kills.knb,0), ifnull(kills.kisk,0), ifnull(losses.lnb,0), ifnull(losses.lisk,0)
-		FROM (SELECT shp_class as psm_shp_id, 0 as knb,0 as kisk ,count(kll_id) AS lnb, sum(kll_isk_loss) AS lisk
-			FROM kb3_kills kll
-				INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )
-			WHERE  kll.kll_victim_id = $plt_id
-			GROUP BY shp_class) losses right join (SELECT $plt_id as psm_plt_id, shp_class as psm_shp_id, COUNT(kll.kll_id) AS knb,
-				sum(kll_isk_loss) AS kisk,0 as lnb,0 as lisk
-			FROM kb3_kills kll
-				INNER JOIN kb3_ships shp
-					ON ( shp.shp_id = kll.kll_ship_id )
-				INNER JOIN kb3_inv_detail ind ON (ind.ind_kll_id = kll.kll_id)
-			WHERE ind.ind_plt_id = $plt_id
-			GROUP BY shp_class) kills on (kills.psm_shp_id = losses.psm_shp_id)";
-		$qry->execute($sql);
 
 		$klist = new KillList();
 		$klist->addInvolvedPilot($plt_id);
@@ -124,40 +97,48 @@ select $plt_id as psm_plt_id, losses.psm_shp_id, ifnull(kills.knb,0), ifnull(kil
 	 */
 	public static function addKill($kill)
 	{
+		$year = date('Y',strtotime($kill->getTimestamp()));
+		$month = date('m',strtotime($kill->getTimestamp()));
 		$alls = array();
-		$qry = DBFactory::getDBQuery();
-		$qry->execute("SELECT 1 FROM kb3_sum_pilot WHERE psm_plt_id = ".$kill->getVictimID());
-		if ($qry->recordCount()) {
-			$sql = "INSERT INTO kb3_sum_pilot (psm_plt_id, psm_shp_id, psm_loss_count, psm_loss_isk) ".
-					"VALUES ( ".$kill->getVictimID().", ".$kill->getVictimShip()->getClass()->getID().", 1, ".
-					$kill->getISKLoss().") ON DUPLICATE KEY UPDATE ".
-					"psm_loss_count = psm_loss_count + 1, ".
-					"psm_loss_isk = psm_loss_isk + ".$kill->getISKLoss();
-			$qry->execute($sql);
+		$shipid = $kill->getVictimShip()->getClass()->getID();
+		$involved = $kill->getInvolved();
+		$killisk = $kill->getISKLoss();
+		$killloot = $kill->getISKLoot();
+		$points = $kill->getKillPoints();
 
-			$sql = "UPDATE kb3_pilots SET plt_lpoints = plt_lpoints + ".$kill->getKillPoints().
-					" WHERE plt_id = ".$kill->getVictimID();
+		$qry = DBFactory::getDBQuery();		
+		
+		$sql = "UPDATE kb3_sum_pilot SET psm_loss_count=psm_loss_count+1, psm_loss_isk=psm_loss_isk+$killisk, psm_loss_loot=psm_loss_loot+$killloot, psm_loss_points=psm_loss_points+$points WHERE " .
+			   " psm_plt_id = " . $kill->getVictimID() . " AND psm_shp_id = $shipid AND psm_monthday = $month AND psm_year = $year";
+		$qry->execute($sql);
+		if ( $qry->affectedRows() == 0 ) {
+			$sql = "INSERT INTO kb3_sum_pilot (psm_plt_id, psm_shp_id, psm_loss_count, psm_loss_isk, psm_loss_loot, psm_loss_points, psm_monthday, psm_year) ".
+					"VALUES ( ".$kill->getVictimID().", ".$shipid.", 1, $killisk, $killloot, $points, $month, $year)";
 			$qry->execute($sql);
-		}
-		foreach ($kill->getInvolved() as $inv) {
+		}	
+
+		$sql = "UPDATE kb3_pilots SET plt_lpoints=plt_lpoints+".$points. " WHERE plt_id = ".$kill->getVictimID();
+		$qry->execute($sql);
+
+		foreach ($involved as $inv) {
 			if (isset($alls[$inv->getPilotID()])) {
 				continue;
 			}
 			$alls[$inv->getPilotID()] = 1;
-			$qry->execute("SELECT 1 FROM kb3_sum_pilot WHERE psm_plt_id = ".$inv->getPilotID());
-			if (!$qry->recordCount()) {
-				continue;
-			}
-			$sql = "INSERT INTO kb3_sum_pilot (psm_plt_id, psm_shp_id, psm_kill_count, psm_kill_isk) ".
-					"VALUES ( ".$inv->getPilotID().", ".$kill->getVictimShip()->getClass()->getID().", 1, ".
-					$kill->getISKLoss().") ON DUPLICATE KEY UPDATE ".
-					"psm_kill_count = psm_kill_count + 1, ".
-					"psm_kill_isk = psm_kill_isk + ".$kill->getISKLoss();
+
+			$sql = "UPDATE kb3_sum_pilot SET psm_kill_count=psm_kill_count+1, psm_kill_isk=psm_kill_isk+$killisk, psm_kill_loot=psm_kill_loot+$killloot, psm_kill_points=psm_kill_points+$points WHERE " .
+				   " psm_plt_id = " . $inv->getPilotID() . " AND psm_shp_id = $shipid AND psm_monthday = $month AND psm_year = $year";
 			$qry->execute($sql);
-			$sql = "UPDATE kb3_pilots SET plt_kpoints = plt_kpoints + ".$kill->getKillPoints().
-					" WHERE plt_id = ".$inv->getPilotID();
+			if ( $qry->affectedRows() == 0 ) {
+				$sql = "INSERT INTO kb3_sum_pilot (psm_plt_id, psm_shp_id, psm_kill_count, psm_kill_isk, psm_kill_loot, psm_kill_points, psm_monthday, psm_year) ".
+						"VALUES ( ".$inv->getPilotID().", ".$shipid.", 1, $killisk, $killloot, $points, $month, $year)";
+				$qry->execute($sql);
+			}
+
+			$sql = "UPDATE kb3_pilots SET plt_kpoints=plt_kpoints + ".$kill->getKillPoints(). " WHERE plt_id = ".$inv->getPilotID();
 			$qry->execute($sql);
 		}
+		unset($qry);
 	}
 
 	/**
@@ -167,45 +148,43 @@ select $plt_id as psm_plt_id, losses.psm_shp_id, ifnull(kills.knb,0), ifnull(kil
 	 */
 	public static function delKill($kill)
 	{
+		$year = date('Y',strtotime($kill->getTimestamp()));
+		$month = date('m',strtotime($kill->getTimestamp()));
+		$shipid = $kill->getVictimShip()->getClass()->getID();
+		$killisk = $kill->getISKLoss();
+		$killloot = $kill->getISKLoot();
+		$points = $kill->getKillPoints();
 		$alls = array();
 		$qry = DBFactory::getDBQuery();
-		$qry->execute("SELECT 1 FROM kb3_sum_pilot WHERE psm_plt_id = "
-				.$kill->getVictimID());
-		// No summary table to remove kill from so skip.
-		if ($qry->recordCount()) {
-			$sql = "UPDATE kb3_sum_pilot"
-					." SET psm_loss_count = psm_loss_count - 1,"
-					." psm_loss_isk = psm_loss_isk - ".$kill->getISKLoss()
-					." WHERE psm_plt_id = ".$kill->getVictimID()
-					." AND psm_shp_id = ".$kill->getVictimShip()->getClass()->getID();
-			$qry->execute($sql);
+		$sql = "UPDATE kb3_sum_pilot SET psm_loss_count = psm_loss_count - 1, ".
+				" psm_loss_isk = psm_loss_isk-".$killisk.
+				" ,psm_loss_loot = psm_loss_loot-".$killloot .
+				" ,psm_loss_points = psm_loss_points-".$points.
+				" WHERE psm_plt_id = ".$kill->getVictimID().
+				" AND psm_shp_id = $shipid AND psm_monthday = $month AND psm_year = $year";
+		$qry->execute($sql);
 
-			$sql = "UPDATE kb3_pilots SET plt_lpoints = plt_lpoints - "
-					.$kill->getKillPoints()
-					." WHERE plt_id = ".$kill->getVictimID();
-			$qry->execute($sql);
-		}
+		$sql = "UPDATE kb3_pilots SET plt_lpoints = plt_lpoints - " .$kill->getKillPoints()
+			  ." WHERE plt_id = ".$kill->getVictimID();
+		$qry->execute($sql);
+
 		foreach ($kill->getInvolved() as $inv) {
-			if ($alls[$inv->getPilotID()]) {
+			if (isset($alls[$inv->getPilotID()])) {
 				continue;
 			}
 			$alls[$inv->getPilotID()] = 1;
-			$qry->execute("SELECT 1 FROM kb3_sum_pilot WHERE psm_plt_id = "
-					.$inv->getPilotID());
-			if (!$qry->recordCount()) {
-				continue;
-			}
-			$sql = "UPDATE kb3_sum_pilot"
-					." SET psm_kill_count = psm_kill_count - 1, "
-					." psm_kill_isk = psm_kill_isk - ".$kill->getISKLoss()
-					." WHERE psm_plt_id = ".$inv->getPilotID()
-					." AND psm_shp_id = ".$kill->getVictimShip()->getClass()->getID();
+
+			$sql = "UPDATE kb3_sum_pilot SET psm_kill_count = psm_kill_count - 1, ".
+					" psm_kill_isk = psm_kill_isk - ".$killisk.
+					" ,psm_kill_loot = psm_kill_loot - ".$killloot.
+					" ,psm_kill_points = psm_kill_points - ".$points.
+					" WHERE psm_plt_id = ".$inv->getPilotID().
+					" AND psm_shp_id = $shipid AND psm_monthday = $month AND psm_year = $year";
 			$qry->execute($sql);
 
-			$sql = "UPDATE kb3_pilots SET plt_kpoints = plt_kpoints - "
-					.$kill->getKillPoints()
+			$sql = "UPDATE kb3_pilots SET plt_kpoints = plt_kpoints - ".$kill->getKillPoints()
 					." WHERE plt_id = ".$inv->getPilotID();
-			$qry->execute($sql);
+			$qry->execute($sql);			
 		}
 	}
 
