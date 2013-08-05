@@ -17,10 +17,10 @@ class summaryCache
 		corpSummary::delKill($kill);
 		pilotSummary::delKill($kill);
 	}
-	static public function update($kill, $difference)
+	static public function update($kill, $difference, $differenceloot)
 	{
-		allianceSummary::update($kill, $difference);
-		corpSummary::update($kill, $difference);
-		pilotSummary::update($kill, $difference);
+		allianceSummary::update($kill, $difference, $differenceloot);
+		corpSummary::update($kill, $difference, $differenceloot);
+		pilotSummary::update($kill, $difference, $differenceloot);
 	}
 }

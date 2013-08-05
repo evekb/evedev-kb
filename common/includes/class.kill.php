@@ -21,6 +21,7 @@ class Kill extends Cacheable
 	private $timestamp = null;
 	private $dmgtaken = null;
 	private $iskloss = 0;
+	private $iskloot = 0;
 	private $killpoints = null;
 	private $victimid = null;
 	private $victimcorp = null;
@@ -442,6 +443,17 @@ class Kill extends Cacheable
 			$this->execQuery();
 		}
 		return $this->iskloss;
+	}
+
+	/**
+	 * @return float
+	 */
+	function getISKLoot()
+	{
+		if(!isset($this->iskloot)) {
+			$this->execQuery();
+		}
+		return $this->iskloot;
 	}
 
 	/**
@@ -877,6 +889,7 @@ class Kill extends Cacheable
 					$this->victimid = $cache->victimid;
 					$this->dmgtaken = $cache->dmgtaken;
 					$this->iskloss = $cache->iskloss;
+					$this->iskloot = $cache->iskloot;
 					$this->killpoints = $cache->killpoints;
 					$this->victimcorpid = $cache->victimcorpid;
 					$this->victimallianceid = $cache->victimallianceid;
@@ -903,7 +916,7 @@ class Kill extends Cacheable
 			$sql = "select kll.kll_id, kll.kll_external_id, kll.kll_timestamp,
 						kll.kll_victim_id, kll.kll_crp_id, kll.kll_all_id,
 						kll.kll_ship_id, kll.kll_system_id,
-						kll.kll_points, kll.kll_isk_loss, kll_dmgtaken,
+						kll.kll_points, kll.kll_isk_loss, kll.kll_isk_loot, kll_dmgtaken,
 						fb.ind_plt_id as fbplt_id,
 						fb.ind_crp_id as fbcrp_id,
 						fb.ind_all_id as fbali_id,
@@ -940,6 +953,7 @@ class Kill extends Cacheable
 			$this->tdallianceid = (int)$row['tdali_id'];
 			$this->externalid = (int)$row['kll_external_id'];
 			$this->iskloss = (float)$row['kll_isk_loss'];
+			$this->iskloot = (float)$row['kll_isk_loot'];
 			$this->dmgtaken = (int)$row['kll_dmgtaken'];
 			$this->killpoints = (int)$row['kll_points'];
 
@@ -1384,6 +1398,15 @@ class Kill extends Cacheable
 	{
 		$this->iskloss = $isk;
 	}
+
+	/**
+	 * Set the ISK loss value for this kill.
+	 */
+	function setISKLoot($isk)
+	{
+		$this->iskloot = $isk;
+	}
+
 	/**
 	 * Calculate the current cost of a ship loss excluding blueprints.
 	 * @param boolean $update set true to update all-time summaries.
@@ -1394,6 +1417,7 @@ class Kill extends Cacheable
 		// Make sure the kill is initialised before we change anything.
 		$this->execQuery();
 		$value = 0;
+		$loot = 0;
 		foreach($this->destroyeditems_ as $itd) {
 			$item = $itd->getItem();
 			if(strpos($item->getName(), "Blueprint") === FALSE) $value += $itd->getValue() * $itd->getQuantity();
@@ -1401,7 +1425,7 @@ class Kill extends Cacheable
 		if(config::get('kd_droptototal')) {
 			foreach($this->droppeditems_ as $itd) {
 				$item = $itd->getItem();
-				if(strpos($item->getName(), "Blueprint") === FALSE) $value += $itd->getValue() * $itd->getQuantity();
+				if(strpos($item->getName(), "Blueprint") === FALSE) $loot += $itd->getValue() * $itd->getQuantity();
 			}
 		}
 		$value += $this->getVictimShip()->getPrice();
@@ -1413,7 +1437,31 @@ class Kill extends Cacheable
 				summaryCache::update($this, $value - $this->iskloss);
 			}
 		}
-		$this->iskloss = $value;
+		$this->iskloss = $value + $loot;
+		$this->iskloot = $loot;
+		return $value;
+	}
+
+	function calcISKDropped( ) {
+		// Make sure the kill is initialised before we change anything.
+		$this->execQuery();
+		$value = 0;
+		foreach($this->droppeditems_ as $itd) {
+			$item = $itd->getItem();
+			if(strpos($item->getName(), "Blueprint") === FALSE) $value += $itd->getValue() * $itd->getQuantity();
+		}
+		return $value;
+	}
+	
+	function calcISKDestroyed() {
+		// Make sure the kill is initialised before we change anything.
+		$this->execQuery();
+		$value = 0;
+		foreach($this->destroyeditems_ as $itd) {
+			$item = $itd->getItem();
+			if(strpos($item->getName(), "Blueprint") === FALSE) $value += $itd->getValue() * $itd->getQuantity();
+		}
+		$value += $this->getVictimShip()->getPrice();
 		return $value;
 	}
 
@@ -1536,7 +1584,7 @@ class Kill extends Cacheable
 
 		$qry = DBFactory::getDBQuery();
 		$sql = "INSERT INTO kb3_kills
-            (kll_id , kll_timestamp , kll_victim_id , kll_all_id , kll_crp_id , kll_ship_id , kll_system_id , kll_fb_plt_id , kll_td_plt_id , kll_points , kll_dmgtaken, kll_external_id, kll_isk_loss)
+            (kll_id , kll_timestamp , kll_victim_id , kll_all_id , kll_crp_id , kll_ship_id , kll_system_id , kll_fb_plt_id , kll_td_plt_id , kll_points , kll_dmgtaken, kll_external_id, kll_isk_loss, kll_isk_loot)
             VALUES (".$qid.",
 			date_format('".$this->timestamp."', '%Y.%m.%d %H:%i:%s'),
             ".$this->victimid.",
@@ -1552,7 +1600,8 @@ class Kill extends Cacheable
 			$sql .= $this->externalid.", ";
 		else
 			$sql .= "NULL, ";
-		$sql .= $this->getISKLoss()." )";
+		$sql .= $this->getISKLoss().", ";
+		$sql .= $this->getISKLoot()." )";
 		$qry->autocommit(false);
 		if(!$qry->execute($sql)) {
 			return $this->rollback($qry);
