@@ -123,8 +123,6 @@ class API_KillLog extends API
 				$feedfetch = new IDFeed();
 				$feedfetch->setXML($this->pheal->xml);
 				$feedfetch->setLogName("API");
-				$feedfetch->setAcceptedTrust(-1);
-				$feedfetch->setKillTrust(3);
 				$feedfetch->read();
 
 				$posted = array_merge($posted, $feedfetch->getPosted());

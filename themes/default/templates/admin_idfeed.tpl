@@ -5,7 +5,6 @@
 		<tr style='text-align: left;'>
 			<th>Feed URL</th>
 			<th>Last Kill</th>
-			<th>Trusted</th>
 			<th>Active</th>
 			<th>Last Updated</th>
 			<th>Delete</th>
@@ -17,9 +16,6 @@
 			</td>
 			<td>
 				<input type='text' name='feed[{$i.id}][lastkill]' class='lastkill' size='10' value='{$i.lastkill}' />
-			</td>
-			<td>
-				<input type='checkbox' name='feed[{$i.id}][trusted]' class='trusted' value='1' {if $i.trusted}checked="checked"{/if} />
 			</td>
 			<td>
 				<input type='checkbox' name='feed[{$i.id}][active]' class='active' value='1' {if $i.active}checked="checked"{/if} />
@@ -34,7 +30,10 @@
 {/foreach}
 		<tr>
 			<td colspan='2'>
-				<i>Example: http://killboard.domain.com/?a=idfeed</i>
+				<i>Examples: http://killboard.domain.com/?a=idfeed<br /><br />
+				http://zkillboard.com<br />
+				Other forms of interaction with zKill are possible. This parser does not honor zKill's advertised expires header or cachedUntil value, so do not set an unreasonable polling frequency in your cron.<br /><br />
+				Default parameters are automatically added to feed URLs if missing.<br /></i>
 			</td>
 			<td>
 			</td>

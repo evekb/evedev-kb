@@ -11,7 +11,7 @@ if (!substr_compare(PHP_OS, 'win', 0, 3, true)) {
 }
 
 $cronStartTime = microtime(true);
-@error_reporting(E_ERROR);
+set_error_handler("feedErrorHandler");
 
 if( php_sapi_name() == 'cli' ) {
 	ob_implicit_flush(true);
@@ -40,7 +40,6 @@ require_once('globals.php');
 $config = new Config(KB_SITE);
 
 $feeds = config::get("fetch_idfeeds");
-$html = '';
 
 $qry = new DBQuery();
 $qry->execute("SELECT * FROM kb3_feeds WHERE feed_kbsite = '".KB_SITE."'");
@@ -48,7 +47,6 @@ while ($row = $qry->getRow()) {
 	$tmphtml = '';
 	$id = $row["feed_id"];
 	$url = $row["feed_url"];
-	$trusted = (bool)($row["feed_flags"] & FEED_TRUSTED);
 	$active = (bool)($row["feed_flags"] & FEED_ACTIVE);
 	$lastkill = (int) $row["feed_lastkill"];
 
@@ -87,6 +85,21 @@ function getOwners()
 	return $myids;
 }
 
+function feedErrorHandler($errno, $errstr, $errfile, $errline) {
+	if (!(error_reporting() & $errno)) // This error code is not included in error_reporting
+		return;
+
+	if ($errno == E_USER_WARNING) {
+		printlog($errstr);
+		return true; //do not invoke php error handling
+		die;
+	}
+	return; //let php handle it, it's not a feed error we generated
+}
+
+/**
+ * @param boolean $trusted Depreciated.
+*/
 function getIDFeed($id, $url, $trusted, $lastkill)
 {
 	// Just in case, check for empty urls.
@@ -99,46 +112,38 @@ function getIDFeed($id, $url, $trusted, $lastkill)
 	$feedfetch->setID();
 	$feedfetch->setAllKills(1);
 
-	if ($trusted) {
-		$feedfetch->setAcceptedTrust(1);
-	} else {
-		$feedfetch->setAcceptedTrust(0);
-	}
-	if(!$lastkill) {
-		$feedfetch->setStartDate(time() - 60*60*24*7);
-	} else {
+	if(!$lastkill)
+		$feedfetch->setStartDate(time() - 60*60*24*7); //1 week ago
+	else
 		$feedfetch->setStartKill($lastkill + 1, true);
-	}
 
 	if($feedfetch->read($url) !== false) {
 		$posted = count($feedfetch->getPosted());
 		$skipped = count($feedfetch->getSkipped());
 		$duplicate = count($feedfetch->getDuplicate());
+		
+		if (strrpos(strtolower($url), 'zkillboard'))
+			$newKillID = $feedfetch->getLastReturned();
+		else
+			$newKillID = $feedfetch->getLastInternalReturned();
 
-		if( $posted+$skipped+$duplicate == 0 ) {
-			$qry2->execute("UPDATE kb3_feeds SET feed_flags=0 WHERE feed_kbsite = '".KB_SITE."' AND feed_id = $id");
- 		}
-		if( intval($feedfetch->getLastInternalReturned()) > $lastkill) {
-			$qry2->execute("UPDATE kb3_feeds SET feed_lastkill=".
-							intval($feedfetch->getLastInternalReturned()) .", feed_updated=NOW()
-							WHERE feed_kbsite = '".KB_SITE."' AND feed_id = $id");
-		}
-		printlog( $posted." kills were posted, ".$duplicate." duplicate kills and ".$skipped." were skipped.");
-		printlog("Last kill ID returned was ".intval($feedfetch->getLastInternalReturned()));
-		if ($feedfetch->getParseMessages()) {
-			foreach( $feedfetch->getParseMessages() as $msg) {
+		if($newKillID > $lastkill)
+			$qry2->execute("UPDATE kb3_feeds SET feed_lastkill=".intval($newKillID) .", feed_updated=NOW()
+				WHERE feed_kbsite = '".KB_SITE."' AND feed_id = $id");
+
+		printlog($posted." kills were posted, ".$duplicate." duplicate kills and ".$skipped." were skipped.");
+		printlog("Last kill ID returned was $newKillID");
+		if ($feedfetch->getParseMessages())
+			foreach($feedfetch->getParseMessages() as $msg)
 				printlog($msg);
-			}
- 		}
  	} else {
-		printlog("Error reading feed: ".$val['url']);
-		printlog($feedfetch->errormsg());die;
-		$qry2->execute("UPDATE kb3_feeds SET feed_flags=0 WHERE feed_kbsite = '".KB_SITE."' AND feed_id = $id");
-		if(!$val['lastkill']) $html .= ", Start time = ".(time() - 60*60*24*7);
-		else if($val['apikills']) $html .= ", Start kill = ".($val['lastkill']);
-		printlog($feedfetch->errormsg());
+		if(!$val['lastkill'])
+			printlog("Start time = ".date('YmdHi', (time() - 60*60*24*7)));
+		else if($val['apikills'])
+			printlog("Start kill = ".$val['lastkill']);
+		printlog("Error reading feed: ".$feedfetch->errormsg());
 	}
-	return $html;
+	printlog("Fetch url: ".$feedfetch->getFullURL());
 }
 
 function printlog($string) {

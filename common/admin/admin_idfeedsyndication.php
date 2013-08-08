@@ -33,10 +33,9 @@ $feeds = array();
 // Retrieve feeds from Database
 $qry->execute("SELECT * FROM kb3_feeds WHERE feed_kbsite = '".KB_SITE."'");
 while ($row = $qry->getRow()) {
-	$trusted = (bool)($row["feed_flags"] & FEED_TRUSTED);
 	$active = (bool)($row["feed_flags"] & FEED_ACTIVE);
 
-	$feeds[$row["feed_id"]] = array('id'=>$row["feed_id"], 'updated'=>$row["feed_updated"],'active'=>$active, 'uri'=>$row["feed_url"], 'trusted'=>$trusted, 'lastkill'=>$row["feed_lastkill"]);
+	$feeds[$row["feed_id"]] = array('id'=>$row["feed_id"], 'updated'=>$row["feed_updated"],'active'=>$active, 'uri'=>$row["feed_url"], 'lastkill'=>$row["feed_lastkill"]);
 }
 
 // updating/saving urls and options
@@ -51,7 +50,6 @@ if ($_POST['submit'])
 			}
 
 			$active = (isset($val["active"]) ? 1 : 0);
-			$trusted = (isset($val["trusted"]) ? 1 : 0);
 			$lastkill = intval($val["lastkill"]);
 
 			// check feed doesn't already exist
@@ -63,20 +61,16 @@ if ($_POST['submit'])
 			}
 
 			$feed_flags = 0;
-			if( $active) {
+			if($active)
 				$feed_flags |= FEED_ACTIVE;
-			}
-			if ( $trusted ) {
-				$feed_flags |= FEED_TRUSTED;
-			}
-			$sql = "INSERT INTO kb3_feeds( feed_url, feed_lastkill, feed_kbsite, feed_flags ) VALUES ( '" . $qry->escape($uri) . "', $lastkill, '" . KB_SITE . "', '$feed_flags' )";
+
+			$sql = "INSERT INTO kb3_feeds( feed_url, feed_lastkill, feed_kbsite, feed_flags) VALUES ( '" . $qry->escape($uri) . "', $lastkill, '" . KB_SITE . "', '$feed_flags' )";
 			$qry->execute($sql);
 
 			$qry->execute("SELECT * FROM kb3_feeds WHERE feed_kbsite = '".KB_SITE."' AND feed_url='" . $qry->escape($uri) . "'");
 			while ($row = $qry->getRow()) {
-				$trusted = (bool)($row["feed_flags"] & FEED_TRUSTED);
 				$active = (bool)($row["feed_flags"] & FEED_ACTIVE);
-				$feeds[$row["feed_id"]] = array('id'=>$row["feed_id"], 'updated'=>$row["feed_updated"],'active'=>$active, 'uri'=>$row["feed_url"], 'trusted'=>$trusted, 'lastkill'=>$row["feed_lastkill"]);
+				$feeds[$row["feed_id"]] = array('id'=>$row["feed_id"], 'updated'=>$row["feed_updated"], 'active'=>$active, 'uri'=>$row["feed_url"], 'lastkill'=>$row["feed_lastkill"]);
 			}
 
 		} else {
@@ -84,22 +78,15 @@ if ($_POST['submit'])
 			$id = intval($key);
 			$uri = $val["url"];
 			$active = (isset($val["active"]) ? 1 : 0);
-			$trusted = (isset($val["trusted"]) ? 1 : 0);
 			$lastkill = intval($val["lastkill"]);
-			if( $feeds[$id]['active'] != $active ||
-				$feeds[$id]['trusted'] != $trusted ) {
+			if( $feeds[$id]['active'] != $active) {
 				// flags have changed
 				$feed_flags = 0;
-				if( $active) {
+				if($active)
 					$feed_flags |= FEED_ACTIVE;
-				}
-				if ( $trusted ) {
-					$feed_flags |= FEED_TRUSTED;
-				}
 
 				$qry->execute("UPDATE kb3_feeds SET feed_flags=$feed_flags WHERE feed_kbsite = '".KB_SITE."' AND feed_id = $id");
 				$feeds[$id]['active'] = (bool)($feed_flags & FEED_ACTIVE);
-				$feeds[$id]['trusted'] = (bool)($feed_flags & FEED_TRUSTED);
 			}
 
 			if ( $feeds[$id]['lastkill'] != $lastkill || $feeds[$id]['uri'] != $uri ) {
@@ -112,7 +99,7 @@ if ($_POST['submit'])
 }
 
 // Add an empty feed to the list, or create with one empty feed.
-$feeds[] = array('id'=>'new', 'updated'=>'', 'active'=>'', 'uri'=>"", 'trusted'=>0, 'lastkill'=>0);
+$feeds[] = array('id'=>'new', 'updated'=>'', 'active'=>'', 'uri'=>"", 'lastkill'=>0);
 
 $smarty->assignByRef('rows', $feeds);
 

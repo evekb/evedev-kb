@@ -25,7 +25,8 @@ define('KB_APIKEY_BADAUTH', 8);
 define('KB_APIKEY_EXPIRED', 16);
 define('KB_APIKEY_BADCORP', 32);
 
-define('FEED_TRUSTED', 1);
+$idfeedversion = '1.5';
+//define('FEED_TRUSTED', 1); //depreciated, do not reuse
 define('FEED_ACTIVE', 2);
 
 // Make sure the core functions are loaded.
@@ -303,14 +304,29 @@ if (!function_exists('get_called_class')) {
 	}
 }
 
+/**
+ * Append a SimpleXMLElement to another
+ * 
+ * @param SimpleXMLElement $base
+ * @param SimpleXMLElement $append
+ */
+function sxe_append(SimpleXMLElement $base, SimpleXMLElement $append) {
+	$baseDom = dom_import_simplexml($base);
+	$appendDom = dom_import_simplexml($append);
+	$baseDom->appendChild($baseDom->ownerDocument->importNode($appendDom, true));
+}
+
+if (!function_exists('gzdecode')) {
 	/**
-	 * Append a SimpleXMLElement to another
+	 * Decode gz coded data
 	 * 
-	 * @param SimpleXMLElement $base
-	 * @param SimpleXMLElement $append
-	*/
-	function sxe_append(SimpleXMLElement $base, SimpleXMLElement $append) {
-		$baseDom = dom_import_simplexml($base);
-		$appendDom = dom_import_simplexml($append);
-		$baseDom->appendChild($baseDom->ownerDocument->importNode($appendDom, true));
+	 * http://php.net/manual/en/function.gzdecode.php
+	 * 
+	 * @param string $data gzencoded data
+	 * @return string inflated data
+	 */
+	function gzdecode($data) {
+		// strip header and footer and inflate
+		return gzinflate(substr($data, 10, -8));
+	}
 }
