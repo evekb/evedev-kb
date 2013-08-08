@@ -20,8 +20,9 @@
  *		Depreciated Hash & trust are but they are left here for backwards board compatibility.
  *		Trust is now hard-coded to 3.
  *		Support gzip encoding.
+ *		Added authorization checks.
  *		Version bumped to consolidate syndication v1.04 and fetcher v1.2.
- * 
+ *
  * @package EDK
  */
 class IDFeed
@@ -57,20 +58,20 @@ class IDFeed
 		$this->lastReturned = 0;
 		$this->time = '';
 		$this->cachedTime = '';
-		
+
 		global $idfeedversion;
 
 		$http = new http_request($this->getFullURL());
 		$http->set_useragent("EDK IDFeedfetcher ".$idfeedversion);
 		$http->set_timeout(300);
-		
+
 		//accept gzip encoding
 		$http->set_header('Accept-Encoding: gzip');
 		if (strpos($http->get_header(), 'Content-Encoding: gzip') !== false)
 			$this->xml = gzdecode($http->get_content());
 		else
 			$this->xml = $http->get_content();
-		
+
 		if ($http->get_http_code() != 200) {
 			trigger_error("HTTP error ".$http->get_http_code()." while fetching feed from ".$this->url.$options.".", E_USER_WARNING);
 			return false;
@@ -347,13 +348,13 @@ class IDFeed
 	{
 		return $this->xml;
 	}
-	
+
 	/**
 	 * Builds a feed URL from the base url and all set options
 	 *
 	 * @return mixed The fully assembled url or false if url is not set
 	 *
-	 */	
+	 */
 	function getFullURL() {
 		if (!$this->url) {
 			return false;
@@ -370,13 +371,13 @@ class IDFeed
 				$options .= 'xml/';
 			if (strpos($url, 'orderdirection') === false)
 				$options .= 'orderDirection/asc/';
-			
+
 			//zKill currently doesn't allow querying negative killmails (these are how zKill denotes non-api verified mails)
 			//additionally, edk doesn't yet have code to handle negative killmails either
 			//as a result we have to insist on api kills only
 			if (strrpos($url, 'api-only') === false)
 				$options .= 'api-only/';
-			
+
 			foreach ($this->options as $key => $val) {
 				switch ($key) {
 					case 'startdate':
@@ -440,7 +441,7 @@ class IDFeed
 				$options .= $key."=".$val;
 			}
 		}
-		
+
 		return $this->url.$options;
 	}
 
@@ -535,7 +536,7 @@ class IDFeed
 			$kill = new Kill();
 			if ($externalID) {
 				$kill->setExternalID($externalID);
-					
+
 				$id = $kill->getDupe(); //speedy dup check based on external id only
 				if ($id > 0) { //duplicate found
 					$qry = DBFactory::getDBQuery(true);
@@ -574,12 +575,12 @@ class IDFeed
 						$errorstring .= " NPC Only mail.";
 						$skip = true;
 					}
-						
+
 					if (!$skip) { //skipping intensive items processing
 						if (isset($row->rowset[1]->row[0]))
 							foreach ($row->rowset[1]->row as $item)
 								$this->processItem($item, $kill);
-						
+
 						$authorized = false;
 						if (config::get('cfg_allianceid') && in_array($kill->getVictimAllianceID(), config::get('cfg_allianceid')))
 							$authorized = true;
@@ -1092,13 +1093,13 @@ class IDFeed
 	/**
 	 * Depreciated. Returns a hash of the killmail for backwards
 	 * compatibility with older boards using this board's idfeed.
-	 * 
+	 *
 	 * Optionally pdates the db with the generated hash if missing.
 	 *
 	 * @param Kill $kill The kill to hash
 	 * @param bool $update Whether to set the hash in the mails db table if it's missing
 	 * @return mixed The hash string or false upon error
-	 */	
+	 */
 	static function getHash($kill, $update = false) {
 		$qry = DBFactory::getDBQuery();
 		if (!is_object($kill))
@@ -1112,14 +1113,14 @@ class IDFeed
 					return $row['kll_hash'];
 			}
 		}
-		
+
 		//generate hash
 		$restoreClassification = false;
 		if ($kill->isClassified) { //temporarily disable classification for raw mail generation
 			config::set('kill_classified', 0);
 			$restoreClassification = true;
 		}
-			
+
 			$mail = trim($kill->getRawMail());
 		$mail = str_replace("\r\n", "\n", $mail);
 
@@ -1144,7 +1145,7 @@ class IDFeed
 			$involved = substr($mail, $involvedStart);
 		else
 			$involved = substr($mail, $involvedStart, $itemspos - $involvedStart);
-			
+
 		$invList = explode("Name: ", $involved);
 		$invListDamage = array();
 		$invlistName = array();
@@ -1158,7 +1159,7 @@ class IDFeed
 				$name = trim(substr($party,0,$pos));
 				$invListName[] = $name;
 			}
-				
+
 		// Sort the involved list by damage done then alphabetically.
 		array_multisort($invListDamage, SORT_DESC, SORT_NUMERIC, $invListName, SORT_ASC, SORT_STRING);
 
@@ -1206,7 +1207,7 @@ class IDFeed
 		$hashIn .= implode(',', $invListDamage);
 
 		$hash = md5($hashIn, true);
-			
+
 		if ($update) {
 			$externalID = $kill->getExternalID();
 			if ($externalID) {
