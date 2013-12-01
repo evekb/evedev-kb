@@ -264,7 +264,7 @@ class Api
 
 function getdata($apiroot, $target, $query)
 {
-    $fp = fsockopen($apiroot, 80);
+    $fp = fsockopen("ssl://".$apiroot, 443);
 
     if (!$fp)
     {
