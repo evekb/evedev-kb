@@ -264,7 +264,7 @@ class Ship extends Cacheable
 					." WHERE typeName = ?");
 		}
 
-		$shp_name = $name;
+		$shp_name = $name = trim(stripslashes($name));
 		$pqry->bind_param('s', $shp_name);
 		$pqry->bind_result($id, $typeName, $scl_id);
 
