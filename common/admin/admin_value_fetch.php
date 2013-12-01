@@ -68,7 +68,7 @@ else
 
 	$html .= '<form method="post" action="'.edkURI::page("admin_value_fetch").'">';
 	$html .= '<table width="100%" border="1">';
-	$html .= '<tr><td>Update Faction Values</td><td><input type="radio" name="faction" value="factionyes" checked="checked" />Yes</td><td><input type="radio" name="faction" value="factionno" />No</td></tr>';
+	$html .= '<tr><td>Update Faction Values</td><td><input type="radio" name="faction" value="factionyes" />Yes</td><td><input type="radio" name="faction" value="factionno" checked="checked" />No</td></tr>';
 	$html .= '<tr><td>Filename</td><td colspan="2"><input type="text" name="turl" id="turl" value="'.$url.'" size="110" /></td></tr>';
 	$html .= '<tr><td colspan="3" align="center"><i>Leave above field empty to reset to default.</i></td></tr>';
 	if ((time() - $timestamp) < 86400)
