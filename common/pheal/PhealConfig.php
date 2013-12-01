@@ -57,7 +57,7 @@ class PhealConfig
      * use https://api.eveonline.com/ if you like to have ssl support
      * @var String
      */
-    public $api_base = "http://api.eveonline.com/";
+    public $api_base = "https://api.eveonline.com/";
 
     /**
      * enable the new customize key system (use keyID instead of userID, etc)

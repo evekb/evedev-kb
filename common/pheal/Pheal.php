@@ -318,6 +318,8 @@ class Pheal
         curl_setopt(self::$curl, CURLOPT_URL, $url);
         curl_setopt(self::$curl, CURLOPT_HTTPHEADER, $headers);
         curl_setopt(self::$curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt(self::$curl, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt(self::$curl, CURLOPT_SSL_VERIFYPEER, 0);
         
         // call
         $result	= curl_exec(self::$curl);
