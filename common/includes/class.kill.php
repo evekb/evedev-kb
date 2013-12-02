@@ -51,7 +51,7 @@ class Kill extends Cacheable
 	{
 		$id = intval($id);
 		if($id && $external) {
-			$qry = DBFactory::getDBQuery();
+			$qry = DBFactory::getDBQuery(true);
 			$qry->execute("SELECT kll_id FROM kb3_kills WHERE kll_external_id = ".$id);
 			if($qry->recordCount()) {
 				$result = $qry->getRow();
