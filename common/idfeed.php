@@ -174,7 +174,7 @@ if (isset($_GET['lastID']) && isset($_GET['allkills'])
 if (isset($_GET['startdate']))
 		$list->setStartDate(gmdate('Y-m-d H:i:s', intval($_GET['startdate'])));
 if (isset($_GET['enddate']))
-		$list->setEndDate(gmdate('Y-m-d H:i:s', intval($_GET['startdate'])));
+		$list->setEndDate(gmdate('Y-m-d H:i:s', intval($_GET['enddate'])));
 
 header("Content-Type: text/xml");
 echo IDFeed::killListToXML($list);
