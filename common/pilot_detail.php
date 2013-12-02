@@ -228,9 +228,11 @@ class pPilotDetail extends pageAssembly
 			case "losses":
 				$list = new KillList();
 				$list->setOrdered(true);
-				$list->setPodsNoobships(config::get('podnoobs'));
 				$list->addVictimPilot($this->pilot);
-				if ($scl_id) $list->addVictimShipClass($scl_id);
+				if ($scl_id)
+					$list->addVictimShipClass($scl_id);
+				else
+					$list->setPodsNoobships(config::get('podnoobs'));
 				$list->setPageSplit(config::get('killcount'));
 				$pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 
@@ -262,10 +264,11 @@ class pPilotDetail extends pageAssembly
 				if (config::get('comments_count')) $list->setCountComments(true);
 				if (config::get('killlist_involved')) $list->setCountInvolved(true);
 				$list->setLimit(10);
-				$list->setPodsNoobships(config::get('podnoobs'));
 				$list->addInvolvedPilot($this->pilot);
-				if ($scl_id) $list->addVictimShipClass($scl_id);
-
+				if ($scl_id)
+					$list->addVictimShipClass($scl_id);
+				else
+					$list->setPodsNoobships(config::get('podnoobs'));
 				$table = new KillListTable($list);
 				$table->setDayBreak(false);
 				$smarty->assign('kills', $table->generate());
@@ -275,10 +278,11 @@ class pPilotDetail extends pageAssembly
 				if (config::get('comments_count')) $list->setCountComments(true);
 				if (config::get('killlist_involved')) $list->setCountInvolved(true);
 				$list->setLimit(10);
-				$list->setPodsNoobships(config::get('podnoobs'));
 				$list->addVictimPilot($this->pilot);
-				if ($scl_id) $list->addVictimShipClass($scl_id);
-
+				if ($scl_id)
+					$list->addVictimShipClass($scl_id);
+				else
+					$list->setPodsNoobships(config::get('podnoobs'));
 				$table = new KillListTable($list);
 				$table->setDayBreak(false);
 				$table->setDayBreak(false);

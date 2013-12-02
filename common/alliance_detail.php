@@ -345,10 +345,12 @@ class pAllianceDetail extends pageAssembly
 					$list->setCountInvolved(true);
 				}
 				$list->setLimit(10);
-				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->addInvolvedAlliance($this->alliance);
 				if ($scl_id) {
 					$list->addVictimShipClass($scl_id);
+				}
+				else {
+					$list->setPodsNoobShips(config::get('podnoobs'));
 				}
 				$ktab = new KillListTable($list);
 				$ktab->setLimit(10);
@@ -364,12 +366,13 @@ class pAllianceDetail extends pageAssembly
 					$list->setCountInvolved(true);
 				}
 				$list->setLimit(10);
-				$list->setPodsNoobShips(config::get('podnoobs'));
 				$list->addVictimAlliance($this->alliance);
 				if ($scl_id) {
 					$list->addVictimShipClass($scl_id);
 				}
-
+				else {
+					$list->setPodsNoobShips(config::get('podnoobs'));
+				}
 				$ltab = new KillListTable($list);
 				$ltab->setLimit(10);
 				$ltab->setDayBreak(false);
