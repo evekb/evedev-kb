@@ -25,6 +25,16 @@ class Parser
 	function Parser($killmail, $externalID = null, $loadExternals = true)
 	{
 		self::$loadExternals = $loadExternals;
+		// -------------------------------------
+		// fix for new localization in killmails
+		// -------------------------------------
+
+		// remove possible escaping of double quotation marks
+		$killmail = preg_replace("/\\\\\"/", "\"", $killmail);
+		// remove <localized> shit and extract the hint if any
+		$killmail = preg_replace_callback("/\<localized hint=\"(.*)\"\>(.*)(\*)?(\<\/localized\>)?\\r/", create_function('$match', 'return $match[1];'), $killmail);
+		// remove trailing * if any
+		$killmail = preg_replace("/(\*)?\\r/", "", $killmail);
 
 		$this->killmail_ = trim(str_replace("\r", '', $killmail));
 
