@@ -471,10 +471,14 @@ class Parser
 								$crp = $this->fetchCorp($corporation);
 								if($crp && $crp->getExternalID(true) > 0)
 								{
-									if(strtotime($timestamp) > time() - 24*60*60 && $crp->fetchCorp())
+									if($crp->fetchCorp())
 									{
 										$al = $crp->getAlliance();
-										$ianame = $al->getName();
+										$alName = $al->getName();
+										if(trim($alName) != "")
+										{
+											$ianame = $al->getName();
+										}
 									}
 									// else check db for kills with that corp at the same time?
 								}
