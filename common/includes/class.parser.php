@@ -949,6 +949,9 @@ class Parser
 					if (!$corp->getExternalID()) {
 						$corp = false;
 					}
+					else {
+						$corp->execQuery();
+					}
 				}
 			} else {
 				$corp = Corporation::add($corpname, $alliance, $timestamp, 0, self::$loadExternals);

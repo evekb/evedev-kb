@@ -742,7 +742,7 @@ class IDFeed
 			|| $shipClassID == 37)  // large Tower
 		{
 			$corpByName = Corporation::lookup(strval($inv['corporationName']));
-			if($corpbyName)
+			if($corpByName)
 			{
 				$alliance = $corpByName->getAlliance();
 			}
