@@ -141,7 +141,7 @@ if (count($page_error) == 0) {
 				if (is_array($fileList)) {
 					foreach ($fileList as $file) {
 						if ($file['filename'] == "cache/todelete.txt") {
-							$tmp = $readingZip->extractFile($file['index'], PCLZIP_OPT_REPLACE_NEWER);
+							$tmp = $readingZip->extractFile($file['index']);
 							$deleteList = explode("\n", $tmp[0]["content"]);
 						} else if (is_dir($file['filename'])) {
 							// Add empty directories to the backup list.
@@ -174,7 +174,7 @@ if (count($page_error) == 0) {
 					}
 				}
 
-				$readingZip->extractZip(getcwd(), PCLZIP_OPT_REPLACE_NEWER);
+				$readingZip->extractZip(getcwd());
 				if ($deleteList) {
 					foreach ($deleteList as $curFile) {
 						if ($curFile && substr($curFile, 0, 1) != "/") {

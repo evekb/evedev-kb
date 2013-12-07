@@ -61,7 +61,7 @@ class Zip
 
     function extractZip($pathToExtractTo) {
 	if(!isset($this->archive)) $this->archive = new PclZip($this->filename);
-	$this->errors =$this->archive->extract(PCLZIP_OPT_PATH, $pathToExtractTo);
+	$this->errors =$this->archive->extract(PCLZIP_OPT_PATH, $pathToExtractTo, PCLZIP_OPT_REPLACE_NEWER);
     }
 
     function extractFile($index) {
