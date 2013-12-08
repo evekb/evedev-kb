@@ -771,42 +771,9 @@ class KillWrapper extends Kill
 		return $this->involvedparties_;
 	}
 
-	function setHash($hash)
-	{
-		if (strlen($hash) > 16) {
-			$this->hash = pack("H*", $hash);
-		} else {
-			$this->hash = $hash;
-		}
-	}
-
-	function getHash($hex = false, $update = true)
-	{
-		if ($this->hash) {
-			if ($hex) {
-				return bin2hex($this->hash);
-			} else {
-				return $this->hash;
-			}
-		} else {
-			trigger_error(__FUNCTION__ . " not implemented in this class",
-					E_USER_ERROR);
-		}
-	}
-
 	function setRawMail($mail)
 	{
 		$this->mail = $mail;
-	}
-
-	public function setTrust($trust)
-	{
-		$this->trust = intval($trust);
-	}
-
-	public function getTrust()
-	{
-		return $this->trust;
 	}
 
 	/**

@@ -20,7 +20,7 @@
 			<td>{$i.Value}</td>
         {/if}
 		</tr>
-        {if $admin && $config->get('item_values') && !$fixSlot && !$i.bpc}
+        {if $admin && $config->get('item_values') && !$i.bpc}
 		<tr class="kb-table-row-even">
 			<td colspan="4">
 				<form method="post" action="{$formURL}">
@@ -36,25 +36,6 @@
 			</td>
 		</tr>
         {/if}
-        {if $admin and $i.slotID < 4 and $fixSlot}
-		<tr class="kb-table-row-even">
-			<td colspan="4">
-				<form method="post" action="{$formURL}">
-					<div style="float:right;">
-						<input type="submit" name="submit" value="UpdateSlot" class="comment-button" />
-					</div>
-					<div style="float:right;">
-				Fix slot:
-						<input name="IID" value="{$i.itemID}" type="hidden" />
-						<input name="KID" value="{$killID}" type="hidden" />
-						<input name="TYPE" value="destroyed" type="hidden" />
-						<input name="OLDSLOT" value="{$i.slotID}" type="hidden" />
-						<input name="{$i.itemID}" type="text" class="comment-button" value="{$i.slotID}" size="6" />
-					</div>
-				</form>
-			</td>
-		</tr>
-        {/if}
     {/foreach}
     {foreach from=$dropped.$slotindex item="i"}
 		<tr class="kb-table-row-odd dropped">
@@ -65,7 +46,7 @@
 			<td>{$i.Value}</td>
         {/if}
 		</tr>
-        {if $admin && $config->get('item_values') && !$fixSlot && !$i.bpc}
+        {if $admin && $config->get('item_values') && !$i.bpc}
 		<tr class="kb-table-row-even">
 			<td colspan="4">
 				<form method="post" action="{$formURL}">
@@ -76,25 +57,6 @@
 				Current single Item Value:
 						<input name="IID" value="{$i.itemID}" type="hidden" />
 						<input name="{$i.itemID}" type="text" class="comment-button" value="{$i.single_unit}" size="8" />
-					</div>
-				</form>
-			</td>
-		</tr>
-        {/if}
-	{if $admin and $i.slotID < 4 and $fixSlot}
-		<tr class="kb-table-row-even">
-			<td colspan="4">
-				<form method="post" action="{$formURL}">
-					<div style="float:right;">
-						<input type="submit" name="submit" value="UpdateSlot" class="comment-button" />
-					</div>
-					<div style="float:right;">
-				Fix slot:
-						<input name="IID" value="{$i.itemID}" type="hidden" />
-						<input name="KID" value="{$killID}" type="hidden" />
-						<input name="TYPE" value="dropped" type="hidden" />
-						<input name="OLDSLOT" value="{$i.slotID}" type="hidden" />
-						<input name="{$i.itemID}" type="text" class="comment-button" value="{$i.slotID}" size="6" />
 					</div>
 				</form>
 			</td>
@@ -125,7 +87,7 @@
 			<td colspan="3"><div>Ship Loss:</div></td>
 			<td>{$shipValue}</td>
 		</tr>
-        {if $admin and $config->get('item_values') and !$fixSlot}
+        {if $admin and $config->get('item_values')}
 		<tr class="kb-table-row-even">
 			<td colspan="4" style="vertical-align:top; text-align:right">
 				<form method="post" action="{$formURL}">

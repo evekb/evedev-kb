@@ -15,7 +15,7 @@ $(document).ready(function() {
 			$(this).removeClass('ui-state-hover');
 		}
 	).click(function( event ) {
-		$('div.summerytable-container').slideToggle();		
+		$('div.summarytable-container').slideToggle();		
     });
 });
 //]]>
@@ -27,7 +27,7 @@ $(document).ready(function() {
 {else}{if $verbose}{assign var=columns value=2}{assign var=width value=50}
 {else}{assign var=columns value=3}{assign var=width value=33}{/if}{/if}
 <div class="summarytable edk-section-main ui-widget-content ui-helper-reset">
-	<div class="summerytable-container">
+	<div class="summarytable-container"{if $summarycollapsed} style="display:none;"{/if}>
 		<table class="kb-subtable ui-widget ui-helper-reset">
 			<tr>
 				<td style="width:{$width}%;">

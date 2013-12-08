@@ -14,28 +14,20 @@
  * 1.0.7 Better CCP API handling
  * 1.0.8 Handle NPC ships in API feeds.
  * 1.0.9 Add Implant location
- * 1.1.0 Fix Trust issues.
- * 1.2.0 Use CCP's slot numbering
+ * 1.1 Fix Trust issues.
+ * 1.2 Use CCP's slot numbering
+ * 1.5 Support fetching from zKillboard.
+ *		Depreciated Hash & trust are but they are left here for backwards board compatibility.
+ *		Trust is now hard-coded to 3.
+ *		Support gzip encoding.
+ *		Added authorization checks.
+ *		Version bumped to consolidate syndication v1.04 and fetcher v1.2.
+ *
  * @package EDK
  */
 class IDFeed
 {
 	private $url = '';
-	/**
-	 * @var int The level of trust to accept before verifying a mail. Lower
-	 * is more trusting.
-	 */
-	private $trust = 255;
-	/**
-	 * @var int Force a level of trust when verifying kills. Used to set kills
-	 * from the API as trusted.
-	 */
-	private $killtrust = 0;
-	/**
-	 * @var int The maximum level of trust to record, regardless of what a remote
-	 * feed may claim.
-	 */
-	private $maxtrust = 3;
 	private $xml = '';
 	private $options = array();
 	private $lastReturned = 0;
@@ -49,7 +41,6 @@ class IDFeed
 	private $errormsg = '';
 	private $errorcode = 0;
 	private $npcOnly = true;
-	const version = "1.2";
 	private $lookupLocation = false;
 
 	/**
@@ -68,30 +59,21 @@ class IDFeed
 		$this->time = '';
 		$this->cachedTime = '';
 
-		if (strpos($this->url, "?") === false) {
-			$options = "?";
-		} else {
-			$options = "&";
-		}
-		$first = true;
-		foreach ($this->options as $key => $val) {
-			if ($first) {
-				$first = false;
-			} else {
-				$options .= "&";
-			}
-			$options .= $key."=".$val;
-		}
-
 		global $idfeedversion;
 
-		$http = new http_request($this->url.$options);
-		$http->set_useragent("EDK IDFeedfetcher ".self::version);
+		$http = new http_request($this->getFullURL());
+		$http->set_useragent("EDK IDFeedfetcher ".$idfeedversion);
 		$http->set_timeout(300);
-		$this->xml = $http->get_content();
+
+		//accept gzip encoding
+		$http->set_header('Accept-Encoding: gzip');
+		if (strpos($http->get_header(), 'Content-Encoding: gzip') !== false)
+			$this->xml = gzdecode($http->get_content());
+		else
+			$this->xml = $http->get_content();
+
 		if ($http->get_http_code() != 200) {
-			trigger_error("HTTP error ".$http->get_http_code()
-					." while fetching feed from ".$this->url.$options.".", E_USER_WARNING);
+			trigger_error("HTTP error ".$http->get_http_code()." while fetching feed from ".$this->url.$options.".", E_USER_WARNING);
 			return false;
 		}
 
@@ -341,53 +323,6 @@ class IDFeed
 	}
 
 	/**
-	 * Set level of trust to accept. Kills with a trust level greater than or
-	 * equal to this will be accepted as verified. If the remote kill has a trust
-	 * level below this, it will not be verified.
-	 *
-	 * e.g.
-	 * We fetch a KillLog from the API and use setKillTrust to force it to a
-	 * trust level of 3. Another board then fetches from us, and is willing to
-	 * accept a trust level of 1, so the kills are fetched and accepted as
-	 * verified. The trust level is reduced to 2 by that board. The next board
-	 * will also accept them as verified and set trust to 1, and the next 0.
-	 *
-	 * If a board accepts all kills with a trust level of 1 it will accept the
-	 * kill from the first three boards (3, 2, 1) as verified. The fourth
-	 * board trusts the kill itself , but the level of trust is too low for other
-	 * boards to accept that kill as verified from the fourth board.
-	 *
-	 * Untrusted kills are still accepted, but not marked as verified. (Future
-	 * versions may also have minimum standards to accept unverified kills.) Note
-	 * that it is possible for trust levels to change. e.g. A kill is manually
-	 * posted so has a trust level of 0 but then the same kill is fetched from
-	 * the API and the trust level changed to 3. Thus a kill may be untrusted
-	 * when a remote board fetches but become trusted later on.
-	 *
-	 * @param int $trust Accept kills with greater than or equal to this level
-	 * of trust.
-	 * @return int
-	 */
-	function setAcceptedTrust($trust = 1)
-	{
-		$this->trust = (int)$trust;
-		return $this->trust;
-	}
-
-	/**
-	 * Force a level of trust to record for new kills. e.g. API kills have no
-	 * inherent trust mechanism but we do trust them.
-	 *
-	 * @param int $trust
-	 * @return int
-	 */
-	function setKillTrust($trust = 0)
-	{
-		$this->killtrust = (int)$trust;
-		return $this->killtrust;
-	}
-
-	/**
 	 * Fetch the External ID of the last kill returned.
 	 * @return int External ID of the last kill returned.
 	 */
@@ -412,6 +347,102 @@ class IDFeed
 	function getXML()
 	{
 		return $this->xml;
+	}
+
+	/**
+	 * Builds a feed URL from the base url and all set options
+	 *
+	 * @return mixed The fully assembled url or false if url is not set
+	 *
+	 */
+	function getFullURL() {
+		if (!$this->url) {
+			return false;
+		}
+
+		$url = strtolower($this->url);
+		if (strpos($url, 'zkillboard')) {
+			$options = '';
+			if (substr($url, -1) != '/')
+				$options .= '/';
+			if (strpos($url, 'api') === false)
+				$options .= 'api/';
+			if (strpos($url, 'xml') === false)
+				$options .= 'xml/';
+			if (strpos($url, 'orderdirection') === false)
+				$options .= 'orderDirection/asc/';
+
+			//zKill currently doesn't allow querying negative killmails (these are how zKill denotes non-api verified mails)
+			//additionally, edk doesn't yet have code to handle negative killmails either
+			//as a result we have to insist on api kills only
+			if (strrpos($url, 'api-only') === false)
+				$options .= 'api-only/';
+
+			foreach ($this->options as $key => $val) {
+				switch ($key) {
+					case 'startdate':
+						$key = 'startTime';
+						$val = date('YmdHi', $val);
+						break;
+					case 'enddate':
+						$key = 'endTime';
+						$val = date('YmdHi', $val);
+						break;
+					case 'lastintID': //zKill doesn't have an internal kill
+						$val -= 1; //cron_feed.php adds 1
+					case 'lastID':
+						$key = 'afterKillID';
+						break;
+					case 'allkills':
+						//if in the future both zKill and edk support negative killmails, this can be uncommented
+						//if ($val == 0)
+						//	$options .= 'api-only/';
+						continue 2;
+						break;
+					case 'pilot':
+						$key = 'characterID';
+						break;
+					case 'corp':
+						$key = 'corporationID';
+						break;
+					case 'alliance':
+						$key = 'allianceID';
+						break;
+					case 'system':
+						$key = 'solarSystemID';
+						break;
+					case 'region':
+						$key = 'regionID';
+						break;
+					case 'limit':
+						break;
+					//case 'kll_ext_id': //untested
+					//	$key = "limit/1/afterKillID";
+					//	$val -= 1;
+					//	break;
+					default:
+						continue 2; //this option not recognized by zKill, skip
+				}
+				$options .= "$key/$val/";
+			}
+		} else {
+			if (strpos($this->url, "?") === false) {
+				$options = "?";
+			} else {
+				$options = "&";
+			}
+			$first = true;
+			foreach ($this->options as $key => $val) {
+				if ($first) {
+					$first = false;
+				} else {
+					$options .= "&";
+				}
+				$options .= $key."=".$val;
+			}
+		}
+
+		return $this->url.$options;
 	}
 
 	/**
@@ -472,12 +503,14 @@ class IDFeed
 		if (isset($sxe->error)) {
 			$this->errorcode = (int)$sxe->error['code'];
 			$this->errormsg = strval($sxe->error);
-			return 0;
+			return false;
 		}
-		// We need raw mails for the mailhash so temporarily disable
-		// classification
-		config::put('kill_classified', 0);
-		if (!is_null($sxe->result->rowset->row)) {
+		if (!empty($sxe->result->error)) {
+			$this->errormsg = strval($sxe->result->error);
+			return false;
+		}
+
+		if (!empty($sxe->result->rowset->row)) {
 			foreach ($sxe->result->rowset->row as $row) {
 				$this->processKill($row);
 			}
@@ -491,141 +524,132 @@ class IDFeed
 	private function processKill($row)
 	{
 		$skip = false;
+		$dup = false;
+		$errorstring = "";
 		$internalID = (int)$row['killInternalID'];
 		$externalID = (int)$row['killID'];
 		$id = 0;
 		if (config::get('filter_apply') && config::get('filter_date')
 				> strtotime(strval($row['killTime']))) {
 			$skip = true;
-		}
-		if (!$skip && !$id = $this->killExists($row)) {
-			$qry = DBFactory::getDBQuery();
-
-			$kill = new Kill();
-			if ($externalID
-					&& ($this->killtrust || (int)$row['trust'] >= $this->trust)) {
-				$kill->setExternalID($externalID);
-			}
-			if ((int)$row['trust'] || $this->killtrust) {
-				$kill->setTrust(min($this->maxtrust,
-						max((int)$row['trust'] - 1, $this->killtrust)));
-			}
-
-			$kill->setTimeStamp(strval($row['killTime']));
-
-			$qrow = $qry->getRow();
-			$sys = SolarSystem::getByID((int)$row['solarSystemID']);
-			if (!$sys->getName()) {
-				return false;
-			}
-			$kill->setSolarSystem($sys);
-
-			if (!$this->processVictim($row, $kill, strval($row['killTime']))) {
-				$skip = true;
-			}
-
-			$this->npcOnly = true;
-			if (!$skip) {
-				foreach ($row->rowset[0]->row as $inv) {
-					if (!$this->processInvolved($inv, $kill,
-							strval($row['killTime']))) {
-						if ($internalID) {
-							$errorstring = "Involved Party error in kill:"
-									." External ID = $externalID, Internal ID"
-									." = $internalID";
-						} else {
-							$errorstring = "Involved Party error in kill: ID = "
-									.$externalID;
-						}
-						$this->parsemsg[] = $errorstring;
-						$skip = true;
-						break;
-					}
-				}
-			}
-			// Don't post NPC only kills if configured.
-			if ($this->npcOnly && Config::get('post_no_npc_only')) {
-				$skip = true;
-			}
-			if (!$skip) {
-				if (isset($row->rowset[1]->row[0])) {
-					foreach ($row->rowset[1]->row as $item) {
-						$this->processItem($item, $kill);
-					}
-				}
-				$id = $kill->add();
-				if ($id == 0) {
-					if ($internalID) {
-						$errorstring = "Kill not added. External ID ="
-								." $externalID, Internal ID = $internalID";
-					} else {
-						$errorstring = "Kill not added. ID = $externalID";
-					}
-					$this->parsemsg[] = $errorstring;
-					$skip = true;
-				} else if ($id < 0) {
-					$id = $kill->getDupe(true);
-					if ($externalID  && $id
-							&& ($this->killtrust || (int)$row['trust'] >= $this->trust)) {
-						$qry = DBFactory::getDBQuery(true);
-						$trust = min($this->maxtrust,
-								max((int)$row['trust'] - 1, $this->killtrust));
-						$qry->execute( "INSERT IGNORE INTO kb3_mails (  `kll_id`,"
-								." `kll_timestamp`, `kll_external_id`, `kll_hash`,"
-								." `kll_trust`, `kll_modified_time`)"
-								."VALUES(".$id.", '".$kill->getTimeStamp()."', "
-								.$externalID.", "
-								."'".$qry->escape($kill->getHash(false, false))."',"
-								." ".$trust.","
-								." UTC_TIMESTAMP())");
-						$qry->execute("UPDATE kb3_kills SET kb3_kills.kll_external_id=".$externalID.
-						" WHERE kb3_kills.kll_id = $id AND kb3_kills.kll_external_id IS NULL");
-				   }
-					$this->duplicate[] = array($externalID, $internalID, $id);
-					$skip = true;
-				} else {
-					$this->posted[] = array($externalID, $internalID,
-						$id);
-					// Prepare text for the log.
-					if($this->url) {
-						$logaddress = "ID:".$this->url;
-						if (strpos($logaddress, "?")) {
-							$logaddress = substr($logaddress, 0,
-									strpos($logaddress, "?"));
-						}
-						if ($kill->getExternalID()) {
-							$logaddress .= "?a=kill_detail&kll_ext_id="
-									.$kill->getExternalID();
-						} else if ($internalID) {
-							$logaddress .= "?a=kill_detail&kll_id=".$internalID;
-						}
-					} else if ($this->name) {
-						$logaddress = $this->name;
-						if ($kill->getExternalID()) {
-							$logaddress .= ":kll_ext_id="
-									.$kill->getExternalID();
-						} else if ($internalID) {
-							$logaddress .= ":kll_id=".$internalID;
-						}
-					} else {
-						$logaddress = "ID: local input";
-					}
-
-					logger::logKill($id, $logaddress);
-				}
-			}
 		} else {
-			$skip = true;
+			$kill = new Kill();
+			if ($externalID) {
+				$kill->setExternalID($externalID);
+
+				$id = $kill->getDupe(); //speedy dup check based on external id only
+				if ($id > 0) { //duplicate found
+					$qry = DBFactory::getDBQuery(true);
+					$qry->execute("INSERT IGNORE INTO kb3_mails (`kll_id`,"
+						." `kll_timestamp`, `kll_external_id`, `kll_modified_time`)"
+						."VALUES($id, '".$kill->getTimeStamp()."', $externalID,  UTC_TIMESTAMP())");
+					$qry->execute("UPDATE kb3_kills SET kb3_kills.kll_external_id = $externalID WHERE kb3_kills.kll_id = $id AND kb3_kills.kll_external_id IS NULL");
+					$dup = true;
+				}
+			}
+			if (!$dup) {
+				$kill->setTimeStamp(strval($row['killTime']));
+
+				$sys = SolarSystem::getByID((int)$row['solarSystemID']);
+				if (!$sys->getName()) {
+					$errorstring .= " Invalid solar system";
+					$skip = true;
+				}
+				$kill->setSolarSystem($sys);
+
+				if (!$this->processVictim($row, $kill, strval($row['killTime']))) {
+					$errorstring .= " Invalid victim.";
+					$skip = true;
+				}
+
+				if (!$skip) { //skipping intensive involved party processing
+					$this->npcOnly = true; //there's no real check for this anymore?
+					foreach ($row->rowset[0]->row as $inv)
+						if (!$this->processInvolved($inv, $kill, strval($row['killTime']))) {
+							$errorstring .= " Invalid involved party.";
+							$skip = true;
+							break;
+						}
+					// Don't post NPC only kills if configured.
+					if ($this->npcOnly && Config::get('post_no_npc_only')) {
+						$errorstring .= " NPC Only mail.";
+						$skip = true;
+					}
+
+					if (!$skip) { //skipping intensive items processing
+						if (isset($row->rowset[1]->row[0]))
+							foreach ($row->rowset[1]->row as $item)
+								$this->processItem($item, $kill);
+
+						$authorized = false;
+						if (config::get('cfg_allianceid') && in_array($kill->getVictimAllianceID(), config::get('cfg_allianceid')))
+							$authorized = true;
+						else if (config::get('cfg_corpid') && in_array($kill->getVictimCorpID(), config::get('cfg_corpid')))
+							$authorized = true;
+						else if (config::get('cfg_pilotid') && in_array($kill->getVictimID(), config::get('cfg_pilotid')))
+							$authorized = true;
+						foreach($kill->getInvolved() as $inv) {
+							if (config::get('cfg_allianceid') && in_array($inv->getAllianceID(), config::get('cfg_allianceid')))
+								$authorized = true;
+							else if (config::get('cfg_corpid') && in_array($inv->getCorpID(), config::get('cfg_corpid')))
+								$authorized = true;
+							else if (config::get('cfg_pilotid') && in_array($inv->getPilotID(), config::get('cfg_pilotid')))
+								$authorized = true;
+						}
+						if (!$authorized)
+							$skip = true;
+						else {
+							$id = $kill->add();
+							if ($kill->getDupe(true)) {
+								$dup = true;
+							} else {
+								$this->posted[] = array($externalID, $internalID, $id);
+								// Prepare text for the log.
+								if($this->url) {
+									$logaddress = "ID:".$this->url;
+									if (strpos($logaddress, "?")) {
+										$logaddress = substr($logaddress, 0,
+											strpos($logaddress, "?"));
+									}
+									if ($kill->getExternalID()) {
+										$logaddress .= "?a=kill_detail&kll_ext_id="
+										.$kill->getExternalID();
+									} else if ($internalID) {
+										$logaddress .= "?a=kill_detail&kll_id=".$internalID;
+									}
+								} else if ($this->name) {
+									$logaddress = $this->name;
+									if ($kill->getExternalID()) {
+										$logaddress .= ":kll_ext_id="
+										.$kill->getExternalID();
+									} else if ($internalID) {
+										$logaddress .= ":kll_id=".$internalID;
+									}
+								} else {
+									$logaddress = "ID: local input";
+								}
+
+								logger::logKill($id, $logaddress);
+							}
+						}
+					}
+				}
+			}
 		}
 		if ($skip) {
 			$this->skipped[] = array($externalID, $internalID, $id);
+			if ($errorstring) {
+				$errorstring .= " Kill not added. killID =  $externalID" . ($internalID ? ", killInternalID = $internalID." : ".");
+				$this->parsemsg[] = $errorstring;
+			}
 		}
-		if ($this->lastReturned < $externalID) {
+		if ($dup) {
+			$this->duplicate[] = array($externalID, $internalID, $id);
+		}
+		if ($this->lastReturned < $externalID)
 			$this->lastReturned = $externalID;
-		}
-		if ($this->lastInternalReturned < $internalID) {
+		if ($this->lastInternalReturned < $internalID)
 			$this->lastInternalReturned = $internalID;
-		}
 	}
 
 	/**
@@ -861,54 +885,6 @@ class IDFeed
 		return $this->cachedTime;
 	}
 
-	/**
-	 * Returns the id of a matching existing kill if found.
-	 * This does not guarantee non-existence as it only checks external id and
-	 * hash
-	 *
-	 * @param SimpleXML $row A SimpleXML object containing the kill.
-	 *
-	 * @return integer 0 if no match found, the kll_id if found.
-	 */
-	private function killExists(&$row)
-	{
-		$qry = DBFactory::getDBQuery(true);
-		if (strlen($row['hash']) > 1) {
-			$qry->execute("SELECT kll_id, kll_external_id, kll_trust FROM kb3_mails"
-					." WHERE kll_hash = 0x".$qry->escape(strval($row['hash'])));
-			if ($qry->recordCount()) {
-				$qrow = $qry->getRow();
-				$id = (int)$qrow['kll_id'];
-				if ((int)$row['trust'] >= $this->trust
-						&& (int)$row['killID']
-						&& !(int)$qrow['kll_external_id']) {
-					$qry->execute("UPDATE kb3_kills JOIN kb3_mails ON kb3_kills.kll_id = ".
-							"kb3_mails.kll_id SET kb3_mails.kll_external_id = ".
-							(int)$row['killID'].", kb3_kills.kll_external_id = ".
-							(int)$row['killID']." WHERE kb3_mails.kll_id = $id AND ".
-							"kb3_mails.kll_external_id IS NULL");
-					$trust = min($this->maxtrust,
-									max((int)$row['trust'] - 1, $this->killtrust));
-					if ($trust > (int)$qrow['kll_trust']) {
-						$qry->execute("UPDATE kb3_mails SET kll_trust = "
-								.$trust." WHERE kll_id = ".$id);
-					}
-				}
-				return $id;
-			}
-		}
-		if ((int)$row['killID'] > 0) {
-			$qry->execute("SELECT kll_id FROM kb3_kills "
-					."WHERE kll_external_id = ".(int)$row['killID']);
-			if ($qry->recordCount()) {
-				$qrow = $qry->getRow();
-				$id = $qrow['kll_id'];
-				return $id;
-			}
-		}
-		return 0;
-	}
-
 	public function errormsg()
 	{
 		return $this->errormsg;
@@ -933,16 +909,13 @@ class IDFeed
 		$kills = $result->addChild('rowset');
 		$kills->addAttribute('name', 'kills');
 		$kills->addAttribute('key', 'killID');
-		$kills->addAttribute('columns',
-				'killID,solarSystemID,killTime,moonID,hash,trust');
+		$kills->addAttribute('columns', 'killID,solarSystemID,killTime,moonID,hash,trust');
 
 		$count = 0;
 		$timing = '';
 		while ($kill = $killList->getKill()) {
-			if (config::get('km_cache_enabled') && CacheHandler::exists($kill->getID().".xml",
-							'mails')) {
-				$cachedRow = new SimpleXMLElement(CacheHandler::get($kill->getID().".xml",
-										'mails'));
+			if (config::get('km_cache_enabled') && CacheHandler::exists($kill->getID().".xml", 'mails')) {
+				$cachedRow = new SimpleXMLElement(CacheHandler::get($kill->getID().".xml", 'mails'));
 				IDFeed::addXMLElement($kills, $cachedRow);
 				continue;
 			}
@@ -956,16 +929,8 @@ class IDFeed
 			$row->addAttribute('solarSystemID', $kill->getSystem()->getExternalID());
 			$row->addAttribute('killTime', $kill->getTimeStamp());
 			$row->addAttribute('moonID', '0');
-			$qry->execute("SELECT kll_hash FROM kb3_mails WHERE kll_id = "
-					.$kill->getID());
-			if ($qry->recordCount()) {
-				$qrow = $qry->getRow();
-				$row->addAttribute('hash', bin2hex($qrow['kll_hash']));
-			} else {
-				$kill = Kill::getByID($kill->getID());
-				$row->addAttribute('hash', bin2hex($kill->getHash()));
-			}
-			$row->addAttribute('trust', $kill->getTrust());
+			$row->addAttribute('hash', bin2hex(IDFeed::getHash($kill, true)));
+			$row->addAttribute('trust', 3);
 			$victim = Pilot::getByID($kill->getVictimID());
 			$victimCorp = Corporation::getByID($kill->getVictimCorpID());
 			$victimAlliance = Alliance::getByID($kill->getVictimAllianceID());
@@ -1123,5 +1088,141 @@ class IDFeed
 		foreach ($source->children() as $child) {
 			IDFeed::addXMLElement($new_dest, $child);
 		}
+	}
+
+	/**
+	 * Depreciated. Returns a hash of the killmail for backwards
+	 * compatibility with older boards using this board's idfeed.
+	 *
+	 * Optionally pdates the db with the generated hash if missing.
+	 *
+	 * @param Kill $kill The kill to hash
+	 * @param bool $update Whether to set the hash in the mails db table if it's missing
+	 * @return mixed The hash string or false upon error
+	 */
+	static function getHash($kill, $update = false) {
+		$qry = DBFactory::getDBQuery();
+		if (!is_object($kill))
+			return false;
+		$killID = $kill->getID();
+		if($killID) {
+				$qry->execute("SELECT hex(kll_hash) FROM kb3_mails WHERE kll_id = " . (int)$killID);
+			if ($qry->recordCount()) {
+				$row = $qry->getRow();
+					if ($row['kll_hash']) //so far this field should never be null, but we could remove hash in the future...
+					return $row['kll_hash'];
+			}
+		}
+
+		//generate hash
+		$restoreClassification = false;
+		if ($kill->isClassified) { //temporarily disable classification for raw mail generation
+			config::set('kill_classified', 0);
+			$restoreClassification = true;
+		}
+
+			$mail = trim($kill->getRawMail());
+		$mail = str_replace("\r\n", "\n", $mail);
+
+		if(is_null($mail)) {
+			if ($restoreClassification)
+				config::set('kill_classified', 1);
+			return false;
+		}
+
+		$involvedStart = strpos($mail, "Involved parties:");
+		if ($involvedStart === false) {
+			if ($restoreClassification)
+				config::set('kill_classified', 1);
+			return false;
+		}
+		$involvedStart = strpos($mail, "Name:", $involvedStart);
+
+		$itemspos = strpos($mail, "\nDestroyed items:");
+		if ($itemspos === false)
+			$itemspos = strpos($mail, "\nDropped items:");
+		if ($itemspos === false)
+			$involved = substr($mail, $involvedStart);
+		else
+			$involved = substr($mail, $involvedStart, $itemspos - $involvedStart);
+
+		$invList = explode("Name: ", $involved);
+		$invListDamage = array();
+		$invlistName = array();
+		foreach($invList as $party)
+			if(!empty($party))
+			{
+				$pos = strrpos($party, ": ");
+				$damage = @intval(substr($party, $pos+2));
+				$invListDamage[] = $damage;
+				$pos = strpos($party, "\n");
+				$name = trim(substr($party,0,$pos));
+				$invListName[] = $name;
+			}
+
+		// Sort the involved list by damage done then alphabetically.
+		array_multisort($invListDamage, SORT_DESC, SORT_NUMERIC, $invListName, SORT_ASC, SORT_STRING);
+
+		$hashIn = substr($mail, 0, 16);
+		$hashIn = str_replace('.', '-', $hashIn);
+
+		$pos = strpos($mail, "Victim: ");
+		if($pos === false)
+			$pos = strpos($mail, "Moon: ");
+		$pos += 8;
+
+		$posEnd = strpos($mail, "\n", $pos);
+		if ($pos === false || $posEnd === false)
+			return false;
+		$hashIn .= substr($mail, $pos, $posEnd - $pos);
+
+		$pos = strpos($mail, "Destroyed: ") + 11;
+		$posEnd = strpos($mail, "\n", $pos);
+		if ($pos === false || $posEnd === false) {
+			if ($restoreClassification)
+				config::set('kill_classified', 1);
+			return false;
+		}
+		$hashIn .= substr($mail, $pos, $posEnd - $pos);
+
+		$pos = strpos($mail, "System: ") + 8;
+		$posEnd = strpos($mail, "\n", $pos);
+		if ($pos === false || $posEnd === false) {
+			if ($restoreClassification)
+				config::set('kill_classified', 1);
+			return false;
+		}
+		$hashIn .= substr($mail, $pos, $posEnd - $pos);
+
+		$pos = strpos($mail, "Damage Taken: ") + 14;
+		$posEnd = strpos($mail, "\n", $pos);
+		if ($pos === false || $posEnd === false) {
+			if ($restoreClassification)
+				config::set('kill_classified', 1);
+			return false;
+		}
+		$hashIn .= substr($mail, $pos, $posEnd - $pos);
+
+		$hashIn .= implode(',', $invListName);
+		$hashIn .= implode(',', $invListDamage);
+
+		$hash = md5($hashIn, true);
+
+		if ($update) {
+			$externalID = $kill->getExternalID();
+			if ($externalID) {
+				$sql = "INSERT IGNORE INTO kb3_mails (`kll_id`, `kll_timestamp`, ".
+				"`kll_external_id`, `kll_hash`, `kll_modified_time`) VALUES ($killID, '".
+				$kill->getTimeStamp()."', $externalID, '".$qry->escape($hash)."', UTC_TIMESTAMP())";
+			} else {
+				$sql = "INSERT IGNORE INTO kb3_mails (`kll_id`, `kll_timestamp`, ".
+				"`kll_hash`, `kll_modified_time`) VALUES ($killID, '".
+				$kill->getTimeStamp()."', '".$qry->escape($hash)."', UTC_TIMESTAMP())";
+			}
+			$qry->execute($sql);
+		}
+		if ($restoreClassification)
+			config::set('kill_classified', 1);
+		return $hash;
 	}
 }

@@ -37,12 +37,11 @@ class Kill extends Cacheable
 	private $tdallianceid = null;
 	private $solarsystemid = null;
 	private $dupeid = 0;
-	private $hash = false;
 	private $mail = null;
-	private $trust = 0;
 	private $executed = false;
 	private $involvedcount = null;
 	private $valid = null;
+	private $topDamage = 0;
 
 	/**
 	 * @param integer $id The ID for this kill
@@ -361,7 +360,7 @@ class Kill extends Cacheable
 
 	/**
 	 * Return the Final Blow dealer's Alliance name.
-	 * @return integer
+	 * @return string
 	 */
 	function getFBAllianceName()
 	{
@@ -789,88 +788,61 @@ class Kill extends Cacheable
 	}
 
 	/**
-	 * Check if this kill is a duplicate and return the id if so.
+	 * Check if this kill is a duplicate and return the kill id if found.
+	 * 
+	 * Matches on external ID or all of the following:
+	 * timestamp, solar system, victim, victim's ship, final blow pilot, and damage taken
 	 *
-	 * @param boolean $checkonly
-	 * @return integer
+	 * @param boolean $checkonly Do not hit the db, only retrieve the result from the last call
+	 * @return integer The duplicate kill id, 0 if no duplicate, or -1 upon error
 	 */
-	function getDupe($checkonly = false)
-	{
-		if (!$checkonly) {
-			if($this->dupeid != 0) {
-				return $this->dupeid;
-			}
-			// Don't call execQuery unless we're missing information.
-			if (!$this->timestamp) {
-				$this->execQuery();
+	function getDupe($checkonly = false) {
+		if ($checkonly)
+			return $this->dupeid;
+		if ($this->externalid) {
+			$qry = DBFactory::getDBQuery();
+			$sql = "SELECT kll_id FROM kb3_kills WHERE kll_external_id = " . $this->externalid;
+			$qry->execute($sql);
+			if($qry->recordCount()) {
+				$row = $qry->getRow();
+				$this->dupeid = $row['kll_id'];
+				return $row['kll_id'];
 			}
 		}
+		// Don't call execQuery unless we're missing information.
+		if (!$this->timestamp || !$this->solarsystem || !$this->victimship || !$this->fbpilotid || !$this->dmgtaken || (!$this->victimid && !$this->victimcorpid))
+			$this->execQuery();
+		if (!$this->timestamp || !$this->solarsystem || !$this->victimship || !$this->fbpilotid || !$this->dmgtaken || (!$this->victimid && !$this->victimcorpid))
+			return 0;
+
 		$this->dupeid = 0;
 		$qry = DBFactory::getDBQuery(true);
-		if (!$this->fbpilotid || !$this->victimid) {
-			return 0;
-		}
-		if($this->externalid) {
-			$sql = "SELECT kll_id FROM kb3_kills WHERE kll_external_id = ".
-				$this->externalid;
-			$qry->execute($sql);
-			if($qry->recordCount()) {
-				$row = $qry->getRow();
-				$this->dupeid = $row['kll_id'];
-				return $row['kll_id'];
-			}
-		}
-		if($this->hash) {
-			$sql = "SELECT kll_id FROM kb3_mails WHERE kll_hash = 0x".
-				bin2hex($this->hash);
-			$qry->execute($sql);
-			if($qry->recordCount()) {
-				$row = $qry->getRow();
-				$this->dupeid = $row['kll_id'];
-				return $row['kll_id'];
-			}
-		}
-		$sql = "SELECT kll_id"
-				." FROM kb3_kills"
-				." WHERE kll_timestamp ='".$this->timestamp."'";
+
+		$sql = "SELECT kll_id FROM kb3_kills WHERE kll_timestamp = '".$this->timestamp."'";
 		// use corp id for pos to catch all the old mails with missing moons.
-		if($this->getVictimShip()->getClass()->getID() >= 35
-						&& $this->getVictimShip()->getClass()->getID() <= 38) {
+		if($this->getVictimShip()->getClass()->getID() >= 35 && $this->getVictimShip()->getClass()->getID() <= 38) {
+			if (!$this->victimcorpid)
+				return -1;
 			$sql .= " AND kll_crp_id = ".$this->victimcorpid;
 		} else {
+			if (!$this->victimid)
+				return -1;
 			$sql .= " AND kll_victim_id = ".$this->victimid;
 		}
 		$sql .= " AND kll_ship_id = ".$this->victimship->getID()
-					." AND kll_system_id = ".$this->solarsystem->getID()
-					." AND kll_fb_plt_id = ".$this->fbpilotid
-					." AND kll_dmgtaken = ".intval($this->dmgtaken)
-					." AND kll_id != ".$this->id;
+			." AND kll_system_id = ".$this->solarsystem->getID()
+			." AND kll_fb_plt_id = ".$this->fbpilotid
+			." AND kll_dmgtaken = ".intval($this->dmgtaken)
+			." AND kll_id != ".$this->id;
 		$qry->execute($sql);
-		$qryinv = DBFactory::getDBQuery(true);
 
-		while ($row = $qry->getRow()) {
+		if ($qry->recordCount()) {
+			$row = $qry->getRow();
 			$kll_id = $row['kll_id'];
-			// No involved parties found to differentiate kills
-			if(empty($this->involvedparties_)) {
-				$this->dupeid = $kll_id;
-				return $kll_id;
-			}
-
-			// Check that all involved parties we know of are on the kill
-			// and did the same damage.
-			$invList = array();
-			foreach($this->involvedparties_ as $inv)
-				$invList[] = '('.$inv->getPilotID().','.intval($inv->getDamageDone()).')';
-			$sql = 'SELECT COUNT(*) as count FROM kb3_inv_detail WHERE ind_kll_id = '.
-				$kll_id.' AND (ind_plt_id,ind_dmgdone) IN ('.implode(',', $invList).')';
-
-			$qryinv->execute($sql);
-			$row = $qryinv->getRow();
-			if($row['count'] == count($this->involvedparties_)) {
-				$this->dupeid = $kll_id;
-				return $kll_id;
-			}
+			$this->dupeid = $kll_id;
 		}
+				
+		return $this->dupeid;
 	}
 
 	private function execQuery()
@@ -902,9 +874,7 @@ class Kill extends Cacheable
 					$this->tdallianceid = $cache->tdallianceid;
 					$this->solarsystemid = $cache->solarsystemid;
 					$this->dupeid = $cache->dupeid;
-					$this->hash = $cache->hash;
 					$this->mail = $cache->mail;
-					$this->trust = $cache->trust;
 					$this->executed = $cache->executed;
 					$this->involvedcount = $cache->involvedcount;
 					$this->valid = $cache->valid;
@@ -1501,7 +1471,14 @@ class Kill extends Cacheable
 		return $points;
 	}
 
-	function add($id = null)
+	/**
+	 * Add the kill, while updating any duplicates.
+	 * 
+	 * After calling, check if duplicates were found with getDupe(true).
+	 * 
+	 * @return integer The kill ID if added or the duplicate kill ID if a duplicate was found.
+	 */
+	function add()
 	{
 		// If value isn't already calculated then do so now. Don't update the
 		// stored value since at this point it does not exist.
@@ -1515,16 +1492,10 @@ class Kill extends Cacheable
 		// Set these to make sure we don't try to load the kill from the db before it exists.
 		$this->executed = true;
 		$this->valid = true;
-		//Always recalculate the hash ourselves before posting.
-		$this->hash = false;
-		$this->getHash(false,false);
 
-		$this->getDupe(true);
-		if ($this->dupeid == 0) {
+		$this->getDupe(); //if found, updates external id and modified timestamp
+		if ($this->dupeid == 0)
 			$this->realadd();
-		} else {
-			$this->id = -1;
-		}
 		$qry->autocommit(true);
 		return $this->id;
 	}
@@ -1539,7 +1510,7 @@ class Kill extends Cacheable
 		if ( $this->timestamp == "" || !$this->getVictim()->getID()
 				|| !$this->victimship->getName() || !$this->solarsystem->getID()
 				|| !$this->victimallianceid || !$this->victimcorpid
-				|| !$this->getFBPilotID() || !$this->getHash(false, false)) {
+				|| !$this->getFBPilotID()) {
 			return 0;
 		}
 		// TODO: Redo accounting for ammo (see kill_detail).
@@ -1715,11 +1686,13 @@ class Kill extends Cacheable
 		if($notfirstitd &&!$qry->execute($itdsql))
 			return $this->rollback($qry);
 
-		$sql = "INSERT INTO kb3_mails (  `kll_id`, `kll_timestamp`, `kll_external_id`, `kll_hash`, `kll_trust`, `kll_modified_time`)".
+		$sql = "INSERT INTO kb3_mails (`kll_id`, `kll_timestamp`, `kll_external_id`, `kll_hash`, `kll_modified_time`)".
 			"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ";
-		if($this->externalid) $sql .= $this->externalid.", ";
-		else $sql .= "NULL, ";
-			$sql .= "'".$qry->escape($this->getHash(false, false))."', 0, UTC_TIMESTAMP())";
+		if ($this->externalid)
+			$sql .= $this->externalid.", ";
+		else
+			$sql .= "NULL, ";
+		$sql .= "'".$qry->escape(IDFeed::getHash($this))."', UTC_TIMESTAMP())";
 		if(!@$qry->execute($sql))
 			return $this->rollback($qry);
 
@@ -1751,7 +1724,7 @@ class Kill extends Cacheable
 		if ($delcomments)
 		{
 			$qry->execute("delete from kb3_comments where kll_id = ".$this->id);
-			if ($permanent)
+			if ($permanent) //this uses the trust field for a different purpose: to prevent reposts of deleted kills
 				$qry->execute("UPDATE kb3_mails SET kll_trust = -1, kll_modified_time = UTC_TIMESTAMP() WHERE kll_id = ".$this->id);
 			else
 				$qry->execute("DELETE FROM kb3_mails WHERE kll_id = ".$this->id);
@@ -1765,6 +1738,14 @@ class Kill extends Cacheable
 
 	function addInvolvedParty($involved)
 	{
+		$dmg = $involved->getDamageDone();
+		if ($dmg > $topDamage || $topDamage == 0) { //sets highest dmg dealer or last with 0
+			$this->setTDPilotID($involved->getPilotID());
+			$this->setTDCorpID($involved->getCorpID());
+			$this->setTDAllianceID($involved->getAllianceID());
+			$topDamage = $dmg;
+		}
+		
 		array_push($this->involvedparties_, $involved);
 	}
 
@@ -1787,70 +1768,10 @@ class Kill extends Cacheable
 		if(!$this->involvedparties_) $this->execQuery();
 		return $this->involvedparties_;
 	}
-	function setHash($hash)
-	{
-		if(strlen($hash) > 16) $this->hash = pack("H*", $hash);
-		else $this->hash = $hash;
-	}
-	function getHash($hex = false, $update = true)
-	{
-		if($this->hash)
-		{
-			if($hex) return bin2hex($this->hash);
-			else return $this->hash;
-		}
-		$qry = DBFactory::getDBQuery();
-		// Get the mail and trust as well since we're fetching the row anyway.
-		if($this->id)
-			$qry->execute("SELECT kll_hash, kll_trust FROM kb3_mails WHERE kll_id = ".$this->id);
-		if($qry->recordCount())
-		{
-			$row = $qry->getRow();
-			$this->hash = $row['kll_hash'];
-			$this->trust = $row['kll_trust'];
-		}
-		else
-		{
-			$this->hash = Parser::hashMail($this->getRawMail());
-			if($this->hash === false) return false;
-			if($update)
-			{
-				if($this->id && $this->externalid)
-				{
-					$sql = "INSERT IGNORE INTO kb3_mails (  `kll_id`, `kll_timestamp`, ".
-						"`kll_external_id`, `kll_hash`, `kll_trust`, `kll_modified_time`)".
-						"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ".
-						$this->externalid.", '".$qry->escape($this->hash)."', ".
-						$this->trust.", UTC_TIMESTAMP())";
-				}
-				else if($this->id)
-				{
-					$sql = "INSERT IGNORE INTO kb3_mails (  `kll_id`, `kll_timestamp`, ".
-						"`kll_hash`, `kll_trust`, `kll_modified_time`)".
-						"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ".
-						"'".$qry->escape($this->hash)."', ".
-						$this->trust.", UTC_TIMESTAMP())";
-				}
-				if($this->id) $qry->execute($sql);
-			}
-		}
-		if($hex) return bin2hex($this->hash);
-		else return $this->hash;
-	}
+	
 	function setRawMail($mail)
 	{
 		$this->mail = $mail;
-	}
-	public function setTrust($trust)
-	{
-		$this->trust = intval($trust);
-	}
-	public function getTrust()
-	{
-		if(!is_null($this->trust)) return $this->trust;
-		if(!$this->getHash()) return $this->trust;
-		$this->trust = 0;
-		return $this->trust;
 	}
 	private function rollback(&$qry)
 	{

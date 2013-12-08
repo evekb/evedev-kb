@@ -161,6 +161,10 @@ class KillSummaryTablePublic extends KillSummaryTable
 			$smarty->assign('kiskB', round($this->tkisk / 1000000000, 2));
 			$smarty->assign('kiskM', round($this->tkisk / 1000000, 2));
 			$smarty->assign('kcount', $this->tkcount);
+			if (config::get('summarytable_collapsed'))
+			{
+				$smarty->assign('summarycollapsed', 1);
+			}
 		}
 
 		if (edkURI::getArg('scl_id')) {

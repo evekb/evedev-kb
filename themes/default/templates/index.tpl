@@ -53,6 +53,18 @@
           oTable.fnOpen(nTr, commentDetails(oTable, nTr), 'kl-detail-comment-list');
         }
       });
+	  
+	  $('body')
+		.on('mouseenter mouseleave', '.ui-state-default', function (event) {
+			if(event.type == 'mouseenter')
+			{
+				$(this).not('.ui-state-disabled').addClass('ui-state-hover');
+			}
+			else if(event.type == 'mouseleave')
+			{
+				$(this).not('.ui-state-disabled').removeClass('ui-state-hover');
+			}
+		});
     });
     //]]>
 	</script>

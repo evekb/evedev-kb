@@ -26,11 +26,11 @@
  */
 
 $starttime = microtime(true);
-$idfeedversion = "1.04";
+global $idfeedversion;
 
 $maxkillsreturned = 200;
 $xml = "<?xml version='1.0' encoding='UTF-8'?>
-<eveapi version='2' edkapi='".$idfeedversion."'>
+<eveapi version='2' edkapi='$idfeedversion'>
 </eveapi>";
 $sxe = new SimpleXMLElement($xml);
 
