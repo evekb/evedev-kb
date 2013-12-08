@@ -59,6 +59,39 @@ class corpSummary extends statSummary
 		$this->executed = true;
 	}
 
+	public function getMonthlySummary()
+	{
+		if (!$this->crp_id) {
+			return false;
+		}
+
+		$qry = DBFactory::getDBQuery();
+
+		$sql = "SELECT csm_year, csm_monthday, sum(csm_loss_count) as csm_loss_count,
+				sum(csm_loss_isk) as csm_loss_isk, sum(csm_kill_count) as csm_kill_count,
+				sum(csm_kill_isk) as csm_kill_isk, sum(csm_kill_loot) as csm_kill_loot,
+				sum(csm_kill_points) as csm_kill_points, sum(csm_loss_points) as csm_loss_points,
+				sum(csm_loss_loot) as csm_loss_loot
+			FROM kb3_sum_corp WHERE csm_crp_id = ".$this->crp_id."
+			GROUP BY csm_year, csm_monthday ORDER BY csm_year desc, csm_monthday desc";
+		$qry->execute($sql);
+		while ($row = $qry->getRow()) {
+			$dt = new DateTime();
+			$dt->setDate($row['csm_year'], $row['csm_monthday'], 1); // returns DateTime object
+
+			$summary[$row['csm_year']][$row['csm_monthday']]['date'] = $dt;
+			$summary[$row['csm_year']][$row['csm_monthday']]['killcount'] = (int) $row['csm_kill_count'];
+			$summary[$row['csm_year']][$row['csm_monthday']]['killisk'] = (float) $row['csm_kill_isk'];
+			$summary[$row['csm_year']][$row['csm_monthday']]['losscount'] = (int) $row['csm_loss_count'];
+			$summary[$row['csm_year']][$row['csm_monthday']]['lossisk'] = (float) $row['csm_loss_isk'];
+			$summary[$row['csm_year']][$row['csm_monthday']]['lossloot'] = (float) $row['csm_loss_loot'];
+			$summary[$row['csm_year']][$row['csm_monthday']]['losspoints'] = (int) $row['csm_loss_points'];
+			$summary[$row['csm_year']][$row['csm_monthday']]['killloot'] = (float) $row['csm_kill_loot'];
+			$summary[$row['csm_year']][$row['csm_monthday']]['killpoints'] = (int) $row['csm_kill_points'];
+		}
+		return $summary;
+	}
+
 	/**
 	 * Add a Kill and its value to the summary.
 	 *

@@ -244,6 +244,12 @@ class pPilotDetail extends pageAssembly
 				return $smarty->fetch(get_tpl('detail_kl_ships_weapons'));
 
 				break;
+			case 'history':
+				$pltsum = new pilotSummary($this->plt_id);
+				$smarty->assign('title', Language::get('history'));
+				$smarty->assign('summary', $pltsum->getMonthlySummary());
+				return $smarty->fetch(get_tpl('detail_history'));
+				break;
 			default:
 				$list = new KillList();
 				$list->setOrdered(true);
@@ -289,6 +295,7 @@ class pPilotDetail extends pageAssembly
 		}
 		$this->addMenuItem("caption","Kills &amp; losses");
 		$this->addMenuItem("link","Recent activity", edkURI::build($args, array('view', 'recent', true)));
+		$this->addMenuItem("link", "Historical activity", edkURI::build($args, array('view', 'history', true)));
 		$this->addMenuItem("link","Kills", edkURI::build($args, array('view', 'kills', true)));
 		$this->addMenuItem("link","Losses", edkURI::build($args, array('view', 'losses', true)));
 		$this->addMenuItem("caption","Statistics");

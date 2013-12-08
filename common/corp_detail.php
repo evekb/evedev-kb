@@ -501,6 +501,12 @@ class pCorpDetail extends pageAssembly
 				return $smarty->fetch(get_tpl('detail_kl_ships_weapons'));
 
 				break;
+			case 'history':
+				$crpsum = new corpSummary($this->crp_id);
+				$smarty->assign('title', Language::get('history'));
+				$smarty->assign('summary', $crpsum->getMonthlySummary());
+				return $smarty->fetch(get_tpl('detail_history'));
+				break;
 			case 'violent_systems':
 				$smarty->assign('title', 'Most violent systems');
 				$smarty->assign('month', $this->monthname);
@@ -619,6 +625,7 @@ class pCorpDetail extends pageAssembly
 
 		$this->addMenuItem("caption","Kills &amp; losses");
 		$this->addMenuItem("link","Recent activity", edkURI::build($args));
+		$this->addMenuItem("link", "Historical activity", edkURI::build($args, array('view', 'history', true)));
 		$this->addMenuItem("link","Kills", edkURI::build($args, array('view', 'kills', true)));
 		$this->addMenuItem("link","Losses", edkURI::build($args, array('view', 'losses', true)));
 		$this->addMenuItem("caption","Pilot statistics");

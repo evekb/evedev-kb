@@ -7,15 +7,22 @@ class summaryCache
 {
 	static public function addKill($kill)
 	{
+		$qry = DBFactory::getDBQuery();
+		$qry->execute("BEGIN");
 		allianceSummary::addKill($kill);
 		corpSummary::addKill($kill);
 		pilotSummary::addKill($kill);
+		config::set('last_summary_id', $lastkillid);
+		$qry->execute("COMMIT");
 	}
 	static public function delKill($kill)
 	{
+		$qry = DBFactory::getDBQuery();
+		$qry->execute("BEGIN");
 		allianceSummary::delKill($kill);
 		corpSummary::delKill($kill);
 		pilotSummary::delKill($kill);
+		$qry->execute("COMMIT");
 	}
 	static public function update($kill, $difference, $differenceloot)
 	{

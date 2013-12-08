@@ -86,6 +86,13 @@ function update043()
 			$qry->execute("ALTER TABLE kb3_sum_alliance ADD COLUMN asm_loss_points int(11) DEFAULT 0 NOT NULL");
 			$qry->execute("ALTER TABLE kb3_sum_corp ADD COLUMN csm_loss_points int(11) DEFAULT 0 NOT NULL");
 			$qry->execute("ALTER TABLE kb3_sum_pilot ADD COLUMN psm_loss_points int(11) DEFAULT 0 NOT NULL");
+			
+			$qry->execute("ALTER TABLE kb3_sum_alliance CHANGE COLUMN asm_kill_isk asm_kill_isk DECIMAL(15,2) DEFAULT 0 NOT NULL");
+			$qry->execute("ALTER TABLE kb3_sum_pilot CHANGE COLUMN psm_kill_isk psm_kill_isk DECIMAL(15,2) DEFAULT 0 NOT NULL");
+			$qry->execute("ALTER TABLE kb3_sum_corp CHANGE COLUMN csm_kill_isk csm_kill_isk DECIMAL(15,2) DEFAULT 0 NOT NULL");
+			$qry->execute("ALTER TABLE kb3_sum_alliance CHANGE COLUMN asm_loss_isk asm_loss_isk DECIMAL(15,2) DEFAULT 0 NOT NULL");
+			$qry->execute("ALTER TABLE kb3_sum_pilot CHANGE COLUMN psm_loss_isk psm_loss_isk DECIMAL(15,2) DEFAULT 0 NOT NULL");
+			$qry->execute("ALTER TABLE kb3_sum_corp CHANGE COLUMN csm_loss_isk csm_loss_isk DECIMAL(15,2) DEFAULT 0 NOT NULL");
 
 			config::set('043updatestatus',5);
 			$smarty->assign('refresh',1);

@@ -90,6 +90,39 @@ class pilotSummary extends statSummary
 		return;
 	}
 
+	public function getMonthlySummary()
+	{
+		if (!$this->plt_id) {
+			return false;
+		}
+
+		$qry = DBFactory::getDBQuery();
+
+		$sql = "SELECT psm_year, psm_monthday, sum(psm_loss_count) as psm_loss_count,
+				sum(psm_loss_isk) as psm_loss_isk, sum(psm_kill_count) as psm_kill_count,
+				sum(psm_kill_isk) as psm_kill_isk, sum(psm_kill_loot) as psm_kill_loot,
+				sum(psm_kill_points) as psm_kill_points, sum(psm_loss_points) as psm_loss_points,
+				sum(psm_loss_loot) as psm_loss_loot
+			FROM kb3_sum_pilot WHERE psm_plt_id = ".$this->plt_id."
+			GROUP BY psm_year, psm_monthday ORDER BY psm_year desc, psm_monthday desc";
+		$qry->execute($sql);
+		while ($row = $qry->getRow()) {
+			$dt = new DateTime();
+			$dt->setDate($row['psm_year'], $row['psm_monthday'], 1); // returns DateTime object
+
+			$summary[$row['psm_year']][$row['psm_monthday']]['date'] = $dt;
+			$summary[$row['psm_year']][$row['psm_monthday']]['killcount'] = (int) $row['psm_kill_count'];
+			$summary[$row['psm_year']][$row['psm_monthday']]['killisk'] = (float) $row['psm_kill_isk'];
+			$summary[$row['psm_year']][$row['psm_monthday']]['losscount'] = (int) $row['psm_loss_count'];
+			$summary[$row['psm_year']][$row['psm_monthday']]['lossisk'] = (float) $row['psm_loss_isk'];
+			$summary[$row['psm_year']][$row['psm_monthday']]['lossloot'] = (float) $row['psm_loss_loot'];
+			$summary[$row['psm_year']][$row['psm_monthday']]['losspoints'] = (int) $row['psm_loss_points'];
+			$summary[$row['psm_year']][$row['psm_monthday']]['killloot'] = (float) $row['psm_kill_loot'];
+			$summary[$row['psm_year']][$row['psm_monthday']]['killpoints'] = (int) $row['psm_kill_points'];
+		}
+		return $summary;
+	}
+
 	/**
 	 * Add a Kill and its value to the summary.
 	 *

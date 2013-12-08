@@ -59,6 +59,39 @@ class allianceSummary extends statSummary
 		$this->executed = true;
 	}
 
+	public function getMonthlySummary()
+	{
+		if (!$this->all_id) {
+			return false;
+		}
+
+		$qry = DBFactory::getDBQuery();
+
+		$sql = "SELECT asm_year, asm_monthday, sum(asm_loss_count) as asm_loss_count,
+				sum(asm_loss_isk) as asm_loss_isk, sum(asm_kill_count) as asm_kill_count,
+				sum(asm_kill_isk) as asm_kill_isk, sum(asm_kill_loot) as asm_kill_loot,
+				sum(asm_kill_points) as asm_kill_points, sum(asm_loss_points) as asm_loss_points,
+				sum(asm_loss_loot) as asm_loss_loot
+			FROM kb3_sum_alliance WHERE asm_all_id = ".$this->all_id."
+			GROUP BY asm_year, asm_monthday ORDER BY asm_year desc, asm_monthday desc";
+		$qry->execute($sql);
+		while ($row = $qry->getRow()) {
+			$dt = new DateTime();
+			$dt->setDate($row['asm_year'], $row['asm_monthday'], 1); // returns DateTime object
+
+			$summary[$row['asm_year']][$row['asm_monthday']]['date'] = $dt;
+			$summary[$row['asm_year']][$row['asm_monthday']]['killcount'] = (int) $row['asm_kill_count'];
+			$summary[$row['asm_year']][$row['asm_monthday']]['killisk'] = (float) $row['asm_kill_isk'];
+			$summary[$row['asm_year']][$row['asm_monthday']]['losscount'] = (int) $row['asm_loss_count'];
+			$summary[$row['asm_year']][$row['asm_monthday']]['lossisk'] = (float) $row['asm_loss_isk'];
+			$summary[$row['asm_year']][$row['asm_monthday']]['lossloot'] = (float) $row['asm_loss_loot'];
+			$summary[$row['asm_year']][$row['asm_monthday']]['losspoints'] = (int) $row['asm_loss_points'];
+			$summary[$row['asm_year']][$row['asm_monthday']]['killloot'] = (float) $row['asm_kill_loot'];
+			$summary[$row['asm_year']][$row['asm_monthday']]['killpoints'] = (int) $row['asm_kill_points'];
+		}
+		return $summary;
+	}
+
 	/**
 	 * Add a Kill and its value to the summary.
 	 *

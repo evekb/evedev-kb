@@ -761,6 +761,12 @@ class pAllianceDetail extends pageAssembly
 			case 'corp_list':
 				return $this->corpList();
 				break;
+			case 'history':
+				$allsum = new allianceSummary($this->alliance);
+				$smarty->assign('title', Language::get('history'));
+				$smarty->assign('summary', $allsum->getMonthlySummary());
+				return $smarty->fetch(get_tpl('detail_history'));
+				break;
 		}
 		return '';
 	}
@@ -812,6 +818,8 @@ class pAllianceDetail extends pageAssembly
 		$menubox->setIcon("menu-item.gif");
 		$this->addMenuItem("caption", "Kills &amp; losses");
 		$this->addMenuItem("link", "Recent activity", edkURI::build($args));
+		$this->addMenuItem("link", "Historical activity",
+				edkURI::build($args, array('view', 'history', true)));
 		$this->addMenuItem("link", "Kills",
 				edkURI::build($args, array('view', 'kills', true)));
 		$this->addMenuItem("link", "Losses",
