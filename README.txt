@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.0.4
+Eve Development Network Killboard v4.0.5
 -------------------------------------------
 
 // REQUIREMENTS
@@ -24,6 +24,19 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
+v4.0.5
+Fixes:
+Bugfix: Files from code update archive shall always be extracted
+Bugfix: Towers show always "None" as Alliance
+Workaround: API verification of manually poster or fetched kills
+Feature: make parser accept killmails from fully localized clients
+Bugfix: idfeed uses argument "startdate" as "enddate"
+Bugfix: if the option "Include Capsules, Shuttles and Noobships in kills" is disabled in ACP, kills for these ship classes won't be displayed even if filtered
+Value fetch: Set "Update Faction Values" to No as default
+Fix: Capsule - Genolution 'Auroral' 197-variant
+Fix step 5 of installation
+Fix for API via https
+-------------------------------------------
 v4.0.4
 Fixes:
 Add Crucible 1.1 DB packages.
