@@ -11,7 +11,7 @@
  */
 require_once('common/admin/admin_menu.php');
 
-$page = new Page("Administration - Feed Syndication " . IDFeed::version);
+$page = new Page("Administration - Feed Syndication " . $idfeedversion);
 $page->setCachable(false);
 $page->setAdmin();
 
