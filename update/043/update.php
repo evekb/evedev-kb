@@ -20,7 +20,7 @@ function update043()
 			$qry->execute("DELETE FROM kb3_sum_alliance");
 			$qry->execute("DELETE FROM kb3_sum_corp");
 			$qry->execute("DELETE FROM kb3_sum_pilot");
-			$qry->execute("UPDATE c3kb.kb3_pilots SET plt_lpoints=0, plt_kpoints=0");
+			$qry->execute("UPDATE kb3_pilots SET plt_lpoints=0, plt_kpoints=0");
 
 			config::set('043updatestatus',1);
 			$smarty->assign('refresh',1);
