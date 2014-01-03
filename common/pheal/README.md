@@ -1,9 +1,14 @@
 # Pheal
 
-Copyright (C) 2010-2012 by Peter Petermann
+Copyright (C) 2010-2013 by Peter Petermann
 All rights reserved.
 
 Pheal is a port of EAAL to PHP
+
+## READ THIS FIRST
+if you are starting a new project, and you are running PHP 5.3 or larger you should consider using PhealNG instead. While PhealNG has most of the Features contained in Pheal, it has also been refactored to use PHP Namespaces and should be considered the current version of Pheal.
+
+https://github.com/3rdpartyeve/phealng
 
 ## LICENSE
 Pheal is licensed under a MIT style license, see LICENSE.txt
@@ -13,7 +18,7 @@ for further information
 - does not need to change when EVE API changes
 
 ## REQUIREMENTS
-- PHP 5.2 (might run on earlier versions, untested)
+- PHP 5.2+ (might run on earlier versions, untested)
 
 
 ## INSTALLATION

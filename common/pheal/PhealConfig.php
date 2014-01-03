@@ -102,7 +102,7 @@ class PhealConfig
      * After what time should an api call considered to as timeout?
      * @var int
      */
-    public $http_timeout = 10;
+    public $http_timeout = 20;
 
     /**
      * verify ssl peer (CURLOPT_SSL_VERIFYPEER
