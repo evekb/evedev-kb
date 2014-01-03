@@ -16,7 +16,7 @@ define('IMG_SERVER', "image.eveonline.com");
 // current version: major.minor.sub
 // even numbers for minor = development version
 define('KB_VERSION', '4.1.0-dev');
-define('KB_RELEASE', '(Retribution)');
+define('KB_RELEASE', '(Rubicon)');
 
 define('KB_APIKEY_LEGACY', 1);
 define('KB_APIKEY_CORP', 2);
