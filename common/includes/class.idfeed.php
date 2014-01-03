@@ -753,6 +753,18 @@ class IDFeed
 		} else {
 			$alliance = Alliance::add("None");
 		}
+		// get alliance from corp if ship is any kind of tower
+		$shipClassID = $ship->getClass()->getID();
+		if($shipClassID == 35           // small Tower
+			|| $shipClassID == 36   // medium Tower
+			|| $shipClassID == 37)  // large Tower
+		{
+			$corpByName = Corporation::lookup(strval($inv['corporationName']));
+			if($corpByName)
+			{
+				$alliance = $corpByName->getAlliance();
+			}
+		}
 		$corp = Corporation::add(strval($inv['corporationName']), $alliance, $time,
 					(int)$inv['corporationID']);
 
