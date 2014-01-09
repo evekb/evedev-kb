@@ -32,6 +32,7 @@
 
     $(document).ready(function() {
       var oTable = $('.kl-table').dataTable({
+        "aaSorting": [[ 1, "desc" ]],
         "bFilter": false,
         "sPaginationType": "full_numbers",
         "bJQueryUI": true,

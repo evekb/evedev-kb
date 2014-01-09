@@ -10,7 +10,7 @@
 					<th class="kl-victim">Victim</th>
 					<th class="kl-finalblow">Final blow</th>
 					<th class="kl-location">Location</th>
-					<th></th>
+					<th>Inv</th>
 				</tr>
 			</thead>
 			<tbody>
