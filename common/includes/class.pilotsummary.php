@@ -41,7 +41,7 @@ class pilotSummary extends statSummary
 			FROM kb3_ship_classes left join kb3_sum_pilot
 				ON (psm_shp_id = scl_id AND psm_plt_id = ".$this->plt_id.")
 			WHERE scl_class not in ('Drone','Unknown')
-				GROUP BY psm_shp_id ORDER BY scl_class";
+				GROUP BY scl_id ORDER BY scl_class";
 		$qry->execute($sql);
 		while ($row = $qry->getRow()) {
 			$this->summary[$row['scl_id']]['class_name'] = $row['scl_class'];
