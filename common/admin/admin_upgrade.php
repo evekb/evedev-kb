@@ -58,51 +58,8 @@ if (count($page_error) == 0) {
 	}
 
 
-	//cache a database update to the cache directory
-	if (isset($_GET['db_dl_ref'])) {
-		$db = $parser->getDBInfo();
-		foreach ($db as $piece) { //version number must be greater than current version, else do nothing
-			if ($piece['version'] > $dbversion
-							&& $piece['version'] == $_GET['db_dl_ref']) {
-				if (!file_exists(KB_CACHEDIR."/update")) {
-					mkdir(KB_CACHEDIR."/update", 0777);
-				}
-
-				$hostFileName = $piece['url'];
-				$lastPart = explode('/', $hostFileName);
-				$cacheFileName = KB_CACHEDIR."/update/".$lastPart[count($lastPart) - 1];
-				new FileCacher($hostFileName, $cacheFileName);
-				break;
-			}
-		}
-	}
-	//overwrite existing database upgrade
-	else if (isset($_GET['db_apply_ref'])) {
-		$db = $parser->getDBInfo();
-		foreach ($db as $piece) {
-			//version number must be greater than current version, else do nothing
-			if ($piece['version'] > $dbversion
-							&& $piece['version'] == $_GET['db_apply_ref']) {
-				$hostFileName = $piece['url'];
-				$lastPart = explode('/', $hostFileName);
-				$cacheFileName = KB_CACHEDIR."/update/".$lastPart[count($lastPart) - 1];
-
-				//cachefile holds the stuff we want to import
-				$update = new DBUpdater($cacheFileName);
-				$update->runQueries();
-
-				Config::set('upd_dbVersion', $piece['version']);
-				$qry = DBFactory::getDBQuery(true);
-				$qry->execute("INSERT INTO `kb3_config` (cfg_site, cfg_key, cfg_value) ".
-								"SELECT cfg_site, 'upd_dbVersion', '{$piece['version']}' FROM `kb3_config` ".
-								"GROUP BY cfg_site ON DUPLICATE KEY UPDATE cfg_value = '{$piece['version']}';");
-				$dbversion = $piece['version'];
-				break;
-			}
-		}
-	}
 	//cache a code file update to the cache directory
-	else if (isset($_GET['code_dl_ref'])) {
+	if (isset($_GET['code_dl_ref'])) {
 		$code = $parser->getcodeInfo();
 		foreach ($code as $piece) {
 			//version number must be greater than current version, else do nothing
@@ -204,42 +161,8 @@ if (count($page_error) == 0) {
 	}
 
 	//if we've finished an action, reparse the xml
-	if (isset($_GET['db_apply_ref']) || isset($_GET['db_dl_ref']) || isset($_GET['code_apply_ref']) || isset($_GET['code_dl_ref'])) {
+	if (isset($_GET['code_apply_ref']) || isset($_GET['code_dl_ref'])) {
 		$parser->retrieveData();
-	}
-
-	//list the db updates
-	$db = $parser->getDBInfo();
-	$lowestDB = $parser->getLowestDBVersion();
-	if ($parser->getLatestDBVersion() > $dbversion) {
-		$i = 0;
-		foreach ($db as $piece) {
-			if ($piece['version'] == $lowestDB) {
-				$dbList[$i]['lowest'] = true;
-			}
-			if ($piece['version'] > $dbversion) {
-				$dbList[$i]['hash'] = $piece['hash'];
-				$dbList[$i]['version'] = $piece['version'];
-				$dbList[$i]['desc'] = $piece['desc'];
-
-				$hostFileName = $piece['url'];
-				$lastPart = explode('/', $hostFileName);
-				$dbList[$i]['short_name'] = $lastPart[count($lastPart) - 1];
-				$cacheFileName = KB_CACHEDIR."/update/".$lastPart[count($lastPart) - 1];
-
-				if (!file_exists($cacheFileName)) {
-					$dbList[$i]['cached'] = false;
-				} else {
-					$dbList[$i]['cached'] = true;
-
-					//match the hashes, else the file is buggered. Disallow update application.
-					if ($piece['hash'] == md5_file($cacheFileName)) {
-						$dbList[$i]['hash_match'] = true;
-					}
-				}
-				$i++;
-			}
-		}
 	}
 
 	//list the code updates
@@ -280,12 +203,9 @@ $time = Config::get('upd_cacheTime') + 86400; // add a day
 $update_time = date("Y-m-d G:i:s", $time);
 
 $smarty->assign('update_time', $update_time);
-$smarty->assign('dbList', $dbList);
 $smarty->assign('codeList', $codeList);
 $smarty->assign('page_error', $page_error);
-$smarty->assign('DBmessage', $parser->getLatestDBMessage());
 $smarty->assign('codemessage', $parser->getLatestCodeMessage());
-$smarty->assign('dbversion', Config::get('upd_dbVersion'));
 $smarty->assign('codeversion', KB_VERSION);
 
 

@@ -61,56 +61,6 @@
     <br/>
 {/if}
 <br/>
-<div class="block-header2">Database [This Killboard is Database Version {$dbversion}]</div>
-{if $DBmessage != ''}
-    <div class="block-header">Message from the devs</div>
-    <p>{$DBmessage}</p>
-{/if}
-    <table class="kb-table" style="width:100%">
-    <tr class="kb-table-header">
-	<td>Version</td>
-	<td>File</td>
-	<td>Description</td>
-	<td>Action</td>
-    </tr>
-    {if count($dbList) > 0}
-	{section name=idx loop=$dbList}
-	    <tr class="{cycle name=ccl}" style="height: 20px">
-		<td>
-		    {$dbList[idx].version}<br/>
-		</td>
-		<td>
-		    {$dbList[idx].short_name}<br/>
-		</td>
-		<td width="50%">
-		    {$dbList[idx].desc}<br/>
-		</td>
-		<td>
-		    {if !$dbList[idx].cached || !$dbList[idx].hash_match}
-			<a href="{$kb_host}/?a=admin_upgrade&amp;db_dl_ref={$dbList[idx].version}">Download</a>
-			{if !$dbList[idx].hash_match}
-			    <span style="text-decoration: blink">!!</span><br/>
-			{/if}
-		    {/if}
-		    {if $dbList[idx].hash_match && $dbList[idx].lowest}
-			<a href="{$kb_host}/?a=admin_upgrade&amp;db_apply_ref={$dbList[idx].version}">Apply</a>
-		    {else}
-			^<br/>
-		    {/if}
-		</td>
-	    </tr>
-	{/section}
-    </table>
-    <br/><span style="text-decoration: blink">!!</span> - The downloaded file's hash doesn't match the expected one or the file hasn't been downloaded yet.<br/>
-    ^ - This patch relies on the one above it.<br/>
-    <br/>
-    {else}
-	<tr class="{cycle name=ccl}" style="height: 20px">
-	    <td colspan="5">No new updates.</td>
-	</tr>
-	</table>
-	<br/>
-    {/if}
 <br/>
 The upgrade description file will be retrieved again at: <b>{$update_time} GMT</b>.<br/>
 You can force the update description file to retrieved now by clicking on the <a href="{$kb_host}/?a=admin_upgrade&amp;refresh">link</a>.<br/>
