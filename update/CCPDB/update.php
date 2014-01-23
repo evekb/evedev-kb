@@ -61,21 +61,48 @@ $i = 0;
 $did = false;
 $errors = false;
 $qry = DBFactory::getDBQuery(true);
+$lasttable='';
 foreach ($data as $table => $files)
 {
-	foreach ($files as $file)
+	foreach ($files as $fileIndex => $file)
 	{
 		$i++;
 		if ($_SESSION['sqlinsert'] > $i)
 		{
+			$lasttable=$table;
 			continue;
+		}
+      
+		$error = '';
+		$errors = 0;
+		// we have a (new) table structure definition and this is the first chunk for this table -> re-create it first
+		if($struct[$table] && $lasttable!=$table)  // Only drop/create the table before using 1st sql file
+		{
+			$first = false;
+			// drop table
+			//$content .= "<br/>Dropping table ".$table."<br/>";
+			$result = $qry->execute("DROP TABLE IF EXISTS `".$table."`;");
+			if (!$result)
+			{
+			$error .= 'error: '.$qry->getErrorMsg().'<br/>';
+			$errors++;
+			break;
+			}
+
+			// create table
+			//$content .= "Creating table ".$table." .<br/>";
+			$result = $qry->execute($struct[$table]);
+			if (!$result)
+			{
+				$error .= 'error: '.$qry->getErrorMsg().'<br/>';
+				$errors++;
+				break;
+			}
 		}
 		$content .= 'Inserting data ('.$i.'/'.$datacnt.') into '.$table.'<br/> using file '.$file.'...<br/>';
 
-		$error = '';
 		$fp = gzopen($file, 'r');
 		$lines = 0;
-		$errors = 0;
 		$text = '';
 		$query_count = 0;
 		$qry->autocommit(false);
