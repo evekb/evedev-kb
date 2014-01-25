@@ -349,11 +349,9 @@ v150.13Apoc.33.2622.0 - Updates for
 
 // SUPPORT
 -------------------------------------------
-Web:                http://eve-id.net/forum/
+Web:                http://www.evekb.org/forum/
 
-Check out the EVE-Development Network for
-general support, bugfixes and new versions
-at http://www.eve-id.net
+For general support, bugfixes and new versions see http://www.evekb.org
 
 Developers wanted!
 If you'd like to contribute to further version
