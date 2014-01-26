@@ -1,18 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <kb3>
   <name>kb3_dgmattributetypes</name>
-  <rows>1623</rows>
+  <rows>1732</rows>
   <structure>CREATE TABLE `kb3_dgmattributetypes` (
-  `attributeID` int(11) NOT NULL default &#039;0&#039;,
+  `attributeID` int(11) NOT NULL DEFAULT '0',
   `attributeName` char(100) NOT NULL,
-  `icon` char(5) NOT NULL,
-  `defaultValue` int(11) NOT NULL default &#039;0&#039;,
-  `published` enum(&#039;true&#039;,&#039;false&#039;) NOT NULL default &#039;true&#039;,
+  `icon` char(5) NOT NULL DEFAULT '0',
+  `defaultValue` int(11) NOT NULL DEFAULT '0',
+  `published` enum('true','false') NOT NULL DEFAULT 'true',
   `displayName` char(100) NOT NULL,
-  `unitID` int(11) default NULL,
-  `stackable` enum(&#039;true&#039;,&#039;false&#039;) NOT NULL default &#039;true&#039;,
-  `highIsGood` enum(&#039;true&#039;,&#039;false&#039;) NOT NULL default &#039;true&#039;,
-  PRIMARY KEY  (`attributeID`),
+  `unitID` int(11) DEFAULT NULL,
+  `stackable` enum('true','false') NOT NULL DEFAULT 'true',
+  `highIsGood` enum('true','false') NOT NULL DEFAULT 'true',
+  PRIMARY KEY (`attributeID`),
   KEY `attributeName` (`attributeName`)
-) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
+) ENGINE=MyISAM DEFAULT CHARSET=utf8</structure>
 </kb3>

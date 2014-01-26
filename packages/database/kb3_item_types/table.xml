@@ -1,14 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <kb3>
   <name>kb3_item_types</name>
-  <rows>866</rows>
+  <rows>903</rows>
   <structure>CREATE TABLE `kb3_item_types` (
-  `itt_id` int(11) NOT NULL default &#039;0&#039;,
+  `itt_id` int(11) NOT NULL DEFAULT '0',
   `itt_cat` int(11) NOT NULL,
   `itt_name` char(120) NOT NULL,
-  `itt_slot` tinyint(4) NOT NULL default &#039;0&#039;,
-  PRIMARY KEY  (`itt_id`)
-) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
+  `itt_slot` tinyint(4) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`itt_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8</structure>
 </kb3>
-
-

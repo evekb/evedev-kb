@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <kb3>
   <name>kb3_races</name>
-  <rows>6</rows>
+  <rows>8</rows>
   <structure>CREATE TABLE `kb3_races` (
-  `rce_id` int(11) NOT NULL auto_increment,
+  `rce_id` int(11) NOT NULL AUTO_INCREMENT,
   `rce_race` char(30) NOT NULL,
-  PRIMARY KEY  (`rce_id`)
-) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
+  PRIMARY KEY (`rce_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=129 DEFAULT CHARSET=utf8</structure>
 </kb3>

@@ -1,35 +1,35 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <kb3>
   <name>kb3_dgmeffects</name>
-  <rows>2840</rows>
+  <rows>3399</rows>
   <structure>CREATE TABLE `kb3_dgmeffects` (
-  `effectID` smallint(5) NOT NULL default &#039;0&#039;,
+  `effectID` smallint(5) NOT NULL DEFAULT '0',
   `effectName` text NOT NULL,
-  `effectCategory` smallint(5) NOT NULL default &#039;0&#039;,
-  `preExpression` int(11) default NULL,
-  `postExpression` int(11) default NULL,
+  `effectCategory` smallint(5) NOT NULL DEFAULT '0',
+  `preExpression` int(11) DEFAULT NULL,
+  `postExpression` int(11) DEFAULT NULL,
   `description` text,
-  `guid` char(60) default NULL,
-  `graphicID` smallint(5) default NULL,
-  `isOffensive` enum(&#039;true&#039;,&#039;false&#039;) NOT NULL default &#039;false&#039;,
-  `isAssistance` enum(&#039;true&#039;,&#039;false&#039;) NOT NULL default &#039;false&#039;,
-  `durationAttributeID` smallint(5) default NULL,
-  `trackingSpeedAttributeID` smallint(5) default NULL,
-  `dischargeAttributeID` smallint(5) default NULL,
-  `rangeAttributeID` smallint(5) default NULL,
-  `falloffAttributeID` smallint(5) default NULL,
-  `disallowAutoRepeat` enum(&#039;true&#039;,&#039;false&#039;) NOT NULL default &#039;false&#039;,
-  `published` enum(&#039;true&#039;,&#039;false&#039;) NOT NULL default &#039;true&#039;,
+  `guid` char(60) DEFAULT NULL,
+  `graphicID` smallint(5) DEFAULT NULL,
+  `isOffensive` enum('true','false') NOT NULL DEFAULT 'false',
+  `isAssistance` enum('true','false') NOT NULL DEFAULT 'false',
+  `durationAttributeID` smallint(5) DEFAULT NULL,
+  `trackingSpeedAttributeID` smallint(5) DEFAULT NULL,
+  `dischargeAttributeID` smallint(5) DEFAULT NULL,
+  `rangeAttributeID` smallint(5) DEFAULT NULL,
+  `falloffAttributeID` smallint(5) DEFAULT NULL,
+  `disallowAutoRepeat` enum('true','false') NOT NULL DEFAULT 'false',
+  `published` enum('true','false') NOT NULL DEFAULT 'true',
   `displayName` char(100) NOT NULL,
-  `isWarpSafe` enum(&#039;true&#039;,&#039;false&#039;) NOT NULL default &#039;false&#039;,
-  `rangeChance` enum(&#039;true&#039;,&#039;false&#039;) NOT NULL default &#039;false&#039;,
-  `electronicChance` enum(&#039;true&#039;,&#039;false&#039;) NOT NULL default &#039;false&#039;,
-  `propulsionChance` enum(&#039;true&#039;,&#039;false&#039;) NOT NULL default &#039;false&#039;,
-  `distribution` int(11) default NULL,
+  `isWarpSafe` enum('true','false') NOT NULL DEFAULT 'false',
+  `rangeChance` enum('true','false') NOT NULL DEFAULT 'false',
+  `electronicChance` enum('true','false') NOT NULL DEFAULT 'false',
+  `propulsionChance` enum('true','false') NOT NULL DEFAULT 'false',
+  `distribution` int(11) DEFAULT NULL,
   `sfxName` char(20) NOT NULL,
-  `npcUsageChanceAttributeID` smallint(5) default NULL,
-  `npcActivationChanceAttributeID` smallint(5) default NULL,
-  `fittingUsageChanceAttributeID` smallint(5) default NULL,
-  PRIMARY KEY  (`effectID`)
-) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
+  `npcUsageChanceAttributeID` smallint(5) DEFAULT NULL,
+  `npcActivationChanceAttributeID` smallint(5) DEFAULT NULL,
+  `fittingUsageChanceAttributeID` smallint(5) DEFAULT NULL,
+  PRIMARY KEY (`effectID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8</structure>
 </kb3>

@@ -1,24 +1,23 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <kb3>
   <name>kb3_invtypes</name>
-  <rows>19676</rows>
+  <rows>21355</rows>
   <structure>CREATE TABLE `kb3_invtypes` (
-  `typeID` int(11) NOT NULL default &#039;0&#039;,
-  `groupID` int(11) NOT NULL default &#039;0&#039;,
+  `typeID` int(11) NOT NULL DEFAULT '0',
+  `groupID` int(11) NOT NULL DEFAULT '0',
   `typeName` char(100) NOT NULL,
+  `icon` char(5) DEFAULT NULL,
   `description` text NOT NULL,
-  `icon` char(5) default NULL,
-  `radius` float NOT NULL default &#039;0&#039;,
-  `mass` float NOT NULL default &#039;0&#039;,
-  `volume` float NOT NULL default &#039;0&#039;,
-  `capacity` float NOT NULL default &#039;0&#039;,
-  `portionSize` int(11) NOT NULL default &#039;1&#039;,
-  `raceID` int(11) default NULL,
-  `basePrice` float NOT NULL default &#039;0&#039;,
-  `marketGroupID` int(11) default NULL,
-  PRIMARY KEY  (`typeID`),
+  `mass` float NOT NULL DEFAULT '0',
+  `volume` float NOT NULL DEFAULT '0',
+  `capacity` float NOT NULL DEFAULT '0',
+  `portionSize` int(11) NOT NULL DEFAULT '1',
+  `raceID` int(11) DEFAULT NULL,
+  `basePrice` float NOT NULL DEFAULT '0',
+  `marketGroupID` int(11) DEFAULT NULL,
+  PRIMARY KEY (`typeID`),
   KEY `groupID` (`groupID`),
   KEY `marketGroupID` (`marketGroupID`),
   KEY `typeName` (`typeName`)
-) Engine=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;</structure>
+) ENGINE=MyISAM DEFAULT CHARSET=utf8</structure>
 </kb3>
