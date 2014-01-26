@@ -19,10 +19,12 @@ define('API_SERVER', "http://api.eveonline.com");
 //define('API_SERVER', "http://apitest.eveonline.com");
 define('IMG_SERVER', "image.eveonline.com");
 
-// current version: major.minor.sub
+// current version: major.minor.sub-ccpDBupdateNo
 // even numbers for minor = development version
-define('KB_VERSION', '4.0.5');
-define('KB_RELEASE', '(Crucible)');
+define('KB_VERSION', '4.0.6-0');
+define('KB_RELEASE', '(Rubicon 1.1)');
+define('KB_CCP_DB_VERSION', '94321');
+define('KB_CCP_DB_DATE', 'Jan 24, 2014');
 
 define('KB_APIKEY_LEGACY', 1);
 define('KB_APIKEY_CORP', 2);
