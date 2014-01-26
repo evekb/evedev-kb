@@ -87,13 +87,21 @@ if(isset($_GET['package']))
 }
 $qry=DBFactory::getDBQuery(true);
 define('CURRENT_DB_UPDATE', config::get("DBUpdate"));
-if (CURRENT_DB_UPDATE >= LATEST_DB_UPDATE )
+define('CURRENT_CCP_VERSION', config::get("CCPDbVersion"));
+if ((CURRENT_DB_UPDATE >= LATEST_DB_UPDATE) && (CURRENT_CCP_VERSION >= KB_CCP_DB_VERSION))
 {
 		$smarty->assign('content', "Board is up to date.<br><a href='".config::get('cfg_kbhost')."/'>Return to your board</a>");
 		$smarty->display('update.tpl');
 	die();
 }
-updateDB();
+if(CURRENT_DB_UPDATE < LATEST_DB_UPDATE) updateDB();
+if(CURRENT_CCP_VERSION < KB_CCP_DB_VERSION)
+{ // CALL CCP reset DB
+	$smarty->assign('content', 'CCP DB is not up to date.<br><a href=index.php?package=CCPDB&amp;do=reset>'.
+					'Install current version</a>'); 
+		 $smarty->display('update.tpl');
+	die();
+}
 @touch ('install/install.lock');
 		$smarty->assign('content', "Update complete.<br><a href='".config::get('cfg_kbhost')."/'>Return to your board</a>");
 		$smarty->display('update.tpl');

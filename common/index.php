@@ -131,8 +131,9 @@ role::init();
 // start session management
 session::init();
 
-// Check if the database structure needs updating
-if(config::get('DBUpdate') < LATEST_DB_UPDATE)
+// Check if the KB internal database structure needs updating
+// or if we need to install a new CCP DB
+if((config::get('DBUpdate') < LATEST_DB_UPDATE) || (config::get('CCPDbVersion') < KB_CCP_DB_VERSION))
 {
 	// Check db is installed.
 	if(config::get('cfg_kbhost'))
