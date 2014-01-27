@@ -14,7 +14,7 @@ define('KB_CACHEDIR', 'cache');
 define('KB_PAGECACHEDIR', KB_CACHEDIR.'/page');
 define('KB_MAILCACHEDIR', KB_CACHEDIR.'/mails');
 define('KB_QUERYCACHEDIR', KB_CACHEDIR.'/SQL');
-define('KB_UPDATE_URL', 'http://evedev-kb.googlecode.com/files');
+define('KB_UPDATE_URL', 'http://evekb.org/downloads');
 define('API_SERVER', "http://api.eveonline.com");
 //define('API_SERVER', "http://apitest.eveonline.com");
 define('IMG_SERVER', "image.eveonline.com");
