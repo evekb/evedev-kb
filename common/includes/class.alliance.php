@@ -132,8 +132,14 @@ class Alliance extends Entity
 					$sql .= "all_id = ".$this->id;
 				}
 				$qry->execute($sql);
-				if ($this->externalid && !$qry->recordCount()) {
-					$this->fetchAlliance();
+				if ($this->externalid && !$qry->recordCount()) 
+                                {
+					// check for success to prevent endless recursive calls
+                                        if($this->fetchAlliance())
+                                        {
+                                            // after adding the alliance to DB we need to read its properties
+                                            $this->execQuery();
+                                        }
 				} else if ($qry->recordCount()) {
 					$row = $qry->getRow();
 					$this->id = (int) $row['all_id'];
