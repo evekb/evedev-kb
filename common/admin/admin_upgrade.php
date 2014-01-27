@@ -81,7 +81,7 @@ if (count($page_error) == 0) {
 	else if (isset($_GET['code_apply_ref'])) {
 		$code = $parser->getCodeInfo();
 		foreach ($code as $piece) { //version number must be greater than current version, else do nothing
-			if ($piece['version'] > $dbversion && $piece['version'] == $_GET['code_apply_ref']) {
+			if ($piece['version'] > $codeversion && $piece['version'] == $_GET['code_apply_ref']) {
 				if (!file_exists(KB_CACHEDIR."/update/backup")) {
 					mkdir(KB_CACHEDIR."/update/backup", 0777);
 				}
