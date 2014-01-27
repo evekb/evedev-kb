@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.0.5
+Eve Development Network Killboard v4.0.6.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -24,6 +24,15 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
+v4.0.6.0
+Includes CCP DB for Rubicon 1.1 (Jan 24, 2014)
+Removed the autoupdater for CCP database
+Starting with 4.0.6.0 EDK will always contain current CCP DB.
+  This is what the forth number in the version is for. E.g. if there will
+  be a new CCP DB but no code update in EDK, then next version will be 4.0.6.1
+Bugfix: execQuery() on unknown entities identified by external ID
+Fixed the code autoupgrader. It should work for the next upcoming versions now
+-------------------------------------------
 v4.0.5
 Fixes:
 Bugfix: Files from code update archive shall always be extracted
