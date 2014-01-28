@@ -37,14 +37,16 @@ class pAbout extends pageAssembly
 		global $smarty;
 		// Current active developers
 		$currentDeveloper = array(
-			'Hon Kovell', // Various stuff (EDK2-3)
-			'mastergamer', // Different various stuff
-			'FriedRoadKill', // Parser, db updates and image packs
 			'Mini Mooo',
+			'Salvoxia', 
+			'Fuegor',
 		);
 
 		// Inactive developers
 		$developer = array(
+			'Hon Kovell', // Various stuff (EDK2-3)
+			'mastergamer', // Different various stuff
+			'FriedRoadKill', // Parser, db updates and image packs
 			'exi', // Various stuff (EDK <2)
 			'Beansman',
 			'Ralle030583',
@@ -60,8 +62,6 @@ class pAbout extends pageAssembly
 			'Coni',
 			'bunjiboys',
 			'EDG',
-			'Salvoxia',
-			'Fuegor',
 		);
 		sort($developer);
 		sort($contributor);
