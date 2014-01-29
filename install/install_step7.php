@@ -2,7 +2,7 @@
 /**
  * @package EDK
  */
-
+require_once('../common/includes/constants.php');
 if(!$installrunning) {header('Location: index.php');die();}
 $stoppage = true;
 global $smarty;
@@ -43,6 +43,8 @@ if (file_exists('../kbconfig.php'))
 	insertConfig('cfg_kbtitle', $title);
 
 	insertConfig('cfg_mainsite', '');
+	// write current CCP DB Version to config
+	insertConfig('CCPDbVersion', KB_CCP_DB_VERSION);
 
 	$confs = file('config.data');
 	foreach ($confs as $line)

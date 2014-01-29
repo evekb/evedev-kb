@@ -141,7 +141,7 @@ if (!empty($_REQUEST['sub']) && $_REQUEST['sub'] == 'data')
 				$text = '';
 				$query_count = 0;
 				mysql_query("START TRANSACTION");
-				while ($query = gzgets($fp, 4000))
+				while ($query = gzgets($fp, 8192))
 				{
 					$text .= $query;
 					if (substr(trim($query), -1, 1) != ';')
