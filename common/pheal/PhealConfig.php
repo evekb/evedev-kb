@@ -1,7 +1,7 @@
 <?php
 /*
  MIT License
- Copyright (c) 2010 Peter Petermann, Daniel Hoffend
+ Copyright (c) 2010 - 2012 Peter Petermann, Daniel Hoffend
 
  Permission is hereby granted, free of charge, to any person
  obtaining a copy of this software and associated documentation
@@ -63,7 +63,7 @@ class PhealConfig
      * enable the new customize key system (use keyID instead of userID, etc)
      * @var bool
      */
-    public $api_customkeys = false;
+    public $api_customkeys = true;
 
     /**
      * associative array with additional parameters that should be passed
@@ -102,7 +102,7 @@ class PhealConfig
      * After what time should an api call considered to as timeout?
      * @var int
      */
-    public $http_timeout = 10;
+    public $http_timeout = 20;
 
     /**
      * verify ssl peer (CURLOPT_SSL_VERIFYPEER

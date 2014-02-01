@@ -24,36 +24,10 @@
  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  OTHER DEALINGS IN THE SOFTWARE.
 */
-
 /**
- * null cache, as a placeholder if no cache is used
+ * Pheal Connection Exception, where connection problems will be dumped into for easy identifying
  */
-class PhealNullCache implements PhealCacheInterface
+class PhealConnectionException extends PhealException
 {
-    /**
-     * Load XML from cache
-     * @param int $userid
-     * @param string $apikey
-     * @param string $scope
-     * @param string $name
-     * @param array $args
-     */
-    public function load($userid, $apikey, $scope, $name, $args)
-    {
-        return false;
-    }
 
-    /**
-     * Save XML from cache
-     * @param int $userid
-     * @param string $apikey
-     * @param string $scope
-     * @param string $name
-     * @param array $args
-     * @param string $xml
-     */
-    public function save($userid, $apikey, $scope, $name, $args, $xml)
-    {
-        return false;
-    }
 }

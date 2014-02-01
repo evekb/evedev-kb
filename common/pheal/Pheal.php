@@ -1,7 +1,7 @@
 <?php
 /*
  MIT License
- Copyright (c) 2010 Peter Petermann, Daniel Hoffend
+ Copyright (c) 2010 - 2012 Peter Petermann, Daniel Hoffend
 
  Permission is hereby granted, free of charge, to any person
  obtaining a copy of this software and associated documentation
@@ -33,7 +33,7 @@ class Pheal
     /**
      * Version container
      */
-    public static $version = "0.0.14-dev";
+    public static $version = "0.1.15";
 
     /**
      * resource handler for curl
@@ -53,7 +53,7 @@ class Pheal
     private $key;
 
     /**
-     * var @string|null
+     * @var string|null
      */
     private $keyType;
     
@@ -223,17 +223,20 @@ class Pheal
                 PhealConfig::getInstance()->log->stop();
 
                 // parse
-                $element = new SimpleXMLElement($this->xml);
+                @$element = new SimpleXMLElement($this->xml);
 
             // just forward HTTP Errors
             } catch(PhealHTTPException $e) {
                 throw $e;
-
+            // just forward PhealConnectionException errors
+            } catch(PhealConnectionException $e) {
+                throw $e;
             // other request errors
             } catch(Exception $e) {
                 // log + throw error
                 PhealConfig::getInstance()->log->errorLog($scope,$name,$http_opts,$e->getCode() . ': ' . $e->getMessage());
-                throw new PhealException('API Date could not be read / parsed, original exception: ' . $e->getMessage());
+                // change Exception to PhealException but keep the original error data (easier debugging in client application).
+                throw new PhealException('Original exception: ' . $e->getMessage(), $e->getCode(), $e);
             }
             PhealConfig::getInstance()->cache->save($this->userid,$this->key,$scope,$name,$opts,$this->xml);
             
@@ -245,7 +248,7 @@ class Pheal
                 PhealConfig::getInstance()->log->errorLog($scope,$name,$http_opts,$element->error['code'] . ': ' . $element->error);
             }
         } else {
-            $element = new SimpleXMLElement($this->xml);
+            @$element = new SimpleXMLElement($this->xml);
         }
         return new PhealResult($element);
     }
@@ -273,7 +276,7 @@ class Pheal
             curl_setopt(self::$curl, CURLOPT_INTERFACE, $http_interface_ip);
 
         // ignore ssl peer verification if needed
-        if(substr($url,5) == "https")
+        if(substr($url,0,5) == "https")
             curl_setopt(self::$curl, CURLOPT_SSL_VERIFYPEER, PhealConfig::getInstance()->http_ssl_verifypeer);
             
         // http timeout 
@@ -292,7 +295,7 @@ class Pheal
             
             // attach url parameters
             if(count($opts))
-            $url .= "?" . http_build_query($opts);
+                $url .= "?" . http_build_query($opts,'', '&');
         }
         
         // additional headers
@@ -318,8 +321,6 @@ class Pheal
         curl_setopt(self::$curl, CURLOPT_URL, $url);
         curl_setopt(self::$curl, CURLOPT_HTTPHEADER, $headers);
         curl_setopt(self::$curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt(self::$curl, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt(self::$curl, CURLOPT_SSL_VERIFYPEER, 0);
         
         // call
         $result	= curl_exec(self::$curl);
@@ -333,12 +334,22 @@ class Pheal
             self::disconnect();
 
         // http errors
-        if($httpCode >= 400)
+        if($httpCode >= 400) {
+            switch($httpCode) {
+                case 400:
+                case 403:
+                case 500:
+                case 503: 
+                    return $result;
+                    break;
+                default:
+            }            
             throw new PhealHTTPException($httpCode, $url);
+        }
 
         // curl errors
         if($errno)
-            throw new Exception($error, $errno);
+            throw new PhealConnectionException($error, $errno);
         else
             return $result;
     }
@@ -354,7 +365,9 @@ class Pheal
     public static function request_http_file($url,$opts)
     {
         $options = array();
-        
+        $options['http'] = array();
+        $options['http']['ignore_errors'] = true;
+
         // set custom user agent
         if(($http_user_agent = PhealConfig::getInstance()->http_user_agent) != false)
             $options['http']['user_agent'] = $http_user_agent;
@@ -371,12 +384,12 @@ class Pheal
         if(count($opts) && PhealConfig::getInstance()->http_post)
         {
             $options['http']['method'] = 'POST';
-            $options['http']['content'] = http_build_query($opts);
+            $options['http']['content'] = http_build_query($opts, '', '&');
         }
         // else build url parameters
         elseif(count($opts))
         {
-            $url .= "?" . http_build_query($opts);
+            $url .= "?" . http_build_query($opts,'','&');
         }
 
         // set track errors. needed for $php_errormsg
@@ -397,11 +410,21 @@ class Pheal
         $httpCode = 200;
         if(isset($http_response_header[0]))
             list($httpVersion,$httpCode,$httpMsg) = explode(' ', $http_response_header[0], 3);
-        
-        // throw http error
-        if(is_numeric($httpCode) && $httpCode >= 400)
+       
+        // http errors
+        if(is_numeric($httpCode) && $httpCode >= 400) {
+            switch($httpCode) {
+                case 400:
+                case 403:
+                case 500:
+                case 503:
+                    return $result;
+                    break;
+                default:
+            }
             throw new PhealHTTPException($httpCode, $url);
-
+        }
+ 
         // throw error
         if($result === false) {
             $message = ($php_errormsg ? $php_errormsg : 'HTTP Request Failed');
@@ -409,7 +432,7 @@ class Pheal
             // set track_errors back to the old value
             ini_set('track_errors',$oldTrackErrors);
 
-            throw new Exception($message);
+            throw new PhealConnectionException($message);
 
         // return result
         } else {

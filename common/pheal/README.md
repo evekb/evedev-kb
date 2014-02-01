@@ -1,13 +1,14 @@
 # Pheal
 
-Copyright (C) 2010-2011 by Peter Petermann
+Copyright (C) 2010-2013 by Peter Petermann
 All rights reserved.
 
 Pheal is a port of EAAL to PHP
 
-## WARNING
-Pheal is not a stable release yet,
-stuff might or might not work as expected
+## READ THIS FIRST
+if you are starting a new project, and you are running PHP 5.3 or larger you should consider using PhealNG instead. While PhealNG has most of the Features contained in Pheal, it has also been refactored to use PHP Namespaces and should be considered the current version of Pheal.
+
+https://github.com/3rdpartyeve/phealng
 
 ## LICENSE
 Pheal is licensed under a MIT style license, see LICENSE.txt
@@ -17,33 +18,37 @@ for further information
 - does not need to change when EVE API changes
 
 ## REQUIREMENTS
-- PHP 5.2 (might run on earlier versions, untested)
+- PHP 5.2+ (might run on earlier versions, untested)
 
 
 ## INSTALLATION
+### GIT
 1. `git clone git://github.com/ppetermann/pheal.git`
 2. make sure your autoloader is able to find the classes
    (filename example.php matches classname "example" OR
    `include "../path/to/Pheal.php"; spl_autoload_register("Pheal::classload");`
    in your application, which will use a simple buildin autoloader
 
+### composer
+pheal is available as package pheal/pheal through packagist on composer http://getcomposer.org
+
 ## USAGE
 
 ### Initialize the API Object
     require_once "Pheal/Pheal.php";
     spl_autoload_register("Pheal::classload");
-    $pheal = new Pheal("myUserid", "myAPI key"[, "scope for request"]);
+    $pheal = new Pheal("keyID", "vCode"[, "scope for request"]);
 the scope is the one used for the API requests, ex. account/char/corp/eve/map/server 
 see API Reference the scope can be changed during runtime and defaults to account
 
-for public API's you can leave userID/apiKey empty.
+for public API's you can leave keyID/vCode empty.
     $pheal = new Pheal();
     $pheal->scope = 'map';
 or
     $pheal = new Pheal(null, null, 'map');
 
 ### Request Information
-    $result = $pheal>ApiPage();
+    $result = $pheal->ApiPage();
 this will return an Object of type PhealResult which then can be used to read the api result
 If you want to access the raw http/xml result for whatever reason, you can just ask the xml 
 attribute afterwords.
@@ -52,7 +57,7 @@ attribute afterwords.
 ### Example 1, getting a list of characters on the account:
     require_once "Pheal/Pheal.php";
     spl_autoload_register("Pheal::classload");
-    $pheal = new Pheal("myUserid", "myAPI key"[, "scope for request"]);
+    $pheal = new Pheal("keyID", "vCode"[, "scope for request"]);
 
     $result = $pheal->Characters();
     foreach($result->characters as $character)
@@ -61,7 +66,7 @@ attribute afterwords.
 ### Example 2, getting the id for a given character name
     require_once "Pheal/Pheal.php";
     spl_autoload_register("Pheal::classload");
-    $pheal = new Pheal("myUserid", "myAPI key"[, "scope for request"]);
+    $pheal = new Pheal("keyID", "vCode"[, "scope for request"]);
 
     $pheal->scope = "eve";
     $result = $pheal->CharacterID(array("names" => "Peter Powers"));
@@ -76,7 +81,7 @@ does the magic. if you don't give a path it defaults to $HOME/.pheal/cache
     require_once "Pheal/Pheal.php";
     spl_autoload_register("Pheal::classload");
     PhealConfig::getInstance()->cache = new PhealFileCache();
-    $pheal = new Pheal("myUserid", "myAPI key"[, "scope for request"]);
+    $pheal = new Pheal("keyID", "vCode"[, "scope for request"]);
 
     $pheal->scope = "eve";
     $result = $pheal->CharacterID(array("names" => "Peter Powers"));
@@ -101,7 +106,7 @@ which is the EVE APIs error code, and also contains the EVE API message as messa
     require_once "Pheal/Pheal.php";
     spl_autoload_register("Pheal::classload");
     PhealConfig::getInstance()->cache = new PhealFileCache();
-    $pheal = new Pheal("myUserid", "myAPI key"[, "scope for request"]);
+    $pheal = new Pheal("keyID", "vCode"[, "scope for request"]);
     try {
         $pheal->Killlog(array("characterID" => 12345));
     } catch(PhealException $e) {
@@ -172,7 +177,7 @@ remote server. HTTP Keep-Alive is only available with the curl method.
 With Incursion 1.1.2 CCP allows you to make SSL encrypted calls. To accomplish that
 you only need to point the api_base to the correct SSL url.
 
-At the moment SSL is not enabled by default.
+since 0.1.0 SSL is enabled by default.
 
     require_once "Pheal/Pheal.php";
     spl_autoload_register("Pheal::classload");
@@ -194,23 +199,12 @@ result array in your favorite template engine.
     $array = $result->toArray();
     $json = json_encode($array);
 
-### Customizable API Keys - Basics
-Pheal has experimental support the new customizable api key system. To be able to use
-a new custom key, you've to change a config option and force Pheal to use the https
-url. After that just use Pheal like you did before just replace userID with your keyID
-and apiKey with vCode in your Pheal object init.
-Atm, the custom key support is still in testing (use https://apitest.eveonline.com instead).
+### Legacy API Keys - Basics
+Since 0.1.0 Pheal is using the customizeable Keys by default. If you for what ever reason
+need to use legacy keys (you should not), you can enable the old behaviour by
+setting api_customkeys to false on the PhealConfig
 
-    require_once "Pheal/Pheal.php";
-    spl_autoload_register("Pheal::classload");
-    PhealConfig::getInstance()->api_base = 'https://api.eveonline.com/';
-    PhealConfig::getInstance()->api_customkeys = true;
-    $pheal = new Pheal($keyID, $vCode);
-    try {
-        $result = $pheal->accountScope->APIKeyInfo();
-    } catch(PhealException $e) {
-        echo 'error: ' . $e->code . ' message: ' . $e->getMessage();
-    }
+    PhealConfig::getInstance()->api_customkeys = false;
 
 ### Customizable API Keys - Access Check
 This config options allows you to verify the call for a given accessLevel before any
@@ -237,6 +231,10 @@ Pheal will throw an PhealAccessException so you can react on the access limitati
     } catch(PhealAPIException $e) {
        echo 'api error: ' . $e->code . ' message: ' . $e->getMessage();
        /* do something - example: disable key */
+    
+	} catch(PhealConnectionException $e) {
+       echo 'connection error: ' . $e->code . ' message: ' . $e->getMessage();
+       /* do something - example: skip script, for instance EVE servers are down */
 
     } catch(PhealException $e) {
         echo 'generic error: ' . $e->code . ' message: ' . $e->getMessage();
