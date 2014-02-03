@@ -95,7 +95,7 @@ else
 	$trouble['Connectivity'][] = array('passed'=>false, 'text'=> $html);
 }
 
-if(array_search('https', stream_get_wrappers()))
+if(in_array('https', stream_get_wrappers()))
 {
 	$html =  '  HTTPS wrapper is installed.';
 	$trouble['Connectivity'][] = array('passed'=>true, 'text'=> $html);
