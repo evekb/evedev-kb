@@ -671,6 +671,12 @@ class Parser
 						}
 					}
 				}
+                                
+                                // we need to check for errors BEFORE we use the objects
+                                if ($this->getError())
+                                {
+                                        return 0;
+                                }
 
 				$iparty = new InvolvedParty($ipilot->getID(), $icorp->getID(),
 					$ialliance->getID(), $secstatus, $iship->getID(),
@@ -744,10 +750,6 @@ class Parser
 		if (!$authorized)
 		{
 			return -2;
-		}
-		if ($this->getError())
-		{
-			return 0;
 		}
 
 		if ($this->returnmail)
