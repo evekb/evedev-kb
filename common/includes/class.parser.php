@@ -751,6 +751,12 @@ class Parser
 		{
 			return -2;
 		}
+                
+                // again check for errors in the rest of the mail
+                if ($this->getError())
+                {
+                        return 0;
+                }
 
 		if ($this->returnmail)
 		{

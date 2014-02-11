@@ -259,8 +259,7 @@ class Translate
             "'Penumbra' I White Noise ECM", "'Anointed' I EM Ward Reinforcement", "Large 'Vehemence' I Shockwave Charge",
             "Small 'Vehemence' I Shockwave Charge", "Micro 'Vehemence' I Shockwave Charge", "Medium 'Vehemence' I Shockwave Charge",
             "125mm 'Scout' I Accelerator Cannon", "125mm Prototype I Gauss Gun", "Medium Converse I Deflection Catalyzer",
-            "Large Converse I Deflection Catalyzer", "X-Large Converse I Deflection Catalyzer", "Skirmish Warfare Link - Interdiction Maneuvers",
-            "Information Warfare Link - Sensor Integrity", "EMP Generator", "200mm 'Scout' I Accelerator Cannon", "200mm Prototype I Gauss Gun",
+            "Large Converse I Deflection Catalyzer", "X-Large Converse I Deflection Catalyzer", "EMP Generator", "200mm 'Scout' I Accelerator Cannon", "200mm Prototype I Gauss Gun",
             "350mm 'Scout' I Accelerator Cannon", "350mm Prototype I Gauss Gun", "'Accord' I Core Compensation", "'Repose' I Core Compensation",
             "Small 'Arup' I Remote Bulwark Reconstruction", "Small 'Solace' I Remote Bulwark Reconstruction",
             "Medium 'Arup' I Remote Bulwark Reconstruction", "Medium 'Solace' I Remote Bulwark Reconstruction",
@@ -269,19 +268,7 @@ class Translate
             "Heavy 'Knave' I Energy Drain", "Medium 'Knave' I Energy Drain", "'Stalwart' I Particle Field Magnifier",
             "'Copasetic' I Particle Field Acceleration", "Micro 'Vigor' I Core Augmentation", "EMP Generator Blueprint",
             "Hardwiring - Eifyr and Co 'Gunslinger' MX-2", "'Gloom' I White Noise ECM", "'Shade' I White Noise ECM", 
-            "'Umbra' I White Noise ECM", "Armored Warfare Link - Damage Control", "Skirmish Warfare Link - Evasive Maneuvers", 
-            "Siege Warfare Link - Active Shielding", "Information Warfare Link - Recon Operation", "Information Warfare Link - Electronic Superiority", 
-            "Skirmish Warfare Link - Rapid Deployment", "Armored Warfare Link - Passive Defense", "Siege Warfare Link - Shield Harmonizing", 
-            "Armored Warfare Link - Rapid Repair", "Siege Warfare Link - Shield Efficiency", "Armored Warfare Link - Damage Control Blueprint", 
-            "Armored Warfare Link - Passive Defense Blueprint", "Armored Warfare Link - Rapid Repair Blueprint", 
-            "Information Warfare Link - Electronic Superiority Blueprint", "Information Warfare Link - Recon Operation Blueprint", 
-            "Information Warfare Link - Sensor Integrity Blueprint", "Siege Warfare Link - Shield Harmonizing Blueprint", 
-            "Siege Warfare Link - Active Shielding Blueprint", "Siege Warfare Link - Shield Efficiency Blueprint", 
-            "Skirmish Warfare Link - Evasive Maneuvers Blueprint", "Skirmish Warfare Link - Interdiction Maneuvers Blueprint", 
-            "Skirmish Warfare Link - Rapid Deployment Blueprint", "Mining Foreman Link - Harvester Capacitor Efficiency", 
-            "Mining Foreman Link - Harvester Capacitor Efficiency Blueprint", "Mining Foreman Link - Mining Laser Field Enhancement", 
-            "Mining Foreman Link - Mining Laser Field Enhancement Blueprint", "Mining Foreman Link - Laser Optimization",
-            "Mining Foreman Link - Laser Optimization Blueprint", "Drone Tracking Computer II", "Drone Tracking Computer II Blueprint",
+            "'Umbra' I White Noise ECM", "Drone Tracking Computer II", "Drone Tracking Computer II Blueprint",
             "Capital EMP Generator", "Capital EMP Generator Blueprint", "Station (Caldari 1 Wrecked)", "Minmatar Starbase Control Tower_LCO");
         $replace = array("Microorganisms", "Ice Microorganisms Extractor", "Barren Microorganisms Extractor", 
             "Temperate Microorganisms Extractor", "Oceanic Microorganisms Extractor", "Hardwiring - Eifyr and Co. 'Gunslinger' MX-0.5", 
@@ -321,8 +308,7 @@ class Translate
             "'Penumbra' White Noise ECM", "'Anointed' EM Ward Reinforcement", "Large 'Vehemence' Shockwave Charge", 
             "Small 'Vehemence' Shockwave Charge", "Micro 'Vehemence' Shockwave Charge", "Medium 'Vehemence' Shockwave Charge", 
             "125mm 'Scout' Accelerator Cannon", "125mm Prototype Gauss Gun", "Medium Converse Deflection Catalyzer", 
-            "Large Converse Deflection Catalyzer", "X-Large Converse Deflection Catalyzer", "Skirmish Warfare Link - Interdiction Maneuvers I", 
-            "Information Warfare Link - Sensor Integrity I", "EM Pulse Generator", "200mm 'Scout' Accelerator Cannon", 
+            "Large Converse Deflection Catalyzer", "X-Large Converse Deflection Catalyzer", "EM Pulse Generator", "200mm 'Scout' Accelerator Cannon", 
             "200mm Prototype Gauss Gun", "350mm 'Scout' Accelerator Cannon", "350mm Prototype Gauss Gun", "'Accord' Core Compensation", 
             "'Repose' Core Compensation", "Small 'Arup' Remote Bulwark Reconstruction", "Small 'Solace' Remote Bulwark Reconstruction", 
             "Medium 'Arup' Remote Bulwark Reconstruction", "Medium 'Solace' Remote Bulwark Reconstruction", 
@@ -330,7 +316,25 @@ class Translate
             "'Pandemonium' Ballistic Enhancement", "Large 'Regard' Power Projector", "Medium 'Regard' Power Projector", 
             "Heavy 'Knave' Energy Drain", "Medium 'Knave' Energy Drain", "'Stalwart' Particle Field Magnifier", 
             "'Copasetic' Particle Field Acceleration", "Micro 'Vigor' Core Augmentation", "EM Pulse Generator Blueprint", 
-            "Hardwiring - Eifyr and Co. 'Gunslinger' MX-2", "'Gloom' White Noise ECM", "'Shade' White Noise ECM", "'Umbra' White Noise ECM", 
+            "Hardwiring - Eifyr and Co. 'Gunslinger' MX-2", "'Gloom' White Noise ECM", "'Shade' White Noise ECM", "'Umbra' White Noise ECM",  
+            "Capital EM Pulse Generator", "Capital EM Pulse Generator Blueprint", "Wrecked Caldari Station", "Indestructible Minmatar Starbase");
+
+        $preg_search = array("/Skirmish Warfare Link - Interdiction Maneuvers[^I]+[^,]/", "/Information Warfare Link - Sensor Integrity[^I]+[^,]/", 
+            "/Armored Warfare Link - Damage Control[^I]+[^,]/", "/Skirmish Warfare Link - Evasive Maneuvers[^I]+[^,]/", 
+            "/Siege Warfare Link - Active Shielding[^I]+[^,]/", "/Information Warfare Link - Recon Operation[^I]+[^,]/", "/Information Warfare Link - Electronic Superiority[^I]+[^,]/", 
+            "/Skirmish Warfare Link - Rapid Deployment[^I]+[^,]/", "/Armored Warfare Link - Passive Defense[^I]+[^,]/", "/Siege Warfare Link - Shield Harmonizing[^I]+[^,]/", 
+            "/Armored Warfare Link - Rapid Repair[^I]+[^,]/", "/Siege Warfare Link - Shield Efficiency[^I]+[^,]/", "/Armored Warfare Link - Damage Control Blueprint[^I]+[^,]/", 
+            "/Armored Warfare Link - Passive Defense Blueprint[^I]+[^,]/", "/Armored Warfare Link - Rapid Repair Blueprint[^I]+[^,]/", 
+            "/Information Warfare Link - Electronic Superiority Blueprint[^I]+[^,]/", "/Information Warfare Link - Recon Operation Blueprint[^I]+[^,]/", 
+            "/Information Warfare Link - Sensor Integrity Blueprint[^I]+[^,]/", "/Siege Warfare Link - Shield Harmonizing Blueprint[^I]+[^,]/", 
+            "/Siege Warfare Link - Active Shielding Blueprint[^I]+[^,]/", "/Siege Warfare Link - Shield Efficiency Blueprint[^I]+[^,]/", 
+            "/Skirmish Warfare Link - Evasive Maneuvers Blueprint[^I]+[^,]/", "/Skirmish Warfare Link - Interdiction Maneuvers Blueprint[^I]+[^,]/", 
+            "/Skirmish Warfare Link - Rapid Deployment Blueprint[^I]+[^,]/", "/Mining Foreman Link - Harvester Capacitor Efficiency[^I]+[^,]/", 
+            "/Mining Foreman Link - Harvester Capacitor Efficiency Blueprint[^I]+[^,]/", "/Mining Foreman Link - Mining Laser Field Enhancement[^I]+[^,]/", 
+            "/Mining Foreman Link - Mining Laser Field Enhancement Blueprint[^I]+[^,]/", "/Mining Foreman Link - Laser Optimization[^I]+[^,]/",
+            "/Mining Foreman Link - Laser Optimization Blueprint[^I]+[^,]/");
+
+        $preg_replace = array("Skirmish Warfare Link - Interdiction Maneuvers I", "Information Warfare Link - Sensor Integrity I",
             "Armored Warfare Link - Damage Control I", "Skirmish Warfare Link - Evasive Maneuvers I", "Siege Warfare Link - Active Shielding I", 
             "Information Warfare Link - Recon Operation I", "Information Warfare Link - Electronic Superiority I", 
             "Skirmish Warfare Link - Rapid Deployment I", "Armored Warfare Link - Passive Defense I", 
@@ -344,9 +348,11 @@ class Translate
             "Skirmish Warfare Link - Rapid Deployment I Blueprint", "Mining Foreman Link - Harvester Capacitor Efficiency I", 
             "Mining Foreman Link - Harvester Capacitor Efficiency I Blueprint", "Mining Foreman Link - Mining Laser Field Enhancement I", 
             "Mining Foreman Link - Mining Laser Field Enhancement I Blueprint", "Mining Foreman Link - Laser Optimization I", 
-            "Mining Foreman Link - Laser Optimization I Blueprint", "Omnidirectional Tracking Link II", "Omnidirectional Tracking Link II Blueprint", 
-            "Capital EM Pulse Generator", "Capital EM Pulse Generator Blueprint", "Wrecked Caldari Station", "Indestructible Minmatar Starbase");
+            "Mining Foreman Link - Laser Optimization I Blueprint", "Omnidirectional Tracking Link II", "Omnidirectional Tracking Link II Blueprint");
+        
+        $this->killmail_ = preg_replace($preg_search, $preg_replace, $this->killmail_);
         $this->killmail_ = str_replace($search, $replace, $this->killmail_);
+        
 				// Reverse the MWD change from 'Monopropellant Hydrazine Boosters' above.
         $this->killmail_ = str_replace("Phased Monopropellant Hydrazine Boosters", "Phased Monopropellant I Hydrazine Boosters", $this->killmail_);
     }
