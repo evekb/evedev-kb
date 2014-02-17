@@ -12,7 +12,7 @@ $page = new Page("Settings - Kill Log API");
 $page->setCachable(false);
 $page->setAdmin();
 
-if ($key_id = (int)edkURI::getArg('delete')) {
+if (is_string($key_id = edkURI::getArg('delete')) ) {
 	$qry2 = new DBQuery();
 	$sql = "DELETE from kb3_api_keys WHERE key_id = '".$key_id."' AND key_kbsite = '".KB_SITE."'";
 	$qry2->execute($sql);
@@ -50,8 +50,13 @@ if ($_POST['add'] ) {
 	$key_id = $qry->escape($_POST['keyid']);
 	$key_key = $qry->escape($_POST['keycode']);
 
-	$sql = "INSERT INTO kb3_api_keys( key_name, key_id, key_key, key_kbsite, key_flags ) VALUES ( '$key_name', '$key_id', '$key_key', '".KB_SITE."', 0 )";
-	$qry->execute($sql);
+	if(($key_id != 0) && ($key_name != '') && ($key_key != "")) {
+		$sql = "INSERT INTO kb3_api_keys( key_name, key_id, key_key, key_kbsite, key_flags ) VALUES ( '$key_name', '$key_id', '$key_key', '".KB_SITE."', 0 )";
+		$qry->execute($sql);
+	}
+	else {
+		$html .= "Invalid key not added (Please fill out Name, ID and Verification Code)<br/>";
+	}
 }
 
 
@@ -278,6 +283,9 @@ if ($_POST['apilog']) {
 					case "Corporation":
 						$flags |= KB_APIKEY_CORP;
 						break;
+					default: //Just to be sure...
+						$flags |= KB_APIKEY_BADAUTH;
+						break;
 				}
 			} else {
 				if ($act->getError() !== null) {
@@ -296,7 +304,9 @@ if ($_POST['apilog']) {
 							}
 							$flags |= KB_APIKEY_EXPIRED;
 							break;
-						default:
+						default: // All other errors are taken as BADAUTH, so we
+							 // won't fail later in the code
+							$flags |= KB_APIKEY_BADAUTH;
 					}
 				} else {
 					// no error so user didn't have '256' access
