@@ -1,14 +1,12 @@
 <?php
-/**
- * $Date: 2010-05-30 13:44:06 +1000 (Sun, 30 May 2010) $
- * $Revision: 721 $
- * $HeadURL: https://evedev-kb.googlecode.com/svn/trunk/common/includes/class.eveapi.php $
- * @package EDK
- */
 
 /**
- * API KillLog - /corp/Killlog.xml.aspx
+ * API KillMails - /corp/KillMails.xml.aspx
+ * does not suffer from the terrible account-wide caching, always returns valid results
  */
+
+define('NUMBER_OF_CALLS_DEFAULT', 1);
+
 class API_KillLog extends API
 {
 	function Import($name, $id, $key, $flags)
@@ -28,8 +26,6 @@ class API_KillLog extends API
 		if(function_exists("set_time_limit")) {
       		set_time_limit(0);
 		}
-		$lastdatakillid = 1;
-		$currentdatakillid = 0;
 
 		$logsource = "New XML";
 		// Load new XML
@@ -40,20 +36,29 @@ class API_KillLog extends API
 		$posted = array();
 		$skipped = array();
 
+                // get maximum number of API calls per key
+                $numberOfCallsMax = config::get('apikillmails_numberofcalls');
+                if(!$numberOfCallsMax)
+                {
+                    $numberOfCallsMax = NUMBER_OF_CALLS_DEFAULT;
+                }
+
 		foreach ($characters as $char) {
 			$output .= "Processing ".$char['characterName']."<br><br>";
-			$currentkill = 0;
-			$lastkill = -1;
-			while ($lastkill != $currentkill) {
-				$lastkill = $currentkill;
+			$oldestKill = 0;
+                        $mailsDepleted = FALSE;
+                        $numberOfCalls = 0;
+                        
+			while (!$mailsDepleted && $numberOfCalls < $numberOfCallsMax) {
+                                $numberOfCalls++;
 				$args = array("characterID" => $char['characterID']);
-				if ($lastkill) {
-					$args["beforeKillID"] = $lastkill;
+				if ($oldestKill > 0) {
+					$args["fromID"] = $oldestKill;
 				}
 				if ($flags & KB_APIKEY_CORP) {
-					$killLog = $this->CallAPI("corp", "KillLog", $args, $id, $key);
+					$killLog = $this->CallAPI("corp", "KillMails", $args, $id, $key);
 				} else if ($flags & KB_APIKEY_CHAR) {
-					$killLog = $this->CallAPI("char", "KillLog", $args, $id, $key);
+					$killLog = $this->CallAPI("char", "KillMails", $args, $id, $key);
 				} else {
 					$output .= "<div class='block-header2'>Key does not have access to KillLog</div>";
 					break;
@@ -61,11 +66,22 @@ class API_KillLog extends API
 
 				if ($this->getError() === null) {
 					// Get oldest kill
-					$currentkill = 0;
+					$oldestKill = 0;
 					$sxe = simplexml_load_string($this->pheal->xml);
+                                        if(count($sxe->result->rowset->row) > 0)
+                                        {
+                                            $oldestKill = (int) $sxe->result->rowset->row[0]['killID'];
+                                        }
+                                        
+                                        else
+                                        {
+                                            $mailsDepleted = TRUE;
+                                            break;
+                                        }
+                                        
 					foreach ($sxe->result->rowset->row as $row) {
-						if ($currentkill < (int) $row['killID']) {
-							$currentkill = (int) $row['killID'];
+						if ($oldestKill > (int) $row['killID']) {
+							$oldestKill = (int) $row['killID'];
 						}
 					}
 				}
@@ -74,11 +90,11 @@ class API_KillLog extends API
 					if ($this->getError() == 120 && $this->pheal->xml) {
 						// Check if we just need to skip back a few kills
 						// i.e. first page of kills is already fetched.
-						$pos = strpos($this->pheal->xml, "Expected beforeKillID [");
+						$pos = strpos($this->pheal->xml, "Expected fromID [");
 						if ($pos) {
 							$pos += 23;
 							$pos2 = strpos($this->pheal->xml, "]", $pos);
-							$currentkill = (int) substr($this->pheal->xml, $pos, $pos2 - $pos);
+							$oldestKill = (int) substr($this->pheal->xml, $pos, $pos2 - $pos);
 						}
 					} else if (!$posted && !$skipped) {
 						// Something went wrong and no kills were found.

@@ -73,6 +73,12 @@ if ($_POST['submit'] || $_POST['import']) {
 		config::set('post_no_npc_only', '0');
 	}
 
+	if ($_POST['API_NoOfAPICalls']) {
+		$tmp = intval($_POST['API_NoOfAPICalls']);
+		if($tmp <= 0 || $tmp > 100) $tmp = 1;
+                config::set('apikillmails_numberofcalls', $tmp);
+        }
+
 	$html .= "Settings Saved.<br />";
 }
 
@@ -397,6 +403,16 @@ if ($_POST['apilog']) {
 	$html .= "<tr><td style='height:30px; width:150px'>Import multiple keys one at a time? </td>";
 	$html .= "<td><input type='checkbox' name='API_MultipleMode' id='API_MultipleMode'";
 	if (config::get('API_MultipleMode')) $html .= " checked=\"checked\"";
+	$html .= " /></td></tr>";
+
+	$html .= "<tr><td style='height:30px; width:150px'>Max. number of API calls per key [1..100] </td>";
+	$html .= "<td><input type='text' name='API_NoOfAPICalls' id='API_NoOfAPICalls' size='5'";
+	if ($NoAPICalls = config::get('apikillmails_numberofcalls')) {
+		 $html .= " value=\"". $NoAPICalls ."\"";
+	}
+	else {
+		 $html .= " value=\"1\"";
+	}
 	$html .= " /></td></tr>";
 
 	// Import
