@@ -7,5 +7,5 @@
   `shp_class` int(11) NOT NULL DEFAULT '18',
   PRIMARY KEY (`shp_id`),
   KEY `shp_class` (`shp_class`)
-) ENGINE=MyISAM AUTO_INCREMENT=33611 DEFAULT CHARSET=utf8</structure>
+) ENGINE=MyISAM AUTO_INCREMENT=33611 DEFAULT CHARSET=latin1</structure>
 </kb3>

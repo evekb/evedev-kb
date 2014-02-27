@@ -14,5 +14,5 @@
   `highIsGood` enum('true','false') NOT NULL DEFAULT 'true',
   PRIMARY KEY (`attributeID`),
   KEY `attributeName` (`attributeName`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8</structure>
+) ENGINE=MyISAM DEFAULT CHARSET=latin1</structure>
 </kb3>

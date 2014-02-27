@@ -13,5 +13,5 @@
   PRIMARY KEY (`sys_id`),
   KEY `sys_con_id` (`sys_con_id`),
   KEY `sys_name` (`sys_name`)
-) ENGINE=MyISAM AUTO_INCREMENT=31002505 DEFAULT CHARSET=utf8</structure>
+) ENGINE=MyISAM AUTO_INCREMENT=31002505 DEFAULT CHARSET=latin1</structure>
 </kb3>

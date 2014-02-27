@@ -8,5 +8,5 @@
   `isDefault` enum('true','false') NOT NULL DEFAULT 'false',
   PRIMARY KEY (`typeID`,`effectID`),
   KEY `isDefault` (`isDefault`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8</structure>
+) ENGINE=MyISAM DEFAULT CHARSET=latin1</structure>
 </kb3>

@@ -8,5 +8,5 @@
   `itt_name` char(120) NOT NULL,
   `itt_slot` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`itt_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8</structure>
+) ENGINE=MyISAM DEFAULT CHARSET=latin1</structure>
 </kb3>

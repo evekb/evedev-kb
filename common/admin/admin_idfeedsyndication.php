@@ -13,7 +13,7 @@
 
 require_once('common/admin/admin_menu.php');
 
-$page = new Page("Administration - IDFeed Syndication " . IDFeed::version);
+$page = new Page("Administration - IDFeed Syndication " . ID_FEED_VERSION);
 $page->setCachable(false);
 $page->setAdmin();
 

@@ -91,11 +91,11 @@ class ItemList
 		if (count($this->destroyedIDarray)) {
 			$sql .= ", if(dl.attributeID IS NULL,sum(itd.itd_quantity),"
 					."truncate(sum(itd.itd_quantity)/count(dl.attributeID),0)) "
-					."as itd_quantity, itd_itm_id, itd_itl_id, itl_location ";
+					."as itd_quantity, itd_itm_id, itd_itl_id, itl_flagText ";
 		} else if (count($this->droppedIDarray)) {
 			$sql .= ", if(dl.attributeID IS NULL,sum(itd.itd_quantity),"
 					."truncate(sum(itd.itd_quantity)/count(dl.attributeID),0)) "
-					."as itd_quantity, itd_itm_id, itd_itl_id, itl_location ";
+					."as itd_quantity, itd_itm_id, itd_itl_id, itl_flagText ";
 		}
 
 		$sql .= "from kb3_invtypes inv "
@@ -113,15 +113,15 @@ class ItemList
 					."and itd_kll_id in ("
 					.implode(',', $this->destroyedIDarray).") "
 					."left join kb3_item_locations itl "
-					."on (itd.itd_itl_id = itl.itl_id "
-					."or (itd.itd_itl_id = 0 and itl.itl_id = 1))";
+					."on (itd.itd_itl_id = itl.itl_flagID "
+					."or (itd.itd_itl_id = 0 and itl.itl_flagID = 1))";
 		} else if (count($this->droppedIDarray)) {
 			$sql .= "join kb3_items_dropped itd "
 					."on inv.typeID = itd_itm_id and itd_kll_id in ("
 					.implode(',', $this->droppedIDarray).") "
 					."left join kb3_item_locations itl "
-					."on (itd.itd_itl_id = itl.itl_id "
-					."or (itd.itd_itl_id = 0 and itl.itl_id = 1)) ";
+					."on (itd.itd_itl_id = itl.itl_flagID "
+					."or (itd.itd_itl_id = 0 and itl.itl_flagID = 1)) ";
 		} else {
 			$sql .= "where inv.typeID in (".implode(',', $this->itemarray).") ";
 		}

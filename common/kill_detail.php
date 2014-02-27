@@ -210,13 +210,13 @@ class pKillDetail extends pageAssembly
 				}
 
 				$i_name = $item->getName();
-				$i_location = $destroyed->getLocationID();
+				$i_location = InventoryFlag::collapse($destroyed->getLocationID());
 				$i_id = $item->getID();
 				$i_usedgroup = $item->get_used_launcher_group();
 				
 				// BPCs
-				if($i_location == 9) {
-					$i_location = 4;
+				if($i_location == InventoryFlag::$COPY) {
+					$i_location = InventoryFlag::$CARGO;
 					$i_name = $i_name." (Copy)";
 					$value = $formatted = 0;
 					$bpc = true;
@@ -238,9 +238,9 @@ class pKillDetail extends pageAssembly
 				);
 
 				//Fitting, KE - add destroyed items to an array of all fitted items.
-				if ($i_location <= 3 || $i_location == 7 || $i_location == 5) {
+				if ($i_location ==InventoryFlag::$LOW_SLOT_1 || $i_location ==  InventoryFlag::$MED_SLOT_1 || $i_location ==  InventoryFlag::$HIGH_SLOT_1 || $i_location ==InventoryFlag::$SUB_SYSTEM_SLOT_1 || $i_location ==InventoryFlag::$RIG_SLOT_1) {
 					if (($i_usedgroup != 0)) {
-						if ($i_location == 1) {
+						if ($i_location == InventoryFlag::$HIGH_SLOT_1) {
 							$i_ammo = $item->get_ammo_size($i_name);
 							if ($i_usedgroup == 481) {
 								$i_ammo = 0;
@@ -263,7 +263,7 @@ class pKillDetail extends pageAssembly
 						// Avoids timeouts on badly faked mails.
 						// TODO: Refuse to show fitting and display an invalid message.
 						for ($count = 0; $count < min($i_qty, 8); $count++) {
-							if ($i_location == 1) {
+							if ($i_location == InventoryFlag::$HIGH_SLOT_1) {
 								$i_charge = $item->get_used_charge_size();
 							} else {
 								$i_charge = 0;
@@ -303,13 +303,13 @@ class pKillDetail extends pageAssembly
 				}
 
 				$i_name = $item->getName();
-				$i_location = $dropped->getLocationID();
+				$i_location = InventoryFlag::collapse($dropped->getLocationID());
 				$i_id = $item->getID();
 				$i_usedgroup = $item->get_used_launcher_group();
 
 				// BPCs
-				if($i_location == 9) {
-					$i_location = 4;
+				if($i_location == InventoryFlag::$COPY) {
+					$i_location = InventoryFlag::$CARGO;
 					$i_name = $i_name." (Copy)";
 					$value = $formatted = 0;
 					$bpc = true;
@@ -330,9 +330,9 @@ class pKillDetail extends pageAssembly
 				);
 
 				//Fitting -KE, add dropped items to the list
-				if (($i_location != 4) && ($i_location != 6)) {
+				if (($i_location != InventoryFlag::$CARGO )&& ($i_location != InventoryFlag::$DRONE_BAY)) {
 					if (($i_usedgroup != 0)) {
-						if ($i_location == 1) {
+						if ($i_location >= InventoryFlag::$HIGH_SLOT_1 && $i_location <= InventoryFlag::$HIGH_SLOT_8) {
 							$i_ammo = $item->get_ammo_size($i_name);
 
 							if ($i_usedgroup == 481) {
@@ -354,7 +354,7 @@ class pKillDetail extends pageAssembly
 						// Use a max of 8 as a sanity check.
 						// Avoids timeouts on badly faked mails.
 						for ($count = 0; $count < min($i_qty, 8); $count++) {
-							if ($i_location == 1) {
+							if ($i_location == InventoryFlag::$HIGH_SLOT_1) {
 								$i_charge = $item->get_used_charge_size();
 							} else {
 								$i_charge = 0;
@@ -733,56 +733,125 @@ class pKillDetail extends pageAssembly
 		if (config::get('item_values')) {
 			$smarty->assign('item_values', 'true');
 		}
+                
+                $slot_array = array();
 		// preparing slot layout
-		$slot_array = array();
+                // we predefine some flags/slots which are supposed to be at the top/bottom
+                // High slots
+                $InventoryFlag = new InventoryFlag(InventoryFlag::$HIGH_SLOT_1);
+                $slot_array[$InventoryFlag->getID()] = array(
+                        'img' => 'icon'.$InventoryFlag->getIcon().'.png',
+                        'text' => "High Slot",
+                        'items' => array()
+                );
+                
+                // Med slots
+                $InventoryFlag = new InventoryFlag(InventoryFlag::$MED_SLOT_1);
+                $slot_array[$InventoryFlag->getID()] = array(
+                        'img' => 'icon'.$InventoryFlag->getIcon().'.png',
+                        'text' => "Medium Slot",
+                        'items' => array()
+                );
+                
+                // Low slots
+                $InventoryFlag = new InventoryFlag(InventoryFlag::$LOW_SLOT_1);
+                $slot_array[$InventoryFlag->getID()] = array(
+                        'img' => 'icon'.$InventoryFlag->getIcon().'.png',
+                        'text' => "Low Slot",
+                        'items' => array()
+                );
+                
+                // Rig slots
+                $InventoryFlag = new InventoryFlag(InventoryFlag::$RIG_SLOT_1);
+                $slot_array[$InventoryFlag->getID()] = array(
+                        'img' => 'icon'.$InventoryFlag->getIcon().'.png',
+                        'text' => "Rig Slot",
+                        'items' => array()
+                );
+                
+                // Subsystem slots
+                $InventoryFlag = new InventoryFlag(InventoryFlag::$SUB_SYSTEM_SLOT_1);
+                $slot_array[$InventoryFlag->getID()] = array(
+                        'img' => 'icon'.$InventoryFlag->getIcon().'.png',
+                        'text' => "Subsystem Slot",
+                        'items' => array()
+                );
+                
+                // Drone Bay
+                $InventoryFlag = new InventoryFlag(InventoryFlag::$DRONE_BAY);
+                $slot_array[$InventoryFlag->getID()] = array(
+                        'img' => 'icon'.$InventoryFlag->getIcon().'.png',
+                        'text' => $InventoryFlag->getText(),
+                        'items' => array()
+                );
+                
+                // Cargo
+                $InventoryFlag = new InventoryFlag(InventoryFlag::$CARGO);
+                $slot_array[$InventoryFlag->getID()] = array(
+                        'img' => 'icon'.$InventoryFlag->getIcon().'.png',
+                        'text' => $InventoryFlag->getText(),
+                        'items' => array()
+                );
+        
+                // filter pre-defined prefix flags
+                // remove the slots this kill has no items for
+                foreach($slot_array AS $flagID => $value)
+                {
+                    if((!array_key_exists($flagID, $this->dest_array) && !array_key_exists($flagID, $this->drop_array)))
+                    {
+                        unset($slot_array[$flagID]);
+                    }
+                }
+                
+                
 
-		$slot_array[1] = array(
-			'img' => 'icon08_11.png',
-			'text' => 'Fitted - High slot',
-			'items' => array()
-		);
-
-		$slot_array[2] = array(
-			'img' => 'icon08_10.png',
-			'text' => 'Fitted - Mid slot',
-			'items' => array()
-		);
-
-		$slot_array[3] = array(
-			'img' => 'icon08_09.png',
-			'text' => 'Fitted - Low slot',
-			'items' => array()
-		);
-
-		$slot_array[5] = array(
-			'img' => 'icon68_01.png',
-			'text' => 'Fitted - Rig slot',
-			'items' => array()
-		);
-
-		$slot_array[7] = array(
-			'img' => 'icon76_04.png',
-			'text' => 'Fitted - Subsystems',
-			'items' => array()
-		);
-
-		$slot_array[6] = array(
-			'img' => 'icon02_10.png',
-			'text' => 'Drone bay',
-			'items' => array()
-		);
-
-		$slot_array[4] = array(
-			'img' => 'icon03_14.png',
-			'text' => 'Cargo Bay',
-			'items' => array()
-		);
-
-		$slot_array[8] = array(
-			'img' => 'icon03_14.png',
-			'text' => 'Implants',
-			'items' => array()
-		);
+                // generically add all the other slots
+                $genericSlotsInKill = array();
+                foreach($this->dest_array AS $flagID => $item)
+                {
+                    if(!isset($slot_array[$flagID]) && $flagID != InventoryFlag::$OTHER)
+                    {
+                        $InventoryFlag = new InventoryFlag($flagID);
+                        $genericSlotsInKill[$flagID] = array(
+                                'img' => 'icon'.$InventoryFlag->getIcon().'.png',
+                                'text' => $InventoryFlag->getText(),
+                                'items' => array()
+                        );
+                    }
+                }
+                
+                foreach($this->drop_array AS $flagID => $item)
+                {
+                    if(!isset($slot_array[$flagID]) && $flagID != InventoryFlag::$OTHER)
+                    {
+                        $InventoryFlag = new InventoryFlag($flagID);
+                        $genericSlotsInKill[$flagID] = array(
+                                'img' => 'icon'.$InventoryFlag->getIcon().'.png',
+                                'text' => $InventoryFlag->getText(),
+                                'items' => array()
+                        );
+                    }
+                }
+                
+                // sort generic flags so we always have the same order
+                ksort($genericSlotsInKill);
+                
+                // now (literally) add generic slots with pre-defined ones
+                // php IS evil!
+                $slot_array += $slot_array + $genericSlotsInKill;
+                
+                // now add pre-defined suffix flags
+                if((array_key_exists(InventoryFlag::$OTHER, $this->dest_array) || array_key_exists(InventoryFlag::$OTHER, $this->drop_array)))
+                {
+                    $InventoryFlag = new InventoryFlag(InventoryFlag::$OTHER);
+                        $slot_array[$InventoryFlag->getID()] = array(
+                                'img' => 'icon'.$InventoryFlag->getIcon().'.png',
+                                'text' => $InventoryFlag->getText(),
+                                'items' => array()
+                        );
+                }
+                
+                
 		$smarty->assignByRef('slots', $slot_array);
 
 		$smarty->assignByRef('destroyed', $this->dest_array);
@@ -882,160 +951,238 @@ class pKillDetail extends pageAssembly
 	function fitting()
 	{
 		global $smarty;
+                
+                // high slots
+                for($i = InventoryFlag::$HIGH_SLOT_1; $i <= InventoryFlag::$HIGH_SLOT_8; $i++)
+                {
+                    if (is_array($this->fitting_array[$i])) {
+                            foreach ($this->fitting_array[$i] as $array_rowh) {
+                                    $sort_by_nameh["groupID"][] = $array_rowh["groupID"];
+                            }
 
-		if (is_array($this->fitting_array[1])) {
-			foreach ($this->fitting_array[1] as $array_rowh) {
-				$sort_by_nameh["groupID"][] = $array_rowh["groupID"];
-			}
+                            array_multisort($sort_by_nameh["groupID"], SORT_ASC,
+                                            $this->fitting_array[$i]);
+                    }
+                }
 
-			array_multisort($sort_by_nameh["groupID"], SORT_ASC,
-					$this->fitting_array[1]);
-		}
+                // med slots
+                for($i = InventoryFlag::$MED_SLOT_1; $i <= InventoryFlag::$MED_SLOT_8; $i++)
+                {
+                    if (is_array($this->fitting_array[$i])) {
+                            foreach ($this->fitting_array[$i] as $array_rowm) {
+                                    $sort_by_namem["groupID"][] = $array_rowm["groupID"];
+                            }
 
-		if (is_array($this->fitting_array[2])) {
-			foreach ($this->fitting_array[2] as $array_rowm) {
-				$sort_by_namem["groupID"][] = $array_rowm["groupID"];
-			}
+                            array_multisort($sort_by_namem["groupID"], SORT_ASC,
+                                            $this->fitting_array[$i]);
+                    }
+                }
 
-			array_multisort($sort_by_namem["groupID"], SORT_ASC,
-					$this->fitting_array[2]);
-		}
+                // low slots
+                for($i =InventoryFlag::$LOW_SLOT_1; $i <=InventoryFlag::$LOW_SLOT_8; $i++)
+                {
+                    if (is_array($this->fitting_array[$i])) {
+                            foreach ($this->fitting_array[$i] as $array_rowl) {
+                                    $sort_by_namel["groupID"][] = $array_rowl["Name"];
+                            }
 
-		if (is_array($this->fitting_array[3])) {
-			foreach ($this->fitting_array[3] as $array_rowl) {
-				$sort_by_namel["groupID"][] = $array_rowl["Name"];
-			}
+                            array_multisort($sort_by_namel["groupID"], SORT_ASC,
+                                            $this->fitting_array[$i]);
+                    }
+                }
 
-			array_multisort($sort_by_namel["groupID"], SORT_ASC,
-					$this->fitting_array[3]);
-		}
+                // rig slots
+                for($i =InventoryFlag::$RIG_SLOT_1; $i <=InventoryFlag::$RIG_SLOT_8; $i++)
+                {
+                    if (is_array($this->fitting_array[$i])) {
+                            foreach ($this->fitting_array[$i] as $array_rowr) {
+                                    $sort_by_namer["Name"][] = $array_rowr["Name"];
+                            }
 
-		if (is_array($this->fitting_array[5])) {
-			foreach ($this->fitting_array[5] as $array_rowr) {
-				$sort_by_namer["Name"][] = $array_rowr["Name"];
-			}
+                            array_multisort($sort_by_namer["Name"], SORT_ASC,
+                                            $this->fitting_array[$i]);
+                    }
+                }
 
-			array_multisort($sort_by_namer["Name"], SORT_ASC,
-					$this->fitting_array[5]);
-		}
+                // subsystems
+                for($i =InventoryFlag::$SUB_SYSTEM_SLOT_1; $i <=InventoryFlag::$SUB_SYSTEM_SLOT_8; $i++)
+                {
+                    if (is_array($this->fitting_array[$i])) {
+                            foreach ($this->fitting_array[$i] as $array_rowr) {
+                                    $sort_by_namer["groupID"][] = $array_rowr["groupID"];
+                            }
 
-		if (is_array($this->fitting_array[7])) {
-			foreach ($this->fitting_array[7] as $array_rowr) {
-				$sort_by_namer["groupID"][] = $array_rowr["groupID"];
-			}
-
-			array_multisort($sort_by_namer["groupID"], SORT_ASC,
-					$this->fitting_array[7]);
-		}
+                            array_multisort($sort_by_namer["groupID"], SORT_ASC,
+                                            $this->fitting_array[$i]);
+                    }
+                }
 
 		//Fitting - KE, sort the fitted items into name order, so that several of the same item apear next to each other. -end
+                // high slot ammo
+                for($i = InventoryFlag::$HIGH_SLOT_1; $i <= InventoryFlag::$HIGH_SLOT_8; $i++)
+                {
+                    $length = count($this->ammo_array[$i]);
 
-		$length = count($this->ammo_array[1]);
+                    $temp = array();
 
-		$temp = array();
+                    if (is_array($this->fitting_array[$i])) {
+                            $hiammo = array();
 
-		if (is_array($this->fitting_array[1])) {
-			$hiammo = array();
+                            foreach ($this->fitting_array[$i] as $highfit) {
+                                    $group = $highfit["groupID"];
+                                    $size = $highfit["chargeSize"];
 
-			foreach ($this->fitting_array[1] as $highfit) {
-				$group = $highfit["groupID"];
-				$size = $highfit["chargeSize"];
+                                    if ($group
+                                                    == 483						  // Modulated Deep Core Miner II, Modulated Strip Miner II and Modulated Deep Core Strip Miner II
+                                                    || $group == 53					 // Laser Turrets
+                                                    || $group == 55					 // Projectile Turrets
+                                                    || $group == 74					 // Hybrid Turrets
+                                                    || ($group >= 506 && $group <= 511) // Some Missile Lauchers
+                                                    || $group == 481					// Probe Launchers
+                                                    || $group == 899					// Warp Disruption Field Generator I
+                                                    || $group == 771					// Heavy Assault Missile Launchers
+                                                    || $group == 589					// Interdiction Sphere Lauchers
+                                                    || $group == 524					// Citadel Torpedo Launchers
+                                                    || $group == 1245					// Rapid Heavy Missile Launchers
+                                    ) {
+                                            $found = 0;
 
-				if ($group
-						== 483						  // Modulated Deep Core Miner II, Modulated Strip Miner II and Modulated Deep Core Strip Miner II
-						|| $group == 53					 // Laser Turrets
-						|| $group == 55					 // Projectile Turrets
-						|| $group == 74					 // Hybrid Turrets
-						|| ($group >= 506 && $group <= 511) // Some Missile Lauchers
-						|| $group == 481					// Probe Launchers
-						|| $group == 899					// Warp Disruption Field Generator I
-						|| $group == 771					// Heavy Assault Missile Launchers
-						|| $group == 589					// Interdiction Sphere Lauchers
-						|| $group == 524					// Citadel Torpedo Launchers
-				) {
-					$found = 0;
+                                            if ($group == 511 || $group == 1245) {
+                                                    $group = 509;
+                                            } // Assault Missile Lauchers uses same ammo as Standard Missile Lauchers
 
-					if ($group == 511) {
-						$group = 509;
-					} // Assault Missile Lauchers uses same ammo as Standard Missile Lauchers
+                                            if (is_array($this->ammo_array[$i])) {
+                                                    $j = 0;
 
-					if (is_array($this->ammo_array[1])) {
-						$i = 0;
+                                                    while (!($found) && $j < $length) {
+                                                            $temp = array_shift($this->ammo_array[$i]);
 
-						while (!($found) && $i < $length) {
-							$temp = array_shift($this->ammo_array[1]);
+                                                            if (($temp["usedgroupID"] == $group)
+                                                                            && ($temp["size"] == $size)) {
+                                                                    $hiammo[] = array('type' => $temp["Icon"]	);
 
-							if (($temp["usedgroupID"] == $group)
-									&& ($temp["size"] == $size)) {
-								$hiammo[] = array('type' => $temp["Icon"]	);
+                                                                    $found = 1;
+                                                            }
 
-								$found = 1;
-							}
+                                                            $this->ammo_array[$i][] = $temp;
+                                                            $j++;
+                                                    }
+                                            }
 
-							$this->ammo_array[1][] = $temp;
-							$i++;
-						}
-					}
+                                            if (!($found)) {
+                                                    $hiammo[] = array('type' => "<img src='".IMG_URL
+                                                                            ."/items/24_24/icon09_13.png' alt='' />");
+                                            }
+                                    } else {
+                                            $hiammo[] = array('type' => $smarty->fetch(get_tpl('blank')));
+                                    }
+                            }
+                    }
+                }
 
-					if (!($found)) {
-						$hiammo[] = array('type' => "<img src='".IMG_URL
-									."/items/24_24/icon09_13.png' alt='' />");
-					}
-				} else {
-					$hiammo[] = array('type' => $smarty->fetch(get_tpl('blank')));
-				}
-			}
-		}
+                for($i = InventoryFlag::$MED_SLOT_1; $i <= InventoryFlag::$MED_SLOT_8; $i++)
+                {
+                    $length = count($this->ammo_array[$i]);
 
-		$length = count($this->ammo_array[2]);
+                    if (is_array($this->fitting_array[$i])) {
+                            $midammo = array();
 
-		if (is_array($this->fitting_array[2])) {
-			$midammo = array();
+                            foreach ($this->fitting_array[$i] as $midfit) {
+                                    $group = $midfit["groupID"];
 
-			foreach ($this->fitting_array[2] as $midfit) {
-				$group = $midfit["groupID"];
+                                    if ($group == 76 // Capacitor Boosters
+                                                    || $group == 208 // Remote Sensor Dampeners
+                                                    || $group == 212 // Sensor Boosters
+                                                    || $group == 291 // Tracking Disruptors
+                                                    || $group == 213 // Tracking Computers
+                                                    || $group == 209 // Tracking Links
+                                                    || $group == 290 // Remote Sensor Boosters
+                                                    || $group == 646 // Omnidirectional Tracking Links
+                                    ) {
+                                            $found = 0;
 
-				if ($group == 76 // Capacitor Boosters
-						|| $group == 208 // Remote Sensor Dampeners
-						|| $group == 212 // Sensor Boosters
-						|| $group == 291 // Tracking Disruptors
-						|| $group == 213 // Tracking Computers
-						|| $group == 209 // Tracking Links
-						|| $group == 290 // Remote Sensor Boosters
-				) {
-					$found = 0;
+                                            if (is_array($this->ammo_array[$i])) {
+                                                    $j = 0;
 
-					if (is_array($this->ammo_array[2])) {
-						$i = 0;
+                                                    while (!$found && $j < $length) {
+                                                            $temp = array_shift($this->ammo_array[$i]);
 
-						while (!$found && $i < $length) {
-							$temp = array_shift($this->ammo_array[2]);
+                                                            if ($temp["usedgroupID"] == $group) {
+                                                                    $midammo[] = array('type' => $temp["Icon"]);
 
-							if ($temp["usedgroupID"] == $group) {
-								$midammo[] = array('type' => $temp["Icon"]);
+                                                                    $found = 1;
+                                                            }
 
-								$found = 1;
-							}
+                                                            $this->ammo_array[$i][] = $temp;
+                                                            $j++;
+                                                    }
+                                            }
 
-							$this->ammo_array[2][] = $temp;
-							$i++;
-						}
-					}
-
-					if (!$found) {
-						$midammo[] = array('type' => "<img src='".IMG_URL
-									."/items/24_24/icon09_13.png' alt='' />");
-					}
-				} else {
-					$midammo[] = array('type' => $smarty->fetch(get_tpl('blank')));
-				}
-			}
-		}
-		$smarty->assignByRef('fitting_high', $this->fitting_array[1]);
-		$smarty->assignByRef('fitting_med', $this->fitting_array[2]);
-		$smarty->assignByRef('fitting_low', $this->fitting_array[3]);
-		$smarty->assignByRef('fitting_rig', $this->fitting_array[5]);
-		$smarty->assignByRef('fitting_sub', $this->fitting_array[7]);
+                                            if (!$found) {
+                                                    $midammo[] = array('type' => "<img src='".IMG_URL
+                                                                            ."/items/24_24/icon09_13.png' alt='' />");
+                                            }
+                                    } else {
+                                            $midammo[] = array('type' => $smarty->fetch(get_tpl('blank')));
+                                    }
+                            }
+                    }
+                }
+                
+                // high slots
+                $highSlots = array();
+                for($i = InventoryFlag::$HIGH_SLOT_1; $i <= InventoryFlag::$HIGH_SLOT_8; $i++)
+                {
+                    if(isset($this->fitting_array[$i]) && is_array($this->fitting_array[$i]))
+                    {
+                        $highSlots = array_merge($highSlots, $this->fitting_array[$i]);
+                    }
+                }
+		$smarty->assignByRef('fitting_high', $highSlots);
+                
+                // med slots
+                $medSlots = array();
+                for($i = InventoryFlag::$MED_SLOT_1; $i <= InventoryFlag::$MED_SLOT_8; $i++)
+                {
+                    if(isset($this->fitting_array[$i]) && is_array($this->fitting_array[$i]))
+                    {
+                        $medSlots = array_merge($medSlots, $this->fitting_array[$i]);
+                    }
+                }
+                $smarty->assignByRef('fitting_med', $medSlots);
+                
+                // low slots
+                $lowSlots = array();
+                for($i =InventoryFlag::$LOW_SLOT_1; $i <=InventoryFlag::$LOW_SLOT_8; $i++)
+                {
+                    if(isset($this->fitting_array[$i]) && is_array($this->fitting_array[$i]))
+                    {
+                        $lowSlots = array_merge($lowSlots, $this->fitting_array[$i]);
+                    }
+                }
+		$smarty->assignByRef('fitting_low', $lowSlots);
+                
+                // rig slots
+                $rigSlots = array();
+                for($i =InventoryFlag::$RIG_SLOT_1; $i <=InventoryFlag::$RIG_SLOT_8; $i++)
+                {
+                    if(isset($this->fitting_array[$i]) && is_array($this->fitting_array[$i]))
+                    {
+                        $rigSlots = array_merge($rigSlots, $this->fitting_array[$i]);
+                    }
+                }
+		$smarty->assignByRef('fitting_rig', $rigSlots);
+                
+                // subsystem slots
+                $subsystemSlots = array();
+                for($i =InventoryFlag::$SUB_SYSTEM_SLOT_1; $i <=InventoryFlag::$SUB_SYSTEM_SLOT_8; $i++)
+                {
+                    if(isset($this->fitting_array[$i]) && is_array($this->fitting_array[$i]))
+                    {
+                        $subsystemSlots = array_merge($subsystemSlots, $this->fitting_array[$i]);
+                    }
+                }
+		$smarty->assignByRef('fitting_sub', $subsystemSlots);
 		$smarty->assignByRef('fitting_ammo_high', $hiammo);
 		$smarty->assignByRef('fitting_ammo_mid', $midammo);
 		$smarty->assign('showammo', config::get('fp_showammo'));

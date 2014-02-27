@@ -125,16 +125,14 @@ class DestroyedItem
 	 */
 	function getLocationID()
 	{
-		if($this->locationID_) {
+		if(!is_null($this->locationID_) && $this->locationID_ != InventoryFlag::$UNKNOWN) {
 			return $this->locationID_;
 		}
-		if ($this->location_) {
+		if ($this->location_ || strlen($this->location_) == 0) {
 			$this->locationID_ = (int) $this->item_->getSlot();
-		} else {
-			$qry = DBFactory::getDBQuery();
-			$qry->execute("select itl_id from kb3_item_locations where itl_location = '".$this->location_."'");
-			$row = $qry->getRow();
-			$this->locationID_ = (int) $row['itl_id'];
+		} else { 
+                        $InventoryFlag = InventoryFlag::getConvertedByName($this->location_);
+			$this->locationID_ = $InventoryFlag->getID();
 		}
 		return $this->locationID_;
 	}

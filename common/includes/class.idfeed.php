@@ -56,7 +56,6 @@ class IDFeed
 	private $errormsg = '';
 	private $errorcode = 0;
 	private $npcOnly = true;
-	const version = "1.10";
 
 	/**
 	 * Fetch a new feed.
@@ -89,10 +88,8 @@ class IDFeed
 			$options .= $key."=".$val;
 		}
 
-		global $idfeedversion;
-
 		$http = new http_request($this->url.$options);
-		$http->set_useragent("EDK IDFeedfetcher ".self::version);
+		$http->set_useragent("EDK IDFeedfetcher ".ID_FEED_VERSION);
 		$http->set_timeout(300);
 		$this->xml = $http->get_content();
 		if ($http->get_http_code() != 200) {
@@ -470,6 +467,7 @@ class IDFeed
 		if (floatval($sxe['edkapi']) && $sxe['edkapi'] < 0.91) {
 			return false;
 		}
+                
 		$this->time = $sxe->currentTime;
 		$this->cachedTime = $sxe->cachedUntil;
 		if (isset($sxe->error)) {
@@ -553,7 +551,20 @@ class IDFeed
 			if (!$skip) {
 				if (isset($row->rowset[1]->row[0])) {
 					foreach ($row->rowset[1]->row as $item) {
-						$this->processItem($item, $kill);
+						if(!$this->processItem($item, $kill))
+                                                {
+                                                    if ($internalID) {
+							$errorstring = "Error processing item with ID ".$item['typeID'].":"
+									." External ID = $externalID, Internal ID"
+									." = $internalID";
+                                                    } else {
+                                                        $errorstring = "Involved Party error in kill: ID = "
+                                                                        .$externalID;
+                                                    }
+                                                    $this->parsemsg[] = $errorstring;
+                                                    $skip = true;
+                                                    break;
+                                                }
 					}
 				}
 				$id = $kill->add();
@@ -680,7 +691,7 @@ class IDFeed
 
 					$namedata = $idtoname->getIDData();
 
-					$name = $namedata[0]['name'];
+					$name = strval($victim['corporationName'])." - ".$namedata[0]['name'];
 				}
 				$name = strval($victim['corporationName'])." - ".$name;
 			} else {
@@ -739,7 +750,8 @@ class IDFeed
 		$shipClassID = $ship->getClass()->getID();
 		if($shipClassID == 35           // small Tower
 			|| $shipClassID == 36   // medium Tower
-			|| $shipClassID == 37)  // large Tower
+			|| $shipClassID == 37   // large Tower
+                        || $shipClassID == 38)  // POS Module  
 		{
 			$corpByName = Corporation::lookup(strval($inv['corporationName']));
 			if($corpByName)
@@ -799,42 +811,43 @@ class IDFeed
 	 */
 	private function processItem($item, &$kill, $slot = null)
 	{
-		if ((int)$item['singleton'] == 2) {
-			// Blueprint copy - in the cargohold
-			$location = 9;
-		} else if ((int)$item['flag'] == 5) {
-			// Cargo
-			$location = 4;
-		} else if ((int)$item['flag'] == 89) {
-			// Implant
-			$location = 8;
-		} else if ((int)$item['flag'] == 87) {
-			// Drone Bay
-			$location = 6;
-		} else if ($slot != null) {
-			$location = $slot;
-		} else {
-			$litem = new Item((int)$item['typeID']);
-			$location = $litem->getSlot();
-		}
+            $typeID = (int)$item['typeID'];
+            // we will add this item with the given flag, even if it's not in our database
+            // that way, when the database is updated, the item will display correctly
+            $Item = new Item($typeID);
+            
+            // IDFeed always returns valid CCP flags
+            $location = (int)$item['flag'];
+            
+            // singleton flag is set for copies in API and IDFeed (even old Feeds)
+            if((int)$item['singleton'] === 2)
+            {
+                $location = InventoryFlag::$COPY;
+            }
+            // we're fetching from an old IDFeed, not from the API
+            if ($slot != null) 
+            {
+                $location = $slot;
+            } 
+            
+            // don't get the item's slot if the location is 0!
+            // that's just an unknown location, not the item's usual location
 
-		if ((int)$item['qtyDropped']) {
-			$kill->addDroppedItem(new DestroyedItem(new Item(
-					(int)$item['typeID']), (int)$item['qtyDropped'], '',
-					$location));
-		}
-		if ((int)$item['qtyDestroyed']) {
-			$kill->addDestroyedItem(new DestroyedItem(new Item(
-					(int)$item['typeID']), (int)$item['qtyDestroyed'], '',
-					$location));
-		}
-		// Check for containers.
-		if (isset($item->rowset)) {
-			foreach ($item->rowset->row as $subitem) {
-				$this->processItem($subitem, $kill, $location);
-			}
-		}
-		return true;
+            if ((int)$item['qtyDropped']) {
+                    $kill->addDroppedItem(new DestroyedItem($Item, (int)$item['qtyDropped'], '',
+                                    $location));
+            }
+            if ((int)$item['qtyDestroyed']) {
+                    $kill->addDestroyedItem(new DestroyedItem($Item, (int)$item['qtyDestroyed'], '',
+                                    $location));
+            }
+            // Check for containers.
+            if (isset($item->rowset)) {
+                    foreach ($item->rowset->row as $subitem) {
+                            $this->processItem($subitem, $kill, $location);
+                    }
+            }
+            return true;
 	}
 
 	/**
@@ -936,7 +949,7 @@ class IDFeed
 	{
 		$date = gmdate('Y-m-d H:i:s');
 		$xml = "<?xml version='1.0' encoding='UTF-8'?>
-		<eveapi version='2' edkapi='".$idfeedversion."'>
+		<eveapi version='2' edkapi='".ID_FEED_VERSION."'>
 		</eveapi>";
 		$sxe = new SimpleXMLElement($xml);
 		// Let's start making the xml.
@@ -1078,23 +1091,10 @@ class IDFeed
 				while ($iRow = $qry->getRow()) {
 					$itemRow = $items->addChild('row');
 					$itemRow->addAttribute('typeID', $iRow['itd_itm_id']);
-					if ($iRow['itd_itl_id'] == 9) {
-						// BPC in cargo
-						$itemRow->addAttribute('flag', 5);
-					} else if ($iRow['itd_itl_id'] == 4) {
-						// cargo
-						$itemRow->addAttribute('flag', 5);
-					} else if ($iRow['itd_itl_id'] == 6) {
-						// drone
-						$itemRow->addAttribute('flag', 87);
-					} else if ($iRow['itd_itl_id'] == 8) {
-						// implant
-						$itemRow->addAttribute('flag', 89);
-					} else {
-						$itemRow->addAttribute('flag', 0);
-					}
-
-					if ($iRow['itd_itl_id'] == 9) {
+                                        // no conversion needed, IDFeed always returns valid CCP flags
+                                        $itemRow->addAttribute('flag', $iRow['itd_itl_id']);
+	
+					if ($iRow['itd_itl_id'] == InventoryFlag::$COPY) {
 						$itemRow->addAttribute('singleton', 2);
 					} else {
 						$itemRow->addAttribute('singleton', 0);
@@ -1108,20 +1108,9 @@ class IDFeed
 				while ($iRow = $qry2->getRow()) {
 					$itemRow = $items->addChild('row');
 					$itemRow->addAttribute('typeID', $iRow['itd_itm_id']);
-					if ($iRow['itd_itl_id'] == 9) {
-						// BPC in cargo
-						$itemRow->addAttribute('flag', 5);
-					} else if ($iRow['itd_itl_id'] == 4) {
-						// cargo
-						$itemRow->addAttribute('flag', 5);
-					} else if ($iRow['itd_itl_id'] == 6) {
-						// drone
-						$itemRow->addAttribute('flag', 87);
-					} else {
-						$itemRow->addAttribute('flag', 0);
-					}
-
-					if ($iRow['itd_itl_id'] == 9) {
+					$itemRow->addAttribute('flag', $iRow['itd_itl_id']);
+                                        
+					if ($iRow['itd_itl_id'] == InventoryFlag::$COPY) {
 						$itemRow->addAttribute('singleton', 2);
 					} else {
 						$itemRow->addAttribute('singleton', 0);

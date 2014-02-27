@@ -32,11 +32,10 @@
  */
 
 $starttime = microtime(true);
-$idfeedversion = "1.04";
 
 $maxkillsreturned = cache::checkLoad() ? 20 : 200;
 $xml = "<?xml version='1.0' encoding='UTF-8'?>
-<eveapi version='2' edkapi='".$idfeedversion."'>
+<eveapi version='2' edkapi='".ID_FEED_VERSION."'>
 </eveapi>";
 $sxe = new SimpleXMLElement($xml);
 

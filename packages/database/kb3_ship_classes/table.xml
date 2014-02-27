@@ -9,5 +9,5 @@
   `scl_points` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`scl_id`),
   UNIQUE KEY `scl_class` (`scl_class`)
-) ENGINE=MyISAM AUTO_INCREMENT=46 DEFAULT CHARSET=utf8</structure>
+) ENGINE=MyISAM AUTO_INCREMENT=46 DEFAULT CHARSET=latin1</structure>
 </kb3>

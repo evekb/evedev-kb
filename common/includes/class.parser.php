@@ -795,14 +795,6 @@ class Parser
 		$i = 0;
 		$num = count($destroyed);
 
-		if (is_null($locations)) {
-			$qry = DBFactory::getDBQuery();
-			$qry->execute("SELECT itl_id, itl_location FROM kb3_item_locations");
-			while ($row = $qry->getRow()) {
-				$locations[$row['itl_location']] = $row['itl_id'];
-			}
-		}
-
 		while ($i < $num) {
 			$container = false;
 			$destroyed[$i] = trim($destroyed[$i]);
@@ -884,15 +876,25 @@ class Parser
 			}
 
 			if ($location) {
-				$locid = $locations[$location];
+                            $InventoryFlag = InventoryFlag::getConvertedByName($location);
+                            if(!is_null($InventoryFlag))
+                            {
+                                $locid = $InventoryFlag->getID();
+                            }
+                            
+                            // Unknown location
+                            else
+                            {
+                                $locid = InventoryFlag::$UNKNOWN;
+                            }
+                            
 			} else {
-				$locid = 0;
+				$locid = InventoryFlag::$UNKNOWN;
 			}
 			$items[] = array('item' => $item, 'quantity' => $quantity,
 				'location' => $locid);
 			$i++;
 		}
-
 		return $items;
 	}
 
@@ -935,7 +937,7 @@ class Parser
 	/**
 	 * Return corporation from cached list or look up a new name.
 	 *
-	 * @param string $corpname Alliance name to look up.
+	 * @param string $corpname Corp name to look up.
 	 * @return Corporation Corporation object matching input name.
 	 */
 	private static function fetchCorp($corpname, $alliance = null, $timestamp = null)

@@ -9,9 +9,11 @@
   `kll_hash` binary(16) NOT NULL,
   `kll_trust` tinyint(4) NOT NULL DEFAULT &#039;0&#039;,
   `kll_modified_time` datetime NOT NULL,
+  `kll_crest_hash` char(40) DEFAULT NULL,
   PRIMARY KEY (`kll_id`),
   UNIQUE KEY `time_hash` (`kll_timestamp`,`kll_hash`),
   UNIQUE KEY `external_id` (`kll_external_id`),
+  UNIQUE KEY `crest_hash` (`kll_crest_hash`),
   KEY `kll_modified_time` (`kll_modified_time`)
 ) Engine=MyISAM;</structure>
 </kb3>

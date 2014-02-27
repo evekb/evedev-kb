@@ -1,11 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <kb3>
   <name>kb3_item_locations</name>
-  <rows>9</rows>
+  <rows>132</rows>
   <structure>CREATE TABLE `kb3_item_locations` (
-  `itl_id` int(11) NOT NULL auto_increment,
-  `itl_location` char(24) NOT NULL,
-  PRIMARY KEY  (`itl_id`),
-  KEY `itl_id` (`itl_location`,`itl_id`)
-) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
+  `itl_flagID` smallint(6) NOT NULL,
+  `itl_flagName` varchar(200) DEFAULT NULL,
+  `itl_flagText` varchar(100) DEFAULT NULL,
+  `itl_orderID` int(11) DEFAULT NULL,
+  `itl_icon` varchar(10) NOT NULL DEFAULT '03_14',
+  PRIMARY KEY (`itl_flagID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</structure>
 </kb3>

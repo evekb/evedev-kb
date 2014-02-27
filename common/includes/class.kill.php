@@ -21,6 +21,8 @@ class Kill extends Cacheable
 	 * @var integer
 	 */
 	private $externalid = null;
+        /** @var string the crest hash for this kill */
+        private $crestHash = null;
 	public $involvedparties_ = array();
 	public $destroyeditems_ = array();
 	public $droppeditems_ = array();
@@ -532,9 +534,9 @@ class Kill extends Cacheable
 		static $locations;
 		if(!isset($locations)) {
 			$qry = DBFactory::getDBQuery();
-			$qry->execute("SELECT itl_id, itl_location FROM kb3_item_locations");
+			$qry->execute("SELECT itl_flagID, itl_flagText FROM kb3_item_locations");
 			while($row = $qry->getRow()) {
-				$locations[$row['itl_id']] = $row['itl_location'];
+				$locations[$row['itl_flagID']] = $row['itl_flagText'];
 			}
 		}
 
@@ -579,7 +581,30 @@ class Kill extends Cacheable
 			if($this->getVictimName() == $this->getSystem()->getName())
 				$mail .= "Moon: Unknown\r\n";
 			else
-				$mail .= "Moon: ".$this->getVictimName()."\r\n";
+                        {
+                            // is the victim's name a moon?
+                            $moonID = API_Helpers::getMoonID($this->getVictimName());
+                            if($moonID)
+                            {
+                                $mail .= "Moon: ".$this->getVictimName()."\r\n";
+                            }
+                            
+                            else
+                            {
+                                // try parsing the victim's name in case it's the format
+                                // <corporationName> - <moonName>
+                                $namePieces = explode(" - ", $this->getVictimName());
+                                if(is_array($namePieces) && count($namePieces) > 2)
+                                {
+                                    // remove first part, which is the corp name
+                                    array_splice($namePieces, 0, 1);
+                                    $mail .= "Moon: ".implode(" - ", $namePieces)."\r\n";
+                                }
+                            }
+                            
+                            
+                        }
+				
 			$mail .= "System: ".$this->getSystem()->getName()."\r\n";
 			$mail .= "Security: ".$this->getSystem()->getSecurity(true)."\r\n";
 			$mail .= "Damage Taken: ".$this->dmgtaken."\r\n\r\n";
@@ -670,14 +695,17 @@ class Kill extends Cacheable
 				if ($destroyed->getQuantity() > 1) {
 					$mail .= ", Qty: ".$destroyed->getQuantity();
 				}
-				if ($destroyed->getLocationID() == 4) {
+                                $flagID = InventoryFlag::collapse($destroyed->getLocationID());
+				if ($destroyed->getLocationID() == InventoryFlag::$CARGO) {
 					$mail .= " (Cargo)";
-				} else if ($destroyed->getLocationID() == 6) {
+				} else if ($destroyed->getLocationID() == InventoryFlag::$DRONE_BAY) {
 					$mail .= " (Drone Bay)";
-				} else if ($destroyed->getLocationID() == 8) {
+				} else if ($destroyed->getLocationID() == InventoryFlag::$IMPLANT) {
 					$mail .= " (Implant)";
-				} else if ($destroyed->getLocationID() == 9) {
+				} else if ($destroyed->getLocationID() == InventoryFlag::$COPY) {
 					$mail .= " (Copy)";
+				} else if ($destroyed->getLocationID() == InventoryFlag::$OTHER) {
+					$mail .= " (Other)";
 				}
 				$mail .= "\r\n";
 			}
@@ -693,14 +721,16 @@ class Kill extends Cacheable
 				if ($dropped->getQuantity() > 1) {
 					$mail .= ", Qty: ".$dropped->getQuantity();
 				}
-				if ($dropped->getLocationID() == 4) {
+				if ($dropped->getLocationID() == InventoryFlag::$CARGO) {
 					$mail .= " (Cargo)";
-				} else if ($dropped->getLocationID() == 6) {
+				} else if ($dropped->getLocationID() == InventoryFlag::$DRONE_BAY) {
 					$mail .= " (Drone Bay)";
-				} else if ($dropped->getLocationID() == 8) {
+				} else if ($dropped->getLocationID() == InventoryFlag::$IMPLANT) {
 					$mail .= " (Implant)";
-				} else if ($dropped->getLocationID() == 9) {
-					$mail .= " (Copy) (Cargo)";
+				} else if ($dropped->getLocationID() == InventoryFlag::$COPY) {
+					$mail .= " (Copy)";
+				} else if ($dropped->getLocationID() == InventoryFlag::$OTHER) {
+					$mail .= " (Other)";
 				}
 				$mail .= "\r\n";
 			}
@@ -808,6 +838,7 @@ class Kill extends Cacheable
 				if ($cache->valid) {
 					$this->id = $cache->id;
 					$this->externalid = $cache->externalid;
+                                        $this->crestHash = $cache->crestHash;
 					$this->involvedparties_ = $cache->involvedparties_;
 					$this->destroyeditems_ = $cache->destroyeditems_;
 					$this->droppeditems_ = $cache->droppeditems_;
@@ -856,6 +887,7 @@ class Kill extends Cacheable
 			} else {
 				$this->valid = true;
 			}
+                        
 
 			$this->timestamp = $row['kll_timestamp'];
 			$this->solarsystemid = (int)$row['kll_system_id'];
@@ -894,7 +926,7 @@ class Kill extends Cacheable
 			while($item = $destroyedlist->getItem()) {
 				$destroyed = new DestroyedItem($item,
 					$item->getAttribute('itd_quantity'),
-					$item->getAttribute('itl_location'),
+					$item->getAttribute('itl_flagText'),
 					$item->getAttribute('itd_itl_id'));
 				$this->destroyeditems_[] = $destroyed;
 			}
@@ -903,7 +935,7 @@ class Kill extends Cacheable
 			while($item = $droppedlist->getItem()) {
 				$dropped = new DestroyedItem($item,
 					$item->getAttribute('itd_quantity'),
-					$item->getAttribute('itl_location'),
+					$item->getAttribute('itl_flagText'),
 					$item->getAttribute('itd_itl_id'));
 				$this->droppeditems_[] = $dropped;
 			}
@@ -1564,11 +1596,24 @@ class Kill extends Cacheable
 		if($notfirstitd &&!$qry->execute($itdsql))
 			return $this->rollback($qry);
 
-		$sql = "INSERT INTO kb3_mails (  `kll_id`, `kll_timestamp`, `kll_external_id`, `kll_hash`, `kll_trust`, `kll_modified_time`)".
+		$sql = "INSERT INTO kb3_mails (  `kll_id`, `kll_timestamp`, `kll_external_id`, `kll_hash`, `kll_trust`, `kll_modified_time`, `kll_crest_hash`)".
 			"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ";
 		if($this->externalid) $sql .= $this->externalid.", ";
-		else $sql .= "NULL, ";
-			$sql .= "'".$qry->escape($this->getHash(false, false))."', 0, UTC_TIMESTAMP())";
+                else $sql .= "NULL, ";
+                $sql .= "'".$qry->escape($this->getHash(false, false))."', 0, UTC_TIMESTAMP(), ";
+                
+                // add CREST hash
+                if($this->crestHash)
+                {
+                    $sql .= "'$this->crestHash'";
+                }
+                
+                else
+                {
+                    $sql .= "NULL";
+                }
+                $sql .= ")";
+                
 		if(!@$qry->execute($sql))
 			return $this->rollback($qry);
 
@@ -1741,6 +1786,53 @@ class Kill extends Cacheable
 				$this->putCache();
 			}
 	}
+        
+        /**
+	 * Get the crest hash of this kill.
+	 *
+	 * @return string the crest hash for this kill
+	 */
+	function getCrestHash()
+	{
+		if(is_null($this->crestHash)) {
+			$this->execQuery();
+		}
+		return $this->crestHash;
+	}
+        
+        /**
+         * sets the kill's CREST hash
+         * @param string $crestHash
+         */
+        function setCreshHash($crestHash)
+	{
+		$this->crestHash = $crestHash;
+	}
+        
+        
+        /**
+	 * Update this kill's CREST hash.
+	 * @param string $crestHash
+	 */
+	public function updateCrestHash($crestHash)
+	{
+		$this->execQuery();
+                
+		$qry = new DBPreparedQuery();
+                $qry->prepare('UPDATE kb3_mails SET kll_crest_hash = ? WHERE kll_id = ?');
+                $qry->bind_param(array(
+                    'si',
+                    &$crestHash,
+                    &$this->id
+                ));
+                
+		if(@$qry->execute())
+                {
+                    $this->crestHash = $crestHash;
+                    $this->putCache();
+                }
+	}
+        
 	/**
 	 * Compares two InvolvedParty objects for sorting by damage then name.
 	 * @param InvolvedParty $a
@@ -1762,4 +1854,7 @@ class Kill extends Cacheable
 	{
 		return Cacheable::factory(get_class(), $id);
 	}
+        
+        
+        
 }
