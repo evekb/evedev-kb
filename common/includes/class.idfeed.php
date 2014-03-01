@@ -56,6 +56,13 @@ class IDFeed
 	private $errormsg = '';
 	private $errorcode = 0;
 	private $npcOnly = true;
+        
+        /** 
+         * flag indicating the slot for an item in an incoming feed/API
+         * should be looked up if the incoming flag is zero
+         * @var boolean
+         */
+        private $lookupSlotForIncomingZeroFlags = FALSE;
 
 	/**
 	 * Fetch a new feed.
@@ -468,6 +475,11 @@ class IDFeed
 			return false;
 		}
                 
+                // if we'r fetching from another IDFeed (not from API) and the version is either empty or below 1.2
+                if ((!is_null($sxe['edkapi']) && strlen($sxe['edkapi']) == 0) || (floatval($sxe['edkapi']) && $sxe['edkapi'] < 1.2)) {
+			$this->lookupSlotForIncomingZeroFlags = TRUE;
+		}
+                
 		$this->time = $sxe->currentTime;
 		$this->cachedTime = $sxe->cachedUntil;
 		if (isset($sxe->error)) {
@@ -818,6 +830,13 @@ class IDFeed
             
             // IDFeed always returns valid CCP flags
             $location = (int)$item['flag'];
+            
+            // if we fetch from a legacy IDFeed, a zero flag means
+            // "fitted in the slot the item belongs in"
+            if($location == 0 && $this->lookupSlotForIncomingZeroFlags)
+            {
+                $location = $Item->getSlot();
+            }
             
             // singleton flag is set for copies in API and IDFeed (even old Feeds)
             if((int)$item['singleton'] === 2)
