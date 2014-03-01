@@ -45,6 +45,9 @@ if (file_exists('../kbconfig.php'))
 	insertConfig('cfg_mainsite', '');
 	// write current CCP DB Version to config
 	insertConfig('CCPDbVersion', KB_CCP_DB_VERSION);
+        
+        // write current DBUpdate to config
+        insertConfig('DBUpdate', LATEST_DB_UPDATE);
 
 	$confs = file('config.data');
 	foreach ($confs as $line)
