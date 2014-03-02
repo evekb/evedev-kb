@@ -8,7 +8,6 @@
  */
 options::cat('Advanced', 'Configuration', 'Available updates');
 options::fadd('Code updates', 'none', 'custom', array('update', 'codeCheck'));
-options::fadd('Database updates', 'none', 'custom', array('update', 'dbCheck'));
 
 options::cat('Advanced', 'Configuration', 'Killboard Configuration');
 options::fadd('Killboard Title', 'cfg_kbtitle', 'edit:size:50');
