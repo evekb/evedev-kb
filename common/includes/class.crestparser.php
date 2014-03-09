@@ -200,7 +200,7 @@ class CrestParser
 
 	/**
 	 *
-	 * @param \Perry\Representation\Eve\v1\Killmail $mailRepresentation
+	 * @param mixed $mailRepresentation
 	 * @return string
 	 */
 	public static function hashMail($mailRepresentation = null)
@@ -297,7 +297,7 @@ class CrestParser
         
         
        /**
-        * @param \Perry\Representation\Eve\v1\Killmail $mailRepresentation
+        * @param mixed $mailRepresentation
         * @return array
         */
         public static function getAttackers($mailRepresentation) {
@@ -326,7 +326,7 @@ class CrestParser
        
        
        /**
-        * @param \Perry\Representation\Eve\v1\Killmail $mailRepresentation
+        * @param mixed $mailRepresentation
         * @return array
         */
         public static function getVictim($mailRepresentation)
@@ -349,7 +349,7 @@ class CrestParser
         }
         
        /**
-        * @param \Perry\Representation\Eve\v1\Killmail $mailRepresentation
+        * @param mixed $mailRepresentation
         * @return array
         */
        private static function getItems($itemsInMail)
@@ -628,7 +628,12 @@ class CrestParser
             {
                     $location = (int)$item['flag'];
             } 
-
+            
+            // if item has a parent, use the parent's flag
+            if(!is_null($parentItemLocation))
+            {
+                $location = $parentItemLocation;
+            }
 
             if($item['qtyDropped']) {
                $Kill->addDroppedItem(
