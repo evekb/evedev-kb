@@ -7,16 +7,17 @@
  */
 
 options::cat('Advanced', 'Posting Options', 'Posting Options');
+
 options::fadd('Enable Comments', 'comments', 'checkbox');
 options::fadd('Require password for Comments', 'comments_pw', 'checkbox');
-options::fadd('Forbid posting', 'post_forbid', 'checkbox');
-//options::fadd('Forbid out of game posting', 'post_oog_forbid', 'checkbox');
-//options::fadd('Enable auto-addition of unknown Items', 'adapt_items', 'checkbox');
-//options::fadd('ReAdd known killmails', 'readd_dupes', 'checkbox');
-//options::fadd('Mail post password', 'post_password', 'custom', array('admin_posting', 'createPostQ'), array('admin_posting', 'setPostPassword'));
-//options::fadd('Comment post password', 'comment_password', 'custom', array('admin_posting', 'createCommentQ'), array('admin_posting', 'setCommentPassword'));
-options::fadd('Mail post password', 'post_password', 'password', '', array('admin_posting', 'setPostPassword'));
+options::fadd('Forbid killmail posting', 'post_forbid', 'checkbox');
+options::fadd('Forbid CREST link posting', 'post_crest_forbid', 'checkbox');
+options::fadd('Require password for CREST link posting', 'crest_pw_needed', 'checkbox');
+
+options::fadd('Killmail post password', 'post_password', 'password', '', array('admin_posting', 'setPostPassword'));
+options::fadd('CREST link post password', 'post_crest_password', 'password', '', array('admin_posting', 'setCrestPostPassword'));
 options::fadd('Comment post password', 'comment_password', 'password', '', array('admin_posting', 'setCommentPassword'));
+
 options::fadd('Killmail CC', 'post_mailto', 'edit');
 options::fadd('Mailhost', 'post_mailhost', 'edit');
 options::fadd('Mailserver', 'post_mailserver', 'edit', '', '', 'This is the server where php connects to send the mail.');
@@ -107,6 +108,11 @@ class admin_posting
 	{
 		if(admin_posting::passwordChanged($_POST['option_post_password'],config::get('post_password')))
 			config::set('post_password', admin_posting::makePassword($_POST['option_post_password']));
+	}
+	function setCrestPostPassword()
+	{
+		if(admin_posting::passwordChanged($_POST['option_post_crest_password'],config::get('post_crest_password')))
+			config::set('post_crest_password', admin_posting::makePassword($_POST['option_post_crest_password']));
 	}
 	function setCommentPassword()
 	{
