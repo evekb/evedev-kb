@@ -21,10 +21,10 @@ define('IMG_SERVER', "image.eveonline.com");
 
 // current version: major.minor.sub.ccpDBupdateNo
 // even numbers for minor = development version
-define('KB_VERSION', '4.0.7.0');
-define('KB_RELEASE', '(Rubicon 1.1)');
-define('KB_CCP_DB_VERSION', '94321');
-define('KB_CCP_DB_DATE', 'Jan 24, 2014');
+define('KB_VERSION', '4.0.7.1');
+define('KB_RELEASE', '(Rubicon 1.3)');
+define('KB_CCP_DB_VERSION', '95173');
+define('KB_CCP_DB_DATE', 'Mar 12, 2014');
 
 define('KB_APIKEY_LEGACY', 1);
 define('KB_APIKEY_CORP', 2);
