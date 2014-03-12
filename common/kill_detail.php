@@ -192,11 +192,13 @@ class pKillDetail extends pageAssembly
 
 	function fittingSetup()
 	{
+                $destroyedItems = self::groupDestroyedItems($this->kill->destroyeditems_);
+                
 		// ship fitting
-		if (count($this->kill->destroyeditems_) > 0) {
+		if (count($destroyedItems) > 0) {
 			$this->dest_array = array();
-
-			foreach ($this->kill->destroyeditems_ as $destroyed) {
+                       
+			foreach ($destroyedItems as $destroyed) {
 				$item = $destroyed->getItem();
 				$i_qty = $destroyed->getQuantity();
 
@@ -284,10 +286,11 @@ class pKillDetail extends pageAssembly
 			}
 		}
 
-		if (count($this->kill->droppeditems_) > 0) {
+                $droppedItems = self::groupDestroyedItems($this->kill->droppeditems_);
+		if (count($droppedItems) > 0) {
 			$this->drop_array = array();
 
-			foreach ($this->kill->droppeditems_ as $dropped) {
+			foreach ($droppedItems as $dropped) {
 				$item = $dropped->getItem();
 				$i_qty = $dropped->getQuantity();
 
@@ -853,8 +856,8 @@ class pKillDetail extends pageAssembly
                 
                 
 		$smarty->assignByRef('slots', $slot_array);
-
-		$smarty->assignByRef('destroyed', $this->dest_array);
+  
+                $smarty->assignByRef('destroyed', $this->dest_array);
 		$smarty->assignByRef('dropped', $this->drop_array);
 
 		if ($this->totalValue >= 0) {
@@ -1504,6 +1507,50 @@ class pKillDetail extends pageAssembly
 		$smarty->assign("postedDate", $posteddate);
 		return $smarty->fetch(get_tpl("sourcedFrom"));
 	}
+        
+        /**
+         * groups destroyed items which are assigned to different slots
+         * by their collapsed location ID
+         * @param DestroyedItem[] $desroyedItems the list of destroyed items to 
+         * @return DestroyedItem[] an array of grouped destroyed items by collapsed location ID
+         */
+        protected static function groupDestroyedItems($destroyedItems)
+        {
+            $destroyedItemsGroupedByLocation = array();
+            // group by slot groups..
+            foreach($destroyedItems AS $destroyedItem)
+            {
+                $location = InventoryFlag::collapse($destroyedItem->getLocationID());
+                $typeID = $destroyedItem->getItem()->getID();
+                if(!isset($destroyedItemsGroupedByLocation[$location][$typeID]))
+                {
+                    if(!isset($destroyedItemsGroupedByLocation[$location]))
+                    {
+                        $destroyedItemsGroupedByLocation[$location] = array();
+                    }
+                    $destroyedItemsGroupedByLocation[$location][$typeID] = $destroyedItem;
+                }
+
+                else
+                {
+                    // we already have an item of this type for this slot, add up quantities
+                    $quantityGrouped = $destroyedItemsGroupedByLocation[$location][$typeID]->getQuantity() + $destroyedItem->getQuantity();
+                    $destroyedItemsGroupedByLocation[$location][$typeID] = new DestroyedItem($destroyedItem->getItem(), $quantityGrouped, null, $location);
+                }
+            }
+
+            // reset destroyed items and replace with grouped
+            $destroyedItemsGrouped = array();
+            foreach($destroyedItemsGroupedByLocation AS $location)
+            {
+                foreach($location AS $destroyedItem)
+                {
+                    $destroyedItemsGrouped[] = $destroyedItem;
+                }
+            }
+            
+            return $destroyedItemsGrouped;
+        }
 }
 
 $killDetail = new pKillDetail();
