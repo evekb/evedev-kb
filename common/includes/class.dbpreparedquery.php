@@ -115,6 +115,15 @@ class DBPreparedQuery
 		if($this->stmt) return $this->stmt->num_rows;
 		return false;
 	}
+        
+        /**
+	 * Return the number affected rows by an INSERT, UPDATE or DELETE query
+	 */
+	public function affectedRows()
+	{
+		if($this->stmt) return $this->stmt->affected_rows;
+		return false;
+	}
 	/**
 	 * Return the auto-increment ID from the last insert operation.
 	 */
