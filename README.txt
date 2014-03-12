@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.0.7.0
+Eve Development Network Killboard v4.0.7.1
 -------------------------------------------
 
 // REQUIREMENTS
@@ -24,6 +24,9 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
+v4.0.7.1
+Includes CCP DB for Rubicon 1.3 (Mar 10, 2014)
+-------------------------------------------
 v4.0.7.0
 Bugfix: Installer incompatibility with new database
 Bugfix: Weapons list in "Ships & Weapons"
