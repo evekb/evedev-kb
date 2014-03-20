@@ -152,14 +152,14 @@ if (count($page_error) == 0) {
                                 foreach($deleteList as $file)
                                 {
                                     // file exists and is not writeable
-                                    if(file_exists($file['filename']) && !is_writeable($file['filename']))
+                                    if(file_exists($file) && !is_writeable($file))
                                     {
                                         // try to make it writable!
-                                        if(chmod($file['filename'], 0777))
+                                        if(chmod($file, 0777))
                                         {
                                             // clear cache, check again
-                                            clearstatcache(TRUE, $file['filename']);
-                                            if(is_writable($file['filename']))
+                                            clearstatcache(TRUE, $file);
+                                            if(is_writable($file))
                                             {
                                                 continue;
                                             }
