@@ -245,7 +245,7 @@ class Api
 {
     function Api()
     {
-        $this->apiroot_ = "api.eve-online.com";
+        $this->apiroot_ = "api.eveonline.com";
     }
 
     function getCharId($name)
