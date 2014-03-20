@@ -29,6 +29,15 @@
 $timeStarted = microtime(true);
 
 @include_once('kbconfig.php');
+
+// determine the request scheme
+$requestScheme = "http";
+if($_SERVER && isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] != 'off' || $_SERVER['HTTPS'] != ''))
+{
+    $requestScheme = "https";
+}
+$requestScheme .= "://";
+
 // If there is no config then redirect to the install folder.
 if(!defined('KB_SITE'))
 {
@@ -37,7 +46,7 @@ if(!defined('KB_SITE'))
 	$url = $_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
 	$url = substr($url, 0, strrpos($url, '/',1)).'/install/';
 	$url = preg_replace('/\/{2,}/','/',$url);
-	$url = "http://".$url;
+	$url = $requestScheme.$url;
 	$html .= "<a href='".$url."'>install</a> to install a new killboard";
 	$html .= "</body></html>";
 	die($html);
@@ -50,7 +59,7 @@ else if(file_exists("install") && !file_exists("install/install.lock"))
 	$url = $_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
 	$url = substr($url, 0, strrpos($url, '/',1)).'/install/';
 	$url = preg_replace('/\/{2,}/','/',$url);
-	$html .= "<p>Go to <a href='http://".$url."'>Install</a> to install a new killboard.</p>";
+	$html .= "<p>Go to <a href='".$requestScheme.$url."'>Install</a> to install a new killboard.</p>";
 	$html .= "</body></html>";
 	die($html);
 }
@@ -69,7 +78,7 @@ $config = new Config();
 if(!config::get('cfg_kbhost'))
 {
 	config::put('cfg_kbhost',
-			"http://".$_SERVER['HTTP_HOST'].
+			$requestScheme.$_SERVER['HTTP_HOST'].
 			substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'],"/")));
 }
 if(!config::get('cfg_img'))
@@ -140,7 +149,7 @@ if((config::get('DBUpdate') < LATEST_DB_UPDATE) || (config::get('CCPDbVersion') 
 	{
 		$url = preg_replace('/^http:\/\//','',KB_HOST."/update/");
 		$url = preg_replace('/\/{2,}/','/',$url);
-		header('Location: http://'.$url);
+		header('Location: '.$requestScheme.$url);
 		die;
 	}
 	// Should not be able to reach this point but have this just in case
@@ -151,7 +160,7 @@ if((config::get('DBUpdate') < LATEST_DB_UPDATE) || (config::get('CCPDbVersion') 
 		$url = $_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
 		$url = substr($url, 0, strrpos($url, '/',1)).'/install/';
 		$url = preg_replace('/\/+/','/',$url);
-		$url = "http://".$url;
+		$url = $requestScheme.$url;
 		$html .= "<a href='".$url."'>install</a> to install a new killboard";
 		$html .= "</body></html>";
 		die($html);
