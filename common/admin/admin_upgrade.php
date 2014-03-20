@@ -122,6 +122,60 @@ if (count($page_error) == 0) {
 						}
 					}
 				}
+                                
+                                // first check if all files to update/delete
+                                // a) do not exist right now
+                                // b) exist and are writable
+                                foreach($fileList as $file)
+                                {
+                                    // file exists and is not writeable
+                                    if(file_exists($file['filename']) && !is_writeable($file['filename']))
+                                    {
+                                        // try to make it writable!
+                                        if(chmod($file['filename'], 0777))
+                                        {
+                                            // clear cache, check again
+                                            clearstatcache(TRUE, $file['filename']);
+                                            if(is_writable($file['filename']))
+                                            {
+                                                continue;
+                                            }
+                                        }
+                                        
+                                        // at this point the file is nor writeable
+                                        // and an attempt to make it writeable has failed
+                                        $page_error[] = $file['filename']." is not writeable. Please manually set file permissions.";
+                                    }
+                                }
+                                
+                                // check for deleteList
+                                foreach($deleteList as $file)
+                                {
+                                    // file exists and is not writeable
+                                    if(file_exists($file['filename']) && !is_writeable($file['filename']))
+                                    {
+                                        // try to make it writable!
+                                        if(chmod($file['filename'], 0777))
+                                        {
+                                            // clear cache, check again
+                                            clearstatcache(TRUE, $file['filename']);
+                                            if(is_writable($file['filename']))
+                                            {
+                                                continue;
+                                            }
+                                        }
+                                        
+                                        // at this point the file is nor writeable
+                                        // and an attempt to make it writeable has failed
+                                        $page_error[] = $file['filename']." is not writeable. Please manually set file permissions.";
+                                    }
+                                }
+                                
+                                if(!empty($page_error))
+                                {
+                                    $page_error[] = "Update has NOT been applied";
+                                    break;
+                                }
 
 				$writingZip = new Zip(KB_CACHEDIR.'/update/backup/'.$codeversion.'.zip');
 				$writingZip->addFileArray($fileName);
