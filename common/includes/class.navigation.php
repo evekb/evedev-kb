@@ -111,7 +111,7 @@ class Navigation
 		$sql = "INSERT INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr`,`page` ,`hidden`,`KBSITE`) VALUES".
 			" ('top',1,'Home','".edkURI::build(array('a', 'home', true))."','_self',1,'ALL_PAGES',0,'".$this->site."'),".
 			" ('top',1,'Campaigns','".edkURI::build(array('a', 'campaigns', true))."','_self',2,'ALL_PAGES',0,'".$this->site."'),".
-			" ('top',1,'Post Mail','".edkURI::build(array('a', 'post', true))."','_self',3,'ALL_PAGES',0,'".$this->site."'),".
+			" ('top',1,'Post Kill','".edkURI::build(array('a', 'post', true))."','_self',3,'ALL_PAGES',0,'".$this->site."'),".
 			" ('top',1,'Stats','".edkURI::build(array('a', 'self_detail', true))."','_self',4,'ALL_PAGES',0,'".$this->site."'),".
 			" ('top',1,'Awards','".edkURI::build(array('a', 'awards', true))."','_self',5,'ALL_PAGES',0,'".$this->site."'),".
 			" ('top',1,'Standings','".edkURI::build(array('a', 'standings', true))."','_self',6,'ALL_PAGES',0,'".$this->site."'),".
