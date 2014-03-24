@@ -8,5 +8,5 @@
   `displayName` char(20) DEFAULT NULL,
   `description` text,
   PRIMARY KEY (`unitID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1</structure>
+) ENGINE=MyISAM DEFAULT CHARSET=utf8</structure>
 </kb3>

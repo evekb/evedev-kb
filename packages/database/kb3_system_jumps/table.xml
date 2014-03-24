@@ -6,5 +6,5 @@
   `sjp_from` int(11) NOT NULL DEFAULT '0',
   `sjp_to` int(11) NOT NULL DEFAULT '0',
   KEY `sjp_from` (`sjp_from`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1</structure>
+) ENGINE=MyISAM DEFAULT CHARSET=utf8</structure>
 </kb3>

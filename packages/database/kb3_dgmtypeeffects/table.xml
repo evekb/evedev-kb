@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <kb3>
   <name>kb3_dgmtypeeffects</name>
-  <rows>34944</rows>
+  <rows>35125</rows>
   <structure>CREATE TABLE `kb3_dgmtypeeffects` (
   `typeID` int(11) NOT NULL DEFAULT '0',
   `effectID` int(11) NOT NULL DEFAULT '0',
   `isDefault` enum('true','false') NOT NULL DEFAULT 'false',
   PRIMARY KEY (`typeID`,`effectID`),
   KEY `isDefault` (`isDefault`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1</structure>
+) ENGINE=MyISAM DEFAULT CHARSET=utf8</structure>
 </kb3>

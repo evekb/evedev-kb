@@ -9,5 +9,5 @@
   `reg_y` float NOT NULL DEFAULT '0',
   `reg_z` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`reg_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1</structure>
+) ENGINE=MyISAM DEFAULT CHARSET=utf8</structure>
 </kb3>
