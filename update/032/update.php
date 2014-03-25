@@ -31,7 +31,10 @@ function update032()
 {
         // change directory to make the class-loader functional
         chdir("..");
-	global $url, $smarty, $TABLE_NAME, $NUMBER_OF_ITEMS_TO_UPDATE_PER_CALL;
+        // for this we need an up2date CCP DB first
+        updateCCPDB();
+        
+	global $smarty;
 	
 	$NUMBER_OF_ITEMS_TO_UPDATE_PER_CALL = 50000;
 	$TABLE_NAME = "kb3_items_destroyed";
@@ -225,7 +228,7 @@ function update032()
                         $result = call_user_func($slotsToConvert["method"], $slotsToConvert);
                         $message .= $result["stepMessage"];
                         
-                        if($result["isStepComplete"])
+                        if($result["isStepComplete"] === TRUE)
                         {
                              // increase the step, so we can continue converting the next flag
                             $updateStepNumber++;
@@ -255,7 +258,6 @@ function update032()
                     config::set("DBUpdate", "032");
                     $qry = DBFactory::getDBQuery(true);
                     $qry->execute("INSERT INTO kb3_config (cfg_site, cfg_key, cfg_value) SELECT cfg_site, 'DBUpdate', '032' FROM kb3_config GROUP BY cfg_site ON DUPLICATE KEY UPDATE cfg_value = '032'");
-                    config::del($configStatusKeyName);
                     
                 }
 
@@ -292,14 +294,10 @@ function convertEDKToCCPFlagDefault($slotsToConvert)
 		"isStepComplete" => FALSE
 	);
 
-	$updateFlags = new DBPreparedQuery();
-	$updateFlags->prepare('UPDATE '.$slotsToConvert["tableName"].' SET itd_itl_id = ? WHERE itd_itl_id = ? LIMIT ?');
-	// bind parameter
-	$params = array('iii', &$slotsToConvert["flagNew"], &$slotsToConvert["flagOld"], &$slotsToConvert["numberOfItemsPerCall"]);
-	$updateFlags->bind_params($params);
+	$updateFlags = DBFactory::getDBQuery(true);
+	$conversionResult = $updateFlags->execute('UPDATE '.$slotsToConvert["tableName"].' SET itd_itl_id = '.$slotsToConvert["flagNew"].' WHERE itd_itl_id = '.$slotsToConvert["flagOld"].' LIMIT '.$slotsToConvert["numberOfItemsPerCall"]);
 	
-	// execute the statement
-	if(!$updateFlags->execute())
+	if(!$conversionResult)
 	{
 		throw new UpdateException("Error while converting ".$slotsToConvert["description"]." for dropped items: ".$updateFlags->getErrorMsg());
 	}
@@ -357,14 +355,9 @@ function convertSlotsFromManualMails($slotsToConvert)
 				$result["stepMessage"] .= "<br/>Can't update slot for unknown item ".$row['itd_itm_id'];
 				
 				// convert it back to location ID 0
-				$updateQuery = new DBPreparedQuery();
-				$updateQuery->prepare('UPDATE '.$slotsToConvert["tableName"].' SET itd_itl_id = 0 WHERE itd_itl_id = -20 AND itd_itm_id = ? LIMIT ?');
-				// bind parameter
-				$params = array('ii', &$row['itd_itm_id'], &$slotsToConvert["numberOfItemsPerCall"]);
-				$updateQuery->bind_params($params);
-				
-				$conversionResult = $updateQuery->execute();
-				
+				$updateQuery = DBFactory::getDBQuery(true);
+				$conversionResult = $updateQuery->execute('UPDATE '.$slotsToConvert["tableName"].' SET itd_itl_id = 0 WHERE itd_itl_id = -20 AND itd_itm_id = '.$row['itd_itm_id'].' LIMIT '.$slotsToConvert["numberOfItemsPerCall"]);
+								
 				if(!$conversionResult)
 				{
 					// we need to stop here, else we would be running in an endless loop
@@ -374,17 +367,50 @@ function convertSlotsFromManualMails($slotsToConvert)
 			
 			else
 			{
-				// get default location for the item
-				$location = $Item->getSlot();
+                                // avoid any caching issues by using a normal query
+                                $slotLocationQuery = DBFactory::getDBQuery(true);
+                                $slotLocationResult = $slotLocationQuery->execute("select itt_slot from kb3_item_types types
+						inner join kb3_invtypes it ON it.groupID = types.itt_id
+						where it.typeID = ".$row['itd_itm_id']);
+                                
+                                if(!$slotLocationResult)
+                                {
+                                    $location = 0;
+                                }
+                                
+                                else
+                                {
+                                    $getSlotResult = $slotLocationQuery->getRow();
+                                }
+
+                                if (!$getSlotResult['itt_slot']) {
+                                     // try getting location from parent item
+                                    $slotLocationQuery->execute("select itt_slot from kb3_item_types
+						inner join kb3_dgmtypeattributes d
+						where itt_id = d.value
+						and d.typeID = ".$row['itd_itm_id']."
+						and d.attributeID in (137,602);");
+                                    $getSlotResult = $slotLocationQuery->getRow();
+
+                                    if (!$getSlotResult['itt_slot']) 
+                                    {
+                                            $location = 0;
+                                    }
+                                    
+                                    else
+                                    {
+                                        $location = $getSlotResult['itt_slot'];
+                                    }
+                                }
+
+                                else 
+                                {
+                                        $location = $getSlotResult['itt_slot'];
+                                }
 
 				// update slots for this item type, if location in database is -20
-				$updateQuery = new DBPreparedQuery();
-				$updateQuery->prepare('UPDATE '.$slotsToConvert["tableName"].' SET itd_itl_id = ? WHERE itd_itl_id = -20 AND itd_itm_id = ? LIMIT ?');
-				// bind parameter
-				$params = array('iii', &$location, &$row['itd_itm_id'], &$slotsToConvert["numberOfItemsPerCall"]);
-				$updateQuery->bind_params($params);
-				
-				$conversionResult = $updateQuery->execute();
+				$updateQuery = DBFactory::getDBQuery(true);
+				$conversionResult = $updateQuery->execute('UPDATE '.$slotsToConvert["tableName"].' SET itd_itl_id = '.$location.' WHERE itd_itl_id = -20 AND itd_itm_id = '.$row['itd_itm_id'].' LIMIT '.$slotsToConvert["numberOfItemsPerCall"]);
 				if(!$conversionResult)
 				{
 					throw new UpdateException("Failed to update slots for item ".$Item->getName()." with error: ".$updateQuery->getErrorMsg());
@@ -403,3 +429,34 @@ function convertSlotsFromManualMails($slotsToConvert)
 	
 	return $result;
 }
+
+/**
+ * checks and initializes update of the CCP DB package (if necessary)
+ */
+function updateCCPDB()
+{
+	global $smarty;
+
+    // determine the request scheme
+    $requestScheme = "http";
+    if($_SERVER && isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] != 'off' || $_SERVER['HTTPS'] != ''))
+    {
+        $requestScheme = "https";
+    }
+    $requestScheme .= "://";
+    
+    // Check if the KB internal database structure needs updating
+    // or if we need to install a new CCP DB
+    if(config::get('CCPDbVersion') < KB_CCP_DB_VERSION)
+    {       
+            $package = 'CCPDB';
+			if('update/'.is_dir($package)) require('update/'.$package.'/update.php');
+			else
+			{
+				$smarty->assign('content', "Specified package does not exist.");
+				$smarty->display('update.tpl');
+			}
+			die();
+    }
+}
+
