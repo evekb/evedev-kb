@@ -64,7 +64,7 @@ if($pcache) {
 echo "<br />Removed ".CacheHandler::removeByAge('SQL/', $maxSQLAge * 24)." files from SQL/<br />\n";
 echo "Removed ".CacheHandler::removeByAge('page/'.KB_SITE.'/', $maxOtherAge * 24)." files from page/<br />\n";
 echo "Removed ".CacheHandler::removeByAge("templates_c/", $maxOtherAge * 24)." files from templates_c/<br />\n";
-echo "Removed ".CacheHandler::removeByAge("mail/", $maxOtherAge * 24)." files from mail/<br />\n";
+echo "Removed ".CacheHandler::removeByAge("mails/", $maxOtherAge * 24)." files from mail/<br />\n";
 // Let's let people see their latest beautiful creation in the character creator.
 echo "Removed ".CacheHandler::removeByAge('img/', $maxImageAge * 24)." files from img/<br />\n";
 //echo "Removed ".CacheHandler::removeBySize('img/', 512 * 24)." files from img/<br />\n";
