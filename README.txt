@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.0.7.1
+Eve Development Network Killboard v4.2.0.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -24,6 +24,34 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
+
+v4.2.0.0
+Features:
+o Support of kill posting via CREST link
+o Support for all hangar locations for dropped/destroyed items
+o Use CCP KillMail API instead of old KillLog API
+o Kill Details: support for charges in low slots
+
+Bugfixes:
+o Updated file verification with correct checksums
+o Fixed typo in cron_clearup
+o Keep https scheme on update redirections
+o Updated API Base URL in installer
+o Handling of item locations from old feeds
+o Adding of NPC Corps failed in some environments
+o Make API key handling more robust
+o Parser NullPointer and translation of old mails
+o Graceful error handling for unknown involved ships in parser
+o Correct detection of installed https wrapper
+o Wrong count for KillLists for more than one Killboard Owner
+
+Other:
+o Includes CCPDB for Rubicon 1.3 (Mar 10, 2014)
+o Lineendings of all code files harmonized to unix style
+o Autoupdater enhancement: Check file permissions before update,
+                           Check file permissions for files to delete
+o Updated PHEAL to version 0.1.15
+-------------------------------------------
 v4.0.7.1
 Includes CCP DB for Rubicon 1.3 (Mar 10, 2014)
 -------------------------------------------
