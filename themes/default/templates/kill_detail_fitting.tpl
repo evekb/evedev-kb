@@ -68,6 +68,15 @@
 		{if $fitting_ammo_mid.5.type}<div id="mid6l" class="fit-ammo {if $fitting_high.5.destroyed}fit-destroyed{/if}" style="left:94px; top:288px;">{$fitting_ammo_mid.5.type}</div>{/if}
 		{if $fitting_ammo_mid.6.type}<div id="mid7l" class="fit-ammo {if $fitting_high.6.destroyed}fit-destroyed{/if}" style="left:118px; top:305px;">{$fitting_ammo_mid.6.type}</div>{/if}
 		{if $fitting_ammo_mid.7.type}<div id="mid8l" class="fit-ammo {if $fitting_high.7.destroyed}fit-destroyed{/if}" style="left:146px; top:318px;">{$fitting_ammo_mid.7.type}</div>{/if}
+                
+                {if $fitting_ammo_low.0.type}<div id="low1l" class="fit-ammo {if $fitting_low.0.destroyed}fit-destroyed{/if}" style="left:315px; top:154px;">{$fitting_ammo_low.0.type}</div>{/if}
+		{if $fitting_ammo_low.1.type}<div id="low2l" class="fit-ammo {if $fitting_low.1.destroyed}fit-destroyed{/if}" style="left:320px; top:182px;">{$fitting_ammo_low.1.type}</div>{/if}
+		{if $fitting_ammo_low.2.type}<div id="low3l" class="fit-ammo {if $fitting_low.2.destroyed}fit-destroyed{/if}" style="left:318px; top:210px;">{$fitting_ammo_low.2.type}</div>{/if}
+		{if $fitting_ammo_low.3.type}<div id="low4l" class="fit-ammo {if $fitting_low.3.destroyed}fit-destroyed{/if}" style="left:312px; top:238px;">{$fitting_ammo_low.3.type}</div>{/if}
+		{if $fitting_ammo_low.4.type}<div id="low5l" class="fit-ammo {if $fitting_low.4.destroyed}fit-destroyed{/if}" style="left:294px; top:265px;">{$fitting_ammo_low.4.type}</div>{/if}
+		{if $fitting_ammo_low.5.type}<div id="low6l" class="fit-ammo {if $fitting_low.5.destroyed}fit-destroyed{/if}" style="left:276px; top:288px;">{$fitting_ammo_low.5.type}</div>{/if}
+		{if $fitting_ammo_low.6.type}<div id="low7l" class="fit-ammo {if $fitting_low.6.destroyed}fit-destroyed{/if}" style="left:252px; top:305px;">{$fitting_ammo_low.6.type}</div>{/if}
+		{if $fitting_ammo_low.7.type}<div id="low8l" class="fit-ammo {if $fitting_low.7.destroyed}fit-destroyed{/if}" style="left:224px; top:318px;">{$fitting_ammo_low.7.type}</div>{/if}
 	{/if}
 
 	{if $noBigImage}

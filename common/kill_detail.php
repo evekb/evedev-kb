@@ -215,6 +215,15 @@ class pKillDetail extends pageAssembly
 				$i_location = InventoryFlag::collapse($destroyed->getLocationID());
 				$i_id = $item->getID();
 				$i_usedgroup = $item->get_used_launcher_group();
+                                
+                                // Nanite Repair Paste for ancillary armor repairers is a special snowflake
+                                // there are no type attributes indicating a used group
+                                // if item is nanite repair paste
+                                if($i_id == 28668) 
+                                {
+                                    // ancillary armor repairers
+                                    $i_usedgroup = 1199;
+                                }
 				
 				// BPCs
 				if($i_location == InventoryFlag::$COPY) {
@@ -309,6 +318,15 @@ class pKillDetail extends pageAssembly
 				$i_location = InventoryFlag::collapse($dropped->getLocationID());
 				$i_id = $item->getID();
 				$i_usedgroup = $item->get_used_launcher_group();
+                                
+                                // Nanite Repair Paste for ancillary armor repairers is a special snowflake
+                                // there are no type attributes indicating a used group
+                                // if item is nanite repair paste
+                                if($i_id == 28668) 
+                                {
+                                    // ancillary armor repairers
+                                    $i_usedgroup = 1199;
+                                }
 
 				// BPCs
 				if($i_location == InventoryFlag::$COPY) {
@@ -1132,6 +1150,48 @@ class pKillDetail extends pageAssembly
                     }
                 }
                 
+                
+                for($i = InventoryFlag::$LOW_SLOT_1; $i <= InventoryFlag::$LOW_SLOT_8; $i++)
+                {
+                    $length = count($this->ammo_array[$i]);
+
+                    if (is_array($this->fitting_array[$i])) {
+                            $lowammo = array();
+
+                            foreach ($this->fitting_array[$i] as $lowfit) {
+                                    $group = $lowfit["groupID"];
+
+                                    if ($group == 1199 // Ancillary Armor Repairers
+                                    ) {
+                                            $found = 0;
+
+                                            if (is_array($this->ammo_array[$i])) {
+                                                    $j = 0;
+
+                                                    while (!$found && $j < $length) {
+                                                            $temp = array_shift($this->ammo_array[$i]);
+
+                                                            if ($temp["usedgroupID"] == $group) {
+                                                                    $lowammo[] = array('type' => $temp["Icon"]);
+
+                                                                    $found = 1;
+                                                            }
+                                                            $this->ammo_array[$i][] = $temp;
+                                                            $j++;
+                                                    }
+                                            }
+
+                                            if (!$found) {
+                                                    $lowammo[] = array('type' => "<img src='".IMG_URL
+                                                                            ."/items/24_24/icon09_13.png' alt='' />");
+                                            }
+                                    } else {
+                                            $lowammo[] = array('type' => $smarty->fetch(get_tpl('blank')));
+                                    }
+                            }
+                    }
+                }
+                
                 // high slots
                 $highSlots = array();
                 for($i = InventoryFlag::$HIGH_SLOT_1; $i <= InventoryFlag::$HIGH_SLOT_8; $i++)
@@ -1188,6 +1248,7 @@ class pKillDetail extends pageAssembly
 		$smarty->assignByRef('fitting_sub', $subsystemSlots);
 		$smarty->assignByRef('fitting_ammo_high', $hiammo);
 		$smarty->assignByRef('fitting_ammo_mid', $midammo);
+                $smarty->assignByRef('fitting_ammo_low', $lowammo);
 		$smarty->assign('showammo', config::get('fp_showammo'));
 
 		$smarty->assign('victimShipBigImage',
