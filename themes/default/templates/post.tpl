@@ -29,8 +29,7 @@
       <br />
       <b>Killmail:</b><br />
       <form id="postform" name="postform" class="f_killmail" method="post" action="{$kb_host}/?a=post">
-      <textarea name="killmail" id="killmail" class="f_killmail" cols="70" rows="24">
-      </textarea>
+      <textarea name="killmail" id="killmail" class="f_killmail" cols="70" rows="24"></textarea>
       {if !$isadmin}
         <br /><br /><b>Password:</b><br /><input id="password" name="password" type="password" />
       {/if}
