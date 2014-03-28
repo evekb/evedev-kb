@@ -1015,7 +1015,7 @@
 ./common/includes/class.navigation.php:7ec07686a3f5a100172c4ebbb80fbe762417f690
 ./common/includes/db.php:3bbb42be036140d01577e335bf69c42a29e795ac
 ./common/includes/class.box.php:8e184cdb6523a07666546933cd6beaa2758a2411
-./common/includes/constants.php:b3c3907c36cb981cd47b205f0070bb2290de4592
+./common/includes/constants.php:f91e7c5169797fddea0d787a9f29e4cafe57a9a0
 ./common/includes/class.comments.php:739a189f6831e0a1a59823600527d2ae56f1cf22
 ./common/includes/class.toplist.php:cfd136c0e1c73c40a565dceedf876b6b7189b78c
 ./common/includes/class.contracttarget.php:e4cb3d3480fd12d6f2a9f2f63e8086ea3fbf8d96
@@ -1391,7 +1391,7 @@
 ./themes/default/templates/icon32.tpl:13a5f0d1147fef7a5fd4e2e24ea3c8c4688639e9
 ./themes/default/templates/kill_detail_inv.tpl:e6bb6370fbfacd9c2e3180c3d4d2b598ab2d35e1
 ./themes/default/templates/about_bottom.tpl:459b8e845dd5a2fb4156ce31bcbeca5d7f626a79
-./themes/default/templates/post.tpl:81ee6e0dd6723614fd91656a9999ea02f97524d5
+./themes/default/templates/post.tpl:e6f74371fe9d697bf8bf0ee2aed7dfe02a159752
 ./themes/default/templates/admin_options_edit.tpl:d6aa51f60dc3f167e6f0ae95773ab5d175fdd9b6
 ./themes/default/templates/contractlisttable.tpl:53f2c28d3f97a3bb3df02728392b6317da88cc20
 ./themes/default/templates/kill_detail_items_lost.tpl:ac66468b8550db5483e4d3f4997fb1062c810f79
