@@ -143,6 +143,13 @@ class Item extends Cacheable
 
 		// if item has no slot get the slot from parent item
 		if ($this->row_['itt_slot'] == 0) {
+
+                        // check if item is not in the database
+                        if(!isset($this->row_['typeID']))
+                        {
+                            return 0;
+                        }
+                        
 			$qry = DBFactory::getDBQuery();
 			$query = "select itt_slot from kb3_item_types
 						inner join kb3_dgmtypeattributes d
