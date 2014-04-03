@@ -13,7 +13,6 @@
   PRIMARY KEY (`kll_id`),
   UNIQUE KEY `time_hash` (`kll_timestamp`,`kll_hash`),
   UNIQUE KEY `external_id` (`kll_external_id`),
-  UNIQUE KEY `crest_hash` (`kll_crest_hash`),
   KEY `kll_modified_time` (`kll_modified_time`)
 ) Engine=MyISAM;</structure>
 </kb3>
