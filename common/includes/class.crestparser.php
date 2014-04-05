@@ -492,14 +492,12 @@ class CrestParser
                 	
                 
                 // get alliance
+                $Alliance = Alliance::add("None");
                 if ($involvedParty['allianceID'] > 0) {
                         $Alliance = Alliance::add($involvedParty['allianceName'], $involvedParty['allianceID']);
                 } else if ($involvedParty['factionID'] > 0) {
-                        $Alliance = Alliance::add($involvedParty['factionName'],$involvedParty['factionID']);
+                        $Alliance = Alliance::add($involvedParty['factionName'], $involvedParty['factionID']);
                 }           
-                else {
-                        $Alliance = Alliance::add("None");
-                }
                 
                 // get corp
                 // if corp is not present, use faction

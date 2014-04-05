@@ -747,7 +747,7 @@ class IDFeed
 		$ship = Ship::getByID((int)$inv['shipTypeID']);
 		$weapon = Cacheable::factory('Item', (int)$inv['weaponTypeID']);
 
-		$alliance = new Alliance();
+		$alliance = Alliance::add("None");
 
 		if ((int)$inv['allianceID']) {
 			$alliance = Alliance::add(strval($inv['allianceName']),
@@ -755,9 +755,8 @@ class IDFeed
 		} else if ((int)$inv['factionID']) {
 			$alliance = Alliance::add(strval($inv['factionName']),
 					(int)$inv['factionID']);
-		} else {
-			$alliance = Alliance::add("None");
 		}
+                
 		// get alliance from corp if ship is any kind of tower
 		$shipClassID = $ship->getClass()->getID();
 		if($shipClassID == 35           // small Tower
