@@ -50,6 +50,7 @@ class pAbout extends pageAssembly
 			'exi', // Various stuff (EDK <2)
 			'Beansman',
 			'Ralle030583',
+			'Idun', // EDK 4.1 dev
 			'Captain Thunk' // API mod
 		);
 
