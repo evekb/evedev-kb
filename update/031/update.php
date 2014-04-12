@@ -39,7 +39,7 @@ function update031()
         // for this we need an up2date CCP DB first
         updateCCPDB();
 
-	global $smarty;
+	global $url, $smarty;
 	
 	$NUMBER_OF_ITEMS_TO_UPDATE_PER_CALL = 50000;
 	$TABLE_NAME = "kb3_items_dropped";

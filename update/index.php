@@ -24,7 +24,16 @@ require_once('common/includes/globals.php');
 
 $config = new Config(KB_SITE);
 session::init();
-$url="http://".$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
+
+// determine the request scheme
+$requestScheme = "http";
+if($_SERVER && isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] != 'off' || $_SERVER['HTTPS'] != ''))
+{
+    $requestScheme = "https";
+}
+$requestScheme .= "://";
+
+$url=$requestScheme.$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
 if($_SERVER['QUERY_STRING'] != "") $url .= '?'.$_SERVER['QUERY_STRING'];
 
 // Make sure there are no caching issues.
