@@ -570,7 +570,8 @@ class IDFeed
 									." External ID = $externalID, Internal ID"
 									." = $internalID";
                                                     } else {
-                                                        $errorstring = "Involved Party error in kill: ID = "
+                                                        $errorstring =  "Error processing item with ID ".$item['typeID'].":"
+                                                                        ."Involved Party error in kill: ID = "
                                                                         .$externalID;
                                                     }
                                                     $this->parsemsg[] = $errorstring;
@@ -579,14 +580,33 @@ class IDFeed
                                                 }
 					}
 				}
-				$id = $kill->add();
+                                
+                                // catch KillExceptions
+                                // will be thrown creating the raw mail, and thus creating the kill's hash, fatally fails
+                                $errorstring = "";
+                                $killException = null;
+                                try
+                                {
+                                    $id = $kill->add();
+                                } 
+                                
+                                catch (KillException $ex) 
+                                {
+                                    $killException = $ex;
+                                    $id = 0;
+                                }
+
 				if ($id == 0) {
 					if ($internalID) {
-						$errorstring = "Kill not added. External ID ="
+						$errorstring .= "Kill not added. External ID ="
 								." $externalID, Internal ID = $internalID";
 					} else {
-						$errorstring = "Kill not added. ID = $externalID";
+						$errorstring .= "Kill not added. ID = $externalID";
 					}
+                                        if(!is_null($killException))
+                                        {
+                                            $errorstring .= ". ".$killException->getMessage();
+                                        }
 					$this->parsemsg[] = $errorstring;
 					$skip = true;
 				} else if ($id < 0) {

@@ -149,6 +149,9 @@ class API_KillLog extends API
 				$output .= "<div class='block-header2'>"
 								.count($posted)." kill".(count($posted) == 1 ? "" : "s")." posted, "
 								.count($skipped)." skipped from feed: ".$id.".<br></div>";
+                                if ($feedfetch->getParseMessages()) {
+                                        $output .= implode("<br />", $feedfetch->getParseMessages());
+                                }
 				if (count($posted)) {
 					$output .= "<div class='block-header2'>Posted</div>\n";
 					foreach ($posted as $killid) {

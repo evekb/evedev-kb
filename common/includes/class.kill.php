@@ -7,6 +7,11 @@
  */
 
 /**
+ * thrown whenever anything goes wrong while handling a kill
+ */
+class KillException extends Exception {}
+
+/**
  * @package EDK
  */
 class Kill extends Cacheable
@@ -552,21 +557,16 @@ class Kill extends Cacheable
 		}
 
 		if (!$this->getVictimName()) {
-			trigger_error("Invalid mail, victim name blank", E_USER_ERROR);
-			return "";
+			throw new KillException("Invalid mail, victim name blank");
 		} else if (!$this->getVictimCorpName()) {
-			trigger_error("Invalid mail, victim corporation blank", E_USER_ERROR);
-			return "";
+			throw new KillException("Invalid mail, victim corporation blank");
 		} else if (!$this->getVictimAllianceName()
 				&& !$this->getVictimFactionName()) {
-			trigger_error("Invalid mail, victim alliance blank", E_USER_ERROR);
-			return "";
+			throw new KillException("Invalid mail, victim alliance blank");
 		} else if (!$ship->getName()) {
-			trigger_error("Invalid mail, ship blank", E_USER_ERROR);
-			return "";
+			throw new KillException("Invalid mail, ship blank");
 		} else if (!$this->getSystem()->getName()) {
-			trigger_error("Invalid mail, system blank", E_USER_ERROR);
-			return "";
+			throw new KillException("Invalid mail, system blank",´);
 		}
 
 		$mail = substr(str_replace('-', '.' , $this->getTimeStamp()), 0, 16)."\r\n\r\n";
@@ -636,21 +636,15 @@ class Kill extends Cacheable
 			// Split these into multiple ifs so the error tells us where the
 			// problem was.
 			if (!$pilot->getName()) {
-				trigger_error("Invalid mail, invalid involved pilot", E_USER_ERROR);
-				var_dump($pilot);
-				return "";
+				throw new KillException("Invalid mail, invalid involved pilot (ID: ".$pilot->getID().")");
 			} else if (!$corp->getName()) {
-				trigger_error("Invalid mail, invalid involved corporation", E_USER_ERROR);
-				return "";
+				throw new KillException("Invalid mail, invalid involved corporation (ID: ".$corp->getID().")");
 			} else if (!$alliance->getName()) {
-				trigger_error("Invalid mail, invalid involved alliance", E_USER_ERROR);
-				return "";
+				throw new KillException("Invalid mail, invalid involved alliance (ID: ".$alliance->getID().")");
 			} else if (!$weapon->getName()) {
-				trigger_error("Invalid mail, invalid involved weapon", E_USER_ERROR);
-				return "";
+				throw new KillException("Invalid mail, invalid involved weapon (ID: ".$weapon->getID().")");
 			} else if (!$ship->getName()) {
-				trigger_error("Invalid mail, invalid involved ship", E_USER_ERROR);
-				return "";
+				throw new KillException("Invalid mail, invalid involved ship (ID: ".$ship->getID().")");
 			}
 			if ($pilot->getName() == $weapon->getName()) {
 				$name = $pilot->getName()." / ".$corp->getName();
