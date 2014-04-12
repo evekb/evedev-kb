@@ -106,7 +106,7 @@ foreach ($data as $table => $files)
 		$text = '';
 		$query_count = 0;
 		$qry->autocommit(false);
-		while ($query = gzgets($fp, 8192))
+		while ($query = gzgets($fp, 32768))
 		{
 			$text .= $query;
 			if (substr(trim($query), -1, 1) != ';')
