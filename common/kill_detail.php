@@ -696,8 +696,9 @@ class pKillDetail extends pageAssembly
 		$smarty->assign('killID', $this->kill->getID());
 		$plt = new Pilot($this->kill->getVictimID());
 		$item = new dogma($this->kill->getVictimShip()->getID());
-		// itt_cat = 6 for ships. Assume != 6 is a structure.
-		if ($item->get('itt_cat') != 6) {
+                $shipClassID = $this->kill->getVictimShip()->getClass()->getID();
+		// itt_cat = 6 for ships, shipClassID = 45 are personal deployable structures. Assume != 6 is a structure.
+		if ($item->get('itt_cat') != 6 && $shipClassID != 45) {
 			$corp = new Corporation($this->kill->getVictimCorpID());
 			$smarty->assign('victimPortrait', $corp->getPortraitURL(64));
 			$smarty->assign('victimExtID', 0);
