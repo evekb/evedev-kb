@@ -132,7 +132,7 @@ if (count($page_error) == 0) {
                                     if(file_exists($file['filename']) && !is_writeable($file['filename']))
                                     {
                                         // try to make it writable!
-                                        if(chmod($file['filename'], 0777))
+                                        if(@chmod($file['filename'], 0777))
                                         {
                                             // clear cache, check again
                                             clearstatcache(TRUE, $file['filename']);
@@ -155,7 +155,7 @@ if (count($page_error) == 0) {
                                     if(file_exists($file) && !is_writeable($file))
                                     {
                                         // try to make it writable!
-                                        if(chmod($file, 0777))
+                                        if(@chmod($file, 0777))
                                         {
                                             // clear cache, check again
                                             clearstatcache(TRUE, $file);
