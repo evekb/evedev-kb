@@ -440,7 +440,7 @@ function convertSlotsFromManualMails($slotsToConvert)
  */
 function updateCCPDB()
 {
-	global $smarty;
+	global $url, $smarty;
 
     // determine the request scheme
     $requestScheme = "http";
