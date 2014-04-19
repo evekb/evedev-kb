@@ -1048,7 +1048,7 @@
 ./common/includes/class.edkloader.php:ed8ebeb949dfa454ff4e2114f3c4416f56fdaa89
 ./common/includes/class.pagesplitter.php:e394c23ddc8462d7b8f4d3be3da21218408d88d5
 ./common/includes/class.killlisttable.php:e4701f9ae2faef7fdf0b4375bda8d4cd9c33471a
-./common/includes/class.translate.php:067eb88aec2cd2480611ba70389a1ef3e107b993
+./common/includes/class.translate.php:9852612e412de5ab05c88049bb3bc65dbb90c432
 ./common/includes/class.killwrapper.php:92206bef2e3f02d409dca786eb3c3d8579fda2b0
 ./common/includes/class.registry.php:f2cc588ffa141151e78497c2e9e6bc11a818f825
 ./common/includes/xajax.functions.php:5ca61b939ec869a77eb6232d9cfa3072d66de376
@@ -1243,13 +1243,13 @@
 ./common/admin/admin_status.php:85d7adaad4250cc766eac505a1f8d0877a1553e3
 ./common/admin/admin_value_fetch.php:2e04e0a0b5465d229bb9356b24462089ce188aa5
 ./common/admin/option_appearance.php:8aba56a72e55816d0ce847fc519e0d8d99fefe60
-./common/admin/option_config.php:03147df070c779b36d06cc786f46dde4ac6d0e0a
+./common/admin/option_config.php:260aadbf55f9477ef1604fd910c20c115a7e6d09
 ./common/admin/admin_mapoptions.php:2c5a41124591d49b8933ac5c12966f98263e89c3
 ./common/admin/admin_kill_import.php:7885b2ff9bbe954cb893baeaa0244ca0c5731561
 ./common/admin/admin_standings.php:36f681b2ad6adc82a0c653c9edfd22298926e247
 ./common/admin/admin_menu.php:e779a7e7726bacad7d2d834a852afba22e26d069
 ./common/admin/admin_verify.php:aefcf62a356b29bf4097fbdd9b201f12eda802ef
-./common/admin/admin_api.php:83d834f6f572c9aa56948987e866ef75db7e9b87
+./common/admin/admin_api.php:7eb91a3b7e79109c031253c886684d43159b0112
 ./common/admin/admin_kill_export_csv.php:0842831207d82f01cc2f41eacb516addc932ff98
 ./common/admin/option_posting.php:804f8d4fedf9ed94d03b36de0a98fe835fd165f2
 ./common/admin/admin_postperm.php:98a20be5edec9188052831dcd7e5122267e93c52
