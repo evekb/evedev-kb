@@ -46,7 +46,7 @@ o Correct detection of installed https wrapper
 o Wrong count for KillLists for more than one Killboard Owner
 
 Other:
-o Includes CCPDB for Rubicon 1.3 (Mar 10, 2014)
+o Includes CCPDB for Rubicon 1.3 (Mar 23, 2014)
 o Lineendings of all code files harmonized to unix style
 o Autoupdater enhancement: Check file permissions before update,
                            Check file permissions for files to delete
