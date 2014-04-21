@@ -17,14 +17,15 @@ $shipclass = $ship->getClass();
 $shipname = $ship->getName();
 $killtitle .= $pilotname."'s ".$shipname;
 
-$fitting_array[1] = array();    // high slots
-$fitting_array[2] = array();    // med slots
-$fitting_array[3] = array();    // low slots
-$fitting_array[5] = array();    // rig slots
-$fitting_array[6] = array();    // drone bay
-$fitting_array[7] = array();    // subsystems
-$ammo_array[1] = array();	// high ammo
-$ammo_array[2] = array();	// mid ammo
+$fitting_array[InventoryFlag::$HIGH_SLOT_1] = array();    // high slots
+$fitting_array[InventoryFlag::$MED_SLOT_1] = array();    // med slots
+$fitting_array[InventoryFlag::$LOW_SLOT_1] = array();    // low slots
+$fitting_array[InventoryFlag::$RIG_SLOT_1] = array();    // rig slots
+$fitting_array[InventoryFlag::$DRONE_BAY] = array();    // drone bay
+$fitting_array[InventoryFlag::$SUB_SYSTEM_SLOT_1] = array();    // subsystems
+$ammo_array[InventoryFlag::$HIGH_SLOT_1] = array();	// high ammo
+$ammo_array[InventoryFlag::$MED_SLOT_1] = array();	// mid ammo
+$ammo_array[InventoryFlag::$LOW_SLOT_1] = array();	// low ammo
 
 
 if (count($kill->destroyeditems_) > 0)
@@ -34,17 +35,38 @@ if (count($kill->destroyeditems_) > 0)
 		$item = $destroyed->getItem();
 		$i_qty = $destroyed->getQuantity();
 		$i_name = $item->getName();
-		$i_location = $destroyed->getLocationID();
+		$i_location = InventoryFlag::collapse($destroyed->getLocationID());
 		$i_id = $item->getID();
 		$i_usedgroup = $item->get_used_launcher_group($i_name);
-		//Fitting, KE - add destroyed items to an array of all fitted items.
-		if($i_location != 4)
+		
+		// Nanite Repair Paste for ancillary armor repairers is a special snowflake
+		// there are no type attributes indicating a used group
+		// if item is nanite repair paste
+		if($i_id == 28668) 
 		{
-			if(($i_usedgroup == 0))
+			// ancillary armor repairers
+			$i_usedgroup = 1199;
+		}
+		//Fitting, KE - add destroyed items to an array of all fitted items.
+		if($i_location != InventoryFlag::$CARGO)
+		{
+			if(($i_usedgroup != 0))
+			{
+				if ($i_location == InventoryFlag::$HIGH_SLOT_1)
+				{
+					$i_ammo=$item->get_ammo_size($i_name);
+
+				}
+				else
+				{
+					$i_ammo = 0;
+				}
+				$ammo_array[$i_location][]=array('Name'=>$i_name, 'usedgroupID' => $i_usedgroup, 'size' => $i_ammo);
+			} else
 			{
 				for ($count = 0; $count < $i_qty; $count++)
 				{
-					if ($i_location == 1)
+					if ($i_location == InventoryFlag::$HIGH_SLOT_1)
 					{
 						$i_charge=$item->get_used_charge_size($i_name);
 					}
@@ -67,17 +89,37 @@ if (count($kill->droppeditems_) > 0)
 		$item = $dropped->getItem();
 		$i_qty = $dropped->getQuantity();
 		$i_name = $item->getName();
-		$i_location = $dropped->getLocationID();
+		$i_location = InventoryFlag::collapse($dropped->getLocationID());
 		$i_id = $item->getID();
 		$i_usedgroup = $item->get_used_launcher_group($i_name);
-		//Fitting -KE, add dropped items to the list
-		if($i_location != 4)
+		// Nanite Repair Paste for ancillary armor repairers is a special snowflake
+		// there are no type attributes indicating a used group
+		// if item is nanite repair paste
+		if($i_id == 28668) 
 		{
-			if(($i_usedgroup == 0))
+			// ancillary armor repairers
+			$i_usedgroup = 1199;
+		}
+		
+		//Fitting -KE, add dropped items to the list
+		if($i_location != InventoryFlag::$CARGO)
+		{
+			if(($i_usedgroup != 0))
+			{
+				if ($i_location == InventoryFlag::$HIGH_SLOT_1)
+				{
+					$i_ammo=$item->get_ammo_size($i_name);
+				}
+				else
+				{
+					$i_ammo = 0;
+				}
+				$ammo_array[$i_location][]=array('Name'=>$i_name, 'usedgroupID' => $i_usedgroup, 'size' => $i_ammo);
+			} else
 			{
 				for ($count = 0; $count < $i_qty; $count++)
 				{
-					if ($i_location == 1)
+					if ($i_location == InventoryFlag::$HIGH_SLOT_1)
 					{
 						$i_charge=$item->get_used_charge_size($i_name);
 					}
@@ -97,12 +139,12 @@ if (count($kill->droppeditems_) > 0)
 
 
 
-$slots = array(3 => "low slot",
-	2 => "med slot",
-	1 => "hi slot",
-	5 => "rig slot",
-	7 => "subsystem slot",
-	6 => "drone bay");
+$slots = array(InventoryFlag::$LOW_SLOT_1 => "low slot",
+	InventoryFlag::$MED_SLOT_1 => "med slot",
+	InventoryFlag::$HIGH_SLOT_1 => "hi slot",
+	InventoryFlag::$RIG_SLOT_1 => "rig slot",
+	InventoryFlag::$SUB_SYSTEM_SLOT_1 => "subsystem slot",
+	InventoryFlag::$DRONE_BAY => "drone bay");
 
 
 // Some tools require xml formatted with indents.
@@ -165,7 +207,7 @@ foreach ($slots as $i => $empty)
 		{
 			$item = $a_item['Name'];
 			$xml .= "\t\t\t<hardware ";
-			if($i == 6)
+			if($i == InventoryFlag::$DRONE_BAY)
 			{
 				$xml .= "qty=\"1\" ";
 				$xml .= "slot=\"".$slots[$i]."\" ";

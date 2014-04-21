@@ -17,14 +17,15 @@ $shipclass = $ship->getClass();
 $shipname = $ship->getName();
 $killtitle .= $pilotname."'s ".$shipname;
 
-$fitting_array[1] = array();    // high slots
-$fitting_array[2] = array();    // med slots
-$fitting_array[3] = array();    // low slots
-$fitting_array[5] = array();    // rig slots
-$fitting_array[6] = array();    // drone bay
-$fitting_array[7] = array();    // subsystems
-$ammo_array[1] = array();	// high ammo
-$ammo_array[2] = array();	// mid ammo
+$fitting_array[InventoryFlag::$HIGH_SLOT_1] = array();    // high slots
+$fitting_array[InventoryFlag::$MED_SLOT_1] = array();    // med slots
+$fitting_array[InventoryFlag::$LOW_SLOT_1] = array();    // low slots
+$fitting_array[InventoryFlag::$RIG_SLOT_1] = array();    // rig slots
+$fitting_array[InventoryFlag::$DRONE_BAY] = array();    // drone bay
+$fitting_array[InventoryFlag::$SUB_SYSTEM_SLOT_1] = array();    // subsystems
+$ammo_array[InventoryFlag::$HIGH_SLOT_1] = array();	// high ammo
+$ammo_array[InventoryFlag::$MED_SLOT_1] = array();	// mid ammo
+$ammo_array[InventoryFlag::$LOW_SLOT_1] = array();	// low ammo
 
 
 if (count($kill->destroyeditems_) > 0)
@@ -34,15 +35,24 @@ if (count($kill->destroyeditems_) > 0)
 		$item = $destroyed->getItem();
 		$i_qty = $destroyed->getQuantity();
 		$i_name = $item->getName();
-		$i_location = $destroyed->getLocationID();
+		$i_location = InventoryFlag::collapse($destroyed->getLocationID());
 		$i_id = $item->getID();
 		$i_usedgroup = $item->get_used_launcher_group($i_name);
+		
+		// Nanite Repair Paste for ancillary armor repairers is a special snowflake
+		// there are no type attributes indicating a used group
+		// if item is nanite repair paste
+		if($i_id == 28668) 
+		{
+			// ancillary armor repairers
+			$i_usedgroup = 1199;
+		}
 		//Fitting, KE - add destroyed items to an array of all fitted items.
-		if($i_location != 4)
+		if($i_location != InventoryFlag::$CARGO)
 		{
 			if(($i_usedgroup != 0))
 			{
-				if ($i_location == 1)
+				if ($i_location == InventoryFlag::$HIGH_SLOT_1)
 				{
 					$i_ammo=$item->get_ammo_size($i_name);
 
@@ -56,7 +66,7 @@ if (count($kill->destroyeditems_) > 0)
 			{
 				for ($count = 0; $count < $i_qty; $count++)
 				{
-					if ($i_location == 1)
+					if ($i_location == InventoryFlag::$HIGH_SLOT_1)
 					{
 						$i_charge=$item->get_used_charge_size($i_name);
 					}
@@ -79,15 +89,24 @@ if (count($kill->droppeditems_) > 0)
 		$item = $dropped->getItem();
 		$i_qty = $dropped->getQuantity();
 		$i_name = $item->getName();
-		$i_location = $dropped->getLocationID();
+		$i_location = InventoryFlag::collapse($dropped->getLocationID());
 		$i_id = $item->getID();
 		$i_usedgroup = $item->get_used_launcher_group($i_name);
+		// Nanite Repair Paste for ancillary armor repairers is a special snowflake
+		// there are no type attributes indicating a used group
+		// if item is nanite repair paste
+		if($i_id == 28668) 
+		{
+			// ancillary armor repairers
+			$i_usedgroup = 1199;
+		}
+		
 		//Fitting -KE, add dropped items to the list
-		if($i_location != 4)
+		if($i_location != InventoryFlag::$CARGO)
 		{
 			if(($i_usedgroup != 0))
 			{
-				if ($i_location == 1)
+				if ($i_location == InventoryFlag::$HIGH_SLOT_1)
 				{
 					$i_ammo=$item->get_ammo_size($i_name);
 				}
@@ -100,7 +119,7 @@ if (count($kill->droppeditems_) > 0)
 			{
 				for ($count = 0; $count < $i_qty; $count++)
 				{
-					if ($i_location == 1)
+					if ($i_location == InventoryFlag::$HIGH_SLOT_1)
 					{
 						$i_charge=$item->get_used_charge_size($i_name);
 					}
@@ -119,68 +138,68 @@ if (count($kill->droppeditems_) > 0)
 }
 
 //Fitting - KE, sort the fitted items into groupID order, so that several of the same item apear next to each other.
-if(!(empty($fitting_array[1])))
+if(!(empty($fitting_array[InventoryFlag::$HIGH_SLOT_1])))
 {
-	foreach ($fitting_array[1] as $array_rowh)
+	foreach ($fitting_array[InventoryFlag::$HIGH_SLOT_1] as $array_rowh)
 	{
 		$sort_by_nameh["groupID"][] = $array_rowh["groupID"];
 	}
-	array_multisort($sort_by_nameh["groupID"],SORT_ASC,$fitting_array[1]);
+	array_multisort($sort_by_nameh["groupID"],SORT_ASC,$fitting_array[InventoryFlag::$HIGH_SLOT_1]);
 }
 
-if(!(empty($fitting_array[2])))
+if(!(empty($fitting_array[InventoryFlag::$MED_SLOT_1])))
 {
-	foreach ($fitting_array[2] as $array_rowm)
+	foreach ($fitting_array[InventoryFlag::$MED_SLOT_1] as $array_rowm)
 	{
 		$sort_by_namem["groupID"][] = $array_rowm["groupID"];
 	}
-	array_multisort($sort_by_namem["groupID"],SORT_ASC,$fitting_array[2]);
+	array_multisort($sort_by_namem["groupID"],SORT_ASC,$fitting_array[InventoryFlag::$MED_SLOT_1]);
 }
 
-if(!(empty($fitting_array[3])))
+if(!(empty($fitting_array[InventoryFlag::$LOW_SLOT_1])))
 {
-	foreach ($fitting_array[3] as $array_rowl)
+	foreach ($fitting_array[InventoryFlag::$LOW_SLOT_1] as $array_rowl)
 	{
 		$sort_by_namel["groupID"][] = $array_rowl["groupID"];
 	}
-	array_multisort($sort_by_namel["groupID"],SORT_ASC,$fitting_array[3]);
+	array_multisort($sort_by_namel["groupID"],SORT_ASC,$fitting_array[InventoryFlag::$LOW_SLOT_1]);
 }
 
-if(!(empty($fitting_array[5])))
+if(!(empty($fitting_array[InventoryFlag::$CARGO])))
 {
-	foreach ($fitting_array[5] as $array_rowr)
+	foreach ($fitting_array[InventoryFlag::$CARGO] as $array_rowr)
 	{
 		$sort_by_namer["Name"][] = $array_rowr["Name"];
 	}
-	array_multisort($sort_by_namer["Name"],SORT_ASC,$fitting_array[5]);
+	array_multisort($sort_by_namer["Name"],SORT_ASC,$fitting_array[InventoryFlag::$CARGO]);
 }
 
-if(!(empty($fitting_array[6])))
+if(!(empty($fitting_array[InventoryFlag::$DRONE_BAY])))
 {
-	foreach ($fitting_array[6] as $array_rowd)
+	foreach ($fitting_array[InventoryFlag::$DRONE_BAY] as $array_rowd)
 	{
 		$sort_by_named["Name"][] = $array_rowd["Name"];
 	}
-	array_multisort($sort_by_named["Name"],SORT_ASC,$fitting_array[6]);
+	array_multisort($sort_by_named["Name"],SORT_ASC,$fitting_array[InventoryFlag::$DRONE_BAY]);
 }
 
-if(!(empty($fitting_array[7])))
+if(!(empty($fitting_array[InventoryFlag::$SUB_SYSTEM_SLOT_1])))
 {
-	foreach ($fitting_array[7] as $array_rowd)
+	foreach ($fitting_array[InventoryFlag::$SUB_SYSTEM_SLOT_1] as $array_rowd)
 	{
 		$sort_by_names["Name"][] = $array_rowd["Name"];
 	}
-	array_multisort($sort_by_names["Name"],SORT_ASC,$fitting_array[7]);
+	array_multisort($sort_by_names["Name"],SORT_ASC,$fitting_array[InventoryFlag::$SUB_SYSTEM_SLOT_1]);
 }
 
 //Fitting - KE, sort the fitted items into name order, so that several of the same item apear next to each other. -end
 
-$length = count($ammo_array[1]);
+$length = count($ammo_array[InventoryFlag::$HIGH_SLOT_1]);
 $temp = array();
-if(is_array($fitting_array[1]))
+if(is_array($fitting_array[InventoryFlag::$HIGH_SLOT_1]))
 {
 	$hiammo = array();
-	foreach ($fitting_array[1] as $highfit)
+	foreach ($fitting_array[InventoryFlag::$HIGH_SLOT_1] as $highfit)
 	{
 		$group = $highfit["groupID"];
 		$size = $highfit["chargeSize"];
@@ -199,18 +218,18 @@ if(is_array($fitting_array[1]))
 			$found = 0;
 			if ($group == 511)
 			{ $group = 509; } // Assault Missile Lauchers uses same ammo as Standard Missile Lauchers
-			if(is_array($ammo_array[1]))
+			if(is_array($ammo_array[InventoryFlag::$HIGH_SLOT_1]))
 			{
 				$i = 0;
 				while (!($found) && $i<$length)
 				{
-					$temp = array_shift($ammo_array[1]);
+					$temp = array_shift($ammo_array[InventoryFlag::$HIGH_SLOT_1]);
 					if (($temp["usedgroupID"] == $group) && ($temp["size"] == $size))
 					{
 						$hiammo[]=$temp["Name"];
 						$found = 1;
 					}
-					array_push($ammo_array[1],$temp);
+					array_push($ammo_array[InventoryFlag::$HIGH_SLOT_1],$temp);
 					$i++;
 				}
 			}
@@ -225,11 +244,11 @@ if(is_array($fitting_array[1]))
 	}
 }
 
-$length = count($ammo_array[2]);
-if(is_array($fitting_array[2]))
+$length = count($ammo_array[InventoryFlag::$MED_SLOT_1]);
+if(is_array($fitting_array[InventoryFlag::$MED_SLOT_1]))
 {
 	$midammo = array();
-	foreach ($fitting_array[2] as $midfit)
+	foreach ($fitting_array[InventoryFlag::$MED_SLOT_1] as $midfit)
 	{
 		$group = $midfit["groupID"];
 		if($group == 76 // Capacitor Boosters
@@ -242,18 +261,18 @@ if(is_array($fitting_array[2]))
 		)
 		{
 			$found = 0;
-			if(is_array($ammo_array[2]))
+			if(is_array($ammo_array[InventoryFlag::$MED_SLOT_1]))
 			{
 				$i = 0;
 				while (!($found) && $i<$length)
 				{
-					$temp = array_shift($ammo_array[2]);
+					$temp = array_shift($ammo_array[InventoryFlag::$MED_SLOT_1]);
 					if ($temp["usedgroupID"] == $group)
 					{
 						$midammo[]=$temp["Name"];
 						$found = 1;
 					}
-					array_push($ammo_array[2],$temp);
+					array_push($ammo_array[InventoryFlag::$MED_SLOT_1],$temp);
 					$i++;
 				}
 			}
@@ -269,12 +288,49 @@ if(is_array($fitting_array[2]))
 	}
 }
 
-$slots = array(3 => "[empty low slot]",
-	2 => "[empty mid slot]",
-	1 => "[empty high slot]",
-	5 => "[empty rig slot]",
-	7 => "",
-	6 => "");
+$length = count($ammo_array[InventoryFlag::$LOW_SLOT_1]);
+if(is_array($fitting_array[InventoryFlag::$LOW_SLOT_1]))
+{
+	$lowammo = array();
+	foreach ($fitting_array[InventoryFlag::$LOW_SLOT_1] as $midfit)
+	{
+		$group = $midfit["groupID"];
+		if ($group == 1199 // Ancillary Armor Repairers
+		) {
+			$found = 0;
+			if(is_array($ammo_array[InventoryFlag::$LOW_SLOT_1]))
+			{
+				$i = 0;
+				while (!($found) && $i<$length)
+				{
+					$temp = array_shift($ammo_array[InventoryFlag::$LOW_SLOT_1]);
+					if ($temp["usedgroupID"] == $group)
+					{
+						$lowammo[]=$temp["Name"];
+						$found = 1;
+					}
+					array_push($ammo_array[InventoryFlag::$LOW_SLOT_1],$temp);
+					$i++;
+				}
+			}
+			if (!($found))
+			{
+				$lowammo[]=0;
+			}
+		}
+		else
+		{
+			$lowammo[]=0;
+		}
+	}
+}
+
+$slots = array(InventoryFlag::$LOW_SLOT_1 => "[empty low slot]",
+	InventoryFlag::$MED_SLOT_1 => "[empty mid slot]",
+	InventoryFlag::$HIGH_SLOT_1 => "[empty high slot]",
+	InventoryFlag::$RIG_SLOT_1 => "[empty rig slot]",
+	InventoryFlag::$SUB_SYSTEM_SLOT_1 => "",
+	InventoryFlag::$DRONE_BAY => "");
 
 ?>
 popup|<form>
@@ -301,22 +357,29 @@ foreach ($slots as $i => $empty)
 		foreach ($fitting_array[$i] as $k => $a_item)
 		{
 			$item = $a_item['Name'];
-			if ($i == 6)
+			if ($i == InventoryFlag::$DRONE_BAY)
 			{
 				$item .= ' x1';
 			}
-			elseif ($i == 1)
+			elseif ($i == InventoryFlag::$HIGH_SLOT_1)
 			{
 				if ($hiammo[$k])
 				{
 					$item .=','.$hiammo[$k];
 				}
 			}
-			elseif ($i == 2)
+			elseif ($i == InventoryFlag::$MED_SLOT_1)
 			{
 				if ($midammo[$k])
 				{
 					$item .=','.$midammo[$k];
+				}
+			}
+			elseif($i == InventoryFlag::$LOW_SLOT_1)
+			{
+				if($lowammo[$k])
+				{
+					$item .=",".$lowammo[$k];
 				}
 			}
 			echo $item."\n";
