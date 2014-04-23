@@ -77,9 +77,11 @@ if ($val = $_REQUEST['standing']) {
 		$qry->execute('INSERT INTO kb3_standings VALUES (\'' . join("','", $fields) . '\')');
 	}
 }
-if ($_REQUEST['del']) {
-	$totyp = preg_replace('/[^ac]/', '', substr($_REQUEST['del'], 0, 1));
-	$toid = intval(substr($_REQUEST['del'], 1));
+
+if (edkURI::getArg('del', 1)) {
+        $standingId = edkURI::getArg('del', 1);
+	$totyp = preg_replace('/[^ac]/', '', substr($standingId, 0, 1));
+	$toid = intval(substr($standingId, 1));
 
 	$qry = DBFactory::getDBQuery();
 	if (config::get('cfg_corpid')) {
