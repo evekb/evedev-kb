@@ -135,7 +135,7 @@ class API_KillLog extends API
 						break;
 					}
 				}
-
+                                
 				$feedfetch = new IDFeed();
 				$feedfetch->setXML($this->pheal->xml);
 				$feedfetch->setLogName("API");
@@ -143,8 +143,26 @@ class API_KillLog extends API
 				$feedfetch->setKillTrust(3);
 				$feedfetch->read();
 
-				$posted = array_merge($posted, $feedfetch->getPosted());
-				$skipped = array_merge($skipped, $feedfetch->getSkipped());
+				$posted = $feedfetch->getPosted();
+				$skipped = $feedfetch->getSkipped();
+                                
+                                if ($this->getError() == null)
+                                {
+                                    // We found kills!
+                                    $qry = DBFactory::getDBQuery();
+
+                                    $qry->execute("insert into kb3_apilog values( '".KB_SITE."', '"
+                                                                    .addslashes($name)."',"
+                                                                    .count($posted).","
+                                                                    ."0 ,"
+                                                                    .count($skipped).","
+                                                                    ."0 ,"
+                                                                    .(count($posted) + count($skipped)).",'"
+                                                                    ."New XML','"
+                                                                    ."Cron Job','
+                                                                    0', 
+                                                                    UTC_TIMESTAMP() )");
+                                }
 
 				$output .= "<div class='block-header2'>"
 								.count($posted)." kill".(count($posted) == 1 ? "" : "s")." posted, "
