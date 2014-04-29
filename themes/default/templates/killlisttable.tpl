@@ -30,7 +30,11 @@
 							<div class="no_stretch kl-shiptype-text">
 								<b>{$k.victimshipname}</b>
 								<br />
-								{$k.victimshipclass}
+								{if !$killlist_iskloss}
+									{$k.victimshipclass}
+								{else}
+									{$k.victimiskloss}
+								{/if}
 							</div>
 						</td>
 						{if !$k.allianceexists}

@@ -90,9 +90,21 @@ class KillListTable
 			$kll['victimshipname'] = $kill->getVictimShipName();
 			$kll['victimshipclass'] = $kill->getVictimShipClassName();
 			$kll['victim'] = $kill->getVictimName();
+			$kll['victimiskloss'] = $kill->getISKLoss();
+			if($kll['victimiskloss'] > 1000000000)
+			{
+				 $kll['victimiskloss'] = sprintf("%.02fb", $kll['victimiskloss']/1000000000, $unit);
+			}
+			elseif($kll['victimiskloss'] > 1000000)
+			{
+				 $kll['victimiskloss'] = sprintf("%.02fm", $kll['victimiskloss']/1000000, $unit);
+			}
+			elseif($kll['victimiskloss'] > 1000)
+			{
+				 $kll['victimiskloss'] = sprintf("%.02fk", $kll['victimiskloss']/1000, $unit);
+			}
 			$kll['victimcorp'] = $kill->getVictimCorpName();
 			$kll['victimalliancename'] = $kill->getVictimAllianceName();
-			$kll['victimiskloss'] = $kill->getISKLoss();
 			$kll['fb'] = $kill->getFBPilotName();
 			$kll['fbcorp'] = $kill->getFBCorpName();
 			if ($kill->isClassified() && !Session::isAdmin()) {
@@ -198,6 +210,7 @@ class KillListTable
 		}
 
 		$smarty->assignByRef('killlist', $kl);
+		$smarty->assign('killlist_iskloss', config::get('killlist_iskloss'));
 		return $smarty->fetch(get_tpl('killlisttable'));
 	}
 }

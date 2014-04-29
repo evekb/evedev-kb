@@ -34,6 +34,7 @@ options::fadd('Display comment count', 'comments_count', 'checkbox');
 options::fadd('Display involved count', 'killlist_involved', 'checkbox');
 options::fadd('Display clock', 'show_clock', 'checkbox');
 options::fadd('Display Monthly stats', 'show_monthly', 'checkbox', '', '', 'Default is weekly');
+options::fadd('Show ISK loss', 'killlist_iskloss', 'checkbox', '', '', 'Instead of ship type');
 
 options::cat('Appearance', 'Front Page', 'Kill Summary Tables');
 options::fadd('Display Summary Table', 'summarytable', 'checkbox');
