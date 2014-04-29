@@ -93,15 +93,15 @@ class KillListTable
 			$kll['victimiskloss'] = $kill->getISKLoss();
 			if($kll['victimiskloss'] > 1000000000)
 			{
-				 $kll['victimiskloss'] = sprintf("%.02fb", $kll['victimiskloss']/1000000000, $unit);
+				 $kll['victimiskloss'] = sprintf("%.02fb", $kll['victimiskloss']/1000000000);
 			}
 			elseif($kll['victimiskloss'] > 1000000)
 			{
-				 $kll['victimiskloss'] = sprintf("%.02fm", $kll['victimiskloss']/1000000, $unit);
+				 $kll['victimiskloss'] = sprintf("%.02fm", $kll['victimiskloss']/1000000);
 			}
 			elseif($kll['victimiskloss'] > 1000)
 			{
-				 $kll['victimiskloss'] = sprintf("%.02fk", $kll['victimiskloss']/1000, $unit);
+				 $kll['victimiskloss'] = sprintf("%.02fk", $kll['victimiskloss']/1000);
 			}
 			$kll['victimcorp'] = $kill->getVictimCorpName();
 			$kll['victimalliancename'] = $kill->getVictimAllianceName();
