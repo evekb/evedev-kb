@@ -23,7 +23,7 @@ class SimpleCrest
      * will fall back to file_get_contents if curl isn't available 
 	 * accepted values: curl, file
      */
-    public static $HTTP_METHOD = "file";
+    public static $HTTP_METHOD = "curl";
     
     
     protected static $curl;
