@@ -553,7 +553,7 @@ class CrestParser
                         $Alliance = $Corp->getAlliance();
                         $Ship = Ship::lookup("Unknown");
                         $Weapon = Item::getByID($involvedParty['shipTypeID']);
-                        $involvedPartyName = $Weapon->getName();
+                        $involvedPartyName = $Corp->getName().' - '.$Weapon->getName();
                         $isNPC = TRUE;
                         $involvedCharacterID = $Weapon->getID();
 		}

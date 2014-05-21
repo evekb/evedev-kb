@@ -763,6 +763,14 @@ class IDFeed
 			$this->parsemsg[] = "Involved party blank.";
 			return false;
 		}
+                
+                $controlTowerShipClasses = array(
+			35, // small Tower
+			36, // medium Tower
+			37, // large Tower
+			38 // POS Module  
+		);
+                
 		$npc = false;
 		$ship = Ship::getByID((int)$inv['shipTypeID']);
 		$weapon = Cacheable::factory('Item', (int)$inv['weaponTypeID']);
@@ -779,10 +787,7 @@ class IDFeed
                 
 		// get alliance from corp if ship is any kind of tower
 		$shipClassID = $ship->getClass()->getID();
-		if($shipClassID == 35           // small Tower
-			|| $shipClassID == 36   // medium Tower
-			|| $shipClassID == 37   // large Tower
-                        || $shipClassID == 38)  // POS Module  
+		if(in_array($shipClassID, $controlTowerShipClasses))  // POS Module/Tower  
 		{
 			$corpByName = Corporation::lookup(strval($inv['corporationName']));
 			if($corpByName)
@@ -796,14 +801,26 @@ class IDFeed
 		$charid = (int)$inv['characterID'];
 		$charname = (string)$inv['characterName'];
 		// Allow for blank names for consistency with CCP API.
+                // @deprecated? API doesn't supply a character name here
 		if (preg_match("/(Mobile (Large|Medium|Small) Warp Disruptor I?I?|\w+ Control Tower( \w+)?)/",
 				$charname)) {
 			$charname = $inv['corporationName'].' - '.$charname;
 			$charid = 0;
-		} else if ($charname == ""
+		} 
+                // @deprecated? API doesn't supply a weapon here
+                else if ($charname == ""
 				&& (preg_match("/(Mobile \w+ Warp|\w+ Control Tower( \w+)?)/",
 				   $weapon->getName()))) {
 			$charname = $inv['corporationName'].' - '.$weapon->getName();
+			$charid = 0;
+		} 
+                // this should be up-to-date for current state of the API
+		// needs verification for Mobile Warpdisruptors
+                else if ($charname == ""
+				&& (preg_match("/(Mobile \w+ Warp|\w+ Control Tower( \w+)?)/",
+				   $ship->getName()))) {
+			$charname = $inv['corporationName'].' - '.$ship->getName();
+			$weapon = $ship;
 			$charid = 0;
 		} else if ($charname == "" && !$charid) {
 			// NPC ship
