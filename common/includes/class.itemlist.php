@@ -83,11 +83,11 @@ class ItemList
 				&& !count($this->droppedIDarray))) {
 			return;
 		}
-		$sql = "select inv.icon, inv.typeID, "
-				."itp.price, kb3_item_types.*, dga.value as techlevel, "
-				."dc.value as usedcharge, dl.value as usedlauncher, "
-				."inv.groupID, inv.typeName, inv.capacity, inv.raceID, "
-				."inv.basePrice, inv.marketGroupID";
+		$sql = "select inv.icon, inv.typeID,
+                            itp.price, kb3_item_types.*, dga.value as metalevel, dgb.value as techlevel,
+                            dc.value as usedcharge, dl.value as usedlauncher,
+                            inv.groupID, inv.typeName, inv.capacity, inv.raceID, inv.mass, inv.volume,
+                            inv.basePrice, inv.marketGroupID";
 		if (count($this->destroyedIDarray)) {
 			$sql .= ", if(dl.attributeID IS NULL,sum(itd.itd_quantity),"
 					."truncate(sum(itd.itd_quantity)/count(dl.attributeID),0)) "
@@ -98,15 +98,13 @@ class ItemList
 					."as itd_quantity, itd_itm_id, itd_itl_id, itl_flagText ";
 		}
 
-		$sql .= "from kb3_invtypes inv "
-				."left join kb3_dgmtypeattributes dga "
-				."on dga.typeID=inv.typeID and dga.attributeID=633 "
-				."left join kb3_item_price itp on itp.typeID=inv.typeID "
-				."left join kb3_item_types on inv.groupID=itt_id "
-				."left join kb3_dgmtypeattributes dc "
-				."on dc.typeID = inv.typeID AND dc.attributeID IN (128) "
-				."left join kb3_dgmtypeattributes dl "
-				."on dl.typeID = inv.typeID AND dl.attributeID IN (137,602) ";
+		$sql .= "from kb3_invtypes inv
+                            left join kb3_dgmtypeattributes dga on dga.typeID=inv.typeID and dga.attributeID=633
+                            left join kb3_dgmtypeattributes dgb on dgb.typeID=inv.typeID and dgb.attributeID=422
+                            left join kb3_item_price itp on itp.typeID=inv.typeID
+                            left join kb3_item_types on inv.groupID=itt_id
+                            left join kb3_dgmtypeattributes dc on dc.typeID = inv.typeID AND dc.attributeID IN (128)
+                            left join kb3_dgmtypeattributes dl on dl.typeID = inv.typeID AND dl.attributeID IN (137,602) ";
 
 		if (count($this->destroyedIDarray)) {
 			$sql .= "join kb3_items_destroyed itd on inv.typeID = itd_itm_id "
