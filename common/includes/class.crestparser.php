@@ -103,9 +103,9 @@ class CrestParser
 		{
 			$checkHash->fetch();
 			$this->dupeid_ = $kill_id;
-			// We still want to update the external ID if we were given one.
+			// We still want to update the external ID if we were given one.			
 			if($this->externalID)
-			{
+			{ 
 				$qry->execute("UPDATE kb3_kills"
 						." JOIN kb3_mails ON kb3_mails.kll_id = kb3_kills.kll_id"
 						." SET kb3_kills.kll_external_id = ".$this->externalID
@@ -113,7 +113,7 @@ class CrestParser
 						.", kll_modified_time = UTC_TIMESTAMP()"
 						." WHERE kb3_kills.kll_id = ".$this->dupeid_
 						." AND kb3_kills.kll_external_id IS NULL");
-
+				
 				if($trust >= 0 && $this->trust && $trust > $this->trust) {
 					$qry->execute("UPDATE kb3_mails SET kll_trust = "
 							.$this->trust." WHERE kll_id = ".$this->dupeid_);
@@ -123,6 +123,7 @@ class CrestParser
                         // we also want to update the CREST hash
                         $qry->execute("UPDATE kb3_mails SET kll_crest_hash = '"
 							.$this->crestHash."' WHERE kll_id = ".$this->dupeid_);
+				
 			if($trust < 0)
                         {
                             throw new CrestParserException("That mail has been deleted. Kill id was "
@@ -131,7 +132,7 @@ class CrestParser
 			throw new CrestParserException("That killmail has already been posted <a href=\""
 						."?a=kill_detail&kll_id=".$this->getDupeID()
 						."\">here</a>.", -1);
-		}
+		}			
 		// Check external IDs
 		else if($this->externalID)
 		{
@@ -225,6 +226,10 @@ class CrestParser
 					{       
                                                 // required for NPCs without corp
                                                 $corpName = "Unknown";
+                                                if(strlen($attacker["factionName"]) > 0)
+                                                {
+                                                    $corpName = $attacker["factionName"];
+                                                }
                                                 if(strlen($attacker["corporationName"]) > 0)
                                                 {
                                                     $corpName = $attacker["corporationName"];
@@ -490,12 +495,15 @@ class CrestParser
 		$Weapon = Cacheable::factory('Item', $involvedParty['weaponTypeID']);
             
                 	
-                
                 // get alliance
                 $Alliance = Alliance::add("None");
-                if ($involvedParty['allianceID'] > 0) {
+                if ($involvedParty['allianceID'] > 0) 
+                {
                         $Alliance = Alliance::add($involvedParty['allianceName'], $involvedParty['allianceID']);
-                } else if ($involvedParty['factionID'] > 0) {
+                }
+                // only use faction as alliance if no corporation is given (faction NPC)
+                else if ($involvedParty['factionID'] > 0 && strlen($involvedParty['corporationName']) > 0) 
+                {		
                         $Alliance = Alliance::add($involvedParty['factionName'], $involvedParty['factionID']);
                 }           
                 

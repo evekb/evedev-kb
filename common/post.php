@@ -155,25 +155,29 @@ function post_crest()
         try
         {
             $killid = $CrestParser->parse(true);
+            logger::logKill($killid);
         }
-        catch(Exception $e) {
-            if($e->getCode() == -4 && $page->isAdmin()) {
-                $html .= '<br />
-                    <form id="postform" name="postform" class="f_killmail" method="post" action="'.KB_HOST.'/?a=post">
-                            <input type="hidden" name="crest_url" id="crest_url" value = "'.htmlentities($_POST['crest_url']).'"/>
-                            <input type="hidden" name="kll_id" id="kill_id" value = "'.$CrestParser->getDupeID().'"/>
-                            <input type="hidden" name="undelete" id="undelete" value = "1"/>
-                    <input id="submit_crest" name="submit_crest" type="submit" value="Undelete" />
-                    </form>';
+        catch(CrestParserException $e) {
+            if($e->getCode() == -4 )
+			{
+				$html = "That mail has been deleted. Kill id was ".$CrestParser->getDupeID();
+				if($page->isAdmin()) {
+					$html .= '<br />
+						<form id="postform" name="postform" class="f_killmail" method="post" action="'.KB_HOST.'/?a=post">
+								<input type="hidden" name="crest_url" id="crest_url" value = "'.htmlentities($_POST['crest_url']).'"/>
+								<input type="hidden" name="kll_id" id="kill_id" value = "'.$CrestParser->getDupeID().'"/>
+								<input type="hidden" name="undelete" id="undelete" value = "1"/>
+						<input id="submit_crest" name="submit_crest" type="submit" value="Undelete" />
+						</form>';
+				}
             }
 
             else {
                 $html .= $e->getMessage();
-                return $html;
             }
+			return $html;
         }
 
-        logger::logKill($killid);
         header("Location: ".html_entity_decode(edkURI::page('kill_detail',
                                         $killid, 'kll_id')));
         exit();
