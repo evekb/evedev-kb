@@ -55,5 +55,12 @@ function checkAll(checkname, exby)
 		</tr>
 	</table>
 	<br />
+        <div class='block-header2'>Options</div><table>
+        <table>
+            <tr>
+                <td style='height:30px; width:150px'>Ignore NPC only deaths?</td>
+                <td><input type='checkbox' name='post_no_npc_only_feed' id='post_no_npc_only_feed' {if $post_no_npc_only_feed}checked="checked"{/if} /></td>
+            </tr>
+        </table>
 	<br />
 	<input type='submit' id='submitOptions' name='submit' value="Save" /></form>

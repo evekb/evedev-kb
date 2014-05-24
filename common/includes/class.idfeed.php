@@ -56,6 +56,10 @@ class IDFeed
 	private $errormsg = '';
 	private $errorcode = 0;
 	private $npcOnly = true;
+        // flag indicating we're fetching from the EVE API (not from an IDFeed)
+        private $isApiFetch = FALSE;
+        /** flag indicating whether to skip NPC only losses */
+        private $skipNpcOnly;
         
         /** 
          * flag indicating the slot for an item in an incoming feed/API
@@ -475,6 +479,18 @@ class IDFeed
 			return false;
 		}
                 
+                // fetching from API?
+                if(!is_null($sxe['edkapi']) && strlen($sxe['edkapi']) == 0)
+                {
+                    $this->isApiFetch = TRUE;
+                    $this->skipNpcOnly = config::get('post_no_npc_only');
+                }
+                
+                else
+                {
+                    $this->skipNpcOnly = config::get('post_no_npc_only_feed');
+                }
+                
                 // if we'r fetching from another IDFeed (not from API) and the version is either empty or below 1.2
                 if ((!is_null($sxe['edkapi']) && strlen($sxe['edkapi']) == 0) || (floatval($sxe['edkapi']) && $sxe['edkapi'] < 1.2)) {
 			$this->lookupSlotForIncomingZeroFlags = TRUE;
@@ -556,9 +572,10 @@ class IDFeed
 					}
 				}
 			}
-			// Don't post NPC only kills if configured.
-			if ($this->npcOnly && Config::get('post_no_npc_only')) {
-				$skip = true;
+			
+			if ($this->npcOnly && $this->skipNpcOnly) 
+                        {
+                            $skip = true;
 			}
 			if (!$skip) {
 				if (isset($row->rowset[1]->row[0])) {

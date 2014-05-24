@@ -68,6 +68,16 @@ if ($_POST['submit'] || $_POST['fetch'])
 	}
 	$feeds = &$newlist;
 	config::set("fetch_idfeeds", $feeds);
+        
+        if($_POST['post_no_npc_only_feed'])
+        {
+            config::set('post_no_npc_only_feed', 1);
+        }
+        
+        else
+        {
+            config::set('post_no_npc_only_feed', 0);
+        }
 	$feeds[] = array('url'=>"", 'apikills'=>0, 'trusted'=>0, 'lastkill'=>0);
 }
 
@@ -100,7 +110,7 @@ foreach($feeds as $key => &$val) {
 	$rows[] = array('name'=>$key, 'uri'=>$val['url'], 'lastkill'=>$val['lastkill'], 'trusted'=>$val['trusted'], 'fetch'=>!$fetch);
 }
 $smarty->assignByRef('rows', $rows);
-
+$smarty->assign('post_no_npc_only_feed', config::get('post_no_npc_only_feed'));
 $smarty->assign('results', $html);
 $page->addContext($menubox->generate());
 $page->setContent($smarty->fetch(get_tpl('admin_idfeed')));
