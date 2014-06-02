@@ -24,7 +24,25 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
+v4.2.1.0
 
+Enhancements:
+Updated CCPDB package files to Kronos 1.0
+Updated CCPDB and Killboard version
+Enhancement: Added "ignore NPC kills" option to IDFeed
+Enhancement: Added more attributes to itemlist
+Enhancement: cURL support for SimpleCrest fetcher
+Config option: Show ISK loss instead of ship type
+
+Fix: CrestParser, NPC kills and permanent deletion
+Fix: Add corp name in front of control towers/mods
+Fix: Changed default method to cURL for SimpleCrest
+Fix: Delete standings when using simple URLs
+Fix: No API Log entries for KillMails API call
+Fix: EFT and EVE Fitting export with new slot flags
+Fix: Suppress warnings in auto updater
+Fix: Empty redirect URL in conversion scripts Part 2
+-------------------------------------------
 v4.2.0.0
 Features:
 o Support of kill posting via CREST link
