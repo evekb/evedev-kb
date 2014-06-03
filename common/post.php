@@ -173,7 +173,14 @@ function post_crest()
             }
 
             else {
-                $html .= $e->getMessage();
+                if($e->getPrevious())
+                {
+                    $html .= $e->getPrevious()->getMessage();
+                }
+                else
+                {
+                    $html .= $e->getMessage();
+                }
             }
 			return $html;
         }

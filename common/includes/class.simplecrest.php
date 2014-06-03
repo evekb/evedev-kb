@@ -157,7 +157,7 @@ class SimpleCrest
                 throw new \Exception("could not connect to api");
             }
 
-            throw new \Exception("an error occured with the http request: ".$headers[0]);
+            throw new \Exception("an error occurred with the http request: ".$headers[0]);
         } else 
             {
             return $data;

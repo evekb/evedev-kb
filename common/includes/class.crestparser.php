@@ -72,7 +72,15 @@ class CrestParser
                 
                 // create killmail representation
                 // get instance
-                $this->killmailRepresentation = SimpleCrest::getReferenceByUrl($this->crestUrl);
+                try
+                {
+                    $this->killmailRepresentation = SimpleCrest::getReferenceByUrl($this->crestUrl);
+                }
+                
+                catch(Exception $e)
+                {
+                    throw new CrestParserException("An error occurred while getting data from CREST", -100, $e);
+                }
 
 		$qry = DBFactory::getDBQuery();
 
