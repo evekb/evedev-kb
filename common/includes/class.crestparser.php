@@ -79,7 +79,7 @@ class CrestParser
                 
                 catch(Exception $e)
                 {
-                    throw new CrestParserException("An error occurred while getting data from CREST", -100, $e);
+                    throw new CrestParserException($e->getMessage(), $e->getCode());
                 }
 
 		$qry = DBFactory::getDBQuery();

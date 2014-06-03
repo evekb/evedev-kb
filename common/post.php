@@ -172,17 +172,11 @@ function post_crest()
 				}
             }
 
-            else {
-                if($e->getPrevious())
-                {
-                    $html .= $e->getPrevious()->getMessage();
-                }
-                else
-                {
-                    $html .= $e->getMessage();
-                }
+            else 
+            {
+                $html .= $e->getMessage();
             }
-			return $html;
+            return $html;
         }
 
         header("Location: ".html_entity_decode(edkURI::page('kill_detail',
