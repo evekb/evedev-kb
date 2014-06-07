@@ -15,7 +15,7 @@ if (config::get('comments')) {
  */
 class pKillDetail extends pageAssembly
 {
-
+    
 	/** @var integer The id of the kill this page is for. */
 	public $kll_id;
 	/** @var integer The external id of the kill this page is for. */
@@ -1262,6 +1262,13 @@ class pKillDetail extends pageAssembly
 			$this->verification = false;
 		}
 		$smarty->assign('verify_yesno', $this->verification);
+                
+                // get crest URL for the kill
+                $crestUrl = $this->kill->getCrestUrl();
+                if(!is_null($crestUrl) && strlen($crestUrl) > 0)
+                {
+                    $smarty->assign('crest_url', $crestUrl);
+                }
 
 		//get the actual slot count for each vessel - for the fitting panel
 		$dogma = Cacheable::factory('dogma',

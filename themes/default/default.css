@@ -1653,6 +1653,12 @@ td.finalblow
 	width: 16px;
 }
 
+.fitting-panel div.verified > a > img
+{
+	height: 16px;
+	width: 16px;
+}
+
 .fitting-panel div.fit-slot-bg
 {
 	height: 398px;

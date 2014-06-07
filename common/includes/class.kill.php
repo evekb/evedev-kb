@@ -16,6 +16,10 @@ class KillException extends Exception {}
  */
 class Kill extends Cacheable
 {
+    
+        /** @const the base URL for the public CREST killmail endpoint */
+        static $CREST_KILLMAIL_ENDPOINT = "http://public-crest.eveonline.com/killmails/";
+
 	/**
 	 * The ID for this kill
 	 * @var integer
@@ -1788,10 +1792,47 @@ class Kill extends Cacheable
 	 */
 	function getCrestHash()
 	{
-		if(is_null($this->crestHash)) {
-			$this->execQuery();
+		if(is_null($this->crestHash) && $this->id) {
+		    $qry = new DBPreparedQuery();
+                    $qry->prepare('SELECT kll_crest_hash FROM kb3_mails WHERE kll_id = ?');
+
+                    $resultArray = array(
+                        &$this->crestHash
+                    );
+                    // bind results
+                    $qry->bind_results($resultArray);
+
+                    // bind parameter
+                    $params = array('i', &$this->id);
+                    $qry->bind_params($params);
+                    $qry->execute();
+                    if($qry->recordCount())
+                    {
+                        $qry->fetch();
+                        $this->putCache();
+                    }
 		}
 		return $this->crestHash;
+	}
+        
+        
+        /**
+	 * Get the crest URL of this kill.
+	 *
+	 * @return string the crest URL for this kill
+	 */
+	function getCrestUrl()
+	{
+		if(is_null($this->externalid)) 
+                {
+                    $this->execQuery();
+		}
+
+                if($this->getCrestHash() && !is_null($this->externalid))
+                {
+                    return self::$CREST_KILLMAIL_ENDPOINT.$this->externalid.'/'.$this->getCrestHash().'/';
+                }
+                return NULL;
 	}
         
         /**

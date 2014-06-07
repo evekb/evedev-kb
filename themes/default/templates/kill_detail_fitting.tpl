@@ -86,7 +86,11 @@
 	{/if}
 		<div class="verified">
 			{if $verify_yesno}
-			<img class="verified-yes" src='{$img_url}/items/24_24/icon09_09.png' alt='Kill verified' title="Kill verified ID: {$verify_id}" />
+                            {if isset($crest_url)}
+                                <a href="{$crest_url}"><img class="verified-yes" src='{$img_url}/items/24_24/icon09_09.png' alt='Kill verified' title="Kill verified ID: {$verify_id}" /></a>
+                            {else}
+                                <img class="verified-yes" src='{$img_url}/items/24_24/icon09_09.png' alt='Kill verified' title="Kill verified ID: {$verify_id}" />
+                            {/if}
 			{else}
 			<img class="verified-no" src='{$img_url}/items/24_24/icon09_13.png' alt='Kill not verified' title="Kill not verified" />
 			{/if}

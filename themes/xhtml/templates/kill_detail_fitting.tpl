@@ -81,7 +81,11 @@
 		{if $showverify}
 		<div style="position:absolute; left:382px; top:0px; width:16px; height:16px; z-index:4;">
 			{if $verify_yesno}
-			<img style="position:absolute; height:16px; width:16px; border:0px" src='{$img_url}/items/24_24/icon09_09.png' alt='Kill verified' title="Kill verified ID: {$verify_id}" />
+                            {if isset($crest_url)}
+                                <a href="{$crest_url}"><img style="position:absolute; height:16px; width:16px; border:0px" src='{$img_url}/items/24_24/icon09_09.png' alt='Kill verified' title="Kill verified ID: {$verify_id}" /></a>
+                            {else}
+                                <img style="position:absolute; height:16px; width:16px; border:0px" src='{$img_url}/items/24_24/icon09_09.png' alt='Kill verified' title="Kill verified ID: {$verify_id}" />
+                            {/if}
 			{else}
 			<img style="position:absolute; height:16px; width:16px; border:0px" src='{$img_url}/items/24_24/icon09_13.png' alt='Kill not verified' title="Kill not verified" />
 			{/if}
