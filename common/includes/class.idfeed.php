@@ -480,7 +480,7 @@ class IDFeed
 		}
                 
                 // fetching from API?
-                if(!is_null($sxe['edkapi']) && strlen($sxe['edkapi']) == 0)
+                if(is_null($sxe['edkapi']))
                 {
                     $this->isApiFetch = TRUE;
                     $this->skipNpcOnly = config::get('post_no_npc_only');
