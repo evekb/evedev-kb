@@ -13,10 +13,14 @@ $page = new Page();
 $page->setAdmin();
 
 if ($_POST) {
-		options::handlePost();
+    options::handlePost();
 }
 $page->setContent(options::genOptionsPage());
 $page->addContext(options::genAdminMenu());
+// reload in order to correctly update the owner removal lists
+if ($_POST) {
+    admin_config::reload();
+}
 
 if (!edkURI::getArg('field', 1)
 		|| !edkURI::getArg('sub', 1)

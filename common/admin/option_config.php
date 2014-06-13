@@ -503,14 +503,13 @@ class admin_config
 			} else if ($set == 'c') {
 				$all = Alliance::add('Unknown');
 
-				$crp = new Corporation();
-				$crp->add($char_info[0]['name'], $all, $timestamp,
+				$crp = Corporation::add($char_info[0]['name'], $all, $timestamp,
 						$char_info[0]['characterID'], false);
 
 				$_POST['option_cfg_corpid'] = $value = $crp->getID();
 				$corps = config::get('cfg_corpid');
 				$corps[] = intval($value);
-				config::set('cfg_pilotid', $corps);
+				config::set('cfg_corpid', $corps);
 
 				$html = '<input type="text" id="option_cfg_corpid"'
 						.' name="option_cfg_corpid" value="" size="40"'
