@@ -20,6 +20,7 @@ $page->addContext(options::genAdminMenu());
 // reload in order to correctly update the owner removal lists
 if ($_POST) {
     admin_config::reload();
+    exit();
 }
 
 if (!edkURI::getArg('field', 1)
