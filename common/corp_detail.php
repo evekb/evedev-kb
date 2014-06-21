@@ -242,8 +242,13 @@ class pCorpDetail extends pageAssembly
 			$smarty->assign('share_count', $myAPI->getShares());
 			$smarty->assign('tax_rate', $myAPI->getTaxRate());
 			$smarty->assign('external_url', $myAPI->getUrl());
-			$smarty->assign('corp_description', str_replace( "<br>", "<br />",
-					$myAPI->getDescription()));
+                        $description = $myAPI->getDescription();
+                        $description = preg_replace('/<br>/', '<br />', $description);
+                        // replace non-html size
+                        $description = preg_replace('/<font size=\"[1-9]+\"/', '<font', $description);
+                        // replace character links
+                        $description = preg_replace('/showinfo:1378\/\//', KB_HOST.'/?a=pilot_detail&plt_ext_id=', $description);
+			$smarty->assign('corp_description', $description);
 		}
 		return $smarty->fetch(get_tpl('corp_detail_stats'));
 	}
