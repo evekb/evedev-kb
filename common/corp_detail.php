@@ -247,11 +247,46 @@ class pCorpDetail extends pageAssembly
                         // replace non-html size
                         $description = preg_replace('/<font size=\"[1-9]+\"/', '<font', $description);
                         // replace character links
-                        $description = preg_replace('/showinfo:1378\/\//', KB_HOST.'/?a=pilot_detail&plt_ext_id=', $description);
+                        $description = preg_replace_callback('/showinfo:[1-9]+\/\//', array($this, 'parseShowInfoLink'), $description);
 			$smarty->assign('corp_description', $description);
 		}
 		return $smarty->fetch(get_tpl('corp_detail_stats'));
 	}
+        
+        /**
+         * callback for showinfo links in corp description;
+         * replaces the showinfo-link with a link to the correct entity (corp/ally/pilot)
+         * @param array $showInfoLinks
+         */
+        static function parseShowInfoLink($showInfoLinks)
+        {
+            // showInfoLinks[0] looks like this: showinfo:1378//
+            // make it look like: showinfo:1378
+            $showInfoLink = substr($showInfoLinks[0], 0, strlen($showInfoLinks[0])-2);
+            // 1378
+            $typeID = substr($showInfoLink, strpos($showInfoLink, ':')+1, strlen($showInfoLink)-strpos($showInfoLink, ':'));
+
+            // Alliance
+            if($typeID == 16159)
+            {
+                return KB_HOST.'/?a=alliance_detail&all_ext_id=';
+            }
+            
+            // Corporation
+            elseif($typeID == 2)
+            {
+                return KB_HOST.'/?a=pilot_detail&plt_ext_id=';
+            }
+            
+            // Characters of various races
+            elseif($typeID >= 1373 && $typeID <= 1386)
+            {
+                return KB_HOST.'/?a=pilot_detail&plt_ext_id=';
+            }
+            
+            // nothing of the above, don't change anything
+            return $showInfoLinks[0];
+        }
 
 	/**
 	 *  Build the killlists that are needed for the options selected.

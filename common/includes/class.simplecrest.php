@@ -26,6 +26,9 @@ class SimpleCrest
     public static $HTTP_METHOD = "curl";
     
     
+    public static $USER_AGENT = "EDK HTTP Requester, http://www.evekb.org";
+    
+    
     protected static $curl;
     
     
@@ -93,6 +96,7 @@ class SimpleCrest
         curl_setopt(self::$curl, CURLOPT_URL, $url);
         curl_setopt(self::$curl, CURLOPT_HTTPHEADER, $headers);
         curl_setopt(self::$curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt(self::$curl, CURLOPT_USERAGENT, self::$USER_AGENT);
         
         // call
         $result	= curl_exec(self::$curl);
@@ -113,13 +117,13 @@ class SimpleCrest
                     break;
                 default:
             }            
-            throw new Exception('Error getting data from CREST: HTTP '.$httpCode.', URL: '.$url);
+            throw new Exception('Error getting data: HTTP '.$httpCode.', URL: '.$url);
         }
         
         // curl errors
         if($errorNumber)
         {
-            throw new Exception('Error getting data from CREST: '.$error.'('.$errno.')');
+            throw new Exception('Error getting data: '.$error.'('.$errno.')');
         }
         
         return $result;
@@ -135,6 +139,7 @@ class SimpleCrest
     {
         // build header
         $header = 'Accept-language: en\r\n';
+        $header .= "User-Agent: ".self::USER_AGENT."\r\n";
         
         $opts = array(
             'http' => array(

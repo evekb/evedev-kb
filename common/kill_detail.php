@@ -1567,6 +1567,9 @@ class pKillDetail extends pageAssembly
 		} else if (preg_match("/^ID:http/", $source)) {
 			$type = "URL";
 			$source = substr($source, 3);
+		} else if (preg_match("/^ZKB:http/", $source)) {
+			$type = "URL";
+			$source = substr($source, 4);
 		} else {
 			$type = "unknown";
 		}

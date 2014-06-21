@@ -192,4 +192,8 @@
     <name>kb3_user_titles</name>
     <version>1.1</version>
   </table>
+  <table>
+    <name>kb3_zkbfetch</name>
+    <version>1.0</version>
+  </table>
 </kb3>
