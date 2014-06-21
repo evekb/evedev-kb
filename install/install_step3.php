@@ -82,7 +82,7 @@ if ($_SESSION['sql']['db'])
 	    else
 	    {
 		    $smarty->assign('test_version', $result['version']);
-		    $version_ok = $result['version'] >= "5";
+		    $version_ok = floatval($result['version']) >= 5;
 		    $smarty->assign("version_ok", $version_ok);
 		    if (!$version_ok)
 				$stoppage = true;
