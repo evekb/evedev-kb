@@ -247,6 +247,12 @@ class pKillDetail extends pageAssembly
 					'slotID' => $i_location,
 					'bpc' => $bpc
 				);
+                                
+                                // Generate Ship DNA array
+                                $this->items[$i_location][] = array (
+                                    'item' => $i_id,
+                                    'qty' => $i_qty
+                                );
 
 				//Fitting, KE - add destroyed items to an array of all fitted items.
 				if ($i_location ==InventoryFlag::$LOW_SLOT_1 || $i_location ==  InventoryFlag::$MED_SLOT_1 || $i_location ==  InventoryFlag::$HIGH_SLOT_1 || $i_location ==InventoryFlag::$SUB_SYSTEM_SLOT_1 || $i_location ==InventoryFlag::$RIG_SLOT_1) {
@@ -349,6 +355,12 @@ class pKillDetail extends pageAssembly
 					'slotID' => $i_location,
 					'bpc' => $bpc
 				);
+                                
+                                // Generate Ship DNA array
+                                $this->items[$i_location][] = array (
+                                    'item' => $i_id,
+                                    'qty' => $i_qty
+                                );
 
 				//Fitting -KE, add dropped items to the list
 				if (($i_location != InventoryFlag::$CARGO )&& ($i_location != InventoryFlag::$DRONE_BAY)) {
@@ -1341,6 +1353,41 @@ class pKillDetail extends pageAssembly
 
 		return $smarty->fetch(get_tpl('kill_detail_damage_box'));
 	}
+        
+        /**
+         * Function to implode the fittings array for ShipDNA, remove keys and add separators
+         */
+        function array_implode( $glue, $separator, $array )
+        {
+                if ( !is_array( $array ) ) {
+                        return $array;
+                }
+                $string = array();
+                foreach ( $array as $key => $val )
+                {
+                        if ( is_array( $val ) )
+                        {
+                                $val = implode( $glue, $val );
+                        }
+                        $string[] = "{$val}";
+                }
+
+                return implode( $separator, $string );
+        }
+
+       function generateShipDNA()
+        {
+                $high = $this->array_implode(';', ':', $this->items[27]);
+                $subs = $this->array_implode(';', ':', $this->items[125]);
+                $mid = $this->array_implode(';', ':', $this->items[19]);
+                $low = $this->array_implode(';', ':', $this->items[11]);
+                $rigs = $this->array_implode(';', ':', $this->items[92]);
+                $drones = $this->array_implode(';', ':', $this->items[87]);
+                $ship = $this->kill->getVictimShipID();
+
+                $link = $ship . ":" . $subs . ":" . $high . ":" . $mid . ":" . $low . ":" . $rigs . ":" . $drones . "::";
+                return $link;
+        }
 
 	function menuSetup()
 	{
@@ -1359,6 +1406,13 @@ class pKillDetail extends pageAssembly
 					."');ReverseContentDisplay('popup')");
 			$this->addMenuItem("link", "EvE Fitting", edkURI::page(
 					'eve_fitting', $this->kill->getID(), 'kll_id'));
+                        
+                        if (!IS_IGB) {
+                                $this->addMenuItem("link", "Ship DNA", "javascript:alert('You need to use the EVE In Game Browser to use this feature')");
+                        }
+                        else {
+                                $this->addMenuItem("link", "Ship DNA", "javascript:CCPEVE.showFitting('" . $this->generateShipDNA() . "')");
+                        }
 		}
 
 		if ($this->kill->relatedKillCount() > 1
