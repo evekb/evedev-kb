@@ -26,6 +26,7 @@ define('KB_RELEASE', '(Kronos 1.0)');
 define('KB_CCP_DB_VERSION', '98431');
 define('KB_CCP_DB_DATE', 'May 30, 2014');
 define('ID_FEED_VERSION', 1.20);
+define('ZKB_FETCH_VERSION', 1.0);
 define('KB_APIKEY_LEGACY', 1);
 define('KB_APIKEY_CORP', 2);
 define('KB_APIKEY_CHAR', 4);

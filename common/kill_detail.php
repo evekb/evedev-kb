@@ -1290,11 +1290,11 @@ class pKillDetail extends pageAssembly
 		$hicount = (int) $dogma->attrib['hiSlots']['value'];
 		$rigcount = (int) $dogma->attrib['rigSlots']['value'];
 
-		$subcount = count($this->fitting_array[7]);
+		$subcount = count($subsystemSlots);
 
 		//This code counts the slots granted by subsystem modules for the fitting panel
 		if ($subcount > 0) {
-			foreach ($this->fitting_array[7] as $subfit) {
+			foreach ($subsystemSlots as $subfit) {
 				$lookupRef = $subfit["itemID"];
 				$sql = 'SELECT `attributeID`, `value` FROM `kb3_dgmtypeattributes` WHERE '.
 						'`attributeID` IN (1374, 1375, 1376) AND `typeID` = '.$lookupRef.';';

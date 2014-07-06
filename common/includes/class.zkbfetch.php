@@ -40,10 +40,16 @@ class ZKBFetch
     protected $id;
     /** @param int the last timestamp for the last kill fetched from this url*/
     protected $lastKillTimestamp;
+    /** @param int maximum number of kills fetched per cycle */
+    protected $maxNumberOfKillsPerCycle;
+
+    /** @param int default value for maximum number of kills to fetch */
+    public static $MAX_NUMBER_OF_KILLS_PER_CYCLE_DEFAULT = 50;
    
     public function ZKBFetch($id = NULL)
     {
         $this->id = $id;
+        $this->maxNumberOfKillsPerCycle = self::$MAX_NUMBER_OF_KILLS_PER_CYCLE_DEFAULT;
     }
     
     /**
@@ -57,7 +63,7 @@ class ZKBFetch
         }
         
         $fetchParams = new DBPreparedQuery();
-        $fetchParams->prepare('SELECT fetchID, url, lastKillTimstamp FROM kb3_zkbfetch WHERE fetchID = ?');
+        $fetchParams->prepare('SELECT fetchID, url, lastKillTimestamp FROM kb3_zkbfetch WHERE fetchID = ?');
         $lastKillTimestamp = NULL;
         $arr = array(&$this->id, &$this->url, &$lastKillTimestamp);
         $fetchParams->bind_results($arr);
@@ -110,7 +116,7 @@ class ZKBFetch
         }
         
         $fetchParams = new DBPreparedQuery();
-        $fetchParams->prepare('INSERT INTO kb3_zkbfetch VALUES (?, ?)');
+        $fetchParams->prepare('INSERT INTO kb3_zkbfetch (`url`, `lastKillTimestamp`) VALUES (?, ?)');
         $types = 'ss';
         $timeString = strftime('%Y-%m-%d %H:%M:%S', $this->lastKillTimestamp);
         $arr2 = array(&$types, &$this->url, &$timeString);
@@ -125,6 +131,21 @@ class ZKBFetch
     }
     
     /**
+     * deletes the fetch configuration with the given ID
+     * @param int $id
+     */
+    public static function delete($id)
+    {
+        $fetchParams = new DBPreparedQuery();
+        $fetchParams->prepare('DELETE FROM kb3_zkbfetch WHERE fetchID = ?');
+        $types = 'i';
+        $arr = array(&$types, &$id);
+        $fetchParams->bind_params($arr);
+
+        return $fetchParams->execute();
+    }
+    
+    /**
      * gets all ZKBFetch configurations from the database
      * @return array of \ZKBFetch objects
      */
@@ -133,7 +154,7 @@ class ZKBFetch
         $resultObjects = array();
         
         $qry = DBFactory::getDBQuery();
-        $qry->execute('SELECT fetchID FROM kb3_zkbfetch');
+        $qry->execute('SELECT fetchID FROM kb3_zkbfetch ORDER BY fetchID ASC');
         while($result = $qry->getRow())
         {
             $resultObjects[] = ZKBFetch::getByID($result['fetchID']);
@@ -174,6 +195,22 @@ class ZKBFetch
     }
     
     
+    public function getID()
+    {
+        return $this->id;
+    }
+    
+    public function getLastKillTimestamp()
+    {
+        if(!is_null($this->id) && is_null($this->lastKillTimestamp))
+        {
+            $this->execQuery();
+        }
+        
+        return $this->lastKillTimestamp;
+    }
+    
+    
     public function setLastKillTimestamp($timestamp)
     {
         if(!is_numeric($timestamp))
@@ -199,6 +236,36 @@ class ZKBFetch
         
         return true;
     }
+    
+    
+    /**
+     * 
+     * @param boolean $ignoreNPCOnlyKills flag indicating whether to ignore NPC only killmails
+     */
+    public function setIgnoreNpcOnlyKills($ignoreNPCOnlyKills)
+    {
+        if($ignoreNPCOnlyKills === TRUE)
+        {
+            $this->ignoreNPCOnly = TRUE;
+        }
+        
+        else
+        {
+            $this->ignoreNPCOnly = FALSE;
+        }
+    }
+    
+    /**
+     * 
+     * @param int $maxNumberOfKillsPerCycle maximum number of kills fetched per cycle
+     */
+    public function setMaxNumberOfKillsPerCycle($maxNumberOfKillsPerCycle)
+    {
+        if(is_numeric($maxNumberOfKillsPerCycle))
+        {
+            $this->maxNumberOfKillsPerCycle = $maxNumberOfKillsPerCycle;
+        }
+    }
 
     
     /**
@@ -207,7 +274,7 @@ class ZKBFetch
      */
     public function fetch()
     {
-        if (!$this->url) 
+        if (!$this->fetchUrl) 
         {
             return false;
         }
@@ -216,7 +283,7 @@ class ZKBFetch
         // get instance
         try
         {
-            $this->rawData = SimpleCrest::getReferenceByUrl($this->url);
+            $this->rawData = SimpleCrest::getReferenceByUrl($this->fetchUrl);
         }
 
         catch(Exception $e)
@@ -233,34 +300,42 @@ class ZKBFetch
      */
     protected function validateUrl()
     {
-      // TODO 
-      // remove XML modifier, we need JSON
-      str_replace('xml/', '', $this->url);
-      // must end with a slash
-      if(substr($this->url, -1) != '/')
-      {
-          $this->url .= '/';
-      }
-      
-      // force API verified mails only
-      if(strpos($this->url, 'api-only') === FALSE)
-      {
-          $this->url .= 'api-only/';
-      }
-      
-      // add startTime, if not already in URL and if given
-      if(strpos($this->url, 'startTime') === FALSE && !is_null($this->lastKillTimestamp) && strlen(trim($this->lastKillTimestamp) > 0))
-      {
-          $this->url .= "startTime/$this->lastKillTimestamp/";
-      }
-      
-      $urlPieces = explode("/", $this->url);
+        $this->fetchUrl = $this->url;
+        // remove XML modifier, we need JSON
+        str_replace('xml/', '', $this->fetchUrl);
+        // must end with a slash
+        if(substr($this->fetchUrl, -1) != '/')
+        {
+            $this->fetchUrl .= '/';
+        }
 
-      if(count($urlPieces) < 5
-        || $urlPieces[3] != "api")
-      {
-          throw new ZKBFetchException("Invalid zBK API URL: ".$this->url);
-      }
+        // force API verified mails only
+        if(strpos($this->fetchUrl, 'api-only') === FALSE)
+        {
+            $this->fetchUrl .= 'api-only/';
+        }
+
+        // limit returned mails to 50
+        if(strpos($this->fetchUrl, 'limit') === FALSE)
+        {
+            $this->fetchUrl .= "limit/$this->maxNumberOfKillsPerCycle/";
+        }
+
+        // add startTime, if not already in URL and if given and the URL is not for a specific kill
+        if(strpos($this->fetchUrl, 'startTime') === FALSE && !is_null($this->lastKillTimestamp) && strlen(trim($this->lastKillTimestamp) > 0)
+                && strpos($this->fetchUrl, 'killID') === FALSE)
+        {
+        
+            $timestampFormattedForZkb = strftime("%Y%m%d%H%M", $this->lastKillTimestamp);
+            $this->fetchUrl .= "startTime/$timestampFormattedForZkb/orderDirection/asc/";
+        }
+
+        $urlPieces = explode("/", $this->fetchUrl);
+
+        if(count($urlPieces) < 5 || $urlPieces[3] != "api")
+        {
+            throw new ZKBFetchException("Invalid zBK API URL: ".$this->fetchUrl);
+        }
     }
     
     
@@ -277,7 +352,8 @@ class ZKBFetch
         $this->fetch();
         if(empty($this->rawData))
         {
-            throw new ZKBFetchException("Empty result returned by API ".$this->url);
+            //throw new ZKBFetchException("Empty result returned by API ".$this->fetchUrl);
+            // this is a valid case
         }
         
         // loop over all kills
@@ -309,12 +385,11 @@ class ZKBFetch
 
         // Check hashes with a prepared query.
         // Make it static so we can reuse the same query for feed fetches.
-        $timestamp;
         $checkHash;
         $hash;
         $trust;
         $killId;
-        $timestamp = str_replace('.', '-', $this->killTime);
+        $timestamp = str_replace('.', '-', $killData->killTime);
 
         // Check hashes.
         $hash = self::hashMail($killData);
@@ -358,6 +433,12 @@ class ZKBFetch
             }
             // kill is already known
             $this->skipped[] = $killData->killID;
+            
+            // update last kill timestamp
+            if(is_null($this->lastKillTimestamp) || $this->lastKillTimestamp < strtotime($timestamp))
+            {
+                $this->lastKillTimestamp = strtotime($timestamp);
+            }
             return;
         }	
         
@@ -371,9 +452,6 @@ class ZKBFetch
         }
 
         $this->hash = $hash;
-
-        // get timestamp
-        $timestamp = $killData->killTime;
 
         // Filtering
         if(config::get('filter_apply'))
@@ -414,8 +492,14 @@ class ZKBFetch
         try
         {
             $isNPCOnlyKill = FALSE;
-            $this->processVictim($Kill, $killData);
+            // this method sets the $isNPCOnlyKill flag
             $this->processInvolved($Kill, $killData, $isNPCOnlyKill);
+            if($isNPCOnlyKill && $this->ignoreNPCOnly)
+            {
+                $this->skipped[] = $killData->killID;
+                return;
+            }
+            $this->processVictim($Kill, $killData);
             $this->processItems($Kill, $killData);
         }
         
@@ -535,7 +619,7 @@ class ZKBFetch
     * processes and adds all involved parties to the given kill reference;
     * source is the json decoded kill data from zKB API
     * @param Kill $Kill reference to the kill to update
-    * @param Object $kilLData json decoded kill data
+    * @param Object $killData json decoded kill data
     * @param boolean flag that gets set if involved parties are NPCs only
     * @throws ZKBFetchException
     */

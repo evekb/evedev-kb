@@ -14,7 +14,7 @@ function update033()
 		$sql = 'CREATE TABLE IF NOT EXISTS `kb3_zkbfetch` (
   `fetchID` int(11) NOT NULL auto_increment,
   `url` varchar(127) NOT NULL,
-  `lasKillTimestamp` datetime default NULL,
+  `lastKillTimestamp` datetime default NULL,
   PRIMARY KEY (`fetchID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
 		$qry->execute($sql);
