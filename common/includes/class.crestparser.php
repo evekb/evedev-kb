@@ -519,12 +519,24 @@ class CrestParser
                 // if corp is not present, use faction
                 if($involvedParty['corporationID'] > 0)
                 {
-                    $Corp = Corporation::add(strval($involvedParty['corporationName']), $Alliance, $timestamp, (int)$involvedParty['corporationID']);
+                    // try getting the corp from our database
+                    $Corp = Corporation::lookup(strval($involvedParty['corporationName']));
+                    // create new corp
+                    if(!$Corp)
+                    {
+                        Corporation::add(strval($involvedParty['corporationName']), $Alliance, $timestamp, (int)$involvedParty['corporationID']);
+                    }
                 }   
 
                 else if($involvedParty['factionID'] > 0)
                 {
-                    $Corp = Corporation::add(strval($involvedParty['factionName']), $Alliance, $timestamp, (int)$involvedParty['factionID']);
+                    // try getting the corp from our database
+                    $Corp = Corporation::lookup(strval($involvedParty['factionName']));
+                    // create new corp
+                    if(!$Corp)
+                    {
+                        $Corp= Corporation::add(strval($involvedParty['factionName']), $Alliance, $timestamp, (int)$involvedParty['factionID']);
+                    }
                 }
                 
                 // NPCs without Corp/Alliance/Faction (e.g. Rogue Drones)
@@ -677,21 +689,22 @@ class CrestParser
 	 */
 	private static function fetchCorp($corpName, $Alliance = null, $timestamp = null)
 	{
-                if ($Alliance == null) {
-                        $corp = Corporation::lookup($corpName);
-                        // If the corporation is new and the alliance unknown (structure)
-                        // fetch the alliance from the API.
-                        if (!$corp) {
-                                $corp = Corporation::add($corpName, Alliance::add("None"), $timestamp);
-                                if (!$corp->getExternalID()) {
-                                        $corp = false;
-                                }
-                                else {
-                                        $corp->execQuery();
-                                }
-                        }
-                } else {
-                        $corp = Corporation::add($corpName, $Alliance, $timestamp, 0, FALSE);
+                $corp = Corporation::lookup($corpName);
+                if (!$corp) {
+                    if ($Alliance == null) {      
+                            // If the corporation is new and the alliance unknown (structure)
+                            // fetch the alliance from the API.
+                            $corp = Corporation::add($corpName, Alliance::add("None"), $timestamp);
+                            if (!$corp->getExternalID()) {
+                                    $corp = false;
+                            }
+                            else {
+                                    $corp->execQuery();
+                            }
+
+                    } else {
+                            $corp = Corporation::add($corpName, $Alliance, $timestamp, 0, FALSE);
+                    }
                 }
 
 		return $corp;
