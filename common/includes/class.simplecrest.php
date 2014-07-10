@@ -47,12 +47,12 @@ class SimpleCrest
         // determine whether cURL is available
         if(in_array  ('curl', get_loaded_extensions()) && self::$HTTP_METHOD == 'curl')
         {
-            $data = self::getCrestByCurl($url, $opts);
+            $data = self::getCrestByCurl($url);
         }
         
         else
         {
-            $data = self::getCrestByFileGetContents($url, $opts);
+            $data = self::getCrestByFileGetContents($url);
         }
         
         if($data != NULL)
