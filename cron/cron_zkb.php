@@ -14,7 +14,6 @@ if (!substr_compare(PHP_OS, 'win', 0, 3, true)) {
 }
 
 $cronStartTime = microtime(true);
-@error_reporting(E_ERROR);
 
 // Has to be run from the KB main directory for nested includes to work
 if(file_exists(getcwd().'/cron_zkb.php')) {
