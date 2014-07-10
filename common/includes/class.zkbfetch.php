@@ -559,14 +559,31 @@ class ZKBFetch
                throw new ZKBFetchException("Insufficient victim corporation information provided! Kill-ID: ".$killData->killID);
        }
 
-       // get alliance
-       if ($victimDetails['allianceID'] > 0) {
-               $Alliance = Alliance::add($victimDetails['allianceName'], $victimDetails['allianceID']);
-       } else if ($victimDetails['factionID'] > 0) {
-               $Alliance = Alliance::add($victimDetails['factionName'],$victimDetails['factionID']);
-       } else {
+      // get alliance
+       if ($victimDetails['allianceID'] > 0) 
+       {
+            // first check for alliance by external ID
+            $Alliance = new Alliance($victimDetails['allianceID'], TRUE);
+            if(!$Alliance->getID())
+            {
+                $Alliance = Alliance::add($victimDetails['allianceName'], $victimDetails['allianceID']);
+            }
+       } 
+       
+       else if ($victimDetails['factionID'] > 0) 
+       {
+            $Alliance = new Alliance($victimDetails['factionID'], TRUE);
+            if(!$Alliance->getID())
+            {
+                $Alliance = Alliance::add($victimDetails['factionName'],$victimDetails['factionID']);
+            }
+       } 
+       
+       else {
                $Alliance = Alliance::add("None");
        }
+      
+
 
        // get corp
        // if corp is not present, use faction
