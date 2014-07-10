@@ -390,7 +390,12 @@ class ZKBFetch
         $trust;
         $killId;
         $timestamp = str_replace('.', '-', $killData->killTime);
-
+        
+        if(is_null($this->lastKillTimestamp) || $this->lastKillTimestamp < strtotime($timestamp))
+        {
+            $this->lastKillTimestamp = strtotime($timestamp);
+        }
+        
         // Check hashes.
         $hash = self::hashMail($killData);
 
@@ -508,7 +513,17 @@ class ZKBFetch
             $this->skipped[] = $killData->killID;
             throw $e;
         }
-        $killId = $Kill->add();
+        
+        try
+        {
+            $killId = $Kill->add();
+        }
+        
+        catch(KillException $e)
+        {
+            $this->skipped[] = $killData->killID;
+            throw new ZKBFetchException($e->getMessage().", KillID = ".$killData->killID);
+        }
         
         if($killId > 0)
         {
@@ -528,11 +543,7 @@ class ZKBFetch
         {
             $this->skipped[] = $killData->killID;
         }
-        
-        if(is_null($this->lastKillTimestamp) || $this->lastKillTimestamp < strtotime($timestamp))
-        {
-            $this->lastKillTimestamp = strtotime($timestamp);
-        }
+
     }
     
     
@@ -564,6 +575,7 @@ class ZKBFetch
        {
             // first check for alliance by external ID
             $Alliance = new Alliance($victimDetails['allianceID'], TRUE);
+            // fallback
             if(!$Alliance->getID())
             {
                 $Alliance = Alliance::add($victimDetails['allianceName'], $victimDetails['allianceID']);
@@ -575,6 +587,7 @@ class ZKBFetch
             $Alliance = new Alliance($victimDetails['factionID'], TRUE);
             if(!$Alliance->getID())
             {
+                // fallback
                 $Alliance = Alliance::add($victimDetails['factionName'],$victimDetails['factionID']);
             }
        } 
@@ -678,12 +691,22 @@ class ZKBFetch
            $Alliance = Alliance::add("None");
            if ($involvedParty['allianceID'] > 0) 
            {
-                   $Alliance = Alliance::add($involvedParty['allianceName'], $involvedParty['allianceID']);
+                $Alliance = new Alliance($involvedParty['allianceID'], TRUE);
+                // fallback
+                if(!$Alliance->getID())
+                {
+                    $Alliance = Alliance::add($involvedParty['allianceName'], $involvedParty['allianceID']);
+                }
+                
            }
            // only use faction as alliance if no corporation is given (faction NPC)
            else if ($involvedParty['factionID'] > 0 && strlen($involvedParty['corporationName']) > 0) 
            {		
+               $Alliance = new Alliance($involvedParty['factionID'], TRUE); 
+               if(!$Alliance->getID())
+               {
                    $Alliance = Alliance::add($involvedParty['factionName'], $involvedParty['factionID']);
+               }
            }           
 
            // get corp

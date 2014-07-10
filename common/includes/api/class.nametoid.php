@@ -34,7 +34,7 @@ class API_NametoID extends API
 
 		$data = $this->CallAPI( "eve", "CharacterID", array( "names" => $this->API_Names_ ) , null, null );
 
-		if($data == false) return "Error fetching names";
+		if($data == false) return "Error fetching IDs";
 
 		foreach($data->characters as $character) {
 			$this->NameData_[] = array(

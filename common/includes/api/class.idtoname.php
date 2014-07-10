@@ -6,25 +6,15 @@
  * @package EDK
  */
 
+require_once("class.api.php");
 // **********************************************************************************************************************************************
 // ****************                                   API ID -> Name Conversion /eve/CharacterID.xml.aspx 	                     ****************
 // **********************************************************************************************************************************************
-class API_IDtoName
+class API_IDtoName  extends API
 {
-	private $CachedUntil_ = '';
-	private $CurrentTime_ = '';
+
 	private $API_IDs_ = '';
-	private $NameData_ = array();
-
-	public function getCachedUntil()
-	{
-		return $this->CachedUntil_;
-	}
-
-	public function getCurrentTime()
-	{
-		return $this->CurrentTime_;
-	}
+	private $IDData_ = array();
 
 	public function setIDs($IDs)
 	{
@@ -32,48 +22,29 @@ class API_IDtoName
 	}
 	public function getIDData()
 	{
-		return $this->NameData_;
+		return $this->IDData_;
 	}
 
 	public function clear()
 	{
-		$this->NameData_ = array();
-		unset($this->NameData_);
+		$this->IDData_ = array();
+		unset($this->IDData_);
 	}
 
 	public function fetchXML()
 	{
-		if ($this->API_IDs_ != "") $data = $this->loaddata($this->API_IDs_);
-		else return "No IDs have been input.";
+		if ($this->API_IDs_ == "")
+                    return "No IDs have been input.";
 
-		if(!$data) return "Error fetching IDs";
+                $data = $this->CallAPI( "eve", "CharacterName", array( "ids" => $this->API_IDs_ ) , null, null );
+                
+		if($data == false) return "Error fetching Names";
 
-		$sxe = @simplexml_load_string($data);
-
-		if(!$sxe)
-		{
-			 trigger_error("Error retrieving API XML", E_USER_WARNING);
-			 return "Error retrieving API XML";
-		}
-		if(strval($sxe->error)) return strval("Error code ".$sxe->error['code'].": ".$sxe->error);
-
-		foreach($sxe->result->rowset->row as $row)
-			$this->NameData_[] = array('name'=>strval($row['name']),
-				'characterID'=>intval($row['characterID']));
-		
-		$this->CurrentTime_ = strval($sxe->currentTime);
-		$this->CachedUntil_ = strval($sxe->cachedUntil);
-
+		foreach($data->characters as $character) {
+			$this->IDData_[] = array(
+                            'name'=>strval($character->name),
+                            'characterID'=>intval($character->characterID));
+                }
 		return "";
-	}
-
-	private function loaddata($ids)
-    {
-        $url = API_SERVER."/eve/CharacterName.xml.aspx";
-		$http = new http_request($url);
-		$http->set_useragent("PHPApi");
-		$http->set_postform("ids", $ids);
-
-		return $http->get_content();
 	}
 }

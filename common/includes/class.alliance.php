@@ -353,15 +353,17 @@ class Alliance extends Entity
 		$myID = new API_IDtoName();
 		$myID->setIDs($this->externalid);
 		$myID->fetchXML();
-		if ($myID != "") {
-			return false;
-		}
 		$myNames = $myID->getIDData();
-
+                
+                if(!isset($myNames[0]['name']))
+                {
+                    return false;
+                }
 		// Use ::add to make sure names are updated in the db and clashes are fixed.
 		$alliance = Alliance::add($myNames[0]['name'],
 						(int) $myNames[0]['characterID']);
 		$this->name = $alliance->name;
+                $this->id = $alliance->getID();
 	}
 
 	/**
