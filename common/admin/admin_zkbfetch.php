@@ -112,6 +112,9 @@ if ($_POST['submit'] || $_POST['fetch'])
     
 }
 
+// update fetch configs again, since we could have deleted some above
+$fetchConfigs = ZKBFetch::getAll();
+
 // building the request query and fetching of the feeds
 if ($_POST['fetch'])
 {
