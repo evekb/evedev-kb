@@ -37,7 +37,6 @@ require_once('kbconfig.php');
 require_once('globals.php');
 $config = new Config(KB_SITE);
 
-$feeds = config::get("fetch_idfeeds");
 $fetchConfigs = ZKBFetch::getAll();
 $html = '';
 
