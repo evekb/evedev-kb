@@ -486,17 +486,24 @@ class Pilot extends Entity
 		}
 			$apiInfo = new API_CharacterInfo();
 			$apiInfo->setID($this->externalid);
-			$result .= $apiInfo->fetchXML();
+			$result = $apiInfo->fetchXML();
 
 			if($result == "") {
 				$data = $apiInfo->getData();
-				$this->alliance = Alliance::add($data['alliance'],
-					$data['allianceID']);
+				if(isset($data['alliance']) && isset($data['allianceID']))
+                                {
+                                    $this->alliance = Alliance::add($data['alliance'], $data['allianceID']);
+                                }
+                                else {
+                                    $this->alliance = Alliance::add('None');
+                                }
+                                
 				$this->corp = Corporation::add($data['corporation'],
 					$this->alliance, $apiInfo->getCurrentTime(),
 					$data['corporationID']);
 				$this->name = $data['characterName'];
-				Pilot::add($data['characterName'], $this->corp, $apiInfo->getCurrentTime(), $data['characterID']);
+				$Pilot = Pilot::add($data['characterName'], $this->corp, $apiInfo->getCurrentTime(), $data['characterID']);
+                                $this->id = $Pilot->getID();
 			} else {
 				return false;
 			}

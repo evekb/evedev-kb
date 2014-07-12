@@ -6,27 +6,16 @@
  * @package EDK
  */
 
+require_once("class.api.php");
 /**
  * Retrieve Character Info from CCP API
  * @package EDK
  */
-class API_CharacterInfo
+class API_CharacterInfo extends API
 {
-	private $CachedUntil = '';
-	private $CurrentTime = '';
 	private $API_ID = '';
 	private $data = array();
-	private $error = false;
-
-	public function getCachedUntil()
-	{
-		return $this->CachedUntil;
-	}
-
-	public function getCurrentTime()
-	{
-		return $this->CurrentTime;
-	}
+        private $currentTime;
 
 	public function setID($ID)
 	{
@@ -42,50 +31,27 @@ class API_CharacterInfo
 		$this->data = array();
 		unset($this->data);
 	}
+        
+        public function getCurrentTime()
+        {
+            return $this->currentTime;
+        }
 
 	public function fetchXML()
 	{
-		if ($this->API_ID != "") $data = $this->loaddata($this->API_ID);
-		else return "No IDs have been input.";
+		if ($this->API_ID == "")
+                    return "No IDs have been input.";
 
-		if(!$data) return "Error fetching IDs";
+                
+                $data = $this->CallAPI( "eve", "CharacterInfo", array( "characterID" => urlencode($this->API_ID) ) , null, null );
+                
+                if($data == false) return "Error fetching IDs";
+                $this->currentTime = $data->currentTime;
+                $data = $data->toArray();
+                $this->data = $data['result'];	
+                
 
-		$sxe = @simplexml_load_string($data);
-		
-		if(!$sxe || strval($sxe->error))
-		{
-			if($sxe->error)
-			{
-				$this->error = array();
-				$this->error['code'] = strval($sxe->error['code']);
-				$this->error['message'] = strval($sxe->error);
-				return strval("Error code ".$sxe->error['code'].": ".$sxe->error);
-			}
-			return "Error connecting to API.";
-		}
-		foreach($sxe->result->children() as $a => $b) $this->data[strval($a)] = strval($b);
-		
-		$this->CurrentTime = strval($sxe->currentTime);
-		$this->CachedUntil = strval($sxe->cachedUntil);
 
 		return "";
-	}
-
-	private function loaddata($id)
-    {
-        $url = API_SERVER."/eve/CharacterInfo.xml.aspx?characterID=" . urlencode($id);
-
-		$http = new http_request($url);
-		$http->set_useragent("PHPApi");
-
-		return $http->get_content();
-	}
-	/**
-	 * Return any errors encountered or false if none.
-	 */
-	function getError()
-	{
-		return $this->error;
-
 	}
 }
