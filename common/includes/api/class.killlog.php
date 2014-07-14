@@ -109,8 +109,8 @@ class API_KillLog extends API
 										."0, "
 										."0, '"
 										."Error','"
-										."Cron Job','"
-										.$this->getError()."', "
+										."Cron Job',"
+										.$this->getError().", "
 										."UTC_TIMESTAMP() )");
 						$output .= "<div class='block-header2'>".$this->getMessage()
 										."</div>";
@@ -128,8 +128,8 @@ class API_KillLog extends API
 										."0 ,"
 										.(count($posted) + count($skipped)).",'"
 										."New XML','"
-										."Cron Job','"
-										.($this->getError() == 119 ? 0 : $this->getError())."', "
+										."Cron Job',"
+										.($this->getError() == 119 ? 0 : $this->getError()).", "
 										."UTC_TIMESTAMP() )");
 
 						break;
@@ -159,8 +159,8 @@ class API_KillLog extends API
                                                                     ."0 ,"
                                                                     .(count($posted) + count($skipped)).",'"
                                                                     ."New XML','"
-                                                                    ."Cron Job','
-                                                                    0', 
+                                                                    ."Cron Job',
+                                                                    0, 
                                                                     UTC_TIMESTAMP() )");
                                 }
 
