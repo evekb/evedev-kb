@@ -7,7 +7,7 @@
  * @package EDK
  */
 if (!defined('LATEST_DB_UPDATE')) {
-	define('LATEST_DB_UPDATE', "032");
+	define('LATEST_DB_UPDATE', "033");
 }
 
 define('KB_CACHEDIR', 'cache');
@@ -21,10 +21,10 @@ define('IMG_SERVER', "image.eveonline.com");
 
 // current version: major.minor.sub.ccpDBupdateNo
 // even numbers for minor = development version
-define('KB_VERSION', '4.2.1.0');
-define('KB_RELEASE', '(Kronos 1.0)');
+define('KB_VERSION', '4.2.2.0');
+define('KB_RELEASE', '(Crius 1.0)');
 define('KB_CCP_DB_VERSION', '98431');
-define('KB_CCP_DB_DATE', 'May 30, 2014');
+define('KB_CCP_DB_DATE', 'Jul 19, 2014');
 define('ID_FEED_VERSION', 1.20);
 define('ZKB_FETCH_VERSION', 1.0);
 define('KB_APIKEY_LEGACY', 1);
