@@ -32,10 +32,22 @@ $timeStarted = microtime(true);
 
 // determine the request scheme
 $requestScheme = "http";
-if($_SERVER && isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] != 'off' || $_SERVER['HTTPS'] != ''))
+if (isset($_SERVER['HTTPS'])) 
+{
+    // Set to a non-empty value if the script was queried through the HTTPS protocol. 
+    // ISAPI with IIS sets the value to "off", if the request was not madet throught the HTTPS protocol
+    if (!empty($_SERVER['HTTPS']) && 'off' != strtolower($_SERVER['HTTPS']) && '' != trim($_SERVER['HTTPS']))
+    {
+        $requestScheme = "https";
+    }
+} 
+
+// fallback: check the server port
+elseif(isset($_SERVER['SERVER_PORT']) && ('443' == $_SERVER['SERVER_PORT'])) 
 {
     $requestScheme = "https";
 }
+
 $requestScheme .= "://";
 
 // If there is no config then redirect to the install folder.
