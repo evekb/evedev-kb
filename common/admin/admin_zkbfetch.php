@@ -30,6 +30,7 @@ if($_POST['add'])
             $newFetchUrl .= '/';
         }
         $newFetchTimestamp = trim($_POST['newFetchTimestamp']);
+        $newFetchTimestamp = strtotime($newFetchTimestamp);
 
         $NewZKBFetch = new ZKBFetch();
         $NewZKBFetch->setUrl($newFetchUrl);
