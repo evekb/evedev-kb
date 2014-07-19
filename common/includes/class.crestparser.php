@@ -524,7 +524,7 @@ class CrestParser
                     // create new corp
                     if(!$Corp)
                     {
-                        Corporation::add(strval($involvedParty['corporationName']), $Alliance, $timestamp, (int)$involvedParty['corporationID']);
+                        $Corp = Corporation::add(strval($involvedParty['corporationName']), $Alliance, $timestamp, (int)$involvedParty['corporationID']);
                     }
                 }   
 
@@ -535,7 +535,7 @@ class CrestParser
                     // create new corp
                     if(!$Corp)
                     {
-                        $Corp= Corporation::add(strval($involvedParty['factionName']), $Alliance, $timestamp, (int)$involvedParty['factionID']);
+                        $Corp = Corporation::add(strval($involvedParty['factionName']), $Alliance, $timestamp, (int)$involvedParty['factionID']);
                     }
                 }
                 
