@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <kb3>
   <name>kb3_moons</name>
-  <rows>232767</rows>
+  <rows>342170</rows>
   <structure>CREATE TABLE `kb3_moons` (
   `itemID` int(11) NOT NULL,
   `itemName` varchar(127) NOT NULL,
   PRIMARY KEY (`itemID`),
   KEY `itemName` (`itemName`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;</structure>
+) ENGINE=MyISAM DEFAULT CHARSET=utf8</structure>
 </kb3>
