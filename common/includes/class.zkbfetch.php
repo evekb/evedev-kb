@@ -557,7 +557,7 @@ class ZKBFetch
    protected function processVictim(&$Kill, $killData)
    {
        $victimDetails = self::getVictim($killData);
-       $timestamp = $this->killTime;
+       $timestamp = $killData->killTime;
 
        // If we have a character ID but no name then we give up - the needed
        // info is gone.
@@ -956,7 +956,7 @@ class ZKBFetch
         }
 
         // was it a pos structure?
-        else if($victim["moondID"] != 0)
+        else if($victim["moonID"] != 0)
         {
             $moonName = API_Helpers::getMoonName($victim["moonID"]);
             // cut off the first two characters (again, to keep compatibility with legacy parser killmails)
