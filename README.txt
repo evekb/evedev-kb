@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.0.0
+Eve Development Network Killboard v4.2.2.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -24,6 +24,32 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
+v4.2.2.0
+
+Features:
+Support fetching kills from zKillboard
+Show DNA ship fitting for kills in IGB
+Expose a kill's CREST link
+Updated CCP DB to Crius 1.0 (100038)
+
+Enhancements:
+Added parsing of showinfo-links in corp descriptions
+Determine Alliance of involved structure more reliably
+
+Bugfixes:
+Fix: getting a corp with better performance for CREST mails
+Fix: Improved HTTPS detection
+Fix: Fixed error when logging to kb3_apilog in some environments
+Fix: Fetching a Pilot from API
+Corrected API server URL in constants.php
+Fix: Remove size attributes from Corp descriptions
+Fix: MySQL version to check fails with server versions > 9
+Fix: Added exit() after setting header for reloading page
+Fix: Add corps as additional board owners
+Fix: Distinguishing API from IDFeed in IDFeed class
+Fix: CrestParser exception handling compatibility
+Fix: Exception handling in CrestParser
+-------------------------------------------
 v4.2.1.0
 
 Enhancements:
