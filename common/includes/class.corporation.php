@@ -290,7 +290,7 @@ class Corporation extends Entity
 								$timestamp."','%Y.%m.%d %H:%i:%s') ".
 								"where crp_id = ".$crp->id;
 				$qry->execute($sql);
-				$crp->alliance = $alliance;
+				$crp->alliance = $alliance->getID();
 			}
 			if (!$crp->externalid && $externalid) {
 				$crp->setExternalID((int)$externalid);
