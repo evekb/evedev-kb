@@ -354,6 +354,8 @@ class ZKBFetch
         {
             //throw new ZKBFetchException("Empty result returned by API ".$this->fetchUrl);
             // this is a valid case
+            // set rawData to an empty array, so the loop doesn't complain
+            $this->rawData = array();
         }
         
         // loop over all kills
