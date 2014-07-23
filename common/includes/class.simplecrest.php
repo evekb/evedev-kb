@@ -139,7 +139,7 @@ class SimpleCrest
     {
         // build header
         $header = 'Accept-language: en\r\n';
-        $header .= "User-Agent: ".self::USER_AGENT."\r\n";
+        $header .= "User-Agent: ".self::$USER_AGENT."\r\n";
         
         $opts = array(
             'http' => array(
