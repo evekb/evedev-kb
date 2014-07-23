@@ -123,7 +123,7 @@ class SimpleCrest
         // curl errors
         if($errorNumber)
         {
-            throw new Exception('Error getting data: '.$error.'('.$errno.')');
+            throw new Exception('Error getting data: '.$error.'('.$errorNumber.')');
         }
         
         return $result;
