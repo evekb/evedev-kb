@@ -130,7 +130,7 @@ class SimpleCrest
     }
     
     
-    /**
+     /**
      * gets data from CREST using the given url and
      * file_get_contents
      * @param String $url the CREST url to fetch data from
@@ -155,19 +155,51 @@ class SimpleCrest
         $opts['http']['header'] = $header;
         
         $context = stream_context_create($opts);
-
+        $headers = @get_headers($url, 1);
         if (false === ($data = @file_get_contents($url, false, $context))) {
 
-            if (false === $headers = (@get_headers($url, 1))) {
+            if (false === $headers) {
                 throw new \Exception("could not connect to api");
             }
 
             throw new \Exception("an error occurred with the http request: ".$headers[0]);
-        } else 
+        } 
+		
+        else 
+        {
+            if(isset($headers['Transfer-Encoding']) && $headers['Transfer-Encoding'] == "chunked")
             {
-            return $data;
+                // fix: some PHP versions don't automatically decode chunked http streams
+                $decoded = self::decode_chunked($data);
+                if(trim($decoded) == "")
+                {
+                    return $data;
+                }
+
+                else
+                {
+                    return $decoded;
+                }
+            }
+
+            else
+            {
+                    return $data;
+            }
+				
         }
         
         return null;
+    }
+	
+    public static function decode_chunked($str) 
+    {
+      for ($res = ''; !empty($str); $str = trim($str)) {
+            $pos = strpos($str, "\r\n");
+            $len = hexdec(substr($str, 0, $pos));
+            $res.= substr($str, $pos + 2, $len);
+            $str = substr($str, $pos + 2 + $len);
+      }
+      return $res;
     }
 }
