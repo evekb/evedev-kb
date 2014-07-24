@@ -175,7 +175,7 @@ function getZKBApi(&$fetchConfig)
         try
         {
             $fetchConfig->setMaxNumberOfKillsPerCycle(config::get('maxNumberOfKillsPerCycle'));
-            $fetchConfig->setIgnoreNpcOnlyKills(config::get('post_no_npc_only_zkb'));
+            $fetchConfig->setIgnoreNpcOnlyKills((boolean)(config::get('post_no_npc_only_zkb')));
             $fetchConfig->processApi();
             $html .= "ZKBApi: ".$fetchConfig->getUrl()."<br />\n";
             $html .= count($fetchConfig->getPosted())." kills were posted and ".
