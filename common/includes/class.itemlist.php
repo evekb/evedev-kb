@@ -111,15 +111,13 @@ class ItemList
 					."and itd_kll_id in ("
 					.implode(',', $this->destroyedIDarray).") "
 					."left join kb3_item_locations itl "
-					."on (itd.itd_itl_id = itl.itl_flagID "
-					."or (itd.itd_itl_id = 0 and itl.itl_flagID = 1))";
+					."on (itd.itd_itl_id = itl.itl_flagID )";
 		} else if (count($this->droppedIDarray)) {
 			$sql .= "join kb3_items_dropped itd "
 					."on inv.typeID = itd_itm_id and itd_kll_id in ("
 					.implode(',', $this->droppedIDarray).") "
 					."left join kb3_item_locations itl "
-					."on (itd.itd_itl_id = itl.itl_flagID "
-					."or (itd.itd_itl_id = 0 and itl.itl_flagID = 1)) ";
+					."on (itd.itd_itl_id = itl.itl_flagID ) ";
 		} else {
 			$sql .= "where inv.typeID in (".implode(',', $this->itemarray).") ";
 		}
