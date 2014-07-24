@@ -20,7 +20,7 @@ if(file_exists(getcwd().'/cron_zkb.php')) {
 	// current working directory minus last 5 letters of string ("/cron")
 	$KB_HOME = preg_replace('/[\/\\\\]cron$/', '', getcwd());
 } else if(file_exists(__FILE__)) {
-	$KB_HOME = preg_replace('/[\/\\\\]cron[\/\\\\]cron_feed\.php$/', '', __FILE__);
+	$KB_HOME = preg_replace('/[\/\\\\]cron[\/\\\\]cron_zkb\.php$/', '', __FILE__);
 } else {
 	echo "Set \$KB_HOME to the killboard root in cron/cron_zkb\.php.";
 	die;
