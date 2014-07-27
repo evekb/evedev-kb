@@ -20,6 +20,7 @@ cache/SQL/
 cache/pheal/
 !cache/pheal/.htaccess
 cache/error.log
+cache/killadded.mk
 cache/evecentral/
 cache/img
 cache/update
@@ -38,3 +39,21 @@ cache/pheal_error.log
 # IIS7 
 web.config
 
+# Untrack custom mods
+mods/
+!mods/ajcron/
+!mods/forum_post/
+!mods/known_members/
+!mods/mail_editor/
+!mods/mail_forward/
+!mods/rss_feed/
+!mods/signature_generator/
+!mods/.htaccess
+!mods/index.php
+
+# Untrack custom themes
+themes/
+!themes/default/
+!themes/xhtml/
+!themes/generic.js
+!themes/genericfitting.css

@@ -385,6 +385,15 @@ class ZKBFetch
     {
         $qry = DBFactory::getDBQuery();
 
+        // Check for duplicate by external ID
+        $qry->execute('SELECT kll_id FROM kb3_kills WHERE kll_external_id = '.$killData->killID);
+        if($qry->recordCount())
+        {
+            // kill is already known
+            $this->skipped[] = $killData->killID;
+            return;
+        }
+
         // Check hashes with a prepared query.
         // Make it static so we can reuse the same query for feed fetches.
         $checkHash;
@@ -448,15 +457,6 @@ class ZKBFetch
             }
             return;
         }	
-        
-        // Check for duplicate by external ID
-        $qry->execute('SELECT kll_id FROM kb3_kills WHERE kll_external_id = '.$killData->killID);
-        if($qry->recordCount())
-        {
-            // kill is already known
-            $this->skipped[] = $killData->killID;
-            return;
-        }
 
         $this->hash = $hash;
 
