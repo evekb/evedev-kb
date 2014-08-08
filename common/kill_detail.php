@@ -1397,7 +1397,13 @@ class pKillDetail extends pageAssembly
 				"sndReq('".edkURI::page(
 						'kill_mail', $this->kill->getID(), 'kll_id')
 				."');ReverseContentDisplay('popup')");
-
+                // expose CREST url (if kill was posted via CREST)
+                $crestUrl = $this->kill->getCrestUrl();
+                if(!is_null($crestUrl))
+                {
+                    $this->addMenuItem("link", "CREST Link", $crestUrl);
+                }
+                
 		if (config::get('kd_EFT')) {
 			$this->addMenuItem("link", "EFT Fitting", edkURI::page(
 					'eft_fitting', $this->kill->getID(), 'kll_id'), 0, 0,
