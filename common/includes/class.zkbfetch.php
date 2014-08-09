@@ -153,7 +153,7 @@ class ZKBFetch
     {
         $resultObjects = array();
         
-        $qry = DBFactory::getDBQuery();
+        $qry = DBFactory::getDBQuery(true);
         $qry->execute('SELECT fetchID FROM kb3_zkbfetch ORDER BY fetchID ASC');
         while($result = $qry->getRow())
         {
