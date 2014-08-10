@@ -436,7 +436,7 @@ class ZKBFetch
             {
                 $this->skipped[] = $killData->killID;
                 throw new ZKBFetchException("Kill ".$killData->killID." has been deleted. KillID was "
-                                    .$this->getDupeID(), -4);
+                                    .$dupeid, -4);
             }
             // kill is already known
             $this->skipped[] = $killData->killID;
