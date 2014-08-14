@@ -1940,14 +1940,16 @@ class Kill extends Cacheable
             
             // prepare the victim's characterID
             $victimCharacterId = $victimPilot->getExternalID();
-            if(!$victimCharacterId)
+            // make sure this is actually a real character ID; mustn be NULL, mustn't be less than 100M
+            if(!$victimCharacterId || $victimCharacterId < 100000000)
             {
                 $victimCharacterId = "None";
             }
             
             // prepare the final blow pilot's characterID
             $finalBlowCharacterId = $finalBlowPilot->getExternalID();
-            if(!$finalBlowCharacterId)
+            // make sure this is actually a real character ID; mustn be NULL, mustn't be less than 100M
+            if(!$finalBlowCharacterId || $finalBlowCharacterId < 100000000)
             {
                 $finalBlowCharacterId = "None";
             }
