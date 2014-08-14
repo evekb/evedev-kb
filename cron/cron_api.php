@@ -61,7 +61,10 @@ if (!$dir = config::get('cache_dir'))
 {
     $dir = 'cache/data';
 }
-define('KB_CACHEDIR', $dir);
+if(!defined('KB_CACHEDIR'))
+{
+    define('KB_CACHEDIR', $dir);
+}
 
 $outhead = "Running API Import on " . gmdate("M d Y H:i") . "\n\n";
 $html = '';
@@ -78,7 +81,6 @@ while ($row = $qry->getRow()) {
 	}
 	$html .= "Importing Mails for " . $row['key_name'] . "<br />";
 	$html .= $myEveAPI->Import($row['key_name'], $row['key_id'], $row['key_key'], $row['key_flags']);
-	$apicachetime[$i] = $myEveAPI->CachedUntil_;
 }
 $html .= "Time taken = ".(microtime(true) - $cronStartTime)." seconds.";
 
