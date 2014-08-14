@@ -1593,6 +1593,12 @@ class Kill extends Cacheable
 		}
 		if($notfirstitd &&!$qry->execute($itdsql))
 			return $this->rollback($qry);
+                
+                // try calculate CREST hash
+                if(!$this->crestHash)
+                {
+                    $this->crestHash = $this->calculateCrestHash();
+                }
 
 		$sql = "INSERT INTO kb3_mails (  `kll_id`, `kll_timestamp`, `kll_external_id`, `kll_hash`, `kll_trust`, `kll_modified_time`, `kll_crest_hash`)".
 			"VALUES(".$this->getID().", '".$this->getTimeStamp()."', ";
@@ -1809,9 +1815,28 @@ class Kill extends Cacheable
                     if($qry->recordCount())
                     {
                         $qry->fetch();
-                        $this->putCache();
                     }
-		}
+                }
+                
+                // kill has not been posted via CREST
+                if(!$this->crestHash)
+                {
+                     // calculate the crest hash
+                    $this->crestHash = $this->calculateCrestHash();
+                    // if successfully calculated
+                    if($this->crestHash)
+                    {
+                        // update the crest hash in the database
+                        // let's not do this just yet, first need to be sure it's working properly
+                        //$this->updateCrestHash($this->crestHash);
+                    }
+                }
+                
+                if($this->crestHash)
+                {
+                    $this->putCache();
+                }
+		
 		return $this->crestHash;
 	}
         
@@ -1855,11 +1880,13 @@ class Kill extends Cacheable
                 
 		$qry = new DBPreparedQuery();
                 $qry->prepare('UPDATE kb3_mails SET kll_crest_hash = ? WHERE kll_id = ?');
-                $qry->bind_param(array(
+                $params = array(
                     'si',
                     &$crestHash,
                     &$this->id
-                ));
+                );
+                
+                $qry->bind_params($params);
                 
 		if(@$qry->execute())
                 {
@@ -1867,6 +1894,72 @@ class Kill extends Cacheable
                     $this->putCache();
                 }
 	}
+        
+        /**
+         * tries to calculate the CREST hash using the external
+         * ID and some specific kill information
+         */
+        public function calculateCrestHash()
+        {
+            // we need the external kill ID
+            if(!$this->getExternalID())
+            {
+                return NULL;
+            }
+            $finalBlowPilotId = $this->getFBPilotID();
+            $finalBlowPilot = Pilot::getByID($finalBlowPilotId);
+            $victimPilot = $this->getVictim();
+            $victimShip = $this->getVictimShip();
+            $time = $this->getTimeStamp();
+            
+            // check for timestmap existance
+            $defaultTimezone = date_default_timezone_get();
+            // set UTC as default timezone
+            date_default_timezone_set('UTC');
+            $timestamp = strtotime($time);
+            // restore default timezone
+            date_default_timezone_set($defaultTimezone);
+            if($timestamp === FALSE || $timestamp < 0)
+            {
+                return NULL;
+            }
+            
+            
+            // check final blow pilot, victim pilot and victim ship
+            if(!$finalBlowPilot || !$victimPilot || !$victimShip)
+            {
+                return NULL;
+            }
+            
+            // prepare the ship type ID
+            $shipTypeID = $victimShip->getID();
+            if(!$shipTypeID)
+            {
+                return NULL;
+            }
+            
+            // prepare the victim's characterID
+            $victimCharacterId = $victimPilot->getExternalID();
+            if(!$victimCharacterId)
+            {
+                $victimCharacterId = "None";
+            }
+            
+            // prepare the final blow pilot's characterID
+            $finalBlowCharacterId = $finalBlowPilot->getExternalID();
+            if(!$finalBlowCharacterId)
+            {
+                $finalBlowCharacterId = "None";
+            }
+            
+            // prepare the timestamp
+            // this should be (unixtime * 10000000) + 116444736000000000 
+            // but let's cut some zeros in order to support 32bit systems
+            $timestamp = $timestamp  + 1644473600;
+            $timestamp = '1'.$timestamp.'0000000';
+            
+            return sha1($victimCharacterId . $finalBlowCharacterId . $shipTypeID . $timestamp);
+        }
         
 	/**
 	 * Compares two InvolvedParty objects for sorting by damage then name.
