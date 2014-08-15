@@ -59,7 +59,7 @@ class imageURL
 			$url = KB_HOST."/thumb.php";
 		} else {
 			$ccp = true;
-			$url = "http://".IMG_SERVER;
+			$url = IMG_SERVER;
 		}
 
 		if ($ccp || config::get('cfg_pathinfo')) {

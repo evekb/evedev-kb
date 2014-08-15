@@ -17,7 +17,7 @@ define('KB_QUERYCACHEDIR', KB_CACHEDIR.'/SQL');
 define('KB_UPDATE_URL', 'http://evekb.org/downloads');
 define('API_SERVER', "https://api.eveonline.com");
 //define('API_SERVER', "https://apitest.eveonline.com");
-define('IMG_SERVER', "image.eveonline.com");
+define('IMG_SERVER', "https://image.eveonline.com");
 
 // current version: major.minor.sub.ccpDBupdateNo
 // even numbers for minor = development version
