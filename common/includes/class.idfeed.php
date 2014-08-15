@@ -1052,7 +1052,38 @@ class IDFeed
 			$row->addAttribute('killInternalID', intval($kill->getID()));
 			$row->addAttribute('solarSystemID', $kill->getSystem()->getExternalID());
 			$row->addAttribute('killTime', $kill->getTimeStamp());
-			$row->addAttribute('moonID', '0');
+                        // check for POS structure
+                        if(in_array($kill->getVictimShip()->getClass()->getID() , array(35, 36, 37, 38)))
+                        {
+                            // try to extract a moon ID from name 
+                            $victimName = $kill->getVictimName();
+                            if(substr_count($victimName, " - ") > 1)
+                            {
+                                $moonName = substr($victimName, strpos($victimName, " - ") + 3);
+                            }
+                            
+                            else
+                            {
+                                $moonName = $victimName;
+                            }
+                            $moonId = API_Helpers::getMoonID($moonName);
+                            if($moonId)
+                            {
+                                $row->addAttribute('moonID', $moonId);
+                            }
+                            
+                            else
+                            {
+                                $row->addAttribute('moonID', '0');
+                            }
+                        }
+                        
+                        else
+                        {
+                            $row->addAttribute('moonID', '0');
+                        }
+                            
+			
 			$row->addAttribute('hash', bin2hex($kill->getHash()));
 			$row->addAttribute('trust', $kill->getTrust());
 			$victim = Pilot::getByID($kill->getVictimID());
