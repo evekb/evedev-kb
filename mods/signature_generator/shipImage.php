@@ -54,7 +54,7 @@ class shipImage
 	 */
 	private static function fetchImage($id, $size = 64)
 	{
-		$url = 'http://'.IMG_SERVER."/"."InventoryType"."/".$id."_".$size.".png";
+		$url = IMG_SERVER."/"."InventoryType"."/".$id."_".$size.".png";
 		if(function_exists('curl_init'))
 		{
 			// in case of a dead eve server we only want to wait 2 seconds
@@ -63,6 +63,11 @@ class shipImage
 			curl_setopt($ch, CURLOPT_URL, $url);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+                        // ignore ssl peer verification
+                        if(substr($url,0,5) == "https")
+                        {
+                            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+                        }
 			$file = curl_exec($ch);
 			//list($header, $file) = explode("\n\n", $file, 2);
 			$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);

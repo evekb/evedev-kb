@@ -281,7 +281,7 @@ class thumb
 		else $ext = 'png';
 
 		if($type != 'Character' && $type != 'Corporation' && $type != 'Alliance') return false;
-		$url = "http://".IMG_SERVER."/".$type."/".$this->id."_".$size.".".$ext;
+		$url = IMG_SERVER."/".$type."/".$this->id."_".$size.".".$ext;
 		if (function_exists('curl_init'))
 		{
 			// in case of a dead eve server we only want to wait 2 seconds
@@ -290,6 +290,11 @@ class thumb
 			curl_setopt($ch, CURLOPT_URL, $url);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, 2);
+                        // ignore ssl peer verification
+                        if(substr($url,0,5) == "https")
+                        {
+                            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+                        }
 			// CURLOPT_FOLLOWLOCATION doesn't work if safe mode or open_basedir is set
 			
 			// For pilots we should try from oldportraits.eveonline.com if the main server doesn't have them.
@@ -303,13 +308,7 @@ class thumb
 			{
 				if($type == 'Character')
 				{
-					$url = "http://oldportraits.eveonline.com/".$type."/".$this->id."_".$size.".".$ext;
-					curl_setopt($ch, CURLOPT_URL, $url);
-					curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-					$file = curl_exec($ch);
-					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-					if($http_code != 200)
-						$file = file_get_contents("img/1_$size.jpg");
+                                        $file = file_get_contents("img/1_$size.jpg");
 				}
 				else if($type == 'Alliance')
 					$file = file_get_contents("img/alliances/default.png");
@@ -331,12 +330,7 @@ class thumb
 			{
 				if($type == 'Character')
 				{
-					$url = "http://oldportraits.eveonline.com/".$type."/".$this->id."_".$size.".".$ext;
-					$http = new http_request($url);
-					$file = $http->get_content();
-					$http_code = $http->get_http_code();
-					if($http_code != 200)
-						$file = file_get_contents("img/1_$size.jpg");
+					$file = file_get_contents("img/1_$size.jpg");
 				}
 				else if($type == 'Alliance')
 					$file = file_get_contents("img/alliances/default.png");
