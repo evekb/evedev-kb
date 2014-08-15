@@ -15,7 +15,7 @@
  */
 class CacheHandlerHashedMem extends CacheHandlerHashed
 {
-	private static $maxage = 0;
+	private static $maxage = 43200;
 	
 	/**
 	 * Add a file to the cache.

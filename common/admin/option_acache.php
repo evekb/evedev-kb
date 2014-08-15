@@ -32,6 +32,12 @@ options::cat('Advanced', 'Cache', 'Clear Caches');
 options::fadd('File Cache', 'none', 'custom', array('admin_acache', 'optionClearCaches'), array('admin_acache', 'clearCaches'));
 options::fadd('Kill Summary Cache', 'none', 'custom', array('admin_acache', 'optionClearSum'), array('admin_acache', 'clearSumCache'));
 
+global $mc;
+if(defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE == true && !is_null($mc) && method_exists('Memcache', 'flush'))
+{
+    options::fadd('MemCache', 'none', 'custom', array('admin_acache', 'optionFlushMemcached'), array('admin_acache', 'flushMemcached'));
+}
+
 class admin_acache
 {
     function getKillmails()
@@ -65,6 +71,10 @@ class admin_acache
 	{
 		return '<input type="checkbox" name="option_clear_sum" />Clear cache ?';
 	}
+        function optionFlushMemcached()
+	{
+		return '<input type="checkbox" name="option_flush_memcached" />Flush MemCache ?';
+	}
 	function clearCaches()
 	{
         if ($_POST['option_clear_caches'] == 'on') {
@@ -91,5 +101,15 @@ class admin_acache
 			CacheHandler::removeByAge('store', 0, true);
 			$_POST['option_clear_sum'] == 'off';
         }
+	}
+        function flushMemcached()
+	{
+            global $mc;
+            // Check for memcached
+            if(defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE == true && !is_null($mc) && method_exists('Memcache', 'flush'))
+            {
+                $mc->flush();
+            }
+            $_POST['option_flush_memcached'] = 'off';
 	}
 }
