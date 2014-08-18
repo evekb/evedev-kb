@@ -85,7 +85,7 @@ class role
 			{
 				// this indicates a hard role without a database entry
 				// generate an identification number
-				$id = abs(crc32($key));
+				$id = self::generateId($key);
 
 				// insert it into the database
 				$db = DBFactory::getDBQuery();;
@@ -94,4 +94,15 @@ class role
 		}
 		self::$roles['keys'][$key] = $data;
 	}
+        
+        private static function generateId($key)
+        {
+            $crc = crc32($key);
+            // check for 64ibt systems
+            if($crc & 0x80000000){
+                $crc ^= 0xffffffff;
+                $crc += 1;
+            }
+            return $crc;
+        }
 }
