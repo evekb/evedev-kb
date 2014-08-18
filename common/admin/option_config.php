@@ -482,7 +482,7 @@ class admin_config
 
 		if (isset($char_info[0]['characterID'])
 				&& strlen($char_info[0]['characterID']) > 0) {
-			$timestamp = gmdate('%Y.%m.%d %H:%i:%s', time());
+			$timestamp = gmdate('Y.m.d H:i:s', time());
 
 			if ($set == 'p') {
 				$all = Alliance::add('Unknown');
