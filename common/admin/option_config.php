@@ -127,7 +127,7 @@ class admin_config
 			//old PILOT_ID
 			$plt_id = intval($plt_id);
 
-			if ($plt_id > 100000000) { //external IDs are over 100 million
+			if ($plt_id > 90000000) { //external IDs are over 90 million
 				$qry->execute("SELECT `plt_name`, `plt_id` FROM `kb3_pilots`"
 						." WHERE `plt_externalid` = ".$plt_id);
 				if (!$qry->recordCount()) {
