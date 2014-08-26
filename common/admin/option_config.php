@@ -122,12 +122,12 @@ class admin_config
 		if (strlen(trim($plt_id == '')) > 0)
 			$plt_id = 0;
 
-		if ($numeric || $plt_id > 0) {
+		if ($numeric && $plt_id > 0) {
 			//second condition is for when nothing was posted and it uses the
 			//old PILOT_ID
 			$plt_id = intval($plt_id);
 
-			if ($plt_id > 90000000) { //external IDs are over 90 million
+			if ($plt_id > 90000000) { //external IDs are over 90 million for characters
 				$qry->execute("SELECT `plt_name`, `plt_id` FROM `kb3_pilots`"
 						." WHERE `plt_externalid` = ".$plt_id);
 				if (!$qry->recordCount()) {
@@ -213,12 +213,12 @@ class admin_config
 			$crp_id = 0;
 		}
 
-		if ($numeric || $crp_id > 0) {
+		if ($numeric && $crp_id > 0) {
 			//second condition is for when nothing was posted and it uses the
 			//old PILOT_ID
 			$crp_id = intval($crp_id);
 
-			if ($crp_id > 100000000) { //external IDs are over 100 million
+			if ($crp_id > 98000000) { //external IDs are over 98 million for corps
 				$qry->execute("SELECT `crp_name`, `crp_id` FROM `kb3_corps`"
 						." WHERE `crp_external_id` = ".$crp_id);
 				if (!$qry->recordCount()) {
@@ -307,9 +307,9 @@ class admin_config
 			$all_id = 0;
 		}
 
-		if ($numeric || $all_id > 0) {
+		if ($numeric && $all_id > 0) {
 			$all_id = intval($all_id);
-			if ($all_id > 100000000) { //external IDs are over 100 million
+			if ($all_id > 99000000) { //external IDs are over 99 million for alliances
 				$qry->execute("SELECT `all_name`, `all_id` FROM `kb3_alliances`"
 						." WHERE `all_external_id` = ".$all_id);
 				if (!$qry->recordCount()) {
