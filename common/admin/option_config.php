@@ -307,9 +307,9 @@ class admin_config
 			$all_id = 0;
 		}
 
-		if ($numeric || $all_id > 0) {
+		if ($numeric && $all_id > 0) {
 			$all_id = intval($all_id);
-			if ($all_id > 100000000) { //external IDs are over 100 million
+			if ($all_id > 90000000) { //external IDs are over 90 million
 				$qry->execute("SELECT `all_name`, `all_id` FROM `kb3_alliances`"
 						." WHERE `all_external_id` = ".$all_id);
 				if (!$qry->recordCount()) {
