@@ -846,6 +846,11 @@ class IDFeed
 			$charname = $weapon->getName();
 			$npc = true;
 			$charid = $weapon->getID();
+                        if(!$charname)
+                        {
+                            $this->parsemsg[] = "Involved party is an NPC with a ship type not found in the database!";
+                            return false;
+                        }
 		} else if ($charname == "" && $charid) {
 			// Bugged kill
 			$this->parsemsg[] = "Involved party has blank pilot name.";

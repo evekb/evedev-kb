@@ -581,6 +581,10 @@ class CrestParser
                         $Alliance = $Corp->getAlliance();
                         $Ship = Ship::lookup("Unknown");
                         $Weapon = Item::getByID($involvedParty['shipTypeID']);
+                        if(!$Weapon->getName())
+                        {
+                            throw new CrestParserException("Involved party is an NPC with a ship type not found in the database! Kill-ID: ".$killData->killID);
+                        }
                         $involvedPartyName = $Corp->getName().' - '.$Weapon->getName();
                         $isNPC = TRUE;
                         $involvedCharacterID = $Weapon->getID();
