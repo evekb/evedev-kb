@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.2.0
+Eve Development Network Killboard v4.2.3.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -24,6 +24,38 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
+v4.2.3.0
+
+Features:
+Updated CCP DB to Hyperion 1.0 (101505)
+
+Enhancements:
+Enhancements to Memcache caching
+Enhancement: Get images CCP image server via SSL
+Enhancement: Use correct moonID in IDFeed whenever possible
+Enhancement: Added CREST link generator
+Enhancement: Expose CREST url via kill details menu
+
+Bugfixes:
+Fix: Adding corps/alliances as owners by external ID
+Fix: SQL error when adding killboard owners in some environments
+Fix: Adding a pilot as killboard owner by external ID
+Fix: Handling of https scheme for image server URL
+Fix for the Fix for CREST hash generator with NPC deaths
+Fix for CREST hash generator with NPC deaths
+Fix: Fixed some warnings in API import cron job
+Fix: Fetching permanently deleted mails from zKB causes error
+Fix: Caching issue while listing zKB Fetch
+Fix: Items in "None" bay were doubled on display
+Fix: Ignore NPC only kills from zKB Fetch
+Fix: Fixed possible fatal error in cron_zkb in some environments
+Fix: Crest/zKB Fetcher and chunked responses
+Fix: Empty data set from zKB API causing a warning
+Fix: Fix for displaying the error code for Json Fetching errors
+Fix: Fixed typo and copy-paste error in zKB Fetcher
+Fix: CREST/zKB Fetcher with file HTTP method
+Fix: Alliance detection for involved structures
+-------------------------------------------
 v4.2.2.0
 
 Features:
