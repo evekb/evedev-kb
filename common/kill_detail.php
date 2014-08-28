@@ -1081,11 +1081,13 @@ class pKillDetail extends pageAssembly
                                     ) {
                                             $found = 0;
 
+                                            // Rapid Light Missile Lauchers use same ammo as Standard Missile Lauchers
                                             if ($group == 511) 
                                             {
                                                     $group = 509;
-                                            } // Assault Missile Lauchers uses same ammo as Standard Missile Lauchers
+                                            } 
                                             
+                                            // Rapid Heavy Missile Launchers use same ammo as Heavy Missile launchers
                                             else if($group == 1245)
                                             {
                                                 $group = 510;
