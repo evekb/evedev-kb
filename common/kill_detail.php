@@ -1081,9 +1081,15 @@ class pKillDetail extends pageAssembly
                                     ) {
                                             $found = 0;
 
-                                            if ($group == 511 || $group == 1245) {
+                                            if ($group == 511) 
+                                            {
                                                     $group = 509;
                                             } // Assault Missile Lauchers uses same ammo as Standard Missile Lauchers
+                                            
+                                            else if($group == 1245)
+                                            {
+                                                $group = 510;
+                                            }
 
                                             if (is_array($this->ammo_array[$i])) {
                                                     $j = 0;
