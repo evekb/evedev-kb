@@ -1149,10 +1149,10 @@ class pKillDetail extends pageAssembly
                                                 $group = 290;
                                             } 
                                             
-                                            // (Remote) Tracking Computers use the same ammo as Omnidirectional Tracking Links
-                                            else if ($group == 213 || $group == 209)
+                                            // Tracking Computers and Omnidirectional Tracking Links use the same ammo as (Remote)
+                                            else if ($group == 213 || $group == 646)
                                             {
-                                                $group = 646;
+                                                $group = 209;
                                             }
 
                                             if (is_array($this->ammo_array[$i])) {
