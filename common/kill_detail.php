@@ -1084,7 +1084,7 @@ class pKillDetail extends pageAssembly
                                             // Rapid Light Missile Lauchers use same ammo as Standard Missile Lauchers
                                             if ($group == 511) 
                                             {
-                                                    $group = 509;
+                                                $group = 509;
                                             } 
                                             
                                             // Rapid Heavy Missile Launchers use same ammo as Heavy Missile launchers
@@ -1142,6 +1142,18 @@ class pKillDetail extends pageAssembly
                                                     || $group == 646 // Omnidirectional Tracking Links
                                     ) {
                                             $found = 0;
+                                            
+                                            // Sensor Boosters use the same ammo as Remote Sensor Boosters
+                                            if ($group == 212) 
+                                            {
+                                                $group = 290;
+                                            } 
+                                            
+                                            // (Remote) Tracking Computers use the same ammo as Omnidirectional Tracking Links
+                                            else if ($group == 213 || $group == 209)
+                                            {
+                                                $group = 646;
+                                            }
 
                                             if (is_array($this->ammo_array[$i])) {
                                                     $j = 0;
