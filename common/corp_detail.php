@@ -275,7 +275,7 @@ class pCorpDetail extends pageAssembly
             // Corporation
             elseif($typeID == 2)
             {
-                return KB_HOST.'/?a=pilot_detail&plt_ext_id=';
+                return KB_HOST.'/?a=corp_detail&crp_ext_id=';
             }
             
             // Characters of various races
