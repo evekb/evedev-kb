@@ -27,7 +27,7 @@ $page->setTitle('Administration - Item Values');
 if ('POST' == $_SERVER['REQUEST_METHOD'] AND isset($_POST['update_value'])) {
 	$item = $_POST['itm_id'];
 	$value = $_POST['value'];
-	$query = "UPDATE kb3_item_price SET price='$value' WHERE typeID=$item";
+	$query = "REPLACE INTO kb3_item_price (typeID, price) VALUES ($item, $value)";
 	$qry = DBFactory::getDBQuery();;
 	$qry->execute($query);
 	$smarty->assign('success', 'Manual update of item price was successful.');
