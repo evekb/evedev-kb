@@ -27,10 +27,22 @@ $page->setTitle('Administration - Item Values');
 if ('POST' == $_SERVER['REQUEST_METHOD'] AND isset($_POST['update_value'])) {
 	$item = $_POST['itm_id'];
 	$value = $_POST['value'];
-	$query = "REPLACE INTO kb3_item_price (typeID, price) VALUES ($item, $value)";
-	$qry = DBFactory::getDBQuery();;
-	$qry->execute($query);
-	$smarty->assign('success', 'Manual update of item price was successful.');
+        
+        $query = new DBPreparedQuery();
+        $query->prepare('REPLACE INTO kb3_item_price (`typeID`, `price`) VALUES (?, ?)');
+        $dataTypes = 'ii';
+
+        $arr2 = array(&$dataTypes, &$item, &$value);
+        $query->bind_params($arr2);
+        if(!$query->execute())
+        {
+            $smarty->assign('success', 'Manual update of item price was NOT successful: '.$query->getErrorMsg());
+        }
+        
+        else
+        {
+            $smarty->assign('success', 'Manual update of item price was successful.');
+        }
 }
 
 // On a get, we might be doing an EVE Central update
