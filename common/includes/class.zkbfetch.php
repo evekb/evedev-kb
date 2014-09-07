@@ -715,12 +715,24 @@ class ZKBFetch
            // if corp is not present, use faction
            if($involvedParty['corporationID'] > 0)
            {
-               $Corp = Corporation::add(strval($involvedParty['corporationName']), $Alliance, $timestamp, (int)$involvedParty['corporationID']);
+               // try getting the corp from our database
+                $Corp = Corporation::lookup(strval($involvedParty['corporationName']));
+                // create new corp
+                if(!$Corp)
+                {
+                    $Corp = Corporation::add(strval($involvedParty['corporationName']), $Alliance, $timestamp, (int)$involvedParty['corporationID']);
+                }
            }   
 
            else if($involvedParty['factionID'] > 0)
            {
-               $Corp = Corporation::add(strval($involvedParty['factionName']), $Alliance, $timestamp, (int)$involvedParty['factionID']);
+               // try getting the corp from our database
+                $Corp = Corporation::lookup(strval($involvedParty['corporationName']));
+                // create new corp
+                if(!$Corp)
+                {
+                    $Corp = Corporation::add(strval($involvedParty['corporationName']), $Alliance, $timestamp, (int)$involvedParty['corporationID']);
+                }
            }
 
            // NPCs without Corp/Alliance/Faction (e.g. Rogue Drones)
