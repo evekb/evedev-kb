@@ -405,9 +405,17 @@ class Corporation extends Entity
 		if($result == false) {
 			return false;
 		}
-
-		$alliance = Alliance::add($myAPI->getAllianceName(),
-						$myAPI->getAllianceID());
+                $allianceId = $myAPI->getAllianceID();
+                if($allianceId)
+                {
+                    $alliance = Alliance::add($myAPI->getAllianceName(),
+                                                    $myAPI->getAllianceID());
+                }
+                
+                else
+                {
+                    $alliance = Alliance::add("None");
+                }
 
 		if (!$alliance) {
 			return false;
