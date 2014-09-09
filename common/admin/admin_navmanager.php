@@ -129,8 +129,8 @@ function changeUrl($id, $url)
 function newPage($descr, $url)
 {
     $qry = DBFactory::getDBQuery(true);
-	$descr = $qry->escape(preg_replace('/[^\w_-\d]/', '', $descr));
-	$url = $qry->escape($url);
+    $descr = $qry->escape(preg_replace('/[^\w\d]/', '', $descr));
+    $url = $qry->escape($url);
     $query = "SELECT max(posnr) as nr FROM kb3_navigation WHERE nav_type='top' AND KBSITE = '".KB_SITE."'";
     $qry->execute($query);
     $row = $qry->getRow();
