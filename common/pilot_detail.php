@@ -152,8 +152,17 @@ class pPilotDetail extends pageAssembly
 			if($result == "")
 			{
 				$data = $apiInfo->getData();
-				$this->alliance = Alliance::add($data['alliance'],
+                                if(isset($data['allianceID']) && isset($data['alliance']))
+                                {
+                                    $this->alliance = Alliance::add($data['alliance'],
 					$data['allianceID']);
+                                }
+                                
+                                else
+                                {
+                                    $this->alliance = Alliance::add("None");
+                                }
+				
 				$this->corp = Corporation::add($data['corporation'],
 					$this->alliance, $apiInfo->getCurrentTime(),
 					$data['corporationID']);
