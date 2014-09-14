@@ -94,11 +94,16 @@ class Corporation extends Entity
 	 */
 	function getExternalID($populateList = false)
 	{
+                // sanity check: no factions!
+                if(is_numeric($this->externalid) && $this->externalid < 1000000)
+                {
+                    return 0;
+                }
 		if($this->externalid) return $this->externalid;
 		$this->execQuery();
 		if(!$populateList)
 		{
-			if($this->externalid) return $this->externalid;
+			if($this->externalid && is_numeric($this->externalid) && $this->externalid > 1000000) return $this->externalid;
 
 			$myID = new API_NametoID();
 			$myID->setNames($this->getName());
@@ -353,7 +358,9 @@ class Corporation extends Entity
 				$this->putCache();
 				return true;
 			}
-			if($qry->execute("UPDATE kb3_corps SET crp_external_id = ".$externalid." where crp_id = ".$this->id))
+                        
+                        // update the database with this ID, but don't return it!
+			if($qry->execute("UPDATE kb3_corps SET crp_external_id = ".$externalid." where crp_id = ".$this->id) && $externalid > 1000000)
 			{
 				$this->externalid = $externalid;
 				$this->putCache();

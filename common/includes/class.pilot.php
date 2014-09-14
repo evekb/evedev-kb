@@ -73,11 +73,21 @@ class Pilot extends Entity
 	 */
 	public function getExternalID($populateList = false)
 	{
+                // sanity-check: don't return external IDs that clearly aren't characterIDs (but might be typeIDs)
+                if(is_numeric($this->externalid) && $this->externalid < 90000000)
+                {
+                    return 0;
+                }
 		if ($this->externalid) {
 			return $this->externalid;
 		}
 		if (!$populateList) {
 			$this->execQuery();
+                        // sanity-check: don't return external IDs that clearly aren't characterIDs (but might be typeIDs)
+                        if(is_numeric($this->externalid) && $this->externalid < 90000000)
+                        {
+                            return 0;
+                        }
 			if ($this->externalid) {
 				return $this->externalid;
 			}
@@ -417,15 +427,14 @@ class Pilot extends Entity
 		$this->execQuery();
 		if (!$this->id) {
 			return false;
-		} else if ($externalID == $this->externalid) {
+		} else if ($externalID == $this->externalid  && $externalID > 90000000) {
 			return true;
 		}
-		$this->externalid = $externalID;
-		Cacheable::delCache($this);
+		
 
 		$qry = DBFactory::getDBQuery(true);
 		$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_externalid = "
-				.$this->externalid." AND plt_id <> ".$this->id);
+				.$externalID." AND plt_id <> ".$this->id);
 		if ($qry->recordCount()) {
 			$result = $qry->getRow();
 			$qry->autocommit(false);
@@ -447,8 +456,16 @@ class Pilot extends Entity
 			$qry->autocommit(true);
 		} else {
 			$qry->execute("UPDATE kb3_pilots SET plt_externalid = "
-					.$this->externalid." WHERE plt_id = ".$this->id);
+					.$externalID." WHERE plt_id = ".$this->id);
 		}
+                
+                if($externalID < 90000000)
+                {
+                    return false;
+                }
+                    
+                $this->externalid = $externalID;
+		Cacheable::delCache($this);
 		$this->valid = true;
 		return true;
 	}
