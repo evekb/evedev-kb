@@ -727,11 +727,11 @@ class ZKBFetch
            else if($involvedParty['factionID'] > 0)
            {
                // try getting the corp from our database
-                $Corp = Corporation::lookup(strval($involvedParty['corporationName']));
+                $Corp = Corporation::lookup(strval($involvedParty['factionName']));
                 // create new corp
                 if(!$Corp)
                 {
-                    $Corp = Corporation::add(strval($involvedParty['corporationName']), $Alliance, $timestamp, (int)$involvedParty['corporationID']);
+                    $Corp = Corporation::add(strval($involvedParty['factionName']), $Alliance, $timestamp, (int)$involvedParty['factionID']);
                 }
            }
 
