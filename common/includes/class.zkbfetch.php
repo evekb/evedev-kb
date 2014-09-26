@@ -40,16 +40,16 @@ class ZKBFetch
     protected $id;
     /** @param int the last timestamp for the last kill fetched from this url*/
     protected $lastKillTimestamp;
-    /** @param int maximum number of kills fetched per cycle */
-    protected $maxNumberOfKillsPerCycle;
+    /** @param int negative offset in hours to apply to the last kill timestamp before fetching */
+    protected $killTimestampOffset;
 
-    /** @param int default value for maximum number of kills to fetch */
-    public static $MAX_NUMBER_OF_KILLS_PER_CYCLE_DEFAULT = 50;
+    /** @param int default for the negative offset in hours to apply to the last kill timestamp before fetching */
+    public static $KILL_TIMESTAMP_OFFSET_DEFAULT = 2;
    
     public function ZKBFetch($id = NULL)
     {
         $this->id = $id;
-        $this->maxNumberOfKillsPerCycle = self::$MAX_NUMBER_OF_KILLS_PER_CYCLE_DEFAULT;
+        $this->killTimestampOffset = self::$KILL_TIMESTAMP_OFFSET_DEFAULT;
     }
     
     /**
@@ -257,13 +257,13 @@ class ZKBFetch
     
     /**
      * 
-     * @param int $maxNumberOfKillsPerCycle maximum number of kills fetched per cycle
+     * @param int $killTimestampOffset negative offset in hours to apply to the last kill timestamp before fetching
      */
-    public function setMaxNumberOfKillsPerCycle($maxNumberOfKillsPerCycle)
+    public function setKillTimestampOffset($killTimestampOffset)
     {
-        if(is_numeric($maxNumberOfKillsPerCycle))
+        if(is_numeric($killTimestampOffset))
         {
-            $this->maxNumberOfKillsPerCycle = $maxNumberOfKillsPerCycle;
+            $this->killTimestampOffset = $killTimestampOffset;
         }
     }
 
@@ -315,18 +315,17 @@ class ZKBFetch
             $this->fetchUrl .= 'api-only/';
         }
 
-        // limit returned mails to 50
-        if(strpos($this->fetchUrl, 'limit') === FALSE)
-        {
-            $this->fetchUrl .= "limit/$this->maxNumberOfKillsPerCycle/";
-        }
-
         // add startTime, if not already in URL and if given and the URL is not for a specific kill
         if(strpos($this->fetchUrl, 'startTime') === FALSE && !is_null($this->lastKillTimestamp) && strlen(trim($this->lastKillTimestamp) > 0)
                 && strpos($this->fetchUrl, 'killID') === FALSE)
         {
-        
-            $timestampFormattedForZkb = strftime("%Y%m%d%H%M", $this->lastKillTimestamp);
+            $lastKillTimestampModified = $this->lastKillTimestamp;
+            // apply negative offset
+            if(isset($this->killTimestampOffset) && is_numeric($this->killTimestampOffset))
+            {
+                $lastKillTimestampModified -= $this->killTimestampOffset*3600;
+            }
+            $timestampFormattedForZkb = strftime("%Y%m%d%H%M", $lastKillTimestampModified);
             $this->fetchUrl .= "startTime/$timestampFormattedForZkb/orderDirection/asc/";
         }
 

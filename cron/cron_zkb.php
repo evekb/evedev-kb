@@ -66,7 +66,7 @@ function getZKBApi(&$fetchConfig)
         
         try
         {
-            $fetchConfig->setMaxNumberOfKillsPerCycle(config::get('maxNumberOfKillsPerCycle'));
+            $fetchConfig->setKillTimestampOffset(config::get('killTimestampOffset'));
             $fetchConfig->setIgnoreNpcOnlyKills((boolean)(config::get('post_no_npc_only_zkb')));
             $fetchConfig->processApi();
             $html .= "ZKBApi: ".$fetchConfig->getUrl()."<br />\n";

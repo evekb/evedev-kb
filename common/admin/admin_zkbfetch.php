@@ -103,12 +103,10 @@ if ($_POST['submit'] || $_POST['fetch'])
     }
     
     // set the maximum number of kills per cycle to a new value
-    if($_POST['maxNumberOfKillsPerCycle'] 
-            && is_numeric($_POST['maxNumberOfKillsPerCycle']) 
-            && $_POST['maxNumberOfKillsPerCycle'] >= 10 
-            && $_POST['maxNumberOfKillsPerCycle'] <= 200)
+    if($_POST['killTimestampOffset'] 
+            && is_numeric($_POST['killTimestampOffset']))
     {
-        config::set('maxNumberOfKillsPerCycle', $_POST['maxNumberOfKillsPerCycle']);
+        config::set('killTimestampOffset', $_POST['killTimestampOffset']);
     }
     
 }
@@ -147,12 +145,12 @@ foreach($fetchConfigs as &$fetchConfig)
 $smarty->assignByRef('rows', $rows);
 $smarty->assign('results', $html);
 $smarty->assign('post_no_npc_only_zkb', config::get('post_no_npc_only_zkb'));
-$maxNumberOfKillsPerCycle = config::get('maxNumberOfKillsPerCycle');
-if(!$maxNumberOfKillsPerCycle)
+$killTimestampOffset = config::get('killTimestampOffset');
+if(!$killTimestampOffset)
 {
-    $maxNumberOfKillsPerCycle = ZKBFetch::$MAX_NUMBER_OF_KILLS_PER_CYCLE_DEFAULT;
+    $killTimestampOffset = ZKBFetch::$KILL_TIMESTAMP_OFFSET_DEFAULT;
 }
-$smarty->assign('maxNumberOfKillsPerCycle', $maxNumberOfKillsPerCycle);
+$smarty->assign('killTimestampOffset', $killTimestampOffset);
 $page->addContext($menubox->generate());
 $page->setContent($smarty->fetch(get_tpl('admin_zkbfetch')));
 $page->generate();
@@ -174,7 +172,7 @@ function getZKBApi(&$fetchConfig)
         
         try
         {
-            $fetchConfig->setMaxNumberOfKillsPerCycle(config::get('maxNumberOfKillsPerCycle'));
+            $fetchConfig->setKillTimestampOffset(config::get('killTimestampOffset'));
             $fetchConfig->setIgnoreNpcOnlyKills((boolean)(config::get('post_no_npc_only_zkb')));
             $fetchConfig->processApi();
             $html .= "ZKBApi: ".$fetchConfig->getUrl()."<br />\n";
