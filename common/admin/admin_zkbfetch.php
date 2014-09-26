@@ -151,6 +151,7 @@ if(!$killTimestampOffset)
     $killTimestampOffset = ZKBFetch::$KILL_TIMESTAMP_OFFSET_DEFAULT;
 }
 $smarty->assign('killTimestampOffset', $killTimestampOffset);
+$smarty->assign("currentTimeUtc", gmdate("Y-m-d H:i:s", time()));
 $page->addContext($menubox->generate());
 $page->setContent($smarty->fetch(get_tpl('admin_zkbfetch')));
 $page->generate();

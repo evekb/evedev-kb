@@ -61,7 +61,7 @@ function checkAll(checkname, exby)
 				<input type='text' name='newFetchUrl' size='50' class='password' value="" />
 			</td>
 			<td>
-				<input type='text' name='newFetchTimestamp' class='lastkill' size='20' value='{$smarty.now|date_format:"%Y-%m-%d %H:%M:%S"}' />
+				<input type='text' name='newFetchTimestamp' class='lastkill' size='20' value='{$currentTimeUtc}' />
 			</td>
                         <td>
                                 <input type='submit' id='submitOptions' name='add' value="Add" />             

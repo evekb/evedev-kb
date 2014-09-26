@@ -112,6 +112,7 @@ class ZKBFetch
         // if no lastKillTimestamp given, set it to NOW
         if(is_null($this->lastKillTimestamp) || $this->lastKillTimestamp === 0)
         {
+            // get current timestamp in UTC
             $this->lastKillTimestamp = time();
         }
         
