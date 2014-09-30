@@ -24,6 +24,32 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
+v4.2.4.0
+
+Features:
+Updated CCP DB to Oceanus 1.0 (105658)
+
+Enhancements:
+Enhancement: Negative timestamp offset for zKB fetch
+Enhancement: Alliance detection for involved pos mods
+Added sanity check for external corp/pilot IDs
+Made item price editor use prepared queries
+
+Bugfixes:
+Fix: Use UTC time for adding new zKB fetch configurations
+Fix: Copy/Paste error in zKB fetch for involved factions
+Fix: Blank alliance for corps without alliance part 2
+Fix: Blank alliance for corps without alliance
+Fix for creating IDs for roles on 64bit unix systems
+Fix: Warning when adding custom top navigation item
+Fix: Edit item price for items without price
+Fix: Ammo recognition for Tracking Computers
+Fix: Corporation links in Corp descriptions
+Fix: Ammo recognition for Sensor Boosters
+Fix: Ammo detection for Rapid Heavy Missile Launcher
+
+
+-------------------------------------------
 v4.2.3.0
 
 Features:
