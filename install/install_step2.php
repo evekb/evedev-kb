@@ -2,7 +2,7 @@
 /**
  * @package EDK
  */
-
+require_once('../common/includes/constants.php');
 if(!$installrunning) {header('Location: index.php');die();}
 $stoppage = false;
 global $smarty;
@@ -111,7 +111,7 @@ else
 }
 
 // connectivity
-$url = 'http://www.eve-id.net/logo.png';
+$url = $hostFileName = KB_UPDATE_URL . "/update.xml";
 $smarty->assign('conn_url', $url);
 $smarty->assign('conn_fopen_exists', ini_get('allow_url_fopen'));
 $smarty->assign('conn_image', $pass_img);

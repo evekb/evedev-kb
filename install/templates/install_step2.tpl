@@ -57,7 +57,7 @@ I will now test if your web server allows remote connections. This is needed for
 <br/>
 <b>Let's start with fopen:</b><br/>
 {if $conn_fopen_exists}
-    allow_url_fopen is enabled, I will try to fetch the test image: '{$conn_url}'<br/>
+    allow_url_fopen is enabled, I will try to fetch the test file: '{$conn_url}'<br/>
     {if $conn_fopen_success}
 	Seems to be ok, I got the file.<br/>
     {else}
@@ -74,7 +74,7 @@ I will now test if your web server allows remote connections. This is needed for
 <br/>
 <b>Let's try cURL now; it's used for some sections of the killboard but if it's absent we fall back to fopen:</b><br/>
 {if $conn_curl_exists}
-    cURL seems to be available, I will try to fetch the test image: '{$conn_url}'<br/>
+    cURL seems to be available, I will try to fetch the test file: '{$conn_url}'<br/>
     {if $conn_curl_success}
 	Seems to be ok, I got the file.<br/>
     {else}
