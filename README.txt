@@ -2,7 +2,7 @@
 Eve Development Network Killboard v4.2.3.0
 -------------------------------------------
 
-// REQUIREMENTS
+// REQUIREMENTS THE GAME
 -------------------------------------------
 - Webserver (Apache, IIS)
 - PHP 5.2+
