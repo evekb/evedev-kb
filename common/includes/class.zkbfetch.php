@@ -45,6 +45,9 @@ class ZKBFetch
 
     /** @param int default for the negative offset in hours to apply to the last kill timestamp before fetching */
     public static $KILL_TIMESTAMP_OFFSET_DEFAULT = 2;
+    
+    /** @param int maximum number of cycles tried to fetch to get new kills before stopping as a safety measure */
+    public static $MAXIMUM_NUMBER_OF_CYCLES = 6;
    
     public function ZKBFetch($id = NULL)
     {
@@ -320,13 +323,7 @@ class ZKBFetch
         if(strpos($this->fetchUrl, 'startTime') === FALSE && !is_null($this->lastKillTimestamp) && strlen(trim($this->lastKillTimestamp) > 0)
                 && strpos($this->fetchUrl, 'killID') === FALSE)
         {
-            $lastKillTimestampModified = $this->lastKillTimestamp;
-            // apply negative offset
-            if(isset($this->killTimestampOffset) && is_numeric($this->killTimestampOffset))
-            {
-                $lastKillTimestampModified -= $this->killTimestampOffset*3600;
-            }
-            $timestampFormattedForZkb = strftime("%Y%m%d%H%M", $lastKillTimestampModified);
+            $timestampFormattedForZkb = strftime("%Y%m%d%H%M", $this->lastKillTimestamp);
             $this->fetchUrl .= "startTime/$timestampFormattedForZkb/orderDirection/asc/";
         }
 
@@ -345,32 +342,66 @@ class ZKBFetch
      */
     public function processApi()
     {
-        // validate the URL
-        $this->validateUrl();
+        // initialize rawData
+        $this->rawData = array(1,2);
         
-        // fetch the raw data from zKB API
-        $this->fetch();
-        if(empty($this->rawData))
+        // remember the timestamp we started with
+        $startTimestamp = $this->lastKillTimestamp;
+        
+        // apply negative offset
+        if(isset($this->killTimestampOffset) && is_numeric($this->killTimestampOffset) && isset($this->lastKillTimestamp) && is_numeric($this->lastKillTimestamp))
         {
-            //throw new ZKBFetchException("Empty result returned by API ".$this->fetchUrl);
-            // this is a valid case
-            // set rawData to an empty array, so the loop doesn't complain
-            $this->rawData = array();
+            $this->lastKillTimestamp -= $this->killTimestampOffset*3600;
         }
         
-        // loop over all kills
-        foreach($this->rawData AS $killData)
+        // initialize fetch counter
+        $cyclesFetched = 0;
+        // we need this loop to keep fetching until we don't get any data (because there is no new data)
+        // or we get data containing a kill with a timestamp newer than the timestamp we started with
+        do
         {
-            try
+            // validate and build the URL
+            $this->validateUrl();
+
+            // fetch the raw data from zKB API
+            $this->fetch();
+            if(empty($this->rawData))
             {
-                $this->processKill($killData);
+                //throw new ZKBFetchException("Empty result returned by API ".$this->fetchUrl);
+                // this is a valid case
+                // set rawData to an empty array, so the loop doesn't complain
+                $this->rawData = array();
+            }
+
+            // loop over all kills
+            foreach($this->rawData AS $killData)
+            {
+                try
+                {
+                    $this->processKill($killData);
+                }
+
+                catch(ZKBFetchException $e)
+                {
+                    $this->parsemsg[] = $e->getMessage();
+                }
             }
             
-            catch(ZKBFetchException $e)
+            // no timestamp given at all
+            if($startTimestamp == NULL)
             {
-                $this->parsemsg[] = $e->getMessage();
+                break;
             }
-        }
+            
+            // safety stop
+            if($cyclesFetched >= self::$MAXIMUM_NUMBER_OF_CYCLES)
+            {
+                $this->parsemsg[] = "Stopped fetching before finding new kills due to safety limit (fetched 1200 kills in a row!). Try lowering your negative kill timestamp offset!";
+                break;
+            }
+            
+            $cyclesFetched++;
+        }  while(count($this->rawData) > 1 && $this->lastKillTimestamp <= $startTimestamp);
         
         $this->setLastKillTimestamp($this->lastKillTimestamp);
     }
@@ -393,10 +424,7 @@ class ZKBFetch
         $killId;
         $timestamp = str_replace('.', '-', $killData->killTime);
         
-        if(is_null($this->lastKillTimestamp) || $this->lastKillTimestamp < strtotime($timestamp))
-        {
-            $this->lastKillTimestamp = strtotime($timestamp);
-        }
+        $this->lastKillTimestamp = strtotime($timestamp);
         
         // Check hashes.
         $hash = self::hashMail($killData);
@@ -441,11 +469,6 @@ class ZKBFetch
             // kill is already known
             $this->skipped[] = $killData->killID;
             
-            // update last kill timestamp
-            if(is_null($this->lastKillTimestamp) || $this->lastKillTimestamp < strtotime($timestamp))
-            {
-                $this->lastKillTimestamp = strtotime($timestamp);
-            }
             return;
         }	
         
