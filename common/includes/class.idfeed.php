@@ -777,7 +777,12 @@ class IDFeed
 				&& !(int)$inv['weaponTypeID']
 				&& !(int)$inv['characterID']
 				&& !(string)$inv['characterName']) {
-			$this->parsemsg[] = "Involved party blank.";
+			$errorMsg = "Involved party blank.";
+                        if($kill->getExternalID())
+                        {
+                            $errorMsg .= " ID = ".$kill->getExternalID();
+                        }
+                        $this->parsemsg[] = $errorMsg;
 			return false;
 		}
                 
