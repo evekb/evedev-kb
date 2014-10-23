@@ -343,7 +343,7 @@ class ZKBFetch
     public function processApi()
     {
         // initialize rawData
-        $this->rawData = array(1,2);
+        $this->rawData = array();
         
         // remember the timestamp we started with
         $startTimestamp = $this->lastKillTimestamp;
@@ -356,12 +356,21 @@ class ZKBFetch
         
         // initialize fetch counter
         $cyclesFetched = 0;
+        
+        $fetchUrlPreviousCycle = '';
         // we need this loop to keep fetching until we don't get any data (because there is no new data)
         // or we get data containing a kill with a timestamp newer than the timestamp we started with
         do
         {
             // validate and build the URL
             $this->validateUrl();
+            // check if the fetch URL is the same as for the last cycle
+            if($fetchUrlPreviousCycle == $this->fetchUrl)
+            {
+                // stop fetching, we're fetching the same bunch of kills all over again!
+                // may happen if more than one kill matches the last kill timestamp
+                break;
+            }
 
             // fetch the raw data from zKB API
             $this->fetch();
@@ -396,11 +405,14 @@ class ZKBFetch
             // safety stop
             if($cyclesFetched >= self::$MAXIMUM_NUMBER_OF_CYCLES)
             {
-                $this->parsemsg[] = "Stopped fetching before finding new kills due to safety limit (fetched 1200 kills in a row!). Try lowering your negative kill timestamp offset!";
+                $this->parsemsg[] = "Stopped fetching before finding new kills due to safety limit (fetched ".(self::$MAXIMUM_NUMBER_OF_CYCLES*200)." kills in a row!). "
+                        . "Try lowering your negative kill timestamp offset!";
                 break;
             }
             
             $cyclesFetched++;
+            // remember the URL we used during this cycle
+            $fetchUrlPreviousCycle = $this->fetchUrl;
         }  while(count($this->rawData) > 1 && $this->lastKillTimestamp <= $startTimestamp);
         
         $this->setLastKillTimestamp($this->lastKillTimestamp);
