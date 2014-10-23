@@ -562,6 +562,7 @@ class CrestParser
                 // victim's name
                 $involvedPartyName = $involvedParty['characterName'];
                 $involvedCharacterID = $involvedParty['characterID'];
+                $loadPilotExternals = true;
                 
                 // Fix for case that involved party is an actual pilot without corp
                 // FoxFour is to blame!
@@ -587,12 +588,13 @@ class CrestParser
                         }
                         $involvedPartyName = $Corp->getName().' - '.$Weapon->getName();
                         $isNPC = TRUE;
-                        $involvedCharacterID = $Weapon->getID();
+                        $involvedCharacterID = 0;
+                        $loadPilotExternals = false;
 		}
                 
                 
                 
-                $Pilot = Pilot::add($involvedPartyName, $Corp, $timestamp, $involvedCharacterID);
+                $Pilot = Pilot::add($involvedPartyName, $Corp, $timestamp, $involvedCharacterID, $loadPilotExternals);
 
                 // create involvedParty
                 $IParty = new InvolvedParty($Pilot->getID(), $Corp->getID(),

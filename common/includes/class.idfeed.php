@@ -822,12 +822,14 @@ class IDFeed
 
 		$charid = (int)$inv['characterID'];
 		$charname = (string)$inv['characterName'];
+                $loadPilotExternals = true;
 		// Allow for blank names for consistency with CCP API.
                 // @deprecated? API doesn't supply a character name here
 		if (preg_match("/(Mobile (Large|Medium|Small) Warp Disruptor I?I?|\w+ Control Tower( \w+)?)/",
 				$charname)) {
 			$charname = $inv['corporationName'].' - '.$charname;
 			$charid = 0;
+                        $loadPilotExternals = false;
 		} 
                 // @deprecated? API doesn't supply a weapon here
                 else if ($charname == ""
@@ -835,6 +837,7 @@ class IDFeed
 				   $weapon->getName()))) {
 			$charname = $inv['corporationName'].' - '.$weapon->getName();
 			$charid = 0;
+                        $loadPilotExternals = false;
 		} 
                 // this should be up-to-date for current state of the API
 		// needs verification for Mobile Warpdisruptors
@@ -844,13 +847,15 @@ class IDFeed
 			$charname = $inv['corporationName'].' - '.$ship->getName();
 			$weapon = $ship;
 			$charid = 0;
+                        $loadPilotExternals = false;
 		} else if ($charname == "" && !$charid) {
 			// NPC ship
 			$ship = Ship::lookup("Unknown");
 			$weapon = Item::getByID((int) $inv['shipTypeID']);
 			$charname = $weapon->getName();
 			$npc = true;
-			$charid = $weapon->getID();
+			$charid = 0;
+                        $loadPilotExternals = false;
                         if(!$charname)
                         {
                             $this->parsemsg[] = "Involved party is an NPC with a ship type not found in the database!";
@@ -862,8 +867,7 @@ class IDFeed
 			return false;
 		}
 
-		$pilot = Pilot::add((string)$charname, $corp, $time,
-					 $charid);
+		$pilot = Pilot::add((string)$charname, $corp, $time, $charid, $loadPilotExternals);
 
 		$iparty = new InvolvedParty($pilot->getID(), $corp->getID(),
 				$alliance->getID(), (float) $inv['securityStatus'],
