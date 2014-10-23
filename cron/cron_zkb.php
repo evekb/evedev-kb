@@ -76,7 +76,7 @@ function getZKBApi(&$fetchConfig)
             $html .= "<br />\n";
             if ($fetchConfig->getParseMessages()) 
             {
-                $html .= implode("<br />", $fetchConfig->getParseMessages());
+                $html .= implode("<br />", $fetchConfig->getParseMessages())."<br/>";
             }
         } 
         
