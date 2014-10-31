@@ -8,15 +8,9 @@
  */
 
 /********************************************
-* Cron script for value fetcher by Beansman
-* Made for the www.eve-id.net killboard.
-* Previous mod version available at
-* http://svn.nsbit.dk/itemfetch
-*
-* Read though the script and change variables
-* as needed.
-*
-* Made from liqs feed cron script ;)
+*  Based on the
+*  Cron script for value fetcher by Beansman
+*  Updated for ValueFetcherCrest by Salvoxia
 *
 ********************************************/
 
@@ -38,7 +32,7 @@ if (file_exists(getcwd().'/cron_value.php')) {
 } else if (file_exists(__FILE__)) {
 	$KB_HOME = preg_replace('/[\/\\\\]cron[\/\\\\]cron_value\.php$/', '', __FILE__);
 } else {
-	echo "Set \$KB_HOME to the killboard root in cron/cron_feed\.php.";
+	echo "Set \$KB_HOME to the killboard root in cron/cron_value\.php.";
 	die;
 }
 
@@ -56,14 +50,14 @@ require_once ('common/includes/class.edkerror.php');
 
 set_error_handler(array('EDKError', 'handler'), E_ERROR );
 
-$url = config::get('fetchurl');
+$url = config::get('itemPriceCrestUrl');
 if ($url == null || $url == "")
-	$url = "http://eve.no-ip.de/prices/30d/prices-all.xml";
+	$url = ValueFetcherCrest::$CREST_URL;
 
-$fetch = new valueFetcher($url);
+$fetch = new ValueFetcherCrest($url);
 
 // Fetch
-$count = $fetch->fetch_values();
+$count = $fetch->fetchValues();
 
 // Echo result
 echo $count." Items updated\n";
