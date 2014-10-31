@@ -141,6 +141,23 @@ class SimpleCrest
         $header = 'Accept-language: en\r\n';
         $header .= "User-Agent: ".self::$USER_AGENT."\r\n";
         
+        $compressionLibrary = NULL;;
+        // determine whether compression is available
+        if(extension_loaded('zlib'))
+        {
+            $compressionLibrary = "gzip";
+        }
+        
+        else if(extension_loaded('pecl'))
+        {
+            $compressionLibrary = "pecl";
+        }
+        
+        if(!is_null($compressionLibrary))
+        {
+            $header .= 'Accept-Encoding: gzip\r\n';
+        }
+        
         $opts = array(
             'http' => array(
                 'method' => "GET",
@@ -167,6 +184,20 @@ class SimpleCrest
 		
         else 
         {
+            // check for compression and decompress, if possible
+            if(is_null($compressionLibrary) && isset($headers['Content-Encoding']) && $headers['Content-Encoding'] == 'gzip')
+            {
+                if($compressionLibrary == 'gzip')
+                {
+                    $data = gzdecode($data);
+                }
+                
+                else if($compressionLibrary == 'pecl')
+                {
+                    $data = http_inflate($data);
+                }
+            }
+            
             if(isset($headers['Transfer-Encoding']) && $headers['Transfer-Encoding'] == "chunked")
             {
                 // fix: some PHP versions don't automatically decode chunked http streams
