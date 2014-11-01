@@ -16,15 +16,14 @@ define('KB_MAILCACHEDIR', KB_CACHEDIR.'/mails');
 define('KB_QUERYCACHEDIR', KB_CACHEDIR.'/SQL');
 define('KB_UPDATE_URL', 'http://evekb.org/downloads');
 define('API_SERVER', "https://api.eveonline.com");
-//define('API_SERVER', "https://apitest.eveonline.com");
 define('IMG_SERVER', "https://image.eveonline.com");
 
 // current version: major.minor.sub.ccpDBupdateNo
 // even numbers for minor = development version
-define('KB_VERSION', '4.2.4.0');
-define('KB_RELEASE', '(Oceanus 1.0)');
-define('KB_CCP_DB_VERSION', '105658');
-define('KB_CCP_DB_DATE', 'Sep 30, 2014');
+define('KB_VERSION', '4.2.5.0');
+define('KB_RELEASE', '(Phoebe 1.0)');
+define('KB_CCP_DB_VERSION', '107269');
+define('KB_CCP_DB_DATE', 'Nov 04, 2014');
 define('ID_FEED_VERSION', 1.20);
 define('ZKB_FETCH_VERSION', 1.0);
 define('KB_APIKEY_LEGACY', 1);
