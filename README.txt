@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.3.0
+Eve Development Network Killboard v4.2.5.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -24,6 +24,27 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
+v4.2.5.0
+
+Features:
+Updated CCP DB to Phoebe 1.0 (build 107269)
+CREST item value fetcher
+
+Enhancements:
+Added compression to SimpleCrest cURL fallback
+Enhanced error logging for API import/IDFeed
+
+Bugfixes:
+Fixed formatting of zKB fetch error texts
+Fix: zKB fetch fetching the same kills all over again
+Fix: Correctly distinguish involved structures
+Fix: Updated XHTML theme for CREST link posting
+Fix for external Character ID sanity check
+Fix: zKB fetch not fetching new kills
+Comments not diplayed on kill detail pages
+Updated URL for connectivity check during installation
+
+-------------------------------------------
 v4.2.4.0
 
 Features:
