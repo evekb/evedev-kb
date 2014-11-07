@@ -6,6 +6,8 @@
  * @package EDK
  */
 
+$URL_FETCHING_TEST_URL = 'http://www.evekb.org/downloads/update.xml';
+
 require_once('common/admin/admin_menu.php');
 
 $page = new Page('Administration - Troubleshooting');
@@ -57,22 +59,21 @@ else
 // connectivity
 $sections['Connectivity'] = 'Connectivity';
 
-$url = 'http://www.eve-id.net/logo.png';
 if (ini_get('allow_url_fopen'))
 {
-	if (count(file($url)))
+	if (count(file($URL_FETCHING_TEST_URL)))
 	{
 		$html =  '  allow_url_fopen is available.<br />';
 		$trouble['Connectivity'][] = array('passed'=>true, 'text'=> $html);
 	}
 	else
 	{
-		$html =  '  I could not get the file, this might be a firewall related issue or the eve-dev server is not available.<br />';
+		$html =  '  I could not get the file, this might be a firewall related issue or the evekb server is not available.<br />';
 		$trouble['Connectivity'][] = array('passed'=>false, 'text'=> $html);
 	}
 }
 
-$http = new http_request($url);
+$http = new http_request($URL_FETCHING_TEST_URL);
 if ($http->get_content())
 {
 	$html =  '  Socket Connect is available.';
@@ -80,7 +81,7 @@ if ($http->get_content())
 }
 else
 {
-	$html =  '  I could not get the file, this might be a firewall related issue or the eve-dev server is not available.<br />';
+	$html =  '  I could not get the file, this might be a firewall related issue or the evekb server is not available.<br />';
 	$trouble['Connectivity'][] = array('passed'=>false, 'text'=> $html);
 }
 
