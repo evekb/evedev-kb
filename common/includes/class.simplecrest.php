@@ -83,7 +83,10 @@ class SimpleCrest
         // ignore ssl peer verification
         if(substr($url,0,5) == "https")
         {
-            curl_setopt(self::$curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+           curl_setopt(self::$curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+           // try using TLS
+           curl_setopt(self::$curl, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1);
+           curl_setopt(self::$curl, CURLOPT_SSL_CIPHER_LIST, 'TLSv1');
         }
         
         // set timeout
