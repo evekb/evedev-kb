@@ -373,7 +373,16 @@ class ZKBFetch
             }
 
             // fetch the raw data from zKB API
-            $this->fetch();
+            try
+            {
+                $this->fetch();
+            }
+            
+            catch(Exception $e)
+            {
+                $this->lastKillTimestamp = $startTimestamp;
+                throw $e;
+            }
             if(empty($this->rawData))
             {
                 //throw new ZKBFetchException("Empty result returned by API ".$this->fetchUrl);

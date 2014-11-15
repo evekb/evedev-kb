@@ -114,7 +114,6 @@ class SimpleCrest
             switch($httpCode) {
                 case 400:
                 case 403:
-                case 500:
                 case 503: 
                     return $result;
                     break;
@@ -175,14 +174,20 @@ class SimpleCrest
         $opts['http']['header'] = $header;
         
         $context = stream_context_create($opts);
-        $headers = @get_headers($url, 1);
+
         if (false === ($data = @file_get_contents($url, false, $context))) {
 
-            if (false === $headers) {
+            if (false === $http_response_header) {
                 throw new \Exception("could not connect to api");
             }
+            
+            // get HTTP response code by reading $http_response_header (magic variable, automatically filled)
+            if(isset($http_response_header[0]))
+            {
+                list($httpVersion,$httpCode,$httpMsg) = explode(' ', $http_response_header[0], 3);
+            }
 
-            throw new \Exception("an error occurred with the http request: ".$headers[0]);
+            throw new Exception('Error getting data: HTTP '.$httpCode.', URL: '.$url);
         } 
 		
         else 
