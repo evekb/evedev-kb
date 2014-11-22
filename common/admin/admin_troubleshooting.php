@@ -7,6 +7,8 @@
  */
 
 $URL_FETCHING_TEST_URL = 'http://www.evekb.org/downloads/update.xml';
+$API_TESTING_CHARACTER_ID = 800263173;
+$CREST_TESTING_URL = 'http://public-crest.eveonline.com/killmails/33493676/553ac7e2aeabe48092bde10958de0a44dc6f35ef/';
 
 require_once('common/admin/admin_menu.php');
 
@@ -107,6 +109,17 @@ else
 	$trouble['Connectivity'][] = array('passed'=>false, 'text'=> $html);
 }
 
+if(in_array  ('curl', get_loaded_extensions()) )
+{
+	$html =  '  cURL is available.';
+	$trouble['Connectivity'][] = array('passed'=>true, 'text'=> $html);
+}
+else
+{
+	$html =  '  cURL is NOT available.<br />';
+	$trouble['Connectivity'][] = array('passed'=>false, 'text'=> $html);
+}
+
 //yes this is a mess, pew pew and programming dont mix =P
 function find_SQL_Version()
 {
@@ -126,7 +139,139 @@ else $trouble['Server'][] = array('passed'=>false, 'text'=> $html);
 
 $html = "  $sqlver";
 if(find_SQL_Version() >= 5) $trouble['Server'][] = array('passed'=>true, 'text'=> $html);
-else $html = $trouble['Server'][] = array('passed'=>false, 'text'=> $html);
+else $trouble['Server'][] = array('passed'=>false, 'text'=> $html);
+
+// checks for API caching
+$sections['API Caching'] = 'API Caching';
+// get current API caching folder
+$cachingFolderApi = getcwd() . DIRECTORY_SEPARATOR . KB_CACHEDIR. DIRECTORY_SEPARATOR . "api";
+$html = 'Current API caching folder is set to '.$cachingFolderApi;
+$trouble['API Caching'][] = array('passed'=>true, 'text'=>$html);
+
+// check if folder exists
+if(file_exists($cachingFolderApi)) 
+{
+    $html =  '  API Caching folder exists.';
+    $trouble['API Caching'][] = array('passed'=>true, 'text'=> $html);
+    
+    // check if folder is writable
+    if(@touch($cachingFolderApi. DIRECTORY_SEPARATOR . "write_check.tst" )) 
+    {
+        $html =  '  API Caching folder is writable.';
+        $trouble['API Caching'][] = array('passed'=>true, 'text'=> $html);
+        @unlink($cachingFolderSql. DIRECTORY_SEPARATOR . "write_check.tst");
+        
+        // connectivity check for XML API
+        $apiIdToName = new API_IDtoName();
+        $apiIdToName->setIDs($API_TESTING_CHARACTER_ID);
+        $apiIdToName->fetchXML();
+        if(count($apiIdToName->getIDData()) > 0)
+        {
+            $html =  '  Successfully connected to XML API';
+            $trouble['API Caching'][] = array('passed'=>true, 'text'=> $html);
+        }
+        else
+        {
+            $html =  '  Connection to XML API NOT successul.';
+            $trouble['API Caching'][] = array('passed'=>false, 'text'=> $html);
+        }      
+        
+        // connectivity check for CREST
+        $kill = SimpleCrest::getReferenceByUrl($CREST_TESTING_URL);
+        if(!is_null($kill) && (int)$kill->killID > 0)
+        {
+            $html =  '  Successfully connected to CREST API';
+            $trouble['API Caching'][] = array('passed'=>true, 'text'=> $html);
+        }
+        else
+        {
+            $html =  '  Connection to CREST API NOT successul.';
+            $trouble['API Caching'][] = array('passed'=>false, 'text'=> $html);
+        }
+        
+    }
+    else 
+    {
+        $html =  '  API Caching is NOT writable.';
+        $trouble['API Caching'][] = array('passed'=>false, 'text'=> $html);
+    }
+}
+else 
+{
+    $html =  '  API Caching folder does NOT exist.';
+    $trouble['API Caching'][] = array('passed'=>false, 'text'=> $html);
+}
+
+
+
+// checks for SQL query caching
+$sections['SQL Caching'] = 'SQL Caching (File)';
+// get current SQL caching folder
+$cachingFolderSql = getcwd() . DIRECTORY_SEPARATOR . KB_QUERYCACHEDIR;
+$html = 'Current SQL caching folder is set to '.$cachingFolderSql;
+$trouble['SQL Caching'][] = array('passed'=>true, 'text'=>$html);
+
+// check if folder exists
+if(file_exists($cachingFolderSql)) 
+{
+    $html =  '  SQL Caching folder exists.';
+    $trouble['SQL Caching'][] = array('passed'=>true, 'text'=> $html);
+    
+    // check if folder is writable
+    if(@touch($cachingFolderSql. DIRECTORY_SEPARATOR . "write_check.tst" )) 
+    {
+        $html =  '  SQL Caching folder is writable.';
+        $trouble['SQL Caching'][] = array('passed'=>true, 'text'=> $html);
+        @unlink($cachingFolderSql. DIRECTORY_SEPARATOR . "write_check.tst");
+    }
+    else 
+    {
+        $html =  '  SQL Caching is NOT writable.';
+        $trouble['SQL Caching'][] = array('passed'=>false, 'text'=> $html);
+    }
+}
+else 
+{
+    $html =  '  SQL Caching folder does NOT exist.';
+    $trouble['SQL Caching'][] = array('passed'=>false, 'text'=> $html);
+}
+
+
+
+
+$sections['Object Caching'] = 'Object Caching (File)';
+// get current Object caching folder
+$cachingFolderObject = getcwd() . DIRECTORY_SEPARATOR . KB_CACHEDIR. DIRECTORY_SEPARATOR . "store";
+$html = 'Current Object caching folder is set to '.$cachingFolderObject;
+$trouble['Object Caching'][] = array('passed'=>true, 'text'=>$html);
+
+// check if folder exists
+if(file_exists($cachingFolderObject)) 
+{
+    $html =  '  Object Caching folder exists.';
+    $trouble['Object Caching'][] = array('passed'=>true, 'text'=> $html);
+    
+    // check if folder is writable
+    if(@touch($cachingFolderObject. DIRECTORY_SEPARATOR . "write_check.tst" )) 
+    {
+        $html =  '  Object Caching folder is writable.';
+        $trouble['Object Caching'][] = array('passed'=>true, 'text'=> $html);
+        @unlink($cachingFolderObject. DIRECTORY_SEPARATOR . "write_check.tst");
+    }
+    else 
+    {
+        $html =  '  Object Caching is NOT writable.';
+        $trouble['Object Caching'][] = array('passed'=>false, 'text'=> $html);
+    }
+}
+else 
+{
+    $html =  '  Object Caching folder does NOT exist.';
+    $trouble['Object Caching'][] = array('passed'=>false, 'text'=> $html);
+}
+
+
+
 
 $smarty->assignByRef('sections', $sections);
 $smarty->assignByRef('trouble', $trouble);
