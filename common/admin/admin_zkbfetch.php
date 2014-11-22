@@ -102,11 +102,10 @@ if ($_POST['submit'] || $_POST['fetch'])
         config::set('post_no_npc_only_zkb', 0);
     }
     
-    // set the maximum number of kills per cycle to a new value
-    if($_POST['killTimestampOffset'] 
-            && is_numeric($_POST['killTimestampOffset']))
+    // set the negative timestamp offset
+    if(isset($_POST['killTimestampOffset']) && is_numeric($_POST['killTimestampOffset']))
     {
-        config::set('killTimestampOffset', $_POST['killTimestampOffset']);
+        config::set('killTimestampOffset', (int) $_POST['killTimestampOffset']);
     }
     
 }
@@ -146,7 +145,7 @@ $smarty->assignByRef('rows', $rows);
 $smarty->assign('results', $html);
 $smarty->assign('post_no_npc_only_zkb', config::get('post_no_npc_only_zkb'));
 $killTimestampOffset = config::get('killTimestampOffset');
-if(!$killTimestampOffset)
+if(is_null($killTimestampOffset) || !is_numeric($killTimestampOffset))
 {
     $killTimestampOffset = ZKBFetch::$KILL_TIMESTAMP_OFFSET_DEFAULT;
 }
