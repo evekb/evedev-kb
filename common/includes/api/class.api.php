@@ -10,7 +10,20 @@ class API {
 		require_once("common/pheal/Pheal.php");
 		spl_autoload_register("Pheal::classload");
 
-		PhealConfig::getInstance()->http_method = 'curl';
+                // automatically determine whether to use cURL or file_get_contents
+                if(in_array  ('curl', get_loaded_extensions()))
+                {
+                    PhealConfig::getInstance()->http_method = 'curl';
+                }
+                else
+                {
+                    PhealConfig::getInstance()->http_method = 'file';
+                }
+                
+                if(!defined(KB_CACHEDIR))
+                {
+                    define(KB_CACHEDIR, 'cache');
+                }
 		PhealConfig::getInstance()->http_post = false;
 		PhealConfig::getInstance()->http_keepalive = true;
 		// default 15 seconds
@@ -18,9 +31,9 @@ class API {
 		// KeepAliveTimeout in seconds
 		PhealConfig::getInstance()->http_timeout = 60;
 		//PhealConfig::getInstance()->cache = new PhealMemcache(array('port' => 11211));
-		PhealConfig::getInstance()->cache = new PhealFileCache('cache/api/');
+		PhealConfig::getInstance()->cache = new PhealFileCache(KB_CACHEDIR.'/api/');
 		PhealConfig::getInstance()->api_customkeys = true;
-		PhealConfig::getInstance()->log = new PhealFileLog('cache/api/');
+		PhealConfig::getInstance()->log = new PhealFileLog(KB_CACHEDIR.'/api/');
 	}
 
 	function IsCached() {
