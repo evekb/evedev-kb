@@ -211,4 +211,19 @@ class API_Helpers
 
 		return $cachetime;
 	}
+        
+        public static function isCurlSupported()
+        {
+            if(in_array  ('curl', get_loaded_extensions()))
+            {
+                // check for SSL support with cURL
+                $version = curl_version();
+                return ($version['features'] & CURL_VERSION_SSL) && in_array  ('openssl', get_loaded_extensions());
+            }
+            
+            else
+            {
+                return false;
+            }
+        }
 }

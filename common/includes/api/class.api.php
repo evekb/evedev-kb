@@ -11,7 +11,7 @@ class API {
 		spl_autoload_register("Pheal::classload");
 
                 // automatically determine whether to use cURL or file_get_contents
-                if(in_array  ('curl', get_loaded_extensions()))
+                if(API_Helpers::isCurlSupported())
                 {
                     PhealConfig::getInstance()->http_method = 'curl';
                 }
@@ -31,7 +31,8 @@ class API {
 		// KeepAliveTimeout in seconds
 		PhealConfig::getInstance()->http_timeout = 60;
 		//PhealConfig::getInstance()->cache = new PhealMemcache(array('port' => 11211));
-		PhealConfig::getInstance()->cache = new PhealFileCache(KB_CACHEDIR.'/api/');
+                // the default delimiter may cause problems on some file system, we want to use a dash for this
+		PhealConfig::getInstance()->cache = new PhealFileCache(KB_CACHEDIR.'/api/', array('delimiter' => '-'));
 		PhealConfig::getInstance()->api_customkeys = true;
 		PhealConfig::getInstance()->log = new PhealFileLog(KB_CACHEDIR.'/api/');
 	}

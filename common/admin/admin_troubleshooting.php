@@ -109,14 +109,14 @@ else
 	$trouble['Connectivity'][] = array('passed'=>false, 'text'=> $html);
 }
 
-if(in_array  ('curl', get_loaded_extensions()) )
+if(API_Helpers::isCurlSupported())
 {
-	$html =  '  cURL is available.';
+	$html =  '  cURL with SSL support is available.';
 	$trouble['Connectivity'][] = array('passed'=>true, 'text'=> $html);
 }
 else
 {
-	$html =  '  cURL is NOT available.<br />';
+	$html =  '  cURL with SSL support is NOT available.<br />';
 	$trouble['Connectivity'][] = array('passed'=>false, 'text'=> $html);
 }
 
@@ -159,7 +159,7 @@ if(file_exists($cachingFolderApi))
     {
         $html =  '  API Caching folder is writable.';
         $trouble['API Caching'][] = array('passed'=>true, 'text'=> $html);
-        @unlink($cachingFolderSql. DIRECTORY_SEPARATOR . "write_check.tst");
+        @unlink($cachingFolderApi. DIRECTORY_SEPARATOR . "write_check.tst");
         
         // connectivity check for XML API
         $apiIdToName = new API_IDtoName();
@@ -172,7 +172,7 @@ if(file_exists($cachingFolderApi))
         }
         else
         {
-            $html =  '  Connection to XML API NOT successul.';
+            $html =  '  Connection to XML API NOT successul, Error: '.$apiIdToName->getMessage().' (Code: '.$apiIdToName->getError().')';
             $trouble['API Caching'][] = array('passed'=>false, 'text'=> $html);
         }      
         

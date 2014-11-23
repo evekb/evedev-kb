@@ -45,7 +45,7 @@ class SimpleCrest
         }
 
         // determine whether cURL is available
-        if(in_array  ('curl', get_loaded_extensions()) && self::$HTTP_METHOD == 'curl')
+        if(API_Helpers::isCurlSupported() && self::$HTTP_METHOD == 'curl')
         {
             $data = self::getCrestByCurl($url);
         }
