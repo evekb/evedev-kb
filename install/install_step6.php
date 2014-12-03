@@ -15,7 +15,7 @@ if (isset($_REQUEST['submit']))
 		$_SESSION['sett'][$name] = $value;
 	}
 }
-$uri = 'http://'.$_SERVER['HTTP_HOST'].str_replace('/install/index.php','', $_SERVER['SCRIPT_NAME']);
+$uri = 'http://'.$_SERVER['HTTP_HOST'].str_ireplace('/install/index.php','', $_SERVER['SCRIPT_NAME']);
 if (empty($_SESSION['sett']['adminpw']))
 {
 	$_SESSION['sett']['adminpw'] = '';
