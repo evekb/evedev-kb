@@ -1104,7 +1104,7 @@ class IDFeed
 			$victimCorp = Corporation::getByID($kill->getVictimCorpID());
 			$victimAlliance = Alliance::getByID($kill->getVictimAllianceID());
 			$victimrow = $row->addChild('victim');
-			if ($victim->getName() == $kill->getVictimShipName()) {
+			if ($victim->getName() == $kill->getVictimShipName() || $victim->getName() == $kill->getSolarSystemName()) {
 				$victimrow->addAttribute('characterID', "0");
 				$victimrow->addAttribute('characterName', "");
 			} else {
