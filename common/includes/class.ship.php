@@ -293,4 +293,68 @@ class Ship extends Cacheable
 	{
 		return Cacheable::factory(get_class(), $id);
 	}
+        
+        /**
+         * returns the ship's traits as array of readable HTML text
+         * @return array an array grouping a ship's traits by skill the bonuses are related to
+         */
+        public function getTraitsHtml()
+        {
+            $qry = DBFactory::getDBQuery();
+
+            $sql = "SELECT 
+                itr.typeID AS typeID, it.typeName AS skillName, itr.bonus, eu.displayName AS unit, bonusText   
+                FROM kb3_invtraits itr
+                    LEFT JOIN kb3_invtypes it ON itr.skillID = it.typeID
+                    LEFT JOIN kb3_eveunits eu ON eu.unitID = itr.unitID 
+                    WHERE itr.typeID = ".$this->id;
+            
+            $qry->execute($sql);
+            
+            $traits = array();
+            
+            while($row = $qry->getRow())
+            {
+                // build trait text
+                $trait = '';
+                if($row['bonus'] != NULL)
+                {
+                    $trait .= $row['bonus'].' '.$row['unit'].' ';
+                }
+                $trait .= $row['bonusText'];
+                
+                // replace showinfo links
+                $trait = preg_replace_callback('/showinfo:[1-9]+/', array($this, 'parseShowInfoLink'), $trait);
+                
+                // check for role bonus
+                if($row['skillName'] == NULL)
+                {
+                    $row['skillName'] = 'Role';
+                }
+               
+                // group trait texts by skill
+                if(!isset($traits[$row['skillName']]))
+                {
+                    $traits[$row['skillName']] = array();
+                }
+                $traits[$row['skillName']][] = $trait;
+            }
+            return $traits;
+        }
+        
+        /**
+         * callback for showinfo links in corp description;
+         * replaces the showinfo-link with a link to the correct invtype
+         * @param array $showInfoLinks
+         */
+        static function parseShowInfoLink($showInfoLinks)
+        {
+            // showInfoLinks[0] looks like this: showinfo:1378
+            $showInfoLink = $showInfoLinks[0];
+            // 1378
+            $typeID = substr($showInfoLink, strpos($showInfoLink, ':')+1, strlen($showInfoLink)-strpos($showInfoLink, ':'));
+
+            return edkURI::page('invtype', $typeID);
+        }
+
 }

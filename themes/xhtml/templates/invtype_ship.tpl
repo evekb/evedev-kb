@@ -8,6 +8,20 @@
 				    <td style="vertical-align: top; width:64px; height:64px">
 					    <img style="float: left; margin-right: 10px;" src="{$shipImage}" alt="{$item->item.typeName}" />
 					    {$item->item.description|nl2br}
+                                            {$item->item.description|nl2br}
+                                            <br/><br/>
+                                            {foreach from=$traits key=skillName item=traitsBySkill}
+                                                {if $skillName != 'Role'}
+                                                    <b>{$skillName} bonuses (per skill level):</b>
+                                                {else}
+                                                    <b>Role Bonus:</b>
+                                                {/if}
+                                                <br/>
+                                                {foreach from=$traitsBySkill item=bonusText}
+                                                    {$bonusText}<br/>
+                                                {/foreach}
+                                                <br/>
+                                            {/foreach}
 				    </td>
 				</tr>
 			</table>

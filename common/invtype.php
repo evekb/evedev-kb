@@ -51,6 +51,7 @@ class pInvtype extends pageAssembly
 			//we have a ship, so get it from the db
 			$ship = Ship::getByID($item->get('typeID'));
 			$smarty->assign('shipImage', $ship->getImage(64));
+                        $smarty->assign('traits', $ship->getTraitsHtml());
 
 			$smarty->assign('armour', array('armorHP','armorEmDamageResonance',
 				'armorExplosiveDamageResonance','armorKineticDamageResonance',
