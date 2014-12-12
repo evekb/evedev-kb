@@ -65,9 +65,15 @@ class ValueFetcherCrest
             // use averagePrice (alternative is adjustedPrice, but it's not public what it's adjusted to)
             $itemPrice = @(float)$item->averagePrice;
             $typeId = @(int)$item->type->id;
+            
+            // use adjustedPrice as fallback if averagePrice is not available
+            if(!$itemPrice)
+            {
+                $itemPrice = @(float)$item->adjustedPrice;
+            }
 
             // Make sure we still have data
-            if (is_null($itemPrice) || is_null($typeId)) 
+            if (!$itemPrice || !$typeId) 
             {
                 $numberOfItemsSkipped++;
                 continue;
