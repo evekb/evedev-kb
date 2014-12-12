@@ -189,10 +189,10 @@ class MapView
 			$caption = $this->sysname_." (".roundsec($this->syssec_).")";
 		}
 		
-		if ($this->systemid_ >= 31000007)
-            $sql .= " AND sys.sys_id >= 31000007";
+		if ($this->systemid_ >= 31000001)
+            $sql .= " AND sys.sys_id >= 31000001";
         else
-            $sql .= " AND sys.sys_id < 31000007";
+            $sql .= " AND sys.sys_id < 31000001";
 
 		$qry = DBFactory::getDBQuery();
 		$qry->execute($sql) or die($qry->getErrorMsg());
