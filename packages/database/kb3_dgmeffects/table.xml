@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <kb3>
   <name>kb3_dgmeffects</name>
-  <rows>3527</rows>
+  <rows>3547</rows>
   <structure>CREATE TABLE `kb3_dgmeffects` (
   `effectID` smallint(5) NOT NULL DEFAULT '0',
   `effectName` text NOT NULL,
@@ -30,6 +30,7 @@
   `npcUsageChanceAttributeID` smallint(5) DEFAULT NULL,
   `npcActivationChanceAttributeID` smallint(5) DEFAULT NULL,
   `fittingUsageChanceAttributeID` smallint(5) DEFAULT NULL,
+  `modifierInfo` longtext,
   PRIMARY KEY (`effectID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8</structure>
 </kb3>
