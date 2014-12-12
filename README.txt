@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.5.0
+Eve Development Network Killboard v4.2.6.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -24,6 +24,29 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
+v4.2.6.0
+
+Features:
+
+Updated CCP DB to Rhea 1.0 (109013)
+
+Enhancements:
+CREST value fetcher uses industry price as fallback
+Updated Map generator to work with Thera
+Reintegrated ship traits into item details
+Enhanced cURL detection and Pheal compatibility
+Expanded ACP Troubleshooting section
+Automatically detect file/curl method for XML API
+Use TLS with cURL for fetching from CREST/zKB
+
+Bugfixes:
+Fix: Victim name of structures in IDFeed
+Fix: Host detection during installation
+Fix: Allow negative timestamp offset of 0 for ZKBFetch
+Fix: zKB sliding timestamp and HTTP errors
+Fix: Changed URL for socket connect check
+
+-------------------------------------------
 v4.2.5.0
 
 Features:
