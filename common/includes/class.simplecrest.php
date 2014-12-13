@@ -84,9 +84,8 @@ class SimpleCrest
         if(substr($url,0,5) == "https")
         {
            curl_setopt(self::$curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-           // try using TLS
-           curl_setopt(self::$curl, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1);
-           curl_setopt(self::$curl, CURLOPT_SSL_CIPHER_LIST, 'TLSv1');
+           // set ciphers
+           curl_setopt(self::$curl, CURLOPT_SSL_CIPHER_LIST, 'ALL');
         }
         
         // set timeout
@@ -157,7 +156,7 @@ class SimpleCrest
         
         if(!is_null($compressionLibrary))
         {
-            $header .= 'Accept-Encoding: gzip\r\n';
+            $header .= "Accept-Encoding: gzip\r\n";
         }
         
         $opts = array(
