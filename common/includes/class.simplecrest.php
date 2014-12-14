@@ -44,8 +44,9 @@ class SimpleCrest
             return null;
         }
 
+        API_Helpers::autoSetApiConnectionMethod();
         // determine whether cURL is available
-        if(API_Helpers::isCurlSupported() && self::$HTTP_METHOD == 'curl')
+        if(config::get('apiConnectionMethod') == 'curl' && self::$HTTP_METHOD == 'curl')
         {
             $data = self::getCrestByCurl($url);
         }
@@ -84,8 +85,6 @@ class SimpleCrest
         if(substr($url,0,5) == "https")
         {
            curl_setopt(self::$curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-           // set ciphers
-           curl_setopt(self::$curl, CURLOPT_SSL_CIPHER_LIST, 'ALL');
         }
         
         // set timeout

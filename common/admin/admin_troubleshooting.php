@@ -7,8 +7,6 @@
  */
 
 $URL_FETCHING_TEST_URL = 'http://www.evekb.org/downloads/update.xml';
-$API_TESTING_CHARACTER_ID = 800263173;
-$CREST_TESTING_URL = 'http://public-crest.eveonline.com/killmails/33493676/553ac7e2aeabe48092bde10958de0a44dc6f35ef/';
 
 require_once('common/admin/admin_menu.php');
 
@@ -161,31 +159,29 @@ if(file_exists($cachingFolderApi))
         $trouble['API Caching'][] = array('passed'=>true, 'text'=> $html);
         @unlink($cachingFolderApi. DIRECTORY_SEPARATOR . "write_check.tst");
         
-        // connectivity check for XML API
-        $apiIdToName = new API_IDtoName();
-        $apiIdToName->setIDs($API_TESTING_CHARACTER_ID);
-        $apiIdToName->fetchXML();
-        if(count($apiIdToName->getIDData()) > 0)
+        // test XML API connection
+        try 
         {
+            API_Helpers::testXmlApiConnection();
             $html =  '  Successfully connected to XML API';
             $trouble['API Caching'][] = array('passed'=>true, 'text'=> $html);
-        }
-        else
+        } 
+        catch (EDKApiConnectionException $e) 
         {
-            $html =  '  Connection to XML API NOT successul, Error: '.$apiIdToName->getMessage().' (Code: '.$apiIdToName->getError().')';
+            $html =  '  Connection to XML API NOT successul, Error: '.$e->getMessage().' (Code: '.$e->getCode().')';
             $trouble['API Caching'][] = array('passed'=>false, 'text'=> $html);
-        }      
-        
+        }
+               
         // connectivity check for CREST
-        $kill = SimpleCrest::getReferenceByUrl($CREST_TESTING_URL);
-        if(!is_null($kill) && (int)$kill->killID > 0)
+        try
         {
+            API_Helpers::testCrestApiConnection();
             $html =  '  Successfully connected to CREST API';
             $trouble['API Caching'][] = array('passed'=>true, 'text'=> $html);
         }
-        else
+        catch(EDKApiConnectionException $e)
         {
-            $html =  '  Connection to CREST API NOT successul.';
+            $html =  '  Connection to CREST API NOT successul, Error: '.$e->getMessage().' (Code: '.$e->getCode().')';
             $trouble['API Caching'][] = array('passed'=>false, 'text'=> $html);
         }
         

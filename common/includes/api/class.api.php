@@ -10,8 +10,9 @@ class API {
 		require_once("common/pheal/Pheal.php");
 		spl_autoload_register("Pheal::classload");
 
-                // automatically determine whether to use cURL or file_get_contents
-                if(API_Helpers::isCurlSupported())
+                // init API connection method
+                API_Helpers::autoSetApiConnectionMethod();
+                if(config::get('apiConnectionMethod') == 'curl')
                 {
                     PhealConfig::getInstance()->http_method = 'curl';
                 }

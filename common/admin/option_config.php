@@ -26,6 +26,10 @@ options::fadd('Display profiling information', 'cfg_profile', 'checkbox');
 options::fadd('Log errors', 'cfg_log', 'checkbox');
 options::fadd('Lock board', 'cfg_locked', 'checkbox');
 
+options::cat('Advanced', 'Configuration', 'API');
+options::fadd('API connection method', 'apiConnectionMethod', 'select',
+		array('admin_config', 'createApiConnectionMethod'));
+
 options::cat('Advanced', 'Configuration', 'Public-Mode');
 options::fadd('Only Kills in SummaryTables', 'public_summarytable', 'checkbox',
 		'', '', 'Set no board owners to work in public mode');
@@ -75,6 +79,30 @@ class admin_config
 		$newimg = preg_replace('/\/+$/', '', $_POST['option_cfg_img']);
 		config::set('cfg_img', $newimg);
 		$_POST['option_cfg_img'] = $newimg;
+	}
+        
+        public static function createApiConnectionMethod()
+	{
+		$options = array();
+                API_Helpers::autoSetApiConnectionMethod();
+
+		if (config::get('apiConnectionMethod') == 'curl') {
+			$state = 1;
+		} else {
+			$state = 0;
+		}
+		$options[] = array('value' => 'curl', 'descr' => 'cURL',
+			'state' => $state);
+
+		if (config::get('apiConnectionMethod') == 'file') {
+			$state = 1;
+		} else {
+			$state = 0;
+		}
+		$options[] = array('value' => 'file', 'descr' => 'file',
+			'state' => $state);
+
+		return $options;
 	}
 
 	public static function createSelectStats()

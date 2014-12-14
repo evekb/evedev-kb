@@ -6,6 +6,8 @@
  * @package EDK
  */
 
+class EDKApiConnectionException extends Exception {}
+
 // **********************************************************************************************************************************************
 // **********************************************************************************************************************************************
 // ****************                         					  GENERIC public static functionS                					             ****************
@@ -226,4 +228,88 @@ class API_Helpers
                 return false;
             }
         }
+        
+        
+        /**
+         * executes a call against the XML API
+         * @return true on success
+         * @throws EDKApiConnectionException
+         */
+        public static function testXmlApiConnection()
+        {
+            $API_TESTING_CHARACTER_ID = 800263173;
+            // connectivity check for XML API
+            $apiIdToName = new API_IDtoName();
+            // don't use caching for this
+            PhealConfig::getInstance()->cache = new PhealNullCache();
+            $apiIdToName->setIDs($API_TESTING_CHARACTER_ID);
+            $apiIdToName->fetchXML();
+            if(count($apiIdToName->getIDData()) > 0)
+            {
+                return true;
+            }
+            
+            else
+            {
+                throw new EDKApiConnectionException($apiIdToName->getMessage(), $apiIdToName->getError());
+            }
+        }
+        
+        /**
+         * executes a call against the CREST API
+         * @return true on success
+         * @throws EDKApiConnectionException
+         */
+        public static function testCrestApiConnection()
+        {
+            $CREST_TESTING_URL = 'http://public-crest.eveonline.com/killmails/33493676/553ac7e2aeabe48092bde10958de0a44dc6f35ef/';
+            try
+            {
+                $kill = SimpleCrest::getReferenceByUrl($CREST_TESTING_URL);
+                if(!is_null($kill) && (int)$kill->killID > 0)
+                {
+                    return true;
+                }
+                
+                else
+                {
+                    throw new EDKApiConnectionException("CREST call returned invalid data!", -1);
+                }
+            }
+            
+            catch(Exception $e)
+            {
+                throw new EDKApiConnectionException($e->getMessage(), $e->getError());
+            }
+        }
+        
+        
+        
+        /**
+         * sets the preferred method for connecting to APIs
+         * @return cURL or file
+         */
+        public static function autoSetApiConnectionMethod()
+        {
+            // has the connection method already been set?
+            if(config::get('apiConnectionMethod'))
+            {
+                return;
+            }
+            
+            try
+            {
+                // initialize with cURL setting
+                config::set('apiConnectionMethod', 'curl');
+                API_Helpers::testXmlApiConnection();
+                API_Helpers::testCrestApiConnection();
+            } 
+            catch (Exception $ex) 
+            {
+                // cURL didn't work, fall back to file
+                config::set('apiConnectionMethod', 'file');
+            }
+        }
+        
+        
 }
