@@ -297,12 +297,19 @@ class API_Helpers
                 return;
             }
             
+            // don't test cURL connection if cURL is not available
+            if(!API_Helpers::isCurlSupported())
+            {
+                config::set('apiConnectionMethod', 'file');
+                return;
+            }
+            
             try
             {
                 // initialize with cURL setting
                 config::set('apiConnectionMethod', 'curl');
-                API_Helpers::testXmlApiConnection();
-                API_Helpers::testCrestApiConnection();
+                @API_Helpers::testXmlApiConnection();
+                @API_Helpers::testCrestApiConnection();
             } 
             catch (Exception $ex) 
             {
