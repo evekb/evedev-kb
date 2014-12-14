@@ -155,7 +155,7 @@ class SimpleCrest
         
         if(!is_null($compressionLibrary))
         {
-            $header .= "Accept-Encoding: gzip\r\n";
+            $header .= "Accept-Encoding: deflate\r\n";
         }
         
         $opts = array(
@@ -190,12 +190,23 @@ class SimpleCrest
 		
         else 
         {
+            // parse response headers
+            $headers = array();
+            foreach($http_response_header AS $headerLine)
+            {
+                if(strpos($headerLine, ':') !== FALSE)
+                {
+                    $headers[substr($headerLine, 0, strpos($headerLine, ':'))] = trim(substr($headerLine, strpos($headerLine, ':')+1));
+                }
+            }
+			
             // check for compression and decompress, if possible
-            if(is_null($compressionLibrary) && isset($headers['Content-Encoding']) && $headers['Content-Encoding'] == 'gzip')
+            if(!is_null($compressionLibrary) && isset($headers['Content-Encoding']) && $headers['Content-Encoding'] == 'gzip')
             {
                 if($compressionLibrary == 'gzip')
                 {
-                    $data = gzdecode($data);
+                    $data = gzinflate($data);
+					
                 }
                 
                 else if($compressionLibrary == 'pecl')
