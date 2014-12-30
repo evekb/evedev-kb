@@ -99,7 +99,7 @@ class imageURL
 			if(strpos($url, "?") !== false) {
 				$url .= "&amp;int=1";
 			} else {
-				$url .= "?amp;int=1";
+				$url .= "?int=1";
 			}
 		}
 		return $url;
