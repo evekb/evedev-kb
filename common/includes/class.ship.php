@@ -324,7 +324,7 @@ class Ship extends Cacheable
                 $trait .= $row['bonusText'];
                 
                 // replace showinfo links
-                $trait = preg_replace_callback('/showinfo:[1-9]+/', array($this, 'parseShowInfoLink'), $trait);
+                $trait = preg_replace_callback('/showinfo:[0-9]+/', array($this, 'parseShowInfoLink'), $trait);
                 
                 // check for role bonus
                 if($row['skillName'] == NULL)
