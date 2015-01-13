@@ -70,6 +70,8 @@ function checkAll(checkname, exby)
                 <tr>
 			<td colspan='3'>
 				<i>Example: https://zkillboard.com/api/corporationID/12345567890/</i>
+                                <br/>
+                                <i>Example (beta.eve-kill.net): https://beta.eve-kill.net/api/<b>combined/</b>corporationID/12345567890/</i>
 			</td>
                 </tr>
         </table>
