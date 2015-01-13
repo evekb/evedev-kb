@@ -8,7 +8,6 @@
 				    <td style="vertical-align: top; width:64px; height:64px">
 					    <img style="float: left; margin-right: 10px;" src="{$shipImage}" alt="{$item->item.typeName}" />
 					    {$item->item.description|nl2br}
-                                            {$item->item.description|nl2br}
                                             <br/><br/>
                                             {foreach from=$traits key=skillName item=traitsBySkill}
                                                 {if $skillName != 'Role'}
