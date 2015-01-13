@@ -59,6 +59,7 @@ foreach($kb['kb3']['table'] as $idx => $tbl)
 }
 //start a new db connection with stored session info
 $db = mysql_connect($_SESSION['sql']['host'], $_SESSION['sql']['user'], $_SESSION['sql']['pass']);
+mysql_set_charset('utf8');
 mysql_select_db($_SESSION['sql']['db']);
 $result = mysql_query('SHOW TABLES');
 
