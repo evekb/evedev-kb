@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.6.0
+Eve Development Network Killboard v4.2.7.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -24,6 +24,25 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
+v4.2.7.0
+
+Features:
+Updated CCP DB to Proteus 1.0.109795
+
+Enhancements:
+ZKBFetch: Updated examples for beta.eve-kill.net
+Don't test API connection with cURL if it's not available
+Introduced configuration of API connection method
+
+Bugfixes:
+Fix: Copy/Paste error in Ship Details View
+Fix: Make installer use UTF8 charset in DB connection
+Fixed bug in generating image URLs
+Fixed bug in parsing ship traits info links
+Fix: file method not being able to handle compressed replies
+Fix: For cURL and file methods in SimpleCrest class
+
+-------------------------------------------
 v4.2.6.0
 
 Features:
