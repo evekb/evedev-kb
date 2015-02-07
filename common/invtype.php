@@ -38,9 +38,21 @@ class pInvtype extends pageAssembly
 	 */
 	function context()
 	{
-		parent::__construct();
-		$this->queue("menuSetup");
-		$this->queue("menu");
+                $item = new dogma($this->typeID);
+
+		if (!$item->isValid())
+		{
+			$this->page->setTitle('Error');
+			return 'This ID is not a valid dogma ID.';
+		}
+               
+                // display context menu only for ships
+		if ($item->get('itt_cat') == 6)
+                {
+                    parent::__construct();
+                    $this->queue("menuSetup");
+                    $this->queue("menu");
+                }
 	}
         
         /**
