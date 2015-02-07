@@ -15,6 +15,8 @@ class pInvtype extends pageAssembly
 	public $typeID;
 	/** @var Page */
 	public $page;
+        /** @var array The list of menu options to display. */
+	protected $menuOptions = array();
 		
 	function __construct()
 	{
@@ -29,6 +31,63 @@ class pInvtype extends pageAssembly
 		$this->typeID = edkURI::getArg('id', 1);
 		$this->page = new Page('Item Details');
 
+	}
+        
+        /**
+	 *  Reset the assembly object to prepare for creating the context.
+	 */
+	function context()
+	{
+		parent::__construct();
+		$this->queue("menuSetup");
+		$this->queue("menu");
+	}
+        
+        /**
+	 * Set up the menu.
+	 *
+	 *  Prepare all the base menu options.
+	 */
+	function menuSetup()
+	{
+		$args = array();
+		$args[] = array('id', $this->typeID, true);
+
+		$this->addMenuItem("link","Description", edkURI::build($args));
+		$this->addMenuItem("link","Kills", edkURI::build($args, array('view', 'kills', true)));
+		$this->addMenuItem("link","Losses", edkURI::build($args, array('view', 'losses', true)));
+		return "";
+	}
+	/**
+	 * Build the menu.
+	 *
+	 *  Add all preset options to the menu.
+	 */
+	function menu()
+	{
+		$menubox = new box("Menu");
+		$menubox->setIcon("menu-item.gif");
+		foreach($this->menuOptions as $options)
+		{
+			if(isset($options[2]))
+				$menubox->addOption($options[0],$options[1], $options[2]);
+			else
+				$menubox->addOption($options[0],$options[1]);
+		}
+		return $menubox->generate();
+	}
+        
+        /**
+	 * Add an item to the menu in standard box format.
+	 *
+	 *  Only links need all 3 attributes
+	 * @param string $type Types can be caption, img, link, points.
+	 * @param string $name The name to display.
+	 * @param string $url Only needed for URLs.
+	 */
+	function addMenuItem($type, $name, $url = '')
+	{
+		$this->menuOptions[] = array($type, $name, $url);
 	}
 
 	function details()
@@ -52,25 +111,66 @@ class pInvtype extends pageAssembly
 			$ship = Ship::getByID($item->get('typeID'));
 			$smarty->assign('shipImage', $ship->getImage(64));
                         $smarty->assign('traits', $ship->getTraitsHtml());
+                        
+                        $view = edkURI::getArg('view', 2);
+                        $killList = '';
+                        if($view == 'kills')
+                        {
+                            $list = new KillList();
+                            $list->setOrdered(true);
+                            $list->addInvolvedShipType($this->typeID);
+                            $list->setPageSplit(config::get('killcount'));
+                            $pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
+                            $table = new KillListTable($list);
+                            $table->setDayBreak(false);
+                            $html = $smarty->fetch(get_tpl('invtype_ship_killlist'));
+                            
+                            $smarty->assign('splitter',$pagesplitter->generate());
+                            $smarty->assign('kills', $table->generate());
+                            $html .= $smarty->fetch(get_tpl('detail_kl_kills'));
+                        }
+                        
+                        else if($view == 'losses')
+                        {
+                            $list = new KillList();
+                            $list->setOrdered(true);
+                            $list->addVictimShipType($this->typeID);
+                            $list->setPageSplit(config::get('killcount'));
+                            $pagesplitter = new PageSplitter($list->getCount(), config::get('killcount'));
 
-			$smarty->assign('armour', array('armorHP','armorEmDamageResonance',
-				'armorExplosiveDamageResonance','armorKineticDamageResonance',
-				'armorThermalDamageResonance'));
-			$smarty->assign('shield', array('shieldCapacity','shieldRechargeRate',
-				'shieldEmDamageResonance','shieldExplosiveDamageResonance',
-				'shieldKineticDamageResonance','shieldThermalDamageResonance'));
-			$smarty->assign('propulsion', array('maxVelocity','agility','droneCapacity',
-				'capacitorCapacity','rechargeRate'));
-			$smarty->assign('fitting', array('hiSlots','medSlots','lowSlots','rigSlots',
-				'upgradeCapacity','droneBandwidth','launcherSlotsLeft','turretSlotsLeft',
-				'powerOutput','cpuOutput'));
-			$smarty->assign('targetting', array('maxTargetRange','scanResolution',
-				'maxLockedTargets','scanRadarStrength','scanLadarStrength',
-				'scanMagnetometricStrength','scanGravimetricStrength','signatureRadius'));
-			$smarty->assign('miscellaneous', array('techLevel','propulsionFusionStrength',
-				'propulsionIonStrength','propulsionMagpulseStrength',
-				'propulsionPlasmaStrength'));
-			$html = $smarty->fetch(get_tpl('invtype_ship'));
+                            $table = new KillListTable($list);
+                            $table->setDayBreak(false);
+                            $html = $smarty->fetch(get_tpl('invtype_ship_killlist'));
+                            
+                            $smarty->assign('splitter',$pagesplitter->generate());
+                            $smarty->assign('losses', $table->generate());
+                            $html .= $smarty->fetch(get_tpl('detail_kl_losses'));
+                        }
+                        
+                        else
+                        {
+                            $smarty->assign('armour', array('armorHP','armorEmDamageResonance',
+                                    'armorExplosiveDamageResonance','armorKineticDamageResonance',
+                                    'armorThermalDamageResonance'));
+                            $smarty->assign('shield', array('shieldCapacity','shieldRechargeRate',
+                                    'shieldEmDamageResonance','shieldExplosiveDamageResonance',
+                                    'shieldKineticDamageResonance','shieldThermalDamageResonance'));
+                            $smarty->assign('propulsion', array('maxVelocity','agility','droneCapacity',
+                                    'capacitorCapacity','rechargeRate'));
+                            $smarty->assign('fitting', array('hiSlots','medSlots','lowSlots','rigSlots',
+                                    'upgradeCapacity','droneBandwidth','launcherSlotsLeft','turretSlotsLeft',
+                                    'powerOutput','cpuOutput'));
+                            $smarty->assign('targetting', array('maxTargetRange','scanResolution',
+                                    'maxLockedTargets','scanRadarStrength','scanLadarStrength',
+                                    'scanMagnetometricStrength','scanGravimetricStrength','signatureRadius'));
+                            $smarty->assign('miscellaneous', array('techLevel','propulsionFusionStrength',
+                                    'propulsionIonStrength','propulsionMagpulseStrength',
+                                    'propulsionPlasmaStrength'));
+                            
+                            $html = $smarty->fetch(get_tpl('invtype_ship'));
+                            
+                        }
+
 		}
 		else
 		{
@@ -87,5 +187,10 @@ $invtype = new pInvtype();
 event::call("invtype_assembling", $invtype);
 $html = $invtype->assemble();
 $invtype->page->setContent($html);
+
+$invtype->context();
+event::call("invtype_context_assembling", $invtype);
+$context = $invtype->assemble();
+$invtype->page->addContext($context);
 
 $invtype->page->generate();

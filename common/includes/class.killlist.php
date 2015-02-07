@@ -16,6 +16,7 @@ class KillList
 	private $killisk_ = 0;
 	private $exclude_scl_ = array();
 	private $vic_scl_id_ = array();
+        private $vic_sc_id_ = array();
 	private $regions_ = array();
 	private $systems_ = array();
 	private $groupby_ = array();
@@ -45,6 +46,7 @@ class KillList
 	private $inv_plt_ = array();
 	private $inv_crp_ = array();
 	private $inv_all_ = array();
+        private $inv_shp_ = array();
 	private $vic_plt_ = array();
 	private $vic_crp_ = array();
 	private $vic_all_ = array();
@@ -162,9 +164,13 @@ class KillList
 			// excluded ship filter
 			if (count($this->exclude_scl_))
 				$sql .= " AND shp.shp_class not in ( ".implode(",", $this->exclude_scl_)." )";
-			// included ship filter
+			// included ship class filter
 			if (count($this->vic_scl_id_))
 				$sql .= " AND shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
+                        // included ship type filter
+			if (count($this->vic_sc_id_))
+				$sql .= " AND kll.kll_ship_id in ( ".implode(",", $this->vic_sc_id_)." ) ";
+                        
 			event::call('killlist_where_combined_kills', $sql);
 
 			if(($this->comb_all_ || $this->comb_crp_)
@@ -235,6 +241,9 @@ class KillList
 			// included ship filter
 			if (count($this->vic_scl_id_))
 				$sql .= " AND shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
+                        // included ship type filter
+			if (count($this->vic_sc_id_))
+				$sql .= " AND kll.kll_ship_id in ( ".implode(",", $this->vic_sc_id_)." ) ";
 			event::call('killlist_where_combined_losses', $sql);
 			if ($this->ordered_)
 			{
@@ -298,7 +307,7 @@ class KillList
 			if (!count($this->groupby_))
 			{
 				$this->sqltop_ = 'SELECT ';
-				if(count($this->inv_all_) + count($this->inv_crp_) + count($this->inv_plt_) > 1)
+				if(count($this->inv_all_) + count($this->inv_crp_) + count($this->inv_plt_) + count($this->inv_shp_) > 1)
 					$this->sqltop_ .= ' DISTINCT ';
 				$this->sqltop_ .= implode(', ', $this->expr);
 				event::call('killlist_select_expr', $this->sqltop_);
@@ -364,9 +373,9 @@ class KillList
 					else $this->sql_ .= " order by ".$this->orderby_;
 				}
 			}
-			elseif ( $this->inv_plt_ || $this->inv_crp_ || $this->inv_all_)
+			elseif ( $this->inv_plt_ || $this->inv_crp_ || $this->inv_all_ || $this->inv_shp_)
 			{
-				if($this->inv_plt_ || ($this->inv_crp_ && $this->inv_all_))
+				if($this->inv_plt_ || ($this->inv_crp_ && $this->inv_all_) || $this->inv_shp_)
 				{
 					$this->sql_ .= " INNER JOIN kb3_inv_detail ind ON (ind.ind_kll_id = kll.kll_id)
 						WHERE ";
@@ -374,6 +383,7 @@ class KillList
 					if($this->inv_all_) $invP[] = " ind.ind_all_id in (".implode(',', $this->inv_all_)." ) ";
 					if($this->inv_crp_) $invP[] = " ind.ind_crp_id in (".implode(',', $this->inv_crp_)." ) ";
 					if($this->inv_plt_) $invP[] = " ind.ind_plt_id in (".implode(',', $this->inv_plt_)." ) ";
+                                        if($this->inv_shp_) $invP[] = " ind.ind_shp_id in (".implode(',', $this->inv_shp_)." ) ";
 					$this->sql_ .= "( ".implode(' OR ', $invP)." )";
 
 					if($startdate) $this->sql_ .=" AND ind.ind_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
@@ -394,6 +404,13 @@ class KillList
 					if($startdate) $this->sql_ .=" AND inc.inc_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
 					if($enddate) $this->sql_ .=" AND inc.inc_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
 				}
+                                
+                                else if($this->inv_shp_)
+                                {
+                                        $this->sql_ .= " WHERE ind.ind_shp_id in (".implode(',', $this->inv_shp_)." ) ";
+					if($startdate) $this->sql_ .=" AND ind.ind_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+					if($enddate) $this->sql_ .=" AND ind.ind_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+                                }
 
 				// victim filter
 				if($this->vic_plt_ || $this->vic_crp_ || $this->vic_all_)
@@ -438,6 +455,9 @@ class KillList
 				// included ship filter
 				if (count($this->vic_scl_id_))
 					$this->sql_ .= " AND shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
+                                // included ship type filter
+                                if (count($this->vic_sc_id_))
+                                        $sql .= " AND kll.kll_ship_id in ( ".implode(",", $this->vic_sc_id_)." ) ";
 				event::call('killlist_where_kill', $this->sql_);
 
 				if ($this->ordered_)
@@ -537,6 +557,12 @@ class KillList
 					$this->sql_ .= $sqlwhereop." shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
 					$sqlwhereop = ' AND ';
 				}
+                                // included ship type filter
+                                if (count($this->vic_sc_id_))
+                                {
+                                        $this->sql_ .= $sqlwhereop." kll.kll_ship_id in ( ".implode(",", $this->vic_sc_id_)." ) ";
+					$sqlwhereop = ' AND ';
+                                }
 				event::call('killlist_where_loss', $this->sql_);
 				if ($this->ordered_)
 				{
@@ -726,6 +752,7 @@ class KillList
 		if($test instanceof Pilot) involved::add($this->inv_plt_, $obj);
 		elseif($test instanceof Corporation) involved::add($this->inv_crp_, $obj);
 		elseif($test instanceof Alliance) involved::add($this->inv_all_, $obj);
+                elseif($test instanceof Ship) $this->addInvolvedShipType ($test);
 		else trigger_error ("Parameter passed was not a valid object.", E_USER_WARNING);
 	}
 
@@ -742,6 +769,12 @@ class KillList
 	public function addInvolvedAlliance($alliance)
 	{
 		involved::add($this->inv_all_, $alliance);
+	}
+        
+        public function addInvolvedShipType($shipType)
+	{
+		if(is_numeric($shipType)) $this->inv_shp_[] = $shipType;
+		else $this->inv_shp_[] = $shipType->getID();
 	}
 
 	public function addVictim($obj)
@@ -798,6 +831,12 @@ class KillList
 	{
 		if(is_numeric($shipclass)) $this->vic_scl_id_[] = $shipclass;
 		else $this->vic_scl_id_[] = $shipclass->getID();
+	}
+        
+        public function addVictimShipType($shipType)
+	{
+		if(is_numeric($shipType)) $this->vic_sc_id_[] = $shipType;
+		else $this->vic_sc_id_[] = $shipType->getID();
 	}
 
 	public function addRegion($region)
@@ -895,7 +934,7 @@ class KillList
 		$sql = '';
 		$qstartdate = makeStartDate($this->weekno_, $this->yearno_, $this->monthno_, $this->startweekno_, $this->startDate_);
 		$qenddate = makeEndDate($this->weekno_, $this->yearno_, $this->monthno_, $this->endDate_);
-		if($this->inv_all_ || $this->inv_crp_ || $this->inv_plt_)
+		if($this->inv_all_ || $this->inv_crp_ || $this->inv_plt_ || $this->inv_shp_)
 		{
 			if($qstartdate) $sql .= " kll.kll_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' AND ";
 			if($qenddate) $sql .= " kll.kll_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' AND ";
