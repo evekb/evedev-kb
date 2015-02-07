@@ -99,9 +99,6 @@ function getIDFeed(&$key, &$val)
 	} else {
 		$feedfetch->setAllKills(1);
 	}
-	if ($val['trusted']) {
-		$feedfetch->setAcceptedTrust(1);
-	}
 	if(!$val['lastkill']) {
 		$feedfetch->setStartDate(time() - 60*60*24*7);
 	} else if($val['apikills']) {

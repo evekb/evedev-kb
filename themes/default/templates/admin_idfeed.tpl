@@ -15,7 +15,6 @@ function checkAll(checkname, exby)
 		<tr style='text-align: left;'>
 			<th>Feed URL</th>
 			<th>Last Kill</th>
-			<th>Trusted</th>
 			<th>Fetch</th>
 			<th>Delete</th>
 		</tr>
@@ -28,9 +27,6 @@ function checkAll(checkname, exby)
 				<input type='text' name='lastkill{$i.name}' class='lastkill' size='10' value='{$i.lastkill}' />
 			</td>
 			<td>
-				<input type='checkbox' name='trusted[]' class='trusted' value='{$i.name}' {if $i.trusted}checked="checked"{/if} />
-			</td>
-			<td>
 				<input type='checkbox' name='fetch_feed[]' class='fetch' value='{$i.name}' {if $i.fetch}checked="checked"{/if} />
 			</td>
 			<td>
@@ -41,10 +37,6 @@ function checkAll(checkname, exby)
 		<tr>
 			<td colspan='2'>
 				<i>Example: http://killboard.domain.com/?a=idfeed</i>
-			</td>
-			<td>
-				<input type='checkbox' name='allt' onclick='checkAll("trusted[]",this)' />
-				<i>all/none</i>
 			</td>
 			<td>
 				<input type='checkbox' name='allf' onclick='checkAll("fetch_feed[]",this)' />

@@ -28,21 +28,6 @@
 class IDFeed
 {
 	private $url = '';
-	/** 
-	 * @var int The level of trust to accept before verifying a mail. Lower
-	 * is more trusting.
-	 */
-	private $trust = 255;
-	/** 
-	 * @var int Force a level of trust when verifying kills. Used to set kills
-	 * from the API as trusted.
-	 */
-	private $killtrust = 0;
-	/** 
-	 * @var int The maximum level of trust to record, regardless of what a remote
-	 * feed may claim.
-	 */
-	private $maxtrust = 3;
 	private $xml = '';
 	private $options = array();
 	private $lastReturned = 0;
@@ -354,52 +339,6 @@ class IDFeed
 		return $this->options['allkills'];
 	}
 
-	/**
-	 * Set level of trust to accept. Kills with a trust level greater than or
-	 * equal to this will be accepted as verified. If the remote kill has a trust
-	 * level below this, it will not be verified.
-	 * 
-	 * e.g.
-	 * We fetch a KillLog from the API and use setKillTrust to force it to a 
-	 * trust level of 3. Another board then fetches from us, and is willing to 
-	 * accept a trust level of 1, so the kills are fetched and accepted as
-	 * verified. The trust level is reduced to 2 by that board. The next board
-	 * will also accept them as verified and set trust to 1, and the next 0.
-	 * 
-	 * If a board accepts all kills with a trust level of 1 it will accept the
-	 * kill from the first three boards (3, 2, 1) as verified. The fourth
-	 * board trusts the kill itself , but the level of trust is too low for other
-	 * boards to accept that kill as verified from the fourth board.
-	 * 
-	 * Untrusted kills are still accepted, but not marked as verified. (Future
-	 * versions may also have minimum standards to accept unverified kills.) Note
-	 * that it is possible for trust levels to change. e.g. A kill is manually
-	 * posted so has a trust level of 0 but then the same kill is fetched from
-	 * the API and the trust level changed to 3. Thus a kill may be untrusted
-	 * when a remote board fetches but become trusted later on. 
-	 * 
-	 * @param int $trust Accept kills with greater than or equal to this level
-	 * of trust.
-	 * @return int 
-	 */
-	function setAcceptedTrust($trust = 1)
-	{
-		$this->trust = (int)$trust;
-		return $this->trust;
-	}
-
-	/**
-	 * Force a level of trust to record for new kills. e.g. API kills have no
-	 * inherent trust mechanism but we do trust them.
-	 * 
-	 * @param int $trust
-	 * @return int 
-	 */
-	function setKillTrust($trust = 0)
-	{
-		$this->killtrust = (int)$trust;
-		return $this->killtrust;
-	}
 
 	/**
 	 * Fetch the External ID of the last kill returned.
@@ -531,14 +470,11 @@ class IDFeed
 			$qry = DBFactory::getDBQuery();
 
 			$kill = new Kill();
-			if ($externalID
-					&& ($this->killtrust || (int)$row['trust'] >= $this->trust)) {
-				$kill->setExternalID($externalID);
+			if ($externalID) 
+                        {
+                            $kill->setExternalID($externalID);
 			}
-			if ((int)$row['trust'] || $this->killtrust) {
-				$kill->setTrust(min($this->maxtrust,
-						max((int)$row['trust'] - 1, $this->killtrust)));
-			}
+
 
 			$kill->setTimeStamp(strval($row['killTime']));
 
@@ -628,18 +564,15 @@ class IDFeed
 					$skip = true;
 				} else if ($id < 0) {
 					$id = $kill->getDupe(true);
-					if ($externalID  && $id
-							&& ($this->killtrust || (int)$row['trust'] >= $this->trust)) {
+					if ($externalID  && $id) {
 						$qry = DBFactory::getDBQuery(true);
-						$trust = min($this->maxtrust,
-								max((int)$row['trust'] - 1, $this->killtrust));
 						$qry->execute( "INSERT IGNORE INTO kb3_mails (  `kll_id`,"
 								." `kll_timestamp`, `kll_external_id`, `kll_hash`,"
 								." `kll_trust`, `kll_modified_time`)"
 								."VALUES(".$id.", '".$kill->getTimeStamp()."', "
 								.$externalID.", "
 								."'".$qry->escape($kill->getHash(false, false))."',"
-								." ".$trust.","
+								." 0,"
 								." UTC_TIMESTAMP())");
 						 $qry->execute("UPDATE kb3_kills"
 							." JOIN kb3_mails ON kb3_kills.kll_id ="
@@ -992,20 +925,13 @@ class IDFeed
 			if ($qry->recordCount()) {
 				$qrow = $qry->getRow();
 				$id = (int)$qrow['kll_id'];
-				if ((int)$row['trust'] >= $this->trust
-						&& (int)$row['killID']
-						&& !(int)$qrow['kll_external_id']) {
+				if ((int)$row['killID']	&& !(int)$qrow['kll_external_id']) 
+                                {
 					$qry->execute("UPDATE kb3_kills JOIN kb3_mails ON kb3_kills.kll_id = ".
 							"kb3_mails.kll_id SET kb3_mails.kll_external_id = ".
 							(int)$row['killID'].", kb3_kills.kll_external_id = ".
 							(int)$row['killID']." WHERE kb3_mails.kll_id = $id AND ".
-							"kb3_mails.kll_external_id IS NULL");
-					$trust = min($this->maxtrust,
-									max((int)$row['trust'] - 1, $this->killtrust));
-					if ($trust > (int)$qrow['kll_trust']) {
-						$qry->execute("UPDATE kb3_mails SET kll_trust = "
-								.$trust." WHERE kll_id = ".$id);
-					}
+							"kb3_mails.kll_external_id IS NULL");					
 				}
 				return $id;
 			}

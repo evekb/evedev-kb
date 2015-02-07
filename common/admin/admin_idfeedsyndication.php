@@ -7,7 +7,7 @@
  */
 
 /*
- * EDK IDFeed Syndication v0.90
+ * EDK IDFeed Syndication v1.3
  *
  */
 
@@ -20,10 +20,10 @@ $page->setAdmin();
 $feeds = config::get("fetch_idfeeds");
 // Add an empty feed to the list, or create with one empty feed.
 if(is_null($feeds)) {
-	$feeds[] = array('url'=>"", 'apikills'=>0, 'trusted'=>0, 'lastkill'=>0);
+	$feeds[] = array('url'=>"", 'apikills'=>0, 'lastkill'=>0);
 	config::set("fetch_idfeeds", $feeds);
 } else {
-	$feeds[] = array('url'=>"", 'apikills'=>0, 'trusted'=>0, 'lastkill'=>0);
+	$feeds[] = array('url'=>"", 'apikills'=>0, 'lastkill'=>0);
 }
 
 $feedcount = count($feeds);
@@ -39,11 +39,6 @@ if ($_POST['submit'] || $_POST['fetch'])
         $url = md5($val['url']);
 
         if ($_POST[$url]) {
-            if ($_POST['trusted'] && in_array ($url, $_POST['trusted'])) {
-				$val['trusted'] = 1;
-			} else {
-				$val['trusted'] = 0;
-			}
 			$val['apikills'] = 0;
 			if($_POST['lastkill'.$url] != $val['lastkill']) {
 				$val['lastkill'] = intval($_POST['lastkill'.$url]);
@@ -78,7 +73,7 @@ if ($_POST['submit'] || $_POST['fetch'])
         {
             config::set('post_no_npc_only_feed', 0);
         }
-	$feeds[] = array('url'=>"", 'apikills'=>0, 'trusted'=>0, 'lastkill'=>0);
+	$feeds[] = array('url'=>"", 'apikills'=>0, 'lastkill'=>0);
 }
 
 // building the request query and fetching of the feeds
@@ -107,7 +102,7 @@ foreach($feeds as $key => &$val) {
 	} else {
 		$fetch = true;
 	}
-	$rows[] = array('name'=>$key, 'uri'=>$val['url'], 'lastkill'=>$val['lastkill'], 'trusted'=>$val['trusted'], 'fetch'=>!$fetch);
+	$rows[] = array('name'=>$key, 'uri'=>$val['url'], 'lastkill'=>$val['lastkill'], 'fetch'=>!$fetch);
 }
 $smarty->assignByRef('rows', $rows);
 $smarty->assign('post_no_npc_only_feed', config::get('post_no_npc_only_feed'));
@@ -151,9 +146,6 @@ function getIDFeed(&$key, &$val)
 	$feedfetch = new IDFeed();
 	$feedfetch->setID();
 	$feedfetch->setAllKills(1);
-	if ($val['trusted']) {
-		$feedfetch->setAcceptedTrust(1);
-	}
 	if(!$val['lastkill']) {
 		$feedfetch->setStartDate(time() - 60*60*24*7);
 	} else if($val['apikills']) {
