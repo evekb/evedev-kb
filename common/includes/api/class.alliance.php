@@ -36,7 +36,7 @@ class API_Alliance extends API
 	function LocateAlliance($name)
 	{
 		$res = array();
-                if(is_null($this->data) || !is_array($this->data->alliances))
+                if(is_null($this->data) || (!is_array($this->data->alliances) && !$this->data->alliances instanceof Traversable))
                 {
                     return false;
                 }
@@ -65,10 +65,11 @@ class API_Alliance extends API
 	function LocateAllianceID($id)
 	{
 		$res = array();
-                if(is_null($this->data) || !is_array($this->data->alliances))
+                if(is_null($this->data) || (!is_array($this->data->alliances) && !$this->data->alliances instanceof Traversable))
                 {
                     return false;
                 }
+				
 		foreach( $this->data->alliances as $alliance ) {
 			if( $alliance->allianceID != $id ) {
 				continue;
