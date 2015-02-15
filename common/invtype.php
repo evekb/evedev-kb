@@ -37,7 +37,8 @@ class pInvtype extends pageAssembly
 	 *  Reset the assembly object to prepare for creating the context.
 	 */
 	function context()
-	{
+	{       
+                parent::__construct();
                 $item = new dogma($this->typeID);
 
 		if (!$item->isValid())
@@ -49,7 +50,7 @@ class pInvtype extends pageAssembly
                 // display context menu only for ships
 		if ($item->get('itt_cat') == 6)
                 {
-                    parent::__construct();
+                    
                     $this->queue("menuSetup");
                     $this->queue("menu");
                 }
