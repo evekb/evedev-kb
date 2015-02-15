@@ -266,7 +266,7 @@ if ($_POST['apilog']) {
 	}
 
 	$html .= "<table style='width: 100%' class='kb-subtable'>";
-	$html .= "<thead><tr><td>Name</td><td>ID</td><td>Owner</td><td>Corp</td><td>Char</td><td>Status</td><td></td></tr></thead>";
+	$html .= "<thead><tr><td>Name</td><td>ID</td><td>Owner</td><td>Corp</td><td>Char</td><td style=\"width: 200px;\">Status</td><td></td></tr></thead>";
 
 
 	$qry = new DBQuery();
@@ -325,7 +325,7 @@ if ($_POST['apilog']) {
 					.$qry->escape($row['key_key'])."' AND key_kbsite = '".KB_SITE."'";
 			$qry2->execute($sql);
 		}
-
+                $act = NULL;
 		if ($flags & KB_APIKEY_LEGACY) {
 			$html .= "<td></td><td>-</td><td>-</td>";
 		} else {
@@ -333,9 +333,13 @@ if ($_POST['apilog']) {
 			$chars = array();
 			if (!($flags & KB_APIKEY_BADAUTH || $flags & KB_APIKEY_EXPIRED)) {
 				$act = new API_Account();
-				foreach ($act->fetch($row['key_id'], $row['key_key']) as $character) {
-					$chars[] = $character["characterName"].", ".$character["corporationName"];
-				}
+                                $characters = $act->fetch($row['key_id'], $row['key_key']);
+                                if($characters)
+                                {
+                                    foreach ($characters as $character) {
+                                            $chars[] = $character["characterName"].", ".$character["corporationName"];
+                                    }
+                                }
 			}
 			$html .= join('<br />', $chars);
 			$html .= "</td>";
@@ -354,7 +358,15 @@ if ($_POST['apilog']) {
 
 		// status column
 		$html .= "<td>";
-		if ($flags == 0) {
+                if($act && $act->getMessage())
+                {
+                    $html .= $act->getMessage();
+                    if($act->getError())
+                    {
+                        $html .= " (Code: ".$act->getError().")";
+                    }
+                }
+		else if ($flags == 0) {
 			$html .= "No Status";
 		} else {
 			if ($flags & KB_APIKEY_LEGACY) {
@@ -376,7 +388,7 @@ if ($_POST['apilog']) {
 	$html .= "</table>";
 
 	$html .= "<div class='block-header2'>Add a new API Key</div>";
-	$html .= "<i> Your API key ID and verification Code can be obtained <a href=\"http://support.eveonline.com/api/Key/CreatePredefined/256\">here</a></i><br /><br />";
+	$html .= "<i> Your API key ID and verification Code can be obtained <a href=\"http://support.eveonline.com/api/Key/CreatePredefined/256\" target=\"_blank\">here</a></i><br /><br />";
 
 	$html .= "<table style='width: 100%' class='kb-subtable'>";
 	$html .= "<thead><tr><td>Name</td><td>ID</td><td>Verification Code</td><td></td></tr></thead>";

@@ -36,6 +36,10 @@ class API_Alliance extends API
 	function LocateAlliance($name)
 	{
 		$res = array();
+                if(is_null($this->data) || !is_array($this->data->alliances))
+                {
+                    return false;
+                }
 		foreach( $this->data->alliances as $alliance ) {
 			if( $alliance->name != $name ) {
 				continue;
@@ -49,10 +53,10 @@ class API_Alliance extends API
 			$res['allianceName'] = $alliance->name; // @todo wtf?
 			
 			$res['memberCorps'] = array();
-			foreach( $alliance->memberCorporations as $corp ) {
-				$res['memberCorps'][] = array('corporationID'=>$corp->corporationID, 
-											  'startDate'=>$corp->startDate);
-			}
+                            foreach( $alliance->memberCorporations as $corp ) {
+                                    $res['memberCorps'][] = array('corporationID'=>$corp->corporationID, 
+                                                                                              'startDate'=>$corp->startDate);
+                            }
 			return $res;
 		}
 		return false;	
@@ -61,6 +65,10 @@ class API_Alliance extends API
 	function LocateAllianceID($id)
 	{
 		$res = array();
+                if(is_null($this->data) || !is_array($this->data->alliances))
+                {
+                    return false;
+                }
 		foreach( $this->data->alliances as $alliance ) {
 			if( $alliance->allianceID != $id ) {
 				continue;
