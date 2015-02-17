@@ -22,7 +22,7 @@ define('IMG_SERVER', "https://image.eveonline.com");
 // even numbers for minor = development version
 define('KB_VERSION', '4.2.8.0');
 define('KB_RELEASE', '(Tiamat 1.0)');
-define('KB_CCP_DB_VERSION', '109795');
+define('KB_CCP_DB_VERSION', '110751');
 define('KB_CCP_DB_DATE', 'Feb 17, 2015');
 define('ID_FEED_VERSION', 1.30);
 define('ZKB_FETCH_VERSION', 1.0);
