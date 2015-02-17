@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.7.0
+Eve Development Network Killboard v4.2.8.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -24,6 +24,21 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
+
+Features:
+Updated CCP DB to Tiamat 1.0 (110751)
+
+Enhancements:
+Added kill/loss lists for ship types
+IDFeed 1.3
+
+Bugfixes:
+Fix for API sanity check
+Fix for infamous "Invalid argument supplied..."
+Fix: Correctly build context menu in item detail view
+Fix: Display context menu only for ships in item details view
+
+-------------------------------------------
 v4.2.7.0
 
 Features:
