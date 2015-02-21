@@ -543,12 +543,12 @@ class admin_config
 						.' name="option_cfg_corpid" value="" size="40"'
 						.' maxlength="64" />';
 			} else if ($set == 'a') {
-				$all = Alliance::add('Unknown');
+				$all = Alliance::add($char_info[0]['name'], $char_info[0]['characterID']);
 
 				$_POST['option_cfg_allianceid'] = $value = $all->getID();
-				$alliances = config::get('option_cfg_allianceid');
+				$alliances = config::get('cfg_allianceid');
 				$alliances[] = intval($value);
-				config::set('option_cfg_allianceid', $alliances);
+				config::set('cfg_allianceid', $alliances);
 
 				$html = '<input type="text" id="option_cfg_allianceid"'
 						.' name="option_cfg_allianceid" value="" size="40"'
