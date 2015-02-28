@@ -693,6 +693,11 @@ class Kill extends Cacheable
 				if ($destroyed->getQuantity() > 1) {
 					$mail .= ", Qty: ".$destroyed->getQuantity();
 				}
+                                
+                                if ($destroyed->getSingleton() == InventoryFlag::$SINGLETON_COPY) {
+					$mail .= " (Copy)";
+                                }
+                                
                                 $flagID = InventoryFlag::collapse($destroyed->getLocationID());
 				if ($destroyed->getLocationID() == InventoryFlag::$CARGO) {
 					$mail .= " (Cargo)";
@@ -700,8 +705,6 @@ class Kill extends Cacheable
 					$mail .= " (Drone Bay)";
 				} else if ($destroyed->getLocationID() == InventoryFlag::$IMPLANT) {
 					$mail .= " (Implant)";
-				} else if ($destroyed->getLocationID() == InventoryFlag::$COPY) {
-					$mail .= " (Copy)";
 				} else if ($destroyed->getLocationID() == InventoryFlag::$OTHER) {
 					$mail .= " (Other)";
 				}
@@ -719,14 +722,17 @@ class Kill extends Cacheable
 				if ($dropped->getQuantity() > 1) {
 					$mail .= ", Qty: ".$dropped->getQuantity();
 				}
+                                
+                                if ($dropped->getSingleton() == InventoryFlag::$SINGLETON_COPY) {
+					$mail .= " (Copy)";
+                                }
+                                
 				if ($dropped->getLocationID() == InventoryFlag::$CARGO) {
 					$mail .= " (Cargo)";
 				} else if ($dropped->getLocationID() == InventoryFlag::$DRONE_BAY) {
 					$mail .= " (Drone Bay)";
 				} else if ($dropped->getLocationID() == InventoryFlag::$IMPLANT) {
 					$mail .= " (Implant)";
-				} else if ($dropped->getLocationID() == InventoryFlag::$COPY) {
-					$mail .= " (Copy)";
 				} else if ($dropped->getLocationID() == InventoryFlag::$OTHER) {
 					$mail .= " (Other)";
 				}
@@ -924,6 +930,7 @@ class Kill extends Cacheable
 			while($item = $destroyedlist->getItem()) {
 				$destroyed = new DestroyedItem($item,
 					$item->getAttribute('itd_quantity'),
+                                        $item->getAttribute('itd_singleton'),
 					$item->getAttribute('itl_flagText'),
 					$item->getAttribute('itd_itl_id'));
 				$this->destroyeditems_[] = $destroyed;
@@ -933,6 +940,7 @@ class Kill extends Cacheable
 			while($item = $droppedlist->getItem()) {
 				$dropped = new DestroyedItem($item,
 					$item->getAttribute('itd_quantity'),
+                                        $item->getAttribute('itd_singleton'),
 					$item->getAttribute('itl_flagText'),
 					$item->getAttribute('itd_itl_id'));
 				$this->droppeditems_[] = $dropped;
@@ -1552,12 +1560,12 @@ class Kill extends Cacheable
 			return $this->rollback($qry);
 		// destroyed
 		$notfirstitd=false;
-		$itdsql = "insert into kb3_items_destroyed (itd_kll_id, itd_itm_id, itd_quantity, itd_itl_id) values ";
+		$itdsql = "insert into kb3_items_destroyed (itd_kll_id, itd_itm_id, itd_quantity, itd_itl_id, itd_singleton) values ";
 		foreach ($this->destroyeditems_ as $dest)
 		{
 			$item = $dest->getItem();
 			$loc_id = $dest->getLocationID();
-			if (!is_numeric($this->getID()) || !is_numeric($item->getID()) || !is_numeric($dest->getQuantity()) || !is_numeric($loc_id))
+			if (!is_numeric($this->getID()) || !is_numeric($item->getID()) || !is_numeric($dest->getQuantity()) || !is_numeric($loc_id) || !is_numeric($dest->getSingleton()))
 			{
 				trigger_error('error with destroyed item.', E_USER_WARNING);
 				var_dump($dest);
@@ -1566,7 +1574,7 @@ class Kill extends Cacheable
 			}
 
 			if($notfirstitd) $itdsql .= ", ";
-			$itdsql .= "( ".$this->getID().", ".$item->getID().", ".$dest->getQuantity().", ".$loc_id." )";
+			$itdsql .= "( ".$this->getID().", ".$item->getID().", ".$dest->getQuantity().", ".$loc_id.", ".$dest->getSingleton()." )";
 			$notfirstitd = true;
 		}
 		if($notfirstitd &&!$qry->execute($itdsql))
@@ -1574,12 +1582,12 @@ class Kill extends Cacheable
 
 		// dropped
 		$notfirstitd=false;
-		$itdsql = "insert into kb3_items_dropped (itd_kll_id, itd_itm_id, itd_quantity, itd_itl_id) values ";
+		$itdsql = "insert into kb3_items_dropped (itd_kll_id, itd_itm_id, itd_quantity, itd_itl_id, itd_singleton) values ";
 		foreach ($this->droppeditems_ as $dest)
 		{
 			$item = $dest->getItem();
 			$loc_id = $dest->getLocationID();
-			if (!is_numeric($this->getID()) || !is_numeric($item->getID()) || !is_numeric($dest->getQuantity()) || !is_numeric($loc_id))
+			if (!is_numeric($this->getID()) || !is_numeric($item->getID()) || !is_numeric($dest->getQuantity()) || !is_numeric($loc_id) || !is_numeric($dest->getSingleton()))
 			{
 				trigger_error('error with dropped item.', E_USER_WARNING);
 				var_dump($dest);
@@ -1588,7 +1596,7 @@ class Kill extends Cacheable
 			}
 
 			if($notfirstitd) $itdsql .= ", ";
-			$itdsql .= "( ".$this->getID().", ".$item->getID().", ".$dest->getQuantity().", ".$loc_id." )";
+			$itdsql .= "( ".$this->getID().", ".$item->getID().", ".$dest->getQuantity().", ".$loc_id.", ".$dest->getSingleton()." )";
 			$notfirstitd = true;
 		}
 		if($notfirstitd &&!$qry->execute($itdsql))

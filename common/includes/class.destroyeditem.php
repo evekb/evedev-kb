@@ -21,17 +21,21 @@ class DestroyedItem
 	public $locationID_;
 	/** @var float */
 	private $value;
+        /** @var integer */
+        private $singleton_;
 
 	/**
 	 * @param Item $item
 	 * @param integer $quantity
-	 * @param string|integer $location
+	 * @param integer $singleton
+         * * @param string|integer $location
 	 * @param integer $locationID
 	 */
-	function DestroyedItem($item, $quantity, $location, $locationID = 0)
+	function DestroyedItem($item, $quantity, $singleton, $location, $locationID = 0)
 	{
 		$this->item_ = $item;
 		$this->quantity_ = (int) $quantity;
+                $this->singleton_ = (int) $singleton;
 		$this->location_ = $location;
 		$this->locationID_ = (int) $locationID;
 	}
@@ -136,4 +140,12 @@ class DestroyedItem
 		}
 		return $this->locationID_;
 	}
+        
+        /**
+         * @return integer
+         */
+        function getSingleton()
+        {
+            return $this->singleton_;
+        }
 }

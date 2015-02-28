@@ -226,13 +226,11 @@ class pKillDetail extends pageAssembly
                                 }
 				
 				// BPCs
-				if($i_location == InventoryFlag::$COPY) {
-					$i_location = InventoryFlag::$CARGO;
+                                $bpc = false;
+				if($destroyed->getSingleton() == InventoryFlag::$SINGLETON_COPY) {
 					$i_name = $i_name." (Copy)";
 					$value = $formatted = 0;
 					$bpc = true;
-				} else {
-					$bpc = false;
 				}
 
 				$this->dest_array[$i_location][] = array
@@ -335,13 +333,11 @@ class pKillDetail extends pageAssembly
                                 }
 
 				// BPCs
-				if($i_location == InventoryFlag::$COPY) {
-					$i_location = InventoryFlag::$CARGO;
+                                $bpc = false;
+				if($dropped->getSingleton() == InventoryFlag::$SINGLETON_COPY) {
 					$i_name = $i_name." (Copy)";
 					$value = $formatted = 0;
 					$bpc = true;
-				} else {
-					$bpc = false;
 				}
 
 				$this->drop_array[$i_location][] = array(
@@ -1661,7 +1657,7 @@ class pKillDetail extends pageAssembly
 	}
         
         /**
-         * groups destroyed items which are assigned to different slots
+         * groups destroyed items which are assigned to different slots (and my have different singleton settings)
          * by their collapsed location ID
          * @param DestroyedItem[] $desroyedItems the list of destroyed items to 
          * @return DestroyedItem[] an array of grouped destroyed items by collapsed location ID
@@ -1674,30 +1670,38 @@ class pKillDetail extends pageAssembly
             {
                 $location = InventoryFlag::collapse($destroyedItem->getLocationID());
                 $typeID = $destroyedItem->getItem()->getID();
-                if(!isset($destroyedItemsGroupedByLocation[$location][$typeID]))
+                $singleton = $destroyedItem->getSingleton();
+                if(!isset($destroyedItemsGroupedByLocation[$location][$singleton][$typeID]))
                 {
                     if(!isset($destroyedItemsGroupedByLocation[$location]))
                     {
                         $destroyedItemsGroupedByLocation[$location] = array();
                     }
-                    $destroyedItemsGroupedByLocation[$location][$typeID] = $destroyedItem;
+                    if(!isset($destroyedItemsGroupedByLocation[$location][$singleton]))
+                    {
+                        $destroyedItemsGroupedByLocation[$location][$singleton] = array();
+                    }
+                    $destroyedItemsGroupedByLocation[$location][$singleton][$typeID] = $destroyedItem;
                 }
 
                 else
                 {
                     // we already have an item of this type for this slot, add up quantities
-                    $quantityGrouped = $destroyedItemsGroupedByLocation[$location][$typeID]->getQuantity() + $destroyedItem->getQuantity();
-                    $destroyedItemsGroupedByLocation[$location][$typeID] = new DestroyedItem($destroyedItem->getItem(), $quantityGrouped, null, $location);
+                    $quantityGrouped = $destroyedItemsGroupedByLocation[$location][$singleton][$typeID]->getQuantity() + $destroyedItem->getQuantity();
+                    $destroyedItemsGroupedByLocation[$location][$singleton][$typeID] = new DestroyedItem($destroyedItem->getItem(), $quantityGrouped, $destroyedItem->getSingleton(), null, $location);
                 }
             }
 
             // reset destroyed items and replace with grouped
             $destroyedItemsGrouped = array();
-            foreach($destroyedItemsGroupedByLocation AS $location)
+            foreach($destroyedItemsGroupedByLocation AS $singleton)
             {
-                foreach($location AS $destroyedItem)
+                foreach($singleton AS $location)
                 {
-                    $destroyedItemsGrouped[] = $destroyedItem;
+                    foreach($location AS $destroyedItem)
+                    {
+                        $destroyedItemsGrouped[] = $destroyedItem;
+                    }
                 }
             }
             

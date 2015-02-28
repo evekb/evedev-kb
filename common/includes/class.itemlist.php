@@ -91,11 +91,11 @@ class ItemList
 		if (count($this->destroyedIDarray)) {
 			$sql .= ", if(dl.attributeID IS NULL,sum(itd.itd_quantity),"
 					."truncate(sum(itd.itd_quantity)/count(dl.attributeID),0)) "
-					."as itd_quantity, itd_itm_id, itd_itl_id, itl_flagText ";
+					."as itd_quantity, itd_itm_id, itd_itl_id, itl_flagText, itd_singleton ";
 		} else if (count($this->droppedIDarray)) {
 			$sql .= ", if(dl.attributeID IS NULL,sum(itd.itd_quantity),"
 					."truncate(sum(itd.itd_quantity)/count(dl.attributeID),0)) "
-					."as itd_quantity, itd_itm_id, itd_itl_id, itl_flagText ";
+					."as itd_quantity, itd_itm_id, itd_itl_id, itl_flagText, itd_singleton ";
 		}
 
 		$sql .= "from kb3_invtypes inv
@@ -123,7 +123,7 @@ class ItemList
 		}
 
 		if (count($this->destroyedIDarray) || count($this->droppedIDarray)) {
-			$sql .= "group by itd.itd_itm_id, itd.itd_itl_id "
+			$sql .= "group by itd.itd_itm_id, itd.itd_itl_id, itd.itd_singleton "
 					."order by itd.itd_itl_id ";
 		}
 

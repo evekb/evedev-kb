@@ -732,7 +732,7 @@ class Parser
 			$destroyed_items = $this->scanForItems($destroyed);
 			foreach ($destroyed_items as $item)
 			{
-				$ditem = new DestroyedItem($item['item'], $item['quantity'], '', $item['location']);
+				$ditem = new DestroyedItem($item['item'], $item['quantity'], $item['singleton'], '', $item['location']);
 				$kill->addDestroyedItem($ditem);
 			}
 		}
@@ -747,8 +747,7 @@ class Parser
 			$dropped_items = $this->scanForItems($dropped);
 			foreach ($dropped_items as $item)
 			{
-				$ditem = new DestroyedItem($item['item'], $item['quantity'], '',
-						$item['location']);
+				$ditem = new DestroyedItem($item['item'], $item['quantity'], $item['singleton'], '', $item['location']);
 				$kill->addDroppedItem($ditem);
 			}
 		}
@@ -804,6 +803,12 @@ class Parser
 		while ($i < $num) {
 			$container = false;
 			$destroyed[$i] = trim($destroyed[$i]);
+                        // check for bpc
+                        $singleton = 0;
+                        if(strpos($destroyed[$i], '(Copy)') !== FALSE)
+                        {
+                            $singleton = 2;
+                        }
 			// TODO: Find a nicer way to do this. Then rewrite the rest of the parser.
 			$destroyed[$i] = preg_replace("/ \(Copy\)(.*)\([\w ]*\)/", "$1(Copy)", $destroyed[$i]);
 			$itemname = substr($destroyed[$i], 0, strlen($destroyed[$i]));
@@ -898,7 +903,7 @@ class Parser
 				$locid = InventoryFlag::$UNKNOWN;
 			}
 			$items[] = array('item' => $item, 'quantity' => $quantity,
-				'location' => $locid);
+				'location' => $locid, 'singleton' => $singleton);
 			$i++;
 		}
 		return $items;

@@ -7,6 +7,7 @@
   `itd_itm_id` int(11) NOT NULL default &#039;0&#039;,
   `itd_quantity` int(11) NOT NULL default &#039;1&#039;,
   `itd_itl_id` smallint(11) NOT NULL default &#039;0&#039;,
+  `itd_singleton` tinyint(1) NOT NULL default &#039;0&#039;,
   KEY `itd_kll_id` (`itd_kll_id`),
   KEY `itd_itl_id` (`itd_itl_id`,`itd_kll_id`,`itd_itm_id`)
 ) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>

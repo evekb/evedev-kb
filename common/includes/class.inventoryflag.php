@@ -94,7 +94,10 @@ class InventoryFlag extends Cacheable
     public static $DRONE_BAY = 87;
     public static $IMPLANT = 89;
     public static $OTHER = 0;
+    /** @deprecated copies are now handled via the singleton flag! */
     public static $COPY = -1;
+    
+    public static $SINGLETON_COPY = 2;
     
     public static $UNKNOWN= -10;
     

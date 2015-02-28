@@ -845,22 +845,17 @@ class IDFeed
             } 
             
             // singleton flag is set for copies in API and IDFeed (even old Feeds)
-            if((int)$item['singleton'] === 2)
-            {
-                $location = InventoryFlag::$COPY;
-            }
-            
+            $singleton = (int)$item['singleton'];
+                       
             
             // don't get the item's slot if the location is 0!
             // that's just an unknown location, not the item's usual location
 
             if ((int)$item['qtyDropped']) {
-                    $kill->addDroppedItem(new DestroyedItem($Item, (int)$item['qtyDropped'], '',
-                                    $location));
+                    $kill->addDroppedItem(new DestroyedItem($Item, (int)$item['qtyDropped'], $singleton, '', $location));
             }
             if ((int)$item['qtyDestroyed']) {
-                    $kill->addDestroyedItem(new DestroyedItem($Item, (int)$item['qtyDestroyed'], '',
-                                    $location));
+                    $kill->addDestroyedItem(new DestroyedItem($Item, (int)$item['qtyDestroyed'], $singleton, '', $location));
             }
             // Check for containers.
             if (isset($item->rowset)) {
@@ -1138,12 +1133,7 @@ class IDFeed
 					$itemRow->addAttribute('typeID', $iRow['itd_itm_id']);
                                         // no conversion needed, IDFeed always returns valid CCP flags
                                         $itemRow->addAttribute('flag', $iRow['itd_itl_id']);
-	
-					if ($iRow['itd_itl_id'] == InventoryFlag::$COPY) {
-						$itemRow->addAttribute('singleton', 2);
-					} else {
-						$itemRow->addAttribute('singleton', 0);
-					}
+                                        $itemRow->addAttribute('singleton', $iRow['itd_singleton']);
 
 					$itemRow->addAttribute('qtyDropped', 0);
 					$itemRow->addAttribute('qtyDestroyed', $iRow['itd_quantity']);
@@ -1154,12 +1144,7 @@ class IDFeed
 					$itemRow = $items->addChild('row');
 					$itemRow->addAttribute('typeID', $iRow['itd_itm_id']);
 					$itemRow->addAttribute('flag', $iRow['itd_itl_id']);
-                                        
-					if ($iRow['itd_itl_id'] == InventoryFlag::$COPY) {
-						$itemRow->addAttribute('singleton', 2);
-					} else {
-						$itemRow->addAttribute('singleton', 0);
-					}
+                                        $itemRow->addAttribute('singleton', $iRow['itd_singleton']);
 
 					$itemRow->addAttribute('qtyDropped', $iRow['itd_quantity']);
 					$itemRow->addAttribute('qtyDestroyed', 0);

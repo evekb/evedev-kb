@@ -664,18 +664,15 @@ class CrestParser
             
             // Blueprint copy - in the cargohold
             // overrides all other locations
-            if ((int)$item['singleton'] == 2) {
-                    
-                    $location = InventoryFlag::$COPY;
-            }
-            
+            $singleton = (int)$item['singleton'];
+           
             if($item['qtyDropped']) {
                $Kill->addDroppedItem(
-                   new DestroyedItem($Item, $item['qtyDropped'], '', $location));
+                   new DestroyedItem($Item, $item['qtyDropped'], $singleton, '', $location));
             }
             if($item['qtyDestroyed']) {
                     $Kill->addDestroyedItem(
-                        new DestroyedItem($Item, $item['qtyDestroyed'], '',  $location));
+                        new DestroyedItem($Item, $item['qtyDestroyed'], $singleton, '',  $location));
             }
             
             // process container-items
