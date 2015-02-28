@@ -838,16 +838,18 @@ class IDFeed
                 $location = $Item->getSlot();
             }
             
-            // singleton flag is set for copies in API and IDFeed (even old Feeds)
-            if((int)$item['singleton'] === 2)
-            {
-                $location = InventoryFlag::$COPY;
-            }
             // we're fetching from an old IDFeed, not from the API
             if ($slot != null) 
             {
                 $location = $slot;
             } 
+            
+            // singleton flag is set for copies in API and IDFeed (even old Feeds)
+            if((int)$item['singleton'] === 2)
+            {
+                $location = InventoryFlag::$COPY;
+            }
+            
             
             // don't get the item's slot if the location is 0!
             // that's just an unknown location, not the item's usual location

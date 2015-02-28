@@ -895,20 +895,23 @@ class ZKBFetch
        // that way, when the database is updated, the item will display correctly
        $Item = new Item($typeID);
 
-       if ((int)$item['singleton'] == 2) {
-               // Blueprint copy - in the cargohold
-               $location = InventoryFlag::$COPY;
-       } 
-       else 
-       {
-               $location = (int)$item['flag'];
-       } 
-
        // if item has a parent, use the parent's flag
        if(!is_null($parentItemLocation))
        {
            $location = $parentItemLocation;
        }
+       else 
+       {
+           $location = (int)$item['flag'];
+       } 
+
+       // Blueprint copy - in the cargohold
+       // overrides all other locations
+       if ((int)$item['singleton'] == 2) 
+       {
+            $location = InventoryFlag::$COPY;
+       } 
+       
 
        if($item['qtyDropped']) {
           $Kill->addDroppedItem(
