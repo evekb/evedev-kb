@@ -99,6 +99,11 @@ class DestroyedItem
 		if (isset($this->value)) {
 			return $this->value;
 		}
+                // special treatment for BPCs for now
+                if($this->item_->getAttribute('itt_cat') == 9 && $this->singleton_ == 2)
+                {
+                    return 0;
+                }
 		if ($this->item_->getAttribute('price')) {
 			$this->value = (float) $this->item_->getAttribute('price');
 			return $this->value;

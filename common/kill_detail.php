@@ -206,9 +206,13 @@ class pKillDetail extends pageAssembly
 					$value = $destroyed->getValue();
 					$this->totalValue += $value * $i_qty;
 					$formatted = $destroyed->getFormattedValue();
-
-					if (strpos($item->getName(), 'Blueprint') !== false)
-							$this->bp_value += $value * $i_qty;
+                                        
+                                        // check for Blueprint -> catgory 9 = Blueprint
+                                        // don't need to chack for BPOs, this is handled by the \DestroyedItem->getValue() method
+					if ($item->getAttribute('itt_cat') == 9)
+                                        {
+                                            $this->bp_value += $value * $i_qty;
+                                        }
 				}
 
 				$i_name = $item->getName();
