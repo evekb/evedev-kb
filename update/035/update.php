@@ -4,7 +4,7 @@ require_once('../common/includes/class.xml.php');
 
 /**
  * This database adds the singleton column to the table
- * kb3_destroyed_items. 
+ * kb3_dropped_items. 
  * Becuase of the potential of this table to be huge (8M entries),
  * simply adding the column would take too long in a single transaction
  * to be executed safely from a PHP script. The approach is to create a new
@@ -18,12 +18,12 @@ class UpdateException extends Exception {}
 
 
 
-function update034()
+function update035()
 {
 	global $url, $smarty;
     
-	$DB_UPDATE = "034";
-	$TABLE_NAME = "kb3_items_destroyed";
+	$DB_UPDATE = "035";
+	$TABLE_NAME = "kb3_items_dropped";
 	$TABLE_NAME_TEMP = $TABLE_NAME . "_temp";
 	$NUMBER_OF_ENTRIES_PER_CHUNK = 200000;
 	 
