@@ -73,7 +73,7 @@ function update035()
 		// we're not done yet!
 		if($updateStepNumber <= count($updateSteps))
 		{
-			$message .= "<font size=\"4\">Destroyed items</font><br/>";
+			$message .= "<font size=\"4\">Dropped items</font><br/>";
 			// does the actual logic
 			try
 			{
