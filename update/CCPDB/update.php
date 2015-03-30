@@ -192,7 +192,8 @@ foreach ($data as $table => $files)
 		else
 		{
 			// Update was successful, set the CCP_DB_VERSION coming with this KB version to config db
-			config::set('CCPDbVersion', KB_CCP_DB_VERSION);
+                        $qry = DBFactory::getDBQuery(true);
+			$qry->execute("INSERT INTO kb3_config (cfg_site, cfg_key, cfg_value) SELECT cfg_site, 'CCPDbVersion', '".KB_CCP_DB_VERSION."' FROM kb3_config GROUP BY cfg_site ON DUPLICATE KEY UPDATE cfg_value = '".KB_CCP_DB_VERSION."'");
 			$content .=  '<br/>All tables passed.<br/>';
 			$content .=  '<br/><a href="'.config::get('cfg_kbhost').'/">Return to your board</a>';
 		}

@@ -23,7 +23,7 @@ define('IMG_SERVER', "https://image.eveonline.com");
 define('KB_VERSION', '4.2.9.0');
 define('KB_RELEASE', '(Scylla 1.0)');
 define('KB_CCP_DB_VERSION', '111482');
-define('KB_CCP_DB_DATE', 'Mar 24, 2015');
+define('KB_CCP_DB_DATE', 'Mar 30, 2015');
 define('ID_FEED_VERSION', 1.30);
 define('ZKB_FETCH_VERSION', 1.0);
 define('KB_APIKEY_LEGACY', 1);
