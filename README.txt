@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.8.0
+Eve Development Network Killboard v4.2.9.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -24,6 +24,21 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
+
+Features:
+Updated CCP DB to Scylla 1.0.111482
+
+Enhancements:
+Rewrote table updates for better compatibility
+Enhancement: Added support for item singleton flags
+
+Bugfixes:
+Fix: BPC values in kill detail view
+Fix: BPCs inside containers don't conserve the singleton flags
+Fix: Add an alliance as killboard owner which is not in the database
+
+-------------------------------------------
+v4.2.7.0
 
 Features:
 Updated CCP DB to Tiamat 1.0 (110751)
