@@ -6,7 +6,7 @@ class UpdateException extends Exception {}
 
 
 /**
- * converts the special inventory flag for BPCs for all DROPPED items on existing kills
+ * converts the special inventory flag for BPCs for all DESTROYED items on existing kills
  * to "cargohold" flag and updates the singleton flag accordingly
  * 
  * updates items in batches of 50000, so needs to reload several times
@@ -15,16 +15,16 @@ class UpdateException extends Exception {}
  *      1 - convert BPC copies
  * @package EDK
  */
-function update036()
+function update037()
 {
         // change directory to make the class-loader functional
         chdir("..");
 
 	global $url, $smarty;
 	
-        $DB_UPDATE = "036";
+        $DB_UPDATE = "037";
 	$NUMBER_OF_ITEMS_TO_UPDATE_PER_CALL = 50000;
-	$TABLE_NAME = "kb3_items_dropped";
+	$TABLE_NAME = "kb3_items_destroyed";
         
         $updateSteps = array(
             /** step 1: convert -1 to 5 and singleton 2 (BPCs) */
@@ -55,7 +55,7 @@ function update036()
                 if($updateStepNumber <= count($updateSteps))
                 {
                     $slotsToConvert = $updateSteps[$updateStepNumber];
-                    $message = "<font size=\"4\">Dropped items</font><br/>";
+                    $message = "<font size=\"4\">Destroyed items</font><br/>";
 
                     try
                     {
@@ -134,7 +134,7 @@ function convertEDKBPCFlagAndUpdateSingleton($slotsToConvert)
 	
 	if(!$conversionResult)
 	{
-		throw new UpdateException("Error while converting ".$slotsToConvert["description"]." for dropped items: ".$updateFlags->getErrorMsg());
+		throw new UpdateException("Error while converting ".$slotsToConvert["description"]." for destroyed items: ".$updateFlags->getErrorMsg());
 	}
 
 	$numberOfRowsAffected = $updateFlags->affectedRows();
