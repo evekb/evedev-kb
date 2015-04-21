@@ -138,7 +138,7 @@ class SimpleCrest
         // build header
         $header = "User-Agent: ".self::$USER_AGENT."\r\n";
         
-        $compressionLibrary = NULL;;
+        $compressionLibrary = NULL;
         // determine whether compression is available
         if(extension_loaded('zlib'))
         {
