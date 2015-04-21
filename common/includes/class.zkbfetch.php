@@ -435,6 +435,12 @@ class ZKBFetch
      */
     protected function processKill($killData)
     {
+        // sometimes, the killData is malformed
+        if((int)$killData->killID === 0)
+        {
+            throw new ZKBFetchException("Invalid format for kill, skipping");
+        }
+        
         $qry = DBFactory::getDBQuery();
 
         // Check hashes with a prepared query.
