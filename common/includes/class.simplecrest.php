@@ -77,9 +77,7 @@ class SimpleCrest
             self::$curl = curl_init();
         }
         
-        $headers = array(
-			'Accept-language: en\r\n'
-		);
+        $headers = array();
         
         // ignore ssl peer verification
         if(substr($url,0,5) == "https")
@@ -138,8 +136,7 @@ class SimpleCrest
     protected static function getCrestByFileGetContents($url)
     {
         // build header
-        $header = 'Accept-language: en\r\n';
-        $header .= "User-Agent: ".self::$USER_AGENT."\r\n";
+        $header = "User-Agent: ".self::$USER_AGENT."\r\n";
         
         $compressionLibrary = NULL;;
         // determine whether compression is available
