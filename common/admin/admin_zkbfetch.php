@@ -64,7 +64,7 @@ if ($_POST['submit'] || $_POST['fetch'])
         if ($_POST[$id]) 
         {
             $lastKillTimestampFormatted = strftime('%Y-%m-%d %H:%M:%S', $fetchConfig->getLastKillTimestamp());
-            if($_POST['lastKillTimestamp'.$url] != $lastKillTimestampFormatted) 
+            if($_POST['lastKillTimestamp'.$id] != $lastKillTimestampFormatted) 
             {
                 $lastKillTimestampNew = strtotime($_POST['lastKillTimestamp'.$id]);
                 if($lastKillTimestampNew !== FALSE)
@@ -77,7 +77,6 @@ if ($_POST['submit'] || $_POST['fetch'])
             if($_POST[$id] != $fetchConfig->getUrl()) 
             {
                 $fetchConfig->setUrl($_POST[$id]);
-                $fetchConfig->setLastKillTimestamp(time());
             }
             
             if ($_POST['delete'] && in_array ($id, $_POST['delete'])) 
