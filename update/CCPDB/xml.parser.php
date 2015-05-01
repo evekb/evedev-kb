@@ -142,7 +142,7 @@ class UpdateXMLParser
 					$this->codeData[$i][$j]['url'] = $urlTag->item(0)->nodeValue;
 					$this->codeData[$i][$j]['desc'] = $descriptionTag->item(0)->nodeValue;
 
-					if ($this->lowestCodeVersion >= $this->codeData[$i][$j]['version'])
+					if ($this->lowestCodeVersion == $this->codeData[$i][$j]['version'] || isNewerVersion($this->lowestCodeVersion, $this->codeData[$i][$j]['version']))
 					{
 						$this->lowestCodeVersion = $this->codeData[$i][$j]['version'];
 					}
@@ -180,7 +180,7 @@ class UpdateXMLParser
 					$this->dbData[$i][$j]['url'] = $urlTag->item(0)->nodeValue;
 					$this->dbData[$i][$j]['desc'] = $descriptionTag->item(0)->nodeValue;
 
-					if ($this->lowestDBVersion >= $this->dbData[$i][$j]['version'])
+					if ($this->lowestDBVersion == $this->dbData[$i][$j]['version'] || isNewerVersion($this->lowestDBVersion, $this->dbData[$i][$j]['version']))
 					{
 						$this->lowestDBVersion = $this->dbData[$i][$j]['version'];
 					}

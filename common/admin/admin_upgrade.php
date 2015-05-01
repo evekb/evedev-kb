@@ -63,7 +63,7 @@ if (count($page_error) == 0) {
 		$code = $parser->getcodeInfo();
 		foreach ($code as $piece) {
 			//version number must be greater than current version, else do nothing
-			if ($piece['version'] > $codeversion
+			if (isNewerVersion($piece['version'], $codeversion)
 							&& $piece['version'] == $_GET['code_dl_ref']) {
 				if (!file_exists(getcwd()."/update")) {
 					mkdir(KB_CACHEDIR."/update", 0777);
@@ -81,7 +81,7 @@ if (count($page_error) == 0) {
 	else if (isset($_GET['code_apply_ref'])) {
 		$code = $parser->getCodeInfo();
 		foreach ($code as $piece) { //version number must be greater than current version, else do nothing
-			if ($piece['version'] > $codeversion && $piece['version'] == $_GET['code_apply_ref']) {
+			if (isNewerVersion($piece['version'], $codeversion) && $piece['version'] == $_GET['code_apply_ref']) {
 				if (!file_exists(KB_CACHEDIR."/update/backup")) {
 					mkdir(KB_CACHEDIR."/update/backup", 0777);
 				}
@@ -222,13 +222,13 @@ if (count($page_error) == 0) {
 	//list the code updates
 	$code = $parser->getCodeInfo();
 	$lowestCode = $parser->getLowestCodeVersion();
-	if ($parser->getLatestCodeVersion() > $codeversion) {
+	if (isNewerVersion($parser->getLatestCodeVersion(),$codeversion)) {
 		$i = 0;
 		foreach ($code as $piece) {
 			if ($piece['version'] == $lowestCode) {
 				$codeList[$i]['lowest'] = true;
 			}
-			if ($piece['version'] > $codeversion) {
+			if (isNewerVersion($piece['version'], $codeversion)) {
 				$codeList[$i]['hash'] = $piece['hash'];
 				$codeList[$i]['version'] = $piece['version'];
 				$codeList[$i]['desc'] = $piece['desc'];
