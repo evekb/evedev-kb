@@ -578,7 +578,7 @@ class update
 			return "The required PHP DOMDocument libraries are not installed.";
 		}
 		update::checkStatus();
-		if (update::$codeVersion > KB_VERSION) {
+		if (isNewerVersion(update::$codeVersion, KB_VERSION)) {
 			return "<div>Code updates are available, <a href='"
 					.edkURI::page('admin_upgrade')."'>here</a></div><br/>";
 		}
