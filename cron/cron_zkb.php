@@ -37,6 +37,10 @@ require_once('kbconfig.php');
 require_once('globals.php');
 $config = new Config(KB_SITE);
 
+
+// load mods
+loadMods();
+
 $fetchConfigs = ZKBFetch::getAll();
 $html = '';
 

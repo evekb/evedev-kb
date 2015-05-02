@@ -70,6 +70,9 @@ $outhead = "Running API Import on " . gmdate("M d Y H:i") . "\n\n";
 $html = '';
 $outtemp = '';
 
+// load mods
+loadMods();
+
 $myEveAPI = new API_KillLog();
 $myEveAPI->iscronjob_ = true;
 

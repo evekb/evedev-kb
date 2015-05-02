@@ -41,6 +41,9 @@ $config = new Config(KB_SITE);
 $feeds = config::get("fetch_idfeeds");
 $html = '';
 
+// load mods
+loadMods();
+
 foreach($feeds as $key => &$val) {
 	$tmphtml = '';
 	if (isIDFeed($val['url'])) {
