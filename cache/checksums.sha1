@@ -103,7 +103,7 @@
 ./packages/database/kb3_sum_corp/table.xml:adc2caeb39365e3f88154a1f5a9f9271fa690e2e
 ./packages/database/kb3_api_keys/table.xml:6c81b101208ad2ef8ff640176c0179d345ac87d4
 ./packages/database/kb3_config/table.xml:26e63222a26760dcf1c72f5b565e16e46b27f66b
-./README.txt:8fb7bb9af8b88ec439d8780eedfd1040e910cc32
+./README.txt:5a8cf2e2486f8c062ad5f4aa613bcc5ff9fe24e4
 ./img/sta_gang.png:fdf6dbb56bc5c5e501e3b257fc3efd54caf25116
 ./img/sta_war.png:780a92791e6cf23bd300323060d90aa8485c143c
 ./img/comment.gif:fce8b5e704ae7e86f0a0e30b46c9eeb0bf47e101
@@ -799,7 +799,7 @@
 ./update/020/update.php:74f7688ce4bf991467d1de1bbd49507789b10d06
 ./update/index.php:450682b128af367e949de5b336440355ea17a62b
 ./update/update_login.tpl:6bd8803d54af706d408a3a83086b99c8d323bd8c
-./update/CCPDB/xml.parser.php:fc07cbf81f28ee2e1e22260f4c3af8a7a0366da4
+./update/CCPDB/xml.parser.php:47d8c9dbf217d4fb0e0a5767a4decc9a77539a78
 ./update/CCPDB/db.updater.php:cd904ace4660ec6e5811cc41e48bad3a612ac86b
 ./update/CCPDB/update.php:a018ae45515730f865681e8205995f0318807bae
 ./update/CCPDB/contents.xml:2520e5cf8f2ec1f2e0f064ce71ecc84b33622e5d
@@ -1252,7 +1252,7 @@
 ./common/xajax/xajax_js/xajax_lang_fr_uncompressed.js:b6cbc3e9172002d827f4649891c36ac3c65a27fb
 ./common/xajax/xajax.php:6ee29a2940537aca67121758c30d5ded53bd4316
 ./common/feed.php:7bacddfe929a685591509ac371a6327b3f5a607a
-./common/admin/admin_upgrade.php:cf393bce4f5df6e7e6b9177e88d217508a23f2f4
+./common/admin/admin_upgrade.php:ae6c571976ad9adee811f36eb58c39117033e564
 ./common/admin/admin_audit.php:07b137e1eb4fd8c6c49568dc4a9577c1f2216aa2
 ./common/admin/admin_cc.php:4bd02333d5e2089698b3dd6f97621468961afd35
 ./common/admin/admin_comments_delete.php:0f72ac4b3c57d1423334710f40b487671d9a9c8a
@@ -1279,7 +1279,7 @@
 ./common/admin/admin_idfeedsyndication.php:59aeddacd9f5d2970c4b43a6806e3a6084dd7e85
 ./common/admin/option_acache.php:e4d612db3d83730a6d81aa82f883024918145db9
 ./common/admin/admin_move_pilot.php:2d715820efd1f2fc6c91300d3efef60669f25def
-./common/admin/admin_troubleshooting.php:f600cfc29d28dcc946d445244d6695cdf08290ca
+./common/admin/admin_troubleshooting.php:7dd24cc8b40b8da184fa6ae42d91cfea5a0ac2fa
 ./common/admin/admin_kill_export_search.php:0f1e1594b3f5a0aad9a427387e621ba75ab08772
 ./common/admin/admin_zkbfetch.php:523458b4dea537382161af248d374a3a24575a50
 ./common/admin/admin_kill_delete.php:6ffe96387cdfad36bd601f867ff5a9e4bdc53b8d

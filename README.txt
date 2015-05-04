@@ -35,6 +35,7 @@ Enhancements:
 Load mods in cron jobs
 Improved update mechanism with enhanced version check
 DB Update: Convert BPC flags to singleton
+Change auto updater download file to update2.xml
 
 Bugfixes:
 Fix: zKB Fetch last kill timestamp reset
