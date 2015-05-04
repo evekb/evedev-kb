@@ -111,7 +111,7 @@ else
 }
 
 // connectivity
-$url = KB_UPDATE_URL . "/update.xml";
+$url = KB_UPDATE_URL . "/update2.xml";
 $smarty->assign('conn_url', $url);
 $smarty->assign('conn_fopen_exists', ini_get('allow_url_fopen'));
 $smarty->assign('conn_image', $pass_img);

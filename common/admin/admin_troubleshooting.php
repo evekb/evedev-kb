@@ -6,7 +6,7 @@
  * @package EDK
  */
 
-$URL_FETCHING_TEST_URL = 'http://www.evekb.org/downloads/update.xml';
+$URL_FETCHING_TEST_URL = 'http://www.evekb.org/downloads/update2.xml';
 
 require_once('common/admin/admin_menu.php');
 
