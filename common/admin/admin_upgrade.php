@@ -18,8 +18,8 @@ $page_error = array();
 
 //torch the update definition file. This forces it to be redownloaded.
 if (isset($_GET['refresh'])) {
-	if (file_exists(KB_CACHEDIR."/update/update.xml")) {
-			unlink(KB_CACHEDIR."/update/update.xml");
+	if (file_exists(KB_CACHEDIR."/update/update2.xml")) {
+			unlink(KB_CACHEDIR."/update/update2.xml");
 	}
 }
 
