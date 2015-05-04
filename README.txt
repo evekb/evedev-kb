@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.9.0
+Eve Development Network Killboard v4.2.10.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -24,6 +24,26 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
+===============
+
+v4.2.10.0
+
+Features:
+Updated CCP DB to Mosaic 1.0.112318 Updated Killboard version to 4.2.1.0 (Mosaic 1.0)
+
+Enhancements:
+Load mods in cron jobs
+Improved update mechanism with enhanced version check
+DB Update: Convert BPC flags to singleton
+
+Bugfixes:
+Fix: zKB Fetch last kill timestamp reset
+Fix: Made zKB fetch more robust
+Code cleanup
+Removed Accept-Language from SimpleCrest request headers
+
+-------------------------------------------
+v4.2.9.0
 
 Features:
 Updated CCP DB to Scylla 1.0.111482
@@ -38,7 +58,7 @@ Fix: BPCs inside containers don't conserve the singleton flags
 Fix: Add an alliance as killboard owner which is not in the database
 
 -------------------------------------------
-v4.2.7.0
+v4.2.8.0
 
 Features:
 Updated CCP DB to Tiamat 1.0 (110751)
