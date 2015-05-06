@@ -24,6 +24,14 @@ o/ EVE Development Network
 
 
 VERSION HISTORY
+===============
+
+v4.2.9.1
+Intermediate release for autoupdater only to handle version numbers
+
+
+-------------------------------------------
+v4.2.9.0
 
 Features:
 Updated CCP DB to Scylla 1.0.111482
@@ -38,7 +46,7 @@ Fix: BPCs inside containers don't conserve the singleton flags
 Fix: Add an alliance as killboard owner which is not in the database
 
 -------------------------------------------
-v4.2.7.0
+v4.2.8.0
 
 Features:
 Updated CCP DB to Tiamat 1.0 (110751)
