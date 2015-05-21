@@ -348,7 +348,7 @@ class Translate
                 "Skirmish Warfare Link - Rapid Deployment I Blueprint", "Mining Foreman Link - Harvester Capacitor Efficiency I", 
                 "Mining Foreman Link - Harvester Capacitor Efficiency I Blueprint", "Mining Foreman Link - Mining Laser Field Enhancement I", 
                 "Mining Foreman Link - Mining Laser Field Enhancement I Blueprint", "Mining Foreman Link - Laser Optimization I", 
-                "Mining Foreman Link - Laser Optimization I Blueprint", "Omnidirectional Tracking Link II", "Omnidirectional Tracking Link II Blueprint");
+                "Mining Foreman Link - Laser Optimization I Blueprint");
 
             $this->killmail_ = preg_replace($preg_search, $preg_replace, $this->killmail_);
             $this->killmail_ = str_replace($search, $replace, $this->killmail_);
