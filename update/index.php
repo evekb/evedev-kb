@@ -25,6 +25,7 @@ require_once('common/includes/globals.php');
 $config = new Config(KB_SITE);
 session::init();
 
+// @deprecated; use the getRequestScheme() method from globals.php
 // determine the request scheme
 $requestScheme = "http";
 if (isset($_SERVER['HTTPS'])) 

@@ -440,8 +440,9 @@ function convertSlotsFromManualMails($slotsToConvert)
  */
 function updateCCPDB()
 {
-	global $url, $smarty;
-
+    global $url, $smarty;
+    
+    // @deprecated; use the getRequestScheme() method from globals.php
     // determine the request scheme
     $requestScheme = "http";
     if (isset($_SERVER['HTTPS'])) 

@@ -487,7 +487,7 @@ class admin_config
 
 	public static function reload()
 	{
-		header("Location: http://".$_SERVER['HTTP_HOST']
+		header("Location: ".getRequestScheme().$_SERVER['HTTP_HOST']
 				.$_SERVER['SCRIPT_NAME'].'?'.$_SERVER['QUERY_STRING']);
 	}
 
