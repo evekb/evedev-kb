@@ -223,7 +223,7 @@ class Translate
         {
             $search = array("Micro Organisms", "Ice Micro Organisms Extractor", "Barren Micro Organisms Extractor", 
                 "Temperate Micro Organisms Extractor", "Oceanic Micro Organisms Extractor", "Hardwiring - Eifyr and Co 'Gunslinger' MX-0.5", 
-                "Hardwiring - Eifyr and Co 'Gunslinger' MX-1.5", "Hardwiring - Eifyr and Co 'Gunslinger' MX-2.5", "Mechanic", 
+                "Hardwiring - Eifyr and Co 'Gunslinger' MX-1.5", "Hardwiring - Eifyr and Co 'Gunslinger' MX-2.5", 
                 "Dual 1000mm 'Scout' I Accelerator Cannon", "Quad 3500mm Gallium I Cannon", "6x2500mm Heavy Gallium I Repeating Cannon",
                 "Looking Glass Ocular Implant (right/gold)", "X5 Prototype I Engine Enervator", "Looking Glass Ocular Implant (right/gray)",
                 "Looking Glass Ocular Implant (left/gold)", "Looking Glass Ocular Implant (left/gray)", "Women's 'Structure' Skirt (camoflage)",
@@ -272,7 +272,7 @@ class Translate
                 "Capital EMP Generator", "Capital EMP Generator Blueprint", "Station (Caldari 1 Wrecked)", "Minmatar Starbase Control Tower_LCO");
             $replace = array("Microorganisms", "Ice Microorganisms Extractor", "Barren Microorganisms Extractor", 
                 "Temperate Microorganisms Extractor", "Oceanic Microorganisms Extractor", "Hardwiring - Eifyr and Co. 'Gunslinger' MX-0.5", 
-                "Hardwiring - Eifyr and Co. 'Gunslinger' MX-1.5", "Hardwiring - Eifyr and Co. 'Gunslinger' MX-2.5", "Mechanics", 
+                "Hardwiring - Eifyr and Co. 'Gunslinger' MX-1.5", "Hardwiring - Eifyr and Co. 'Gunslinger' MX-2.5", 
                 "Dual 1000mm 'Scout' Accelerator Cannon", "Quad 3500mm Gallium Cannon", "6x2500mm Heavy Gallium Repeating Cannon", 
                 "Looking Glass Monocle Interface (right/gold)", "X5 Prototype Engine Enervator", "Looking Glass Monocle Interface (right/gray)", 
                 "Looking Glass Monocle Interface (left/gold)", "Looking Glass Monocle Interface (left/gray)", 
@@ -332,7 +332,7 @@ class Translate
                 "/Skirmish Warfare Link - Rapid Deployment Blueprint[^I]+[^,]/", "/Mining Foreman Link - Harvester Capacitor Efficiency[^I]+[^,]/", 
                 "/Mining Foreman Link - Harvester Capacitor Efficiency Blueprint[^I]+[^,]/", "/Mining Foreman Link - Mining Laser Field Enhancement[^I]+[^,]/", 
                 "/Mining Foreman Link - Mining Laser Field Enhancement Blueprint[^I]+[^,]/", "/Mining Foreman Link - Laser Optimization[^I]+[^,]/",
-                "/Mining Foreman Link - Laser Optimization Blueprint[^I]+[^,]/");
+                "/Mining Foreman Link - Laser Optimization Blueprint[^I]+[^,]/", "/Mechanic[^a]/");
 
             $preg_replace = array("Skirmish Warfare Link - Interdiction Maneuvers I", "Information Warfare Link - Sensor Integrity I",
                 "Armored Warfare Link - Damage Control I", "Skirmish Warfare Link - Evasive Maneuvers I", "Siege Warfare Link - Active Shielding I", 
@@ -348,7 +348,7 @@ class Translate
                 "Skirmish Warfare Link - Rapid Deployment I Blueprint", "Mining Foreman Link - Harvester Capacitor Efficiency I", 
                 "Mining Foreman Link - Harvester Capacitor Efficiency I Blueprint", "Mining Foreman Link - Mining Laser Field Enhancement I", 
                 "Mining Foreman Link - Mining Laser Field Enhancement I Blueprint", "Mining Foreman Link - Laser Optimization I", 
-                "Mining Foreman Link - Laser Optimization I Blueprint", "Omnidirectional Tracking Link II", "Omnidirectional Tracking Link II Blueprint");
+                "Mining Foreman Link - Laser Optimization I Blueprint", "Mechanics");
 
             $this->killmail_ = preg_replace($preg_search, $preg_replace, $this->killmail_);
             $this->killmail_ = str_replace($search, $replace, $this->killmail_);
