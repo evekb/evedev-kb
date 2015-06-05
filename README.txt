@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.10.0
+Eve Development Network Killboard v4.2.11.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -26,6 +26,22 @@ o/ EVE Development Network
 VERSION HISTORY
 ===============
 
+v4.2.11.0
+
+Features:
+Updated CCP to Carnyx 1.0.113321, Killboard to 4.2.11.0
+
+Enhancements:
+Special Item Prices
+Updated zKB fetch example URLs
+
+Bugfixes:
+Fix for loading mods in cronjob using xajax (e.g. ajcron)
+Merge pull request #39 from R3ality/patch-1
+  o Update class.translate.php
+Fix: Respect HTTPS scheme everywhere
+
+-------------------------------------------
 v4.2.10.0
 
 Features:
