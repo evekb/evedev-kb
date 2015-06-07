@@ -12,6 +12,8 @@
 class event
 {
 	private static $events = array();
+        
+        private static $isCron = FALSE;
 
 	/**
 	 * Register a callback for an event. Callbacks are of the form
@@ -58,7 +60,13 @@ class event
 	public static function call($event, &$object)
 	{
 		if (isset(self::$events[$event])) {
-			foreach (self::$events[$event] as $callback){
+			foreach (self::$events[$event] as $callback)
+                        {
+                                // prevent xajax from getting initialized if we are in a cron job
+				if(self::$isCron && count($callback) > 0 && $callback[0] == "edk_xajax")
+				{
+					continue;
+				}
 				// if the callback registered to the calling event we'll try to use his callback
 				call_user_func_array($callback, array(&$object));
 			}
@@ -69,4 +77,9 @@ class event
 	{
 		self::$events[$key][] = $data;
 	}
+        
+        public static function setCron($isCron = TRUE)
+        {
+            self::$isCron = $isCron;
+        }
 }

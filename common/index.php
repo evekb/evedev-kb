@@ -193,6 +193,9 @@ $settingsPage = (substr($page, 0, 9) == 'settings_');
 if(file_exists("themes/".$themename."/init.php")) {
 	include_once("themes/".$themename."/init.php");
 }
+
+require_once('common/xajax/xajax.php');
+
 $mods_active = explode(',', config::get('mods_active'));
 $modOverrides = false;
 $modconflicts = array();

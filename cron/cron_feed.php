@@ -40,9 +40,11 @@ $config = new Config(KB_SITE);
 
 $feeds = config::get("fetch_idfeeds");
 $html = '';
+$page = 'idfeedsyndication';
 
 // load mods
-loadMods();
+event::setCron(TRUE);
+loadMods($page);
 
 foreach($feeds as $key => &$val) {
 	$tmphtml = '';

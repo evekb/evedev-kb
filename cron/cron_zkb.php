@@ -36,10 +36,11 @@ chdir($KB_HOME);
 require_once('kbconfig.php');
 require_once('globals.php');
 $config = new Config(KB_SITE);
-
+$page = 'zkbfetch';
 
 // load mods
-loadMods();
+event::setCron(TRUE);
+loadMods($page);
 
 $fetchConfigs = ZKBFetch::getAll();
 $html = '';

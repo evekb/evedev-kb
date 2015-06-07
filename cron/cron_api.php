@@ -69,9 +69,11 @@ if(!defined('KB_CACHEDIR'))
 $outhead = "Running API Import on " . gmdate("M d Y H:i") . "\n\n";
 $html = '';
 $outtemp = '';
+$page = 'cron_api';
 
 // load mods
-loadMods();
+event::setCron(TRUE);
+loadMods($page);
 
 $myEveAPI = new API_KillLog();
 $myEveAPI->iscronjob_ = true;

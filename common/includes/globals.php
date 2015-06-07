@@ -42,7 +42,6 @@ edkloader::register('TopWeaponListTable', 'common/includes/class.toplist.php');
 edkloader::register('thumbInt', 'common/includes/class.thumb.php');
 
 require_once('common/includes/db.php');
-require_once('common/xajax/xajax.php');
 
 function slashfix($fix)
 {
@@ -344,7 +343,7 @@ function isNewerVersion($newVersion, $baseVersion)
 }
 
 
-function loadMods()
+function loadMods($page)
 {
     $mods_active = explode(',', config::get('mods_active'));
     $modOverrides = false;
