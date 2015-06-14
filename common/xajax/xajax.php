@@ -4,7 +4,11 @@
  */
 
 require_once('common/xajax/xajax_core/xajax.inc.php');
-$xajax = new xajax();
+$uri = html_entity_decode(edkURI::build(edkURI::parseURI()));
+if(strpos($uri, "?") === false) $uri .= "?xajax=1";
+else $uri .= "&xajax=1";
+
+$xajax = new xajax($uri);
 event::register('page_assembleheader', 'edk_xajax::insertHTML');
 
 // if mods depend on xajax they can register to xajax_initialised
@@ -13,11 +17,6 @@ event::register('page_assembleheader', 'edk_xajax::insertHTML');
 //event::register('page_assembleheader', 'edk_xajax::lateProcess');
 event::register('mods_initialised', 'edk_xajax::lateProcess');
 //event::register('page_initialisation', 'edk_xajax::lateProcess');
-
-$uri = html_entity_decode(edkURI::build(edkURI::parseURI()));
-if(strpos($uri, "?") === false) $uri .= "?xajax=1";
-else $uri .= "&xajax=1";
-$xajax->configure('requestURI', $uri);
 
 /**
  * @package EDK
