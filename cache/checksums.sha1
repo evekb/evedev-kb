@@ -2,10 +2,10 @@
 ./cron/cron_value.php:1c71a4ae2df2d0735c7de24e08402ea7207e8251
 ./cron/cron_cache.php:1fbab1a4abd414097a23c876e407fda986c22f42
 ./cron/README.txt:5c9f8cd4d873328f6c90e41f13c9b6d285393bff
-./cron/cron_api.php:d7df8e9408b1d6a63b68a59689dad7e6d0afe901
+./cron/cron_api.php:ad4db09f46b579b63edc935063d2745b65439625
 ./cron/cron_clearup.php:7a177114701b18dd32e8fa418f5997413c8f909a
-./cron/cron_zkb.php:142f1e6492d83ab9ad78e726ac996710537c730f
-./cron/cron_feed.php:f17976dd3fd44877dabe0279a947dac8b20e50c9
+./cron/cron_zkb.php:79592c0f0a1c696f0df0068ff84a26f16496c9f3
+./cron/cron_feed.php:3c480d920883d2e169a5ea99ed1ce12149c7e31b
 ./sig.php:b0ab2f9913356bea62c14ae9923b92d6c6b498db
 ./.htaccess:1c910af7d8424702848da105757e4da55feab0b8
 ./packages/database/kb3_log/table.xml:849406a655e5d80cb48eba49167947d171d734ad
@@ -103,7 +103,7 @@
 ./packages/database/kb3_sum_corp/table.xml:adc2caeb39365e3f88154a1f5a9f9271fa690e2e
 ./packages/database/kb3_api_keys/table.xml:6c81b101208ad2ef8ff640176c0179d345ac87d4
 ./packages/database/kb3_config/table.xml:26e63222a26760dcf1c72f5b565e16e46b27f66b
-./README.txt:e2266f789a35c3765acecadaf1452299dc1c1f24
+./README.txt:7318171de93c3c05909b817b192b0a63a449df06
 ./img/sta_gang.png:fdf6dbb56bc5c5e501e3b257fc3efd54caf25116
 ./img/sta_war.png:780a92791e6cf23bd300323060d90aa8485c143c
 ./img/comment.gif:fce8b5e704ae7e86f0a0e30b46c9eeb0bf47e101
@@ -946,7 +946,7 @@
 ./common/pheal/PhealAccessInterface.php:59490b51f6b764f0ac5c0100d454f5d5e9d07081
 ./common/pheal/PhealContainer.php:c09183106fc3f7552b1ae8a64db83d5b61f8916d
 ./common/pheal/PhealElement.php:a772893a28e9d6d8e04ac37eb31866a9d8118d0e
-./common/index.php:d91738b605485dbb6ab66a99386728bc83d08391
+./common/index.php:37f50cdecd082914a9cbe28c123fcd6a7ab09bb8
 ./common/home.php:ef8b6bc14096df1cfd6e5d0f534cc266c02d9925
 ./common/corp_detail.php:d90d2496391fb7da59cf1450d442188a72640fb3
 ./common/coffee.php:dc7b1463c01e69f3e796fc86572ff163ea34c9fa
@@ -1031,7 +1031,7 @@
 ./common/includes/class.navigation.php:7ec07686a3f5a100172c4ebbb80fbe762417f690
 ./common/includes/db.php:3bbb42be036140d01577e335bf69c42a29e795ac
 ./common/includes/class.box.php:8e184cdb6523a07666546933cd6beaa2758a2411
-./common/includes/constants.php:36dee81ad88d3f24c8b09bbe01f534abc408c367
+./common/includes/constants.php:919e6da8e39b5df95d839e25d4950e782bbdb6e3
 ./common/includes/class.comments.php:739a189f6831e0a1a59823600527d2ae56f1cf22
 ./common/includes/class.toplist.php:cfd136c0e1c73c40a565dceedf876b6b7189b78c
 ./common/includes/class.contracttarget.php:e4cb3d3480fd12d6f2a9f2f63e8086ea3fbf8d96
@@ -1050,7 +1050,7 @@
 ./common/includes/class.bargraph.php:2fe7aa711453f31b537693dd5711402823495ba4
 ./common/includes/class.valuefetcher.php:9d03b9375c57cbdcdc4e6a73dc44c14229289f83
 ./common/includes/class.item.php:ad192968a8eca968ef636daad34a4b6c28854bd2
-./common/includes/globals.php:cf454ce661b52fbcfef5b4bbc4c25a498140e7ac
+./common/includes/globals.php:485f5d5925b65a4e7175a29160e49f788c594369
 ./common/includes/eve_central_sync.php:085929637345f8112e7040da29d1467399f25163
 ./common/includes/class.parser.php:0517b9e458978e777a4e2ba145e40031a1ff08d8
 ./common/includes/toptable/class.corp.php:3a9434651153b787715b80a7af58cfca91ce743f
@@ -1072,7 +1072,7 @@
 ./common/includes/class.role.php:ad0587c95cc6f965e697efa04ea85e8f324b4da9
 ./common/includes/class.thumb.php:7129701f351ca01ef5f9de53a1bec2d669d4615c
 ./common/includes/class.config.php:25c3be90da427477a6f1fd8eebe75e8c406d87d3
-./common/includes/class.event.php:fa4872e16fbb9bd01de34bb974e3365a1f339826
+./common/includes/class.event.php:04a04fbafd2fb90eb8161925a49bf894f51d6a05
 ./common/includes/class.cachehandlerhashedmem.php:e7d79935639544298595501c0b4ff09e4915ab36
 ./common/includes/class.session.php:49b2cc7711860231ff92a3031d0c972269f7b15e
 ./common/alliance_detail.php:c242fd6c0c3dc6a2a7a56986dbaf1ac485ef9d7f
@@ -1250,7 +1250,7 @@
 ./common/xajax/xajax_js/xajax_core_uncompressed.js:9f59262dd976153acf313e6b439ce2cc4a55cb0a
 ./common/xajax/xajax_js/xajax_lang_nl.js:74982e2f6b1079b66681ad67c71ace2089090121
 ./common/xajax/xajax_js/xajax_lang_fr_uncompressed.js:b6cbc3e9172002d827f4649891c36ac3c65a27fb
-./common/xajax/xajax.php:6ee29a2940537aca67121758c30d5ded53bd4316
+./common/xajax/xajax.php:d6d554b4f3729429014232fd570b71ca9f492482
 ./common/feed.php:7bacddfe929a685591509ac371a6327b3f5a607a
 ./common/admin/admin_upgrade.php:ae6c571976ad9adee811f36eb58c39117033e564
 ./common/admin/admin_audit.php:07b137e1eb4fd8c6c49568dc4a9577c1f2216aa2

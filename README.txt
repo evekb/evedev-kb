@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.11.0
+Eve Development Network Killboard v4.2.12.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -26,6 +26,13 @@ o/ EVE Development Network
 VERSION HISTORY
 ===============
 
+v4.2.12.0
+
+Bugfixes:
+Fix: AJAX when called from command line
+Fix: Cron Jobs and Simple URLs.
+
+-------------------------------------------
 v4.2.11.0
 
 Features:
