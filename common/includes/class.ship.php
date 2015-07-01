@@ -291,7 +291,21 @@ class Ship extends Cacheable
 	 */
 	static function getByID($id)
 	{
-		return Cacheable::factory(get_class(), $id);
+		$Ship = Cacheable::factory(get_class(), $id);
+                // check if the ship actually has an ID, but we don't know the name
+                // (there are cases when we don't have an ID and DO WANT to return
+                // an "Unknown" ship, for example in killmails with no ship information)
+                if((int) $id != 0 && $Ship->getName() == "Unknown")
+                {
+                    $shipName = API_Helpers::gettypeIDname($id, TRUE);
+                    // sucess?
+                    if(!is_null($shipName))
+                    {
+                        // add new ship with Unknown ship class
+                        return self::lookup($shipName);
+                    }
+                }
+                return $Ship;                
 	}
         
         /**

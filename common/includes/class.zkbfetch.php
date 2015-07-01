@@ -899,7 +899,7 @@ class ZKBFetch
        $typeID = (int)$item['typeID'];
        // we will add this item with the given flag, even if it's not in our database
        // that way, when the database is updated, the item will display correctly
-       $Item = new Item($typeID);
+       $Item = Item::getByID($typeID);
 
        // if item has a parent, use the parent's flag
        if(!is_null($parentItemLocation))

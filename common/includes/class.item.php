@@ -352,6 +352,20 @@ class Item extends Cacheable
 	 */
 	static function getByID($id)
 	{
-		return Cacheable::factory(get_class(), $id);
+		$Item = Cacheable::factory(get_class(), $id);
+                
+                // unknown item?
+                if(is_null($Item->getName()))
+                {
+                    // try fetching it from the API
+                    $typeName = API_Helpers::gettypeIDname($id, TRUE);
+                    if(!is_null($typeName))
+                    {
+                        // remove the item with no info from the cache
+                        self::delCache($Item);
+                        return self::lookup($typeName);
+                    }
+                }
+                return $Item;
 	}
 }

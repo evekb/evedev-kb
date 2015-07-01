@@ -826,7 +826,7 @@ class IDFeed
             $typeID = (int)$item['typeID'];
             // we will add this item with the given flag, even if it's not in our database
             // that way, when the database is updated, the item will display correctly
-            $Item = new Item($typeID);
+            $Item = Item::getByID($typeID);
             
             // IDFeed always returns valid CCP flags
             $location = (int)$item['flag'];

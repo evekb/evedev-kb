@@ -33,18 +33,17 @@ class API_Helpers
 		}
 		else
 		{
-			$info = new API_IDtoName();
-			$info->setIDs($id);
-			$result = $info->fetchXML();
-			if($result == "")
-			{
-				$data = $info->getIDData();
-				if($update && $data[0]['characterID'] > 0 && $data[0]['name'])
+                        $crestTypeUrl = CREST_PUBLIC_URL . '/types/' . $id . '/';
+
+                        $typeInfo = SimpleCrest::getReferenceByUrl($crestTypeUrl);
+                        if($typeInfo != NULL)
+                        {
+				if($update && $typeInfo->name != NULL && $typeInfo->description != NULL)
 				{
-					$sql = "INSERT INTO kb3_invtypes (typeID, typeName, description) values($id, '".$qry->escape($data[0]['name'])."', '')";
+					$sql = "INSERT INTO kb3_invtypes (typeID, typeName, description) values($id, '".$qry->escape($typeInfo->name)."', '".$qry->escape($typeInfo->description)."')";
 					$qry->execute($sql);
 				}
-				return $data[0]['name'];
+				return $typeInfo->name;
 			}
 			return null;
 		}
