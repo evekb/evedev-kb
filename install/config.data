@@ -59,4 +59,6 @@ cache_time	1440
 upd_dbVersion	1.2.1
 cfg_log	1
 cfg_sqlhalt	1
-cfg_objcache 1
+cfg_objcache	1
+cfg_ccpimages	1
+
