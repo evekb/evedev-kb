@@ -36,6 +36,7 @@ class SimpleCrest
      * takes a CREST URL and gets the referenced object
      * @param string $url
      * @return Object a decoded json object
+     * @throws Exception
      */
     public static function getReferenceByUrl($url)
     {

@@ -34,8 +34,17 @@ class API_Helpers
 		else
 		{
                         $crestTypeUrl = CREST_PUBLIC_URL . '/types/' . $id . '/';
-
-                        $typeInfo = SimpleCrest::getReferenceByUrl($crestTypeUrl);
+                        $typeInfo = NULL;
+                        
+                        try 
+                        {
+                            $typeInfo = SimpleCrest::getReferenceByUrl($crestTypeUrl);
+                        } 
+                        catch (Exception $e) 
+                        {
+                            // nothing we can do
+                        }
+                        
                         if($typeInfo != NULL)
                         {
 				if($update && $typeInfo->name != NULL && $typeInfo->description != NULL)
