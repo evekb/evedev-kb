@@ -256,6 +256,10 @@ class pAllianceDetail extends pageAssembly
 				$efficiency = 0;
 			}
 		}
+		else
+		{
+			Alliance::updateClosed($this->alliance->getName(),$this->alliance->getExternalID());
+		}
 		// The summary table is also used by the stats. Whichever is called
 		// first generates the table.
 		$smarty->assign('all_img', $this->alliance->getPortraitURL(128));
