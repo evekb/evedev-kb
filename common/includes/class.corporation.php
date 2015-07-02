@@ -304,6 +304,24 @@ class Corporation extends Entity
 		}
 		return false;
 	}
+
+	/**
+	 * Checks whether a closed corporation exists and updates the stored name if needed.
+	 *
+     * @param string $name The name of the corporation
+	 * @param int $externalid The corporations external ID
+	*/
+
+	static function updateClosed($name,$externalid = 0)
+	{
+		$qry = DBFactory::getDBQuery(true);
+
+		$qry->execute("select crp_name from kb3_corps where crp_name = '[CLOSED] ".slashfix($name)."' and crp_external_id ='".$externalid."'");
+		if(!$qry->recordCount() && $externalid != 0) {
+			$qry->execute("update kb3_corps set crp_name = '[CLOSED] ".$qry->escape($name)."' where crp_name = '".$qry->escape($name)."' and crp_external_id ='".$externalid."'");
+		}
+	}
+
 	/**
 	 * Return whether this corporation was updated before the given timestamp.
 	 *

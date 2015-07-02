@@ -202,6 +202,12 @@ class pCorpDetail extends pageAssembly
 				$this->alliance, $myAPI->getCurrentTime(),
 				$externalid = $this->corp->getExternalID());
 		}
+
+		if($myAPI->getMemberCount() == 0)
+		{
+			Corporation::updateClosed($myAPI->getCorporationName(),$this->corp->getExternalID());
+		}
+
 		$this->page->setTitle('Corporation details - '.$this->corp->getName() . " [" . $myAPI->getTicker() . "]");
 
 		$smarty->assign('portrait_url', $this->corp->getPortraitURL(128));
