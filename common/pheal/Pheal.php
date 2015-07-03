@@ -322,6 +322,9 @@ class Pheal
         curl_setopt(self::$curl, CURLOPT_HTTPHEADER, $headers);
         curl_setopt(self::$curl, CURLOPT_RETURNTRANSFER, true);
         
+        // make sure we can verify the peer's certificatge
+        curl_setopt(self::$curl, CURLOPT_CAINFO, getcwd() . DIRECTORY_SEPARATOR . KB_CACHEDIR . '/cert/cacert.pem');
+        
         // call
         $result	= curl_exec(self::$curl);
         $errno = curl_errno(self::$curl);

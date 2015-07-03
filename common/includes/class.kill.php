@@ -18,8 +18,8 @@ class Kill extends Cacheable
 {
     
         /** @const the base URL for the public CREST killmail endpoint */
-        static $CREST_KILLMAIL_ENDPOINT = "http://public-crest.eveonline.com/killmails/";
-
+        public static $CREST_KILLMAIL_ENDPOINT = '/killmails/';
+        
 	/**
 	 * The ID for this kill
 	 * @var integer
@@ -1863,7 +1863,7 @@ class Kill extends Cacheable
 
                 if($this->getCrestHash() && !is_null($this->externalid))
                 {
-                    return self::$CREST_KILLMAIL_ENDPOINT.$this->externalid.'/'.$this->getCrestHash().'/';
+                    return CREST_PUBLIC_URL . self::$CREST_KILLMAIL_ENDPOINT . $this->externalid.'/'.$this->getCrestHash().'/';
                 }
                 return NULL;
 	}

@@ -52,7 +52,9 @@ set_error_handler(array('EDKError', 'handler'), E_ERROR );
 
 $url = config::get('itemPriceCrestUrl');
 if ($url == null || $url == "")
-	$url = ValueFetcherCrest::$CREST_URL;
+{
+	$url = CREST_PUBLIC_URL . ValueFetcherCrest::$CREST_PRICES_ENDPOINT;
+}
 
 $fetch = new ValueFetcherCrest($url);
 

@@ -29,7 +29,7 @@ if($_POST['submit'])
     // If not set, use default
     if (!$url) 
     {
-        $url = ValueFetcherCrest::$CREST_URL;
+        $url = CREST_PUBLIC_URL . ValueFetcherCrest::$CREST_PRICES_ENDPOINT;
     }
 
     config::set('fetchurl', $url);
@@ -58,7 +58,7 @@ else
     $time = date('r', $timestamp);
     if ($url == null)
     {
-        $url = ValueFetcherCrest::$CREST_URL;
+        $url = CREST_PUBLIC_URL . ValueFetcherCrest::$CREST_PRICES_ENDPOINT;
     }
 
     $html .= 'Last update: '.$time.'<br /><br />';

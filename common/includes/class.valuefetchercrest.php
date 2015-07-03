@@ -16,7 +16,7 @@ class ValueFetcherCrest
 {
     
     /** CREST url pointing to average item prices */
-    public static $CREST_URL = 'https://public-crest.eveonline.com/market/prices/';
+    public static $CREST_PRICES_ENDPOINT = '/market/prices/';
     
     /** the url to fetch item prices from */
     protected $url;

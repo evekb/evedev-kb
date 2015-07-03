@@ -49,7 +49,7 @@ class CrestParser
         function validateCrestUrl()
         {
             // should look like this:
-            // http://public-crest.eveonline.com/killmails/30290604/787fb3714062f1700560d4a83ce32c67640b1797/
+            // https://public-crest.eveonline.com/killmails/30290604/787fb3714062f1700560d4a83ce32c67640b1797/
             $urlPieces = explode("/", $this->crestUrl);
             if(count($urlPieces) < 6 || 
                     $urlPieces[2] != "public-crest.eveonline.com" || 

@@ -270,7 +270,7 @@ class API_Helpers
          */
         public static function testCrestApiConnection()
         {
-            $CREST_TESTING_URL = 'http://public-crest.eveonline.com/killmails/33493676/553ac7e2aeabe48092bde10958de0a44dc6f35ef/';
+            $CREST_TESTING_URL = CREST_PUBLIC_URL . Kill::$CREST_KILLMAIL_ENDPOINT . '33493676/553ac7e2aeabe48092bde10958de0a44dc6f35ef/';
             try
             {
                 $kill = SimpleCrest::getReferenceByUrl($CREST_TESTING_URL);
@@ -287,7 +287,7 @@ class API_Helpers
             
             catch(Exception $e)
             {
-                throw new EDKApiConnectionException($e->getMessage(), $e->getError());
+                throw new EDKApiConnectionException($e->getMessage(), $e->getCode());
             }
         }
         
