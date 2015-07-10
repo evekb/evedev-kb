@@ -246,6 +246,8 @@ class pCorpDetail extends pageAssembly
                         $description = preg_replace('/<br>/', '<br />', $description);
                         // replace non-html size
                         $description = preg_replace('/<font size=\"[1-9]+\"/', '<font', $description);
+                        //strip out broken cyan color tag
+                        $description = preg_replace('/color=\"#bfffffff\"/', '', $description);
                         // replace character links
                         $description = preg_replace_callback('/showinfo:[1-9]+\/\//', array($this, 'parseShowInfoLink'), $description);
 			$smarty->assign('corp_description', $description);
