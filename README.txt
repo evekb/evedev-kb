@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.12.0
+Eve Development Network Killboard v4.2.13.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -26,6 +26,21 @@ o/ EVE Development Network
 VERSION HISTORY
 ===============
 
+v4.2.13.0
+
+Features: 
+Updated CCP DB to Aegis 1.1.1.114255
+Download unknown ships/items
+
+Enhancements:
+Updated CREST links for https, added CA certificate bundle
+Removed obsolete alliance logos ...
+Added error hanlding to item fetching functionality
+
+Bugfixes:
+Fix: Remove broken cyan color tag from corp descriptions
+
+-------------------------------------------
 v4.2.12.0
 
 Bugfixes:
