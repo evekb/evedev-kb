@@ -21,10 +21,10 @@ define('CREST_PUBLIC_URL', 'https://public-crest.eveonline.com');
 
 // current version: major.minor.sub.ccpDBupdateNo
 // even numbers for minor = development version
-define('KB_VERSION', '4.2.12.0');
-define('KB_RELEASE', '(Carnyx 1.0)');
-define('KB_CCP_DB_VERSION', '113321');
-define('KB_CCP_DB_DATE', 'Jun 3, 2015');
+define('KB_VERSION', '4.2.13.0');
+define('KB_RELEASE', '(Aegis 1.1.1)');
+define('KB_CCP_DB_VERSION', '114255');
+define('KB_CCP_DB_DATE', 'Jul 10, 2015');
 define('ID_FEED_VERSION', 1.30);
 define('ZKB_FETCH_VERSION', 1.0);
 define('KB_APIKEY_LEGACY', 1);
