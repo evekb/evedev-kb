@@ -160,7 +160,7 @@ if((config::get('DBUpdate') < LATEST_DB_UPDATE) || (config::get('CCPDbVersion') 
 	// Check db is installed.
 	if(config::get('cfg_kbhost'))
 	{
-		$url = preg_replace('/^http:\/\//','',KB_HOST."/update/");
+		$url = preg_replace('/^http(s)?:\/\//','',KB_HOST."/update/");
 		$url = preg_replace('/\/{2,}/','/',$url);
 		header('Location: '.$requestScheme.$url);
 		die;
