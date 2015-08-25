@@ -250,7 +250,7 @@ class Corporation extends Entity
 						$sql = 'update kb3_corps
 									   set crp_all_id = '.$alliance->getID().', ';
 						$sql .= "crp_updated = date_format(NULLIF('".$timestamp."',''),'%Y.%m.%d %H:%i:%s') ".
-										"where crp_id = ".$this->id;
+										"where crp_id = ".$crp->getID();
 						$qry->execute($sql);
 						$crp->alliance = $alliance;
 					}
