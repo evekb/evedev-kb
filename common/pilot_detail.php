@@ -15,7 +15,9 @@ class pPilotDetail extends pageAssembly
 	public $page = null;
 	/** @var integer */
 	public $plt_id = false;
-
+        
+        /** @var Pilot the pilot */
+        public $pilot = null;
 	/** @var string The selected view. */
 	protected $view = null;
 	/** @var array The list of views and their callbacks. */
@@ -402,6 +404,15 @@ class pPilotDetail extends pageAssembly
 	{
 		return $this->view;
 	}
+        
+        /**
+         * Return the Pilot
+         * @return Pilot
+         */
+        function getPilot()
+        {
+            return $this->pilot;
+        }
 }
 
 

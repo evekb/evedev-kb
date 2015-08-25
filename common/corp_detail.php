@@ -750,6 +750,15 @@ class pCorpDetail extends pageAssembly
 	{
 		$this->viewList[$view] = $callback;
 	}
+        
+        /**
+         * Return the corporation
+         * @return Corporation
+         */
+        function getCorp()
+        {
+            return $this->corp;
+        }
 }
 
 $corpDetail = new pCorpDetail();

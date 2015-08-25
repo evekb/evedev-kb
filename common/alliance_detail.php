@@ -956,6 +956,15 @@ class pAllianceDetail extends pageAssembly
 	{
 		return $this->view;
 	}
+        
+        /**
+         * Return the alliance
+         * @return Alliance
+         */
+        function getAlliance()
+        {
+            return $this->alliance;
+        }
 }
 
 $allianceDetail = new pAllianceDetail();

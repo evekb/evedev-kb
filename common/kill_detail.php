@@ -1711,6 +1711,15 @@ class pKillDetail extends pageAssembly
             
             return $destroyedItemsGrouped;
         }
+        
+        /**
+         * Return the kill
+         * @return Kill
+         */
+        function getKill()
+        {
+            return $this->kill;
+        }
 }
 
 $killDetail = new pKillDetail();

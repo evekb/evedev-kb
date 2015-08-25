@@ -238,6 +238,15 @@ class pSystemDetail extends pageAssembly
 	{
 		return $this->view;
 	}
+        
+        /**
+         * Return the system
+         * @return SolarSystem
+         */
+        function getSystem()
+        {
+            return $this->system;
+        }
 }
 $systemDetail = new pSystemDetail();
 event::call("systemdetail_assembling", $systemDetail);
