@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.13.0
+Eve Development Network Killboard v4.2.14.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -26,6 +26,19 @@ o/ EVE Development Network
 VERSION HISTORY
 ===============
 
+v4.2.14.0
+
+Features:
+Updated EDK version to 4.2.14.0 for Galatea 1.0 and CCP DB to 114618
+
+Enhancements:
+Added getter to detail view pages
+
+Bugfixes:
+Fixed non-static reference in static method in Corporation class
+Fix: Redirection for database update using https
+
+-------------------------------------------
 v4.2.13.0
 
 Features: 
