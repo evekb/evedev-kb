@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.14.0
+Eve Development Network Killboard v4.2.15.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -26,6 +26,15 @@ o/ EVE Development Network
 VERSION HISTORY
 ===============
 
+v4.2.15.0
+
+Features:
+Updated Killboard to 4.2.15.0 and Vanguard 1.0.114986
+
+Bugfixes:
+Fix: SQL error when adding/updating on some environments
+
+-------------------------------------------
 v4.2.14.0
 
 Features:
