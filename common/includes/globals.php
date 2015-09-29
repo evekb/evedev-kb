@@ -410,3 +410,33 @@ function getRequestScheme()
     
     return $requestScheme;
 }
+
+/**
+ * convers a given timestamp into a timestamp that can be understood by MySQL
+ * @param mixed $timestamp a unix timestamp or timestamp of a format understandable by strtotime()
+ * @return String a datetime string formatted for MySQL to understand
+ */
+function toMysqlDateTime($timestamp)
+{
+    $mysqlTimestamp = date('Y-m-d H:i:s', time());
+    if(!is_null($timestamp) && trim($timestamp) != '')
+    {
+        // check for unix timestamp
+        if(is_numeric($timestamp))
+        {
+            $mysqlTimestamp = date('Y-m-d H:i:s', $timestamp);
+        }
+
+        // other formats might be
+        // 2015-09-21 14:45:00 (zKB, EDK IDFeed, CCP XML API)
+        // 2015.09.21 14:45:00 (CREST, Killmail)
+        else
+        {
+            // convert possible 2015.09.21 14:45:00 to 2015-09-21 14:45:00
+            $timestamp = preg_replace("/\./" , "-" , $timestamp);
+            $mysqlTimestamp = date('Y-m-d H:i:s', strtotime($timestamp));
+        }
+    }
+
+    return $mysqlTimestamp;
+}

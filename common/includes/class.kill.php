@@ -1472,12 +1472,12 @@ class Kill extends Cacheable
 		if (!$this->dmgtaken) {
 			$this->dmgtaken = 0;
 		}
-
+                $mysqlTimestamp = toMysqlDateTime($this->timestamp);
 		$qry = DBFactory::getDBQuery();
 		$sql = "INSERT INTO kb3_kills
             (kll_id , kll_timestamp , kll_victim_id , kll_all_id , kll_crp_id , kll_ship_id , kll_system_id , kll_fb_plt_id , kll_points , kll_dmgtaken, kll_external_id, kll_isk_loss)
             VALUES (".$qid.",
-                    date_format('".$this->timestamp."', '%Y.%m.%d %H:%i:%s'),
+            '".$mysqlTimestamp."',
             ".$this->victimid.",
             ".$this->victimallianceid.",
             ".$this->victimcorpid.",
@@ -1530,7 +1530,7 @@ class Kill extends Cacheable
 			}
 
 			if($notfirstd) $involveddsql .= ", ";
-			$involveddsql .= "( ".$this->getID().", date_format('".$this->timestamp."', '%Y.%m.%d %H:%i:%s'), "
+			$involveddsql .= "( ".$this->getID().", '".$mysqlTimestamp."', "
 					.$inv->getPilotID().", '".$inv->getSecStatus()."', "
 					.$inv->getAllianceID().", ".$inv->getCorpID().", "
 					.$ship->getID().", ".$weapon->getID().", ".$order++.", "
@@ -1539,14 +1539,14 @@ class Kill extends Cacheable
 			if(!in_array($inv->getAllianceID(), $invall)) {
 				if($notfirsta) $involvedasql .= ", ";
 				$involvedasql .= "( ".$this->getID().", ".$inv->getAllianceID()
-					.", date_format('".$this->timestamp."', '%Y.%m.%d %H:%i:%s'))";
+					.", '".$mysqlTimestamp."')";
 				$notfirsta = true;
 				$invall[] = $inv->getAllianceID();
 			}
 			if(!in_array($inv->getCorpID(), $invcrp)) {
 				if($notfirstc) $involvedcsql .= ", ";
 				$involvedcsql .= "( ".$this->getID().", ".$inv->getCorpID()
-					.", date_format('".$this->timestamp."', '%Y.%m.%d %H:%i:%s'))";
+					.", '".$mysqlTimestamp."')";
 				$notfirstc = true;
 				$invcrp[] = $inv->getCorpID();
 			}

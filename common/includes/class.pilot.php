@@ -307,6 +307,7 @@ class Pilot extends Entity
 		// Check if pilot exists with a non-cached query.
 		$qry = DBFactory::getDBQuery(true);
 		$name = stripslashes($name);
+                $mysqlTimestamp = toMysqlDateTime($timestamp);
 		// Insert or update a pilot with a cached query to update cache.
 		$qryI = DBFactory::getDBQuery(true);
 		$qry->execute("SELECT * FROM kb3_pilots WHERE plt_name = '".$qry->escape($name)."'");
@@ -337,11 +338,9 @@ class Pilot extends Entity
 					}
 					$qryI->execute("UPDATE kb3_pilots SET plt_crp_id = "
 							.$corp->getID().", plt_updated = "
-							."date_format( '".$timestamp
-							."', '%Y.%m.%d %H:%i:%s') WHERE plt_externalid = "
+							."'".$mysqlTimestamp."' WHERE plt_externalid = "
 							.$externalID." AND plt_crp_id <> ".$corp->getID()
-							." AND ( plt_updated < date_format( '".$timestamp
-							."', '%Y-%m-%d %H:%i') OR plt_updated is null )");
+							." AND ( plt_updated < '".$mysqlTimestamp."' OR plt_updated is null )");
 					if ($qryI->affectedRows() > 0) {
 						Cacheable::delCache($pilot);
 					}
@@ -351,10 +350,10 @@ class Pilot extends Entity
 			$qry->execute("INSERT INTO kb3_pilots (plt_name, plt_crp_id, "
 					."plt_externalid, plt_updated) values ('".$qry->escape($name)."', "
 					.$corp->getID().",	".$externalID.",
-					date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s'))
+					'".$mysqlTimestamp."')
 					ON DUPLICATE KEY UPDATE plt_crp_id=".$corp->getID().",
 					plt_externalid=".$externalID.",
-					plt_updated=date_format( '".$timestamp."', '%Y.%m.%d %H:%i:%s')");
+					plt_updated='".$mysqlTimestamp."'");
 			return new Pilot($qry->getInsertID(), $externalID, $name,
 					$corp->getID());
 		} else {
@@ -369,10 +368,10 @@ class Pilot extends Entity
 			if ($updated < strtotime($timestamp." UTC")
 					&& $corp->getID() != $row['plt_crp_id']) {
 				$qryI->execute("UPDATE kb3_pilots SET plt_crp_id = "
-						.$corp->getID().", plt_updated = '".$timestamp
+						.$corp->getID().", plt_updated = '".$mysqlTimestamp
 						."' WHERE plt_name = '".$qry->escape($name)."'"
 						." AND plt_crp_id <> ".$corp->getID()
-						." AND ( plt_updated < '".$timestamp
+						." AND ( plt_updated < '".$mysqlTimestamp
 						."' OR plt_updated is null )");
 			}
 			$plt = new Pilot($id, $externalID, $name, $corp);
@@ -392,7 +391,7 @@ class Pilot extends Entity
 	 */
 	public function isUpdatable($timestamp)
 	{
-		$timestamp = preg_replace("/\./", "-", $timestamp);
+		$timestamp = toMysqlDateTime($timestamp);
 		if (isset($this->updated)) {
 			if (is_null($this->updated)
 					|| strtotime($timestamp." UTC") > $this->updated) {
@@ -405,7 +404,7 @@ class Pilot extends Entity
 		$qry->execute("select plt_id
                         from kb3_pilots
                        where plt_id = ".$this->id."
-                         and ( plt_updated < date_format( '".$timestamp."', '%Y-%m-%d %H:%i')
+                         and ( plt_updated < '".$timestamp."')
                                or plt_updated is null )");
 
 		return $qry->recordCount() == 1;

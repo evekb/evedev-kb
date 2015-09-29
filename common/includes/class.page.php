@@ -92,14 +92,16 @@ class Page
 	public function addJsLibs($jsLib)
 	{
 		$jsLib = strtolower($jsLib);
+                // use the correct request scheme in case EDK runs on SSL
+                $requestScheme = getRequestScheme();
 		if (!isset($this->jsLibs[$jsLib])) {
 			switch($jsLib)
 			{
 				case 'jquery' :
-					$this->addHeader("<script src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js\" type=\"text/javascript\"></script>");
+					$this->addHeader("<script src=\"".$requestScheme."ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js\" type=\"text/javascript\"></script>");
 					break;
 				case 'prototype' :
-					$this->addHeader("<script src=\"//ajax.googleapis.com/ajax/libs/prototype/1.7.0.0/prototype.js\" type=\"text/javascript\"></script>");
+					$this->addHeader("<script src=\"".$requestScheme."ajax.googleapis.com/ajax/libs/prototype/1.7.0.0/prototype.js\" type=\"text/javascript\"></script>");
 					break;
 			}
 			$this->jsLibs[$jsLib] = true;

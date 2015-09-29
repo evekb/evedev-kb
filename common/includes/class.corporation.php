@@ -211,6 +211,7 @@ class Corporation extends Entity
 		}
 		$name = stripslashes($name);
 		$externalid = (int) $externalid;
+                $mysqlTimestamp = toMysqlDateTime($timestamp);
 		$qry = DBFactory::getDBQuery(true);
 		$qry->execute("select * from kb3_corps
 		               where crp_name = '".$qry->escape($name)."'");
@@ -249,7 +250,7 @@ class Corporation extends Entity
 									&& $crp->isUpdatable($timestamp)) {
 						$sql = 'update kb3_corps
 									   set crp_all_id = '.$alliance->getID().', ';
-						$sql .= "crp_updated = date_format(NULLIF('".$timestamp."',''),'%Y.%m.%d %H:%i:%s') ".
+						$sql .= "crp_updated = '".$mysqlTimestamp."' ".
 										"where crp_id = ".$crp->getID();
 						$qry->execute($sql);
 						$crp->alliance = $alliance;
@@ -262,13 +263,12 @@ class Corporation extends Entity
 				$qry->execute("insert into kb3_corps ".
 								"(crp_name, crp_all_id, crp_external_id, crp_updated) ".
 								"values ('".$qry->escape($name)."',".$alliance->getID().
-								", ".$externalid.", date_format('".$timestamp.
-								"','%Y.%m.%d %H:%i:%s'))");
+								", ".$externalid.", '".$mysqlTimestamp."')");
 			} else {
 				$qry->execute("insert into kb3_corps ".
 								"(crp_name, crp_all_id, crp_updated) ".
 								"values ('".$qry->escape($name)."',".$alliance->getID().
-								",date_format('".$timestamp."','%Y.%m.%d %H:%i:%s'))");
+								", '".$mysqlTimestamp."')");
 			}
 			$crp = Corporation::getByID((int)$qry->getInsertID());
 			$crp->name = $name;
@@ -291,8 +291,7 @@ class Corporation extends Entity
 			if ($row['crp_all_id'] != $alliance->getID()
 							&& $crp->isUpdatable($timestamp)) {
 				$sql = 'update kb3_corps set crp_all_id = '.$alliance->getID().', ';
-				$sql .= "crp_updated = date_format( '".
-								$timestamp."','%Y.%m.%d %H:%i:%s') ".
+				$sql .= "crp_updated = '".$mysqlTimestamp."' ".
 								"where crp_id = ".$crp->id;
 				$qry->execute($sql);
 				$crp->alliance = $alliance->getID();
@@ -311,14 +310,14 @@ class Corporation extends Entity
 	*/
 	function isUpdatable($timestamp)
 	{
-		$timestamp = preg_replace("/\./","-",$timestamp);
+		$timestamp = toMysqlDateTime($timestamp);
 		if(isset($this->updated))
 			if(is_null($this->updated) || strtotime($timestamp." UTC") > $this->updated) return true;
 			else return false;
 		$qry = DBFactory::getDBQuery();
 		$qry->execute("select crp_id from kb3_corps
 		               where crp_id = ".$this->id."
-		               and ( crp_updated < date_format( '".$timestamp."', '%Y-%m-%d %H:%i' )
+		               and ( crp_updated < '".$timestamp."' 
 			           or crp_updated is null )");
 		return $qry->recordCount() == 1;
 	}
