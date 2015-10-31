@@ -70,7 +70,7 @@ class Parser
 		$this->killmail_ = preg_replace('/(\d),(\d)/', '$1.$2', $this->killmail_);
 
 		//get the mail's timestamp - if older than QR, then preparse for scrambler translation
-		$timestamp = substr($this->killmail_, 0, 16);
+                $timestamp = substr($this->killmail_, 0, 19);
 		$timestamp = str_replace('.', '-', $timestamp);
 
 		/* If we are processing an old killmail and updating it to the new format, we should process
@@ -135,7 +135,7 @@ class Parser
 		static $hash;
 		static $trust;
 		static $kill_id;
-		$timestamp = substr($this->killmail_, 0, 16);
+		$timestamp = substr($this->killmail_, 0, 19);
 		$timestamp = str_replace('.', '-', $timestamp);
 
 		// Check hashes.
@@ -202,7 +202,7 @@ class Parser
 		}
 
 		$header = substr($this->killmail_, 0, $involvedpos);
-		$timestamp = substr($header, 0, 16);
+                $timestamp = substr($header, 0, 19);
 
 		$victim = explode("\n", trim(substr($this->killmail_, 0, $involvedpos)));
 		$upper_limit =  count($victim);
