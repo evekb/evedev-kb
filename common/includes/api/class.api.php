@@ -36,6 +36,7 @@ class API {
 		PhealConfig::getInstance()->cache = new PhealFileCache(KB_CACHEDIR.'/api/', array('delimiter' => '-'));
 		PhealConfig::getInstance()->api_customkeys = true;
 		PhealConfig::getInstance()->log = new PhealFileLog(KB_CACHEDIR.'/api/');
+                PhealConfig::getInstance()->api_base = API_SERVER.'/';
 	}
 
 	function IsCached() {
