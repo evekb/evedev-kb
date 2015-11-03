@@ -1107,9 +1107,9 @@ class ZKBFetch
             $victim["factionName"] = (string) $killData->victim->factionName;
             $victim["damageTaken"] = (int) $killData->victim->damageTaken;
             $victim["moonID"] = (int) $killData->moonID;
-            $victim["x"] = (float) $killData->victim->position->x;
-            $victim["y"] = (float) $killData->victim->position->y;
-            $victim["z"] = (float) $killData->victim->position->z;
+            $victim["x"] = (float) $killData->position->x;
+            $victim["y"] = (float) $killData->position->y;
+            $victim["z"] = (float) $killData->position->z;
             return $victim;
     }
    
