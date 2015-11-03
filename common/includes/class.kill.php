@@ -20,6 +20,9 @@ class Kill extends Cacheable
         /** @const the base URL for the public CREST killmail endpoint */
         public static $CREST_KILLMAIL_ENDPOINT = '/killmails/';
         
+        /** the group ID for stargates */
+        public static $GROUP_ID_STARGATE = 10;
+        
 	/**
 	 * The ID for this kill
 	 * @var integer
@@ -57,6 +60,11 @@ class Kill extends Cacheable
 	private $executed = false;
 	private $involvedcount = null;
 	private $valid = null;
+        private $xCoordinate = null;
+        private $yCoordinate = null;
+        private $zCoordinate = null;
+        private $nearestCelestial = null;
+        private $distanceToNearestCelestial = null;
 
 	/**
 	 * @param integer $id The ID for this kill
@@ -573,7 +581,7 @@ class Kill extends Cacheable
 			throw new KillException("Invalid mail, system blank",´);
 		}
 
-		$mail = substr(str_replace('-', '.' , $this->getTimeStamp()), 0, 16)."\r\n\r\n";
+		$mail = substr(str_replace('-', '.' , $this->getTimeStamp()), 0, 19)."\r\n\r\n";
 		// Starbase (so this is a POS mail)
 		if ( in_array($shipclass->getID(), array(35, 36, 37, 38)) ) {
 			$mail .= "Corp: ".$this->getVictimCorpName()."\r\n";
@@ -866,6 +874,11 @@ class Kill extends Cacheable
 					$this->executed = $cache->executed;
 					$this->involvedcount = $cache->involvedcount;
 					$this->valid = $cache->valid;
+                                        $this->xCoordinate = $cache->xCoordinate;
+                                        $this->yCoordinate = $cache->yCoordinate;
+                                        $this->zCoordinate = $cache->zCoordinate;
+                                        $this->nearestCelestial = $cache->nearestCelestial;
+                                        $this->distanceToNearestCelestial = $cache->distanceToNearestCelestial;
 					return $this->valid;
 				}
 			}
@@ -874,7 +887,8 @@ class Kill extends Cacheable
 			$sql = "select kll.kll_id, kll.kll_external_id, kll.kll_timestamp,
 						kll.kll_victim_id, kll.kll_crp_id, kll.kll_all_id,
 						kll.kll_ship_id, kll.kll_system_id,
-						kll.kll_points, kll.kll_isk_loss, kll_dmgtaken,
+						kll.kll_points, kll.kll_isk_loss, kll.kll_dmgtaken, 
+                                                kll.kll_x, kll.kll_y, kll.kll_z,
 						fb.ind_plt_id as fbplt_id,
 						fb.ind_crp_id as fbcrp_id,
 						fb.ind_all_id as fbali_id
@@ -906,6 +920,9 @@ class Kill extends Cacheable
 			$this->iskloss = (float)$row['kll_isk_loss'];
 			$this->dmgtaken = (int)$row['kll_dmgtaken'];
 			$this->killpoints = (int)$row['kll_points'];
+                        $this->xCoordinate = (float)$row['kll_x'];
+                        $this->yCoordinate = (float)$row['kll_y'];
+                        $this->zCoordinate = (float)$row['kll_z'];
 
 			$sql = "select ind_plt_id, ind_crp_id, ind_all_id, ind_sec_status,
 				ind_shp_id, ind_wep_id, ind_dmgdone
@@ -945,6 +962,52 @@ class Kill extends Cacheable
 					$item->getAttribute('itd_itl_id'));
 				$this->droppeditems_[] = $dropped;
 			}
+                        
+                        
+                        // do we have kill coordinates?
+                        if($this->xCoordinate !== (float)0 && $this->yCoordinate !== (float)0 && $this->zCoordinate != (float)0)
+                        {
+                            // calculate the nearest celestial
+                            $sql = "select itemName, groupID, x, y, z, radius "
+                                . "from kb3_mapdenormalize "
+                                . "where solarSystemID = ".$this->solarsystemid;
+                            $qry->execute($sql) or die($qry->getErrorMsg());
+                            
+                            $distanceCorrectedByRadius = null;
+                            while ($row = $qry->getRow())
+                            {
+                                // for each celestial in that system, calculate the euclidean distance between its coordinates
+                                // and the kill's coordinates
+                                $celestialXCoordiante = (float)$row['x'];
+                                $celestialYCoordiante = (float)$row['y'];
+                                $celestialZCoordiante = (float)$row['z'];
+                                $distance = sqrt(pow(($this->xCoordinate - $celestialXCoordiante), 2) + pow(($this->yCoordinate - $celestialYCoordiante), 2) + pow(($this->zCoordinate - $celestialZCoordiante), 2));
+                                
+                                if(is_null($this->distanceToNearestCelestial) || $distance < $this->distanceToNearestCelestial)
+                                {
+                                    $this->distanceToNearestCelestial = $distance;
+                                    if(!is_null($row['radius']))
+                                    {
+                                        $distanceCorrectedByRadius = $this->distanceToNearestCelestial - (float)$row['radius'];
+                                    }
+                                    $this->nearestCelestial = $row['itemName'];
+                                    // check for stargate, to append the " (Stargate) suffix 
+                                    if(self::$GROUP_ID_STARGATE == (int)$row['groupID'])
+                                    {
+                                        $this->nearestCelestial .= ' (Stargate)';
+                                    }
+                                }
+                            }
+                            // actually, use the distance corrected by the celstial's radius
+                            if(!is_null($distanceCorrectedByRadius))
+                            {
+                                if($distanceCorrectedByRadius < 0)
+                                {
+                                    $distanceCorrectedByRadius = 0;
+                                }
+                                $this->distanceToNearestCelestial = $distanceCorrectedByRadius;
+                            }
+                        }
 			$this->executed = true;
 			$this->putCache();
 		}
@@ -1472,10 +1535,23 @@ class Kill extends Cacheable
 		if (!$this->dmgtaken) {
 			$this->dmgtaken = 0;
 		}
+                if(is_null($this->xCoordinate))
+                {
+                    $this->xCoordinate = 0;
+                }
+                if(is_null($this->yCoordinate))
+                {
+                    $this->yCoordinate = 0;
+                }
+                if(is_null($this->zCoordinate))
+                {
+                    $this->zCoordinate = 0;
+                }
+                
                 $mysqlTimestamp = toMysqlDateTime($this->timestamp);
 		$qry = DBFactory::getDBQuery();
 		$sql = "INSERT INTO kb3_kills
-            (kll_id , kll_timestamp , kll_victim_id , kll_all_id , kll_crp_id , kll_ship_id , kll_system_id , kll_fb_plt_id , kll_points , kll_dmgtaken, kll_external_id, kll_isk_loss)
+            (kll_id , kll_timestamp , kll_victim_id , kll_all_id , kll_crp_id , kll_ship_id , kll_system_id , kll_fb_plt_id , kll_points , kll_dmgtaken, kll_external_id, kll_isk_loss, kll_x, kll_y, kll_z)
             VALUES (".$qid.",
             '".$mysqlTimestamp."',
             ".$this->victimid.",
@@ -1488,8 +1564,11 @@ class Kill extends Cacheable
             ".$this->dmgtaken.", ";
 		if($this->externalid) $sql .= $this->externalid.", ";
 		else $sql .= "NULL, ";
-		$sql .= $this->getISKLoss()." )";
-		$qry->autocommit(false);
+		$sql .= $this->getISKLoss().",
+            ".$this->xCoordinate.",
+            ".$this->yCoordinate.",
+            ".$this->zCoordinate." )";
+                        $qry->autocommit(false);
 		if(!$qry->execute($sql)) {
 			return $this->rollback($qry);
 		}
@@ -1877,6 +1956,142 @@ class Kill extends Cacheable
 		$this->crestHash = $crestHash;
 	}
         
+        /**
+         * returns the xCoordinate
+         * @return float the x coordinate of the kill
+         */
+        public function getXCoordinate()
+        {
+            if(!isset($this->xCoordinate)) 
+            {
+                    $this->execQuery();
+            }
+            return $this->xCoordinate;
+        }
+        
+        /**
+         * returns the yCoordinate
+         * @return float the y coordinate of the kill
+         */
+        public function getYCoordinate()
+        {
+            if(!isset($this->yCoordinate)) 
+            {
+                    $this->execQuery();
+            }
+            return $this->yCoordinate;
+        }
+        
+        /**
+         * returns the zCoordinate
+         * @return float the z coordinate of the kill
+         */
+        public function getZCoordinate()
+        {
+            if(!isset($this->zCoordinate)) 
+            {
+                    $this->execQuery();
+            }
+            return $this->zCoordinate;
+        }
+        
+        /** 
+         * sets the kill's x coordinate
+         * @param mixed $xCoordinate the kill's x coordinate, will be interpreted as float
+         */
+        public function setXCoordinate($xCoordinate)
+        {
+            $this->xCoordinate = $xCoordinate;
+        }
+        
+        /** 
+         * sets the kill's y coordinate
+         * @param mixed $yCoordinate the kill's y coordinate, will be interpreted as float
+         */
+        public function setYCoordinate($yCoordinate)
+        {
+            $this->yCoordinate = $yCoordinate;
+        }
+        
+        /** 
+         * sets the kill's z coordinate
+         * @param mixed $zCoordinate the kill's z coordinate, will be interpreted as float
+         */
+        public function setZCoordinate($zCoordinate)
+        {
+            $this->zCoordinate = $zCoordinate;
+        }
+        
+        /**
+         * gets the name of the nearest celestial the kill happened
+         * @return string the name of the nearest celestial the kill happened at, or an empty string of no coordinates are available
+         */
+        public function getNearestCelestialName()
+        {
+            if(!isset($this->nearestCelestial))
+            {
+                    $this->execQuery();
+            }
+            return $this->nearestCelestial;
+        }
+        
+        /**
+         * gets the length of the line segment between the kill's 
+         * coordinates and the nearest celstial in kilometers
+         * @return float the distance to the nearest celstial in kilometers
+         */
+        public function getDistanceToNearestCelestial()
+        {
+            if(!isset($this->distanceToNearestCelestial))
+            {
+                    $this->execQuery();
+            }
+            return $this->distanceToNearestCelestial;
+        }
+        
+        /**
+         * gets the distance to the nearest celstial, but in short form with a quantifier (k, M, AU etc)
+         * @return string the distance to the nearest celstial, but in short form with a quantifier (k, M, AU etc)
+         */
+        public function getDistanceToNearestCelestialFormatted()
+        {
+            if(!isset($this->distanceToNearestCelestial))
+            {
+                    $this->execQuery();
+            }
+            if(isset($this->distanceToNearestCelestial))
+            {
+                // all coordinates are in meters
+                $distanceToNearestCelestialFormatted = round($this->distanceToNearestCelestial, 1) . ' m';
+                // AU
+                if($this->distanceToNearestCelestial > 149597870700)
+                {
+                    $distanceToNearestCelestialFormatted = round($this->distanceToNearestCelestial/149597870700, 1) . ' AU';
+                }
+                
+                // millions kilometers
+                else if($this->distanceToNearestCelestial > 1000000000)
+                {
+                    $distanceToNearestCelestialFormatted = round($this->distanceToNearestCelestial/1000000000, 1) . 'M km';
+                }
+                
+                // thousands kilomteres
+                else if($this->distanceToNearestCelestial > 1000000)
+                {
+                    $distanceToNearestCelestialFormatted = round($this->distanceToNearestCelestial/1000000, 1) . 'k km';
+                }
+                
+                // kilomteres
+                else if($this->distanceToNearestCelestial > 1000)
+                {
+                    $distanceToNearestCelestialFormatted = round($this->distanceToNearestCelestial/1000, 1) . ' km';
+                }
+                
+                return $distanceToNearestCelestialFormatted;
+            }
+            
+            return null;
+        }
         
         /**
 	 * Update this kill's CREST hash.

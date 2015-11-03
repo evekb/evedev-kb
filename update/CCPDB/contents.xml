@@ -41,6 +41,10 @@
     <version>1.1</version>
   </table>
   <table>
+    <name>kb3_mapdenormalize</name>
+    <version>1.1</version>
+  </table>
+  <table>
     <name>kb3_moons</name>
     <version>1.1</version>
   </table>

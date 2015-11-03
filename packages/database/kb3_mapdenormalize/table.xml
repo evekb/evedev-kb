@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<kb3>
+  <name>kb3_mapdenormalize</name>
+  <rows>493796</rows>
+  <structure>CREATE TABLE `kb3_mapdenormalize` (
+  `itemID` int(11) NOT NULL,
+  `typeID` int(11) DEFAULT NULL,
+  `groupID` int(11) DEFAULT NULL,
+  `solarSystemID` int(11) DEFAULT NULL,
+  `constellationID` int(11) DEFAULT NULL,
+  `regionID` int(11) DEFAULT NULL,
+  `orbitID` int(11) DEFAULT NULL,
+  `x` double DEFAULT NULL,
+  `y` double DEFAULT NULL,
+  `z` double DEFAULT NULL,
+  `radius` double DEFAULT NULL,
+  `itemName` varchar(100) DEFAULT NULL,
+  `security` double DEFAULT NULL,
+  `celestialIndex` int(11) DEFAULT NULL,
+  `orbitIndex` int(11) DEFAULT NULL,
+  PRIMARY KEY (`itemID`),
+  KEY `solarSystemID` (`solarSystemID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</structure>
+</kb3>

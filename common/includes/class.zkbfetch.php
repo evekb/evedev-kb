@@ -472,6 +472,7 @@ class ZKBFetch
         {
             $checkHash->fetch();
             $dupeid = $killId;
+            $victimData = self::getVictim($killData);
             // We still want to update the external ID if we were given one.			
             // positive killIDs in zKB are the external IDs, so use it
             $qry->execute("UPDATE kb3_kills"
@@ -479,6 +480,9 @@ class ZKBFetch
                             ." SET kb3_kills.kll_external_id = ".$killData->killID
                             .", kb3_mails.kll_external_id = ".$killData->killID
                             .", kll_modified_time = UTC_TIMESTAMP()"
+                            .", kb3_kills.kll_x = ".$victimData["x"]
+                            .", kb3_kills.kll_y = ".$victimData["y"]
+                            .", kb3_kills.kll_z = ".$victimData["z"]
                             ." WHERE kb3_kills.kll_id = ".$dupeid
                             ." AND kb3_kills.kll_external_id IS NULL");             
 
@@ -695,6 +699,9 @@ class ZKBFetch
        $Kill->setVictimAllianceID($Alliance->getID());
        $Kill->setVictimShip($Ship);
        $Kill->set('dmgtaken', $victimDetails['damageTaken']);
+       $Kill->setXCoordinate($victimDetails['x']);
+       $Kill->setYCoordinate($victimDetails['y']);
+       $Kill->setZCoordinate($victimDetails['z']);
    }
    
    /**
@@ -1100,6 +1107,9 @@ class ZKBFetch
             $victim["factionName"] = (string) $killData->victim->factionName;
             $victim["damageTaken"] = (int) $killData->victim->damageTaken;
             $victim["moonID"] = (int) $killData->moonID;
+            $victim["x"] = (float) $killData->victim->position->x;
+            $victim["y"] = (float) $killData->victim->position->y;
+            $victim["z"] = (float) $killData->victim->position->z;
             return $victim;
     }
    

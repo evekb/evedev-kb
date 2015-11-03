@@ -577,7 +577,9 @@ class IDFeed
 						 $qry->execute("UPDATE kb3_kills"
 							." JOIN kb3_mails ON kb3_kills.kll_id ="
 							." kb3_mails.kll_id SET kb3_kills.kll_external_id="
-							.$externalID." WHERE kb3_kills.kll_id = $id AND"
+							.$externalID.", kb3_kills.kll_x = ".$kill->getXCoordinate().","
+                                                         . "kb3_kills.kll_y = ".$kill->getYCoordinate().","
+                                                         . "kb3_kills.kll_z = ".$kill->getZCoordinate()." WHERE kb3_kills.kll_id = $id AND"
 							." kb3_kills.kll_external_id IS NULL");
 				   }
 					$this->duplicate[] = array($externalID, $internalID, $id);
@@ -689,12 +691,20 @@ class IDFeed
 		$pilot = Pilot::add($name, $corp, $time, (int)$victim['characterID']);
 		$ship = Ship::getByID((int)$victim['shipTypeID']);
 
+                // coordinates default to 0
+                $xCoordinate = (float) @$victim['x'];
+                $yCoordinate = (float) @$victim['y'];
+                $zCoordinate = (float) @$victim['z'];
+         
 		$kill->setVictim($pilot);
 		$kill->setVictimID($pilot->getID());
 		$kill->setVictimCorpID($corp->getID());
 		$kill->setVictimAllianceID($alliance->getID());
 		$kill->setVictimShip($ship);
 		$kill->set('dmgtaken', (int)$victim['damageTaken']);
+                $kill->setXCoordinate($xCoordinate);
+                $kill->setYCoordinate($yCoordinate);
+                $kill->setZCoordinate($zCoordinate);
 		return true;
 	}
 
@@ -1049,6 +1059,11 @@ class IDFeed
 			}
 			$victimrow->addAttribute('damageTaken', $kill->getDamageTaken());
 			$victimrow->addAttribute('shipTypeID', $kill->getVictimShipExternalID());
+                        // add X, Y and Z coordinates
+                        $victimrow->addAttribute('x', $kill->getXCoordinate());
+                        $victimrow->addAttribute('y', $kill->getYCoordinate());
+                        $victimrow->addAttribute('z', $kill->getZCoordinate());
+                        
 			$involved = $row->addChild('rowset');
 			$involved->addAttribute('name', 'attackers');
 			$involved->addAttribute('columns',

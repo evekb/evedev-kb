@@ -24,5 +24,16 @@
 			<td class="kb-table-cell">{$victimDamageTaken|number_format}</td>
 		</tr>
 	{/if}
+        {if isset($distanceToNearestCelestial) && $nearestCelestialName != ""}
+            <tr class="{cycle name="ccl"}">
+                    <td colspan="2" class="kb-table-cell">Location in System:</td>
+                    <td class="kb-table-cell">{$distanceToNearestCelestial} from {$nearestCelestialName}</td>
+            </tr>
+        {else if $nearestCelestialName != ""}
+            <tr class="{cycle name="ccl"}">
+                    <td colspan="2" class="kb-table-cell">Nearest Celestial:</td>
+                    <td class="kb-table-cell">{$nearestCelestialName}</td>
+            </tr>
+        {/if}
 	</table>
 </div>

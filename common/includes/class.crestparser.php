@@ -114,11 +114,15 @@ class CrestParser
 			// We still want to update the external ID if we were given one.			
 			if($this->externalID)
 			{ 
+                                $victimDetails = self::getVictim($this->killmailRepresentation);
 				$qry->execute("UPDATE kb3_kills"
 						." JOIN kb3_mails ON kb3_mails.kll_id = kb3_kills.kll_id"
 						." SET kb3_kills.kll_external_id = ".$this->externalID
 						.", kb3_mails.kll_external_id = ".$this->externalID
 						.", kll_modified_time = UTC_TIMESTAMP()"
+                                                .", kb3_kills.kll_x = ".$victimDetails["x"]
+                                                .", kb3_kills.kll_y = ".$victimDetails["y"]
+                                                .", kb3_kills.kll_z = ".$victimDetails["z"]
 						." WHERE kb3_kills.kll_id = ".$this->dupeid_
 						." AND kb3_kills.kll_external_id IS NULL");
 				
@@ -358,6 +362,9 @@ class CrestParser
                 $victim["damageTaken"] = (int) $mailRepresentation->victim->damageTaken;
                 $victim["moonName"] = (string) $mailRepresentation->moon->name;
                 $victim["moonID"] = (int) $mailRepresentation->moon->id;
+                $victim["x"] = (float) $mailRepresentation->victim->position->x;
+                $victim["y"] = (float) $mailRepresentation->victim->position->y;
+                $victim["z"] = (float) $mailRepresentation->victim->position->z;
                 return $victim;
         }
         
@@ -464,6 +471,9 @@ class CrestParser
             $Kill->setVictimAllianceID($Alliance->getID());
             $Kill->setVictimShip($Ship);
             $Kill->set('dmgtaken', $victimDetails['damageTaken']);
+            $Kill->setXCoordinate($victimDetails['x']);
+            $Kill->setYCoordinate($victimDetails['y']);
+            $Kill->setZCoordinate($victimDetails['z']);
         }
         
         
