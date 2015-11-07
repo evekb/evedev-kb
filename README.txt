@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.15.0
+Eve Development Network Killboard v4.2.16.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -26,6 +26,20 @@ o/ EVE Development Network
 VERSION HISTORY
 ===============
 
+v4.2.16.0
+
+Features:
+Updated EDK to 4.2.16.0 and CCP DB to Parallax 1.0.115480
+Added kill location within systems
+
+Enhancements:
+Killmail Parser: Added support for timestamps accurate to the second
+
+Bugfixes:
+Fix: Kill coordinates in zKBFetch
+Fix: Make Pheal actually use the API server setting in constants.php
+
+-------------------------------------------
 v4.2.15.0
 
 Features:
