@@ -118,24 +118,24 @@ class KillList
 				if($this->comb_crp_) $combP[] = "ind.ind_crp_id IN (".implode(',', $this->comb_crp_)." ) ";
 				if($this->comb_plt_) $combP[] = "ind.ind_plt_id IN (".implode(',', $this->comb_plt_)." ) ";
 				$sql .= "( ".implode(" OR ", $combP)." )";
-				if($startdate) $sql .=" AND ind.ind_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
-				if($enddate) $sql .=" AND ind.ind_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+				if($startdate) $sql .=" AND ind.ind_timestamp >= '".gmdate('Y-m-d H:i:s',$startdate)."' ";
+				if($enddate) $sql .=" AND ind.ind_timestamp <= '".gmdate('Y-m-d H:i:s',$enddate)."' ";
 			}
 			elseif($this->comb_crp_ )
 			{
 				$sql .= "INNER JOIN kb3_inv_crp inc ON inc.inc_kll_id = kll.kll_id ";
 				$sql .= " WHERE inc.inc_crp_id IN (".
 					implode(',', $this->comb_crp_)." ) ";
-				if($startdate) $sql .=" AND inc.inc_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
-				if($enddate) $sql .=" AND inc.inc_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+				if($startdate) $sql .=" AND inc.inc_timestamp >= '".gmdate('Y-m-d H:i:s',$startdate)."' ";
+				if($enddate) $sql .=" AND inc.inc_timestamp <= '".gmdate('Y-m-d H:i:s',$enddate)."' ";
 			}
 			else
 			{
 				$sql .= "INNER JOIN kb3_inv_all ina ON ina.ina_kll_id = kll.kll_id ";
 				$sql .= " WHERE ina.ina_all_id IN (".
 					implode(',', $this->comb_all_)." ) ";
-				if($startdate) $sql .=" AND ina.ina_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
-				if($enddate) $sql .=" AND ina.ina_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+				if($startdate) $sql .=" AND ina.ina_timestamp >= '".gmdate('Y-m-d H:i:s',$startdate)."' ";
+				if($enddate) $sql .=" AND ina.ina_timestamp <= '".gmdate('Y-m-d H:i:s',$enddate)."' ";
 			}
 
 			if($this->apikill_)
@@ -208,9 +208,9 @@ class KillList
 			$sql .= " ) ";
 
 			if($startdate)
-				$sql .= " AND kll.kll_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+				$sql .= " AND kll.kll_timestamp >= '".gmdate('Y-m-d H:i:s',$startdate)."' ";
 			if($enddate)
-				$sql .= " AND kll.kll_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+				$sql .= " AND kll.kll_timestamp <= '".gmdate('Y-m-d H:i:s',$enddate)."' ";
 
 			if($this->apikill_)
 				$sql .= " AND kll.kll_external_id IS NOT NULL ";
@@ -386,30 +386,30 @@ class KillList
                                         if($this->inv_shp_) $invP[] = " ind.ind_shp_id in (".implode(',', $this->inv_shp_)." ) ";
 					$this->sql_ .= "( ".implode(' OR ', $invP)." )";
 
-					if($startdate) $this->sql_ .=" AND ind.ind_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
-					if($enddate) $this->sql_ .=" AND ind.ind_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+					if($startdate) $this->sql_ .=" AND ind.ind_timestamp >= '".gmdate('Y-m-d H:i:s',$startdate)."' ";
+					if($enddate) $this->sql_ .=" AND ind.ind_timestamp <= '".gmdate('Y-m-d H:i:s',$enddate)."' ";
 				}
 				else if($this->inv_all_ )
 				{
 					$this->sql_ .= " INNER JOIN kb3_inv_all ina ON (ina.ina_kll_id = kll.kll_id)
 						WHERE ina.ina_all_id in (".implode(',', $this->inv_all_)." ) ";
-					if($startdate) $this->sql_ .=" AND ina.ina_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
-					if($enddate) $this->sql_ .=" AND ina.ina_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+					if($startdate) $this->sql_ .=" AND ina.ina_timestamp >= '".gmdate('Y-m-d H:i:s',$startdate)."' ";
+					if($enddate) $this->sql_ .=" AND ina.ina_timestamp <= '".gmdate('Y-m-d H:i:s',$enddate)."' ";
 
 				}
 				else if($this->inv_crp_ )
 				{
 					$this->sql_ .= " INNER JOIN kb3_inv_crp inc ON (inc.inc_kll_id = kll.kll_id)
 						WHERE inc.inc_crp_id in (".implode(',', $this->inv_crp_)." ) ";
-					if($startdate) $this->sql_ .=" AND inc.inc_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
-					if($enddate) $this->sql_ .=" AND inc.inc_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+					if($startdate) $this->sql_ .=" AND inc.inc_timestamp >= '".gmdate('Y-m-d H:i:s',$startdate)."' ";
+					if($enddate) $this->sql_ .=" AND inc.inc_timestamp <= '".gmdate('Y-m-d H:i:s',$enddate)."' ";
 				}
                                 
                                 else if($this->inv_shp_)
                                 {
                                         $this->sql_ .= " WHERE ind.ind_shp_id in (".implode(',', $this->inv_shp_)." ) ";
-					if($startdate) $this->sql_ .=" AND ind.ind_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
-					if($enddate) $this->sql_ .=" AND ind.ind_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+					if($startdate) $this->sql_ .=" AND ind.ind_timestamp >= '".gmdate('Y-m-d H:i:s',$startdate)."' ";
+					if($enddate) $this->sql_ .=" AND ind.ind_timestamp <= '".gmdate('Y-m-d H:i:s',$enddate)."' ";
                                 }
 
 				// victim filter
@@ -479,12 +479,12 @@ class KillList
 
 				if($startdate)
 				{
-					$this->sql_ .= $sqlwhereop." kll.kll_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+					$this->sql_ .= $sqlwhereop." kll.kll_timestamp >= '".gmdate('Y-m-d H:i:s',$startdate)."' ";
 					$sqlwhereop = " AND ";
 				}
 				if($enddate)
 				{
-					$this->sql_ .=" AND kll.kll_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+					$this->sql_ .=" AND kll.kll_timestamp <= '".gmdate('Y-m-d H:i:s',$enddate)."' ";
 					$sqlwhereop = " AND ";
 				}
 
@@ -936,17 +936,17 @@ class KillList
 		$qenddate = makeEndDate($this->weekno_, $this->yearno_, $this->monthno_, $this->endDate_);
 		if($this->inv_all_ || $this->inv_crp_ || $this->inv_plt_ || $this->inv_shp_)
 		{
-			if($qstartdate) $sql .= " kll.kll_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' AND ";
-			if($qenddate) $sql .= " kll.kll_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' AND ";
-			if($qstartdate) $sql .= " ind.ind_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
+			if($qstartdate) $sql .= " kll.kll_timestamp >= '".gmdate('Y-m-d H:i:s',$qstartdate)."' AND ";
+			if($qenddate) $sql .= " kll.kll_timestamp <= '".gmdate('Y-m-d H:i:s',$qenddate)."' AND ";
+			if($qstartdate) $sql .= " ind.ind_timestamp >= '".gmdate('Y-m-d H:i:s',$qstartdate)."' ";
 			if($qstartdate && $qenddate) $sql .= " AND ";
-			if($qenddate) $sql .= " ind.ind_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
+			if($qenddate) $sql .= " ind.ind_timestamp <= '".gmdate('Y-m-d H:i:s',$qenddate)."' ";
 		}
 		else
 		{
-			if($qstartdate) $sql .= " kll.kll_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
+			if($qstartdate) $sql .= " kll.kll_timestamp >= '".gmdate('Y-m-d H:i:s',$qstartdate)."' ";
 			if($qstartdate && $qenddate) $sql .= " AND ";
-			if($qenddate) $sql .= " kll.kll_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
+			if($qenddate) $sql .= " kll.kll_timestamp <= '".gmdate('Y-m-d H:i:s',$qenddate)."' ";
 		}
 		return $sql;
 	}
