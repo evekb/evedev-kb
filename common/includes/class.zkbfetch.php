@@ -484,7 +484,7 @@ class ZKBFetch
                             .", kb3_kills.kll_y = ".$victimData["y"]
                             .", kb3_kills.kll_z = ".$victimData["z"]
                             ." WHERE kb3_kills.kll_id = ".$dupeid
-                            ." AND kb3_kills.kll_external_id IS NULL");             
+                            ." AND (kb3_kills.kll_external_id IS NULL OR kb3_kills.kll_x = 0)");             
 
             // we also want to update the CREST hash
             // if zKB ever exposes the CREST hash (if it has one for that kill) via API...

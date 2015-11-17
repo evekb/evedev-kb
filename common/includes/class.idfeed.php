@@ -580,7 +580,7 @@ class IDFeed
 							.$externalID.", kb3_kills.kll_x = ".$kill->getXCoordinate().","
                                                          . "kb3_kills.kll_y = ".$kill->getYCoordinate().","
                                                          . "kb3_kills.kll_z = ".$kill->getZCoordinate()." WHERE kb3_kills.kll_id = $id AND"
-							." kb3_kills.kll_external_id IS NULL");
+							." (kb3_kills.kll_external_id IS NULL OR kb3_kills.kll_x = 0)");
 				   }
 					$this->duplicate[] = array($externalID, $internalID, $id);
 					$skip = true;
@@ -617,6 +617,20 @@ class IDFeed
 			}
 		} else {
 			$skip = true;
+                        // check whether we have to update the kill's coordinates
+                        $Kill = new Kill($id);
+                        if($Kill->getXCoordinate() === (float)0)
+                        {
+                            if($this->processVictim($row, $Kill, strval($row['killTime'])))
+                            {
+                                $qry = DBFactory::getDBQuery(true);
+                                $qry->execute("UPDATE kb3_kills"
+                                        ." JOIN kb3_mails ON kb3_kills.kll_id ="
+                                        ." kb3_mails.kll_id SET kb3_kills.kll_x = ".$Kill->getXCoordinate().","
+                                        . "kb3_kills.kll_y = ".$Kill->getYCoordinate().","
+                                        . "kb3_kills.kll_z = ".$Kill->getZCoordinate()." WHERE kb3_kills.kll_id = ".$Kill->getID());
+                            }
+                        }
 		}
 		if ($skip) {
 			$this->skipped[] = array($externalID, $internalID, $id);

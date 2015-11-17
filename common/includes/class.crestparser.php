@@ -124,7 +124,7 @@ class CrestParser
                                                 .", kb3_kills.kll_y = ".$victimDetails["y"]
                                                 .", kb3_kills.kll_z = ".$victimDetails["z"]
 						." WHERE kb3_kills.kll_id = ".$this->dupeid_
-						." AND kb3_kills.kll_external_id IS NULL");
+						." AND (kb3_kills.kll_external_id IS NULL OR kb3_kills.kll_x = 0)");
 				
 				if($trust >= 0 && $this->trust && $trust > $this->trust) {
 					$qry->execute("UPDATE kb3_mails SET kll_trust = "
