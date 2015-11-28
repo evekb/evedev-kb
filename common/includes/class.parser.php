@@ -142,19 +142,23 @@ class Parser
                 // timestamp is of form YYYY.MM.dd HH:mm (no seconds in the time)
                 if(strrpos($timestamp, ":") != 16)
                 {
-                    $timestamp = substr($this->killmail_, 0, 16) . ":00";
+                    // missing seconds from the timestamp means missing basic information
+                    // for uniquely identifying a kill - we cannot post this mail. Use CREST!
+                    $this->error("Timestamp is not accurate to the second, cannot post kill. Please use CREST!");
+                    return 0;
                 }
 
 		// Check hashes.
 		$hash = self::hashMail($this->killmail_);
 		if(!isset($checkHash))
 		{
+			$timestampMysql = toMysqlDateTime($timestamp);
 			$checkHash = new DBPreparedQuery();
 			$checkHash->prepare('SELECT kll_id, kll_trust FROM kb3_mails WHERE kll_timestamp = ? AND kll_hash = ?');
 			$arr = array(&$kill_id, &$trust);
 			$checkHash->bind_results($arr);
 			$types = 'ss';
-			$arr2 = array(&$types, &$timestamp, &$hash);
+			$arr2 = array(&$types, &$timestampMysql, &$hash);
 			$checkHash->bind_params($arr2);
 		}
 		$checkHash->execute();
