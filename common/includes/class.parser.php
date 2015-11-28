@@ -135,8 +135,15 @@ class Parser
 		static $hash;
 		static $trust;
 		static $kill_id;
+                
 		$timestamp = substr($this->killmail_, 0, 19);
-		$timestamp = str_replace('.', '-', $timestamp);
+                
+                // check for old EDK-style timestamp                
+                // timestamp is of form YYYY.MM.dd HH:mm (no seconds in the time)
+                if(strrpos($timestamp, ":") != 16)
+                {
+                    $timestamp = substr($this->killmail_, 0, 16) . ":00";
+                }
 
 		// Check hashes.
 		$hash = self::hashMail($this->killmail_);
@@ -202,8 +209,7 @@ class Parser
 		}
 
 		$header = substr($this->killmail_, 0, $involvedpos);
-                $timestamp = substr($header, 0, 19);
-
+                
 		$victim = explode("\n", trim(substr($this->killmail_, 0, $involvedpos)));
 		$upper_limit =  count($victim);
 
