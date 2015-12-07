@@ -18,6 +18,7 @@
   `kll_x` double NOT NULL DEFAULT '0',
   `kll_y` double NOT NULL DEFAULT '0',
   `kll_z` double NOT NULL DEFAULT '0',
+  `kll_location` int(11) DEFAULT NULL,
   PRIMARY KEY  (`kll_timestamp`,`kll_id`),
   UNIQUE KEY `kll_id` (`kll_id`),
   KEY `kll_ship_id` (`kll_ship_id`),
@@ -26,6 +27,7 @@
   KEY `kll_crp_id` (`kll_crp_id`),
   KEY `kll_system_id` (`kll_system_id`),
   KEY `kll_fb_plt_id` (`kll_fb_plt_id`),
-  UNIQUE KEY `kll_external_id` (`kll_external_id`)
+  UNIQUE KEY `kll_external_id` (`kll_external_id`),
+  ADD KEY `kll_location` (`kll_location`)
 ) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

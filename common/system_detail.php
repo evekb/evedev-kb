@@ -165,6 +165,7 @@ class pSystemDetail extends pageAssembly
 		parent::__construct();
 		$this->queue("menuSetup");
 		$this->queue("menu");
+                $this->queue("topList");
 	}
 
 	/**
@@ -215,6 +216,23 @@ class pSystemDetail extends pageAssembly
 	function addMenuItem($type, $name, $url = '')
 	{
 		$this->menuOptions[] = array($type, $name, $url);
+	}
+        
+        /**
+	 *
+	 * @return string HTML string for toplists
+	 */
+	function topList()
+	{
+		// Display the top location lists.
+
+                $LocationList = new TopList_Locations();
+                $LocationList->addSystem($this->sys_id);
+                $LocationList->generate();
+                $LocationListBox = new AwardBoxLocation($LocationList, "Top locations", "kills", "kills", "cross");
+                $html = $LocationListBox->generate();
+
+		return $html;
 	}
 
 	/**

@@ -64,6 +64,7 @@ class KillWrapper extends Kill
 	private $victimexternalid = null;
 	private $fbpilotexternalid = null;
 	private $commentcount = null;
+        private $nearestCelestialName = null;
 
 	/**
 	 * @param integer $id The ID for this kill
@@ -771,5 +772,22 @@ class KillWrapper extends Kill
 	{
 		trigger_error(__FUNCTION__ . " not implemented in this class", E_USER_ERROR);
 	}
+        
+        /**
+         * gets the nearest celestial the kill happened
+         * @return \Location the nearest celestial the kill happened at, or null if no coordinates are available
+         */
+        public function getNearestCelestialName()
+        {
+            return $this->nearestCelestialName;
+        }
+        /**
+         * gets the nearest celestial the kill happened
+         * @return \Location the nearest celestial the kill happened at, or null if no coordinates are available
+         */
+        public function getNearestCelestial()
+        {
+            trigger_error(__FUNCTION__ . " not implemented in this class", E_USER_ERROR);
+        }
 
 }

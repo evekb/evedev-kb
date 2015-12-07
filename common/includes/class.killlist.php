@@ -19,6 +19,7 @@ class KillList
         private $vic_sc_id_ = array();
 	private $regions_ = array();
 	private $systems_ = array();
+        private $locations_ = array();
 	private $groupby_ = array();
 	private $offset_ = 0;
 	private $killcounter_ = 0;
@@ -66,6 +67,8 @@ class KillList
 		$this->expr = array("kll.kll_id",
 			"kll.kll_timestamp",
 			"kll.kll_external_id",
+                        "mdn.itemID",
+                        "mdn.itemName",
 			"plt.plt_name",
 			"crp.crp_name",
 			"crp.crp_id",
@@ -334,6 +337,8 @@ class KillList
 								ON ( fbcrp.crp_id = fb.ind_crp_id )
 							STRAIGHT_JOIN kb3_alliances fbali
 								ON ( fbali.all_id = fb.ind_all_id )
+                                                        LEFT JOIN kb3_mapdenormalize mdn
+                                                                ON (kll.kll_location = mdn.itemID)
 						   ";
 			// System
 			if(count($this->systems_) || count($this->regions_))
@@ -432,6 +437,9 @@ class KillList
 				// System filter
 				if (count($this->systems_))
 					$this->sql_ .= " AND kll.kll_system_id in ( ".implode($this->systems_, ",").")";
+                                // Location filter
+                                if (count($this->locations_))
+                                        $this->sql_ .= " AND kll.kll_location in ( ".implode($this->locations_, ",").")";
 
 				// Get all kills after given kill id (used for feed syndication)
 				if ($this->minkllid_)
@@ -685,7 +693,8 @@ class KillList
 				'solarsystemsecurity' => $row['sys_sec'],
 				'externalid' => (int)$row['kll_external_id'],
 				'killpoints' => (int)$row['kll_points'],
-				'iskloss' => (float)$row['kll_isk_loss']
+				'iskloss' => (float)$row['kll_isk_loss'],
+                                'nearestCelestialName' => $row['itemName'],
 				);
 			$kill->setArray($arr);
 			//Set the involved party count if it is known
@@ -849,6 +858,12 @@ class KillList
 	{
 		if(is_numeric($system)) $this->systems_[] = $system;
 		else $this->systems_[] = $system->getID();
+	}
+        
+        public function addLocation($location)
+	{
+		if(is_numeric($location)) $this->locations_[] = $location;
+		else $this->locations_[] = $location->getID();
 	}
 
 	public function addGroupBy($groupby)

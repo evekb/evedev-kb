@@ -26,6 +26,13 @@ class SolarSystem extends Cacheable
 	 * @var array
 	 */
 	private $row = array();
+        
+        /**
+         * holds the IDs of all locations within this 
+         * solarsystem
+         * @var array
+         */
+        protected $locationIDs = array();
 
     function SolarSystem($id = 0)
     {
@@ -86,6 +93,12 @@ class SolarSystem extends Cacheable
         $this->execQuery();
         return $this->row['reg_name'];
     }
+    
+    function getLocationIDs()
+    {
+        $this->execQuery();
+        return $this->locationIDs;
+    }
 
     private function execQuery()
     {
@@ -94,18 +107,32 @@ class SolarSystem extends Cacheable
 			if ($this->isCached()) {
 				$cache = $this->getCache();
 				$this->row = $cache->row;
+                                $this->locationIDs = $cache->locationIDs;
 				$this->executed = true;
 			} else {
 		        $qry = DBFactory::getDBQuery();
-				$sql = "select *
-						   from kb3_systems sys, kb3_constellations con,
-						   kb3_regions reg
+				$sql = "select sys.sys_id AS sys_id, sys_con_id, sys_name, sys_x, sys_y, sys_z, sys_sec, 
+                                            con_id, con_name, con_reg_id, 
+                                            reg_id, reg_name, reg_x, reg_y, reg_z
+						   from kb3_systems sys
+                                                   inner join kb3_constellations con ON con.con_id = sys.sys_con_id
+						   inner join kb3_regions reg ON reg.reg_id = con.con_reg_id
 						   where sys.sys_id = ".$this->id."
-						   and con.con_id = sys.sys_con_id
-						   and reg.reg_id = con.con_reg_id";
+						   ";
 				$qry->execute($sql);
 				$this->row = $qry->getRow();
-				$this->executed = true;
+                                
+                                // now get all locationIDs for this system
+                                $sql = "select itemID
+                                            from kb3_mapdenormalize
+                                            where solarSystemID = ".$this->id;
+                                $qry->execute($sql);
+                                while($locationRow = $qry->getRow())
+                                {
+                                    $this->locationIDs[] = $locationRow['itemID'];
+                                }
+				
+                                $this->executed = true;
 				$this->putCache();
 			}
         }
@@ -135,7 +162,7 @@ class SolarSystem extends Cacheable
 	 * Return a new object by ID. Will fetch from cache if enabled.
 	 *
 	 * @param mixed $id ID to fetch
-	 * @return Alliance
+	 * @return Location
 	 */
 	static function getByID($id)
 	{

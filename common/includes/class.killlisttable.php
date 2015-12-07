@@ -200,6 +200,7 @@ class KillListTable
 					$kll['victimcorpid'], 'crp_id');
 			$kll['urlfbcorp'] = edkURI::page('corp_detail',
 					$kll['fbcorpid'], 'crp_id');
+                        $kll['nearestCelestialName'] = $kill->getNearestCelestialName();
 			event::call('killlist_table_kill', $kll);
 			$kills[] = $kll;
 		}
