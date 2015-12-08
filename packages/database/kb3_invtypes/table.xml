@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <kb3>
   <name>kb3_invtypes</name>
-  <rows>24786</rows>
+  <rows>27945</rows>
   <structure>CREATE TABLE `kb3_invtypes` (
   `typeID` int(11) NOT NULL DEFAULT '0',
   `groupID` int(11) NOT NULL DEFAULT '0',

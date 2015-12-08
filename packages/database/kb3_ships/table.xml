@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <kb3>
   <name>kb3_ships</name>
-  <rows>770</rows>
+  <rows>783</rows>
   <structure>CREATE TABLE `kb3_ships` (
   `shp_id` int(11) NOT NULL AUTO_INCREMENT,
   `shp_class` int(11) NOT NULL DEFAULT '18',
   PRIMARY KEY (`shp_id`),
   KEY `shp_class` (`shp_class`)
-) ENGINE=MyISAM AUTO_INCREMENT=35782 DEFAULT CHARSET=utf8</structure>
+) ENGINE=MyISAM AUTO_INCREMENT=37484 DEFAULT CHARSET=utf8</structure>
 </kb3>
