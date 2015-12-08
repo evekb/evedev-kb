@@ -227,9 +227,32 @@ class pSystemDetail extends pageAssembly
 		// Display the top location lists.
 
                 $LocationList = new TopList_Locations();
-                $LocationList->addSystem($this->sys_id);
+                if ($this->view == 'losses') {
+			involved::load($LocationList, 'loss');
+		} else {
+			involved::load($LocationList, 'kill');
+		}
+		$LocationList->addSystem($this->system);
+		if (config::get('kill_classified')) {
+			$LocationList->setEndDate(gmdate('Y-m-d H:i', strtotime('now - '
+					.(config::get('kill_classified')).' hours')));
+		}
+                
+                $scl_id = (int)edkURI::getArg('scl_id', 2);
+		if ($scl_id) {
+			$LocationList->addVictimShipClass(intval($scl_id));
+                }
                 $LocationList->generate();
-                $LocationListBox = new AwardBoxLocation($LocationList, "Top locations", "kills", "kills", "cross");
+                if($this->view == 'losses')
+                {
+                    $LocationListBox = new AwardBoxLocation($LocationList, "Top locations", "losses", "losses", "cross");
+                }
+                
+                else
+                {
+                    $LocationListBox = new AwardBoxLocation($LocationList, "Top locations", "losses", "losses", "cross");
+                }
+                
                 $html = $LocationListBox->generate();
 
 		return $html;
