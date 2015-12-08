@@ -2039,7 +2039,13 @@ class Kill extends Cacheable
             {
                     $this->calculateNearestCelestial();
             }
-            return $this->nearestCelestial->getName();
+            
+            if(isset($this->nearestCelestial))
+            {
+                return $this->nearestCelestial->getName();
+            }
+            
+            return null;
         }
         
         /**
