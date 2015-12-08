@@ -28,6 +28,6 @@
   KEY `kll_system_id` (`kll_system_id`),
   KEY `kll_fb_plt_id` (`kll_fb_plt_id`),
   UNIQUE KEY `kll_external_id` (`kll_external_id`),
-  ADD KEY `kll_location` (`kll_location`)
+  KEY `kll_location` (`kll_location`)
 ) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>
