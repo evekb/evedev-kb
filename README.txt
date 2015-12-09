@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.16.0
+Eve Development Network Killboard v4.2.17.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -26,6 +26,24 @@ o/ EVE Development Network
 VERSION HISTORY
 ===============
 
+v4.2.17.0
+
+Features:
+Updated EDK to 4.2.17.0 and CCP DB to Forstline 1.0.116241
+Added nearest location to Kills in database
+
+Enhancements:
+Added filters to top locations list on Solarsystem Detail page
+Update coordinates of kills without coordinates
+
+Bugfixes:
+Fixed defect index definition for kb3_kills table
+Fixed exception when viewing kills without nearest location
+Disable posting of text mails without accurate timestamp
+Timestamp parsing of text mails from old EDK installations
+Handling of related kills with new timestamp accuracy
+
+-------------------------------------------
 v4.2.16.0
 
 Features:
