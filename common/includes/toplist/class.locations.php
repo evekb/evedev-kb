@@ -16,7 +16,7 @@ class TopList_Locations extends TopList_Base
                 // the outer subselect then only gets the unique kills and their locations
                 // the top select then groups the kills by location
 		$sql = "select 
-                            count(list.kll_location) as cnt, list.kll_location as itemID, list.itemName as itemName
+                            count(killlist.kll_location) as cnt, killlist.kll_location as itemID, killlist.itemName as itemName
                         from 
                         ( 
                             SELECT DISTINCT sublist.kll_id, sublist.kll_location, sublist.itemName FROM
@@ -33,7 +33,7 @@ class TopList_Locations extends TopList_Base
 
 		$this->setSQLTop($sql);
 
-		$this->setSQLBottom(") sublist ) list group by list.kll_location order by 1 desc limit ".$this->limit);
+		$this->setSQLBottom(") sublist ) killlist group by killlist.kll_location order by 1 desc limit ".$this->limit);
                 
                 if (count($this->inc_vic_scl))
 		{
