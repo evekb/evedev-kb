@@ -341,6 +341,10 @@ class pHome extends pageAssembly
 	 */
 	function topLists()
 	{
+		// Display the top location lists.
+                $LocationList = new TopList_Locations();
+		$this->loadTime($LocationList);   
+                
 		// Display the top pilot lists.
 		if ($this->view != 'losses') {
 			$tklist = new TopList_Kills();
@@ -360,6 +364,13 @@ class pHome extends pageAssembly
 			$tkbox = new AwardBox($tklist, "Top scorers", "points in "
 					.$this->getCurrentPeriod(), "points", "redcross");
 			$html .= $tkbox->generate();
+            
+                        // load involved for top locations
+                        involved::load($LocationList, 'kill');
+                        $LocationList->generate();
+                        $LocationListBox = new AwardBoxLocation($LocationList, "Top locations", "kills in ".$this->getCurrentPeriod(), "kills", "cross");
+                        $html .= $LocationListBox->generate();
+            
 		} else {
 			$tllist = new TopList_Losses();
 			$this->loadTime($tllist);
@@ -369,8 +380,15 @@ class pHome extends pageAssembly
 			$tlbox = new AwardBox($tllist, "Top losers", "losses in "
 					.$this->getCurrentPeriod(), "losses", "moon");
 			$html = $tlbox->generate();
+            
+                        // load involved for top locations
+                        involved::load($LocationList, 'loss');
+                        $LocationList->generate();
+                        $LocationListBox = new AwardBoxLocation($LocationList, "Top locations", "losses in ".$this->getCurrentPeriod(), "losses", "cross");
+                        $html .= $LocationListBox->generate();
 		}
 		return $html;
+
 	}
 
 	/**
