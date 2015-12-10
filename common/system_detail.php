@@ -250,7 +250,7 @@ class pSystemDetail extends pageAssembly
                 
                 else
                 {
-                    $LocationListBox = new AwardBoxLocation($LocationList, "Top locations", "losses", "losses", "cross");
+                    $LocationListBox = new AwardBoxLocation($LocationList, "Top locations", "kills", "kills", "cross");
                 }
                 
                 $html = $LocationListBox->generate();
