@@ -94,7 +94,8 @@ class AwardBox
         
         protected function getEntityName($row)
         {
-            return $row['plt_name'];
+            $pilot = new Pilot($row['plt_id']);
+            return $pilot->getName();
         }
         
         protected function getEntitytUrl($row)
