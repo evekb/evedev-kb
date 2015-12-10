@@ -34,6 +34,15 @@ class TopList_Locations extends TopList_Base
 		$this->setSQLTop($sql);
 
 		$this->setSQLBottom(") sublist ) list group by list.kll_location order by 1 desc limit ".$this->limit);
+                
+                if (count($this->inc_vic_scl))
+		{
+			$this->setPodsNoobShips(true);
+		}
+		else
+		{
+			$this->setPodsNoobShips(config::get('podnoobs'));
+		}
 	}
         
 }
