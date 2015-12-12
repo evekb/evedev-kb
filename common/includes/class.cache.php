@@ -24,7 +24,7 @@ class cache
 	/**
 	 * Check the server load using /proc/loadavg.
 	 *
-	 * Changes reinforced statust depending on load where supported.
+	 * Changes reinforced status depending on load where supported.
 	 *
 	 * @return bool true if the server is reinforced, false if not or not
 	 * supported
@@ -106,6 +106,8 @@ class cache
 		$cachefile = cache::genCacheName();
 		if (defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE == true) {
 			$cachehandler = new CacheHandlerHashedMem();
+		}  elseif (defined('DB_USE_REDIS') && DB_USE_REDIS == true) {
+			$cachehandler = new CacheHandlerHashedRedis();
 		} else {
 			$cachehandler = new CacheHandlerHashed();
 		}
@@ -194,6 +196,8 @@ class cache
 
 			if (DB_USE_MEMCACHE) {
 				$cachehandler = new CacheHandlerHashedMem();
+			} elseif (defined('DB_USE_REDIS') && DB_USE_REDIS == true) {
+				$cachehandler = new CacheHandlerHashedRedis();
 			} else {
 				$cachehandler = new CacheHandlerHashed();
 			}
@@ -248,6 +252,8 @@ class cache
 
 		if (DB_USE_MEMCACHE) {
 			$cachehandler = new CacheHandlerHashedMem();
+		} elseif (defined('DB_USE_REDIS') && DB_USE_REDIS == true) {
+			$cachehandler = new CacheHandlerHashedRedis();
 		} else {
 			$cachehandler = new CacheHandlerHashed();
 		}

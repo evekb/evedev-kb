@@ -22,6 +22,10 @@ options::fadd('Enable SQL-Query File Cache', 'cfg_qcache', 'checkbox', '', '','S
 options::fadd('Enable SQL-Query MemCache', 'cfg_memcache', 'checkbox','','','Requires a separate memcached installation');
 options::fadd('Memcached server', 'cfg_memcache_server', 'edit:size:50');
 options::fadd('Memcached port', 'cfg_memcache_port', 'edit:size:8');
+options::fadd('Enable SQL-Query Redis', 'cfg_redis', 'checkbox','','','Requires a separate Redis installation');
+options::fadd('Redis server', 'cfg_redis_server', 'edit:size:50');
+options::fadd('Redis port', 'cfg_redis_port', 'edit:size:8');
+options::fadd('Redis database', 'cfg_redis_db', 'edit:size:8');
 options::fadd('Halt on SQLError', 'cfg_sqlhalt', 'checkbox');
 
 options::cat('Advanced', 'Cache', 'Even More Caching');
@@ -33,9 +37,14 @@ options::fadd('File Cache', 'none', 'custom', array('admin_acache', 'optionClear
 options::fadd('Kill Summary Cache', 'none', 'custom', array('admin_acache', 'optionClearSum'), array('admin_acache', 'clearSumCache'));
 
 global $mc;
+global $redis;
 if(defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE == true && !is_null($mc) && method_exists('Memcache', 'flush'))
 {
     options::fadd('MemCache', 'none', 'custom', array('admin_acache', 'optionFlushMemcached'), array('admin_acache', 'flushMemcached'));
+}
+if(defined('DB_USE_REDIS') && DB_USE_REDIS == true && !is_null($redis) && method_exists('Redis', 'flushDb'))
+{
+    options::fadd('Redis', 'none', 'custom', array('admin_acache', 'optionFlushRedis'), array('admin_acache', 'flushRedis'));
 }
 
 class admin_acache
@@ -71,9 +80,13 @@ class admin_acache
 	{
 		return '<input type="checkbox" name="option_clear_sum" />Clear cache ?';
 	}
-        function optionFlushMemcached()
+    function optionFlushMemcached()
 	{
 		return '<input type="checkbox" name="option_flush_memcached" />Flush MemCache ?';
+	}
+	function optionFlushRedis()
+	{
+		return '<input type="checkbox" name="option_flush_redis" />Flush Redis ?';
 	}
 	function clearCaches()
 	{
@@ -102,7 +115,8 @@ class admin_acache
 			$_POST['option_clear_sum'] == 'off';
         }
 	}
-        function flushMemcached()
+    
+	function flushMemcached()
 	{
             global $mc;
             // Check for memcached
@@ -111,5 +125,16 @@ class admin_acache
                 $mc->flush();
             }
             $_POST['option_flush_memcached'] = 'off';
+	}
+	
+	function flushRedis()
+	{
+            global $redis;
+            // Check for Redis
+            if(defined('DB_USE_REDIS') && DB_USE_REDIS == true && !is_null($redis) && method_exists('Redis', 'flushDb'))
+            {
+                $redis->flushDb('cfg_redis_db');
+            }
+            $_POST['option_flush_redis'] = 'off';
 	}
 }

@@ -26,6 +26,10 @@ class DBFactory
 		{
 			return new DBMemCachedQuery($forceNormal);
 		}
+		else if (defined('DB_USE_REDIS') && DB_USE_REDIS == true)
+		{
+			return new DBRedisQuery($forceNormal);
+		}
 		else if (defined('DB_USE_QCACHE') && DB_USE_QCACHE == true)
 		{
 			return new DBCachedQuery($forceNormal);

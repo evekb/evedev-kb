@@ -16,6 +16,7 @@ ini_set('display_errors', 1);
 define('DB_HALTONERROR', true);
 define('DB_USE_QCACHE', false);
 define('DB_USE_MEMCACHE',false);
+define('DB_USE_REDIS',false);
 define('KB_CACHEDIR', "cache");
 
 chdir("..");
