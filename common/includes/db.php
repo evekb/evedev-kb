@@ -94,8 +94,11 @@ else
 					$boardMessage = "ERROR: Unable to connect to Redis server, disabling Redis. Please check your settings (server, port, database) and make sure the Redis server is running";
 					define("DB_USE_REDIS", false);
 				}
-				else define("DB_USE_REDIS", true);
-				if(method_exists('Redis', 'select')) $redis->select(config::get('cfg_redis_db'));
+				else
+				{
+					if(method_exists('Redis', 'select')) $redis->select(config::get('cfg_redis_db'));
+					define("DB_USE_REDIS", true);
+				}
 			}
 		} else {
 			define("DB_USE_MEMCACHE", false);
