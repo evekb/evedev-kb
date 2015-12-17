@@ -194,7 +194,7 @@ class cache
 					&& !ini_get('zlib.output_compression');
 			$cachefile = cache::genCacheName();
 
-			if (DB_USE_MEMCACHE) {
+			if (defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE == true) {
 				$cachehandler = new CacheHandlerHashedMem();
 			} elseif (defined('DB_USE_REDIS') && DB_USE_REDIS == true) {
 				$cachehandler = new CacheHandlerHashedRedis();
@@ -250,9 +250,9 @@ class cache
 	{
 		$cachefile = cache::genCacheName();
 
-		if (DB_USE_MEMCACHE) {
+		if (defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE == true) {
 			$cachehandler = new CacheHandlerHashedMem();
-		} elseif (defined('DB_USE_REDIS') && DB_USE_REDIS == true) {
+		}  elseif (defined('DB_USE_REDIS') && DB_USE_REDIS == true) {
 			$cachehandler = new CacheHandlerHashedRedis();
 		} else {
 			$cachehandler = new CacheHandlerHashed();
