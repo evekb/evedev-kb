@@ -67,8 +67,11 @@ class EDKError
 				rename($logfile, $logfile.".old");
 			}
 		}
-		echo $output;
-		self::$errors[] = $output;
+		if (ini_get('display_errors'))
+		{
+			echo $output;
+			self::$errors[] = $output;
+		}
 		return true;
 	}
 }

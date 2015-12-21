@@ -138,13 +138,15 @@ abstract class Cacheable {
 	/**
 	 * Initialise the cachehandler.
 	 *
-	 * Sets a new cachehandler, choosing between memcache or filecache
+	 * Sets a new cachehandler, choosing between memcache, redis or filecache
 	 * depending on killboard settings.
 	 */
 	private static function init()
 	{
 		if(defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE == true) {
 			self::$cachehandler = new CacheHandlerHashedMem();
+		} elseif(defined('DB_USE_REDIS') && DB_USE_REDIS == true) {
+			self::$cachehandler = new CacheHandlerHashedRedis();
 		} else {
 			self::$cachehandler = new CacheHandlerHashed();
 		}

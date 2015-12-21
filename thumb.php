@@ -119,7 +119,7 @@ function goPCA($type, $id, $size = 64, $imghost = "")
 	header("Expires: ".gmdate("D, d M Y H:i:s", time() + $year)." GMT");
 
 	header('Last-Modified: '.gmdate("D, d M Y H:i:s")." GMT");
-	global $mc, $config;
+	global $mc, $redis, $config;
 	include_once('kbconfig.php');
 	require_once('common/includes/globals.php');
 	$config = new Config();
@@ -135,7 +135,7 @@ function goPCA($type, $id, $size = 64, $imghost = "")
 
 function goMap($type, $id, $size=200)
 {
-	global $mc, $config;
+	global $mc, $redis, $config;
 	//TODO integrate the existing common/includes/class.mapview.php
 	include_once('kbconfig.php');
 	require_once('common/includes/globals.php');
