@@ -12,12 +12,25 @@ $dbhost = $host;
 extract($_SESSION['sett']);
 $adminpw = crypt($adminpw);
 
+// prepare replacements for writing configuration
+$replacements = array(
+	'$site' => $site,
+	'$adminpw' => $adminpw,
+	'$dbhost' => $dbhost,
+	'$db' => $db,
+	'$user' => $user,
+	'$pass' => $pass
+);
+
 $smarty->assign('conf_exists', file_exists('../kbconfig.php'));
 if (file_exists('../kbconfig.php'))
 {
 	//make sure we can write the new crypto'd password to the config file
 	chmod('../kbconfig.php', 0777);
-	$config = preg_replace("/\{([^\}]+)\}/e", "\\1", join('', file('./templates/config.tpl')));
+	
+	$config = preg_replace_callback("/\{([^\}]+)\}/", "matchesConfigKeyword", implode('', file('./templates/config.tpl')));
+	
+	
 	$fp = fopen('../kbconfig.php', 'w');
 	fwrite($fp, trim($config));
 	fclose($fp);
@@ -27,27 +40,26 @@ if (file_exists('../kbconfig.php'))
 
 	require_once('../kbconfig.php');
 
-	$db = mysql_connect(DB_HOST, DB_USER, DB_PASS);
-	mysql_select_db(DB_NAME);
+	$db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
 	// move stuff from the config to the database
-	if($aid) insertConfig('cfg_allianceid', serialize(array($aid)));
-	else insertConfig('cfg_allianceid', serialize(array()));
-	if($cid) insertConfig('cfg_corpid', serialize(array($cid)));
-	else insertConfig('cfg_corpid', serialize(array()));
-	if($pid) insertConfig('cfg_pilotid', serialize(array($pid)));
-	else insertConfig('cfg_pilotid', serialize(array()));
+	if($aid) insertConfig($db, 'cfg_allianceid', serialize(array($aid)));
+	else insertConfig($db, 'cfg_allianceid', serialize(array()));
+	if($cid) insertConfig($db, 'cfg_corpid', serialize(array($cid)));
+	else insertConfig($db, 'cfg_corpid', serialize(array()));
+	if($pid) insertConfig($db, 'cfg_pilotid', serialize(array($pid)));
+	else insertConfig($db, 'cfg_pilotid', serialize(array()));
 
-	insertConfig('cfg_img', $img);
-	insertConfig('cfg_kbhost', $host);
-	insertConfig('cfg_kbtitle', $title);
+	insertConfig($db, 'cfg_img', $img);
+	insertConfig($db, 'cfg_kbhost', $host);
+	insertConfig($db, 'cfg_kbtitle', $title);
 
-	insertConfig('cfg_mainsite', '');
+	insertConfig($db, 'cfg_mainsite', '');
 	// write current CCP DB Version to config
-	insertConfig('CCPDbVersion', KB_CCP_DB_VERSION);
+	insertConfig($db, 'CCPDbVersion', KB_CCP_DB_VERSION);
         
         // write current DBUpdate to config
-        insertConfig('DBUpdate', LATEST_DB_UPDATE);
+        insertConfig($db, 'DBUpdate', LATEST_DB_UPDATE);
 
 	$confs = file('config.data');
 	foreach ($confs as $line)
@@ -55,7 +67,7 @@ if (file_exists('../kbconfig.php'))
 		$valuepair = explode(chr(9), trim($line));
 		if(!isset($valuepair[0])) continue;
 		if(!isset($valuepair[1])) $valuepair[1] = '';
-		insertConfig($valuepair[0], $valuepair[1]);
+		insertConfig($db, $valuepair[0], $valuepair[1]);
 	}
 	$stoppage = false;
 }
@@ -66,24 +78,31 @@ $smarty->assign('stoppage', $stoppage);
 $smarty->assign('nextstep', $_SESSION['state']+1);
 $smarty->display('install_step7.tpl');
 
-function insertConfig($key, $value)
+function insertConfig($db, $key, $value)
 {
 	$localvars = array();
 	$localvars[] = 'cfg_kbhost';
 	$localvars[] = 'cfg_img';
 	$localvars[] = 'cfg_kbtitle';
-	$result = mysql_query('SELECT * FROM kb3_config WHERE cfg_site=\''.KB_SITE.'\' AND cfg_key=\''.$key.'\'');
-	if (!$row = mysql_fetch_row($result))
+	$result = $db->query('SELECT * FROM kb3_config WHERE cfg_site=\''.KB_SITE.'\' AND cfg_key=\''.$key.'\'');
+	if (!$row = $result->fetch_assoc())
 	{
 		$sql = "INSERT INTO kb3_config VALUES ('".KB_SITE."','".$key."','".$value."')";
-		mysql_query($sql);
+		$db->query($sql);
 	}
 	if (!in_array($key, $localvars)) {
-		$result = mysql_query('SELECT * FROM kb3_config WHERE cfg_site=\'\' AND cfg_key=\''.$key.'\'');
-		if (!$row = mysql_fetch_row($result))
+		$result = $db->query('SELECT * FROM kb3_config WHERE cfg_site=\'\' AND cfg_key=\''.$key.'\'');
+		if (!$row = $result->fetch_assoc())
 		{
 			$sql = "INSERT INTO kb3_config VALUES ('','".$key."','".$value."')";
-			mysql_query($sql);
+			$db->query($sql);
 		}
 	}
+}
+
+function matchesConfigKeyword($input)
+{
+	global $replacements;
+	// return the first back-reference
+	return $replacements[$input[1]];
 }

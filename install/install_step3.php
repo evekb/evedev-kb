@@ -66,18 +66,17 @@ $smarty->assign('db_engine', $_SESSION['sql']['engine']);
 
 if ($_SESSION['sql']['db'])
 {
-    $db = @mysql_connect($_SESSION['sql']['host'], $_SESSION['sql']['user'], $_SESSION['sql']['pass']);
-
-    $smarty->assign('test_db', is_resource($db));
-    if (is_resource($db))
+    $db = new mysqli($_SESSION['sql']['host'], $_SESSION['sql']['user'], $_SESSION['sql']['pass'], $_SESSION['sql']['db']);
+    $smarty->assign('test_db', $db->connect_errno == 0);
+    if ($db->connect_errno == 0)
     {
-	    $result = mysql_query('SELECT VERSION() AS version');
-	    $result = mysql_fetch_assoc($result);
+	    $result = $db->query('SELECT VERSION() AS version');
+	    $result = $result->fetch_assoc();
 	    $smarty->assign('test_sql', $result);
 	    if (!$result)
 	    {
 		    $stoppage = true;
-		    $smarty->assign('test_error', mysql_error());
+		    $smarty->assign('test_error', $db->error);
 	    }
 	    else
 	    {
@@ -88,41 +87,36 @@ if ($_SESSION['sql']['db'])
 				$stoppage = true;
 			else
 			{
-				$smarty->assign('test_select', mysql_select_db($_SESSION['sql']['db']));
-				if (mysql_select_db($_SESSION['sql']['db']))
+				$smarty->assign('test_select', true);
+				$stoppage = false;
+				$smarty->assign('db_image', $pass_img);
+				//InnoDB check
+				if ($stoppage == false && $_SESSION['sql']['engine'] == 'InnoDB')
 				{
-					$stoppage = false;
-					$smarty->assign('db_image', $pass_img);
-					//InnoDB check
-					if ($stoppage == false && $_SESSION['sql']['engine'] == 'InnoDB')
-					{
-						$smarty->assign('test_inno', true);
-						$stoppage = true;
+					$smarty->assign('test_inno', true);
+					$stoppage = true;
 
-						$result = mysql_query('SHOW ENGINES;');
-						while (($row = mysql_fetch_row($result)) &&  $stoppage == true){
-							if ($row[0] == 'InnoDB'){
-								if ($row[1] == 'YES' || $row[1] == 'DEFAULT'){ // (YES / NO / DEFAULT)
-									$stoppage = false;
-								}
+					$result = $db->query('SHOW ENGINES;');
+					while (($row = $result->fetch_assoc()) &&  $stoppage == true){
+						if ($row['Engine'] == 'InnoDB'){
+							if ($row['Support'] == 'YES' || $row['Support'] == 'DEFAULT'){ // (YES / NO / DEFAULT)
+								$stoppage = false;
+								break;
 							}
 						}
-						if ($stoppage){
-							$smarty->assign('db_image', $fail_img);
-							$smarty->assign('test_error_inno', true);
-						}
+					}
+					if ($stoppage){
+						$smarty->assign('db_image', $fail_img);
+						$smarty->assign('test_error_inno', true);
 					}
 				}
-				else
-				{
-					$smarty->assign('test_error', mysql_error());
-				}
+
 		    }
 	    }
     }
     else
     {
-	    $smarty->assign('test_error', mysql_error());
+	    $smarty->assign('test_error', $db->error);
     }
 }
 $smarty->assign('stoppage', $stoppage);

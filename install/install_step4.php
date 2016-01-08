@@ -68,15 +68,14 @@ foreach($kb['kb3']['table'] as $idx => $tbl)
 	}
 }
 //start a new db connection with stored session info
-$db = mysql_connect($_SESSION['sql']['host'], $_SESSION['sql']['user'], $_SESSION['sql']['pass']);
-mysql_set_charset('utf8');
-mysql_select_db($_SESSION['sql']['db']);
-$result = mysql_query('SHOW TABLES');
+$db = new mysqli($_SESSION['sql']['host'], $_SESSION['sql']['user'], $_SESSION['sql']['pass'], $_SESSION['sql']['db']);
+$db->set_charset('utf8');
+$result = $db->query('SHOW TABLES');
 
 //compare the listed tables to the structure list's and remove if they are the same
-while ($row = mysql_fetch_row($result))
+while ($row = $result->fetch_assoc())
 {
-	$table = $row[0];
+	$table = reset($row);
 	unset($struct[$table]);
 }
 
@@ -92,14 +91,14 @@ if (isset($_REQUEST['sub']) && $_REQUEST['sub'] == 'struct')
 			$query = preg_replace('/MyISAM/', 'InnoDB', $query);
 		}
 
-		$id = mysql_query($query);
+		$id = $db->query($query);
 		if ($id)
 		{
 			echo 'done<br/>';
 		}
 		else
 		{
-			echo 'Error: '.mysql_error().'<br/>';
+			echo 'Error: '.$db->error.'<br/>';
 		}
 		unset($struct[$table]);
 	}
@@ -133,7 +132,7 @@ if (!empty($_REQUEST['sub']) && $_REQUEST['sub'] == 'data')
 	$errors = false;
 	if (!isset($_SESSION['doopt']))
 	{
-		@mysql_query("ALTER DATABASE ".$_SESSION['sql']['db']." CHARACTER SET utf8 COLLATE utf8_general_ci");
+		@$db->query("ALTER DATABASE ".$_SESSION['sql']['db']." CHARACTER SET utf8 COLLATE utf8_general_ci");
 		foreach ($data as $table => $files)
 		{
 			foreach ($files as $file)
@@ -151,7 +150,7 @@ if (!empty($_REQUEST['sub']) && $_REQUEST['sub'] == 'data')
 				$errors = 0;
 				$text = '';
 				$query_count = 0;
-				mysql_query("START TRANSACTION");
+				$db->query("START TRANSACTION");
 				while ($query = gzgets($fp, 65536))
 				{
 					$text .= $query;
@@ -171,13 +170,13 @@ if (!empty($_REQUEST['sub']) && $_REQUEST['sub'] == 'data')
 						}
 						if (strpos($query, 'TRUNCATE') !== FALSE)
 						{
-							mysql_query("COMMIT");
+							$db->query("COMMIT");
 						}
 						$query_count++;
-						$id = mysql_query($query);
+						$id = $db->query($query);
 						if (strpos($query, 'TRUNCATE') !== FALSE)
 						{
-							mysql_query("START TRANSACTION");
+							$db->query("START TRANSACTION");
 						}
 						#echo $query;
 						if (!$id)
@@ -187,7 +186,7 @@ if (!empty($_REQUEST['sub']) && $_REQUEST['sub'] == 'data')
 						}
 					}
 				}
-				mysql_query("COMMIT");
+				$db->query("COMMIT");
 				echo '<br/>File '.$file.' had '.$lines.' lines with '.$query_count.' queries.<br/> '.$errors.' queries failed.<br/>';
 				if (!$error)
 				{
@@ -219,8 +218,8 @@ if (!empty($_REQUEST['sub']) && $_REQUEST['sub'] == 'data')
 			$table = $line['name'];
 			$count = $line['rows'];
 			echo 'Checking table '.$table.': ';
-			$result = mysql_query('SELECT count(*) AS cnt FROM '.$table);
-			$test = mysql_fetch_array($result);
+			$result = $db->query('SELECT count(*) AS cnt FROM '.$table);
+			$test = $result->fetch_array();
 			if ($test['cnt'] != $count && $count != 0)
 			{
 				echo $test['cnt'].'/'.$count.' - <font color="red"><b>FAILED</b></font>';
@@ -275,8 +274,8 @@ if (!$structadd && (empty($_REQUEST['sub']) || ($_REQUEST['sub'] != 'datasel' &&
 		$table = $line['name'];
 		$count = $line['rows'];
 		echo 'Checking table '.$table.': ';
-		$result = mysql_query('SELECT count(*) AS cnt FROM '.$table);
-		$test = mysql_fetch_array($result);
+		$result = $db->query('SELECT count(*) AS cnt FROM '.$table);
+		$test = $result->fetch_array();
 
 		if ($test['cnt'] > $count)
 		{

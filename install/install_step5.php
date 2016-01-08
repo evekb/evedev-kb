@@ -11,90 +11,89 @@ if(!$installrunning)
 $stoppage = true;
 global $smarty;
 
-$db = mysql_connect($_SESSION['sql']['host'], $_SESSION['sql']['user'], $_SESSION['sql']['pass']);
-mysql_select_db($_SESSION['sql']['db']);
+$db = new mysqli($_SESSION['sql']['host'], $_SESSION['sql']['user'], $_SESSION['sql']['pass'], $_SESSION['sql']['db']);
 
 if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'create')
 {
 	if (!empty($_REQUEST['a']))
 	{
-		$result = mysql_query('SELECT all_id FROM kb3_alliances WHERE all_name LIKE \'%'.addslashes(stripslashes($_REQUEST['a'])).'%\'');
-		if ($row = @mysql_fetch_row($result))
+		$result = $db->query('SELECT all_id FROM kb3_alliances WHERE all_name LIKE \'%'.addslashes(stripslashes($_REQUEST['a'])).'%\'');
+		if ($row = @$result->fetch_assoc())
 		{
-			$id = $row[0];
+			$id = $row['all_id'];
 		}
 		else
 		{
 			$query = 'INSERT INTO kb3_alliances (all_name) VALUES (\''.addslashes(stripslashes($_REQUEST['a'])).'\')';
-			mysql_query($query);
-			$id = mysql_insert_id();
+			$db->query($query);
+			$id = $db->insert_id;
 		}
 		$_REQUEST['a'] = $id;
 	}
 	else if(!empty($_REQUEST['c']))
 	{
-		$result = mysql_query('SELECT all_id FROM kb3_alliances WHERE all_name like \'%Unknown%\'');
-		if ($row = @mysql_fetch_row($result))
+		$result = $db->query('SELECT all_id FROM kb3_alliances WHERE all_name like \'%Unknown%\'');
+		if ($row = @$result->fetch_assoc())
 		{
-			$id = $row[0];
+			$id = $row['all_id'];
 		}
 		else
 		{
 			$query = 'INSERT INTO kb3_alliances (all_name) VALUES (\'Unknown\')';
-			mysql_query($query);
-			$id = mysql_insert_id();
+			$db->query($query);
+			$id = $db->insert_id;
 		}
 		$query = 'SELECT crp_id FROM kb3_corps WHERE crp_name LIKE \'%'.addslashes(stripslashes($_REQUEST['c'])).'%\'';
-		$result = mysql_query($query);
+		$result = $db->query($query);
 
-		if ($row = @mysql_fetch_row($result))
+		if ($row = @$result->fetch_assoc())
 		{
-			$id = $row[0];
+			$id = $row['crp_id'];
 		}
 		else
 		{
 			$query = 'INSERT INTO kb3_corps (crp_name, crp_all_id) VALUES (\''.addslashes(stripslashes($_REQUEST['c'])).'\','.$id.')';
-			mysql_query($query);
-			$id = mysql_insert_id();
+			$db->query($query);
+			$id = $db->insert_id;
 		}
 		$_REQUEST['c'] = $id;
 	}
 	else
 	{
-		$result = mysql_query('SELECT all_id FROM kb3_alliances WHERE all_name like \'%Unknown%\'');
-		if ($row = @mysql_fetch_row($result))
+		$result = $db->query('SELECT all_id FROM kb3_alliances WHERE all_name like \'%Unknown%\'');
+		if ($row = @$result->fetch_assoc())
 		{
-			$id = $row[0];
+			$id = $row['all_id'];
 		}
 		else
 		{
 			$query = 'INSERT INTO kb3_alliances (all_name) VALUES (\'Unknown\')';
-			mysql_query($query);
-			$id = mysql_insert_id();
+			$db->query($query);
+			$id = $db->insert_id;
 		}
-		$result = mysql_query('SELECT crp_id FROM kb3_corps WHERE crp_name like \'%Unknown%\'');
-		if ($row = @mysql_fetch_row($result))
+		$result = $db->query('SELECT crp_id FROM kb3_corps WHERE crp_name like \'%Unknown%\'');
+		if ($row = @$result->fetch_assoc())
 		{
-			$id = $row[0];
+			$id = $row['crp_id'];
 		}
 		else
 		{
 			$query = 'INSERT INTO kb3_corps (crp_name, crp_all_id) VALUES (\'Unknown\', '.$id.')';
-			mysql_query($query);
-			$id = mysql_insert_id();
+			$db->query($query);
+			$id = $db->insert_id;
 		}
 		$query = 'SELECT plt_id FROM kb3_pilots WHERE plt_name LIKE \'%'.addslashes(stripslashes($_REQUEST['p'])).'%\'';
-		$result = mysql_query($query);
+		$result = $db->query($query);
 
-		if ($row = @mysql_fetch_row($result))
+		if ($row = @$result->fetch_assoc())
 		{
-			$id = $row[0];
+			$id = $row['plt_id'];
 		}
 		else
 		{
 			$query = 'INSERT INTO kb3_pilots (plt_name, plt_crp_id) VALUES (\''.addslashes(stripslashes($_REQUEST['p'])).'\','.$id.')';
-			mysql_query($query);
-			$id = mysql_insert_id();
+			$db->query($query);
+			$id = $db->insert_id;
 		}
 		$_REQUEST['p'] = $id;
 	}
@@ -139,11 +138,11 @@ if ($stoppage)
 				break;
 		}
 
-		$result = mysql_query($query);
+		$result = $db->query($query);
 
 		$unsharp = true;
 		$results = array();
-		while ($row = mysql_fetch_assoc($result))
+		while ($row = $result->fetch_assoc())
 		{
 			switch ($_REQUEST['searchtype'])
 			{
@@ -243,7 +242,7 @@ $smarty->display('install_step5.tpl');
 
 class Api
 {
-    function Api()
+    function __construct()
     {
         $this->apiroot_ = "api.eveonline.com";
     }
