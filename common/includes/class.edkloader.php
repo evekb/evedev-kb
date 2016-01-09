@@ -55,7 +55,7 @@ class edkloader
 						."/class.".$subfilename.".php")) {
 			require_once(self::$dir."common/includes/".$subdirname."/class."
 					.$subfilename.".php");
-		} else {
+		} else if(file_exists(self::$dir."common/includes/class.".$name.".php")) {
 			@include_once(self::$dir."common/includes/class.".$name.".php");
 		}
 	}
