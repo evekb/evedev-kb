@@ -74,7 +74,7 @@ options::fadd('Show Ammo, charges, etc', 'fp_showammo', 'checkbox');
 
 class admin_appearance
 {
-	function createPanelTheme()
+	static function createPanelTheme()
 	{
 		$sfp_themes = array("tyrannis",
 			"tyrannis_blue",
@@ -98,7 +98,7 @@ class admin_appearance
 		return $options;
 	}
 
-	function createPanelStyle()
+	static function createPanelStyle()
 	{
 		$sfp_styles = array("Windowed",
 			"OldWindow",
@@ -121,7 +121,7 @@ class admin_appearance
 		return $options;
 	}
 
-	function createHighStyle()
+	static function createHighStyle()
 	{
 		$sfp_highstyles = array("ring",
 			"square",
@@ -146,7 +146,7 @@ class admin_appearance
 		return $options;
 	}
 
-	function createAmmoStyle()
+	static function createAmmoStyle()
 	{
 		$sfp_ammostyles = array("solid",
 			"transparent",
@@ -171,7 +171,7 @@ class admin_appearance
 	/* Create the selection options for available banners
 	 * @return stringHTML for the banner selection dropdown list.
 	 */
-	function createSelectBanner()
+	static function createSelectBanner()
 	{
 		$options = array();
 
@@ -204,7 +204,7 @@ class admin_appearance
 	 *
 	 * @return string HTML for the style selection dropdown list.
 	 */
-	function createSelectStyle()
+	static function createSelectStyle()
 	{
 		$options = array();
 		$dir = "themes/".config::get('theme_name')."/";
@@ -234,7 +234,7 @@ class admin_appearance
 	 *
 	 * @return string HTML for the theme selection dropdown list.
 	 */
-	function createSelectTheme()
+	static function createSelectTheme()
 	{
 		$options = array();
 		$dir = "themes/";
@@ -262,7 +262,7 @@ class admin_appearance
 	/**
 	 * Checks if theme has changed and updates page before display.
 	 */
-	function changeTheme()
+	static function changeTheme()
 	{
 		global $themename;
 		if(options::getPrevious('theme_name') == $_POST['option_theme_name']) return;
@@ -285,7 +285,7 @@ class admin_appearance
 	/**
 	 * Updates style before page is displayed.
 	 */
-	function changeStyle()
+	static function changeStyle()
 	{
 		global $smarty;
 		if(options::getPrevious('theme_name') != $_POST['option_theme_name'])
@@ -312,7 +312,7 @@ class admin_appearance
 	 * If the banner is changed the stored size is updated and used to display
 	 *  the banner image. Smarty variables are updated so display is immediate.
 	 */
-	function changeBanner()
+	static function changeBanner()
 	{
 		global $smarty;
 		if(options::getPrevious('style_banner') == $_POST['option_style_banner'])

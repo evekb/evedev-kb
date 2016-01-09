@@ -49,74 +49,80 @@ if(defined('DB_USE_REDIS') && DB_USE_REDIS == true && !is_null($redis) && method
 
 class admin_acache
 {
-    function getKillmails()
-    {
-		$count = 0;
-		if(defined('KB_MAILCACHEDIR'))
-		{
-			if(is_dir(KB_MAILCACHEDIR))
-			{
-				if($files = scandir(KB_MAILCACHEDIR))
-				{
-					foreach($files as $file)
-					{
-						if (substr($file, 0, 1) != '.') $count++;
-					}
-					
-				}
-			}
-		}
-		return $count;
-    }
-    function clearPCache()
-    {
-		CacheHandler::removeByAge('store', 0);
-    }
-	function optionClearCaches()
+        static function getKillmails()
+        {
+                    $count = 0;
+                    if(defined('KB_MAILCACHEDIR'))
+                    {
+                            if(is_dir(KB_MAILCACHEDIR))
+                            {
+                                    if($files = scandir(KB_MAILCACHEDIR))
+                                    {
+                                            foreach($files as $file)
+                                            {
+                                                    if (substr($file, 0, 1) != '.') $count++;
+                                            }
+
+                                    }
+                            }
+                    }
+                    return $count;
+        }
+        
+        static function clearPCache()
+        {
+                    CacheHandler::removeByAge('store', 0);
+        }
+        
+	static function optionClearCaches()
 	{
 		return '<input type="checkbox" name="option_clear_caches" />Clear caches ?';
 	}
-	function optionClearSum()
+	
+        static function optionClearSum()
 	{
 		return '<input type="checkbox" name="option_clear_sum" />Clear cache ?';
 	}
-    function optionFlushMemcached()
+        
+        static function optionFlushMemcached()
 	{
 		return '<input type="checkbox" name="option_flush_memcached" />Flush MemCache ?';
 	}
-	function optionFlushRedis()
+	
+        static function optionFlushRedis()
 	{
 		return '<input type="checkbox" name="option_flush_redis" />Flush Redis ?';
 	}
-	function clearCaches()
+	
+        static function clearCaches()
 	{
-        if ($_POST['option_clear_caches'] == 'on') {
-			CacheHandler::removeByAge('data', 0, true);
-			CacheHandler::removeByAge('api', 0, true);
-			CacheHandler::removeByAge('store', 0, true);
-			CacheHandler::removeByAge('mails', 0, true);
-			CacheHandler::removeByAge('img', 0, true);
-			CacheHandler::removeByAge('templates_c', 0);
-			CacheHandler::removeByAge('SQL', 0, true);
-			$_POST['option_clear_caches'] = 'off';
-        }
+                if ($_POST['option_clear_caches'] == 'on') {
+                                CacheHandler::removeByAge('data', 0, true);
+                                CacheHandler::removeByAge('api', 0, true);
+                                CacheHandler::removeByAge('store', 0, true);
+                                CacheHandler::removeByAge('mails', 0, true);
+                                CacheHandler::removeByAge('img', 0, true);
+                                CacheHandler::removeByAge('templates_c', 0);
+                                CacheHandler::removeByAge('SQL', 0, true);
+                                $_POST['option_clear_caches'] = 'off';
+                }
 	}
-	function clearSumCache()
+	static function clearSumCache()
 	{
-        if ($_POST['option_clear_sum'] == 'on') {
-			$qry = DBFactory::getDBQuery();;
-			$qry->execute("DELETE FROM kb3_sum_alliance");
-			$qry->execute("DELETE FROM kb3_sum_corp");
-			$qry->execute("DELETE FROM kb3_sum_pilot");
-			// Clear page and query cache as well since they also contain the
-			// summaries.
-			CacheHandler::removeByAge('SQL', 0, true);
-			CacheHandler::removeByAge('store', 0, true);
-			$_POST['option_clear_sum'] == 'off';
-        }
+                if ($_POST['option_clear_sum'] == 'on') {
+                                $qry = DBFactory::getDBQuery();;
+                                $qry->execute("DELETE FROM kb3_sum_alliance");
+                                $qry->execute("DELETE FROM kb3_sum_corp");
+                                $qry->execute("DELETE FROM kb3_sum_pilot");
+                                // Clear page and query cache as well since they also contain the
+                                // summaries.
+                                CacheHandler::removeByAge('SQL', 0, true);
+                                CacheHandler::removeByAge('store', 0, true);
+                                $_POST['option_clear_sum'] == 'off';
+                }
 	}
     
-	function flushMemcached()
+	static function flushMemcached()
 	{
             global $mc;
             // Check for memcached
@@ -127,7 +133,7 @@ class admin_acache
             $_POST['option_flush_memcached'] = 'off';
 	}
 	
-	function flushRedis()
+	static function flushRedis()
 	{
             global $redis;
             // Check for Redis

@@ -17,7 +17,7 @@ class admin_db
 	 *
 	 * @return float
 	 */
-	function checkCache()
+	static function checkCache()
 	{
 		$size = self::size(KB_QUERYCACHEDIR);
 		// GB
@@ -37,7 +37,7 @@ class admin_db
 	/**
 	 * Delete the contents of the query cache.
 	 */
-	function killCache()
+	static function killCache()
 	{
 		if ($_POST['option_sql_clearcache'] == 'on') {
 			CacheHandler::removeBySize("SQL", 1);
@@ -47,7 +47,7 @@ class admin_db
 	 * Create an option to link to the database upgrade page.
 	 * @return string HTML link to the database upgrade page.
 	 */
-	function CCPDBlink()
+	static function CCPDBlink()
 	{
 		if(!file_exists("update/CCPDB/update.php"))
 			return "Database update installer is not present.";
