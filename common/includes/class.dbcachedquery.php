@@ -59,7 +59,7 @@ class DBCachedQuery extends DBBaseQuery
 	 *
 	 * @param boolean $nocache true to retrieve results directly from the db.
 	 */
-	function DBCachedQuery($nocache = false)
+	function __construct($nocache = false)
 	{
 		$this->nocache = $nocache;
 

@@ -8,7 +8,7 @@
 
 class TopTable_Ship
 {
-	function TopTable_Ship($toplist)
+	function __construct($toplist)
 	{
 		$this->toplist = $toplist;
 	}

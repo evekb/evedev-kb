@@ -30,7 +30,7 @@ class Corporation extends Entity
      * @param integer $id The corporation ID.
 	 * @param boolean $externalIDFlag true if the id is the external id.
 	*/
-	function Corporation($id = 0, $externalIDFlag = false)
+	function __construct($id = 0, $externalIDFlag = false)
 	{
 		if($externalIDFlag) $this->externalid=intval($id);
 		else $this->id = intval($id);

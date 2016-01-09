@@ -70,7 +70,7 @@ class KillWrapper extends Kill
 	 * @param integer $id The ID for this kill
 	 * @param boolean $external If true then $id is treated as an external ID.
 	 */
-	function KillWrapper($id = 0, $external = false)
+	function __construct($id = 0, $external = false)
 	{
 		$id = intval($id);
 		if ($id && $external) {

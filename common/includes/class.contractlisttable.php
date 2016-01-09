@@ -19,7 +19,7 @@ class ContractListTable
 	/**
 	 * @param ContractList $contractlist
 	 */
-	function ContractListTable(ContractList $contractlist)
+	function __construct(ContractList $contractlist)
 	{
 		$this->contractlist = $contractlist;
 	}

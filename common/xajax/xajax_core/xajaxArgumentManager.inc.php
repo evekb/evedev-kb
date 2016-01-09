@@ -319,7 +319,7 @@ class xajaxArgumentManager
 		Initializes configuration settings to their default values and reads
 		the argument data from the GET or POST data.
 	*/
-	function xajaxArgumentManager()
+	function __construct()
 	{
 		$this->aArgs = array();
 		

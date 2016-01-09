@@ -26,7 +26,7 @@ class DBPreparedQuery
 /**
  * Prepare a connection for a new mysqli query.
  */
-	function DBPreparedQuery()
+	function __construct()
 	{
 		self::$dbconn = new DBConnection();
 	}

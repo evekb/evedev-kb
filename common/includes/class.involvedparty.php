@@ -36,7 +36,7 @@ class InvolvedParty
 	 * @param integer $weapon
 	 * @param integer $dmgdone 
 	 */
-	function InvolvedParty($pilotid, $corpid, $allianceid, $secstatus, $shipid,
+	function __construct($pilotid, $corpid, $allianceid, $secstatus, $shipid,
 			$weaponid, $dmgdone = 0)
 	{
 		$this->pilotid = (int)$pilotid;

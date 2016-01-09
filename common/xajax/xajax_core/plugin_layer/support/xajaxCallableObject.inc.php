@@ -52,7 +52,7 @@ class xajaxCallableObject
 		
 		obj - (object):  The object to reference.
 	*/
-	function xajaxCallableObject(&$obj)
+	function __construct(&$obj)
 	{
 		$this->obj =& $obj;
 		$this->aConfiguration = array();

@@ -27,7 +27,7 @@ class Location extends Cacheable
      */
     private $row = array();
 
-    function Location($id = 0)
+    function __construct($id = 0)
     {
         $this->id = (int)$id;
     }

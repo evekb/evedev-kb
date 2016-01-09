@@ -11,7 +11,7 @@
  */
 class ContractTarget
 {
-	function ContractTarget($contract, $crp_id, $all_id, $reg_id , $sys_id)
+	function __construct($contract, $crp_id, $all_id, $reg_id , $sys_id)
 	{
 		$this->contract_ = $contract;
 		$this->crp_id_ = $crp_id;

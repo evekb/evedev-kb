@@ -23,7 +23,7 @@ class KillListTable
 	/**
 	 * @param KillList $kill_list
 	 */
-	function KillListTable($kill_list)
+	function __construct($kill_list)
 	{
 		$this->limit_ = 0;
 		$this->kill_list_ = $kill_list;

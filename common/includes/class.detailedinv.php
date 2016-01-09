@@ -27,7 +27,7 @@ class DetailedInv extends InvolvedParty
 	 * @param Item $weapon
 	 * @param integer $dmgdone
 	 */
-	function DetailedInv($pilot, $secstatus, $corp, $alliance, $ship, $weapon, $dmgdone = 0)
+	function __construct($pilot, $secstatus, $corp, $alliance, $ship, $weapon, $dmgdone = 0)
 	{
 		$this->pilot_ = $pilot;
 		$this->secstatus_ = $secstatus;

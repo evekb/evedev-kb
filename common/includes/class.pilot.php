@@ -29,7 +29,7 @@ class Pilot extends Entity
 	 * @param string $name The pilot name.
 	 * @param integer|Corporation The pilot's corporation.
 	 */
-	function Pilot($id = 0, $externalID = 0, $name = null, $corp = null)
+	function __construct($id = 0, $externalID = 0, $name = null, $corp = null)
 	{
 		$this->id = intval($id);
 		$this->externalid = intval($externalID);

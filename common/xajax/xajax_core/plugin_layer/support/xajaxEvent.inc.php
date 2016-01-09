@@ -59,7 +59,7 @@ class xajaxEvent
 		
 		Construct and initialize this <xajaxEvent> object.
 	*/
-	function xajaxEvent($sName)
+	function __construct($sName)
 	{
 		$this->sName = $sName;
 		$this->aConfiguration = array();

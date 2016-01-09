@@ -17,7 +17,7 @@ class DBConnection
 {
 	private static $conn_id = null;
 
-	function DBConnection()
+	function __construct()
 	{
 		self::init();
 	}

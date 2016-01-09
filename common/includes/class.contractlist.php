@@ -25,7 +25,7 @@ class ContractList
 	/** @var integer */
 	private $limit;
 
-	function ContractList()
+	function __construct()
 	{
 	}
 

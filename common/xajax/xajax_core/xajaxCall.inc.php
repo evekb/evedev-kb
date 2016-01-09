@@ -111,7 +111,7 @@ class xajaxCall {
 			on the browser.  This function name should match a PHP 
 			function from your script.
 	*/
-	function xajaxCall($sFunction = '') {
+	function __construct($sFunction = '') {
 		$this->sFunction = $sFunction;
 		$this->aParameters = array();
 		$this->sMode = '';

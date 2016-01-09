@@ -17,7 +17,7 @@ class http_request
 {
 	private $follow = false;
 
-	function http_request($url = '', $method = 'GET')
+	function __construct($url = '', $method = 'GET')
 	{
 		if ($url)
 		{

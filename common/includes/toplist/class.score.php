@@ -11,7 +11,7 @@
 
 class TopList_Score extends TopList_Base
 {
-	function TopList_Score()
+	function __construct()
 	{
 		$this->limit = 30;
 	}

@@ -18,7 +18,7 @@ class Menu
 	/**
 	 * Construct a blank side menu.
 	 */
-	function Menu()
+	function __construct()
 	{
 	}
 	/**

@@ -26,7 +26,7 @@ class Item extends Cacheable
 	 * @param integer $id Item ID
 	 * @param array $row Array of attributes.
 	 */
-	function Item($id = 0, $row = null)
+	function __construct($id = 0, $row = null)
 	{
 		$this->id = (int) $id;
 		if (isset($row)) {

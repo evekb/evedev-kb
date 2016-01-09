@@ -14,9 +14,9 @@ class AwardBoxLocation extends AwardBox
 	/**
 	 * Create an AwardBox from the given TopList and descriptions.
 	 */
-	function AwardBoxLocation($list, $title, $comment, $entity, $award, $limit = 10)
+	function __construct($list, $title, $comment, $entity, $award, $limit = 10)
 	{
-            parent::AwardBox($list, $title, $comment, $entity, $award, $limit);
+            parent::__construct($list, $title, $comment, $entity, $award, $limit);
 	}
 
         

@@ -25,7 +25,7 @@ class Comments
 	 *
 	 * @param integer $kll_id The kill id to attach comments to or retrieve for.
 	 */
-	function Comments($kll_id)
+	function __construct($kll_id)
 	{
 		$this->id_ = (int)$kll_id;
 	}

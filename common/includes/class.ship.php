@@ -39,7 +39,7 @@ class Ship extends Cacheable
 	 * @param string $name The Ship name.
 	 * @param ShipClass $class The ShipClass for this Ship.
 	 */
-	function Ship($id = 0, $externalID = null, $name = null, $class = null)
+	function __construct($id = 0, $externalID = null, $name = null, $class = null)
 	{
 		if ($id) {
 			$this->id = (int)$id;

@@ -43,7 +43,7 @@ class Contract
 	/**
 	 * @param integer $ctr_id  The contract ID
 	 */
-	function Contract($ctr_id = 0)
+	function __construct($ctr_id = 0)
 	{
 		$this->ctr_id = (int)$ctr_id;
 

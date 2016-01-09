@@ -29,7 +29,7 @@ class Alliance extends Entity
 	 * @param integer $id The alliance ID.
 	 * @param boolean $external set true if the given id is external
 	 */
-	function Alliance($id = 0, $external = false)
+	function __construct($id = 0, $external = false)
 	{
 		if ($external) {
 			$this->externalid = (int) $id;

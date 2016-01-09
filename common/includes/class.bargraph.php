@@ -26,7 +26,7 @@ class BarGraph
 	 * @param type $width Unused
 	 * @param type $text Optional text to display after graph.
 	 */
-	function BarGraph($value = 0, $max = 100, $width = null, $text = "")
+	function __construct($value = 0, $max = 100, $width = null, $text = "")
 	{
 		$this->value = $value;
 		$this->text = $text;

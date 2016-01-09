@@ -18,7 +18,7 @@ class pilotSummary extends statSummary
 	/**
 	 * @param integer $plt_id
 	 */
-	function pilotSummary($plt_id)
+	function __construct($plt_id)
 	{
 		$this->plt_id = (int) $plt_id;
 		$this->executed = false;

@@ -18,7 +18,7 @@ class Translate
         return $str;
     }
 
-    function Translate($language)
+    function __construct($language)
     {
         $this->language_ = $language;
     }

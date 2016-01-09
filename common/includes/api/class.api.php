@@ -5,7 +5,7 @@ class API {
 
 	protected $pheal = null;
 	
-	function API() {
+	function __construct() {
 		// Loads pheal, so we can do some stuff with it, 
 		require_once("common/pheal/Pheal.php");
 		spl_autoload_register("Pheal::classload");

@@ -56,7 +56,7 @@ class xajaxResponseManager
 		
 		Construct and initialize the one and only xajaxResponseManager object.
 	*/
-	function xajaxResponseManager()
+	function __construct()
 	{
 		$this->objResponse = NULL;
 		$this->aDebugMessages = array();

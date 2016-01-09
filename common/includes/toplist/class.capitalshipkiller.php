@@ -11,7 +11,7 @@
 
 class TopList_CapitalShipKiller extends TopList_Base
 {
-	function TopList_CapitalShipKiller()
+	function __construct()
 	{
 		trigger_error("Using ".get_class($this)." is deprecated. Use TopList_Kills and set ship classes as needed.", E_USER_NOTICE);
 		$this->addVictimShipClass(20); // freighter

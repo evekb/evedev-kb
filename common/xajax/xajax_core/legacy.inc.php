@@ -26,9 +26,9 @@ class legacyXajaxResponse extends xajaxResponse {
 }
 
 class legacyXajax extends xajax {
-	function legacyXajax($sRequestURI='', $sWrapperPrefix='xajax_', $sEncoding=XAJAX_DEFAULT_CHAR_ENCODING, $bDebug=false)
+	function __construct($sRequestURI='', $sWrapperPrefix='xajax_', $sEncoding=XAJAX_DEFAULT_CHAR_ENCODING, $bDebug=false)
 	{
-		parent::xajax();
+		parent::__construct();
 		$this->configure('requestURI', $sRequestURI);
 		$this->configure('wrapperPrefix', $sWrapperPrefix);
 		$this->configure('characterEncoding', $sEncoding);

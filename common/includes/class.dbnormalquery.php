@@ -18,7 +18,7 @@ class DBNormalQuery extends DBBaseQuery
 	/**
 	 * Prepare a connection for a new mysqli query.
 	 */
-	function DBNormalQuery()
+	function __construct()
 	{
 		self::$dbconn = new DBConnection();
 	}

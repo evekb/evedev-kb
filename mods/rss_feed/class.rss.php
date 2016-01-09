@@ -10,7 +10,7 @@
  */
 class RSSTable extends KillListTable
 {
-    function RSSTable($kill_list)
+    function __construct($kill_list)
     {
         $this->limit = 0;
         $this->offset = 0;

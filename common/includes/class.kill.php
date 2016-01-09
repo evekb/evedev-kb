@@ -73,7 +73,7 @@ class Kill extends Cacheable
 	 * @param integer $id The ID for this kill
 	 * @param boolean $external If true then $id is treated as an external ID.
 	 */
-	function Kill($id = 0, $external = false)
+	function __construct($id = 0, $external = false)
 	{
 		$id = intval($id);
 		if($id && $external) {

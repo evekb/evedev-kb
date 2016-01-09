@@ -15,7 +15,7 @@ class Region
 	private $name = '';
 	private $coords = array();
 
-    function Region($id = 0)
+    function __construct($id = 0)
     {
         $this->id = $id;
     }

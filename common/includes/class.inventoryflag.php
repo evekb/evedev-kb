@@ -106,7 +106,7 @@ class InventoryFlag extends Cacheable
      * instantiates a new InventoryFlag
      * @param int $flag the flag
      */
-    function InventoryFlag($flag)
+    function __construct($flag)
     {
         $this->flagID = $flag;
         

@@ -25,7 +25,7 @@ class role
 {
 	private static $roles;
 
-	function role()
+	function __construct()
 	{
 		trigger_error('The class "role" may only be invoked statically.', E_USER_ERROR);
 	}

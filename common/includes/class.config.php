@@ -21,7 +21,7 @@ class Config
 	 *
 	 * @param string $site The site to configure for. Default is KB_SITE define.
 	 */
-	function Config($site = KB_SITE)
+	function __construct($site = KB_SITE)
 	{
 		self::$configSite = $site;
 		self::init();

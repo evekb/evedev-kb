@@ -8,7 +8,7 @@
 
 class TopTable_Pilot
 {
-	function TopTable_Pilot($toplist, $entity)
+	function __construct($toplist, $entity)
 	{
 		$this->toplist = $toplist;
 		$this->entity_ = $entity;

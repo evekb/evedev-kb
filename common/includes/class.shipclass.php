@@ -18,7 +18,7 @@ class ShipClass extends Cacheable
 	private $value = null;
 	private $points = null;
 
-	function ShipClass($id = 0)
+	function __construct($id = 0)
 	{
 		$this->id = (int) $id;
 	}

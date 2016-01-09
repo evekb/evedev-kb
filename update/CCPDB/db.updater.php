@@ -9,7 +9,7 @@ class DBUpdater
     private $fileName = '';
     private $working = true;
     
-    function DBUpdater($pathToGZ = '')
+    function __construct($pathToGZ = '')
     {
 	if($pathToGZ == '')
 	{

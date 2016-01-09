@@ -31,7 +31,7 @@ class DestroyedItem
          * * @param string|integer $location
 	 * @param integer $locationID
 	 */
-	function DestroyedItem($item, $quantity, $singleton, $location, $locationID = 0)
+	function __construct($item, $quantity, $singleton, $location, $locationID = 0)
 	{
 		$this->item_ = $item;
 		$this->quantity_ = (int) $quantity;

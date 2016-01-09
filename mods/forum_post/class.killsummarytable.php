@@ -4,7 +4,7 @@
  */
 class KillSummaryTable
 {
-    function KillSummaryTable($klist = null, $llist = null)
+    function __construct($klist = null, $llist = null)
     {
         $this->klist_ = $klist;
 	    $this->llist_ = $llist;

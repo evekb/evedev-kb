@@ -48,7 +48,7 @@ class xajaxLanguageManager
 		
 		Construct and initialize the one and only xajax language manager object.
 	*/
-	function xajaxLanguageManager()
+	function __construct()
 	{
 		$this->aMessages = array();
 		

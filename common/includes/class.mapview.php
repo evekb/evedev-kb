@@ -34,7 +34,7 @@ class MapView
 	private $sysname_ = '';
 	private $syssec_ = 0;
 
-	function MapView($mode, $size = 200)
+	function __construct($mode, $size = 200)
 	{
 		$this->mode_ = $mode;
 		$this->imgwidth_ = $size;

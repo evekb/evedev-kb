@@ -22,7 +22,7 @@ class Zip
 	 * Basic zip file parser. It allows you to extract zip files, create
      * zips, but not expand existing zips.
      */
-    function Zip($fileName)
+    function __construct($fileName)
     {
 	$this->filename = $fileName;
     }

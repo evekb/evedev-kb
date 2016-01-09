@@ -16,7 +16,7 @@ class Navigation
 	private $site = null;
 	private	$qry = null;
 
-	function Navigation($site = KB_SITE)
+	function __construct($site = KB_SITE)
 	{
 		$this->site = $site;
 	}

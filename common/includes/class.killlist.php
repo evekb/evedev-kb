@@ -61,7 +61,7 @@ class KillList
 	private $limit_ = 0;
 	private $expr = array();
 
-	function KillList()
+	function __construct()
 	{
 		$this->qry_ = DBFactory::getDBQuery();
 		$this->expr = array("kll.kll_id",
@@ -1084,7 +1084,7 @@ class KillList
 
 class CombinedKillList extends KillList
 {
-	function CombinedKillList()
+	function __construct()
 	{
 	// please only load killlists here
 		$this->lists = func_get_args();

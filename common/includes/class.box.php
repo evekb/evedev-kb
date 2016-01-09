@@ -19,7 +19,7 @@ class Box
 	 *
 	 * @param string $title 
 	 */
-    function Box($title = '')
+    function __construct($title = '')
     {
         $this->title_ = $title;
         $this->box_array = array();

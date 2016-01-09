@@ -11,7 +11,7 @@
  */
 class Profiler
 {
-    function Profiler()
+    function __construct()
     {
     }
 

@@ -17,7 +17,7 @@ class PageSplitter
 	 * @param integer $max Total count
 	 * @param integer $split Number of lines to show on each page
 	 */
-	function PageSplitter($max, $split)
+	function __construct($max, $split)
 	{
 		$this->max_ = $max;
 		$this->split_ = $split;

@@ -20,7 +20,7 @@ class dogma extends Cacheable
 	/**
 	 * @param integer $itemID
 	 */
-	public function dogma($itemID)
+	public function __construct($itemID)
 	{
 		$itemID = intval($itemID);
 		if(!$itemID)

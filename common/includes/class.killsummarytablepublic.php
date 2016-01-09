@@ -13,7 +13,7 @@
 class KillSummaryTablePublic extends KillSummaryTable
 {
 
-	function KillSummaryTablePublic($klist = null)
+	function __construct($klist = null)
 	{
 		$this->klist = $klist;
 		$this->verbose = true;

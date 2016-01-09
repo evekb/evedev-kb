@@ -8,7 +8,7 @@
 
 class TopTable_Weapon
 {
-	function TopTable_Weapon(TopList_Base $toplist)
+	function __construct(TopList_Base $toplist)
 	{
 		$this->toplist = $toplist;
 	}

@@ -20,7 +20,7 @@ class allianceSummary extends statSummary
 	 * 
 	 * @param integer $all_id
 	 */
-	function allianceSummary($all_id)
+	function __construct($all_id)
 	{
 		$this->all_id = (int) $all_id;
 	}

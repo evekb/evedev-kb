@@ -17,7 +17,7 @@ class DBMemcachedQuery extends DBCachedQuery
 	 *
 	 * @param boolean $nocache true to retrieve results directly from the db.
 	 */
-	function DBMemcachedQuery($nocache = false)
+	function __construct($nocache = false)
 	{
 		$this->nocache = $nocache;
 

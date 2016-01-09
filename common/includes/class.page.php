@@ -28,7 +28,7 @@ class Page
 	 *
 	 * Page generation timer is started on Page creation.
 	 */
-	function Page($title = '', $cachable = true)
+	function __construct($title = '', $cachable = true)
 	{
 		global $timeStarted;
 		$this->timestart = &$timeStarted;

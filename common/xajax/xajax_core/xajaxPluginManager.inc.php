@@ -62,7 +62,7 @@ class xajaxPluginManager
 		
 		Construct and initialize the one and only xajax plugin manager.
 	*/
-	function xajaxPluginManager()
+	function __construct()
 	{
 		$this->aRequestPlugins = array();
 		$this->aResponsePlugins = array();

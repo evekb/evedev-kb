@@ -8,7 +8,7 @@
 
 class TopTable_Corp
 {
-	function TopTable_Corp($toplist, $entity)
+	function __construct($toplist, $entity)
 	{
 		$this->toplist = $toplist;
 		$this->entity_ = $entity;

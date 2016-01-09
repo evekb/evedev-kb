@@ -20,7 +20,7 @@ class corpSummary extends statSummary
 	 * 
 	 * @param integer $crp_id
 	 */
-	function corpSummary($crp_id)
+	function __construct($crp_id)
 	{
 		$this->crp_id = (int)$crp_id;
 	}

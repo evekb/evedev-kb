@@ -38,7 +38,7 @@ class Fetcher
 	/**
 	 * Construct the Fetcher class and initialise variables.
 	 */
-	function Fetcher()
+	function __construct()
 	{
 		
 	}

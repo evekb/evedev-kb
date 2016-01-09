@@ -88,7 +88,7 @@ class xajaxResponse
 		
 		Create and initialize a xajaxResponse object.
 	*/
-	function xajaxResponse()
+	function __construct()
 	{
 		//SkipDebug
 		if (0 < func_num_args()) {
@@ -1806,7 +1806,7 @@ class xajaxCustomResponse
 	var $sCharacterEncoding;
 	var $bOutputEntities;
 	
-	function xajaxCustomResponse($sContentType)
+	function __construct($sContentType)
 	{
 		$this->sOutput = '';
 		$this->sContentType = $sContentType;

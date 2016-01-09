@@ -15,7 +15,7 @@ class FileCacher
 	 * @param boolean $updateXML
 	 * @return integer 
 	 */
-    function FileCacher($hostFileName, $cacheFileName, $updateXML = false)
+    function __construct($hostFileName, $cacheFileName, $updateXML = false)
     {	
 	//check if cURL exists, else use fsocket open
 	if (function_exists('curl_init'))

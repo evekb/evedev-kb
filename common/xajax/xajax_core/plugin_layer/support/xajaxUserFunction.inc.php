@@ -103,7 +103,7 @@ class xajaxUserFunction
 				
 			$xajax->register(XAJAX_FUNCTION, $myUserFunction);				
 	*/
-	function xajaxUserFunction($uf, $sInclude=NULL, $aConfiguration=array())
+	function __construct($uf, $sInclude=NULL, $aConfiguration=array())
 	{
 		$this->sAlias = '';
 		$this->uf =& $uf;

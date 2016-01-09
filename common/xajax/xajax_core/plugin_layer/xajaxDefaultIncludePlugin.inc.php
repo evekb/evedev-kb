@@ -45,7 +45,7 @@ class xajaxIncludeClientScriptPlugin extends xajaxRequestPlugin
 	var $sLanguage;
 	var $nResponseQueueSize;
 
-	function xajaxIncludeClientScriptPlugin()
+	function __construct()
 	{
 		$this->sJsURI = '';
 		$this->aJsFiles = array();

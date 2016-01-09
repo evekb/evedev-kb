@@ -34,7 +34,7 @@ class SolarSystem extends Cacheable
          */
         protected $locationIDs = array();
 
-    function SolarSystem($id = 0)
+    function __construct($id = 0)
     {
         $this->id = (int)$id;
     }

@@ -30,7 +30,7 @@ class ItemList
 	 * @param array $itemarray
 	 * @param float $price
 	 */
-	function ItemList($itemarray = null, $price = 0)
+	function __construct($itemarray = null, $price = 0)
 	{
 		if (isset($itemarray)) {
 			$this->itemarray = $itemarray;

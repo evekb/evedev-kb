@@ -11,7 +11,7 @@
  */
 class involved
 {
-	function involved()
+	function __construct()
 	{
 		trigger_error('The class "involved" may only be invoked statically.', E_USER_ERROR);
 	}

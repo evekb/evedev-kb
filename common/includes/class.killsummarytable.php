@@ -37,7 +37,7 @@ class KillSummaryTable
 	 * @param KillList $klist
 	 * @param KillList $llist
 	 */
-	function KillSummaryTable($klist = null, $llist = null)
+	function __construct($klist = null, $llist = null)
 	{
 		$this->klist = $klist;
 		$this->llist = $llist;

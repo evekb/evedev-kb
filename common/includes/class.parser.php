@@ -31,7 +31,7 @@ class Parser
 		return $str;
 	}
 
-	function Parser($killmail, $externalID = null, $loadExternals = true)
+	function __construct($killmail, $externalID = null, $loadExternals = true)
 	{
 		self::$loadExternals = $loadExternals;
 		// -------------------------------------

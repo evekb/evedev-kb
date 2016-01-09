@@ -49,7 +49,7 @@ class ZKBFetch
     /** @param int maximum number of cycles tried to fetch to get new kills before stopping as a safety measure */
     public static $MAXIMUM_NUMBER_OF_CYCLES = 6;
    
-    public function ZKBFetch($id = NULL)
+    public function __construct($id = NULL)
     {
         $this->id = $id;
         $this->killTimestampOffset = self::$KILL_TIMESTAMP_OFFSET_DEFAULT;

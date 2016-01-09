@@ -17,7 +17,7 @@ class thumb
 	protected $encoding = 'jpeg';
 	protected $thumb = '';
 
-	function thumb($str_id, $size, $type = 'pilot')
+	function __construct($str_id, $size, $type = 'pilot')
 	{
 		$this->id = $str_id;
 		$this->size = $size;

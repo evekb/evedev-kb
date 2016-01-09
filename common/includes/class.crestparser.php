@@ -30,7 +30,7 @@ class CrestParser
          * 
          * @param string $crestUrl the URL to the crest representation of the kill
          */
-	function CrestParser($crestUrl)
+	function __construct($crestUrl)
 	{                
             $this->crestUrl = $crestUrl;
             // validate the syntax
