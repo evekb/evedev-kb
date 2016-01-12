@@ -21,10 +21,10 @@ define('CREST_PUBLIC_URL', 'https://public-crest.eveonline.com');
 
 // current version: major.minor.sub.ccpDBupdateNo
 // even numbers for minor = development version
-define('KB_VERSION', '4.2.17.0');
-define('KB_RELEASE', '(Frostline 1.0)');
-define('KB_CCP_DB_VERSION', '116241');
-define('KB_CCP_DB_DATE', 'Dec 9, 2015');
+define('KB_VERSION', '4.2.18.0');
+define('KB_RELEASE', '(YC-118-1 1.0)');
+define('KB_CCP_DB_VERSION', '116645');
+define('KB_CCP_DB_DATE', 'Jan 12, 2016');
 define('ID_FEED_VERSION', 1.40);
 define('ZKB_FETCH_VERSION', 1.0);
 define('KB_APIKEY_LEGACY', 1);
