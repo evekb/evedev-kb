@@ -17,7 +17,11 @@ class SimpleCrest
      * kills with many involved parties might take very long to fetch
      */
     public static $TIMEOUT = 45;
+    /** request rate limit / second for public CREST */
+    public static $RATE_LIMIT = 150;
     
+    
+    protected static $lastRequestTimestamp = null;
     /**
      * preferred method of getting data from CREST;
      * will fall back to file_get_contents if curl isn't available 
@@ -26,7 +30,7 @@ class SimpleCrest
     public static $HTTP_METHOD = "curl";
     
     
-    public static $USER_AGENT = "EDK HTTP Requester, http://www.evekb.org";
+    public static $USER_AGENT = "EDK CREST Requester, http://www.evekb.org/forum";
     
     
     protected static $curl;
@@ -44,6 +48,8 @@ class SimpleCrest
         {
             return null;
         }
+        
+        self::respectRateLimit();
 
         API_Helpers::autoSetApiConnectionMethod();
         // determine whether cURL is available
@@ -112,7 +118,6 @@ class SimpleCrest
         if($httpCode >= 400) {
             switch($httpCode) {
                 case 400:
-                case 403:
                 case 503: 
                     return $result;
                     break;
@@ -172,7 +177,7 @@ class SimpleCrest
         $opts['http']['header'] = $header;
         
         $context = stream_context_create($opts);
-
+        
         if (false === ($data = @file_get_contents($url, false, $context))) {
 
             if (false === $http_response_header) {
@@ -249,5 +254,34 @@ class SimpleCrest
             $str = substr($str, $pos + 2 + $len);
       }
       return $res;
+    }
+    
+    /**
+     * blocking waits until the next request may be sent
+     */
+    protected static function respectRateLimit()
+    {
+        // calculate the minimum interval between requests in seconds
+        $minimumRequestInterval = 1.0 / self::$RATE_LIMIT;
+        
+        // initialize last request timestamp
+        if(is_null(self::$lastRequestTimestamp))
+        {
+            self::$lastRequestTimestamp = microtime(true) - 1;
+        }
+        
+        
+        $timeSinceLastRequest = microtime(true) - self::$lastRequestTimestamp;
+        // check if we have to wait before the next request
+        if($timeSinceLastRequest < $minimumRequestInterval)
+        {
+            $timeToWait = ceil($minimumRequestInterval - $timeSinceLastRequest)*1000000;
+            usleep($timeToWait);
+        }
+        
+        // update last request time
+        self::$lastRequestTimestamp = microtime(true);
+
+        return;
     }
 }

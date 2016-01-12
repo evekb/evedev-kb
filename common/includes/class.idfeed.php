@@ -538,15 +538,51 @@ class IDFeed
                                 // will be thrown creating the raw mail, and thus creating the kill's hash, fatally fails
                                 $errorstring = "";
                                 $killException = null;
-                                try
-                                {
-                                    $id = $kill->add();
-                                } 
                                 
-                                catch (KillException $ex) 
+                                // check if we are fetching from an EDK IDFeed
+                                if(!$this->isApiFetch && $kill->getExternalID())
                                 {
-                                    $killException = $ex;
-                                    $id = 0;
+                                    // if the kill has an external ID, we fetch it from CREST 
+                                    // in order to be sure all the kill's information is correct
+                                    // (e.g. a kill with external ID but incorrectly handled kill timestamp
+                                    // would make it impossible to calculate the CREST link)
+                                    $crestLink = $kill->getCrestUrl();
+                                    if(is_null($crestLink))
+                                    {
+                                        $killException = new KillException("Unable to calculate CREST URL for kill, skipping!");
+                                        $id = 0;
+                                    }
+ 
+                                    $CrestParser = new CrestParser($crestLink);
+                                    try
+                                    {
+                                        $id = $CrestParser->parse(true);
+                                    } 
+                                    catch (CrestException $e) 
+                                    {
+                                        $killException = new KillException($e->getMessage());
+                                        $id = 0;
+                                        
+                                        // special treatment for dupes
+                                        if($e->getCode() == -4 )
+                                        {
+                                            $id = $e->getCode();
+                                        }
+                                    }
+                                }
+                                
+                                else
+                                {
+                                    try
+                                    {
+                                        $id = $kill->add();
+                                    } 
+
+                                    catch (KillException $ex) 
+                                    {
+                                        $killException = $ex;
+                                        $id = 0;
+                                    }
                                 }
 
 				if ($id == 0) {
@@ -582,8 +618,8 @@ class IDFeed
                                                          . "kb3_kills.kll_z = ".$kill->getZCoordinate()." WHERE kb3_kills.kll_id = $id AND"
 							." (kb3_kills.kll_external_id IS NULL OR kb3_kills.kll_x = 0)");
 				   }
-					$this->duplicate[] = array($externalID, $internalID, $id);
-					$skip = true;
+                                    $this->duplicate[] = array($externalID, $internalID, $id);
+                                    $skip = true;
 				} else {
 					$this->posted[] = array($externalID, $internalID,
 						$id);
@@ -940,6 +976,16 @@ class IDFeed
 	private function killExists(&$row)
 	{
 		$qry = DBFactory::getDBQuery(true);
+                if ((int)$row['killID'] > 0) {
+			$qry->execute("SELECT kll_id FROM kb3_kills "
+					."WHERE kll_external_id = ".(int)$row['killID']);
+			if ($qry->recordCount()) {
+				$qrow = $qry->getRow();
+				$id = $qrow['kll_id'];
+				return $id;
+			}
+		}
+                
 		if (strlen($row['hash']) > 1) {
 			$qry->execute("SELECT kll_id, kll_external_id, kll_trust FROM kb3_mails"
 					." WHERE kll_hash = 0x".$qry->escape(strval($row['hash'])));
@@ -954,15 +1000,6 @@ class IDFeed
 							(int)$row['killID']." WHERE kb3_mails.kll_id = $id AND ".
 							"kb3_mails.kll_external_id IS NULL");					
 				}
-				return $id;
-			}
-		}
-		if ((int)$row['killID'] > 0) {
-			$qry->execute("SELECT kll_id FROM kb3_kills "
-					."WHERE kll_external_id = ".(int)$row['killID']);
-			if ($qry->recordCount()) {
-				$qrow = $qry->getRow();
-				$id = $qrow['kll_id'];
 				return $id;
 			}
 		}

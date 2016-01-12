@@ -141,15 +141,6 @@ function post_crest()
         || $page->isAdmin()) {
 
         $CrestParser = new CrestParser($_POST['crest_url']);
-
-        if($CrestParser->getError()) {
-            $errors = $CrestParser->getError();
-            foreach ($errors as $error) {
-                $html .= 'Error: '.$error[0];
-            }
-            return $html;
-        }
-
         // Filtering
 
         try

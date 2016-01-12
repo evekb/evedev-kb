@@ -33,16 +33,6 @@ class CrestParser
 	function __construct($crestUrl)
 	{                
             $this->crestUrl = $crestUrl;
-            // validate the syntax
-            try
-            {
-                $this->validateCrestUrl();
-            }
-            
-            catch(CrestParserException $e)
-            {
-                $this->error($e->getMessage());
-            }
 	}
         
         
@@ -58,14 +48,15 @@ class CrestParser
                     strlen($urlPieces[5]) != 40)
             {
                 
-                throw new CrestParserException("Invalid CREST URL.");
+                throw new CrestParserException("Invalid CREST URL: ".$this->crestUrl);
             }        
         }
         
         
 	function parse($checkauth = true)
 	{
-
+                $this->validateCrestUrl();
+                
                 $urlPieces = explode("/", $this->crestUrl);
                 $this->externalID = (int)$urlPieces[4];
                 $this->crestHash = $urlPieces[5];
