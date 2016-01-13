@@ -2197,8 +2197,9 @@ class Kill extends Cacheable
             
             // prepare the final blow pilot's characterID
             $finalBlowCharacterId = $finalBlowPilot->getExternalID();
-            // make sure this is actually a real character ID; mustn be NULL, mustn't be less than 90M
-            if(!$finalBlowCharacterId || $finalBlowCharacterId < 90000000)
+            // make sure this is actually a real character ID; mustn be NULL, mustn't be less than 3M
+            // player characters are above 90M, Drifters are above 3M
+            if(!$finalBlowCharacterId || $finalBlowCharacterId < 3000000)
             {
                 $finalBlowCharacterId = "None";
             }

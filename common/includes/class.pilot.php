@@ -74,7 +74,8 @@ class Pilot extends Entity
 	public function getExternalID($populateList = false)
 	{
                 // sanity-check: don't return external IDs that clearly aren't characterIDs (but might be typeIDs)
-                if(is_numeric($this->externalid) && $this->externalid > 0 && $this->externalid < 90000000)
+                // player characters are above 90M, Drifters are above 3M
+                if(is_numeric($this->externalid) && $this->externalid > 0 && $this->externalid < 3000000)
                 {
                     return 0;
                 }
@@ -84,7 +85,8 @@ class Pilot extends Entity
 		if (!$populateList) {
 			$this->execQuery();
                         // sanity-check: don't return external IDs that clearly aren't characterIDs (but might be typeIDs)
-                        if(is_numeric($this->externalid) && $this->externalid < 90000000)
+                        // player characters are above 90M, Drifters are above 3M
+                        if(is_numeric($this->externalid) && $this->externalid < 3000000)
                         {
                             return 0;
                         }
