@@ -17,6 +17,7 @@
 
 if(function_exists("set_time_limit"))
 	@set_time_limit(0);
+@ini_set('memory_limit', '1024M');
 
 if (!substr_compare(PHP_OS, 'win', 0, 3, true))
 {
