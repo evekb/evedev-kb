@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.17.0
+Eve Development Network Killboard v4.2.18.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -26,6 +26,26 @@ o/ EVE Development Network
 VERSION HISTORY
 ===============
 
+v4.2.18.0
+
+Features:
+Updated EDK to 4.2.18.0 and CCP DB to YC-118-1 1.0.116645
+Add Redis cache system based on memcache handler
+
+Enhancements:
+Increased memory limit for long-running cron jobs
+Added location top list to front page
+PHP errors should only be displayed on the frontend when `display_errors` is on.
+Made update 038 more robust
+
+Bugfixes:
+Fix: CREST link calculations for Drifter kills
+Renamed subselct in location toplist query
+Fix: Location toplist now respects PodNoobship setting
+Fixed location toplist description when showing kills
+Fix: Pilot name was missing from top Solokillers, Damagedealers and Finalblowe toplists
+
+-------------------------------------------
 v4.2.17.0
 
 Features:
