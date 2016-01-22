@@ -10,11 +10,9 @@ comment_password	CHANGEME
 crest_pw_needed	1
 post_crest_password	CHANGEME
 adapt_items	0
-auto_reinforced	0
 bs_podlink	0
 cache_enabled	1
 date_gmtime	1
-is_reinforced	0
 item_values	1
 killlist_iskloss	0
 killlist_alogo	1

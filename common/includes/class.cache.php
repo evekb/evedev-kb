@@ -22,43 +22,6 @@ class cache
 	protected static $reinforced_prob = 20;
 
 	/**
-	 * Check the server load using /proc/loadavg.
-	 *
-	 * Changes reinforced status depending on load where supported.
-	 *
-	 * @return bool true if the server is reinforced, false if not or not
-	 * supported
-	 */
-	public static function checkLoad()
-	{
-		if (PHP_OS != 'Linux') {
-			return false;
-		}
-
-		static $load = null;
-		if (null != $load) {
-			return!!config::get('is_reinforced');
-		}
-		$load = @file_get_contents('/proc/loadavg');
-		if (false === $load) {
-			return;
-		}
-		$array = explode(' ', $load);
-		if ((float) $array[0] > self::$reinforced_enable_threshold) {
-			// If load is high put killboard into RF
-			config::set('is_reinforced', true);
-			return true;
-		} else if (config::get('is_reinforced')
-				&& (float) $array[0] < self::$reinforced_disable_threshold
-				&& rand(1, self::$reinforced_prob) == 1) {
-			// If load is consistently low cancel reinforced
-			config::set('is_reinforced', false);
-			return false;
-		}
-		return!!config::get('is_reinforced');
-	}
-
-	/**
 	 * Check if the current page should be cached.
 	 *
 	 * @param string $page The current page
@@ -73,10 +36,6 @@ class cache
 		// Don't cache the image files.
 		if ($page == 'thumb' || $page == 'sig') {
 			return false;
-		}
-		self::checkLoad();
-		if (config::get('is_reinforced') && count($_POST) == 0) {
-			return true;
 		}
 
 		$cacheignore = explode(',', config::get('cache_ignore'));
@@ -312,14 +271,6 @@ class cache
 		}
 
 		$cachetime = $cachetime * 60;
-
-		if (config::get('is_reinforced')) {
-			// cache is extended in reinforced mode
-			$cachetime = $cachetime * 20;
-			if ($cachetime < 60) {
-				$cachetime = 60;
-			}
-		}
 
 		return $cachetime;
 	}
