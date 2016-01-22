@@ -12,6 +12,16 @@ if(!$installrunning)
 $stoppage = true;
 include('../common/includes/class.xml.php');
 
+// fix for some Ubuntu base systems that don't have gzopen but only gzopen64
+if(!function_exists('gzopen') && function_exists('gzopen64'))
+{     
+    function gzopen($filename, $mode, $use_include_path = 0)
+    {         
+        return gzopen64($filename, $mode, $use_include_path);     
+        
+    } 
+}
+
 echo 'Reading packages...<br/>';
 $xml = new sxml();
 $kb = $xml->parse(file_get_contents('../packages/database/contents.xml'));

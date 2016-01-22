@@ -440,3 +440,14 @@ function toMysqlDateTime($timestamp)
 
     return $mysqlTimestamp;
 }
+
+
+// fix for some Ubuntu base systems that don't have gzopen but only gzopen64
+if(!function_exists('gzopen') && function_exists('gzopen64'))
+{     
+    function gzopen($filename, $mode, $use_include_path = 0)
+    {         
+        return gzopen64($filename, $mode, $use_include_path);     
+        
+    } 
+}
