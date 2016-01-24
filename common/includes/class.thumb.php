@@ -357,7 +357,7 @@ class thumb
 
 class thumbInt extends thumb
 {
-	function thumbInt($int_id, $size, $type)
+	function __construct($int_id, $size, $type)
 	{
 		$this->size = $size;
 		switch($this->type)
