@@ -52,15 +52,9 @@ loadMods($page);
 
 foreach($feeds as $key => &$val) {
 	$tmphtml = '';
-	if (isIDFeed($val['url'])) {
-		if ($tmphtml = getIDFeed($key, $val)) {
-			$html .= "Fetching IDFeed: ".$key."<br />\n".$tmphtml;
-		}
-	} else {
-		if ($tmphtml = getOldFeed($key, $val)) {
-			$html .= "Fetching RSS Feed: ".$key."<br />\n".$tmphtml;
-		}
-	}
+        if ($tmphtml = getIDFeed($key, $val)) {
+                $html .= "Fetching IDFeed: ".$key."<br />\n".$tmphtml;
+        }
 }
 echo $html."<br />\n";
 
@@ -127,115 +121,4 @@ function getIDFeed(&$key, &$val)
 		$html .= $feedfetch->errormsg();
 	}
 	return $html."\n";
-}
-
-/**
- * Check if this is an IDFeed.
- * The url parameter is modified if needed to refer directly to the IDFeed.
- * @param string $url
- * @return string HTML describing the fetch result.
- */
-function isIDFeed(&$url)
-{
-	if (!$url) {
-		// No point checking further.
-		return false;
-	} else if (strpos($url, 'idfeed')) {
-		// Believe the user ...
-		return true;
-	}
-
-	if(strpos($url, '?')) {
-		$urltest = preg_replace('/\?.*/', '?a=idfeed&kll_id=-1', $url);
-	} else if (substr($url, -1) == '/') {
-		$urltest = $url."?a=idfeed&kll_id=-1";
-	} else {
-		$urltest = $url."/?a=idfeed&kll_id=-1";
-	}
-	$http = new http_request($urltest);
-	$http->set_useragent("EDK IDFeedfetcher Check");
-	$http->set_timeout(10);
-	$res = $http->get_content();
-	if ($res && strpos($res, 'edkapi')) {
-		if(strpos($url, '?a=feed')) {
-			$url = preg_replace('/\?a=feed/', '?a=idfeed', $url);
-		} else if(strpos($url, '?')) {
-			$url = preg_replace('/\?/', '?a=idfeed&', $url);
-		} else if (substr($url, -1) == '/') {
-			$url = $url."?a=idfeed";
-		} else {
-			$url = $url."/?a=idfeed";
-		}
-		return true;
-	} else {
-		return false;
-	}
-}
-
-function getOldFeed(&$key, &$val)
-{
-	$html = '';
-	// Just in case, check for empty urls.
-	if(empty($val['url'])) {
-		return '';
-	}
-
-	$url = $val['url'];
-	if (!strpos($url, 'a=feed')) {
-		if (strpos($url, '?')) {
-			$url = str_replace('?', '?a=feed&', $url);
-		} else {
-			$url .= "?a=feed";
-		}
-	}
-	$feedfetch = new Fetcher();
-
-	$myids = getOwners();
-	$lastkill = 0;
-	foreach($myids as $myid) {
-		// If a last kill id is specified fetch all kills since then
-		if($val['lastkill'] > 0) {
-			$urltmp = $url.'&combined=1&lastkllid='.$val['lastkill'];
-			$html .= preg_replace('/<div.+No kills added from feed.+<\/div>/',
-				'', $feedfetch->grab($urltmp, $myid, $val['trust']))."\n";
-			if(intval($feedfetch->lastkllid_) < $lastkill || !$lastkill)
-					$lastkill = intval($feedfetch->lastkllid_);
-			// Check if feed used combined list. get losses if not
-			if(!$feedfetch->combined_) {
-				$html .= preg_replace('/<div.+No kills added from feed.+<\/div>/',
-					'', $feedfetch->grab($urltmp, $myid."&losses=1", $val['trust']))."\n";
-				if(intval($feedfetch->lastkllid_) < $lastkill || !$lastkill)
-						$lastkill = intval($feedfetch->lastkllid_);
-			}
-			// Store most recent kill id fetched
-			if($lastkill > $val['lastkill']) {
-				$val['lastkill'] = $lastkill;
-			}
-		} else {
-			// If no last kill is specified then fetch by week
-			// Fetch for current and previous weeks, both kills and losses
-			for($l = $week - 1; $l <= $week; $l++)
-			{
-				$html .= preg_replace('/<div.+No kills added from feed.+<\/div>/',
-					'', $feedfetch->grab($url . "&year=" . $year . "&week=" . $l,
-						$myid, $val['trust'])) . "\n";
-				if(intval($feedfetch->lastkllid_) < $lastkill
-						|| !$lastkill) {
-					$lastkill = intval($feedfetch->lastkllid_);
-				}
-				$html .= preg_replace('/<div.+No kills added from feed.+<\/div>/',
-					'', $feedfetch->grab($url . "&year=" . $year . "&week=" . $l,
-						$myid . "&losses=1", $val['trust'])) . "\n";
-				if(intval($feedfetch->lastkllid_) < $lastkill
-						|| !$lastkill) {
-					$lastkill = intval($feedfetch->lastkllid_);
-				}
-			}
-			// Store most recent kill id fetched
-			if($lastkill > $val['lastkill']) {
-				$val['lastkill'] = $lastkill;
-			}
-		}
-	}
-	return $html;
 }
