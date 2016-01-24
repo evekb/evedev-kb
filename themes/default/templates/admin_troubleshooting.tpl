@@ -5,7 +5,7 @@
 		<div class="block-header2">{$i}</div>
 {foreach from=$trouble.$i item="module"}
 		<div class="admin-troubleshooting-body admin-troubleshooting-{if $module.passed}working{else}error{/if}">
-			<img src="{$img_url}/panel/{if $module.passed}working{else}error{/if}.jpg" alt="" />
+			<img src="{$img_url}/panel/{if $module.passed}working{else}error{/if}.png" alt="" />
 			{$module.text}
 		</div>
 {/foreach}
