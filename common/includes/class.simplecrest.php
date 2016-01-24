@@ -123,7 +123,7 @@ class SimpleCrest
                     break;
                 default:
             }            
-            throw new Exception('Error getting data: HTTP '.$httpCode.', URL: '.$url);
+            throw new Exception('Error getting data: HTTP '.$httpCode.', URL: '.$url, $httpCode);
         }
         
         // curl errors

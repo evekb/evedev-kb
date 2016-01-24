@@ -103,31 +103,23 @@ function getIDFeed(&$key, &$val)
 	}
 	$feedfetch = new IDFeed();
 	$feedfetch->setID();
-	if($val['apikills']) {
-		$feedfetch->setAllKills(0);
-	} else {
-		$feedfetch->setAllKills(1);
-	}
+	$feedfetch->setAllKills(1);
+
 	if(!$val['lastkill']) {
 		$feedfetch->setStartDate(time() - 60*60*24*7);
-	} else if($val['apikills']) {
-		$feedfetch->setStartKill($val['lastkill'] + 1);
 	} else {
 		$feedfetch->setStartKill($val['lastkill'] + 1, true);
 	}
 
 	if($feedfetch->read($val['url']) !== false) {
-		if($val['apikills'] 
-				&& intval($feedfetch->getLastReturned()) > $val['lastkill']) {
-			$val['lastkill'] = intval($feedfetch->getLastReturned());
-		} else if(!$val['apikills']
-				&& intval($feedfetch->getLastInternalReturned())
-						> $val['lastkill']) {
+                if(intval($feedfetch->getLastInternalReturned()) > $val['lastkill'])
+                {
 			$val['lastkill'] = intval($feedfetch->getLastInternalReturned());
 		}
 		$html .= "Feed: ".$val['url']."<br />\n";
 		$html .= count($feedfetch->getPosted())." kills were posted and ".
-			count($feedfetch->getSkipped())." were skipped.<br />\n";
+			count($feedfetch->getSkipped())." were skipped"
+                         . " (".$feedfetch->getNumberOfKillsFetched()." kills fetched)<br />\n";
 		$html .= "Last kill ID returned was ".$val['lastkill']."<br />\n";
 		if ($feedfetch->getParseMessages()) {
 			$html .= implode("<br />", $feedfetch->getParseMessages());
@@ -135,7 +127,6 @@ function getIDFeed(&$key, &$val)
 	} else {
 		$html .= "Error reading feed: ".$val['url'];
 		if(!$val['lastkill']) $html .= ", Start time = ".(time() - 60*60*24*7);
-		else if($val['apikills']) $html .= ", Start kill = ".($val['lastkill']);
 		$html .= $feedfetch->errormsg();
 	}
 	return $html."\n";

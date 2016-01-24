@@ -29,6 +29,9 @@ options::fadd('Lock board', 'cfg_locked', 'checkbox');
 options::cat('Advanced', 'Configuration', 'API');
 options::fadd('API connection method', 'apiConnectionMethod', 'select',
 		array('admin_config', 'createApiConnectionMethod'));
+options::fadd('Max number of kills to process per run [10-200]', 'maxNumberOfKillsPerRun', 'edit:size:5',
+		array('admin_config', 'createApiConnectionMethod'), array('admin_config', 'checkMaxNumberOfKillsPerRun'));
+options::fadd('Skip non-verifyable kills', 'skipNonVerifyableKills', 'checkbox');
 
 options::cat('Advanced', 'Configuration', 'Public-Mode');
 options::fadd('Only Kills in SummaryTables', 'public_summarytable', 'checkbox',
@@ -104,6 +107,36 @@ class admin_config
 
 		return $options;
 	}
+        
+        public static function createMaxNumberOfKillsPerRun()
+        {
+            $maxNumberOfKillsPerRun = config::get('maxNumberOfKillsPerRun');
+            if(!$maxNumberOfKillsPerRun)
+            {
+                $maxNumberOfKillsPerRun = API_Helpers::autoSetMaxNumberOfKillsToProcess();
+            }
+            return $maxNumberOfKillsPerRun;
+        }
+        
+        public static function checkMaxNumberOfKillsPerRun()
+        {
+            $maxNumberOfKillsPerRun = config::get('maxNumberOfKillsPerRun');
+            // check datatype, lower and upper limits
+            if(!is_numeric($maxNumberOfKillsPerRun))
+            {
+                API_Helpers::autoSetMaxNumberOfKillsToProcess();
+            }
+            
+            else if($maxNumberOfKillsPerRun < API_Helpers::$MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MIN)
+            {
+                config::set('maxNumberOfKillsPerRun', API_Helpers::$MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MIN);
+            }
+            
+            else if($maxNumberOfKillsPerRun > API_Helpers::$MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MAX)
+            {
+                config::set('maxNumberofKillsPerRun', API_Helpers::$MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MAX);
+            }
+        }
 
 	public static function createSelectStats()
 	{

@@ -30,6 +30,9 @@ class ZKBFetch
     private $posted = array();
     /** @param array of skipped kills with external ID */
     private $skipped = array();
+    /** @param int accumulated number of kills returned by zKB */
+    protected $numberOfKillsFetched = 0;
+    
     /** @param array of texts created by fetcher during posting */
     private $parsemsg = array();
     
@@ -48,6 +51,9 @@ class ZKBFetch
     
     /** @param int maximum number of cycles tried to fetch to get new kills before stopping as a safety measure */
     public static $MAXIMUM_NUMBER_OF_CYCLES = 6;
+    
+    /** field for counting the number of kills fetched from CREST; we need to keep track for not running into PHP's time limit */
+    protected static $NUMBER_OF_KILLS_FETCHED_FROM_CREST = 0;
    
     public function __construct($id = NULL)
     {
@@ -390,10 +396,21 @@ class ZKBFetch
                 // set rawData to an empty array, so the loop doesn't complain
                 $this->rawData = array();
             }
+            
+            $maxNumberOfKillsPerRun = config::get('maxNumberOfKillsPerRun');
 
+            // add kills to accumulated number of kills fetched from zKB
+            $this->numberOfKillsFetched += count($this->rawData);
+        
             // loop over all kills
             foreach($this->rawData AS $killData)
             {
+                // check if we reached the maximum number of kills we may fetch
+                if(self::$NUMBER_OF_KILLS_FETCHED_FROM_CREST >= $maxNumberOfKillsPerRun)
+                {
+                    break;
+                }
+                
                 try
                 {
                     $this->processKill($killData);
@@ -403,6 +420,7 @@ class ZKBFetch
                 {
                     $this->parsemsg[] = $e->getMessage();
                 }
+                $this->setLastKillTimestamp($this->lastKillTimestamp);
             }
             
             // no timestamp given at all
@@ -423,8 +441,6 @@ class ZKBFetch
             // remember the URL we used during this cycle
             $fetchUrlPreviousCycle = $this->fetchUrl;
         }  while(count($this->rawData) > 1 && $this->lastKillTimestamp <= $startTimestamp);
-        
-        $this->setLastKillTimestamp($this->lastKillTimestamp);
     }
     
     
@@ -569,18 +585,42 @@ class ZKBFetch
             $this->skipped[] = $killData->killID;
             throw $e;
         }
-        
+
+        $CrestParser = new CrestParser($Kill->getCrestUrl());
         try
         {
-            $killId = $Kill->add();
-        }
-        
-        catch(KillException $e)
+            $killId = $CrestParser->parse(true);
+        } 
+        catch (CrestParserException $e) 
         {
-            $this->skipped[] = $killData->killID;
-            throw new ZKBFetchException($e->getMessage().", KillID = ".$killData->killID);
+            // CREST error due to incorrect CREST hash
+            if($e->getCode() == 403)
+            {
+                // check if kills with invalid CREST hash should be posted as non-verified kills
+                if(!config::get('skipNonVerifyableKills'))
+                {
+                    // reset external ID so the kill is not API verified
+                    $Kill->setExternalID(null);
+                    try
+                    {
+                        $killId = $Kill->add();
+                    }
+
+                    catch(KillException $e)
+                    {
+                        $this->skipped[] = $killData->killID;
+                        throw new ZKBFetchException($e->getMessage().", KillID = ".$killData->killID);
+                    }
+                }
+                else
+                {
+                    $this->skipped[] = $killData->killID;
+                    throw new ZKBFetchException($e->getMessage().", KillID = ".$killData->killID);
+                }
+            }
         }
-        
+       self::$NUMBER_OF_KILLS_FETCHED_FROM_CREST++;
+
         if($killId > 0)
         {
             $this->posted[] = $killData->killID;
@@ -1131,6 +1171,14 @@ class ZKBFetch
    function getPosted()
    {
        return $this->posted;
+   }
+   
+   /**
+    * return the accumulated number of kills by zKB
+    */
+   function getNumberOfKillsFetched()
+   {
+       return $this->numberOfKillsFetched;
    }
    
    

@@ -63,3 +63,4 @@ cfg_redis	0
 cfg_redis_server	0.0.0.0
 cfg_redis_port	0
 cfg_redis_db	0
+skipNonVerifyableKills  1

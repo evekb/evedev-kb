@@ -133,7 +133,7 @@ class CrestParser
 						.$this->getDupeID(), -4);
                         }
 			throw new CrestParserException("That killmail has already been posted <a href=\""
-						."?a=kill_detail&kll_id=".$this->getDupeID()
+						.edkURI::page('kill_detail', $this->getDupeID(), 'kll_id')
 						."\">here</a>.", -1);
 		}			
 		// Check external IDs

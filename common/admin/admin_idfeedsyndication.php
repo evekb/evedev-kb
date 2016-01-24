@@ -20,10 +20,10 @@ $page->setAdmin();
 $feeds = config::get("fetch_idfeeds");
 // Add an empty feed to the list, or create with one empty feed.
 if(is_null($feeds)) {
-	$feeds[] = array('url'=>"", 'apikills'=>0, 'lastkill'=>0);
+	$feeds[] = array('url'=>"", 'lastkill'=>0);
 	config::set("fetch_idfeeds", $feeds);
 } else {
-	$feeds[] = array('url'=>"", 'apikills'=>0, 'lastkill'=>0);
+	$feeds[] = array('url'=>"", 'lastkill'=>0);
 }
 
 $feedcount = count($feeds);
@@ -39,7 +39,6 @@ if ($_POST['submit'] || $_POST['fetch'])
         $url = md5($val['url']);
 
         if ($_POST[$url]) {
-			$val['apikills'] = 0;
 			if($_POST['lastkill'.$url] != $val['lastkill']) {
 				$val['lastkill'] = intval($_POST['lastkill'.$url]);
 			}
@@ -73,7 +72,7 @@ if ($_POST['submit'] || $_POST['fetch'])
         {
             config::set('post_no_npc_only_feed', 0);
         }
-	$feeds[] = array('url'=>"", 'apikills'=>0, 'lastkill'=>0);
+	$feeds[] = array('url'=>"", 'lastkill'=>0);
 }
 
 // building the request query and fetching of the feeds
@@ -148,24 +147,19 @@ function getIDFeed(&$key, &$val)
 	$feedfetch->setAllKills(1);
 	if(!$val['lastkill']) {
 		$feedfetch->setStartDate(time() - 60*60*24*7);
-	} else if($val['apikills']) {
-		$feedfetch->setStartKill($val['lastkill'] + 1);
 	} else {
 		$feedfetch->setStartKill($val['lastkill'] + 1, true);
 	}
 
 	if($feedfetch->read($val['url']) !== false) {
-		if($val['apikills']
-				&& intval($feedfetch->getLastReturned()) > $val['lastkill']) {
-			$val['lastkill'] = intval($feedfetch->getLastReturned());
-		} else if(!$val['apikills']
-				&& intval($feedfetch->getLastInternalReturned())
-						> $val['lastkill']) {
+                if(intval($feedfetch->getLastInternalReturned()) > $val['lastkill']) 
+                {
 			$val['lastkill'] = intval($feedfetch->getLastInternalReturned());
 		}
 		$html .= "IDFeed: ".$val['url']."<br />\n";
 		$html .= count($feedfetch->getPosted())." kills were posted and ".
-						count($feedfetch->getSkipped())." were skipped.<br />\n";
+						count($feedfetch->getSkipped())." were skipped"
+                                                . " (".$feedfetch->getNumberOfKillsFetched()." kills fetched)<br />\n";
 		if ($feedfetch->getParseMessages()) {
 			$html .= implode("<br />", $feedfetch->getParseMessages());
 		}
@@ -173,8 +167,6 @@ function getIDFeed(&$key, &$val)
 		$html .= "Error reading feed: ".$val['url'];
 		if (!$val['lastkill']) {
 			$html .= ", Start time = ".(time() - 60 * 60 * 24 * 7);
-		} else if ($val['apikills']) {
-			$html .= ", Start kill = ".($val['lastkill']);
 		}
 		$html .= $feedfetch->errormsg();
 	}

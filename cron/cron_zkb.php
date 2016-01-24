@@ -79,8 +79,9 @@ function getZKBApi(&$fetchConfig)
             $fetchConfig->processApi();
             $html .= "ZKBApi: ".$fetchConfig->getUrl()."<br />\n";
             $html .= count($fetchConfig->getPosted())." kills were posted and ".
-						count($fetchConfig->getSkipped())." were skipped. ";
-            $html .= "Timestamp of last kill: ".strftime('%Y-%m-%d %H:%M:%S', $fetchConfig->getLastKillTimestamp());
+						count($fetchConfig->getSkipped())." were skipped "
+                                                . "(".$fetchConfig->getNumberOfKillsFetched()." kills fetched).";
+            $html .= " Timestamp of last kill: ".strftime('%Y-%m-%d %H:%M:%S', $fetchConfig->getLastKillTimestamp());
             $html .= "<br />\n";
             if ($fetchConfig->getParseMessages()) 
             {

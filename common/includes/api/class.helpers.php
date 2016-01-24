@@ -15,6 +15,10 @@ class EDKApiConnectionException extends Exception {}
 // **********************************************************************************************************************************************
 class API_Helpers
 {
+        public static $MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_DEFAULT = 60;
+        public static $MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MAX = 200;
+        public static $MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MIN = 10;
+        
 	// **********************************************************************************************************************************************
 	// ****************                         					Convert ID -> Name               					             ****************
 	// **********************************************************************************************************************************************
@@ -325,6 +329,32 @@ class API_Helpers
                 config::set('apiConnectionMethod', 'file');
             }
         }
+        
+        
+         /**
+         * sets the maximum number of kills to process per run (if not already set),
+          * based on the time limit set in the PHP configuration
+         */
+        public static function autoSetMaxNumberOfKillsToProcess()
+        {
+            // has the maximum number of kills to process already been set?
+            if(is_numeric(config::get('maxNumberOfKillsPerRun')))
+            {
+                return;
+            }
+            
+            $timeLimit = ini_get('max_execution_time');
+            $maxNumberOfKillsPerRun = self::$MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_DEFAULT;
+            
+            if($timeLimit !== FALSE)
+            {
+                // on average, we can fetch 2 kills per second (due to CREST response time limitations)
+                $maxNumberOfKillsPerRun = min(array(floor($timeLimit * 2), self::$MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MAX));
+            }
+            
+            config::set('maxNumberOfKillsPerRun', $maxNumberOfKillsPerRun);
+        }
+                
         
         
 }
