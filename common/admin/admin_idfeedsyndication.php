@@ -88,7 +88,6 @@ if ($_POST['fetch'])
 		} else {
 			$html .= getOldFeed($key, $val);
 		}
-		config::set("fetch_idfeeds", $feeds);
 	}
 }
 // generating the html

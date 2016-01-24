@@ -61,9 +61,6 @@ foreach($feeds as $key => &$val) {
 			$html .= "Fetching RSS Feed: ".$key."<br />\n".$tmphtml;
 		}
 	}
-	if ($tmphtml ) {
-		config::set("fetch_idfeeds", $feeds);
-	}
 }
 echo $html."<br />\n";
 
