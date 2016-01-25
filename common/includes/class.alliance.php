@@ -214,6 +214,30 @@ class Alliance extends Entity
 	}
 
 	/**
+	 * Checks whether a closed alliance exists and updates the stored name if needed.
+	 *
+     * @param string $name The name of the alliance
+	 * @param int $externalid The alliance external ID
+	*/
+
+	static function updateClosed($name,$externalid = 0)
+	{
+		$qry = DBFactory::getDBQuery(true);
+
+		if(substr_count(slashfix($name),'[CLOSED]'))
+		{
+			$qry->execute("select all_name from kb3_alliances where all_name = '".slashfix($name)."' and all_external_id ='".$externalid."'");
+		}
+		else
+		{
+			$qry->execute("select all_name from kb3_alliances where all_name = '[CLOSED] ".slashfix($name)."' and all_external_id ='".$externalid."'");
+		}
+		if(!$qry->recordCount()) {
+			$qry->execute("update kb3_alliances set all_name = '[CLOSED] ".$qry->escape($name)."' where all_name = '".$qry->escape($name)."' and all_external_id ='".$externalid."'");
+		}
+	}
+
+	/**
 	 * Set the CCP external ID for this alliance.
 	 *
 	 * @param integer $externalid
