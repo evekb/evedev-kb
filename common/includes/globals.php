@@ -223,12 +223,12 @@ function makeEndDate($week = 0, $year = 0, $month = 0, $enddate = '')
 			$qenddate = strtotime($year.'W'.$week.' +7days -1second UTC');
 		} else if ($month) {
 			if ($month == 12) {
-				$qenddate = strtotime($year.'-12-31 23:59 UTC');
+				$qenddate = strtotime($year.'-12-31 23:59:59 UTC');
 			} else {
 				$qenddate = strtotime($year.'-'.($month + 1).'-1 00:00 - 1 minute UTC');
 			}
 		} else {
-			$qenddate = strtotime($year.'-12-31 23:59 UTC');
+			$qenddate = strtotime($year.'-12-31 23:59:59 UTC');
 		}
 	}
 	//If set use the earliest enddate.
@@ -338,7 +338,7 @@ function isNewerVersion($newVersion, $baseVersion)
         // at this point the two version parts are identical, keep comparing
     }
     
-    // at this point none parts in $newVersion is bigger than the corresponding part in $baseVersion
+    // at this point none part in $newVersion is bigger than the corresponding part in $baseVersion
     return FALSE;
 }
 

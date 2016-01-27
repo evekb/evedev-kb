@@ -731,9 +731,9 @@ class pAllianceDetail extends pageAssembly
 								array('y', $this->nyear, true),
 								array('m', $this->nmonth, true)));
 
-				$startdate = gmdate('Y-m-d H:i',
+				$startdate = gmdate('Y-m-d H:i:s',
 						makeStartDate(0, $this->year, $this->month));
-				$enddate = gmdate('Y-m-d H:i',
+				$enddate = gmdate('Y-m-d H:i:s',
 						makeEndDate(0, $this->year, $this->month));
 				$sql = "select sys.sys_name, sys.sys_sec, sys.sys_id, count(kll.kll_id) as kills
 							from kb3_systems sys, kb3_kills kll, kb3_inv_all ina

@@ -86,7 +86,7 @@ class pSystemDetail extends pageAssembly
 		$this->kill_summary->setSystem($this->sys_id);
 		if (config::get('kill_classified')) {
 			$this->kill_summary->setEndDate(
-					gmdate('Y-m-d H:i', strtotime('now - '
+					gmdate('Y-m-d H:i:s', strtotime('now - '
 					.(config::get('kill_classified')).' hours')));
 		}
 		involved::load($this->kill_summary, 'kill');
@@ -127,7 +127,7 @@ class pSystemDetail extends pageAssembly
 		}
 		$klist->addSystem($this->system);
 		if (config::get('kill_classified')) {
-			$klist->setEndDate(gmdate('Y-m-d H:i', strtotime('now - '
+			$klist->setEndDate(gmdate('Y-m-d H:i:s', strtotime('now - '
 					.(config::get('kill_classified')).' hours')));
 		}
 		if ($scl_id) {
@@ -234,7 +234,7 @@ class pSystemDetail extends pageAssembly
 		}
 		$LocationList->addSystem($this->system);
 		if (config::get('kill_classified')) {
-			$LocationList->setEndDate(gmdate('Y-m-d H:i', strtotime('now - '
+			$LocationList->setEndDate(gmdate('Y-m-d H:i:s', strtotime('now - '
 					.(config::get('kill_classified')).' hours')));
 		}
                 

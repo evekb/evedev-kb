@@ -692,8 +692,8 @@ class pHome extends pageAssembly
 		} elseif ($this->month) {
 			$start = makeStartDate($this->week, $this->year, $this->month);
 			$end = makeEndDate($this->week, $this->year, $this->month);
-			$object->setStartDate(gmdate('Y-m-d H:i', $start));
-			$object->setEndDate(gmdate('Y-m-d H:i', $end));
+			$object->setStartDate(gmdate('Y-m-d H:i:s', $start));
+			$object->setEndDate(gmdate('Y-m-d H:i:s', $end));
 		}
 	}
 

@@ -58,11 +58,11 @@ class KillSummaryTablePublic extends KillSummaryTable
 			$sql .= $sqlop." kll.kll_system_id in ".join(',', $this->system)." ";
 		}
 		if ($startdate) {
-			$sql .= $sqlop." kll.kll_timestamp >= '".gmdate('Y-m-d H:i', $startdate)."' ";
+			$sql .= $sqlop." kll.kll_timestamp >= '".gmdate('Y-m-d H:i:s', $startdate)."' ";
 			$sqlop = " AND ";
 		}
 		if ($enddate) {
-			$sql .= $sqlop." kll.kll_timestamp <= '".gmdate('Y-m-d H:i', $enddate)."' ";
+			$sql .= $sqlop." kll.kll_timestamp <= '".gmdate('Y-m-d H:i:s', $enddate)."' ";
 		}
 		$sql .= 'GROUP BY shp.shp_class';
 		if ($this->inv_crp || $this->inv_all) {

@@ -292,9 +292,9 @@ class TopList_Base
 		}
 		if($this->finalStartDate || $this->finalEndDate)
 		{
-			if($this->finalStartDate) $sql .= " $field >= '".gmdate('Y-m-d H:i',$this->finalStartDate)."' ";
+			if($this->finalStartDate) $sql .= " $field >= '".gmdate('Y-m-d H:i:s',$this->finalStartDate)."' ";
 			if($this->finalStartDate && $this->finalEndDate) $sql .= " AND ";
-			if($this->finalEndDate) $sql .= " $field <= '".gmdate('Y-m-d H:i',$this->finalEndDate)."' ";
+			if($this->finalEndDate) $sql .= " $field <= '".gmdate('Y-m-d H:i:s',$this->finalEndDate)."' ";
 		}
 		return $sql;
 	}

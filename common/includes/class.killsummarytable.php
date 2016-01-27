@@ -133,9 +133,9 @@ class KillSummaryTable
 		$sql = '';
 		$qstartdate = makeStartDate($this->weekno, $this->yearno, $this->monthno, $this->startweekno, $this->startDate);
 		$qenddate = makeEndDate($this->weekno, $this->yearno, $this->monthno, $this->endDate);
-		if($qstartdate) $sql .= " kll.kll_timestamp >= '".gmdate('Y-m-d H:i',$qstartdate)."' ";
+		if($qstartdate) $sql .= " kll.kll_timestamp >= '".gmdate('Y-m-d H:i:s',$qstartdate)."' ";
 		if($qstartdate && $qenddate) $sql .= " AND ";
-		if($qenddate) $sql .= " kll.kll_timestamp <= '".gmdate('Y-m-d H:i',$qenddate)."' ";
+		if($qenddate) $sql .= " kll.kll_timestamp <= '".gmdate('Y-m-d H:i:s',$qenddate)."' ";
 		return $sql;
 	}
 
@@ -342,12 +342,12 @@ class KillSummaryTable
 		{
 			if($startdate)
 			{
-				$sql .= $sqlop." kll.kll_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
+				$sql .= $sqlop." kll.kll_timestamp >= '".gmdate('Y-m-d H:i:s',$startdate)."' ";
 				$sqlop = " AND ";
 			}
 			if($enddate)
 			{
-				$sql .= $sqlop." kll.kll_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+				$sql .= $sqlop." kll.kll_timestamp <= '".gmdate('Y-m-d H:i:s',$enddate)."' ";
 				$sqlop = " AND ";
 			}
 		}
@@ -359,24 +359,24 @@ class KillSummaryTable
 			{
 				$invsql = "SELECT ina_kll_id as kll_id FROM kb3_inv_all
 					WHERE ina_all_id in (".implode(',', $this->inv_all).") ";
-				if($startdate) $invsql .=" AND ina_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
-				if($enddate) $invsql .=" AND ina_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+				if($startdate) $invsql .=" AND ina_timestamp >= '".gmdate('Y-m-d H:i:s',$startdate)."' ";
+				if($enddate) $invsql .=" AND ina_timestamp <= '".gmdate('Y-m-d H:i:s',$enddate)."' ";
 				$involved[] = $invsql;
 			}
 			if ($this->inv_crp)
 			{
 				$invsql = "SELECT inc_kll_id as kll_id FROM kb3_inv_crp
 					WHERE inc_crp_id in (".implode(',', $this->inv_crp).") ";
-				if($startdate) $invsql .=" AND inc_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
-				if($enddate) $invsql .=" AND inc_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+				if($startdate) $invsql .=" AND inc_timestamp >= '".gmdate('Y-m-d H:i:s',$startdate)."' ";
+				if($enddate) $invsql .=" AND inc_timestamp <= '".gmdate('Y-m-d H:i:s',$enddate)."' ";
 				$involved[] = $invsql;
 			}
 			if ($this->inv_plt)
 			{
 				$invsql = "SELECT ind_kll_id as kll_id FROM kb3_inv_detail
 					WHERE ind_plt_id in (".implode(',', $this->inv_plt).") ";
-				if($startdate) $invsql .=" AND ind_timestamp >= '".gmdate('Y-m-d H:i',$startdate)."' ";
-				if($enddate) $invsql .=" AND ind_timestamp <= '".gmdate('Y-m-d H:i',$enddate)."' ";
+				if($startdate) $invsql .=" AND ind_timestamp >= '".gmdate('Y-m-d H:i:s',$startdate)."' ";
+				if($enddate) $invsql .=" AND ind_timestamp <= '".gmdate('Y-m-d H:i:s',$enddate)."' ";
 				$involved[] = $invsql;
 			}
 			$invtypecount = 0;
