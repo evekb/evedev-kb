@@ -36,6 +36,12 @@ class API_KillLog extends API
 		$posted = array();
 		$skipped = array();
 
+                if(!is_null($accts->getError()))
+                {
+                    $output .= $accts->getMessage();
+                    return $output;
+                }
+                
                 // get maximum number of API calls per key
                 $numberOfCallsMax = config::get('apikillmails_numberofcalls');
                 if(!$numberOfCallsMax)
