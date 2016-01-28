@@ -47,17 +47,27 @@ class edkloader
 			$subfilename = substr($name, $splitpos + 1);
 		}
 		$name = str_replace("_", "", $name);
-
-		if (isset(self::$classes[$name])) {
+                
+		if (isset(self::$classes[$name])) 
+                {
 			require_once(self::$classes[$name]);
-		} else if ($splitpos
-				&& is_file(self::$dir."common/includes/".$subdirname
-						."/class.".$subfilename.".php")) {
-			require_once(self::$dir."common/includes/".$subdirname."/class."
-					.$subfilename.".php");
-		} else if(file_exists(self::$dir."common/includes/class.".$name.".php")) {
-			@include_once(self::$dir."common/includes/class.".$name.".php");
+                        return true;
+		} 
+                
+                $includesFilePath = self::$dir."common/includes/".$subdirname."/class.".$subfilename.".php";
+                if ($splitpos && is_file($includesFilePath)) 
+                {
+			require_once($includesFilePath);
+                        return true;
+		} 
+                
+                else if(file_exists(self::$dir."common/includes/class.".$name.".php")) 
+                {
+			include_once(self::$dir."common/includes/class.".$name.".php");
+                        return true;
 		}
+                
+                return false;
 	}
 
 	/**
