@@ -53,15 +53,18 @@ class edkloader
 			require_once(self::$classes[$name]);
                         return true;
 		} 
-
-                $includesFilePath = self::$dir."common/includes/".$subdirname."/class.".$subfilename.".php";
-                if ($splitpos && is_file($includesFilePath)) 
+                
+                if (isset($subdirname) && isset($subfilename)) 
                 {
-			require_once($includesFilePath);
-                        return true;
+                        $includesFilePath = self::$dir."common/includes/".$subdirname."/class.".$subfilename.".php";
+			if(is_file($includesFilePath))
+                        {
+                            require_once($includesFilePath);
+                            return true;
+                        }
 		} 
                 
-                else if(file_exists(self::$dir."common/includes/class.".$name.".php")) 
+                if(file_exists(self::$dir."common/includes/class.".$name.".php")) 
                 {
 			include_once(self::$dir."common/includes/class.".$name.".php");
                         return true;
