@@ -181,7 +181,7 @@ class SimpleCrest
         if (false === ($data = @file_get_contents($url, false, $context))) {
 
             if (false === $http_response_header) {
-                throw new \Exception("could not connect to api");
+                throw new Exception("could not connect to api");
             }
             
             // get HTTP response code by reading $http_response_header (magic variable, automatically filled)
