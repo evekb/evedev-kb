@@ -8,6 +8,7 @@
 
 /**
  * @package EDK
+ * @deprecated This class is kept solely for compatibility with mods based on this value Fetcher!
  */
 class valueFetcher
 {
