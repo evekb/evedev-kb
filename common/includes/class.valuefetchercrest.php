@@ -35,7 +35,7 @@ class ValueFetcherCrest
         
         else
         {
-            $this->url = $CREST_URL;
+            $this->url = CREST_PUBLIC_URL . self::$CREST_PRICES_ENDPOINT;
         }
     }
 
