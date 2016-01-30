@@ -41,6 +41,8 @@ class pHome extends pageAssembly
 	protected $showcombined;
 	/** @var boolean */
 	private $dateSet = false;
+        /** @var \Pilot */
+        private $topPilot;
 
 	function __construct()
 	{
@@ -334,6 +336,62 @@ class pHome extends pageAssembly
 			return $clock->generate();
 		}
 	}
+        
+        /** 
+         * adds meta tags for Twitter Summary Card and OpenGraph tags
+         * to the HTML header
+         */
+        function metaTags()
+        {
+            // build page description depending on view and time interval
+            if($this->view == 'losses')
+            {
+                $metaTagDescription = "Losses";
+            }
+            
+            else if($this->showcombined)
+            {
+                $metaTagDescription = "Kills and Losses";
+            }
+            
+            else
+            {
+                $metaTagDescription = "Kills";
+            }
+            
+            $metaTagDescription .= " in ".$this->getCurrentPeriod(). ".";
+            
+            if($this->topPilot)
+            {
+                // meta tag: image
+                $this->page->addHeader('<meta name="og:image" content="'.$this->topPilot->getPortraitURL(128).'">');
+                $this->page->addHeader('<meta name="twitter:image" content="'.$this->topPilot->getPortraitURL(128).'">');
+                
+                $metaTagDescription .= " Top ";
+                if($this->view == 'losses')
+                {
+                    $metaTagDescription .= "loser: ";
+                }
+                else 
+                {
+                    $metaTagDescription .= "killer: ";
+                }
+                $metaTagDescription .= $this->topPilot->getName() . " (" . $this->topPilot->getCorp()->getName() .").";
+            }
+
+            $this->page->addHeader('<meta name="og:site_name" content="EDK - '.config::get('cfg_kbtitle').'">');
+            $this->page->addHeader('<meta name="description" content="'.$metaTagDescription.'">');
+            $this->page->addHeader('<meta name="og:description" content="'.$metaTagDescription.'">');
+            // meta tag: title
+            $metaTagTitle = config::get('cfg_kbtitle') . " | Front Page";
+            $this->page->addHeader('<meta name="og:title" content="'.$metaTagTitle.'">');
+            $this->page->addHeader('<meta name="twitter:title" content="'.$metaTagTitle.'">');
+            
+            // meta tag: URL
+            $this->page->addHeader('<meta name="og:url" content="'.edkURI::build(array('home')).'">');
+            // meta tag: Twitter summary
+            $this->page->addHeader('<meta name="twitter:card" content="summary">');
+        }
 
 	/**
 	 *
@@ -352,9 +410,13 @@ class pHome extends pageAssembly
 			involved::load($tklist, 'kill');
 
 			$tklist->generate();
+                        $topListRow = $tklist->getRow();
+                        $this->topPilot = Pilot::getByID($topListRow['plt_id']);
+                        
+                        $tklist->rewind();
 			$tkbox = new AwardBox($tklist, "Top killers", "kills in "
 					.$this->getCurrentPeriod(), "kills", "eagle");
-			$html = $tkbox->generate();
+                        $html = $tkbox->generate();
 
 			$tklist = new TopList_Score();
 			$this->loadTime($tklist);
@@ -377,6 +439,10 @@ class pHome extends pageAssembly
 			involved::load($tllist, 'loss');
 
 			$tllist->generate();
+                        $topListRow = $tllist->getRow();
+                        $this->topPilot = Pilot::getByID($topListRow['plt_id']);
+                        
+                        $tllist->rewind();
 			$tlbox = new AwardBox($tllist, "Top losers", "losses in "
 					.$this->getCurrentPeriod(), "losses", "moon");
 			$html = $tlbox->generate();
@@ -401,6 +467,7 @@ class pHome extends pageAssembly
 		$this->queue('menu');
 		$this->queue('clock');
 		$this->queue('topLists');
+                $this->queue('metaTags');
 	}
 
 	/**

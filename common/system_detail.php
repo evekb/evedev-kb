@@ -26,6 +26,9 @@ class pSystemDetail extends pageAssembly
 
 	/** @var KillSummaryTable */
 	private $kill_summary = null;
+        
+        /** @var \TopList_Locations location top list for this solar system */
+        private $LocationList = null;
 
 	function __construct()
 	{
@@ -166,6 +169,7 @@ class pSystemDetail extends pageAssembly
 		$this->queue("menuSetup");
 		$this->queue("menu");
                 $this->queue("topList");
+                $this->queue("metaTags");
 	}
 
 	/**
@@ -226,37 +230,74 @@ class pSystemDetail extends pageAssembly
 	{
 		// Display the top location lists.
 
-                $LocationList = new TopList_Locations();
+                $this->LocationList = new TopList_Locations();
                 if ($this->view == 'losses') {
-			involved::load($LocationList, 'loss');
+			involved::load($this->LocationList, 'loss');
 		} else {
-			involved::load($LocationList, 'kill');
+			involved::load($this->LocationList, 'kill');
 		}
-		$LocationList->addSystem($this->system);
+		$this->LocationList->addSystem($this->system);
 		if (config::get('kill_classified')) {
-			$LocationList->setEndDate(gmdate('Y-m-d H:i:s', strtotime('now - '
+			$this->LocationList->setEndDate(gmdate('Y-m-d H:i:s', strtotime('now - '
 					.(config::get('kill_classified')).' hours')));
 		}
                 
                 $scl_id = (int)edkURI::getArg('scl_id', 2);
 		if ($scl_id) {
-			$LocationList->addVictimShipClass(intval($scl_id));
+			$this->LocationList->addVictimShipClass(intval($scl_id));
                 }
-                $LocationList->generate();
+                $this->LocationList->generate();
                 if($this->view == 'losses')
                 {
-                    $LocationListBox = new AwardBoxLocation($LocationList, "Top locations", "losses", "losses", "cross");
+                    $LocationListBox = new AwardBoxLocation($this->LocationList, "Top locations", "losses", "losses", "cross");
                 }
                 
                 else
                 {
-                    $LocationListBox = new AwardBoxLocation($LocationList, "Top locations", "kills", "kills", "cross");
+                    $LocationListBox = new AwardBoxLocation($this->LocationList, "Top locations", "kills", "kills", "cross");
                 }
                 
                 $html = $LocationListBox->generate();
 
 		return $html;
 	}
+        
+        /** 
+         * adds meta tags for Twitter Summary Card and OpenGraph tags
+         * to the HTML header
+         */
+        function metaTags()
+        {
+            // meta tag: title
+            $metaTagTitle = $this->system->getName() . " | System Details";
+            $this->page->addHeader('<meta name="og:title" content="'.$metaTagTitle.'">');
+            $this->page->addHeader('<meta name="twitter:title" content="'.$metaTagTitle.'">');
+            
+            // build description
+            $metaTagDescription = "In ". $this->system->getName() . " " . $this->kill_summary->getTotalKills() . " ships have been killed and " . $this->kill_summary->getTotalLosses() . " ships have been lost at " . Config::get("cfg_kbtitle").".";
+            if($this->LocationList)
+            {
+                $this->LocationList->rewind();
+                $topLocation = $this->LocationList->getRow();
+                if($topLocation)
+                {
+                    $metaTagDescription .= " The most dangerous location is " . $topLocation['itemName'] . " (" . $topLocation['cnt'] . " kills).";
+                }
+            }            
+            $this->page->addHeader('<meta name="description" content="'.$metaTagDescription.'">');
+            $this->page->addHeader('<meta name="og:description" content="'.$metaTagDescription.'">');
+                
+            // meta tag: image
+            $this->page->addHeader('<meta name="og:image" content="'.imageURL::getURL('Type', 3802, 64).'">');
+            $this->page->addHeader('<meta name="twitter:image" content="'.imageURL::getURL('Type', 3802, 64).'">');
+
+            $this->page->addHeader('<meta name="og:site_name" content="EDK - '.config::get('cfg_kbtitle').'">');
+            
+            // meta tag: URL
+            $this->page->addHeader('<meta name="og:url" content="'.edkURI::build(array('sys_id', $this->sys_id, true)).'">');
+            // meta tag: Twitter summary
+            $this->page->addHeader('<meta name="twitter:card" content="summary">');
+        }
 
 	/**
 

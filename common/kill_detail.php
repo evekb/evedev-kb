@@ -63,6 +63,7 @@ class pKillDetail extends pageAssembly
 		$this->queue("source");
 		$this->queue("middle");
 		$this->queue("victimShip");
+                $this->queue("metaTags");
 		$this->queue("fitting");
 		$this->queue("itemsLost");
 		$this->queue("bottom");
@@ -972,13 +973,43 @@ class pKillDetail extends pageAssembly
                         $smarty->assign('nearestCelestialName', $this->kill->getNearestCelestialName());
                         $smarty->assign('distanceToNearestCelestial', $this->kill->getDistanceToNearestCelestialFormatted());
 		}
-
+               
 		$smarty->assign('timeStamp', $this->kill->getTimeStamp());
 		$smarty->assign('victimShipImg', $ship->getImage(64));
 
 		$smarty->assign('totalLoss', number_format($this->kill->getISKLoss()));
 		return $smarty->fetch(get_tpl('kill_detail_victim_ship'));
 	}
+        
+        /** 
+         * adds meta tags for Twitter Summary Card and OpenGraph tags
+         * to the HTML header
+         */
+        function metaTags()
+        {
+            // build page description depending on the kill being classified or not
+            $metaTagDescription = $this->kill->getVictim()->getName() . " (" . $this->kill->getVictimCorpName() .") lost their " . $this->kill->getVictimShipName() . " (worth " . number_format($this->kill->getISKLoss())." ISK)";
+            if(!$this->kill->isClassified())
+            {
+                $metaTagDescription .= " in " . $this->kill->getSolarSystemName() . " (" . $this->kill->getSystem()->getRegionName() 
+                        . "), ". $this->kill->getDistanceToNearestCelestialFormatted() . " from " .$this->kill->getNearestCelestialName();
+            }
+            $this->page->addHeader('<meta name="og:site_name" content="EDK - '.config::get('cfg_kbtitle').'">');
+            $this->page->addHeader('<meta name="description" content="'.$metaTagDescription.'">');
+            $this->page->addHeader('<meta name="og:description" content="'.$metaTagDescription.'">');
+            // meta tag: title
+            $metaTagTitle = $this->kill->getVictimShip()->getName()." | ".$this->kill->getVictim()->getName()." | Killmail";
+            $this->page->addHeader('<meta name="og:title" content="'.$metaTagTitle.'">');
+            $this->page->addHeader('<meta name="twitter:title" content="'.$metaTagTitle.'">');
+            // meta tag: image
+            $this->page->addHeader('<meta name="og:image" content="'.$this->kill->getVictimShipImage(128).'">');
+            $this->page->addHeader('<meta name="twitter:image" content="'.$this->kill->getVictimShipImage(128).'">');
+            // meta tag: URL
+            $this->page->addHeader('<meta name="og:url" content="'.edkURI::build(array('kll_id', $this->kll_id), true).'">');
+            // meta tag: Twitter summary
+            $this->page->addHeader('<meta name="twitter:card" content="summary">');
+        }
+        
 
 	/**
 	 * Return HTML to describe the victim's fitting

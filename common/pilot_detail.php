@@ -28,6 +28,8 @@ class pPilotDetail extends pageAssembly
 	protected $lpoints = 0;
 	/** @var integer */
 	protected $points = 0;
+        /** @var double efficiency The pilot's efficiency */
+        protected $efficiency = 0;
 
 	/**
 
@@ -45,6 +47,7 @@ class pPilotDetail extends pageAssembly
 		$this->queue("stats");
 		$this->queue("summaryTable");
 		$this->queue("killList");
+                $this->queue("metaTags");
 	}
 
 	/**
@@ -188,18 +191,18 @@ class pPilotDetail extends pageAssembly
 		if ($this->summary->getTotalKills() == 0)
 		{
 			$pilot_survival = 100;
-			$pilot_efficiency = 0;
+			$this->efficiency = 0;
 		}
 		else
 		{
 			if($this->summary->getTotalKills() + $this->summary->getTotalLosses()) $pilot_survival = round($this->summary->getTotalLosses() / ($this->summary->getTotalKills() + $this->summary->getTotalLosses()) * 100,2);
 			else $pilot_survival = 0;
-			if($this->summary->getTotalKillISK() + $this->summary->getTotalLossISK()) $pilot_efficiency = round(($this->summary->getTotalKillISK() / ($this->summary->getTotalKillISK() + $this->summary->getTotalLossISK())) * 100,2);
-			else $pilot_efficiency = 0;
+			if($this->summary->getTotalKillISK() + $this->summary->getTotalLossISK()) $this->efficiency = round(($this->summary->getTotalKillISK() / ($this->summary->getTotalKillISK() + $this->summary->getTotalLossISK())) * 100,2);
+			else $this->efficiency = 0;
 		}
 
 		$smarty->assign('pilot_survival',$pilot_survival);
-		$smarty->assign('pilot_efficiency',$pilot_efficiency);
+		$smarty->assign('pilot_efficiency',$this->efficiency);
 
 		$this->lpoints = $this->summary->getTotalLossPoints();
 		$this->points = $this->summary->getTotalKillPoints();
@@ -343,6 +346,36 @@ class pPilotDetail extends pageAssembly
 		}
 		return $menubox->generate();
 	}
+        
+         /** 
+         * adds meta tags for Twitter Summary Card and OpenGraph tags
+         * to the HTML header
+         */
+        function metaTags()
+        {
+            // meta tag: title
+            $metaTagTitle = $this->pilot->getName() . " | Pilot Details";
+            $this->page->addHeader('<meta name="og:title" content="'.$metaTagTitle.'">');
+            $this->page->addHeader('<meta name="twitter:title" content="'.$metaTagTitle.'">');
+            
+            // build description
+            $metaTagDescription = $this->pilot->getName() . " (Member of " . $this->pilot->getCorp()->getName();
+            $metaTagDescription .= ") has " . $this->summary->getTotalKills() . " kills and " . $this->summary->getTotalLosses() . " losses (Efficiency: ".$this->efficiency."%) at " . config::get('cfg_kbtitle');
+            
+            $this->page->addHeader('<meta name="description" content="'.$metaTagDescription.'">');
+            $this->page->addHeader('<meta name="og:description" content="'.$metaTagDescription.'">');
+                
+            // meta tag: image
+            $this->page->addHeader('<meta name="og:image" content="'.$this->pilot->getPortraitURL(128).'">');
+            $this->page->addHeader('<meta name="twitter:image" content="'.$this->pilot->getPortraitURL(128).'">');
+
+            $this->page->addHeader('<meta name="og:site_name" content="EDK - '.config::get('cfg_kbtitle').'">');
+            
+            // meta tag: URL
+            $this->page->addHeader('<meta name="og:url" content="'.edkURI::build(array('plt_id', $this->plt_id, true)).'">');
+            // meta tag: Twitter summary
+            $this->page->addHeader('<meta name="twitter:card" content="summary">');
+        }
 
 	function points()
 	{

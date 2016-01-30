@@ -21,6 +21,9 @@ class pAllianceDetail extends pageAssembly
 	public $all_external_id = 0;
 	/** @var Alliance */
 	public $alliance = null;
+        /** @var array allianceDetails alliance information
+         *  fetched from the API, populated in stats() */
+        public $allianceDetails = null;
 	/** @var string The selected view. */
 	protected $view = null;
 	/** @var array The list of views and their callbacks. */
@@ -43,6 +46,8 @@ class pAllianceDetail extends pageAssembly
 	private $pyear = '';
 	/** @var KillSummaryTable */
 	private $kill_summary = null;
+        /** @var double efficiency The alliance's efficiency */
+        protected $efficiency = 0;
 
 	/**
 	 * Construct the Alliance Details object.
@@ -59,6 +64,7 @@ class pAllianceDetail extends pageAssembly
 		$this->queue("stats");
 		$this->queue("summaryTable");
 		$this->queue("killList");
+                $this->queue("metaTags");
 	}
 
 	/**
@@ -143,7 +149,9 @@ class pAllianceDetail extends pageAssembly
 		$this->monthname = kbdate("F", strtotime("2000-".$this->month."-2"));
 
 		global $smarty;
+                // keep this for compatibility reasons
 		$smarty->assign('monthname', $this->monthname);
+                $smarty->assign('month', $this->monthname);
 		$smarty->assign('year', $this->year);
 		$smarty->assign('pmonth', $this->pmonth);
 		$smarty->assign('pyear', $this->pyear);
@@ -206,6 +214,7 @@ class pAllianceDetail extends pageAssembly
 		}
 
 		if ($myAlliance) {
+                        
 			$myCorpAPI = new API_CorporationSheet();
 
 			foreach ((array) $myAlliance["memberCorps"] as $tempcorp) {
@@ -250,11 +259,15 @@ class pAllianceDetail extends pageAssembly
 			$smarty->assign('memberCorpCount', count($myAlliance["memberCorps"]));
 
 			if ($this->kill_summary->getTotalKillISK()) {
-				$efficiency = round($this->kill_summary->getTotalKillISK() / ($this->kill_summary->getTotalKillISK() + $this->kill_summary->getTotalLossISK()) * 100,
+				$this->efficiency = round($this->kill_summary->getTotalKillISK() / ($this->kill_summary->getTotalKillISK() + $this->kill_summary->getTotalLossISK()) * 100,
 						2);
 			} else {
-				$efficiency = 0;
+				$this->efficiency = 0;
 			}
+                        
+                        // store for use when adding meta tags
+                        $this->allianceDetails = $myAlliance;
+                        $this->allianceDetails['efficiency'] = $this->efficiency;
 		}
 		// The summary table is also used by the stats. Whichever is called
 		// first generates the table.
@@ -420,12 +433,6 @@ class pAllianceDetail extends pageAssembly
 				break;
 			case "corp_kills":
 				$smarty->assign('title', Language::get('topkillers'));
-				$smarty->assign('month', $this->monthname);
-				$smarty->assign('year', $this->year);
-				$smarty->assign('pmonth', $this->pmonth);
-				$smarty->assign('pyear', $this->pyear);
-				$smarty->assign('nmonth', $this->nmonth);
-				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('all_id', $this->all_id);
 				$smarty->assign('url_previous',
 						edkURI::build($args, array('view', 'corp_kills', true),
@@ -560,12 +567,6 @@ class pAllianceDetail extends pageAssembly
 				break;
 			case "corp_losses":
 				$smarty->assign('title', Language::get('toplosers'));
-				$smarty->assign('month', $this->monthname);
-				$smarty->assign('year', $this->year);
-				$smarty->assign('pmonth', $this->pmonth);
-				$smarty->assign('pyear', $this->pyear);
-				$smarty->assign('nmonth', $this->nmonth);
-				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('all_id', $this->all_id);
 				$smarty->assign('url_previous',
 						edkURI::build($args, array('view', 'corp_losses', true),
@@ -595,12 +596,6 @@ class pAllianceDetail extends pageAssembly
 				break;
 			case "pilot_kills":
 				$smarty->assign('title', Language::get('topkillers'));
-				$smarty->assign('month', $this->monthname);
-				$smarty->assign('year', $this->year);
-				$smarty->assign('pmonth', $this->pmonth);
-				$smarty->assign('pyear', $this->pyear);
-				$smarty->assign('nmonth', $this->nmonth);
-				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('all_id', $this->all_id);
 				$smarty->assign('url_previous',
 						edkURI::build($args, array('view', 'pilot_kills', true),
@@ -630,12 +625,6 @@ class pAllianceDetail extends pageAssembly
 				break;
 			case "pilot_scores":
 				$smarty->assign('title', Language::get('topscorers'));
-				$smarty->assign('month', $this->monthname);
-				$smarty->assign('year', $this->year);
-				$smarty->assign('pmonth', $this->pmonth);
-				$smarty->assign('pyear', $this->pyear);
-				$smarty->assign('nmonth', $this->nmonth);
-				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('all_id', $this->all_id);
 				$smarty->assign('url_previous',
 						edkURI::build($args, array('view', 'pilot_scores', true),
@@ -663,12 +652,6 @@ class pAllianceDetail extends pageAssembly
 				break;
 			case "pilot_losses":
 				$smarty->assign('title', Language::get('toplosers'));
-				$smarty->assign('month', $this->monthname);
-				$smarty->assign('year', $this->year);
-				$smarty->assign('pmonth', $this->pmonth);
-				$smarty->assign('pyear', $this->pyear);
-				$smarty->assign('nmonth', $this->nmonth);
-				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('all_id', $this->all_id);
 				$smarty->assign('url_previous',
 						edkURI::build($args, array('view', 'pilot_losses', true),
@@ -713,12 +696,6 @@ class pAllianceDetail extends pageAssembly
 				break;
 			case 'violent_systems':
 				$smarty->assign('title', Language::get('topmostviolentsys'));
-				$smarty->assign('month', $this->monthname);
-				$smarty->assign('year', $this->year);
-				$smarty->assign('pmonth', $this->pmonth);
-				$smarty->assign('pyear', $this->pyear);
-				$smarty->assign('nmonth', $this->nmonth);
-				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('all_id', $this->all_id);
 				$smarty->assign('url_previous',
 						edkURI::build($args,
@@ -831,6 +808,48 @@ class pAllianceDetail extends pageAssembly
 		$this->queue("menuSetup");
 		$this->queue("menu");
 	}
+        
+        /** 
+         * adds meta tags for Twitter Summary Card and OpenGraph tags
+         * to the HTML header
+         */
+        function metaTags()
+        {
+            // meta tag: title
+            if($this->alliance->isFaction())
+            {
+                $metaTagTitle = $this->alliance->getName() . " | Faction Details";
+            }
+            
+            else
+            {
+                $metaTagTitle = $this->alliance->getName() . " | Alliance Details";
+            }
+            $this->page->addHeader('<meta name="og:title" content="'.$metaTagTitle.'">');
+            $this->page->addHeader('<meta name="twitter:title" content="'.$metaTagTitle.'">');
+            
+            // build description
+            $metaTagDescription = $this->alliance->getName();
+            if($this->allianceDetails)
+            {
+                $metaTagDescription .= " [" . $this->allianceDetails['shortName'] . "] (" . $this->allianceDetails['memberCount'] . " Members in " . count($this->allianceDetails['memberCorps']) . " Corps)";
+            }
+            $metaTagDescription .= " has " . $this->kill_summary->getTotalKills() . " kills and " . $this->kill_summary->getTotalLosses() . " losses (Efficiency: ".$this->efficiency."%) at " . config::get('cfg_kbtitle');
+            
+            $this->page->addHeader('<meta name="description" content="'.$metaTagDescription.'">');
+            $this->page->addHeader('<meta name="og:description" content="'.$metaTagDescription.'">');
+                
+            // meta tag: image
+            $this->page->addHeader('<meta name="og:image" content="'.$this->alliance->getPortraitURL(128).'">');
+            $this->page->addHeader('<meta name="twitter:image" content="'.$this->alliance->getPortraitURL(128).'">');
+
+            $this->page->addHeader('<meta name="og:site_name" content="EDK - '.config::get('cfg_kbtitle').'">');
+            
+            // meta tag: URL
+            $this->page->addHeader('<meta name="og:url" content="'.edkURI::build(array('all_id', $this->all_id, true)).'">');
+            // meta tag: Twitter summary
+            $this->page->addHeader('<meta name="twitter:card" content="summary">');
+        }
 
 	/**
 	 * Build the menu.

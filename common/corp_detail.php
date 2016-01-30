@@ -21,6 +21,9 @@ class pCorpDetail extends pageAssembly
 	public $corp = null;
 	/** @var Alliance */
 	public $alliance = null;
+        /** @var array corpDetails array containing information from the public corp sheet.
+         * Populated by stats() */
+        protected $corpDetails = null;
 
 	/** @var string The selected view. */
 	protected $view = null;
@@ -43,6 +46,9 @@ class pCorpDetail extends pageAssembly
 	private $pyear;
 	/** @var KillSummaryTable */
 	private $kill_summary = null;
+        /** @var double efficiency The corp's efficiency */
+        protected $efficiency = 0;
+
 	
 	/**
 	 * Construct the Pilot Details object.
@@ -58,6 +64,7 @@ class pCorpDetail extends pageAssembly
 		$this->queue("stats");
 		$this->queue("summaryTable");
 		$this->queue("killList");
+                $this->queue("metaTags");
 
 	}
 
@@ -211,6 +218,7 @@ class pCorpDetail extends pageAssembly
 				$this->alliance, $myAPI->getCurrentTime(),
 				$externalid = $this->corp->getExternalID());
 		}
+                $this->corpDetails = array('ticker' => $myAPI->getTicker());
 		$this->page->setTitle('Corporation details - '.$this->corp->getName() . " [" . $myAPI->getTicker() . "]");
 
 		$smarty->assign('portrait_url', $this->corp->getPortraitURL(128));
@@ -218,10 +226,12 @@ class pCorpDetail extends pageAssembly
 		if($this->alliance->getName() == "None") {
 			$smarty->assign('alliance_url', false);
 		} else if($this->alliance->getExternalID()) {
+                        $this->corpDetails['allianceName'] = $this->alliance->getName();
 			$smarty->assign('alliance_url', edkURI::build(
 					array('a', 'alliance_detail', true),
 					array('all_ext_id', $this->alliance->getExternalID(), true)));
 		} else {
+                        $this->corpDetails['allianceName'] = $this->alliance->getName();
 			$smarty->assign('alliance_url', edkURI::build(
 					array('a', 'alliance_detail', true),
 					array('all_id', $this->alliance->getID(), true)));
@@ -233,24 +243,32 @@ class pCorpDetail extends pageAssembly
 		$smarty->assign('damage_done', number_format($this->kill_summary->getTotalKillISK()/1000000000, 2));
 		$smarty->assign('damage_received', number_format($this->kill_summary->getTotalLossISK()/1000000000, 2));
 		if ($this->kill_summary->getTotalKillISK()) {
-			$smarty->assign('efficiency',
-					number_format(100 * $this->kill_summary->getTotalKillISK() /
+			$this->efficiency = number_format(100 * $this->kill_summary->getTotalKillISK() /
 							($this->kill_summary->getTotalKillISK()
-							+ $this->kill_summary->getTotalLossISK()), 2));
+							+ $this->kill_summary->getTotalLossISK()), 2);
 		} else {
-			$smarty->assign('efficiency', 0);
+			$this->efficiency = 0;
 		}
+                
+                $smarty->assign('efficiency', $this->efficiency);
 
 		if ($result != "Corporation is not part of alliance.") {
+                        $this->corpDetails['pilotIdCeo'] = $myAPI->getCeoID();
+                        $this->corpDetails['pilotNameCeo'] = $myAPI->getCeoName();
+                        $this->corpDetails['headQuartersName'] = $myAPI->getStationName();
+                        $this->corpDetails['memberCount'] = $myAPI->getMemberCount();
+                        $this->corpDetails['shareCount'] = $myAPI->getShares();
+                        $this->corpDetails['taxRate'] = $myAPI->getTaxRate();
+                        $this->corpDetails['externalUrl'] = $myAPI->getUrl();
 			$smarty->assign('ceo_url', edkURI::build(
 					array('a', 'pilot_detail', true),
-					array('plt_ext_id', $myAPI->getCeoID(), true)));
-			$smarty->assign('ceo_name', $myAPI->getCeoName());
-			$smarty->assign('HQ_location', $myAPI->getStationName());
-			$smarty->assign('member_count', $myAPI->getMemberCount());
-			$smarty->assign('share_count', $myAPI->getShares());
-			$smarty->assign('tax_rate', $myAPI->getTaxRate());
-			$smarty->assign('external_url', $myAPI->getUrl());
+					array('plt_ext_id', $this->corpDetails['pilotIdCeo'], true)));
+			$smarty->assign('ceo_name', $this->corpDetails['pilotNameCeo']);
+			$smarty->assign('HQ_location', $this->corpDetails['headQuartersName']);
+			$smarty->assign('member_count', $this->corpDetails['memberCount']);
+			$smarty->assign('share_count', $this->corpDetails['shareCount']);
+			$smarty->assign('tax_rate', $this->corpDetails['taxRate']);
+			$smarty->assign('external_url', $this->corpDetails['externalUrl']);
                         $description = $myAPI->getDescription();
                         $description = preg_replace('/<br>/', '<br />', $description);
                         // replace non-html size
@@ -259,7 +277,8 @@ class pCorpDetail extends pageAssembly
                         $description = preg_replace('/color=\"#bfffffff\"/', '', $description);
                         // replace character links
                         $description = preg_replace_callback('/showinfo:[1-9]+\/\//', array($this, 'parseShowInfoLink'), $description);
-			$smarty->assign('corp_description', $description);
+                        $this->corpDetails['description'] = $description;
+			$smarty->assign('corp_description', $this->corpDetails['description']);
 		}
 		return $smarty->fetch(get_tpl('corp_detail_stats'));
 	}
@@ -674,6 +693,45 @@ class pCorpDetail extends pageAssembly
 		$this->addMenuItem("link","Most violent systems", edkURI::build($args, array('view', 'violent_systems', true)));
 		return "";
 	}
+        
+        /** 
+         * adds meta tags for Twitter Summary Card and OpenGraph tags
+         * to the HTML header
+         */
+        function metaTags()
+        {
+            // meta tag: title
+            $metaTagTitle = $this->corp->getName() . " | Corp Details";
+            $this->page->addHeader('<meta name="og:title" content="'.$metaTagTitle.'">');
+            $this->page->addHeader('<meta name="twitter:title" content="'.$metaTagTitle.'">');
+            
+            // build description
+            $metaTagDescription = $this->corp->getName();
+            if($this->corpDetails['ticker'])
+            {
+                $metaTagDescription .= " [" . $this->corpDetails['ticker'] . "] (" . $this->corpDetails['memberCount'] . " pilots";
+            }
+            if(isset($this->corpDetails['allianceName']))
+            {
+                 $metaTagDescription .= ", member of " . $this->corpDetails['allianceName'];
+            }
+            $metaTagDescription .= ") has " . $this->kill_summary->getTotalKills() . " kills and " . $this->kill_summary->getTotalLosses() . " losses (Efficiency: ".$this->efficiency."%) at " . config::get('cfg_kbtitle');
+            
+            $this->page->addHeader('<meta name="description" content="'.$metaTagDescription.'">');
+            $this->page->addHeader('<meta name="og:description" content="'.$metaTagDescription.'">');
+                
+            // meta tag: image
+            $this->page->addHeader('<meta name="og:image" content="'.$this->corp->getPortraitURL(128).'">');
+            $this->page->addHeader('<meta name="twitter:image" content="'.$this->corp->getPortraitURL(128).'">');
+
+            $this->page->addHeader('<meta name="og:site_name" content="EDK - '.config::get('cfg_kbtitle').'">');
+            
+            // meta tag: URL
+            $this->page->addHeader('<meta name="og:url" content="'.edkURI::build(array('crp_id', $this->crp_id, true)).'">');
+            // meta tag: Twitter summary
+            $this->page->addHeader('<meta name="twitter:card" content="summary">');
+        }
+        
 	/**
 	 * Build the menu.
 	 *
