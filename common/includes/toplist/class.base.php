@@ -490,6 +490,14 @@ class TopList_Base
 		$row = $this->qry->getRow();
 		return $row;
 	}
+        
+        public function rewind()
+	{
+            if(!is_null($this->qry))
+            {
+                $this->qry->rewind();
+            }
+        }
 
 	function getTimeFrameSQL()
 	{
