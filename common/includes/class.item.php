@@ -15,7 +15,11 @@ class Item extends Cacheable
 	private $executed = false;
 	private $id = 0;
 	private $row_ = null;
-
+        private $slotId = 0;
+        
+        /** @param int category ID indicating this item is a drone */
+        public static $CATEGORY_ID_DRONE = 18;
+        
 	/**
 	 * Construct a new Item.
 	 *
@@ -140,32 +144,7 @@ class Item extends Cacheable
 	public function getSlot()
 	{
 		$this->execQuery();
-
-		// if item has no slot get the slot from parent item
-		if ($this->row_['itt_slot'] == 0) {
-
-                        // check if item is not in the database
-                        if(!isset($this->row_['typeID']))
-                        {
-                            return 0;
-                        }
-                        
-			$qry = DBFactory::getDBQuery();
-			$query = "select itt_slot from kb3_item_types
-						inner join kb3_dgmtypeattributes d
-						where itt_id = d.value
-						and d.typeID = ".$this->row_['typeID']."
-						and d.attributeID in (137,602);";
-			$qry->execute($query);
-			$row = $qry->getRow();
-
-			if (!$row['itt_slot']) {
-				return 0;
-			}
-
-			return $row['itt_slot'];
-		}
-		return $this->row_['itt_slot'];
+		return $this->slotId;
 	}
 
 	private function execQuery()
@@ -176,6 +155,7 @@ class Item extends Cacheable
 			}
 			if ($this->id && $this->isCached()) {
 				$this->row_ = $this->getCache()->row_;
+                                $this->slotId = $this->getCache()->slotId;
 				$this->executed = true;
 				return;
 			}
@@ -183,17 +163,38 @@ class Item extends Cacheable
 			$qry = DBFactory::getDBQuery();
 
 			$sql = "select inv.*, kb3_item_types.*, dga.value as techlevel,
-				   itp.price, dc.value as usedcharge, dl.value as usedlauncher
+				   itp.price, dc.value as usedcharge, dl.value as usedlauncher, te.effectID as slotIndicator
 				   from kb3_invtypes inv
 				   left join kb3_dgmtypeattributes dga on dga.typeID=inv.typeID and dga.attributeID=633
 				   left join kb3_item_price itp on itp.typeID=inv.typeID
 				   left join kb3_item_types on groupID=itt_id
 				   left join kb3_dgmtypeattributes dc on dc.typeID = inv.typeID AND dc.attributeID IN (128)
-				   left join kb3_dgmtypeattributes dl on dl.typeID = inv.typeID AND dl.attributeID IN (137,602)
+				   left join kb3_dgmtypeattributes dl on dl.typeID = inv.typeID AND dl.attributeID IN (137,602,603)
+                                   left join kb3_dgmtypeeffects te on te.typeID = inv.typeID AND te.effectID IN ("
+                                        .implode(", ", array_keys(InventoryFlag::$EFFECT_ID_SLOT_MAPPING))
+                                   .")
 				   where inv.typeID = '".$this->id."'";
 			if ($qry->execute($sql)) {
 				$this->row_ = $qry->getRow();
 				$this->executed = true;
+                                
+                                // evaluate slot
+                                // do we have an effectID indicating the slot?
+                                $slotIndicator = $this->row_['slotIndicator'];
+                                if($slotIndicator && array_key_exists($slotIndicator, InventoryFlag::$EFFECT_ID_SLOT_MAPPING))
+                                {
+                                        $this->slotId = InventoryFlag::$EFFECT_ID_SLOT_MAPPING[$slotIndicator];
+                                }
+                                
+                                else if($this->row_['itt_cat'] == self::$CATEGORY_ID_DRONE)
+                                {
+                                        $this->slotId = InventoryFlag::$DRONE_BAY;
+                                }
+                                
+                                else
+                                {
+                                        $this->slotId = InventoryFlag::$OTHER;
+                                }
 
 				$this->putCache();
 			}

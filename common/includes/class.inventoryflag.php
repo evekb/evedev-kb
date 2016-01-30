@@ -27,6 +27,20 @@ class InventoryFlag extends Cacheable
     /** @var boolean flag indicating whether data has already been fetched from the database */
     protected $executed = FALSE;
    
+        
+    public static $EFFECT_ID_SLOT_MAPPING = array(
+        //effect ID indicating this item requires an high slot => High Slot 1
+        12 => 27,
+        //effect ID indicating this item requires a med slot => Med Slot 1
+        13 => 19,
+        //effect ID indicating this item requires a low slot => Low Slot 1
+        11 => 11,
+        //effect ID indicating this item requires a rig slot => Rig Slot 1
+        2663 => 92,
+        //effect ID indicating this item requires a subsystem slot => Subsystem Slot 1
+        3772 => 125
+    );
+   
     
     private static $legacyFlagIDMapping = array(
         // High Slot => High power slot 1
