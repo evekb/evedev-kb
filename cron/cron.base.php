@@ -3,7 +3,7 @@
  * @package EDK
  */
 // we want to see in the logs if something goes wrong
-@error_reporting(E_ALL);
+@error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
 // try to disable time limit
 if(function_exists("set_time_limit"))
