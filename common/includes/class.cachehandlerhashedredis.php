@@ -79,7 +79,7 @@ class CacheHandlerHashedRedis extends CacheHandlerHashed
 	 *
 	 * @return boolean false. There is no valid path to a redis object.
 	 */
-	public static function getExternal()
+	public static function getExternal($key, $location = null)
 	{
 		return false;
 	}
@@ -88,7 +88,7 @@ class CacheHandlerHashedRedis extends CacheHandlerHashed
 	 *
 	 * @return boolean false. There is no valid path to a redis object.
 	 */
-	public static function getInternal()
+	public static function getInternal($key, $location = null)
 	{
 		return false;
 	}
