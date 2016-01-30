@@ -21,7 +21,7 @@ function checkAll(checkname, exby)
 {foreach from=$rows item=i}
 		<tr>
 			<td>
-				<input type='text' name='{$i.id}' size='50' class='password' value="{$i.uri}" />
+				<input type='text' name='{$i.id}' size='70' class='password' value="{$i.uri}" />
 			</td>
 			<td>
 				<input type='text' name='lastKillTimestamp{$i.id}' class='lastkill' size='20' value='{$i.lastKillTimestmap}' />
@@ -58,7 +58,7 @@ function checkAll(checkname, exby)
 		</tr>
                 <tr>
 			<td>
-				<input type='text' name='newFetchUrl' size='50' class='password' value="" />
+				<input type='text' name='newFetchUrl' size='70' class='password' value="" />
 			</td>
 			<td>
 				<input type='text' name='newFetchTimestamp' class='lastkill' size='20' value='{$currentTimeUtc}' />
