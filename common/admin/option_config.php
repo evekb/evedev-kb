@@ -29,9 +29,10 @@ options::fadd('Lock board', 'cfg_locked', 'checkbox');
 options::cat('Advanced', 'Configuration', 'API');
 options::fadd('API connection method', 'apiConnectionMethod', 'select',
 		array('admin_config', 'createApiConnectionMethod'));
+admin_config::checkMaxNumberOfKillsPerRun();
 options::fadd('Max number of kills to process per run [10-200]', 'maxNumberOfKillsPerRun', 'edit:size:5',
-		array('admin_config', 'createApiConnectionMethod'), array('admin_config', 'checkMaxNumberOfKillsPerRun'));
-options::fadd('Skip non-verifyable kills', 'skipNonVerifyableKills', 'checkbox');
+		'', array('admin_config', 'checkMaxNumberOfKillsPerRun'));
+options::fadd('Skip non-verifyable kills', 'skipNonVerifyableKills', 'checkbox', null, null, 'HIGHLY recommended!');
 
 options::cat('Advanced', 'Configuration', 'Public-Mode');
 options::fadd('Only Kills in SummaryTables', 'public_summarytable', 'checkbox',
@@ -107,16 +108,6 @@ class admin_config
 
 		return $options;
 	}
-        
-        public static function createMaxNumberOfKillsPerRun()
-        {
-            $maxNumberOfKillsPerRun = config::get('maxNumberOfKillsPerRun');
-            if(!$maxNumberOfKillsPerRun)
-            {
-                $maxNumberOfKillsPerRun = API_Helpers::autoSetMaxNumberOfKillsToProcess();
-            }
-            return $maxNumberOfKillsPerRun;
-        }
         
         public static function checkMaxNumberOfKillsPerRun()
         {
