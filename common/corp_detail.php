@@ -160,6 +160,15 @@ class pCorpDetail extends pageAssembly
 			$this->pyear = $this->year;
 		}
 		$this->monthname = kbdate("F", strtotime("2000-".$this->month."-2"));
+                
+                global $smarty;
+		$smarty->assign('monthname', $this->monthname);
+                $smarty->assign('month', $this->monthname);
+		$smarty->assign('year', $this->year);
+		$smarty->assign('pmonth', $this->pmonth);
+		$smarty->assign('pyear', $this->pyear);
+		$smarty->assign('nmonth', $this->nmonth);
+		$smarty->assign('nyear', $this->nyear);
 	}
 	/**
 	 *  Set up the stats used by the stats and summary table functions
@@ -306,10 +315,10 @@ class pCorpDetail extends pageAssembly
 			$args[] = array('crp_id', $this->crp_id, true);
 		}
 
-		$pyear = array('y', $this->pyear, true);
-		$nyear = array('y', $this->nyear, true);
-		$pmonth = array('m', $this->pmonth, true);
-		$nmonth = array('m', $this->nmonth, true);
+		$pyearUrlArgument = array('y', $this->pyear, true);
+		$nyearUrlArgument = array('y', $this->nyear, true);
+		$pmonthUrlArgument = array('m', $this->pmonth, true);
+		$nmonthUrlArgument = array('m', $this->nmonth, true);
 		switch ($this->view)
 		{
 			case "":
@@ -376,15 +385,9 @@ class pCorpDetail extends pageAssembly
 				break;
 			case "pilot_kills":
 				$smarty->assign('title', 'Top Killers');
-				$smarty->assign('month', $this->monthname);
-				$smarty->assign('year', $this->year);
-				$smarty->assign('pmonth', $this->pmonth);
-				$smarty->assign('pyear', $this->pyear);
-				$smarty->assign('nmonth', $this->nmonth);
-				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('crp_id', $this->crp_id);
-				$smarty->assign('url_previous', edkURI::build($args, array('view', 'pilot_kills', true), $pyear, $pmonth));
-				$smarty->assign('url_next', edkURI::build($args, array('view', 'pilot_kills', true), $nyear, $nmonth));
+				$smarty->assign('url_previous', edkURI::build($args, array('view', 'pilot_kills', true), $pyearUrlArgument, $pmonthUrlArgument));
+				$smarty->assign('url_next', edkURI::build($args, array('view', 'pilot_kills', true), $nyearUrlArgument, $nmonthUrlArgument));
 
 				$list = new TopList_Kills();
 				$list->addInvolvedCorp($this->crp_id);
@@ -405,15 +408,9 @@ class pCorpDetail extends pageAssembly
 				break;
 			case "pilot_scores":
 				$smarty->assign('title', 'Top Scorers');
-				$smarty->assign('month', $this->monthname);
-				$smarty->assign('year', $this->year);
-				$smarty->assign('pmonth', $this->pmonth);
-				$smarty->assign('pyear', $this->pyear);
-				$smarty->assign('nmonth', $this->nmonth);
-				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('crp_id', $this->crp_id);
-				$smarty->assign('url_previous', edkURI::build($args, array('view', 'pilot_scores', true), $pyear, $pmonth));
-				$smarty->assign('url_next', edkURI::build($args, array('view', 'pilot_scores', true), $nyear, $nmonth));
+				$smarty->assign('url_previous', edkURI::build($args, array('view', 'pilot_scores', true), $pyearUrlArgument, $pmonthUrlArgument));
+				$smarty->assign('url_next', edkURI::build($args, array('view', 'pilot_scores', true), $nyearUrlArgument, $nmonthUrlArgument));
 
 				$list = new TopList_Score();
 				$list->addInvolvedCorp($this->crp_id);
@@ -434,15 +431,9 @@ class pCorpDetail extends pageAssembly
 				break;
 			case "pilot_solo":
 				$smarty->assign('title', 'Top Solokillers');
-				$smarty->assign('month', $this->monthname);
-				$smarty->assign('year', $this->year);
-				$smarty->assign('pmonth', $this->pmonth);
-				$smarty->assign('pyear', $this->pyear);
-				$smarty->assign('nmonth', $this->nmonth);
-				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('crp_id', $this->crp_id);
-				$smarty->assign('url_previous', edkURI::build($args, array('view', 'pilot_solo', true), $pyear, $pmonth));
-				$smarty->assign('url_next', edkURI::build($args, array('view', 'pilot_solo', true), $nyear, $nmonth));
+				$smarty->assign('url_previous', edkURI::build($args, array('view', 'pilot_solo', true), $pyearUrlArgument, $pmonthUrlArgument));
+				$smarty->assign('url_next', edkURI::build($args, array('view', 'pilot_solo', true), $nyearUrlArgument, $nmonthUrlArgument));
 
 				$list = new TopList_SoloKiller();
 				$list->addInvolvedCorp($this->crp_id);
@@ -464,15 +455,9 @@ class pCorpDetail extends pageAssembly
 
 			case "pilot_damage":
 				$smarty->assign('title', 'Top Damagedealers');
-				$smarty->assign('month', $this->monthname);
-				$smarty->assign('year', $this->year);
-				$smarty->assign('pmonth', $this->pmonth);
-				$smarty->assign('pyear', $this->pyear);
-				$smarty->assign('nmonth', $this->nmonth);
-				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('crp_id', $this->crp_id);
-				$smarty->assign('url_previous', edkURI::build($args, array('view', 'pilot_damage', true), $pyear, $pmonth));
-				$smarty->assign('url_next', edkURI::build($args, array('view', 'pilot_damage', true), $nyear, $nmonth));
+				$smarty->assign('url_previous', edkURI::build($args, array('view', 'pilot_damage', true), $pyearUrlArgument, $pmonthUrlArgument));
+				$smarty->assign('url_next', edkURI::build($args, array('view', 'pilot_damage', true), $nyearUrlArgument, $nmonthUrlArgument));
 
 				$list = new TopList_DamageDealer();
 				$list->addInvolvedCorp($this->crp_id);
@@ -494,15 +479,9 @@ class pCorpDetail extends pageAssembly
 
 			case "pilot_griefer":
 				$smarty->assign('title', 'Top Griefers');
-				$smarty->assign('month', $this->monthname);
-				$smarty->assign('year', $this->year);
-				$smarty->assign('pmonth', $this->pmonth);
-				$smarty->assign('pyear', $this->pyear);
-				$smarty->assign('nmonth', $this->nmonth);
-				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('crp_id', $this->crp_id);
-				$smarty->assign('url_previous', edkURI::build($args, array('view', 'pilot_griefer', true), $pyear, $pmonth));
-				$smarty->assign('url_next', edkURI::build($args, array('view', 'pilot_griefer', true), $nyear, $nmonth));
+				$smarty->assign('url_previous', edkURI::build($args, array('view', 'pilot_griefer', true), $pyearUrlArgument, $pmonthUrlArgument));
+				$smarty->assign('url_next', edkURI::build($args, array('view', 'pilot_griefer', true), $nyearUrlArgument, $nmonthUrlArgument));
 
 				$list = new TopList_Kills();
 				$list->addVictimShipClass(20); // freighter
@@ -533,15 +512,9 @@ class pCorpDetail extends pageAssembly
 
 			case "pilot_losses":
 				$smarty->assign('title', 'Top Losers');
-				$smarty->assign('month', $this->monthname);
-				$smarty->assign('year', $this->year);
-				$smarty->assign('pmonth', $this->pmonth);
-				$smarty->assign('pyear', $this->pyear);
-				$smarty->assign('nmonth', $this->nmonth);
-				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('crp_id', $this->crp_id);
-				$smarty->assign('url_previous', edkURI::build($args, array('view', 'pilot_losses', true), $pyear, $pmonth));
-				$smarty->assign('url_next', edkURI::build($args, array('view', 'pilot_losses', true), $nyear, $nmonth));
+				$smarty->assign('url_previous', edkURI::build($args, array('view', 'pilot_losses', true), $pyearUrlArgument, $pmonthUrlArgument));
+				$smarty->assign('url_next', edkURI::build($args, array('view', 'pilot_losses', true), $nyearUrlArgument, $nmonthUrlArgument));
 
 				$list = new TopList_Losses();
 				$list->addVictimCorp($this->crp_id);
@@ -575,15 +548,9 @@ class pCorpDetail extends pageAssembly
 				break;
 			case 'violent_systems':
 				$smarty->assign('title', 'Most violent systems');
-				$smarty->assign('month', $this->monthname);
-				$smarty->assign('year', $this->year);
-				$smarty->assign('pmonth', $this->pmonth);
-				$smarty->assign('pyear', $this->pyear);
-				$smarty->assign('nmonth', $this->nmonth);
-				$smarty->assign('nyear', $this->nyear);
 				$smarty->assign('crp_id', $this->crp_id);
-				$smarty->assign('url_previous', edkURI::build($args, array('view', 'violent_systems', true), $pyear, $pmonth));
-				$smarty->assign('url_next', edkURI::build($args, array('view', 'violent_systems', true), $nyear, $nmonth));
+				$smarty->assign('url_previous', edkURI::build($args, array('view', 'violent_systems', true), $pyearUrlArgument, $pmonthUrlArgument));
+				$smarty->assign('url_next', edkURI::build($args, array('view', 'violent_systems', true), $nyearUrlArgument, $nmonthUrlArgument));
 
 				$startdate = gmdate('Y-m-d H:i:s', makeStartDate(0, $this->year, $this->month));
 				$enddate = gmdate('Y-m-d H:i:s', makeEndDate(0, $this->year, $this->month));
@@ -750,6 +717,34 @@ class pCorpDetail extends pageAssembly
 	{
 		$this->viewList[$view] = $callback;
 	}
+        
+        /**
+	 * Return the set month.
+	 * @return integer
+	 */
+	function getMonth()
+	{
+		return $this->month;
+	}
+
+	/**
+	 * Return the set year.
+	 * @return integer
+	 */
+	function getYear()
+	{
+		return $this->year;
+	}
+
+	/**
+	 * Return the set view.
+	 * @return string
+	 */
+	function getView()
+	{
+		return $this->view;
+	}
+        
         
         /**
          * Return the corporation
