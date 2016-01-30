@@ -35,10 +35,20 @@ abstract class Cacheable {
 		} else if (class_exists('Config', false) && !config::get('cfg_objcache')) {
 			return new $classname($id);
 		} else if (self::$cachehandler->exists($classname.$id)) {
-			return self::$cachehandler->get($classname.$id);
-		} else {
-			return new $classname($id);
-		}
+			$object = self::$cachehandler->get($classname.$id);
+                        // check for cache corruption
+                        if($object)
+                        {
+                            return $object;
+                        }
+                        
+                        else
+                        {
+                            self::$cachehandler->remove($classname.$id);
+                        }
+		} 
+                return new $classname($id);
+		
 
 	}
 
