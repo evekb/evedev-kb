@@ -87,7 +87,7 @@ if ($_POST['import'] || isset($_GET['Process'])) {
 	$myEveAPI = new API_KillLog();
 	$myEveAPI->iscronjob_ = false;
 
-	if ($_GET['Process']) {
+	if (isset($_GET['Process'])) {
 		$processindex = $_GET['Process'];
 	} else {
 		$processindex = 1;

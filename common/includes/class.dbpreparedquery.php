@@ -74,7 +74,7 @@ class DBPreparedQuery
 		$t1 = microtime(true);
 
 		//TODO redo this with hooks that cached classes can use.
-		if ( (DB_USE_MEMCACHE || DB_USE_REDIS || DB_USE_QCACHE )
+		if ( ( (defined("DB_USE_MEMCACHE") && DB_USE_MEMCACHE == true) || (defined("DB_USE_REDIS") && DB_USE_REDIS == true) || (defined("DB_USE_QCACHE") && DB_USE_QCACHE == true) )
 			&& strtolower(substr($this->sql, 0, 6)) != 'select'
 			&& strtolower(substr($this->sql, 0, 4)) != 'show')
 		{

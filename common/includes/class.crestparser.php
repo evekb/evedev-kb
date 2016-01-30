@@ -343,19 +343,19 @@ class CrestParser
                 $victim["shipTypeID"] = (int) @$mailRepresentation->victim->shipType->id;
                 $victim["shipTypeName"] = (string) @$mailRepresentation->victim->shipType->name;
                 $victim["characterID"] = (int) @$mailRepresentation->victim->character->id;
-                $victim["characterName"] = (string) $mailRepresentation->victim->character->name;
-                $victim["corporationID"] = (int) $mailRepresentation->victim->corporation->id;
-                $victim["corporationName"] = (string) $mailRepresentation->victim->corporation->name;
+                $victim["characterName"] = (string) @$mailRepresentation->victim->character->name;
+                $victim["corporationID"] = (int) @$mailRepresentation->victim->corporation->id;
+                $victim["corporationName"] = (string) @$mailRepresentation->victim->corporation->name;
                 $victim["allianceID"] = (int) @$mailRepresentation->victim->alliance->id;
                 $victim["allianceName"] = (string) @$mailRepresentation->victim->alliance->name;
-                $victim["factionID"] = (int) $mailRepresentation->victim->faction->id;
-                $victim["factionName"] = (string) $mailRepresentation->victim->faction->name;
-                $victim["damageTaken"] = (int) $mailRepresentation->victim->damageTaken;
-                $victim["moonName"] = (string) $mailRepresentation->moon->name;
-                $victim["moonID"] = (int) $mailRepresentation->moon->id;
-                $victim["x"] = (float) $mailRepresentation->victim->position->x;
-                $victim["y"] = (float) $mailRepresentation->victim->position->y;
-                $victim["z"] = (float) $mailRepresentation->victim->position->z;
+                $victim["factionID"] = (int) @$mailRepresentation->victim->faction->id;
+                $victim["factionName"] = (string) @$mailRepresentation->victim->faction->name;
+                $victim["damageTaken"] = (int) @$mailRepresentation->victim->damageTaken;
+                $victim["moonName"] = (string) @$mailRepresentation->moon->name;
+                $victim["moonID"] = (int) @$mailRepresentation->moon->id;
+                $victim["x"] = (float) @$mailRepresentation->victim->position->x;
+                $victim["y"] = (float) @$mailRepresentation->victim->position->y;
+                $victim["z"] = (float) @$mailRepresentation->victim->position->z;
                 return $victim;
         }
         
