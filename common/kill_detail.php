@@ -992,7 +992,11 @@ class pKillDetail extends pageAssembly
             if(!$this->kill->isClassified())
             {
                 $metaTagDescription .= " in " . $this->kill->getSolarSystemName() . " (" . $this->kill->getSystem()->getRegionName() 
-                        . "), ". $this->kill->getDistanceToNearestCelestialFormatted() . " from " .$this->kill->getNearestCelestialName();
+                        . ")";
+                if(!is_null($this->kill->getNearestCelestial()))
+                {
+                    $metaTagDescription .= ", ". $this->kill->getDistanceToNearestCelestialFormatted() . " from " .$this->kill->getNearestCelestialName();
+                }
             }
             $this->page->addHeader('<meta name="og:site_name" content="EDK - '.config::get('cfg_kbtitle').'">');
             $this->page->addHeader('<meta name="description" content="'.$metaTagDescription.'">');
