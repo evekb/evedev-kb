@@ -12,10 +12,6 @@ $page->setAdmin();
 
 if($_POST['submit'])
 {
-    // Set timeout and memory, we neeeeed it ;)
-    @set_time_limit(0);
-    @ini_set('memory_limit',999999999);
-    error_reporting(0);
 
     /**
     * 	Author: Niels Brink (HyperBeanie)
