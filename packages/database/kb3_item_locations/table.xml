@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <kb3>
   <name>kb3_item_locations</name>
-  <rows>149</rows>
+  <rows>150</rows>
   <structure>CREATE TABLE `kb3_item_locations` (
   `itl_flagID` smallint(6) NOT NULL,
   `itl_flagName` varchar(200) DEFAULT NULL,
