@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.19.0
+Eve Development Network Killboard v4.2.20.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -26,6 +26,14 @@ o/ EVE Development Network
 VERSION HISTORY
 ===============
 
+v4.2.20.0
+
+This is a hotfix release for v4.2.19.0, fixing idfeed
+
+Bugfixes:
+Fix: Removed call to removed function
+  
+-------------------------------------------
 v4.2.19.0
 
 Features:

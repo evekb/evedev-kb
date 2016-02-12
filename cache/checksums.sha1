@@ -184,7 +184,7 @@
 ./packages/database/kb3_sum_corp/table.xml:adc2caeb39365e3f88154a1f5a9f9271fa690e2e
 ./packages/database/kb3_api_keys/table.xml:6c81b101208ad2ef8ff640176c0179d345ac87d4
 ./packages/database/kb3_config/table.xml:26e63222a26760dcf1c72f5b565e16e46b27f66b
-./README.txt:c9aedc8223a4f5d627f14a59d6bdc3873daa537c
+./README.txt:814f2b052c2bfa7047cbba18b20fd2a496d7bbc4
 ./img/sta_gang.png:fdf6dbb56bc5c5e501e3b257fc3efd54caf25116
 ./img/sta_war.png:780a92791e6cf23bd300323060d90aa8485c143c
 ./img/comment.gif:fce8b5e704ae7e86f0a0e30b46c9eeb0bf47e101
@@ -917,7 +917,7 @@
 ./common/post.php:56cf2d7dd2cc9bf19e6de9005c496db839ca8b05
 ./common/awards.php:4280be56cf3fa453ca23755925c22ccf8adaaaa2
 ./common/language/en.php:38c6c938a782c47ef28325829406859d9fc4c6f4
-./common/idfeed.php:d2ee378417b42a00e4d25c0659e0d47b89129ade
+./common/idfeed.php:fa013af81a99941dd33d689c46939d53c6327962
 ./common/logout.php:f7335ad046a0c2e611f87135adf0006236cdfd70
 ./common/eve_fitting.php:f0984fe0ead7e66185fa5de7597406bb9b33c408
 ./common/cc_detail.php:a742320a4d3d5ea25babe7fb0162abecfa93d9fe
