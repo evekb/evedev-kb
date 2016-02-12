@@ -33,7 +33,7 @@
 
 $starttime = microtime(true);
 
-$maxkillsreturned = cache::checkLoad() ? 20 : 200;
+$maxkillsreturned = 200;
 $xml = "<?xml version='1.0' encoding='UTF-8'?>
 <eveapi version='2' edkapi='".ID_FEED_VERSION."'>
 </eveapi>";
