@@ -31,7 +31,7 @@ define('CREST_PUBLIC_URL', 'https://public-crest.eveonline.com');
  * current version: major.minor.sub.ccpDBupdateNo
  * even numbers for minor = development version
  */
-define('KB_VERSION', '4.2.19.0');
+define('KB_VERSION', '4.2.20.0');
 /** release name */
 define('KB_RELEASE', '(YC-118-2 1.0)');
 /** version of the SDE used to produce the current static database */
