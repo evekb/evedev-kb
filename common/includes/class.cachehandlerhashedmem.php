@@ -29,6 +29,9 @@ class CacheHandlerHashedMem extends CacheHandlerHashed
 	public static function put($key, $data, $location = '', $age = null)
 	{
 		global $mc;
+		
+		// reinit $key for multiboard instances
+                $key = KB_SITE . $key;
 
 		$data = serialize($data);
 		if(is_null($age)) $age = self::$maxage;
@@ -55,6 +58,9 @@ class CacheHandlerHashedMem extends CacheHandlerHashed
 	public static function get($key, $location = '')
 	{
 		global $mc;
+		
+		// reinit $key for multiboard instances
+                $key = KB_SITE . $key;
 
 		$hash = self::hash($key.$location);
 		return unserialize($mc->get($hash));
@@ -70,6 +76,9 @@ class CacheHandlerHashedMem extends CacheHandlerHashed
 	public static function exists($key, $location = '')
 	{
 		global $mc;
+		
+		// reinit $key for multiboard instances
+                $key = KB_SITE . $key;
 
 		$hash = self::hash($key,$location);
 		return $mc->get($hash) !== false;
@@ -101,6 +110,9 @@ class CacheHandlerHashedMem extends CacheHandlerHashed
 	 */
 	private static function hash($key, $location = '')
 	{
+		// reinit $key for multiboard instances
+                $key = KB_SITE . $key;
+
 		return md5($key.$location);
 	}
 	/**
@@ -114,6 +126,9 @@ class CacheHandlerHashedMem extends CacheHandlerHashed
 	public static function remove($key, $location = '')
 	{
 		global $mc;
+		
+		// reinit $key for multiboard instances
+                $key = KB_SITE . $key;
 
 		$hash = self::hash($key.$location);
 		return $mc->delete($hash);
@@ -129,6 +144,9 @@ class CacheHandlerHashedMem extends CacheHandlerHashed
 	public static function age($key, $location = '')
 	{
 		global $mc;
+		
+		// reinit $key for multiboard instances
+                $key = KB_SITE . $key;
 
 		$hash = self::hash($key.$location)."age";
 		$age = $mc->get($hash);
