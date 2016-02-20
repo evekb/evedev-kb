@@ -16,6 +16,7 @@
 class CacheHandlerHashedMem extends CacheHandlerHashed
 {
 	private static $maxage = 43200;
+    private static $cacheSite = KB_SITE;
 	
 	/**
 	 * Add a file to the cache.
@@ -101,7 +102,7 @@ class CacheHandlerHashedMem extends CacheHandlerHashed
 	 */
 	private static function hash($key, $location = '')
 	{
-		return md5($key.$location);
+		return md5(self::$cacheSite.$key.$location);
 	}
 	/**
 	 * Remove a cached object
