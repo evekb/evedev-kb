@@ -56,7 +56,7 @@ class Item extends Cacheable
 		} else if ($this->isCached()) {
 			$cache = $this->getCache();
 			$this->row_ = $cache->row_;
-                        $his->slotId = $cache->slotId;
+            $this->slotId = $cache->slotId;
 			$this->executed = true;
 		}
 	}
