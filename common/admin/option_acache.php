@@ -139,7 +139,7 @@ class admin_acache
             // Check for Redis
             if(defined('DB_USE_REDIS') && DB_USE_REDIS == true && !is_null($redis) && method_exists('Redis', 'flushDb'))
             {
-                $redis->flushDb('cfg_redis_db');
+                $redis->flushDb();
             }
             $_POST['option_flush_redis'] = 'off';
 	}
