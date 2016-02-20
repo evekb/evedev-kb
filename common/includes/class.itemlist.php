@@ -87,7 +87,7 @@ class ItemList
                             itp.price, kb3_item_types.*, dga.value as metalevel, dgb.value as techlevel,
                             dc.value as usedcharge, dl.value as usedlauncher,
                             inv.groupID, inv.typeName, inv.capacity, inv.raceID, inv.mass, inv.volume,
-                            inv.basePrice, inv.marketGroupID";
+                            inv.basePrice, inv.marketGroupID, te.effectID as slotIndicator";
 		if (count($this->destroyedIDarray)) {
 			$sql .= ", if(dl.attributeID IS NULL,sum(itd.itd_quantity),"
 					."truncate(sum(itd.itd_quantity)/count(dl.attributeID),0)) "
@@ -104,7 +104,10 @@ class ItemList
                             left join kb3_item_price itp on itp.typeID=inv.typeID
                             left join kb3_item_types on inv.groupID=itt_id
                             left join kb3_dgmtypeattributes dc on dc.typeID = inv.typeID AND dc.attributeID IN (128)
-                            left join kb3_dgmtypeattributes dl on dl.typeID = inv.typeID AND dl.attributeID IN (137,602) ";
+                            left join kb3_dgmtypeattributes dl on dl.typeID = inv.typeID AND dl.attributeID IN (137,602)
+                            left join kb3_dgmtypeeffects te on te.typeID = inv.typeID AND te.effectID IN ("
+                                        .implode(", ", array_keys(InventoryFlag::$EFFECT_ID_SLOT_MAPPING))
+                                   .") ";
 
 		if (count($this->destroyedIDarray)) {
 			$sql .= "join kb3_items_destroyed itd on inv.typeID = itd_itm_id "

@@ -36,9 +36,27 @@ class Item extends Cacheable
 		if (isset($row)) {
 			$this->row_ = $row;
 			$this->executed = true;
+                        // evaluate slot
+                        // do we have an effectID indicating the slot?
+                        $slotIndicator = $this->row_['slotIndicator'];
+                        if($slotIndicator && array_key_exists($slotIndicator, InventoryFlag::$EFFECT_ID_SLOT_MAPPING))
+                        {
+                                $this->slotId = InventoryFlag::$EFFECT_ID_SLOT_MAPPING[$slotIndicator];
+                        }
+
+                        else if($this->row_['itt_cat'] == self::$CATEGORY_ID_DRONE)
+                        {
+                                $this->slotId = InventoryFlag::$DRONE_BAY;
+                        }
+
+                        else
+                        {
+                                $this->slotId = InventoryFlag::$OTHER;
+                        }
 		} else if ($this->isCached()) {
 			$cache = $this->getCache();
 			$this->row_ = $cache->row_;
+                        $his->slotId = $cache->slotId;
 			$this->executed = true;
 		}
 	}
