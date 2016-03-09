@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <kb3>
   <name>kb3_dgmeffects</name>
-  <rows>3853</rows>
+  <rows>3907</rows>
   <structure>CREATE TABLE `kb3_dgmeffects` (
   `effectID` smallint(5) NOT NULL DEFAULT '0',
   `effectName` text NOT NULL,

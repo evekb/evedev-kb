@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <kb3>
   <name>kb3_item_types</name>
-  <rows>1160</rows>
+  <rows>1169</rows>
   <structure>CREATE TABLE `kb3_item_types` (
   `itt_id` int(11) NOT NULL DEFAULT '0',
   `itt_cat` int(11) NOT NULL,
