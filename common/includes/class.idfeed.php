@@ -453,15 +453,25 @@ class IDFeed
 		config::put('kill_classified', 0);
                 $maxNumberOfKillsPerRun = config::get('maxNumberOfKillsPerRun');
 		if (!is_null($sxe->result->rowset->row)) {
-                        $this->numberOfKillsFetched += count($sxe->result->rowset->row);
-                        foreach ($sxe->result->rowset->row as $row) 
-                        {
-                                // check if we reached the maximum number of kills we may fetch
-                                if(self::$NUMBER_OF_KILLS_FETCHED_FROM_CREST >= $maxNumberOfKillsPerRun)
-                                {
-                                    break;
-                                }
-				$this->processKill($row);
+            $this->numberOfKillsFetched += count($sxe->result->rowset->row);
+            foreach ($sxe->result->rowset->row as $row) 
+            {
+                    // check if we reached the maximum number of kills we may fetch
+                    if(self::$NUMBER_OF_KILLS_FETCHED_FROM_CREST >= $maxNumberOfKillsPerRun)
+                    {
+                        break;
+                    }
+                    try
+                    {
+                        $this->processKill($row);
+                    }
+                    
+                    catch(CrestParserException $e)
+                    {
+                        $this->parsemsg[] = "Error communicating with CREST, aborting!";
+                        $this->parsemsg[] = $e->getMessage();
+                        break;
+                    }
 			}
 		}
 		return count($this->posted) + count($this->skipped);
@@ -469,6 +479,7 @@ class IDFeed
 
 	/**
 	 * @param SimpleXMLElement $row The row for a single kill.
+     * @throws CrestException
 	 */
 	private function processKill($row)
 	{
@@ -485,8 +496,8 @@ class IDFeed
 
 			$kill = new Kill();
 			if ($externalID) 
-                        {
-                            $kill->setExternalID($externalID);
+            {
+                $kill->setExternalID($externalID);
 			}
 
 
@@ -594,6 +605,12 @@ class IDFeed
                                             {
                                                 $killException = new KillException("Corrupt kill information provided, skipping");
                                             }
+                                        }
+                                        
+                                        // there seems to be a problem communicating with CREST, stop fetching
+                                        else
+                                        {
+                                            throw $e;
                                         }
                                     }
                                     self::$NUMBER_OF_KILLS_FETCHED_FROM_CREST++;
@@ -1041,7 +1058,7 @@ class IDFeed
 	{
 		$qry = DBFactory::getDBQuery(true);
                 if ((int)$row['killID'] > 0) {
-			$qry->execute("SELECT kll_id FROM kb3_kills "
+			$qry->execute("SELECT kll_id FROM kb3_mails "
 					."WHERE kll_external_id = ".(int)$row['killID']);
 			if ($qry->recordCount()) {
 				$qrow = $qry->getRow();
@@ -1062,7 +1079,7 @@ class IDFeed
 							"kb3_mails.kll_id SET kb3_mails.kll_external_id = ".
 							(int)$row['killID'].", kb3_kills.kll_external_id = ".
 							(int)$row['killID']." WHERE kb3_mails.kll_id = $id AND ".
-							"kb3_mails.kll_external_id IS NULL");					
+							"kb3_mails.kll_external_id IS NULL AND kb3_mails.kll_trust != -1");					
 				}
 				return $id;
 			}
