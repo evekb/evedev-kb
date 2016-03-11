@@ -420,6 +420,13 @@ class ZKBFetch
                 {
                     $this->parsemsg[] = $e->getMessage();
                 }
+                
+                catch(CrestParserException $e)
+                {
+                        $this->parsemsg[] = "Error communicating with CREST, aborting!";
+                        $this->parsemsg[] = $e->getMessage();
+                        break;
+                }
                 $this->setLastKillTimestamp($this->lastKillTimestamp);
             }
             
