@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.20.0
+Eve Development Network Killboard v4.2.21.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -26,6 +26,21 @@ o/ EVE Development Network
 VERSION HISTORY
 ===============
 
+v4.2.21.0
+
+Features:
+Updated EDK to 4.2.21.0 and CCP DB to YC-118-3 1.0.117575
+
+Bugfixes:
+ZKBFetch: Abort instead of skipping kills on CREST communication error
+IDFeed/API: Abort instead of skipping kills on CREST communication error
+Kill location in IGB
+Fixed cache poisoning when running multiple sites
+Fixed typo in Item class when rebuilding instance from cache
+Fix: Flushing the Redis database did not work
+Fix: Item slot for items from ItemLists were not determined correctly
+
+-------------------------------------------
 v4.2.20.0
 
 This is a hotfix release for v4.2.19.0, fixing idfeed
