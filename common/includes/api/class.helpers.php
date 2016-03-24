@@ -51,7 +51,7 @@ class API_Helpers
                         
                         if($typeInfo != NULL)
                         {
-				if($update && $typeInfo->name != NULL && $typeInfo->description != NULL)
+				if($update && $typeInfo->name != NULL)
 				{
 					$sql = "INSERT INTO kb3_invtypes (typeID, typeName, description) values($id, '".$qry->escape($typeInfo->name)."', '".$qry->escape($typeInfo->description)."')";
 					$qry->execute($sql);
