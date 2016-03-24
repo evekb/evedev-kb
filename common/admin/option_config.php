@@ -32,7 +32,7 @@ options::fadd('API connection method', 'apiConnectionMethod', 'select',
 admin_config::checkMaxNumberOfKillsPerRun();
 options::fadd('Max number of kills to process per run [10-200]', 'maxNumberOfKillsPerRun', 'edit:size:5',
 		'', array('admin_config', 'checkMaxNumberOfKillsPerRun'), 'Time limit: '.@ini_get('max_execution_time').'s');
-options::fadd('Skip non-verifyable kills', 'skipNonVerifyableKills', 'checkbox', null, null, 'HIGHLY recommended!');
+options::fadd('Skip non-verifiable kills', 'skipNonVerifyableKills', 'checkbox', null, null, 'HIGHLY recommended!');
 
 options::cat('Advanced', 'Configuration', 'Public-Mode');
 options::fadd('Only Kills in SummaryTables', 'public_summarytable', 'checkbox',
