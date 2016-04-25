@@ -387,4 +387,82 @@ class Item extends Cacheable
                 }
                 return $Item;
 	}
+        
+        /**
+         * Fetches the type with the given ID from CREST, adds it to the database
+         * along with dogma attributes and effects
+         * @param int $typeId
+         * @return \Item
+         */
+        static function fetchItem($typeId)
+        {
+            $crestTypeUrl = CREST_PUBLIC_URL . '/types/' . $typeId . '/';
+            $typeInfo = NULL;
+
+            try 
+            {
+                $typeInfo = SimpleCrest::getReferenceByUrl($crestTypeUrl);
+            } 
+            catch (Exception $e) 
+            {
+                return null;
+            }
+
+            if($typeInfo != NULL)
+            {
+                $typeName = $typeInfo->name;
+                if($typeName == NULL)
+                {
+                    $typeName = "Unknown Item ".$typeId;
+                }
+                 
+                // store the item in the database
+                $query = new DBPreparedQuery();
+                $query->prepare('INSERT INTO kb3_invtypes (`typeID`, `typeName`, `icon`, `description`, `mass`, `volume`, `capacity`, `portionSize` ) '
+                        . 'VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+                $types = 'isssdddi';
+                $arr2 = array(&$types, &$typeId, &$typeName, &$typeInfo->iconID_str, &$typeInfo->description, &$typeInfo->mass, &$typeInfo->volume, &$typeInfo->capacity, &$typeInfo->portionSize);
+                $query->bind_params($arr2);
+                $query->execute();
+                
+                if($typeInfo->dogma != NULL)
+                {
+                    $query = DBFactory::getDBQuery();
+                    
+                    // store attributes in database
+                    if($typeInfo->dogma->attributes != NULL && is_array($typeInfo->dogma->attributes))
+                    {                        
+                        $attributeInserts = array();
+                        foreach($typeInfo->dogma->attributes AS $attributeInfo)
+                        {
+                            $attributeInserts[] = '('.$typeId.', '.$query->escape($attributeInfo->attribute->id_str).',  '.$query->escape($attributeInfo->value).')';
+                        }
+                        
+                        if(count($attributeInserts) > 0) 
+                        {
+                            $sql = 'INSERT INTO kb3_dgmtypeattributes (`typeID`, `attributeID`, `value`) VALUES '. implode(", ", $attributeInserts);
+                            $query->execute($sql);
+                        }
+                    }
+                    
+                    // store effects in database
+                    if($typeInfo->dogma->effects != NULL && is_array($typeInfo->dogma->effects))
+                    {                        
+                        $effectInserts = array();
+                        foreach($typeInfo->dogma->effects AS $effectInfo)
+                        {
+                            $effectInserts[] = "(".$typeId.", ".$query->escape($effectInfo->effect->id_str).",  ".(int) $effectInfo->isDefault.")";
+                        }
+                        
+                        if(count($effectInserts) > 0) 
+                        {
+                            $sql = 'INSERT INTO kb3_dgmtypeeffects (`typeID`, `effectID`, `isDefault`) VALUES '. implode(", ", $effectInserts);
+                            $query->execute($sql);
+                        }
+                    }
+                }
+                return self::lookup($typeName);
+            }
+            return null;
+        }
 }

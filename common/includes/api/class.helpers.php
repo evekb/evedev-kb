@@ -37,28 +37,8 @@ class API_Helpers
 		}
 		else
 		{
-                        $crestTypeUrl = CREST_PUBLIC_URL . '/types/' . $id . '/';
-                        $typeInfo = NULL;
-                        
-                        try 
-                        {
-                            $typeInfo = SimpleCrest::getReferenceByUrl($crestTypeUrl);
-                        } 
-                        catch (Exception $e) 
-                        {
-                            // nothing we can do
-                        }
-                        
-                        if($typeInfo != NULL)
-                        {
-				if($update && $typeInfo->name != NULL)
-				{
-					$sql = "INSERT INTO kb3_invtypes (typeID, typeName, description) values($id, '".$qry->escape($typeInfo->name)."', '".$qry->escape($typeInfo->description)."')";
-					$qry->execute($sql);
-				}
-				return $typeInfo->name;
-			}
-			return null;
+                        $Item = Item::fetchItem($id);
+                        return $Item->getName();
 		}
 	}
 
