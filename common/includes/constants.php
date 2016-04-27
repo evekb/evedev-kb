@@ -25,7 +25,7 @@ define('API_SERVER', "https://api.eveonline.com");
 /** base URL for the image server */
 define('IMG_SERVER', "https://imageserver.eveonline.com");
 /** base URL for connecting to public CREST endpoints */
-define('CREST_PUBLIC_URL', 'https://public-crest.eveonline.com');
+define('CREST_PUBLIC_URL', 'https://crest-tq.eveonline.com');
 
 /** 
  * current version: major.minor.sub.ccpDBupdateNo

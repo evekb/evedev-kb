@@ -42,7 +42,7 @@ class CrestParser
             // https://public-crest.eveonline.com/killmails/30290604/787fb3714062f1700560d4a83ce32c67640b1797/
             $urlPieces = explode("/", $this->crestUrl);
             if(count($urlPieces) < 6 || 
-                    $urlPieces[2] != "public-crest.eveonline.com" || 
+                    substr($this->crestUrl, 0, strlen(CREST_PUBLIC_URL)) != CREST_PUBLIC_URL || 
                     $urlPieces[3] != "killmails" ||
                     !is_numeric($urlPieces[4]) ||
                     strlen($urlPieces[5]) != 40)
