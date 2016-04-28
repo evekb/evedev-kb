@@ -33,6 +33,8 @@ class CrestParser
 	function __construct($crestUrl)
 	{                
             $this->crestUrl = $crestUrl;
+            // allow posting of CREST links using the old public-crest base URL
+            $this->crestUrl = str_replace('https://public-crest.eveonline.com', CREST_PUBLIC_URL, $this->crestUrl);
 	}
         
         
