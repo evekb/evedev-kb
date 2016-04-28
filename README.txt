@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.21.0
+Eve Development Network Killboard v4.2.22.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -26,6 +26,21 @@ o/ EVE Development Network
 VERSION HISTORY
 ===============
 
+v4.2.22.0
+
+Features:
+Updated EDK to 4.2.22.0 and CCP DB to Citadel 1.0.20160427
+Allow posting of CREST links with legacy base URL
+Changed CREST base URL to crest-tq.eveonline.com
+
+Enhancements:
+Fetch dogma info for unknown items
+
+Bugfixes:
+Fixed typo in ACP setting name
+Fix: Fetching item types via CREST
+
+-------------------------------------------
 v4.2.21.0
 
 Features:
