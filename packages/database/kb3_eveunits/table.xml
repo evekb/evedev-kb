@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <kb3>
   <name>kb3_eveunits</name>
-  <rows>57</rows>
+  <rows>58</rows>
   <structure>CREATE TABLE `kb3_eveunits` (
   `unitID` int(5) NOT NULL DEFAULT '0',
   `unitName` char(100) DEFAULT NULL,
