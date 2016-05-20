@@ -531,6 +531,7 @@ class Kill extends Cacheable
 	 */
 	function getRawMail()
 	{
+	try {
 		if(!is_null($this->mail)) return $this->mail;
 
 		if (config::get('km_cache_enabled')
@@ -650,6 +651,7 @@ class Kill extends Cacheable
 
 			// Split these into multiple ifs so the error tells us where the
 			// problem was.
+
 			if (!$pilot->getName()) {
 				throw new KillException("Invalid mail, invalid involved pilot (ID: ".$pilot->getID().")");
 			} else if (!$corp->getName()) {
@@ -661,6 +663,7 @@ class Kill extends Cacheable
 			} else if (!$ship->getName()) {
 				throw new KillException("Invalid mail, invalid involved ship (ID: ".$ship->getID().")");
 			}
+
 			if ($pilot->getName() == $weapon->getName()) {
 				$name = $pilot->getName()." / ".$corp->getName();
 			} else {
@@ -758,6 +761,10 @@ class Kill extends Cacheable
 		$this->mail = $mail;
 
 		return $mail;
+	}
+	catch(KillException $e)
+	{
+	}
 	}
 
 	/**
