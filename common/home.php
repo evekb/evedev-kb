@@ -233,6 +233,7 @@ class pHome extends pageAssembly
 		if (config::get("cfg_fillhome") && !$this->dateSet) {
 			$klist->setLimit(config::get('killcount'));
 			$table = new KillListTable($klist);
+            $table->setShowSummary(config::get('home_show_daily_summary'));
 			if ($this->showcombined) $table->setCombined(true);
 			$table->setLimit(config::get('killcount'));
 			$html = $table->generate();
@@ -244,6 +245,7 @@ class pHome extends pageAssembly
 			$pagesplitter = new PageSplitter($klist->getCount(),
 					config::get('killcount'));
 			$table = new KillListTable($klist);
+            $table->setShowSummary(config::get('home_show_daily_summary'));
 			if ($this->showcombined) $table->setCombined(true);
 			$pagesplit = $pagesplitter->generate();
 			$html = $pagesplit.$table->generate().$pagesplit;
