@@ -21,9 +21,9 @@ class pCorpDetail extends pageAssembly
 	public $corp = null;
 	/** @var Alliance */
 	public $alliance = null;
-        /** @var array corpDetails array containing information from the public corp sheet.
-         * Populated by stats() */
-        protected $corpDetails = null;
+    /** @var array corpDetails array containing information from the public corp sheet.
+     * Populated by stats() */
+    protected $corpDetails = null;
 
 	/** @var string The selected view. */
 	protected $view = null;
@@ -46,8 +46,8 @@ class pCorpDetail extends pageAssembly
 	private $pyear;
 	/** @var KillSummaryTable */
 	private $kill_summary = null;
-        /** @var double efficiency The corp's efficiency */
-        protected $efficiency = 0;
+    /** @var double efficiency The corp's efficiency */
+    protected $efficiency = 0;
 
 	
 	/**
@@ -64,7 +64,7 @@ class pCorpDetail extends pageAssembly
 		$this->queue("stats");
 		$this->queue("summaryTable");
 		$this->queue("killList");
-                $this->queue("metaTags");
+        $this->queue("metaTags");
 
 	}
 
@@ -694,43 +694,43 @@ class pCorpDetail extends pageAssembly
 		return "";
 	}
         
-        /** 
-         * adds meta tags for Twitter Summary Card and OpenGraph tags
-         * to the HTML header
-         */
-        function metaTags()
-        {
-            // meta tag: title
-            $metaTagTitle = $this->corp->getName() . " | Corp Details";
-            $this->page->addHeader('<meta name="og:title" content="'.$metaTagTitle.'">');
-            $this->page->addHeader('<meta name="twitter:title" content="'.$metaTagTitle.'">');
-            
-            // build description
-            $metaTagDescription = $this->corp->getName();
-            if($this->corpDetails['ticker'])
-            {
-                $metaTagDescription .= " [" . $this->corpDetails['ticker'] . "] (" . $this->corpDetails['memberCount'] . " pilots";
-            }
-            if(isset($this->corpDetails['allianceName']))
-            {
-                 $metaTagDescription .= ", member of " . $this->corpDetails['allianceName'];
-            }
-            $metaTagDescription .= ") has " . $this->kill_summary->getTotalKills() . " kills and " . $this->kill_summary->getTotalLosses() . " losses (Efficiency: ".$this->efficiency."%) at " . config::get('cfg_kbtitle');
-            
-            $this->page->addHeader('<meta name="description" content="'.$metaTagDescription.'">');
-            $this->page->addHeader('<meta name="og:description" content="'.$metaTagDescription.'">');
-                
-            // meta tag: image
-            $this->page->addHeader('<meta name="og:image" content="'.$this->corp->getPortraitURL(128).'">');
-            $this->page->addHeader('<meta name="twitter:image" content="'.$this->corp->getPortraitURL(128).'">');
+    /** 
+     * adds meta tags for Twitter Summary Card and OpenGraph tags
+     * to the HTML header
+     */
+    function metaTags()
+    {
+        // meta tag: title
+        $metaTagTitle = $this->corp->getName() . " | Corp Details";
+        $this->page->addHeader('<meta name="og:title" content="'.$metaTagTitle.'">');
+        $this->page->addHeader('<meta name="twitter:title" content="'.$metaTagTitle.'">');
 
-            $this->page->addHeader('<meta name="og:site_name" content="EDK - '.config::get('cfg_kbtitle').'">');
-            
-            // meta tag: URL
-            $this->page->addHeader('<meta name="og:url" content="'.edkURI::build(array('crp_id', $this->crp_id, true)).'">');
-            // meta tag: Twitter summary
-            $this->page->addHeader('<meta name="twitter:card" content="summary">');
+        // build description
+        $metaTagDescription = $this->corp->getName();
+        if($this->corpDetails['ticker'])
+        {
+            $metaTagDescription .= " [" . $this->corpDetails['ticker'] . "] (" . $this->corpDetails['memberCount'] . " pilots";
         }
+        if(isset($this->corpDetails['allianceName']))
+        {
+             $metaTagDescription .= ", member of " . $this->corpDetails['allianceName'];
+        }
+        $metaTagDescription .= ") has " . $this->kill_summary->getTotalKills() . " kills and " . $this->kill_summary->getTotalLosses() . " losses (Efficiency: ".$this->efficiency."%) at " . config::get('cfg_kbtitle');
+
+        $this->page->addHeader('<meta name="description" content="'.$metaTagDescription.'">');
+        $this->page->addHeader('<meta name="og:description" content="'.$metaTagDescription.'">');
+
+        // meta tag: image
+        $this->page->addHeader('<meta name="og:image" content="'.$this->corp->getPortraitURL(128).'">');
+        $this->page->addHeader('<meta name="twitter:image" content="'.$this->corp->getPortraitURL(128).'">');
+
+        $this->page->addHeader('<meta name="og:site_name" content="EDK - '.config::get('cfg_kbtitle').'">');
+
+        // meta tag: URL
+        $this->page->addHeader('<meta name="og:url" content="'.edkURI::build(array('crp_id', $this->crp_id, true)).'">');
+        // meta tag: Twitter summary
+        $this->page->addHeader('<meta name="twitter:card" content="summary">');
+    }
         
 	/**
 	 * Build the menu.
@@ -762,6 +762,22 @@ class pCorpDetail extends pageAssembly
 	{
 		$this->menuOptions[] = array($type, $name, $url);
 	}
+    
+    /**
+    * Removes the menu item with the given name
+    * 
+    * @param string $name the name of the menu item to remove
+    */
+   function removeMenuItem($name)
+   {
+       foreach((array)$this->menuOptions AS $menuItem)
+       {
+           if(count($menuItem) > 1 && $menuItem[1] == $name)
+           {
+               unset($this->menuOptions[key($this->menuOptions)]);
+           }
+       }
+   }
 
 	/**
 
@@ -804,14 +820,51 @@ class pCorpDetail extends pageAssembly
 	}
         
         
-        /**
-         * Return the corporation
-         * @return Corporation
-         */
-        function getCorp()
-        {
-            return $this->corp;
-        }
+    /**
+     * Return the corporation
+     * @return Corporation
+     */
+    function getCorp()
+    {
+        return $this->corp;
+    }
+    
+    function getCorpDetails() 
+    {
+        return $this->corpDetails;
+    }
+
+    function getNextMonth() 
+    {
+        return $this->nmonth;
+    }
+
+    function getNextYear() 
+    {
+        return $this->nyear;
+    }
+
+    function getPreviousMonth() 
+    {
+        return $this->pmonth;
+    }
+
+    function getPreviousYear() 
+    {
+        return $this->pyear;
+    }
+
+    function getKillSummary() 
+    {
+        return $this->kill_summary;
+    }
+
+    function getEfficiency() 
+    {
+        return $this->efficiency;
+    }
+
+
 }
 
 $corpDetail = new pCorpDetail();

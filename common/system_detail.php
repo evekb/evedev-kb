@@ -27,8 +27,8 @@ class pSystemDetail extends pageAssembly
 	/** @var KillSummaryTable */
 	private $kill_summary = null;
         
-        /** @var \TopList_Locations location top list for this solar system */
-        private $LocationList = null;
+    /** @var \TopList_Locations location top list for this solar system */
+    private $LocationList = null;
 
 	function __construct()
 	{
@@ -221,6 +221,22 @@ class pSystemDetail extends pageAssembly
 	{
 		$this->menuOptions[] = array($type, $name, $url);
 	}
+    
+    /**
+    * Removes the menu item with the given name
+    * 
+    * @param string $name the name of the menu item to remove
+    */
+   function removeMenuItem($name)
+   {
+       foreach((array)$this->menuOptions AS $menuItem)
+       {
+           if(count($menuItem) > 1 && $menuItem[1] == $name)
+           {
+               unset($this->menuOptions[key($this->menuOptions)]);
+           }
+       }
+   }
         
         /**
 	 *
@@ -229,10 +245,9 @@ class pSystemDetail extends pageAssembly
 	function topList()
 	{
 		// Display the top location lists.
-
-                $this->LocationList = new TopList_Locations();
-                if ($this->view == 'losses') {
-			involved::load($this->LocationList, 'loss');
+        $this->LocationList = new TopList_Locations();
+        if ($this->view == 'losses') {
+            involved::load($this->LocationList, 'loss');
 		} else {
 			involved::load($this->LocationList, 'kill');
 		}
@@ -242,22 +257,22 @@ class pSystemDetail extends pageAssembly
 					.(config::get('kill_classified')).' hours')));
 		}
                 
-                $scl_id = (int)edkURI::getArg('scl_id', 2);
+        $scl_id = (int)edkURI::getArg('scl_id', 2);
 		if ($scl_id) {
 			$this->LocationList->addVictimShipClass(intval($scl_id));
-                }
-                $this->LocationList->generate();
-                if($this->view == 'losses')
-                {
-                    $LocationListBox = new AwardBoxLocation($this->LocationList, "Top locations", "losses", "losses", "cross");
-                }
-                
-                else
-                {
-                    $LocationListBox = new AwardBoxLocation($this->LocationList, "Top locations", "kills", "kills", "cross");
-                }
-                
-                $html = $LocationListBox->generate();
+        }
+        $this->LocationList->generate();
+        if($this->view == 'losses')
+        {
+            $LocationListBox = new AwardBoxLocation($this->LocationList, "Top locations", "losses", "losses", "cross");
+        }
+
+        else
+        {
+            $LocationListBox = new AwardBoxLocation($this->LocationList, "Top locations", "kills", "kills", "cross");
+        }
+
+        $html = $LocationListBox->generate();
 
 		return $html;
 	}
@@ -321,14 +336,24 @@ class pSystemDetail extends pageAssembly
 		return $this->view;
 	}
         
-        /**
-         * Return the system
-         * @return SolarSystem
-         */
-        function getSystem()
-        {
-            return $this->system;
-        }
+    /**
+     * Return the system
+     * @return SolarSystem
+     */
+    function getSystem()
+    {
+        return $this->system;
+    }
+    
+    function getKillSummary() 
+    {
+        return $this->kill_summary;
+    }
+
+    function getLocationTopList() 
+    {
+        return $this->LocationList;
+    }
 }
 $systemDetail = new pSystemDetail();
 event::call("systemdetail_assembling", $systemDetail);

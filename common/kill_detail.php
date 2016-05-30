@@ -1599,6 +1599,22 @@ class pKillDetail extends pageAssembly
 	{
 		$this->menuOptions[] = func_get_args();
 	}
+    
+    /**
+    * Removes the menu item with the given name
+    * 
+    * @param string $name the name of the menu item to remove
+    */
+   function removeMenuItem($name)
+   {
+       foreach((array)$this->menuOptions AS $menuItem)
+       {
+           if(count($menuItem) > 1 && $menuItem[1] == $name)
+           {
+               unset($this->menuOptions[key($this->menuOptions)]);
+           }
+       }
+   }
 
 	/**
 	 * Update the stored value of an item and the total value of this kill.
@@ -1699,66 +1715,96 @@ class pKillDetail extends pageAssembly
 		return $smarty->fetch(get_tpl("sourcedFrom"));
 	}
         
-        /**
-         * groups destroyed items which are assigned to different slots (and my have different singleton settings)
-         * by their collapsed location ID
-         * @param DestroyedItem[] $desroyedItems the list of destroyed items to 
-         * @return DestroyedItem[] an array of grouped destroyed items by collapsed location ID
-         */
-        protected static function groupDestroyedItems($destroyedItems)
+    /**
+     * groups destroyed items which are assigned to different slots (and my have different singleton settings)
+     * by their collapsed location ID
+     * @param DestroyedItem[] $desroyedItems the list of destroyed items to 
+     * @return DestroyedItem[] an array of grouped destroyed items by collapsed location ID
+     */
+    protected static function groupDestroyedItems($destroyedItems)
+    {
+        $destroyedItemsGroupedByLocation = array();
+        // group by slot groups..
+        foreach($destroyedItems AS $destroyedItem)
         {
-            $destroyedItemsGroupedByLocation = array();
-            // group by slot groups..
-            foreach($destroyedItems AS $destroyedItem)
+            $location = InventoryFlag::collapse($destroyedItem->getLocationID());
+            $typeID = $destroyedItem->getItem()->getID();
+            $singleton = $destroyedItem->getSingleton();
+            if(!isset($destroyedItemsGroupedByLocation[$location][$singleton][$typeID]))
             {
-                $location = InventoryFlag::collapse($destroyedItem->getLocationID());
-                $typeID = $destroyedItem->getItem()->getID();
-                $singleton = $destroyedItem->getSingleton();
-                if(!isset($destroyedItemsGroupedByLocation[$location][$singleton][$typeID]))
+                if(!isset($destroyedItemsGroupedByLocation[$location]))
                 {
-                    if(!isset($destroyedItemsGroupedByLocation[$location]))
-                    {
-                        $destroyedItemsGroupedByLocation[$location] = array();
-                    }
-                    if(!isset($destroyedItemsGroupedByLocation[$location][$singleton]))
-                    {
-                        $destroyedItemsGroupedByLocation[$location][$singleton] = array();
-                    }
-                    $destroyedItemsGroupedByLocation[$location][$singleton][$typeID] = $destroyedItem;
+                    $destroyedItemsGroupedByLocation[$location] = array();
                 }
-
-                else
+                if(!isset($destroyedItemsGroupedByLocation[$location][$singleton]))
                 {
-                    // we already have an item of this type for this slot, add up quantities
-                    $quantityGrouped = $destroyedItemsGroupedByLocation[$location][$singleton][$typeID]->getQuantity() + $destroyedItem->getQuantity();
-                    $destroyedItemsGroupedByLocation[$location][$singleton][$typeID] = new DestroyedItem($destroyedItem->getItem(), $quantityGrouped, $destroyedItem->getSingleton(), null, $location);
+                    $destroyedItemsGroupedByLocation[$location][$singleton] = array();
                 }
+                $destroyedItemsGroupedByLocation[$location][$singleton][$typeID] = $destroyedItem;
             }
 
-            // reset destroyed items and replace with grouped
-            $destroyedItemsGrouped = array();
-            foreach($destroyedItemsGroupedByLocation AS $singleton)
+            else
             {
-                foreach($singleton AS $location)
+                // we already have an item of this type for this slot, add up quantities
+                $quantityGrouped = $destroyedItemsGroupedByLocation[$location][$singleton][$typeID]->getQuantity() + $destroyedItem->getQuantity();
+                $destroyedItemsGroupedByLocation[$location][$singleton][$typeID] = new DestroyedItem($destroyedItem->getItem(), $quantityGrouped, $destroyedItem->getSingleton(), null, $location);
+            }
+        }
+
+        // reset destroyed items and replace with grouped
+        $destroyedItemsGrouped = array();
+        foreach($destroyedItemsGroupedByLocation AS $singleton)
+        {
+            foreach($singleton AS $location)
+            {
+                foreach($location AS $destroyedItem)
                 {
-                    foreach($location AS $destroyedItem)
-                    {
-                        $destroyedItemsGrouped[] = $destroyedItem;
-                    }
+                    $destroyedItemsGrouped[] = $destroyedItem;
                 }
             }
-            
-            return $destroyedItemsGrouped;
         }
-        
-        /**
-         * Return the kill
-         * @return Kill
-         */
-        function getKill()
-        {
-            return $this->kill;
-        }
+
+        return $destroyedItemsGrouped;
+    }
+
+    /**
+     * Return the kill
+     * @return Kill
+     */
+    function getKill()
+    {
+        return $this->kill;
+    }
+    
+    function getNolimit() 
+    {
+        return $this->nolimit;
+    }
+
+    function getDroppedValue()
+    {
+        return $this->dropvalue;
+    }
+
+    function getTotalValue() 
+    {
+        return $this->totalValue;
+    }
+
+    function getBlueprintValue() 
+    {
+        return $this->bp_value;
+    }
+
+    function getDestroyedItems() 
+    {
+        return $this->dest_array;
+    }
+
+    function getDroppedItems() {
+        return $this->drop_array;
+    }
+
 }
 
 $killDetail = new pKillDetail();

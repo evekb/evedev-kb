@@ -157,6 +157,17 @@ class pSearch extends pageAssembly
         global $smarty;
         return $smarty->fetch(get_tpl('search_new'));
     }
+    
+    function getSearchPhrase() 
+    {
+        return $this->searchphrase;
+    }
+
+    function getSearchType() 
+    {
+        return $this->searchtype;
+    }
+
 }
 
 $searchDetail = new pSearch();

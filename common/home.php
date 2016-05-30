@@ -41,8 +41,8 @@ class pHome extends pageAssembly
 	protected $showcombined;
 	/** @var boolean */
 	private $dateSet = false;
-        /** @var \Pilot */
-        private $topPilot;
+    /** @var \Pilot */
+    private $topPilot;
 
 	function __construct()
 	{
@@ -339,61 +339,61 @@ class pHome extends pageAssembly
 		}
 	}
         
-        /** 
-         * adds meta tags for Twitter Summary Card and OpenGraph tags
-         * to the HTML header
-         */
-        function metaTags()
+    /** 
+     * adds meta tags for Twitter Summary Card and OpenGraph tags
+     * to the HTML header
+     */
+    function metaTags()
+    {
+        // build page description depending on view and time interval
+        if($this->view == 'losses')
         {
-            // build page description depending on view and time interval
+            $metaTagDescription = "Losses";
+        }
+
+        else if($this->showcombined)
+        {
+            $metaTagDescription = "Kills and Losses";
+        }
+
+        else
+        {
+            $metaTagDescription = "Kills";
+        }
+
+        $metaTagDescription .= " in ".$this->getCurrentPeriod(). ".";
+
+        if($this->topPilot)
+        {
+            // meta tag: image
+            $this->page->addHeader('<meta name="og:image" content="'.$this->topPilot->getPortraitURL(128).'">');
+            $this->page->addHeader('<meta name="twitter:image" content="'.$this->topPilot->getPortraitURL(128).'">');
+
+            $metaTagDescription .= " Top ";
             if($this->view == 'losses')
             {
-                $metaTagDescription = "Losses";
+                $metaTagDescription .= "loser: ";
             }
-            
-            else if($this->showcombined)
+            else 
             {
-                $metaTagDescription = "Kills and Losses";
+                $metaTagDescription .= "killer: ";
             }
-            
-            else
-            {
-                $metaTagDescription = "Kills";
-            }
-            
-            $metaTagDescription .= " in ".$this->getCurrentPeriod(). ".";
-            
-            if($this->topPilot)
-            {
-                // meta tag: image
-                $this->page->addHeader('<meta name="og:image" content="'.$this->topPilot->getPortraitURL(128).'">');
-                $this->page->addHeader('<meta name="twitter:image" content="'.$this->topPilot->getPortraitURL(128).'">');
-                
-                $metaTagDescription .= " Top ";
-                if($this->view == 'losses')
-                {
-                    $metaTagDescription .= "loser: ";
-                }
-                else 
-                {
-                    $metaTagDescription .= "killer: ";
-                }
-                $metaTagDescription .= $this->topPilot->getName() . " (" . $this->topPilot->getCorp()->getName() .").";
-            }
-
-            $this->page->addHeader('<meta name="og:site_name" content="EDK - '.config::get('cfg_kbtitle').'">');
-            $this->page->addHeader('<meta name="description" content="'.$metaTagDescription.'">');
-            $this->page->addHeader('<meta name="og:description" content="'.$metaTagDescription.'">');
-            // meta tag: title
-            $metaTagTitle = config::get('cfg_kbtitle') . " | Front Page";
-            $this->page->addHeader('<meta name="og:title" content="'.$metaTagTitle.'">');
-            $this->page->addHeader('<meta name="twitter:title" content="'.$metaTagTitle.'">');
-            
-            // meta tag: URL
-            $this->page->addHeader('<meta name="og:url" content="'.edkURI::build(array('home')).'">');
-            // meta tag: Twitter summary
-            $this->page->addHeader('<meta name="twitter:card" content="summary">');
+            $metaTagDescription .= $this->topPilot->getName() . " (" . $this->topPilot->getCorp()->getName() .").";
         }
+
+        $this->page->addHeader('<meta name="og:site_name" content="EDK - '.config::get('cfg_kbtitle').'">');
+        $this->page->addHeader('<meta name="description" content="'.$metaTagDescription.'">');
+        $this->page->addHeader('<meta name="og:description" content="'.$metaTagDescription.'">');
+        // meta tag: title
+        $metaTagTitle = config::get('cfg_kbtitle') . " | Front Page";
+        $this->page->addHeader('<meta name="og:title" content="'.$metaTagTitle.'">');
+        $this->page->addHeader('<meta name="twitter:title" content="'.$metaTagTitle.'">');
+
+        // meta tag: URL
+        $this->page->addHeader('<meta name="og:url" content="'.edkURI::build(array('home')).'">');
+        // meta tag: Twitter summary
+        $this->page->addHeader('<meta name="twitter:card" content="summary">');
+    }
 
 	/**
 	 *
@@ -402,7 +402,7 @@ class pHome extends pageAssembly
 	function topLists()
 	{
 		// Display the top location lists.
-                $LocationList = new TopList_Locations();
+        $LocationList = new TopList_Locations();
 		$this->loadTime($LocationList);   
                 
 		// Display the top pilot lists.
@@ -412,13 +412,13 @@ class pHome extends pageAssembly
 			involved::load($tklist, 'kill');
 
 			$tklist->generate();
-                        $topListRow = $tklist->getRow();
-                        $this->topPilot = Pilot::getByID($topListRow['plt_id']);
+            $topListRow = $tklist->getRow();
+            $this->topPilot = Pilot::getByID($topListRow['plt_id']);
                         
                         $tklist->rewind();
 			$tkbox = new AwardBox($tklist, "Top killers", "kills in "
 					.$this->getCurrentPeriod(), "kills", "eagle");
-                        $html = $tkbox->generate();
+            $html = $tkbox->generate();
 
 			$tklist = new TopList_Score();
 			$this->loadTime($tklist);
@@ -429,11 +429,11 @@ class pHome extends pageAssembly
 					.$this->getCurrentPeriod(), "points", "redcross");
 			$html .= $tkbox->generate();
             
-                        // load involved for top locations
-                        involved::load($LocationList, 'kill');
-                        $LocationList->generate();
-                        $LocationListBox = new AwardBoxLocation($LocationList, "Top locations", "kills in ".$this->getCurrentPeriod(), "kills", "cross");
-                        $html .= $LocationListBox->generate();
+            // load involved for top locations
+            involved::load($LocationList, 'kill');
+            $LocationList->generate();
+            $LocationListBox = new AwardBoxLocation($LocationList, "Top locations", "kills in ".$this->getCurrentPeriod(), "kills", "cross");
+            $html .= $LocationListBox->generate();
             
 		} else {
 			$tllist = new TopList_Losses();
@@ -441,19 +441,19 @@ class pHome extends pageAssembly
 			involved::load($tllist, 'loss');
 
 			$tllist->generate();
-                        $topListRow = $tllist->getRow();
-                        $this->topPilot = Pilot::getByID($topListRow['plt_id']);
+            $topListRow = $tllist->getRow();
+            $this->topPilot = Pilot::getByID($topListRow['plt_id']);
                         
-                        $tllist->rewind();
+            $tllist->rewind();
 			$tlbox = new AwardBox($tllist, "Top losers", "losses in "
 					.$this->getCurrentPeriod(), "losses", "moon");
 			$html = $tlbox->generate();
             
-                        // load involved for top locations
-                        involved::load($LocationList, 'loss');
-                        $LocationList->generate();
-                        $LocationListBox = new AwardBoxLocation($LocationList, "Top locations", "losses in ".$this->getCurrentPeriod(), "losses", "cross");
-                        $html .= $LocationListBox->generate();
+            // load involved for top locations
+            involved::load($LocationList, 'loss');
+            $LocationList->generate();
+            $LocationListBox = new AwardBoxLocation($LocationList, "Top locations", "losses in ".$this->getCurrentPeriod(), "losses", "cross");
+            $html .= $LocationListBox->generate();
 		}
 		return $html;
 
@@ -805,6 +805,22 @@ class pHome extends pageAssembly
 	{
 		$this->menuOptions[] = array($type, $name, $url);
 	}
+    
+    /**
+    * Removes the menu item with the given name
+    * 
+    * @param string $name the name of the menu item to remove
+    */
+   function removeMenuItem($name)
+   {
+       foreach((array)$this->menuOptions AS $menuItem)
+       {
+           if(count($menuItem) > 1 && $menuItem[1] == $name)
+           {
+               unset($this->menuOptions[key($this->menuOptions)]);
+           }
+       }
+   }
 
 	/**
 	 * Add a type of view to the options.
@@ -816,6 +832,26 @@ class pHome extends pageAssembly
 	{
 		$this->viewList[$view] = $callback;
 	}
+    
+    function getShipClassID() 
+    {
+        return $this->scl_id;
+    }
+
+    function getShowCombined() 
+    {
+        return $this->showcombined;
+    }
+
+    function getDateSet() 
+    {
+        return $this->dateSet;
+    }
+
+    function getTopPilot() 
+    {
+        return $this->topPilot;
+    }
 }
 
 $pageAssembly = new pHome();

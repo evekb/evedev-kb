@@ -21,9 +21,9 @@ class pAllianceDetail extends pageAssembly
 	public $all_external_id = 0;
 	/** @var Alliance */
 	public $alliance = null;
-        /** @var array allianceDetails alliance information
-         *  fetched from the API, populated in stats() */
-        public $allianceDetails = null;
+    /** @var array allianceDetails alliance information
+     *  fetched from the API, populated in stats() */
+    public $allianceDetails = null;
 	/** @var string The selected view. */
 	protected $view = null;
 	/** @var array The list of views and their callbacks. */
@@ -46,8 +46,8 @@ class pAllianceDetail extends pageAssembly
 	private $pyear = '';
 	/** @var KillSummaryTable */
 	private $kill_summary = null;
-        /** @var double efficiency The alliance's efficiency */
-        protected $efficiency = 0;
+    /** @var double efficiency The alliance's efficiency */
+    protected $efficiency = 0;
 
 	/**
 	 * Construct the Alliance Details object.
@@ -809,47 +809,47 @@ class pAllianceDetail extends pageAssembly
 		$this->queue("menu");
 	}
         
-        /** 
-         * adds meta tags for Twitter Summary Card and OpenGraph tags
-         * to the HTML header
-         */
-        function metaTags()
+    /** 
+     * adds meta tags for Twitter Summary Card and OpenGraph tags
+     * to the HTML header
+     */
+    function metaTags()
+    {
+        // meta tag: title
+        if($this->alliance->isFaction())
         {
-            // meta tag: title
-            if($this->alliance->isFaction())
-            {
-                $metaTagTitle = $this->alliance->getName() . " | Faction Details";
-            }
-            
-            else
-            {
-                $metaTagTitle = $this->alliance->getName() . " | Alliance Details";
-            }
-            $this->page->addHeader('<meta name="og:title" content="'.$metaTagTitle.'">');
-            $this->page->addHeader('<meta name="twitter:title" content="'.$metaTagTitle.'">');
-            
-            // build description
-            $metaTagDescription = $this->alliance->getName();
-            if($this->allianceDetails)
-            {
-                $metaTagDescription .= " [" . $this->allianceDetails['shortName'] . "] (" . $this->allianceDetails['memberCount'] . " Members in " . count($this->allianceDetails['memberCorps']) . " Corps)";
-            }
-            $metaTagDescription .= " has " . $this->kill_summary->getTotalKills() . " kills and " . $this->kill_summary->getTotalLosses() . " losses (Efficiency: ".$this->efficiency."%) at " . config::get('cfg_kbtitle');
-            
-            $this->page->addHeader('<meta name="description" content="'.$metaTagDescription.'">');
-            $this->page->addHeader('<meta name="og:description" content="'.$metaTagDescription.'">');
-                
-            // meta tag: image
-            $this->page->addHeader('<meta name="og:image" content="'.$this->alliance->getPortraitURL(128).'">');
-            $this->page->addHeader('<meta name="twitter:image" content="'.$this->alliance->getPortraitURL(128).'">');
-
-            $this->page->addHeader('<meta name="og:site_name" content="EDK - '.config::get('cfg_kbtitle').'">');
-            
-            // meta tag: URL
-            $this->page->addHeader('<meta name="og:url" content="'.edkURI::build(array('all_id', $this->all_id, true)).'">');
-            // meta tag: Twitter summary
-            $this->page->addHeader('<meta name="twitter:card" content="summary">');
+            $metaTagTitle = $this->alliance->getName() . " | Faction Details";
         }
+
+        else
+        {
+            $metaTagTitle = $this->alliance->getName() . " | Alliance Details";
+        }
+        $this->page->addHeader('<meta name="og:title" content="'.$metaTagTitle.'">');
+        $this->page->addHeader('<meta name="twitter:title" content="'.$metaTagTitle.'">');
+
+        // build description
+        $metaTagDescription = $this->alliance->getName();
+        if($this->allianceDetails)
+        {
+            $metaTagDescription .= " [" . $this->allianceDetails['shortName'] . "] (" . $this->allianceDetails['memberCount'] . " Members in " . count($this->allianceDetails['memberCorps']) . " Corps)";
+        }
+        $metaTagDescription .= " has " . $this->kill_summary->getTotalKills() . " kills and " . $this->kill_summary->getTotalLosses() . " losses (Efficiency: ".$this->efficiency."%) at " . config::get('cfg_kbtitle');
+
+        $this->page->addHeader('<meta name="description" content="'.$metaTagDescription.'">');
+        $this->page->addHeader('<meta name="og:description" content="'.$metaTagDescription.'">');
+
+        // meta tag: image
+        $this->page->addHeader('<meta name="og:image" content="'.$this->alliance->getPortraitURL(128).'">');
+        $this->page->addHeader('<meta name="twitter:image" content="'.$this->alliance->getPortraitURL(128).'">');
+
+        $this->page->addHeader('<meta name="og:site_name" content="EDK - '.config::get('cfg_kbtitle').'">');
+
+        // meta tag: URL
+        $this->page->addHeader('<meta name="og:url" content="'.edkURI::build(array('all_id', $this->all_id, true)).'">');
+        // meta tag: Twitter summary
+        $this->page->addHeader('<meta name="twitter:card" content="summary">');
+    }
 
 	/**
 	 * Build the menu.
@@ -935,6 +935,22 @@ class pAllianceDetail extends pageAssembly
 	{
 		$this->menuOptions[] = array($type, $name, $url);
 	}
+    
+    /**
+     * Removes the menu item with the given name
+     * 
+     * @param string $name the name of the menu item to remove
+     */
+    function removeMenuItem($name)
+    {
+        foreach((array)$this->menuOptions AS $menuItem)
+        {
+            if(count($menuItem) > 1 && $menuItem[1] == $name)
+            {
+                unset($this->menuOptions[key($this->menuOptions)]);
+            }
+        }
+    }
 
 	/**
 
@@ -976,14 +992,51 @@ class pAllianceDetail extends pageAssembly
 		return $this->view;
 	}
         
-        /**
-         * Return the alliance
-         * @return Alliance
-         */
-        function getAlliance()
-        {
-            return $this->alliance;
-        }
+    /**
+     * Return the alliance
+     * @return Alliance
+     */
+    function getAlliance()
+    {
+        return $this->alliance;
+    }
+    
+    function getAllianceCorps() 
+    {
+        return $this->allianceCorps;
+    }
+
+    function getNextMonth() 
+    {
+        return $this->nmonth;
+    }
+
+    function getNextYear() 
+    {
+        return $this->nyear;
+    }
+
+    function getPreviousMonth() 
+    {
+        return $this->pmonth;
+    }
+
+    function getPreviousYear() 
+    {
+        return $this->pyear;
+    }
+
+    function getKillSummary() 
+    {
+        return $this->kill_summary;
+    }
+
+    function getEfficiency() 
+    {
+        return $this->efficiency;
+    }
+
+
 }
 
 $allianceDetail = new pAllianceDetail();
