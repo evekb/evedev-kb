@@ -38,7 +38,9 @@ class InventoryFlag extends Cacheable
         //effect ID indicating this item requires a rig slot => Rig Slot 1
         2663 => 92,
         //effect ID indicating this item requires a subsystem slot => Subsystem Slot 1
-        3772 => 125
+        3772 => 125,
+        //effect ID indicating this item requires a serivce slot => Structure Service slot 0
+        6306 => 164
     );
    
     
@@ -103,6 +105,9 @@ class InventoryFlag extends Cacheable
     
     public static $SUB_SYSTEM_SLOT_1 = 125;
     public static $SUB_SYSTEM_SLOT_8 = 132;
+    
+    public static $STRUCTURE_SERVICE_SLOT_1 = 164;
+    public static $STRUCUTRE_SERVICE_SLOT_8 = 171;
     
     public static $CARGO = 5;
     public static $DRONE_BAY = 87;
