@@ -419,15 +419,17 @@ class pHome extends pageAssembly
 			$tkbox = new AwardBox($tklist, "Top killers", "kills in "
 					.$this->getCurrentPeriod(), "kills", "eagle");
             $html = $tkbox->generate();
+            if (config::get('kill_points')) 
+            {
+                $tklist = new TopList_Score();
+                $this->loadTime($tklist);
+                involved::load($tklist, 'kill');
 
-			$tklist = new TopList_Score();
-			$this->loadTime($tklist);
-			involved::load($tklist, 'kill');
-
-			$tklist->generate();
-			$tkbox = new AwardBox($tklist, "Top scorers", "points in "
-					.$this->getCurrentPeriod(), "points", "redcross");
-			$html .= $tkbox->generate();
+                $tklist->generate();
+                $tkbox = new AwardBox($tklist, "Top scorers", "points in "
+                        .$this->getCurrentPeriod(), "points", "redcross");
+                $html .= $tkbox->generate();
+            }
             
             // load involved for top locations
             involved::load($LocationList, 'kill');
