@@ -5,7 +5,7 @@
   <structure>CREATE TABLE `kb3_dgmattributetypes` (
   `attributeID` int(11) NOT NULL DEFAULT '0',
   `attributeName` char(100) NOT NULL,
-  `icon` char(5) NOT NULL DEFAULT '0',
+  `icon` char(12) NOT NULL DEFAULT '0',
   `defaultValue` int(11) NOT NULL DEFAULT '0',
   `published` enum('true','false') NOT NULL DEFAULT 'true',
   `displayName` char(100) NOT NULL,
