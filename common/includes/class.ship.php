@@ -297,7 +297,7 @@ class Ship extends Cacheable
                 // an "Unknown" ship, for example in killmails with no ship information)
                 if((int) $id != 0 && $Ship->getName() == "Unknown")
                 {
-                    $shipName = API_Helpers::gettypeIDname($id, TRUE);
+                    $shipName = API_Helpers::getTypeIDname($id, TRUE);
                     // sucess?
                     if(!is_null($shipName))
                     {

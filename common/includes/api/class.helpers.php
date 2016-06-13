@@ -22,7 +22,7 @@ class API_Helpers
 	// **********************************************************************************************************************************************
 	// ****************                         					Convert ID -> Name               					             ****************
 	// **********************************************************************************************************************************************
-	public static function gettypeIDname($id, $update = false)
+	public static function getTypeIDname($id, $update = false)
 	{
 		$id = intval($id);
 		$sql = 'select inv.typeName from kb3_invtypes inv where inv.typeID = ' . $id;

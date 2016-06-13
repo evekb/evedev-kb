@@ -377,7 +377,7 @@ class Item extends Cacheable
                 if(is_null($Item->getName()))
                 {
                     // try fetching it from the API
-                    $typeName = API_Helpers::gettypeIDname($id, TRUE);
+                    $typeName = API_Helpers::getTypeIDname($id, TRUE);
                     if(!is_null($typeName))
                     {
                         // remove the item with no info from the cache
@@ -405,7 +405,20 @@ class Item extends Cacheable
             } 
             catch (Exception $e) 
             {
-                return null;
+                // fallback: Use generic item name
+                // this database entry will be corrected with the next database update
+                // store the item in the database
+                $typeName = "Unknown Type ".$typeId;
+                
+                $query = new DBPreparedQuery();
+                $query->prepare('INSERT INTO kb3_invtypes (`typeID`, `typeName`) '
+                        . 'VALUES (?, ?)');
+                $types = 'is';
+                $arr2 = array(&$types, &$typeId, &$typeName);
+                $query->bind_params($arr2);
+                $query->execute();
+                
+                return self::lookup($typeName);
             }
 
             if($typeInfo != NULL)

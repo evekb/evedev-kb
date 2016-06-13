@@ -166,7 +166,7 @@ class API_CharacterSheet
                     {
 						case "TYPEID":
 							$tempdata['typeID'] = $v;
-							$tempdata['SkillName'] = API_Helpers::gettypeIDname($v);
+							$tempdata['SkillName'] = API_Helpers::getTypeIDname($v);
 							$tempdata['GroupID'] = API_Helpers::getgroupID($v);
 							$tempdata['GroupName'] = API_Helpers::getgroupIDname($tempdata['GroupID']);
 							$tempdata['Rank'] = API_Helpers::gettypeIDrank($v);
