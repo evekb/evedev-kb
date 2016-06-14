@@ -396,7 +396,7 @@ class Item extends Cacheable
          */
         static function fetchItem($typeId)
         {
-            $crestTypeUrl = CREST_PUBLIC_URL . '/types/' . $typeId . '/';
+            $crestTypeUrl = CREST_PUBLIC_URL . '/inventory/types/' . $typeId . '/';
             $typeInfo = NULL;
 
             try 
@@ -453,7 +453,7 @@ class Item extends Cacheable
                         
                         if(count($attributeInserts) > 0) 
                         {
-                            $sql = 'INSERT INTO kb3_dgmtypeattributes (`typeID`, `attributeID`, `value`) VALUES '. implode(", ", $attributeInserts);
+                            $sql = 'REPLACE INTO kb3_dgmtypeattributes (`typeID`, `attributeID`, `value`) VALUES '. implode(", ", $attributeInserts);
                             $query->execute($sql);
                         }
                     }
@@ -469,7 +469,7 @@ class Item extends Cacheable
                         
                         if(count($effectInserts) > 0) 
                         {
-                            $sql = 'INSERT INTO kb3_dgmtypeeffects (`typeID`, `effectID`, `isDefault`) VALUES '. implode(", ", $effectInserts);
+                            $sql = 'REPLACE INTO kb3_dgmtypeeffects (`typeID`, `effectID`, `isDefault`) VALUES '. implode(", ", $effectInserts);
                             $query->execute($sql);
                         }
                     }
