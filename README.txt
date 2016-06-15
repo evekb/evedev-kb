@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.22.0
+Eve Development Network Killboard v4.2.23.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -26,6 +26,24 @@ o/ EVE Development Network
 VERSION HISTORY
 ===============
 
+v4.2.23.0
+
+Features:
+Updated EDK to 4.2.23.0 and CCP DB to YC-118-5 1.0.20160531
+Updated CREST endpoint for fetching item types
+
+Enhancements:
+Top scorers are no longer displayed on the front page if showing kill points is disabled in configuration
+Added getter to page classes for better accessibility from mods
+Added calculation of summary (kills, losses, efficiency) to KillListTable class
+Added support for structure service slots to InventoryFlag class
+
+Bugfixes:
+Fixed link for creating API keys in ACP
+Fix: Fallback for unknown types if fetching from CREST fails
+Fix: Support new Attribute Icon format when viewing item details
+
+-------------------------------------------
 v4.2.22.0
 
 Features:
