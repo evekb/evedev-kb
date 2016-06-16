@@ -96,7 +96,7 @@ else
 				}
 				else
 				{
-					if(method_exists('Redis', 'select')) $redis->select(config::get('cfg_redis_db'));
+					if(method_exists('Redis', 'select')) $redis->select((int) config::get('cfg_redis_db'));
 					define("DB_USE_REDIS", true);
 				}
 			}
