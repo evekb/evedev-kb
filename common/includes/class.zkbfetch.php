@@ -868,7 +868,7 @@ class ZKBFetch
            // NPCs without Corp/Alliance/Faction (e.g. Rogue Drones)
            if(!isset($Corp) || !$Corp->getID())
            {
-               $Corp = $this->fetchCorp("Unknown", $Alliance, $timestamp);
+               $Corp = self::fetchCorp("Unknown", $Alliance, $timestamp);
            }
 
            // get ship class to determine whether it's a tower and 
@@ -1041,6 +1041,35 @@ class ZKBFetch
         }
         return $items;
     }
+    
+    /**
+	 * Return corporation from cached list or look up a new name.
+	 *
+	 * @param string $corpName Corp name to look up.
+	 * @return Corporation Corporation object matching input name.
+	 */
+	private static function fetchCorp($corpName, $Alliance = null, $timestamp = null)
+	{
+        $corp = Corporation::lookup($corpName);
+        if (!$corp) {
+            if ($Alliance == null) {      
+                    // If the corporation is new and the alliance unknown (structure)
+                    // fetch the alliance from the API.
+                    $corp = Corporation::add($corpName, Alliance::add("None"), $timestamp);
+                    if (!$corp->getExternalID()) {
+                            $corp = false;
+                    }
+                    else {
+                            $corp->execQuery();
+                    }
+
+            } else {
+                    $corp = Corporation::add($corpName, $Alliance, $timestamp, 0, FALSE);
+            }
+        }
+
+		return $corp;
+	}
     
     
    /**

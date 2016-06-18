@@ -545,7 +545,7 @@ class CrestParser
             // NPCs without Corp/Alliance/Faction (e.g. Rogue Drones)
             else
             {
-                $Corp = $this->fetchCorp("Unknown", $Alliance, $timestamp);
+                $Corp = self::fetchCorp("Unknown", $Alliance, $timestamp);
             }
 
             // get ship class to determine whether it's a tower and 
