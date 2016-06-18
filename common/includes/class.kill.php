@@ -1928,7 +1928,7 @@ class Kill extends Cacheable
             }
         }
 
-        if($this->crestHash)
+        if($this->crestHash && $this->id)
         {
             $this->putCache();
         }
@@ -1960,7 +1960,7 @@ class Kill extends Cacheable
      * sets the kill's CREST hash
      * @param string $crestHash
      */
-    function setCreshHash($crestHash)
+    function setCrestHash($crestHash)
 	{
 		$this->crestHash = $crestHash;
 	}

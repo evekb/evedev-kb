@@ -172,7 +172,7 @@ class CrestParser
         // set timestamp
         $Kill->setTimeStamp($timestamp);
         // set CREST hash
-        $Kill->setCreshHash($this->crestHash);
+        $Kill->setCrestHash($this->crestHash);
 
         // handle solarSystem
         $solarSystemID = (int)$this->killmailRepresentation->solarSystem->id;

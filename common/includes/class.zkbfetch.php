@@ -558,6 +558,7 @@ class ZKBFetch
         $Kill = new Kill();
         // set external ID
         $Kill->setExternalID($killData->killID);
+        $Kill->setCrestHash(strval($killData->zkb->hash));
         // set timestamp
         $Kill->setTimeStamp($timestamp);
         
@@ -572,26 +573,6 @@ class ZKBFetch
         }
         $Kill->setSolarSystem($solarSystem);
 
-        // handle victim details
-        try
-        {
-            $isNPCOnlyKill = FALSE;
-            // this method sets the $isNPCOnlyKill flag
-            $this->processInvolved($Kill, $killData, $isNPCOnlyKill);
-            if($isNPCOnlyKill && $this->ignoreNPCOnly)
-            {
-                $this->skipped[] = $killData->killID;
-                return;
-            }
-            $this->processVictim($Kill, $killData);
-            $this->processItems($Kill, $killData);
-        }
-        
-        catch(ZKBFetchException $e)
-        {
-            $this->skipped[] = $killData->killID;
-            throw $e;
-        }
 
         $CrestParser = new CrestParser($Kill->getCrestUrl());
         try
@@ -606,24 +587,56 @@ class ZKBFetch
                 // check if kills with invalid CREST hash should be posted as non-verified kills
                 if(!config::get('skipNonVerifyableKills'))
                 {
-                    // reset external ID so the kill is not API verified
+                    // reset external ID and CREST has so the kill is not API verified
                     $Kill->setExternalID(null);
-                    try
-                    {
-                        $killId = $Kill->add();
-                    }
-
-                    catch(KillException $e)
-                    {
-                        $this->skipped[] = $killData->killID;
-                        throw new ZKBFetchException($e->getMessage().", KillID = ".$killData->killID);
-                    }
+                    $Kill->setCrestHash(null);
                 }
                 else
                 {
                     $this->skipped[] = $killData->killID;
                     throw new ZKBFetchException($e->getMessage().", KillID = ".$killData->killID);
                 }
+            }
+            
+            // post kill using provided information, without using CREST
+            if(!config::get('skipNonVerifyableKills'))
+            {
+                // handle victim details
+                try
+                {
+                    $isNPCOnlyKill = FALSE;
+                    // this method sets the $isNPCOnlyKill flag
+                    $this->processInvolved($Kill, $killData, $isNPCOnlyKill);
+                    if($isNPCOnlyKill && $this->ignoreNPCOnly)
+                    {
+                        $this->skipped[] = $killData->killID;
+                        return;
+                    }
+                    $this->processVictim($Kill, $killData);
+                    $this->processItems($Kill, $killData);
+                }
+
+                catch(ZKBFetchException $e)
+                {
+                    $this->skipped[] = $killData->killID;
+                    throw $e;
+                }
+
+                try
+                {
+                    $killId = $Kill->add();
+                }
+
+                catch(KillException $e)
+                {
+                    $this->skipped[] = $killData->killID;
+                    throw new ZKBFetchException($e->getMessage().", KillID = ".$killData->killID);
+                }
+            }
+            else
+            {
+                $this->skipped[] = $killData->killID;
+                throw new ZKBFetchException($e->getMessage().", KillID = ".$killData->killID);
             }
         }
        self::$NUMBER_OF_KILLS_FETCHED_FROM_CREST++;
