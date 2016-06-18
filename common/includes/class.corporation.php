@@ -169,15 +169,15 @@ class Corporation extends Entity
 			$qry->execute($sql);
 			// If we have an external ID but no local record then fetch from CCP.
 			if($this->externalid && !$qry->recordCount())
-                        {
-                            // check for success to prevent endless recursive calls
-                            if($this->fetchCorp())
-                            {
-                                // after adding the alliance to DB we need to read its properties
-                                $this->execQuery();
-                            }
-                        } 
-                        else if($qry->recordCount())
+            {
+                // check for success to prevent endless recursive calls
+                if($this->fetchCorp())
+                {
+                    // after adding the alliance to DB we need to read its properties
+                    $this->execQuery();
+                }
+            } 
+            else if($qry->recordCount())
 			{
 				$row = $qry->getRow();
 				$this->id = intval($row['crp_id']);
@@ -367,6 +367,26 @@ class Corporation extends Entity
 			}
 		}
 		return false;
+	}
+    
+    /**
+	 * Return the corporation ID.
+	 *
+	 * @return integer
+	 */
+	function getID()
+	{
+        if ($this->id) 
+        {
+			return $this->id;
+		} 
+        
+        elseif ($this->externalid) 
+        {
+			$this->execQuery();
+			return $this->id;
+		}        
+        return 0;
 	}
 
 	/**

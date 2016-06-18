@@ -718,12 +718,20 @@ class ZKBFetch
        // if corp is not present, use faction
        if($victimDetails['corporationID'] > 0)
        {
-           $Corp = Corporation::add(strval($victimDetails['corporationName']), $Alliance, $timestamp, (int)$victimDetails['corporationID']);
+            $Corp = new Corporation($victimDetails['corporationID'], TRUE);
+            if(!$Corp->getID() && strlen($victimDetails['corporationName']) > 0)
+            {
+                $Corp = Corporation::add(strval($victimDetails['corporationName']), $Alliance, $timestamp, (int)$victimDetails['corporationID']);
+            }
        }   
 
        else
        {
-           $Corp = Corporation::add(strval($victimDetails['factionName']), $Alliance, $timestamp, (int)$victimDetails['factionID']);
+            $Corp = new Corporation($victimDetails['factionID'], TRUE);
+            if(!$Corp->getID() && strlen($victimDetails['factionName']) > 0)
+            {
+                $Corp = Corporation::add(strval($victimDetails['factionName']), $Alliance, $timestamp, (int)$victimDetails['factionID']);
+            }
        }
 
        // victim's name
@@ -802,8 +810,14 @@ class ZKBFetch
            {
                $Ship = Ship::getByID($involvedParty['shipTypeID']);
            }
-
-           $Weapon = Cacheable::factory('Item', $involvedParty['weaponTypeID']);
+           
+           // if the weapon is not known, the weaponTypeID is 0 for kills that were created from XML API
+           $weaponTypeId = $involvedParty['weaponTypeID'];
+           if(!$weaponTypeId)
+           {
+               $weaponTypeId = $Ship->getID();
+           }
+           $Weapon = Cacheable::factory('Item', $weaponTypeId);
 
 
            // get alliance
@@ -832,10 +846,9 @@ class ZKBFetch
            // if corp is not present, use faction
            if($involvedParty['corporationID'] > 0)
            {
-               // try getting the corp from our database
-                $Corp = Corporation::lookup(strval($involvedParty['corporationName']));
+                $Corp = new Corporation($involvedParty['corporationID'], TRUE);
                 // create new corp
-                if(!$Corp)
+                if(!$Corp->getID() && strlen($involvedParty['corporationName']) > 0)
                 {
                     $Corp = Corporation::add(strval($involvedParty['corporationName']), $Alliance, $timestamp, (int)$involvedParty['corporationID']);
                 }
@@ -843,17 +856,17 @@ class ZKBFetch
 
            else if($involvedParty['factionID'] > 0)
            {
-               // try getting the corp from our database
-                $Corp = Corporation::lookup(strval($involvedParty['factionName']));
+                // try getting the corp from our database
+                $Corp = new Corporation($involvedParty['factionID'], TRUE);
                 // create new corp
-                if(!$Corp)
+                if(!$Corp->getID() && strlen($involvedParty['factionName']) > 0)
                 {
                     $Corp = Corporation::add(strval($involvedParty['factionName']), $Alliance, $timestamp, (int)$involvedParty['factionID']);
                 }
            }
 
            // NPCs without Corp/Alliance/Faction (e.g. Rogue Drones)
-           else
+           if(!isset($Corp) || !$Corp->getID())
            {
                $Corp = $this->fetchCorp("Unknown", $Alliance, $timestamp);
            }
