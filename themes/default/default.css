@@ -250,6 +250,20 @@ textarea.killmail
 	padding: 4px;
 }
 
+.kb-kl-table-summary
+{
+	text-align: center;
+	font-size: 10px;
+	font-weight: bold;
+	height: 15px;
+	padding: 4px;
+}
+
+.kb-kl-summary-cell
+{
+	width: 33%;
+}
+
 .kb-table-row-odd
 {
 	background: #292929;
