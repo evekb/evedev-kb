@@ -31,13 +31,13 @@ define('CREST_PUBLIC_URL', 'https://crest-tq.eveonline.com');
  * current version: major.minor.sub.ccpDBupdateNo
  * even numbers for minor = development version
  */
-define('KB_VERSION', '4.2.23.0');
+define('KB_VERSION', '4.2.24.0');
 /** release name */
-define('KB_RELEASE', '(YC-118-5 1.0)');
+define('KB_RELEASE', '(YC-118-6 1.0)');
 /** version of the SDE used to produce the current static database */
-define('KB_CCP_DB_VERSION', '20160531');
+define('KB_CCP_DB_VERSION', '20160628');
 /** release date of the SDE used to produce the current static database */
-define('KB_CCP_DB_DATE', 'May 31, 2016');
+define('KB_CCP_DB_DATE', 'Jun 28, 2016');
 /** the version of IDFeed used by this killboard, gets reported to clients */
 define('ID_FEED_VERSION', 1.50);
 /** the version of zKBFetch used by this killboard */
