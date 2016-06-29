@@ -7,8 +7,8 @@
 		{if $daybreak && $show_summary}
 			<table class="kb-table kb-kl-table">
 				<tr class="kb-kl-table-summary">
-					<td class="killcount">{if $killlist[day].summary.numberOfKills > 0}Kills: {$killlist[day].summary.numberOfKills}{/if}</td>
-					{if $killlist[day].summary.numberOfLosses > 0}<td class="kb-kl-summary-cell losscount">Losses: {$killlist[day].summary.numberOfLosses}</td>{/if}
+					{if $killlist[day].summary.numberOfKills > 0 || isset($killlist[day].summary.efficiency)}<td class="killcount">Kills: {$killlist[day].summary.numberOfKills}</td>{/if}
+					{if $killlist[day].summary.numberOfLosses > 0 || isset($killlist[day].summary.efficiency)}<td class="{if $killlist[day].summary.numberOfKills > 0 || isset($killlist[day].summary.efficiency)}kb-kl-summary-cell{/if} losscount">Losses: {$killlist[day].summary.numberOfLosses}</td>{/if}
 					{if isset($killlist[day].summary.efficiency)}<td class="kb-kl-summary-cell efficiency">Efficiency: {$killlist[day].summary.efficiency}%</td>{/if}
 				</tr>
 			</table>
