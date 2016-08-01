@@ -34,8 +34,8 @@ class IDFeed
 	private $lastInternalReturned = 0;
 	private $posted = array();
 	private $skipped = array();
-        /** @param int accumulated number of kills present in the XML */
-        protected $numberOfKillsFetched = 0;
+    /** @param int accumulated number of kills present in the XML */
+    protected $numberOfKillsFetched = 0;
 	private $duplicate = array();
 	private $time = '';
 	private $cachedTime = '';
@@ -43,20 +43,20 @@ class IDFeed
 	private $errormsg = '';
 	private $errorcode = 0;
 	private $npcOnly = true;
-        // flag indicating we're fetching from the EVE API (not from an IDFeed)
-        private $isApiFetch = FALSE;
-        /** flag indicating whether to skip NPC only losses */
-        private $skipNpcOnly;
-        
-        /** field for counting the number of kills fetched from CREST; we need to keep track for not running into PHP's time limit */
-        protected static $NUMBER_OF_KILLS_FETCHED_FROM_CREST = 0;
-        
-        /** 
-         * flag indicating the slot for an item in an incoming feed/API
-         * should be looked up if the incoming flag is zero
-         * @var boolean
-         */
-        private $lookupSlotForIncomingZeroFlags = FALSE;
+    // flag indicating we're fetching from the EVE API (not from an IDFeed)
+    private $isApiFetch = FALSE;
+    /** flag indicating whether to skip NPC only losses */
+    private $skipNpcOnly;
+
+    /** field for counting the number of kills fetched from CREST; we need to keep track for not running into PHP's time limit */
+    protected static $NUMBER_OF_KILLS_FETCHED_FROM_CREST = 0;
+
+    /** 
+     * flag indicating the slot for an item in an incoming feed/API
+     * should be looked up if the incoming flag is zero
+     * @var boolean
+     */
+    private $lookupSlotForIncomingZeroFlags = FALSE;
 
 	/**
 	 * Fetch a new feed.
@@ -424,22 +424,23 @@ class IDFeed
 			return false;
 		}
                 
-                // fetching from API?
-                if(is_null($sxe['edkapi']))
-                {
-                    $this->isApiFetch = TRUE;
-                    $this->skipNpcOnly = config::get('post_no_npc_only');
-                }
-                
-                else
-                {
-                    $this->skipNpcOnly = config::get('post_no_npc_only_feed');
-                }
-                
-                // if we'r fetching from another IDFeed (not from API) and the version is either empty or below 1.2
-                if ((!is_null($sxe['edkapi']) && strlen($sxe['edkapi']) == 0) || (floatval($sxe['edkapi']) && $sxe['edkapi'] < 1.2)) {
-			$this->lookupSlotForIncomingZeroFlags = TRUE;
-		}
+        // fetching from API?
+        if(is_null($sxe['edkapi']))
+        {
+            $this->isApiFetch = TRUE;
+            $this->skipNpcOnly = config::get('post_no_npc_only');
+        }
+
+        else
+        {
+            $this->skipNpcOnly = config::get('post_no_npc_only_feed');
+        }
+
+        // if we'r fetching from another IDFeed (not from API) and the version is either empty or below 1.2
+        if ((!is_null($sxe['edkapi']) && strlen($sxe['edkapi']) == 0) || (floatval($sxe['edkapi']) && $sxe['edkapi'] < 1.2)) 
+        {
+            $this->lookupSlotForIncomingZeroFlags = TRUE;
+        }
                 
 		$this->time = $sxe->currentTime;
 		$this->cachedTime = $sxe->cachedUntil;
@@ -451,27 +452,27 @@ class IDFeed
 		// We need raw mails for the mailhash so temporarily disable
 		// classification
 		config::put('kill_classified', 0);
-                $maxNumberOfKillsPerRun = config::get('maxNumberOfKillsPerRun');
+        $maxNumberOfKillsPerRun = config::get('maxNumberOfKillsPerRun');
 		if (!is_null($sxe->result->rowset->row)) {
             $this->numberOfKillsFetched += count($sxe->result->rowset->row);
             foreach ($sxe->result->rowset->row as $row) 
             {
-                    // check if we reached the maximum number of kills we may fetch
-                    if(self::$NUMBER_OF_KILLS_FETCHED_FROM_CREST >= $maxNumberOfKillsPerRun)
-                    {
-                        break;
-                    }
-                    try
-                    {
-                        $this->processKill($row);
-                    }
-                    
-                    catch(CrestParserException $e)
-                    {
-                        $this->parsemsg[] = "Error communicating with CREST, aborting!";
-                        $this->parsemsg[] = $e->getMessage();
-                        break;
-                    }
+                // check if we reached the maximum number of kills we may fetch
+                if(self::$NUMBER_OF_KILLS_FETCHED_FROM_CREST >= $maxNumberOfKillsPerRun)
+                {
+                    break;
+                }
+                try
+                {
+                    $this->processKill($row);
+                }
+
+                catch(CrestParserException $e)
+                {
+                    $this->parsemsg[] = "Error communicating with CREST, aborting!";
+                    $this->parsemsg[] = $e->getMessage();
+                    break;
+                }
 			}
 		}
 		return count($this->posted) + count($this->skipped);
@@ -534,8 +535,8 @@ class IDFeed
 			}
 			
 			if ($this->npcOnly && $this->skipNpcOnly) 
-                        {
-                            $skip = true;
+            {
+                $skip = true;
 			}
 			if (!$skip) {
 				if (isset($row->rowset[1]->row[0])) {
@@ -558,77 +559,84 @@ class IDFeed
 					}
 				}
                                 
-                                // catch KillExceptions
-                                // will be thrown creating the raw mail, and thus creating the kill's hash, fatally fails
-                                $errorstring = "";
-                                $killException = null;
-                                
-                                // check if we can fetch from CREST
-                                if(!is_null($kill->getCrestUrl()))
-                                {
-                                    $CrestParser = new CrestParser($kill->getCrestUrl());
-                                    try
-                                    {
-                                        $id = $CrestParser->parse(true);
-                                    } 
-                                    catch (CrestParserException $e) 
-                                    {
-                                        $killException = $e;
-                                        $id = 0;
-                                        
-                                        // special treatment for dupes (-1) / permanently deleted kills (-4)
-                                        if($e->getCode() < 0)
-                                        {
-                                            $id = $e->getCode();
-                                        }
-                                        
-                                        // CREST error due to incorrect CREST hash
-                                        else if($e->getCode() == 403)
-                                        {
-                                            // check if kills with invalid CREST hash should be posted as non-verified kills
-                                            if(!config::get('skipNonVerifyableKills'))
-                                            {
-                                                // reset external ID so the kill is not API verified
-                                                $kill->setExternalID(null);
-                                                try
-                                                {
-                                                    $id = $kill->add();
-                                                } 
+                // catch KillExceptions
+                // will be thrown creating the raw mail, and thus creating the kill's hash, fatally fails
+                $errorstring = "";
+                $killException = null;
 
-                                                catch (KillException $ex) 
-                                                {
-                                                    $killException = $ex;
-                                                    $id = 0;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                $killException = new KillException("Corrupt kill information provided, skipping");
-                                            }
-                                        }
-                                        
-                                        // there seems to be a problem communicating with CREST, stop fetching
-                                        else
-                                        {
-                                            throw $e;
-                                        }
-                                    }
-                                    self::$NUMBER_OF_KILLS_FETCHED_FROM_CREST++;
-                                }
-                                
-                                else
-                                {
-                                    try
-                                    {
-                                        $id = $kill->add();
-                                    } 
+                // check if we can fetch from CREST
+                if(!is_null($kill->getCrestUrl()))
+                {
+                    $CrestParser = new CrestParser($kill->getCrestUrl());
+                    $CrestParser->setAllowNpcOnlyKills(!$this->skipNpcOnly);
+                    try
+                    {
+                        $id = $CrestParser->parse(true);
+                    } 
+                    catch (CrestParserException $e) 
+                    {
+                        $killException = $e;
+                        $id = 0;
 
-                                    catch (KillException $ex) 
-                                    {
-                                        $killException = $ex;
-                                        $id = 0;
-                                    }
+                        // special treatment for dupes (-1) / permanently deleted kills (-4)
+                        if($e->getCode() < 0)
+                        {
+                            $id = $e->getCode();
+                        }
+
+                        // CREST error due to incorrect CREST hash
+                        else if($e->getCode() == 403)
+                        {
+                            // check if kills with invalid CREST hash should be posted as non-verified kills
+                            if(!config::get('skipNonVerifyableKills'))
+                            {
+                                // reset external ID so the kill is not API verified
+                                $kill->setExternalID(null);
+                                try
+                                {
+                                    $id = $kill->add();
+                                } 
+
+                                catch (KillException $ex) 
+                                {
+                                    $killException = $ex;
+                                    $id = 0;
                                 }
+                            }
+                            else
+                            {
+                                $killException = new KillException("Corrupt kill information provided, skipping");
+                            }
+                        }
+                        
+                        // tried posting an NPC only kill when not allowed
+                        else if($e->getCode() == -5)
+                        {
+                            $skip = true;
+                        }
+
+                        // there seems to be a problem communicating with CREST, stop fetching
+                        else
+                        {
+                            throw $e;
+                        }
+                    }
+                    self::$NUMBER_OF_KILLS_FETCHED_FROM_CREST++;
+                }
+
+                else
+                {
+                    try
+                    {
+                        $id = $kill->add();
+                    } 
+
+                    catch (KillException $ex) 
+                    {
+                        $killException = $ex;
+                        $id = 0;
+                    }
+                }
 
 				if ($id == 0) {
 					if ($internalID) {

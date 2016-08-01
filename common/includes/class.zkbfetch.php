@@ -575,6 +575,7 @@ class ZKBFetch
 
 
         $CrestParser = new CrestParser($Kill->getCrestUrl());
+        $CrestParser->setAllowNpcOnlyKills(!$this->ignoreNPCOnly);
         try
         {
             $killId = $CrestParser->parse(true);
@@ -596,6 +597,12 @@ class ZKBFetch
                     $this->skipped[] = $killData->killID;
                     throw new ZKBFetchException($e->getMessage().", KillID = ".$killData->killID);
                 }
+            }
+            // tried posting an NPC only kill when not allowed
+            else if($e->getCode() == -5)
+            {
+                $this->skipped[] = $killData->killID;
+                return;
             }
             
             // post kill using provided information, without using CREST

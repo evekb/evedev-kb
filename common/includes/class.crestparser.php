@@ -24,7 +24,9 @@ class CrestParser
     /** @var Object (json decoded) */
     private $killmailRepresentation;
     /** @var boolean isNPCOnly flag indicating the killmail has only NPCs as involved parties */
-    private $isNPCOnly = false;
+    private $isNPCOnly = true;
+    /** @var boolean allowNpcOnlyKills flag indicating whether killmails with only NPCs as involved parties may be posted */
+    private $allowNpcOnlyKills = true;
 
     /**
     * 
@@ -186,7 +188,11 @@ class CrestParser
         $this->processVictim($Kill);
         $this->processInvolved($Kill);
         $this->processItems($Kill);
-
+        
+        if($this->isNPCOnly && !$this->allowNpcOnlyKills)
+        {
+            throw new CrestParserException("Kill is a loss to NPCs only, but posting NPC kills is not allowed!", -5);
+        }
         return $Kill->add();
     }
 
@@ -297,14 +303,31 @@ class CrestParser
 	{
 		return $this->dupeid_;
 	}
-	/**
-	 * @return integer
-	 */
+
 	public function setTrust($trust)
 	{
 		$this->trust = intval($trust);
 	}
-        
+    
+    /**
+     * Sets the flag whether to allow posting of kills containing
+     * only NPCs as involved parties.
+     * @param boolean $allowNpcOnlyKills
+     */
+    public function setAllowNpcOnlyKills($allowNpcOnlyKills)
+	{
+		$this->allowNpcOnlyKills = (boolean) $allowNpcOnlyKills;
+	}
+   
+    /**
+     * Returns whether posting of kills with only NPCs as involved parties is allowed.
+     * 
+     * @return boolean true if posting of NPC only kills is allowed, otherwise false
+     */
+    public function getAllowNpcOnlyKills()
+    {
+        return $this->allowNpcOnlyKills;
+    }
         
     /**
      * @param mixed $mailRepresentation
