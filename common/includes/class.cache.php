@@ -30,7 +30,7 @@ class cache
 	protected static function shouldCache($page = '')
 	{
 		// never cache for admins
-		if (session::isAdmin()) {
+		if (session::isAdmin() || session::isCachingForciblyDisabled()) {
 			return false;
 		}
 		// Don't cache the image files.
