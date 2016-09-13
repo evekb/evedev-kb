@@ -864,7 +864,8 @@ class IDFeed
 			35, // small Tower
 			36, // medium Tower
 			37, // large Tower
-			38 // POS Module  
+			38, // POS Module  
+            ShipClass::$SHIP_CLASS_ID_CITADELS        
 		);
                 
 		$npc = false;
@@ -924,17 +925,20 @@ class IDFeed
                         $loadPilotExternals = false;
 		} else if ($charname == "" && !$charid) {
 			// NPC ship
-			$ship = Ship::lookup("Unknown");
+			$ship = Ship::getByID((int) $inv['shipTypeID']); 
 			$weapon = Item::getByID((int) $inv['shipTypeID']);
 			$charname = $weapon->getName();
-			$npc = true;
+			if($ship->getClass()->getID() != ShipClass::$SHIP_CLASS_ID_CITADELS)
+            {
+                $npc = true;
+            }
 			$charid = 0;
-                        $loadPilotExternals = false;
-                        if(!$charname)
-                        {
-                            $this->parsemsg[] = "Involved party is an NPC with a ship type not found in the database!";
-                            return false;
-                        }
+            $loadPilotExternals = false;
+            if(!$charname)
+            {
+                $this->parsemsg[] = "Involved party is an NPC with a ship type not found in the database!";
+                return false;
+            }
 		} else if ($charname == "" && $charid) {
 			// Bugged kill
 			$this->parsemsg[] = "Involved party has blank pilot name.";

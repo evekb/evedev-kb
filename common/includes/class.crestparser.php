@@ -577,7 +577,8 @@ class CrestParser
             if($shipClassID == 35           // small Tower
                 || $shipClassID == 36   // medium Tower
                 || $shipClassID == 37   // large Tower
-                || $shipClassID == 38)  // POS Module  
+                || $shipClassID == 38  // POS Module  
+                || $shipClassID == ShipClass::$SHIP_CLASS_ID_CITADELS)  // Citadels 
             {
                 if($Alliance->getName() == "None")
                 {
@@ -606,14 +607,18 @@ class CrestParser
             if(!$involvedCharacterID && !$involvedParty['weaponTypeID'] && !$involvedParty['allianceID'])                        
             {
                 $Alliance = $Corp->getAlliance();
-                $Ship = Ship::lookup("Unknown");
+                $Ship = Ship::getByID($involvedParty['shipTypeID']);
                 $Weapon = Item::getByID($involvedParty['shipTypeID']);
                 if(!$Weapon->getName())
                 {
                     throw new CrestParserException("Involved party is an NPC with a ship type not found in the database! Kill-ID: ".$killData->killID);
                 }
                 $involvedPartyName = $Corp->getName().' - '.$Weapon->getName();
-                $isNPC = TRUE;
+                // citadels are no NPCs!
+                if($Ship->getClass()->getID() != ShipClass::$SHIP_CLASS_ID_CITADELS)
+                {
+                    $isNPC = TRUE;
+                }
                 $involvedCharacterID = 0;
                 $loadPilotExternals = false;
             }
