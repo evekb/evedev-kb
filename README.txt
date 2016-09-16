@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.25.0
+Eve Development Network Killboard v4.2.26.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -26,6 +26,16 @@ o/ EVE Development Network
 VERSION HISTORY
 ===============
 
+v4.2.26.0
+
+Features:
+Updated EDK to 4.2.26.0 and CCP DB to YC-118-8 1.0.20160912
+
+Bugfixes:
+Fix: Citadels are no longer considered to be NPCs
+Fix: Kill lists listed the same kill multiple times
+
+-------------------------------------------
 v4.2.25.0
 
 Features:
