@@ -17,22 +17,22 @@ if (file_exists('../kbconfig.php'))
 	if(defined('KB_SITE') && defined('DB_HOST') && defined('DB_USER')
 		&& defined('DB_NAME') && defined('DB_PASS'))
 	{
-		$conn = mysql_connect(DB_HOST.':'.DB_PORT, DB_USER, DB_PASS);
-		mysql_select_db(DB_NAME);
+		$db = new mysqli($_SESSION['sql']['host'], $_SESSION['sql']['user'], $_SESSION['sql']['pass'], $_SESSION['sql']['db']);
+		$db->select_db(DB_NAME);
 		if($_GET['erase']==1)
 		{
-			$res = mysql_query("SHOW TABLES", $conn);
-			if($res && mysql_num_rows($res))
+			$res = $db->query("SHOW TABLES");
+			if($res && $res->num_rows > 0)
 			{
-				while($row = mysql_fetch_array($res))
-					mysql_query("DROP TABLE ".$row[0], $conn);
+				while($row = $res->fetch_array())
+					$db->query("DROP TABLE ".$row[0]);
 
 			}
 		}
 		else
 		{
-			$res = mysql_query("SELECT * FROM kb3_config WHERE cfg_site = '".KB_SITE."'", $conn);
-			if($res && mysql_num_rows($res))
+			$res = $db->query("SELECT * FROM kb3_config WHERE cfg_site = '".KB_SITE."'");
+			if($res && $res->num_rows > 0)
 			{
 				$smarty->assign('previous_install', true);
 				$smarty->assign('previous_image', $fail_img);

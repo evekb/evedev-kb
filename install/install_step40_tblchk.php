@@ -39,20 +39,20 @@ function check_navigationtable()
 
 	$qry = DBFactory::getDBQuery();
 	$query = 'SELECT count(*) FROM kb3_navigation';
-	$result = mysql_query($query);
+	$result = $qry->execute($query);
 	if ($result)
 	{
 		$query = "SELECT hidden FROM kb3_navigation LIMIT 1";
-		$result = @mysql_query($query);
+		$result = @$qry->execute($query);
 		if (!$result)
 		{
 			 $qry->execute("ALTER TABLE `kb3_navigation` ADD `hidden` BOOL NOT NULL DEFAULT '0' AFTER `page` ;");
 		}
 		$query = "SELECT count(KBSITE) FROM kb3_navigation WHERE KBSITE = '".KB_SITE."'";
-		$result = @mysql_query($query);
+		$result = @$qry->execute($query);
 		if ($result)
 		{
-			$row = mysql_fetch_row($result);
+			$row = $result->fetch_assoc();
 			if ($row[0] == 0)
 			{
 				$queries = "INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr`,`page` ,`hidden`,`KBSITE`) VALUES ('top',1,'Home','?a=home','_self',1,'ALL_PAGES',0,'".KB_SITE."');
@@ -123,7 +123,7 @@ function check_commenttablerow()
 {
     $qry = DBFactory::getDBQuery();
     $query = 'SELECT posttime FROM kb3_comments LIMIT 1';
-    $result = mysql_query($query);
+    $result = $qry->execute($query);
     if ($result)
     {
         $query = 'ALTER TABLE `kb3_comments` CHANGE `ID` `id` INT( 11 ) NOT NULL AUTO_INCREMENT';
@@ -138,7 +138,7 @@ function check_shipvaltable()
 {
     $qry = DBFactory::getDBQuery();
     $query = 'SELECT count(*) FROM kb3_ships_values';
-    $result = mysql_query($query);
+    $result = $qry->execute($query);
     if ($result)
     {
         return;
@@ -155,8 +155,8 @@ function check_invdetail()
 {
     $qry = DBFactory::getDBQuery();
     $query = 'SELECT ind_sec_status FROM kb3_inv_detail LIMIT 1';
-    $qry->execute($query);
-    $len = mysql_field_len($qry->resid_,0);
+    $result = $qry->execute($query);
+    $len = $result->fetch_field_direct(0)->length;
     if ($len == 4)
     {
         $query = 'ALTER TABLE `kb3_inv_detail` CHANGE `ind_sec_status` `ind_sec_status` VARCHAR(5)';
@@ -168,8 +168,8 @@ function check_pilots()
 {
     $qry = DBFactory::getDBQuery();
     $query = 'SELECT plt_name FROM kb3_pilots LIMIT 1';
-    $qry->execute($query);
-    $len = mysql_field_len($qry->resid_,0);
+    $result = $qry->execute($query);
+    $len = $result->fetch_field_direct(0)->length;
     if ($len == 32)
     {
         $query = 'ALTER TABLE `kb3_pilots` CHANGE `plt_name` `plt_name` VARCHAR(64) NOT NULL';
@@ -181,7 +181,7 @@ function check_contracts()
 {
     $qry = DBFactory::getDBQuery();
     $query = 'SELECT ctd_sys_id FROM kb3_contract_details LIMIT 1';
-    $result = mysql_query($query);
+    $result = $qry->execute($query);
     if ($result)
     {
         return;
@@ -239,7 +239,7 @@ function check_tblstrct1()
 {
     $qry = DBFactory::getDBQuery();
     $query = 'SELECT shp_description FROM kb3_ships LIMIT 1';
-    $result = mysql_query($query);
+    $result = $qry->execute($query);
     if (!$result)
     {
         return;
@@ -251,12 +251,12 @@ function check_tblstrct5()
 {
     $qry = DBFactory::getDBQuery();
     $query = 'SELECT count(*) FROM kb3_standings';
-    $result = mysql_query($query);
+    $result = $qry->execute($query);
     if ($result)
     {
         $query = 'SELECT count(*) FROM kb3_standings WHERE sta_from=1 AND sta_to=1 AND sta_from_type=\'a\' AND
                   sta_to_type=\'c\'';
-        $result = mysql_query($query);
+        $result = $qry->execute($query);
         if ($result)
         {
             return;
@@ -279,7 +279,7 @@ function check_tblstrct6()
 {
     $qry = DBFactory::getDBQuery();
     $query = 'SELECT all_img FROM kb3_alliances LIMIT 1';
-    $result = mysql_query($query);
+    $result = $qry->execute($query);
     if (!$result)
     {
         return;
@@ -292,7 +292,7 @@ function check_killtables()
 {
     $qry = DBFactory::getDBQuery();
     $query = 'SELECT kll_dmgtaken FROM kb3_kills LIMIT 1';
-    $result = mysql_query($query);
+    $result = $qry->execute($query);
     if ($result)
     {
         return;
@@ -301,7 +301,7 @@ function check_killtables()
 
     $qry = DBFactory::getDBQuery();
     $query = 'SELECT ind_dmgdone FROM kb3_inv_detail LIMIT 1';
-    $result = mysql_query($query);
+    $result = $qry->execute($query);
     if ($result)
     {
         return;
