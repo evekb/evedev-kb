@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.26.0
+Eve Development Network Killboard v4.2.27.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -26,6 +26,19 @@ o/ EVE Development Network
 VERSION HISTORY
 ===============
 
+v4.2.27.0
+
+Features:
+Updated EDK to 4.2.27.0 and CCP DB to YC-118-8 1.0.20161011
+
+Enhancements:
+Enhancement: Added possibility to disable page caching via session
+
+Bugfixes:
+Updated Copyright to 2016 in database update template
+Removed last traces of procedural method calls using mysql
+
+-------------------------------------------
 v4.2.26.0
 
 Features:
