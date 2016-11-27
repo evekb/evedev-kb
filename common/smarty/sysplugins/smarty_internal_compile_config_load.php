@@ -14,7 +14,7 @@
  * Smarty Internal Plugin Compile Config Load Class
  */
 class Smarty_Internal_Compile_Config_Load extends Smarty_Internal_CompileBase {
-	// attribute definitions
+    // attribute definitions
     public $required_attributes = array('file');
     public $shorttag_order = array('file','section');
     public $optional_attributes = array('section', 'scope'); 
@@ -33,7 +33,7 @@ class Smarty_Internal_Compile_Config_Load extends Smarty_Internal_CompileBase {
         $_attr = $this->_get_attributes($args);
         
         if ($_attr['nocache'] === true) {
-        	$this->compiler->trigger_template_error('nocache option not allowed', $this->compiler->lex->taglineno);
+            $this->compiler->trigger_template_error('nocache option not allowed', $this->compiler->lex->taglineno);
         }
 
          

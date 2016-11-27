@@ -13,13 +13,13 @@
  */
 class Clock
 {
-	/**
-	 * Generate html for a clock from the template file.
-	 *
-	 * @global Smarty $smarty
-	 * @return string html generated frm the clock template.
-	 */
-	function generate()
+    /**
+     * Generate html for a clock from the template file.
+     *
+     * @global Smarty $smarty
+     * @return string html generated frm the clock template.
+     */
+    function generate()
     {
         global $smarty;
 

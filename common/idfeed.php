@@ -41,139 +41,139 @@ $sxe = new SimpleXMLElement($xml);
 
 $list = new KillList();
 if (isset($_GET['kll_id'])) {
-	$_GET['lastintID'] = $_GET['kll_id'];
-	$_GET['allkills'] = 1;
-	$_GET['range'] = 0;
+    $_GET['lastintID'] = $_GET['kll_id'];
+    $_GET['allkills'] = 1;
+    $_GET['range'] = 0;
 }
 if (isset($_GET['kll_ext_id'])) {
-	$_GET['lastID'] = $_GET['kll_ext_id'];
-	$_GET['allkills'] = 0;
-	$_GET['range'] = 0;
+    $_GET['lastID'] = $_GET['kll_ext_id'];
+    $_GET['allkills'] = 0;
+    $_GET['range'] = 0;
 }
 
 $list->setOrdered(true);
 if (isset($_GET['allkills']) && $_GET['allkills'] == 0 ) {
-	$list->setAPIKill();
-	$list->setOrderBy(' kll.kll_external_id ASC ');
+    $list->setAPIKill();
+    $list->setOrderBy(' kll.kll_external_id ASC ');
 } else {
-	$list->setOrderBy(' kll.kll_id ASC ');
+    $list->setOrderBy(' kll.kll_id ASC ');
 }
 if (isset($_GET['limit'])) {
-	$list->setLimit(min($maxkillsreturned, (int)$_GET['limit']));
+    $list->setLimit(min($maxkillsreturned, (int)$_GET['limit']));
 } else {
-	$list->setLimit($maxkillsreturned);
+    $list->setLimit($maxkillsreturned);
 }
 
 $qry = DBFactory::getDBQuery();
 
 if (isset($_GET['alliance'])) {
-	$arr = explode(',', $_GET['alliance']);
-	foreach ($arr as &$val) {
-		$val = intval($val);
-	}
-	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_external_id IN (".implode(',',
-					$arr).")");
-	if (!$qry->recordCount()) {
-		show($sxe);
-	}
-	while ($row = $qry->getRow()) {
-		$list->addCombinedAlliance($row['all_id']);
-	}
+    $arr = explode(',', $_GET['alliance']);
+    foreach ($arr as &$val) {
+        $val = intval($val);
+    }
+    $qry->execute("SELECT all_id FROM kb3_alliances WHERE all_external_id IN (".implode(',',
+                    $arr).")");
+    if (!$qry->recordCount()) {
+        show($sxe);
+    }
+    while ($row = $qry->getRow()) {
+        $list->addCombinedAlliance($row['all_id']);
+    }
 }
 if (isset($_GET['corp'])) {
-	$arr = explode(',', $_GET['corp']);
-	foreach ($arr as &$val) {
-		$val = intval($val);
-	}
-	$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_external_id IN (".implode(',',
-					$arr).")");
-	if (!$qry->recordCount()) {
-		show($sxe);
-	}
-	while ($row = $qry->getRow()) {
-		$list->addCombinedCorp($row['crp_id']);
-	}
+    $arr = explode(',', $_GET['corp']);
+    foreach ($arr as &$val) {
+        $val = intval($val);
+    }
+    $qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_external_id IN (".implode(',',
+                    $arr).")");
+    if (!$qry->recordCount()) {
+        show($sxe);
+    }
+    while ($row = $qry->getRow()) {
+        $list->addCombinedCorp($row['crp_id']);
+    }
 }
 if (isset($_GET['pilot'])) {
-	$arr = explode(',', $_GET['pilot']);
-	$arr_pilots = array();
-	foreach ($arr as $val) {
-		// Remove 0 external ids since that matches all pilots with no id.
-		if ((int) $val) {
-			$arr_pilots[] = (int) $val;
-		}
-	}
-	$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_externalid IN (".implode(',',
-					$arr_pilots).")");
-	if (!$qry->recordCount()) {
-		show($sxe);
-	}
-	while ($row = $qry->getRow()) {
-		$list->addCombinedPilot($row['plt_id']);
-	}
+    $arr = explode(',', $_GET['pilot']);
+    $arr_pilots = array();
+    foreach ($arr as $val) {
+        // Remove 0 external ids since that matches all pilots with no id.
+        if ((int) $val) {
+            $arr_pilots[] = (int) $val;
+        }
+    }
+    $qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_externalid IN (".implode(',',
+                    $arr_pilots).")");
+    if (!$qry->recordCount()) {
+        show($sxe);
+    }
+    while ($row = $qry->getRow()) {
+        $list->addCombinedPilot($row['plt_id']);
+    }
 }
 if (isset($_GET['alliancename'])) {
-	$_GET['alliancename'] = '"'.str_replace(',', '","',
-					$qry->escape(urldecode($_GET['alliancename']))).'"';
-	$qry->execute("SELECT all_id FROM kb3_alliances WHERE all_name IN (".$_GET['alliancename'].")");
-	if (!$qry->recordCount()) {
-		show($sxe);
-	}
-	while ($row = $qry->getRow()) {
-		$list->addCombinedAlliance($row['all_id']);
-	}
+    $_GET['alliancename'] = '"'.str_replace(',', '","',
+                    $qry->escape(urldecode($_GET['alliancename']))).'"';
+    $qry->execute("SELECT all_id FROM kb3_alliances WHERE all_name IN (".$_GET['alliancename'].")");
+    if (!$qry->recordCount()) {
+        show($sxe);
+    }
+    while ($row = $qry->getRow()) {
+        $list->addCombinedAlliance($row['all_id']);
+    }
 }
 if (isset($_GET['corpname'])) {
-	$_GET['corpname'] = '"'.str_replace(',', '","',
-					$qry->escape(urldecode($_GET['corpname']))).'"';
-	$qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_name IN (".$_GET['corpname'].")");
-	if (!$qry->recordCount()) {
-		show($sxe);
-	}
-	while ($row = $qry->getRow()) {
-		$list->addCombinedCorp($row['crp_id']);
-	}
+    $_GET['corpname'] = '"'.str_replace(',', '","',
+                    $qry->escape(urldecode($_GET['corpname']))).'"';
+    $qry->execute("SELECT crp_id FROM kb3_corps WHERE crp_name IN (".$_GET['corpname'].")");
+    if (!$qry->recordCount()) {
+        show($sxe);
+    }
+    while ($row = $qry->getRow()) {
+        $list->addCombinedCorp($row['crp_id']);
+    }
 }
 if (isset($_GET['pilotname'])) {
-	$_GET['corpname'] = '"'.str_replace(',', '","',
-					$qry->escape(urldecode($_GET['pilotname']))).'"';
-	$qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_name IN (".$_GET['corpname'].")");
-	if (!$qry->recordCount()) {
-		show($sxe);
-	}
-	while ($row = $qry->getRow()) {
-		$list->addCombinedPilot($row['plt_id']);
-	}
+    $_GET['corpname'] = '"'.str_replace(',', '","',
+                    $qry->escape(urldecode($_GET['pilotname']))).'"';
+    $qry->execute("SELECT plt_id FROM kb3_pilots WHERE plt_name IN (".$_GET['corpname'].")");
+    if (!$qry->recordCount()) {
+        show($sxe);
+    }
+    while ($row = $qry->getRow()) {
+        $list->addCombinedPilot($row['plt_id']);
+    }
 }
 
 if (isset($_GET['system'])) {
-	$qry->execute("SELECT sys_id FROM kb3_systems WHERE sys_id = ".intval($_GET['system'])." LIMIT 1");
-	if (!$qry->recordCount()) {
-		show($sxe);
-	}
-	$row = $qry->getRow();
-	$list->addSystem($row['sys_id']);
+    $qry->execute("SELECT sys_id FROM kb3_systems WHERE sys_id = ".intval($_GET['system'])." LIMIT 1");
+    if (!$qry->recordCount()) {
+        show($sxe);
+    }
+    $row = $qry->getRow();
+    $list->addSystem($row['sys_id']);
 } else if (isset($_GET['region'])) {
-	$qry->execute("SELECT reg_id FROM kb3_regions WHERE reg_id = ".intval($_GET['region'])." LIMIT 1");
-	if (!$qry->recordCount()) show($sxe);
-	$row = $qry->getRow();
-	$list->addRegion($row['reg_id']);
+    $qry->execute("SELECT reg_id FROM kb3_regions WHERE reg_id = ".intval($_GET['region'])." LIMIT 1");
+    if (!$qry->recordCount()) show($sxe);
+    $row = $qry->getRow();
+    $list->addRegion($row['reg_id']);
 }
 
 if (isset($_GET['lastID']) && isset($_GET['allkills'])
-		&& $_GET['allkills'] == 0) {
-	$list->setMinExtID(intval($_GET['lastID']));
-	if (isset($_GET['range']))
-			$list->setMaxExtID(intval($_GET['lastID'] + $_GET['range']));
+        && $_GET['allkills'] == 0) {
+    $list->setMinExtID(intval($_GET['lastID']));
+    if (isset($_GET['range']))
+            $list->setMaxExtID(intval($_GET['lastID'] + $_GET['range']));
 } else if (isset($_GET['lastintID'])) {
-	$list->setMinKllID(intval($_GET['lastintID']));
-	if (isset($_GET['range']))
-			$list->setMaxKllID(intval($_GET['lastintID'] + $_GET['range']));
+    $list->setMinKllID(intval($_GET['lastintID']));
+    if (isset($_GET['range']))
+            $list->setMaxKllID(intval($_GET['lastintID'] + $_GET['range']));
 }
 if (isset($_GET['startdate']))
-		$list->setStartDate(gmdate('Y-m-d H:i:s', intval($_GET['startdate'])));
+        $list->setStartDate(gmdate('Y-m-d H:i:s', intval($_GET['startdate'])));
 if (isset($_GET['enddate']))
-		$list->setEndDate(gmdate('Y-m-d H:i:s', intval($_GET['enddate'])));
+        $list->setEndDate(gmdate('Y-m-d H:i:s', intval($_GET['enddate'])));
 
 header("Content-Type: text/xml");
 echo IDFeed::killListToXML($list);
@@ -188,8 +188,8 @@ echo IDFeed::killListToXML($list);
  */
 function show($sxe)
 {
-	header("Content-Type: text/xml");
-	echo $sxe->asXML();
-	cache::generate(); // We should really be in a class so this isn't needed.
-	die;
+    header("Content-Type: text/xml");
+    echo $sxe->asXML();
+    cache::generate(); // We should really be in a class so this isn't needed.
+    die;
 }

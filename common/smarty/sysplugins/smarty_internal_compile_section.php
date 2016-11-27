@@ -13,9 +13,9 @@
  * Smarty Internal Plugin Compile Section Class
  */
 class Smarty_Internal_Compile_Section extends Smarty_Internal_CompileBase {
-	// attribute definitions
+    // attribute definitions
     public $required_attributes = array('name', 'loop');
-   	public $shorttag_order = array('name', 'loop');
+       public $shorttag_order = array('name', 'loop');
     public $optional_attributes = array('start', 'step', 'max', 'show'); 
 
     /**

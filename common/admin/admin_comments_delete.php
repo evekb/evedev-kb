@@ -17,8 +17,8 @@ if ($_POST['confirm'])
 {
     $qry = DBFactory::getDBQuery();
     $qry->execute("DELETE FROM kb3_comments WHERE id='".$_GET['c_id']."'");
-	$smarty->assign('deleted', true);
-	$smarty->assign('id', $_GET['c_id']);
+    $smarty->assign('deleted', true);
+    $smarty->assign('id', $_GET['c_id']);
 }
 else
 {
@@ -27,15 +27,15 @@ else
     if ($qry->recordCount() == 0)
     {
         // no commment
-		$smarty->assign('id', false);
+        $smarty->assign('id', false);
     }
     else
     {
         if($data = $qry->getRow())
         {
-			$smarty->assign('id', $data['id']);
-			$smarty->assign('name', $data['name']);
-			$smarty->assign('comment', $data['comment']);
+            $smarty->assign('id', $data['id']);
+            $smarty->assign('name', $data['name']);
+            $smarty->assign('comment', $data['comment']);
         }
     }
 }

@@ -10,46 +10,46 @@ $smarty->assign('length', false);
 
 if (isset($_REQUEST['submit']))
 {
-	foreach ($_POST['set'] as $name => $value)
-	{
-		$_SESSION['sett'][$name] = $value;
-	}
+    foreach ($_POST['set'] as $name => $value)
+    {
+        $_SESSION['sett'][$name] = $value;
+    }
 }
 $uri = 'http://'.$_SERVER['HTTP_HOST'].str_ireplace('/install/index.php','', $_SERVER['SCRIPT_NAME']);
 if (empty($_SESSION['sett']['adminpw']))
 {
-	$_SESSION['sett']['adminpw'] = '';
+    $_SESSION['sett']['adminpw'] = '';
 }
 
 if (empty($_SESSION['sett']['title']))
 {
-	$_SESSION['sett']['title'] = '';
+    $_SESSION['sett']['title'] = '';
 }
 if (empty($_SESSION['sett']['site']))
 {
-	$_SESSION['sett']['site'] = chr(rand(65,90)).chr(rand(65,90)).chr(rand(65,90)).chr(rand(65,90));
+    $_SESSION['sett']['site'] = chr(rand(65,90)).chr(rand(65,90)).chr(rand(65,90)).chr(rand(65,90));
 }
 if (empty($_SESSION['sett']['host']))
 {
-	$_SESSION['sett']['host'] = $uri;
+    $_SESSION['sett']['host'] = $uri;
 }
 if (empty($_SESSION['sett']['img']))
 {
-	$_SESSION['sett']['img'] = $uri.'/img';
+    $_SESSION['sett']['img'] = $uri.'/img';
 }
 
 if (isset($_SESSION['sett']['adminpw']) && strlen($_SESSION['sett']['adminpw']) > 0 && isset($_SESSION['sett']['site']))
 {
-	$stoppage = false;
+    $stoppage = false;
 }
 if (isset($_SESSION['sett']['site']))
 {
-	$_SESSION['sett']['site'] = preg_replace("/[^\w\d_-]*/", "", $_SESSION['sett']['site']);
-	if(strlen($_SESSION['sett']['site']) > 12 || strlen($_SESSION['sett']['site']) < 1)
-	{
-		$smarty->assign('length', true);
-		$stoppage = true;
-	}
+    $_SESSION['sett']['site'] = preg_replace("/[^\w\d_-]*/", "", $_SESSION['sett']['site']);
+    if(strlen($_SESSION['sett']['site']) > 12 || strlen($_SESSION['sett']['site']) < 1)
+    {
+        $smarty->assign('length', true);
+        $stoppage = true;
+    }
 }
 $settings = array();
 $settings[] = array('descr' => 'Adminpassword', 'name' => 'adminpw', 'value' => $_SESSION['sett']['adminpw']);

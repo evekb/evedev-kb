@@ -31,7 +31,7 @@ class Smarty_Internal_Compile_Private_Modifier extends Smarty_Internal_CompileBa
         // loop over list of modifiers
         foreach ($parameter['modifierlist'] as $single_modifier) {
             $modifier = $single_modifier[0];
-	   $single_modifier[0] = $output;
+       $single_modifier[0] = $output;
             $params = implode(',', $single_modifier); 
             // check for registered modifier
             if (isset($compiler->smarty->registered_plugins[Smarty::PLUGIN_MODIFIER][$modifier])) {

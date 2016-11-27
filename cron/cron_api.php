@@ -27,11 +27,11 @@ $myEveAPI->iscronjob_ = true;
 $qry = new DBQuery();
 $qry->execute("SELECT * FROM kb3_api_keys WHERE key_kbsite = '" . KB_SITE . "' ORDER BY key_name");
 while ($row = $qry->getRow()) {
-	// for fetching specific keys
+    // for fetching specific keys
         if(isset($_GET['feed']) && $_GET['feed'] && $row['key_id'] != $_GET['feed']) {
-		continue;
-	}
-	logCron("Importing Mails for " . $row['key_name']);
-	logCron($myEveAPI->Import($row['key_name'], $row['key_id'], $row['key_key'], $row['key_flags']));
+        continue;
+    }
+    logCron("Importing Mails for " . $row['key_name']);
+    logCron($myEveAPI->Import($row['key_name'], $row['key_id'], $row['key_key'], $row['key_flags']));
 }
 logCron("Time taken = ".(microtime(true) - $cronStartTime)." seconds.");

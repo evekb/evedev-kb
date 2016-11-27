@@ -248,18 +248,18 @@ class Smarty_Internal_Config {
         }
         // pointer to scope
         if ($scope == 'local') {
-        	$scope_ptr = $this->data;
+            $scope_ptr = $this->data;
         } elseif ($scope == 'parent') {
-        	if (isset($this->data->parent)) {
-        		$scope_ptr = $this->data->parent;
-        	} else {
-        		$scope_ptr = $this->data;
-        	}        		
+            if (isset($this->data->parent)) {
+                $scope_ptr = $this->data->parent;
+            } else {
+                $scope_ptr = $this->data;
+            }                
         } elseif ($scope == 'root' || $scope == 'global') {
-        	$scope_ptr = $this->data;
-        	while (isset($scope_ptr->parent)) {
-        		$scope_ptr = $scope_ptr->parent;
-        	} 
+            $scope_ptr = $this->data;
+            while (isset($scope_ptr->parent)) {
+                $scope_ptr = $scope_ptr->parent;
+            } 
         }
         $_config_vars = array();
         include($this->getCompiledFilepath ());

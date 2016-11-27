@@ -12,111 +12,111 @@ function check_commenttable()
     $result = $qry->execute($query);
     if ($result)
     {
-    	check_commenttablerow();
+        check_commenttablerow();
         return;
     }
     $query = 'CREATE TABLE `kb3_comments` (
-	`ID` INT NOT NULL AUTO_INCREMENT ,
-	`kll_id` INT NOT NULL ,
-	`comment` TEXT NOT NULL ,
-	`name` TINYTEXT NOT NULL ,
-	`posttime` TIMESTAMP DEFAULT \'0000-00-00 00:00:00\' NOT NULL,
-	PRIMARY KEY ( `ID` )
-	) TYPE = MYISAM';
+    `ID` INT NOT NULL AUTO_INCREMENT ,
+    `kll_id` INT NOT NULL ,
+    `comment` TEXT NOT NULL ,
+    `name` TINYTEXT NOT NULL ,
+    `posttime` TIMESTAMP DEFAULT \'0000-00-00 00:00:00\' NOT NULL,
+    PRIMARY KEY ( `ID` )
+    ) TYPE = MYISAM';
     $qry->execute($query);
 }
 
 function check_navigationtable()
 {
-	if (CORP_ID)
-	{
-	    $statlink = '?a=corp_detail';
-	}
-	elseif (ALLIANCE_ID)
-	{
-	    $statlink = '?a=alliance_detail';
-	}
+    if (CORP_ID)
+    {
+        $statlink = '?a=corp_detail';
+    }
+    elseif (ALLIANCE_ID)
+    {
+        $statlink = '?a=alliance_detail';
+    }
 
-	$qry = DBFactory::getDBQuery();
-	$query = 'SELECT count(*) FROM kb3_navigation';
-	$result = $qry->execute($query);
-	if ($result)
-	{
-		$query = "SELECT hidden FROM kb3_navigation LIMIT 1";
-		$result = @$qry->execute($query);
-		if (!$result)
-		{
-			 $qry->execute("ALTER TABLE `kb3_navigation` ADD `hidden` BOOL NOT NULL DEFAULT '0' AFTER `page` ;");
-		}
-		$query = "SELECT count(KBSITE) FROM kb3_navigation WHERE KBSITE = '".KB_SITE."'";
-		$result = @$qry->execute($query);
-		if ($result)
-		{
-			$row = $result->fetch_assoc();
-			if ($row[0] == 0)
-			{
-				$queries = "INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr`,`page` ,`hidden`,`KBSITE`) VALUES ('top',1,'Home','?a=home','_self',1,'ALL_PAGES',0,'".KB_SITE."');
-					   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Campaigns','?a=campaigns','_self',2,'ALL_PAGES',0,'".KB_SITE."');
-					   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Contracts','?a=contracts','_self',3,'ALL_PAGES',0,'".KB_SITE."');
-					   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Post Kill','?a=post','_self',6,'ALL_PAGES',0,'".KB_SITE."');
-					   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Stats','$statlink','_self',7,'ALL_PAGES',0,'".KB_SITE."');
-					   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Awards','?a=awards','_self',8,'ALL_PAGES',0,'".KB_SITE."');
-					   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Standings','?a=standings','_self',9,'ALL_PAGES',0,'".KB_SITE."');
-					   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Search','?a=search','_self',10,'ALL_PAGES',0,'".KB_SITE."');
-					   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Admin','?a=admin','_self',11,'ALL_PAGES',0,'".KB_SITE."');
-					   		INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'About','?a=about','_self',12,'ALL_PAGES',0,'".KB_SITE."');";
-			 	$query = explode("\n", $queries);
-				foreach ($query as $querystring)
-				{
-					if ($string = trim(str_replace(');', ')', $querystring)))
-					{
-					    $qry->execute($string);
-					}
-	 			}
-			}
-	   		return;
-		}
-		$query = 'ALTER TABLE `kb3_navigation` ADD `KBSITE` VARCHAR( 16 ) NOT NULL';
+    $qry = DBFactory::getDBQuery();
+    $query = 'SELECT count(*) FROM kb3_navigation';
+    $result = $qry->execute($query);
+    if ($result)
+    {
+        $query = "SELECT hidden FROM kb3_navigation LIMIT 1";
+        $result = @$qry->execute($query);
+        if (!$result)
+        {
+             $qry->execute("ALTER TABLE `kb3_navigation` ADD `hidden` BOOL NOT NULL DEFAULT '0' AFTER `page` ;");
+        }
+        $query = "SELECT count(KBSITE) FROM kb3_navigation WHERE KBSITE = '".KB_SITE."'";
+        $result = @$qry->execute($query);
+        if ($result)
+        {
+            $row = $result->fetch_assoc();
+            if ($row[0] == 0)
+            {
+                $queries = "INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr`,`page` ,`hidden`,`KBSITE`) VALUES ('top',1,'Home','?a=home','_self',1,'ALL_PAGES',0,'".KB_SITE."');
+                               INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Campaigns','?a=campaigns','_self',2,'ALL_PAGES',0,'".KB_SITE."');
+                               INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Contracts','?a=contracts','_self',3,'ALL_PAGES',0,'".KB_SITE."');
+                               INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Post Kill','?a=post','_self',6,'ALL_PAGES',0,'".KB_SITE."');
+                               INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Stats','$statlink','_self',7,'ALL_PAGES',0,'".KB_SITE."');
+                               INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Awards','?a=awards','_self',8,'ALL_PAGES',0,'".KB_SITE."');
+                               INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Standings','?a=standings','_self',9,'ALL_PAGES',0,'".KB_SITE."');
+                               INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Search','?a=search','_self',10,'ALL_PAGES',0,'".KB_SITE."');
+                               INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'Admin','?a=admin','_self',11,'ALL_PAGES',0,'".KB_SITE."');
+                               INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'About','?a=about','_self',12,'ALL_PAGES',0,'".KB_SITE."');";
+                 $query = explode("\n", $queries);
+                foreach ($query as $querystring)
+                {
+                    if ($string = trim(str_replace(');', ')', $querystring)))
+                    {
+                        $qry->execute($string);
+                    }
+                 }
+            }
+               return;
+        }
+        $query = 'ALTER TABLE `kb3_navigation` ADD `KBSITE` VARCHAR( 16 ) NOT NULL';
         $qry->execute($query);
-		$query = 'UPDATE `kb3_navigation` SET KBSITE = "'.KB_SITE.'" WHERE KBSITE LIKE "";';
+        $query = 'UPDATE `kb3_navigation` SET KBSITE = "'.KB_SITE.'" WHERE KBSITE LIKE "";';
         $qry->execute($query);
-		return;
-	}else{
-		$query = 'CREATE TABLE `kb3_navigation` (
-		`ID` INT NOT NULL AUTO_INCREMENT ,
-		`nav_type` TINYTEXT NOT NULL,
-		`intern` INT ( 1 ) NOT NULL,
-		`descr` TINYTEXT NOT NULL ,
-		`url` TINYTEXT NOT NULL ,
-		`target` VARCHAR( 10 )  NOT NULL,
-		`posnr` INT NOT NULL,
-		`page` TINYTEXT NOT NULL,
-		`hidden` BOOL NOT NULL DEFAULT "0",
-		`KBSITE` VARCHAR ( 16 ) NOT NULL,
-		PRIMARY KEY ( `ID` )
-		) TYPE = MYISAM;';
-		   $qry->execute($query);
-		$queries = "INSERT IGNORE INTO `kb3_navigation` VALUES (1,'top',1,'Home','?a=home','_self',1,'ALL_PAGES',0,'".KB_SITE."');
-	   		INSERT IGNORE INTO `kb3_navigation` VALUES (2,'top',1,'Campaigns','?a=campaigns','_self',2,'ALL_PAGES',0,'".KB_SITE."');
-	   		INSERT IGNORE INTO `kb3_navigation` VALUES (3,'top',1,'Contracts','?a=contracts','_self',3,'ALL_PAGES',0,'".KB_SITE."');
-	   		INSERT IGNORE INTO `kb3_navigation` VALUES (4,'top',1,'Kills','?a=kills','_self',4,'ALL_PAGES',0,'".KB_SITE."');
-	   		INSERT IGNORE INTO `kb3_navigation` VALUES (5,'top',1,'Losses','?a=losses','_self',5,'ALL_PAGES',0,'".KB_SITE."');
-	   		INSERT IGNORE INTO `kb3_navigation` VALUES (6,'top',1,'Post Kill','?a=post','_self',6,'ALL_PAGES',0,'".KB_SITE."');
-	   		INSERT IGNORE INTO `kb3_navigation` VALUES (7,'top',1,'Stats','$statlink','_self',7,'ALL_PAGES',0,'".KB_SITE."');
-	   		INSERT IGNORE INTO `kb3_navigation` VALUES (8,'top',1,'Awards','?a=awards','_self',8,'ALL_PAGES',0,'".KB_SITE."');
-	   		INSERT IGNORE INTO `kb3_navigation` VALUES (9,'top',1,'Standings','?a=standings','_self',9,'ALL_PAGES',0,'".KB_SITE."');
-	   		INSERT IGNORE INTO `kb3_navigation` VALUES (10,'top',1,'Search','?a=search','_self',10,'ALL_PAGES',0,'".KB_SITE."');
-	   		INSERT IGNORE INTO `kb3_navigation` VALUES (11,'top',1,'Admin','?a=admin','_self',11,'ALL_PAGES',0,'".KB_SITE."');
-	   		INSERT IGNORE INTO `kb3_navigation` VALUES (12,'top',1,'About','?a=about','_self',12,'ALL_PAGES',0,'".KB_SITE."');";
-	 	$query = explode("\n", $queries);
-		foreach ($query as $querystring)
-		{
-			if ($string = trim(str_replace(');', ')', $querystring)))
-			{
-			    $qry->execute($string);
-			}
-	 	}
-	}
+        return;
+    }else{
+        $query = 'CREATE TABLE `kb3_navigation` (
+        `ID` INT NOT NULL AUTO_INCREMENT ,
+        `nav_type` TINYTEXT NOT NULL,
+        `intern` INT ( 1 ) NOT NULL,
+        `descr` TINYTEXT NOT NULL ,
+        `url` TINYTEXT NOT NULL ,
+        `target` VARCHAR( 10 )  NOT NULL,
+        `posnr` INT NOT NULL,
+        `page` TINYTEXT NOT NULL,
+        `hidden` BOOL NOT NULL DEFAULT "0",
+        `KBSITE` VARCHAR ( 16 ) NOT NULL,
+        PRIMARY KEY ( `ID` )
+        ) TYPE = MYISAM;';
+           $qry->execute($query);
+        $queries = "INSERT IGNORE INTO `kb3_navigation` VALUES (1,'top',1,'Home','?a=home','_self',1,'ALL_PAGES',0,'".KB_SITE."');
+               INSERT IGNORE INTO `kb3_navigation` VALUES (2,'top',1,'Campaigns','?a=campaigns','_self',2,'ALL_PAGES',0,'".KB_SITE."');
+               INSERT IGNORE INTO `kb3_navigation` VALUES (3,'top',1,'Contracts','?a=contracts','_self',3,'ALL_PAGES',0,'".KB_SITE."');
+               INSERT IGNORE INTO `kb3_navigation` VALUES (4,'top',1,'Kills','?a=kills','_self',4,'ALL_PAGES',0,'".KB_SITE."');
+               INSERT IGNORE INTO `kb3_navigation` VALUES (5,'top',1,'Losses','?a=losses','_self',5,'ALL_PAGES',0,'".KB_SITE."');
+               INSERT IGNORE INTO `kb3_navigation` VALUES (6,'top',1,'Post Kill','?a=post','_self',6,'ALL_PAGES',0,'".KB_SITE."');
+               INSERT IGNORE INTO `kb3_navigation` VALUES (7,'top',1,'Stats','$statlink','_self',7,'ALL_PAGES',0,'".KB_SITE."');
+               INSERT IGNORE INTO `kb3_navigation` VALUES (8,'top',1,'Awards','?a=awards','_self',8,'ALL_PAGES',0,'".KB_SITE."');
+               INSERT IGNORE INTO `kb3_navigation` VALUES (9,'top',1,'Standings','?a=standings','_self',9,'ALL_PAGES',0,'".KB_SITE."');
+               INSERT IGNORE INTO `kb3_navigation` VALUES (10,'top',1,'Search','?a=search','_self',10,'ALL_PAGES',0,'".KB_SITE."');
+               INSERT IGNORE INTO `kb3_navigation` VALUES (11,'top',1,'Admin','?a=admin','_self',11,'ALL_PAGES',0,'".KB_SITE."');
+               INSERT IGNORE INTO `kb3_navigation` VALUES (12,'top',1,'About','?a=about','_self',12,'ALL_PAGES',0,'".KB_SITE."');";
+         $query = explode("\n", $queries);
+        foreach ($query as $querystring)
+        {
+            if ($string = trim(str_replace(');', ')', $querystring)))
+            {
+                $qry->execute($string);
+            }
+         }
+    }
 }
 
 function check_commenttablerow()

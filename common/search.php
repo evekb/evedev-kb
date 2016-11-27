@@ -14,14 +14,14 @@ require_once('common/includes/xajax.functions.php');
  */
 class pSearch extends pageAssembly
 {
-	/** @var Page */
-	public $page;
-	/** @var string The phrase to search for. */
-	public $searchphrase;
-	/** @var string The type of result to search for. Valid types are 
-	 * alliance, corp, pilot, system, or item
-	 */
-	public $searchtype;
+    /** @var Page */
+    public $page;
+    /** @var string The phrase to search for. */
+    public $searchphrase;
+    /** @var string The type of result to search for. Valid types are 
+     * alliance, corp, pilot, system, or item
+     */
+    public $searchtype;
     /**
      * Construct the Alliance Details object.
      *
@@ -33,7 +33,7 @@ class pSearch extends pageAssembly
         parent::__construct();
 
         $this->queue("start");
-		$this->queue("newSearch");
+        $this->queue("newSearch");
         $this->queue("checkSearch");
     }
     function start()
@@ -90,7 +90,7 @@ class pSearch extends pageAssembly
                     $sql = "select typeID, typeName from kb3_invtypes where typeName like ('%".$this->searchphrase."%')";
                     break;
             }
-			$qry = DBFactory::getDBQuery();;
+            $qry = DBFactory::getDBQuery();;
             if (!$qry->execute($sql))
             {
                 die ($qry->getErrorMsg());
@@ -146,10 +146,10 @@ class pSearch extends pageAssembly
                         die;
                     }
                 }
-				$smarty->assignByRef('results', $results);
+                $smarty->assignByRef('results', $results);
             }
         }
-		$smarty->assign('nonajax', true);
+        $smarty->assign('nonajax', true);
         return $smarty->fetch(get_tpl('search_result'));
     }
     function newSearch()

@@ -24,11 +24,11 @@ if ($_POST) {
 }
 
 if (!edkURI::getArg('field', 1)
-		|| !edkURI::getArg('sub', 1)
-		|| edkURI::getArg('field', 1) == 'Advanced'
-				&& edkURI::getArg('sub', 2) == 'Configuration') {
-	$page->setTitle('Administration - Board Configuration (Current version: '
-			.KB_VERSION.' '.KB_RELEASE.')');
+        || !edkURI::getArg('sub', 1)
+        || edkURI::getArg('field', 1) == 'Advanced'
+                && edkURI::getArg('sub', 2) == 'Configuration') {
+    $page->setTitle('Administration - Board Configuration (Current version: '
+            .KB_VERSION.' '.KB_RELEASE.')');
 }
 $page->generate();
 

@@ -25,7 +25,7 @@ class SimpleCrest
     /**
      * preferred method of getting data from CREST;
      * will fall back to file_get_contents if curl isn't available 
-	 * accepted values: curl, file
+     * accepted values: curl, file
      */
     public static $HTTP_METHOD = "curl";
     
@@ -107,7 +107,7 @@ class SimpleCrest
         curl_setopt(self::$curl, CURLOPT_USERAGENT, self::$USER_AGENT);
         
         // call
-        $result	= curl_exec(self::$curl);
+        $result    = curl_exec(self::$curl);
         $errorNumber = curl_errno(self::$curl);
         $error = curl_error(self::$curl);
         
@@ -192,7 +192,7 @@ class SimpleCrest
 
             throw new Exception('Error getting data: HTTP '.$httpCode.', URL: '.$url);
         } 
-		
+        
         else 
         {
             // parse response headers
@@ -204,14 +204,14 @@ class SimpleCrest
                     $headers[substr($headerLine, 0, strpos($headerLine, ':'))] = trim(substr($headerLine, strpos($headerLine, ':')+1));
                 }
             }
-			
+            
             // check for compression and decompress, if possible
             if(!is_null($compressionLibrary) && isset($headers['Content-Encoding']) && $headers['Content-Encoding'] == 'gzip')
             {
                 if($compressionLibrary == 'gzip')
                 {
                     $data = gzinflate($data);
-					
+                    
                 }
                 
                 else if($compressionLibrary == 'pecl')
@@ -239,12 +239,12 @@ class SimpleCrest
             {
                     return $data;
             }
-				
+                
         }
         
         return null;
     }
-	
+    
     public static function decode_chunked($str) 
     {
       for ($res = ''; !empty($str); $str = trim($str)) {

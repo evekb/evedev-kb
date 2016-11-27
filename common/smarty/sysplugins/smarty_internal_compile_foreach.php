@@ -13,7 +13,7 @@
  * Smarty Internal Plugin Compile Foreach Class
  */
 class Smarty_Internal_Compile_Foreach extends Smarty_Internal_CompileBase {
-	// attribute definitions
+    // attribute definitions
     public $required_attributes = array('from', 'item');
     public $optional_attributes = array('name', 'key'); 
     public $shorttag_order = array('from','item','key','name');
@@ -116,11 +116,11 @@ class Smarty_Internal_Compile_Foreach extends Smarty_Internal_CompileBase {
             } 
         } 
         if ($usesPropTotal) {
-			$output .= "if (\$_smarty_tpl->tpl_vars[$item]->total > 0){\n";
+            $output .= "if (\$_smarty_tpl->tpl_vars[$item]->total > 0){\n";
         } else {
-			$output .= "if (\$_smarty_tpl->_count(\$_from) > 0){\n";
-		}
-		$output .= "    foreach (\$_from as \$_smarty_tpl->tpl_vars[$item]->key => \$_smarty_tpl->tpl_vars[$item]->value){\n";
+            $output .= "if (\$_smarty_tpl->_count(\$_from) > 0){\n";
+        }
+        $output .= "    foreach (\$_from as \$_smarty_tpl->tpl_vars[$item]->key => \$_smarty_tpl->tpl_vars[$item]->value){\n";
         if ($key != null) {
             $output .= " \$_smarty_tpl->tpl_vars[$key]->value = \$_smarty_tpl->tpl_vars[$item]->key;\n";
         } 

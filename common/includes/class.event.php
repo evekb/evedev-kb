@@ -11,72 +11,72 @@
  */
 class event
 {
-	private static $events = array();
+    private static $events = array();
         
         private static $isCron = FALSE;
 
-	/**
-	 * Register a callback for an event. Callbacks are of the form
-	 * array('Class', 'Method');
-	 *
-	 * @param string $event Event name.
-	 * @param array $callback Callback to be called when the event is triggered
-	 *
-	 * @return boolean True on success, false on failure. 
-	 */
-	public static function register($event, $callback)
-	{
-		if (is_array($callback)) {
-			if (is_object($callback[0])) {
-				trigger_error('The supplied callback has to point to a static method.',
-								E_USER_WARNING);
-				return false;
-			}
-		} else if (!strpos($callback, '::')) {
-			trigger_error('The supplied callback "'.$callback.'" has to point to a static method.',
-							E_USER_WARNING);
-			return false;
-		} else {
-			// Accept callback in string form 'Class::method' for legacy events.
-			$callback = explode('::', $callback);
-		}
-		if (!is_callable($callback, false, $callable_name)) {
-			trigger_error('The stored event handler "'.$event
-					.'" is not callable (CB: "'.join("::", $callback).'").',
-							E_USER_WARNING);
-			return false;
-		}
+    /**
+     * Register a callback for an event. Callbacks are of the form
+     * array('Class', 'Method');
+     *
+     * @param string $event Event name.
+     * @param array $callback Callback to be called when the event is triggered
+     *
+     * @return boolean True on success, false on failure. 
+     */
+    public static function register($event, $callback)
+    {
+        if (is_array($callback)) {
+            if (is_object($callback[0])) {
+                trigger_error('The supplied callback has to point to a static method.',
+                                E_USER_WARNING);
+                return false;
+            }
+        } else if (!strpos($callback, '::')) {
+            trigger_error('The supplied callback "'.$callback.'" has to point to a static method.',
+                            E_USER_WARNING);
+            return false;
+        } else {
+            // Accept callback in string form 'Class::method' for legacy events.
+            $callback = explode('::', $callback);
+        }
+        if (!is_callable($callback, false, $callable_name)) {
+            trigger_error('The stored event handler "'.$event
+                    .'" is not callable (CB: "'.join("::", $callback).'").',
+                            E_USER_WARNING);
+            return false;
+        }
 
-		event::_put($event, $callback);
-		return true;
-	}
+        event::_put($event, $callback);
+        return true;
+    }
 
-	/**
-	 * Call an event. Trigger any callbacks registered for this event.
-	 *
-	 * @param string $event event name.
-	 * @param mixed $object Object to pass to the callback.
-	 */
-	public static function call($event, &$object)
-	{
-		if (isset(self::$events[$event])) {
-			foreach (self::$events[$event] as $callback)
+    /**
+     * Call an event. Trigger any callbacks registered for this event.
+     *
+     * @param string $event event name.
+     * @param mixed $object Object to pass to the callback.
+     */
+    public static function call($event, &$object)
+    {
+        if (isset(self::$events[$event])) {
+            foreach (self::$events[$event] as $callback)
                         {
                                 // prevent xajax from getting initialized if we are in a cron job
-				if(self::$isCron && count($callback) > 0 && $callback[0] == "edk_xajax")
-				{
-					continue;
-				}
-				// if the callback registered to the calling event we'll try to use his callback
-				call_user_func_array($callback, array(&$object));
-			}
-		}
-	}
+                if(self::$isCron && count($callback) > 0 && $callback[0] == "edk_xajax")
+                {
+                    continue;
+                }
+                // if the callback registered to the calling event we'll try to use his callback
+                call_user_func_array($callback, array(&$object));
+            }
+        }
+    }
 
-	private static function _put($key, $data)
-	{
-		self::$events[$key][] = $data;
-	}
+    private static function _put($key, $data)
+    {
+        self::$events[$key][] = $data;
+    }
         
         public static function setCron($isCron = TRUE)
         {

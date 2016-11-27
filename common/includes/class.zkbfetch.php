@@ -506,7 +506,7 @@ class ZKBFetch
             $checkHash->fetch();
             $dupeid = $killId;
             $victimData = self::getVictim($killData);
-            // We still want to update the external ID if we were given one.			
+            // We still want to update the external ID if we were given one.            
             // positive killIDs in zKB are the external IDs, so use it
             $qry->execute("UPDATE kb3_kills"
                             ." JOIN kb3_mails ON kb3_mails.kll_id = kb3_kills.kll_id"
@@ -534,7 +534,7 @@ class ZKBFetch
             $this->skipped[] = $killData->killID;
             
             return;
-        }	
+        }    
         
         // Check for duplicate by external ID
         $qry->execute('SELECT kll_id FROM kb3_kills WHERE kll_external_id = '.$killData->killID);
@@ -695,8 +695,8 @@ class ZKBFetch
        // If we have a character ID but no name then we give up - the needed
        // info is gone.
        // If we have no character ID and no name then it's a structure or NPC
-       //	- if we have a moonID (anchored at a moon) call it corpname - moonname
-       //	- if we don't have a moonID call it corpname - systemname
+       //    - if we have a moonID (anchored at a moon) call it corpname - moonname
+       //    - if we don't have a moonID call it corpname - systemname
        if (!strlen($victimDetails['characterName']) && $victimDetails['characterID'] > 0) {
                    throw new ZKBFetchException("Insufficient victim information provided! Kill-ID: ".$killData->killID);
        } else if (!$victimDetails['corporationID'] && !$victimDetails['factionID']) {
@@ -851,7 +851,7 @@ class ZKBFetch
            }
            // only use faction as alliance if no corporation is given (faction NPC)
            else if ($involvedParty['factionID'] > 0 && strlen($involvedParty['corporationName']) > 0) 
-           {		
+           {        
                $Alliance = new Alliance($involvedParty['factionID'], TRUE); 
                if(!$Alliance->getID())
                {
@@ -1065,13 +1065,13 @@ class ZKBFetch
     }
     
     /**
-	 * Return corporation from cached list or look up a new name.
-	 *
-	 * @param string $corpName Corp name to look up.
-	 * @return Corporation Corporation object matching input name.
-	 */
-	private static function fetchCorp($corpName, $Alliance = null, $timestamp = null)
-	{
+     * Return corporation from cached list or look up a new name.
+     *
+     * @param string $corpName Corp name to look up.
+     * @return Corporation Corporation object matching input name.
+     */
+    private static function fetchCorp($corpName, $Alliance = null, $timestamp = null)
+    {
         $corp = Corporation::lookup($corpName);
         if (!$corp) {
             if ($Alliance == null) {      
@@ -1090,8 +1090,8 @@ class ZKBFetch
             }
         }
 
-		return $corp;
-	}
+        return $corp;
+    }
     
     
    /**

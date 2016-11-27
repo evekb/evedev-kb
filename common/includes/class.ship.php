@@ -29,141 +29,141 @@ class Ship extends Cacheable
     /** @var integer squadron size for this ship (only differs from one for fighters) */
     private $squadronSize = 1;
 
-	/**
-	 * Construct the Ship object.
-	 *
-	 * A Ship object can be constructed from an ID and further details fetched
-	 * from the db. It can also be constructed by passing more details to the
-	 * constructor.
-	 *
-	 * @param integer $id The Ship ID.
-	 * @param null unused.
-	 * @param string $name The Ship name.
-	 * @param ShipClass $class The ShipClass for this Ship.
-	 */
-	function __construct($id = 0, $externalID = null, $name = null, $class = null)
-	{
-		if ($id) {
-			$this->id = (int)$id;
-		}
-		if (isset($name)) {
-			$this->shipname = $name;
-		}
-		if (isset($class)) {
-			$this->shipclass = $class;
-		}
-	}
+    /**
+     * Construct the Ship object.
+     *
+     * A Ship object can be constructed from an ID and further details fetched
+     * from the db. It can also be constructed by passing more details to the
+     * constructor.
+     *
+     * @param integer $id The Ship ID.
+     * @param null unused.
+     * @param string $name The Ship name.
+     * @param ShipClass $class The ShipClass for this Ship.
+     */
+    function __construct($id = 0, $externalID = null, $name = null, $class = null)
+    {
+        if ($id) {
+            $this->id = (int)$id;
+        }
+        if (isset($name)) {
+            $this->shipname = $name;
+        }
+        if (isset($class)) {
+            $this->shipclass = $class;
+        }
+    }
 
-	/**
-	 * Return the id for this Ship.
-	 *
-	 * @return integer id for this Ship.
-	 */
-	function getID()
-	{
-		if ($this->id) {
-			return $this->id;
-		} else if (isset($this->externalid)) {
-			$this->execQuery();
-			return $this->id;
-		}
-		return 0;
-	}
+    /**
+     * Return the id for this Ship.
+     *
+     * @return integer id for this Ship.
+     */
+    function getID()
+    {
+        if ($this->id) {
+            return $this->id;
+        } else if (isset($this->externalid)) {
+            $this->execQuery();
+            return $this->id;
+        }
+        return 0;
+    }
 
-	/**
-	 * Return the external id for this Ship.
-	 * 
-	 * @deprecated
-	 * @return integer external id for this Ship.
-	 */
-	function getExternalID()
-	{
-		return $this->getID();
-	}
+    /**
+     * Return the external id for this Ship.
+     * 
+     * @deprecated
+     * @return integer external id for this Ship.
+     */
+    function getExternalID()
+    {
+        return $this->getID();
+    }
 
-	/**
-	 * Return the name of this Ship.
-	 *
-	 * @return string name of this Ship.
-	 */
-	function getName()
-	{
-		if (is_null($this->shipname)) {
-			$this->execQuery();
-		}
-		return $this->shipname;
-	}
+    /**
+     * Return the name of this Ship.
+     *
+     * @return string name of this Ship.
+     */
+    function getName()
+    {
+        if (is_null($this->shipname)) {
+            $this->execQuery();
+        }
+        return $this->shipname;
+    }
 
-	/**
-	 * Return the ShipClass for this Ship.
-	 *
-	 * @return ShipClass object for this Ship.
-	 */
-	function getClass()
-	{
-		if (is_null($this->shipclass)) {
-			$this->execQuery();
-		}
-		return $this->shipclass;
-	}
+    /**
+     * Return the ShipClass for this Ship.
+     *
+     * @return ShipClass object for this Ship.
+     */
+    function getClass()
+    {
+        if (is_null($this->shipclass)) {
+            $this->execQuery();
+        }
+        return $this->shipclass;
+    }
 
-	/**
-	 * Return the tech level of this Ship.
-	 *
-	 * @return integer tech level for this Ship.
-	 */
-	function getTechLevel()
-	{
-		if ($this->shiptechlevel === null) {
-			$this->execQuery();
-			$attrib = dogma::getByID($this->id)->attrib['techLevel'];
-			if($attrib) {
-				$this->shiptechlevel = (int)$attrib['value'];
-			}
-			if(!$this->shiptechlevel) {
-				$this->shiptechlevel = 1;
-			}
-			$this->putCache();
-		}
-		return $this->shiptechlevel;
-	}
+    /**
+     * Return the tech level of this Ship.
+     *
+     * @return integer tech level for this Ship.
+     */
+    function getTechLevel()
+    {
+        if ($this->shiptechlevel === null) {
+            $this->execQuery();
+            $attrib = dogma::getByID($this->id)->attrib['techLevel'];
+            if($attrib) {
+                $this->shiptechlevel = (int)$attrib['value'];
+            }
+            if(!$this->shiptechlevel) {
+                $this->shiptechlevel = 1;
+            }
+            $this->putCache();
+        }
+        return $this->shiptechlevel;
+    }
 
-	/**
-	 * Return if this Ship is faction.
-	 *
-	 * @return boolean factionality for this Ship.
-	 */
-	function isFaction()
-	{
-		if ($this->shipisfaction === null) {
-			$this->execQuery();
-			$attrib = dogma::getByID($this->id)->attrib['metaLevel'];
-			if($attrib) {
-				$metalevel = (int)$attrib['value'];
-				$this->shipisfaction = ($metalevel > 0 && $metalevel != 5);
-			}
-			if(!$this->shipisfaction) {
-				$this->shipisfaction = false;
-			}
-			$this->putCache();
-		}
-		return $this->shipisfaction;
-	}
+    /**
+     * Return if this Ship is faction.
+     *
+     * @return boolean factionality for this Ship.
+     */
+    function isFaction()
+    {
+        if ($this->shipisfaction === null) {
+            $this->execQuery();
+            $attrib = dogma::getByID($this->id)->attrib['metaLevel'];
+            if($attrib) {
+                $metalevel = (int)$attrib['value'];
+                $this->shipisfaction = ($metalevel > 0 && $metalevel != 5);
+            }
+            if(!$this->shipisfaction) {
+                $this->shipisfaction = false;
+            }
+            $this->putCache();
+        }
+        return $this->shipisfaction;
+    }
 
-	/**
-	 * Return the URL for a portrait of this Ship.
-	 *
-	 * @param integer $size the size of the image to return.
-	 * @return string containing valid URL for a portrait of this Ship.
-	 */
-	function getImage($size)
-	{
-		if (is_null($this->id)) {
-			$this->execQuery();
-		}
+    /**
+     * Return the URL for a portrait of this Ship.
+     *
+     * @param integer $size the size of the image to return.
+     * @return string containing valid URL for a portrait of this Ship.
+     */
+    function getImage($size)
+    {
+        if (is_null($this->id)) {
+            $this->execQuery();
+        }
 
-		return imageURL::getURL('Ship', $this->id, $size);
-	}
+        return imageURL::getURL('Ship', $this->id, $size);
+    }
 
 	/**
 	 * Return the base price of this Ship.
@@ -192,42 +192,42 @@ class Ship extends Cacheable
         return $this->squadronSize;
     }
 
-	/**
-	 * Set the name of this ship.
-	 *
-	 * @param string $shipname the name to set for this Ship
-	 */
-	function setName($shipname)
-	{
-		$this->shipname = $shipname;
-	}
+    /**
+     * Set the name of this ship.
+     *
+     * @param string $shipname the name to set for this Ship
+     */
+    function setName($shipname)
+    {
+        $this->shipname = $shipname;
+    }
 
-	/**
-	 * Set the class of this ship.
-	 *
-	 * @param ShipClass $shipclass the class object to set for this Ship
-	 */
-	function setClass($shipclass)
-	{
-		$this->shipclass = $shipclass;
-	}
+    /**
+     * Set the class of this ship.
+     *
+     * @param ShipClass $shipclass the class object to set for this Ship
+     */
+    function setClass($shipclass)
+    {
+        $this->shipclass = $shipclass;
+    }
 
-	function execQuery()
-	{
-		if (!$this->executed) {
-			if ($this->id && $this->isCached()) {
-				$cache = $this->getCache();
-				$this->shipname = $cache->shipname;
-				$this->shipclass = $cache->shipclass;
-				$this->shiptechlevel = $cache->shiptechlevel;
-				$this->shipisfaction = $cache->shipisfaction;
-				$this->id = $cache->id;
-				$this->value = $cache->value;
-				$this->executed = true;
-				return;
-			}
+    function execQuery()
+    {
+        if (!$this->executed) {
+            if ($this->id && $this->isCached()) {
+                $cache = $this->getCache();
+                $this->shipname = $cache->shipname;
+                $this->shipclass = $cache->shipclass;
+                $this->shiptechlevel = $cache->shiptechlevel;
+                $this->shipisfaction = $cache->shipisfaction;
+                $this->id = $cache->id;
+                $this->value = $cache->value;
+                $this->executed = true;
+                return;
+            }
 
-			$qry = DBFactory::getDBQuery();
+            $qry = DBFactory::getDBQuery();
 
 			$sql = "SELECT typeName, shp_id, shp_class, basePrice, price, ds.value as squadronSize FROM kb3_ships s
                         INNER JOIN kb3_invtypes it ON it.typeID = s.shp_id";
@@ -250,70 +250,70 @@ class Ship extends Cacheable
                 $this->squadronSize = (int) $row['squadronSize'];
             }
 
-			if ($this->id) {
-				$this->putCache();
-			}
-		}
-		$this->executed = true;
-	}
+            if ($this->id) {
+                $this->putCache();
+            }
+        }
+        $this->executed = true;
+    }
 
-	/**
-	 * Look up a Ship by name.
-	 *
-	 * @param string $name a string containing a ship name.
-	 */
-	static function lookup($name)
-	{
-		static $cache_name = array();
-		static $pqry = null;
-		static $id = 0;
-		static $shp_name = "";
-		static $scl_id = 0;
-		static $typeName = "";
+    /**
+     * Look up a Ship by name.
+     *
+     * @param string $name a string containing a ship name.
+     */
+    static function lookup($name)
+    {
+        static $cache_name = array();
+        static $pqry = null;
+        static $id = 0;
+        static $shp_name = "";
+        static $scl_id = 0;
+        static $typeName = "";
 
-		if (isset($cache_name[$name])) {
-			return $cache_name[$name];
-		}
-		if ($name == "Unknown") {
-			$cache_name[$name] = Ship::getByID(0);
-			return $cache_name[$name];
-			
-		}
-		if ($pqry === null) {
-			$pqry = new DBPreparedQuery();
-			$pqry->prepare("SELECT typeID, typeName, shp_class"
-					." FROM kb3_ships RIGHT JOIN kb3_invtypes ON shp_id=typeID"
-					." WHERE typeName = ?");
-		}
+        if (isset($cache_name[$name])) {
+            return $cache_name[$name];
+        }
+        if ($name == "Unknown") {
+            $cache_name[$name] = Ship::getByID(0);
+            return $cache_name[$name];
+            
+        }
+        if ($pqry === null) {
+            $pqry = new DBPreparedQuery();
+            $pqry->prepare("SELECT typeID, typeName, shp_class"
+                    ." FROM kb3_ships RIGHT JOIN kb3_invtypes ON shp_id=typeID"
+                    ." WHERE typeName = ?");
+        }
 
-		$shp_name = $name = trim(stripslashes($name));
-		$pqry->bind_param('s', $shp_name);
-		$pqry->bind_result($id, $typeName, $scl_id);
+        $shp_name = $name = trim(stripslashes($name));
+        $pqry->bind_param('s', $shp_name);
+        $pqry->bind_result($id, $typeName, $scl_id);
 
-		if (!$pqry->execute() || !$pqry->recordCount()) {
-			return false;
-		} else {
-			$pqry->fetch();
-		}
-		if ($scl_id == null && $id) {
-			$qry = DBFactory::getDBQuery();
-			$qry->execute("INSERT INTO kb3_ships (shp_id, shp_class) values($id, 18)");
-			$scl_id = 18; // "Unknown"
-		}
-		$shipclass = ShipClass::getByID($scl_id);
-		$cache_name[$name] = new Ship($id, null, $typeName, $shipclass);
-		return $cache_name[$name];
-	}
+        if (!$pqry->execute() || !$pqry->recordCount()) {
+            return false;
+        } else {
+            $pqry->fetch();
+        }
+        if ($scl_id == null && $id) {
+            $qry = DBFactory::getDBQuery();
+            $qry->execute("INSERT INTO kb3_ships (shp_id, shp_class) values($id, 18)");
+            $scl_id = 18; // "Unknown"
+        }
+        $shipclass = ShipClass::getByID($scl_id);
+        $cache_name[$name] = new Ship($id, null, $typeName, $shipclass);
+        return $cache_name[$name];
+    }
 
-	/**
-	 * Return a new object by ID. Will fetch from cache if enabled.
-	 *
-	 * @param mixed $id ID to fetch
-	 * @return Ship
-	 */
-	static function getByID($id)
-	{
-		$Ship = Cacheable::factory(get_class(), $id);
+    /**
+     * Return a new object by ID. Will fetch from cache if enabled.
+     *
+     * @param mixed $id ID to fetch
+     * @return Ship
+     */
+    static function getByID($id)
+    {
+        $Ship = Cacheable::factory(get_class(), $id);
                 // check if the ship actually has an ID, but we don't know the name
                 // (there are cases when we don't have an ID and DO WANT to return
                 // an "Unknown" ship, for example in killmails with no ship information)
@@ -328,7 +328,7 @@ class Ship extends Cacheable
                     }
                 }
                 return $Ship;                
-	}
+    }
         
         /**
          * returns the ship's traits as array of readable HTML text

@@ -23,7 +23,7 @@ logCron("Starting CREST item value update");
 $url = config::get('itemPriceCrestUrl');
 if ($url == null || $url == "")
 {
-	$url = CREST_PUBLIC_URL . ValueFetcherCrest::$CREST_PRICES_ENDPOINT;
+    $url = CREST_PUBLIC_URL . ValueFetcherCrest::$CREST_PRICES_ENDPOINT;
 }
 
 $fetch = new ValueFetcherCrest($url);

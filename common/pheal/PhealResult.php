@@ -67,7 +67,7 @@ class PhealResult implements PhealArrayInterface
     public function __construct($xml)
     {
         // switch to UTC
-        $oldtz	= date_default_timezone_get();
+        $oldtz    = date_default_timezone_get();
         date_default_timezone_set('UTC');
         
         $this->request_time = (string) $xml->currentTime;
@@ -75,7 +75,7 @@ class PhealResult implements PhealArrayInterface
         $this->request_time_unixtime = (int) strtotime($xml->currentTime);
         $this->cached_until_unixtime = (int) strtotime($xml->cachedUntil);
         
-	// workaround if cachedUntil is missing in API response (request + 1 hour)
+    // workaround if cachedUntil is missing in API response (request + 1 hour)
         if(!$this->cached_until)
         {
             $this->cached_until_unixtime = $this->request_time_unixtime + 60*60;

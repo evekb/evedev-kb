@@ -11,27 +11,27 @@
  */
 class pLocked extends pageAssembly
 {
-	/** @var Page */
-	public $page = null;
+    /** @var Page */
+    public $page = null;
 
-	function __construct()
-	{
-		parent::__construct();
+    function __construct()
+    {
+        parent::__construct();
 
-		$this->queue("start");
-		$this->queue("content");
-	}
+        $this->queue("start");
+        $this->queue("content");
+    }
 
-	function start()
-	{
-		$this->page = new Page("Locked");
-	}
+    function start()
+    {
+        $this->page = new Page("Locked");
+    }
 
-	function content()
-	{
-		global $smarty;
-		return $smarty->fetch(get_tpl("locked"));
-	}
+    function content()
+    {
+        global $smarty;
+        return $smarty->fetch(get_tpl("locked"));
+    }
 
 }
 

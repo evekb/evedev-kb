@@ -92,7 +92,7 @@ class Smarty_Internal_Utility {
                     echo 'Error: ', $e->getMessage(), "<br><br>";
                     $_error_count++;
                 } 
-				// free memory
+                // free memory
                 $this->smarty->template_objects = array();
                 $_tpl->smarty->template_objects = array();
                 $_tpl = null;
@@ -224,13 +224,13 @@ class Smarty_Internal_Utility {
      * @param object $templae template object
      * @return array of tag/attributes
      */
-	function getTags(Smarty_Internal_Template $template) 
-	{
-		$template->smarty->get_used_tags = true;
-		$template->compileTemplateSource();
-		return $template->compiler_object->used_tags;
-	}	
-	
+    function getTags(Smarty_Internal_Template $template) 
+    {
+        $template->smarty->get_used_tags = true;
+        $template->compileTemplateSource();
+        return $template->compiler_object->used_tags;
+    }    
+    
     function testInstall()
     {
         echo "<PRE>\n";

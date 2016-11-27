@@ -59,10 +59,10 @@ class Smarty_Internal_Resource_String {
     public function getTemplateTimestamp($_template)
     { 
         if ($this->isEvaluated) {
-        	//must always be compiled and have no timestamp
-        	return false;
+            //must always be compiled and have no timestamp
+            return false;
         } else {
-        	return 0;
+            return 0;
         }
     } 
 

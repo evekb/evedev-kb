@@ -24,9 +24,9 @@ class RSSTable extends KillListTable
         $this->kill_list_->rewind();
 
         while ($kill = $this->kill_list_->getKill()) {
-			if ($kill->isClassified()) {
-				continue;
-			}
+            if ($kill->isClassified()) {
+                continue;
+            }
             /* date in format:  Tue, 03 Jun 2003 09:39:21 GMT 
             Hack added because the time is not parsed correctly by strtotime()
             */

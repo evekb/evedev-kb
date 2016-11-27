@@ -13,7 +13,7 @@
  */
 // abstract class Smarty_Internal_CompileBase implements TagCompilerInterface
 class Smarty_Internal_CompileBase {
-	public $required_attributes = array();
+    public $required_attributes = array();
     public $optional_attributes = array();
     public $shorttag_order = array();
     public $option_flags = array('nocache');
@@ -71,7 +71,7 @@ class Smarty_Internal_CompileBase {
                     } 
                     // must be named attribute
                 } else {
-                	reset($mixed);
+                    reset($mixed);
                     $_indexed_attr[key($mixed)] = $mixed[key($mixed)];
                 } 
             } 

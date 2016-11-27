@@ -95,7 +95,7 @@ class Smarty_Security {
     public function __construct($smarty)
     {
         $this->smarty = $smarty; 
-	}
+    }
     /**
      * Check if PHP function is trusted.
      * 

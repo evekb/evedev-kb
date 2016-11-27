@@ -11,13 +11,13 @@
 
 class TopList_Griefer extends TopList_Kills
 {
-	function __construct()
-	{
-		trigger_error("Using ".get_class($this)." is deprecated. Use TopList_Kills and set ship classes as needed.", E_USER_NOTICE);
-		$this->addVictimShipClass(20); // freighter
-		$this->addVictimShipClass(22); // exhumer
-		$this->addVictimShipClass(7); // industrial
-		$this->addVictimShipClass(12); // barge
-		$this->addVictimShipClass(14); // transport
-	}
+    function __construct()
+    {
+        trigger_error("Using ".get_class($this)." is deprecated. Use TopList_Kills and set ship classes as needed.", E_USER_NOTICE);
+        $this->addVictimShipClass(20); // freighter
+        $this->addVictimShipClass(22); // exhumer
+        $this->addVictimShipClass(7); // industrial
+        $this->addVictimShipClass(12); // barge
+        $this->addVictimShipClass(14); // transport
+    }
 }

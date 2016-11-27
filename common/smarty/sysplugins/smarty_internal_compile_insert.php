@@ -14,9 +14,9 @@
  * Smarty Internal Plugin Compile Insert Class
  */
 class Smarty_Internal_Compile_Insert extends Smarty_Internal_CompileBase {
-	// attribute definitions
+    // attribute definitions
     public $required_attributes = array('name');
-   	public $shorttag_order = array('name');
+       public $shorttag_order = array('name');
     public $optional_attributes = array('_any'); 
 
     /**

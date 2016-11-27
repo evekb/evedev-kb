@@ -18,11 +18,11 @@ class Smarty_Internal_Resource_Registered {
     {
         $this->smarty = $template->smarty;
         if (isset($resource_type)) {
-        	$template->smarty->registerResource($resource_type,
-        		array("smarty_resource_{$resource_type}_source",
-            		"smarty_resource_{$resource_type}_timestamp",
-                	"smarty_resource_{$resource_type}_secure",
-                	"smarty_resource_{$resource_type}_trusted"));
+            $template->smarty->registerResource($resource_type,
+                array("smarty_resource_{$resource_type}_source",
+                    "smarty_resource_{$resource_type}_timestamp",
+                    "smarty_resource_{$resource_type}_secure",
+                    "smarty_resource_{$resource_type}_trusted"));
         }
     } 
     // classes used for compiling Smarty templates from file resource

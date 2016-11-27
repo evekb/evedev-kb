@@ -11,14 +11,14 @@
 
 class TopList_CapitalShipKiller extends TopList_Base
 {
-	function __construct()
-	{
-		trigger_error("Using ".get_class($this)." is deprecated. Use TopList_Kills and set ship classes as needed.", E_USER_NOTICE);
-		$this->addVictimShipClass(20); // freighter
-		$this->addVictimShipClass(19); // dread
-		$this->addVictimShipClass(27); // carrier
-		$this->addVictimShipClass(28); // mothership
-		$this->addVictimShipClass(26); // titan
-		$this->addVictimShipClass(29); // cap. industrial
-	}
+    function __construct()
+    {
+        trigger_error("Using ".get_class($this)." is deprecated. Use TopList_Kills and set ship classes as needed.", E_USER_NOTICE);
+        $this->addVictimShipClass(20); // freighter
+        $this->addVictimShipClass(19); // dread
+        $this->addVictimShipClass(27); // carrier
+        $this->addVictimShipClass(28); // mothership
+        $this->addVictimShipClass(26); // titan
+        $this->addVictimShipClass(29); // cap. industrial
+    }
 }

@@ -8,18 +8,18 @@
 // try to disable time limit
 if(function_exists("set_time_limit"))
 {
-	@set_time_limit(0);
+    @set_time_limit(0);
 }
 // try to increase memory limit
 @ini_set('memory_limit', '1024M');
 
 if (!substr_compare(PHP_OS, 'win', 0, 3, true))
 {
-	@ini_set('include_path', ini_get('include_path').';.\\common\\includes');
+    @ini_set('include_path', ini_get('include_path').';.\\common\\includes');
 }
 else
 {
-	@ini_set('include_path', ini_get('include_path').':./common/includes');
+    @ini_set('include_path', ini_get('include_path').':./common/includes');
 }
 
 // one level up
@@ -55,19 +55,19 @@ if(!defined('KB_CACHEDIR'))
 function logCron($logText)
 {
         // determine correct line break for this environment
-	$linebreak = "<br/>";
-	if(defined('STDIN'))
-	{
-		$linebreak = PHP_EOL;
-	}
-	// create GMT timestamp
+    $linebreak = "<br/>";
+    if(defined('STDIN'))
+    {
+        $linebreak = PHP_EOL;
+    }
+    // create GMT timestamp
         $timestamp = gmdate("Y/m/d H:i:s");
-	// convert any HTML linebreaks to appropriate linebreaks
+    // convert any HTML linebreaks to appropriate linebreaks
         $logText = preg_replace('/<br(\s)*(\/)?>/', PHP_EOL, $logText);
-	$logText = str_replace("</div>","</div>".PHP_EOL, $logText);
-	// strip any remaining HTML tags
+    $logText = str_replace("</div>","</div>".PHP_EOL, $logText);
+    // strip any remaining HTML tags
         $logText = strip_tags($logText);
-	$logText = str_replace(PHP_EOL, $linebreak, $logText);
+    $logText = str_replace(PHP_EOL, $linebreak, $logText);
     
         print $timestamp.' - '.$logText.$linebreak;
 }

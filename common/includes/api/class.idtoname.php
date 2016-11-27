@@ -8,43 +8,43 @@
 
 require_once("class.api.php");
 // **********************************************************************************************************************************************
-// ****************                                   API ID -> Name Conversion /eve/CharacterID.xml.aspx 	                     ****************
+// ****************                                   API ID -> Name Conversion /eve/CharacterID.xml.aspx                          ****************
 // **********************************************************************************************************************************************
 class API_IDtoName  extends API
 {
 
-	private $API_IDs_ = '';
-	private $IDData_ = array();
+    private $API_IDs_ = '';
+    private $IDData_ = array();
 
-	public function setIDs($IDs)
-	{
-		$this->API_IDs_ = $IDs;
-	}
-	public function getIDData()
-	{
-		return $this->IDData_;
-	}
+    public function setIDs($IDs)
+    {
+        $this->API_IDs_ = $IDs;
+    }
+    public function getIDData()
+    {
+        return $this->IDData_;
+    }
 
-	public function clear()
-	{
-		$this->IDData_ = array();
-		unset($this->IDData_);
-	}
+    public function clear()
+    {
+        $this->IDData_ = array();
+        unset($this->IDData_);
+    }
 
-	public function fetchXML()
-	{
-		if ($this->API_IDs_ == "")
+    public function fetchXML()
+    {
+        if ($this->API_IDs_ == "")
                     return "No IDs have been input.";
 
                 $data = $this->CallAPI( "eve", "CharacterName", array( "ids" => $this->API_IDs_ ) , null, null );
                 
-		if($data == false) return "Error fetching Names";
+        if($data == false) return "Error fetching Names";
 
-		foreach($data->characters as $character) {
-			$this->IDData_[] = array(
+        foreach($data->characters as $character) {
+            $this->IDData_[] = array(
                             'name'=>strval($character->name),
                             'characterID'=>intval($character->characterID));
                 }
-		return "";
-	}
+        return "";
+    }
 }

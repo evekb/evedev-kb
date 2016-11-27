@@ -136,44 +136,44 @@ class Location extends Cacheable
     {
         if (!$this->executed)
         {
-			if ($this->isCached()) {
-				$cache = $this->getCache();
-				$this->row = $cache->row;
-				$this->executed = true;
-			} else {
-		        $qry = DBFactory::getDBQuery();
-				$sql = "select *
-						   FROM kb3_mapdenormalize mdn
+            if ($this->isCached()) {
+                $cache = $this->getCache();
+                $this->row = $cache->row;
+                $this->executed = true;
+            } else {
+                $qry = DBFactory::getDBQuery();
+                $sql = "select *
+                           FROM kb3_mapdenormalize mdn
                                                    INNER JOIN kb3_constellations con ON con.con_id = mdn.constellationID
                                                    INNER JOIN kb3_regions reg ON reg.reg_id = mdn.regionID
                                                    INNER JOIN kb3_systems sys ON sys.sys_id = mdn.solarSystemID
-						   where mdn.itemID = ".$this->id;
-				$qry->execute($sql);
-				$this->row = $qry->getRow();
-				$this->executed = true;
-				$this->putCache();
-			}
+                           where mdn.itemID = ".$this->id;
+                $qry->execute($sql);
+                $this->row = $qry->getRow();
+                $this->executed = true;
+                $this->putCache();
+            }
         }
     }
 
-	/**
-	 * Lookup a SolarSystem by name.
-	 * 
-	 * @param string $name
-	 * @return Location|boolean
-	 */
+    /**
+     * Lookup a SolarSystem by name.
+     * 
+     * @param string $name
+     * @return Location|boolean
+     */
     static function lookup($name)
     {
-			$qry = DBFactory::getDBQuery();
-			$qry->execute("SELECT itemID FROM kb3_mapdenormalize "
-			." WHERE itemID = '".$qry->escape($name)."'");
+            $qry = DBFactory::getDBQuery();
+            $qry->execute("SELECT itemID FROM kb3_mapdenormalize "
+            ." WHERE itemID = '".$qry->escape($name)."'");
 
-			if (!$qry->recordCount()) {
-					return false;
-			} else {
-				$row = $qry->getRow();
-				return Cacheable::factory('Location', (int)$row['itemID']);
-			}
+            if (!$qry->recordCount()) {
+                    return false;
+            } else {
+                $row = $qry->getRow();
+                return Cacheable::factory('Location', (int)$row['itemID']);
+            }
     }
 
     /**

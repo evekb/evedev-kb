@@ -10,12 +10,12 @@
 
 class TopList_Locations extends TopList_Base
 {
-	function generate()
-	{
+    function generate()
+    {
                 // the innermost sub-select lists all kills with all involved pilots etc according to the set filters
                 // the outer subselect then only gets the unique kills and their locations
                 // the top select then groups the kills by location
-		$sql = "select 
+        $sql = "select 
                             count(killlist.kll_location) as cnt, killlist.kll_location as itemID, killlist.itemName as itemName
                         from 
                         ( 
@@ -31,18 +31,18 @@ class TopList_Locations extends TopList_Base
                                     INNER JOIN kb3_mapdenormalize mdn
                                         on ( mdn.itemID = kll.kll_location ) ";
 
-		$this->setSQLTop($sql);
+        $this->setSQLTop($sql);
 
-		$this->setSQLBottom(") sublist ) killlist group by killlist.kll_location order by 1 desc limit ".$this->limit);
+        $this->setSQLBottom(") sublist ) killlist group by killlist.kll_location order by 1 desc limit ".$this->limit);
                 
                 if (count($this->inc_vic_scl))
-		{
-			$this->setPodsNoobShips(true);
-		}
-		else
-		{
-			$this->setPodsNoobShips(config::get('podnoobs'));
-		}
-	}
+        {
+            $this->setPodsNoobShips(true);
+        }
+        else
+        {
+            $this->setPodsNoobShips(config::get('podnoobs'));
+        }
+    }
         
 }

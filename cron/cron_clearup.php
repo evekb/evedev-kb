@@ -28,14 +28,14 @@ $maxOtherAge = 7;
 // disable query caching while the script is running.
 $qcache = config::get('cfg_qcache');
 if($qcache) {
-	logCron("File query cache disabled");
-	config::set('cfg_qcache', 0);
+    logCron("File query cache disabled");
+    config::set('cfg_qcache', 0);
 }
 $pcache = config::get('cache_enabled');
 if($pcache) 
 {
-	logCron("Page cache disabled");
-	config::set('cache_enabled', 0);
+    logCron("Page cache disabled");
+    config::set('cache_enabled', 0);
 }
 
 logCron("clearing SQL query cache...");
@@ -61,12 +61,12 @@ logCron("Removed ".CacheHandler::removeByAge('api/', $maxAPIAge * 24)." files fr
 
 if($qcache) 
 {
-	logCron("File query cache re-enabled");
-	config::set('cfg_qcache', 1);
+    logCron("File query cache re-enabled");
+    config::set('cfg_qcache', 1);
 }
 if($pcache) 
 {
-	logCron("Page cache re-enabled");
-	config::set('cache_enabled', 1);
+    logCron("Page cache re-enabled");
+    config::set('cache_enabled', 1);
 }
 logCron('Time taken = '.(microtime(true) - $cronStartTime).' seconds.');

@@ -14,10 +14,10 @@ if($_POST['submit'])
 {
 
     /**
-    * 	Author: Niels Brink (HyperBeanie)
+    *     Author: Niels Brink (HyperBeanie)
     *
-    *	Licence: Do what you like with it, credit me as the original author
-    *		 Not warrantied for anything, might eat your cat.  Your responsibility.
+    *    Licence: Do what you like with it, credit me as the original author
+    *         Not warrantied for anything, might eat your cat.  Your responsibility.
     */
 
     // Check if user wants to use a local file

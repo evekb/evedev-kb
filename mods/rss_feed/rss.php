@@ -13,9 +13,9 @@ $html .= "<" . "?xml version=\"1.0\"?" . ">
 <channel>
 <title>" . config::get('cfg_kbtitle') . "</title>";
 if (edkURI::getArg('losses', 1)) {
-	$html .= "<description>20 Most Recent Kills</description>";
+    $html .= "<description>20 Most Recent Kills</description>";
 } else {
-	$html .= "<description>20 Most Recent Losses</description>";
+    $html .= "<description>20 Most Recent Losses</description>";
 }
 $html .= "<link>" . KB_HOST . "</link>
 <copyright>" . config::get('cfg_kbtitle') . "</copyright>\n";
@@ -23,16 +23,16 @@ $html .= "<link>" . KB_HOST . "</link>
 $klist = new KillList();
 $klist->setOrdered(true);
 if (edkURI::getArg('all') || edkURI::getArg('', 1) == 'all') {
-	involved::load($klist, 'combined');
+    involved::load($klist, 'combined');
 } else if (edkURI::getArg('losses') || edkURI::getArg('', 1) == 'losses') {
-	involved::load($klist, 'loss');
+    involved::load($klist, 'loss');
 } else {
-	involved::load($klist, 'kill');
+    involved::load($klist, 'kill');
 }
 if ($scl_id) {
-	$klist->addVictimShipClass($scl_id);
+    $klist->addVictimShipClass($scl_id);
 } else {
-	$klist->setPodsNoobShips(false);
+    $klist->setPodsNoobShips(false);
 }
 $klist->setLimit(20);
 

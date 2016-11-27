@@ -5,7 +5,7 @@
 
 if (!class_exists('options'))
 {
-	exit('This killboard is not supported (options package missing)!');
+    exit('This killboard is not supported (options package missing)!');
 }
 options::cat('Modules', 'AJCron', 'Settings');
 options::fadd('Reset next scheduled run to now', 'ajcron_resetNextRun', 'checkbox');

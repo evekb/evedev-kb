@@ -29,8 +29,8 @@ class ajcron
             if (get_class($xajax) == 'xajax')
             {
                 // we're good to go, set up our asynchronous callback
-				$xuf = new xajaxUserFunction(array('ajcron', 'ajcron', 'xajax_req'), null);
-				$xajax->register(XAJAX_FUNCTION, $xuf);
+                $xuf = new xajaxUserFunction(array('ajcron', 'ajcron', 'xajax_req'), null);
+                $xajax->register(XAJAX_FUNCTION, $xuf);
 
                 // fastest way to check wether we have to run or not
                 if (config::get('ajcron_nextrun') < time())
@@ -265,9 +265,9 @@ class ajcron
         #sleep(15);
         return $objResponse;
     }
-	public static function helpFormat()
-	{
-		return "<div id='ajcron_help'>/65 ".KB_HOST."/cron/cron_fetcher.php [FeedSync]<br />
+    public static function helpFormat()
+    {
+        return "<div id='ajcron_help'>/65 ".KB_HOST."/cron/cron_fetcher.php [FeedSync]<br />
 01:00 ".KB_HOST."/cron/cron_clearup.php [CleanUp]<br /></div>";
-	}
+    }
 }

@@ -16,9 +16,9 @@ class Box
 {
     /**
      * Create a box and set the title.
-	 *
-	 * @param string $title 
-	 */
+     *
+     * @param string $title 
+     */
     function __construct($title = '')
     {
         $this->title_ = $title;
@@ -27,9 +27,9 @@ class Box
 
     /**
      * Set the Icon.
-	 *
-	 * @param string $icon
-	 */
+     *
+     * @param string $icon
+     */
     function setIcon($icon)
     {
         $this->icon_ = $icon;
@@ -38,28 +38,28 @@ class Box
     /**
      * Add something to the contents array that we send to smarty later.
      *
-	 * Images can have a width or height specified with a default of 145 pixels.
-	 * Links have an optional onlick setting for javascript functions.
-	 *
-	 * @param string $type type of link. Types can be caption, img, link, points.
-	 * @param string $name Name to display for option.
-	 * @param string $url URL to use for a link.
-	 * @param integer $width Image width.
-	 * @param integer $height Image height.
-	 * @param string|boolean $onclick optional javascript for links
-	 */
+     * Images can have a width or height specified with a default of 145 pixels.
+     * Links have an optional onlick setting for javascript functions.
+     *
+     * @param string $type type of link. Types can be caption, img, link, points.
+     * @param string $name Name to display for option.
+     * @param string $url URL to use for a link.
+     * @param integer $width Image width.
+     * @param integer $height Image height.
+     * @param string|boolean $onclick optional javascript for links
+     */
     function addOption($type, $name, $url = '', $width = 145, $height = 145, $onclick = false)
     {
         $this->box_array[] = array('type' => $type, 'name' => $name,
-			'url' => $url, 'width' => $width, 'height' => $height,
-			'onclick' => $onclick);
+            'url' => $url, 'width' => $width, 'height' => $height,
+            'onclick' => $onclick);
     }
     /**
      * Generate the html from the template.
-	 *
-	 * @global Smarty $smarty
-	 * @return string
-	 */
+     *
+     * @global Smarty $smarty
+     * @return string
+     */
     function generate()
     {
         global $smarty;
@@ -72,6 +72,6 @@ class Box
         $smarty->assign('title', $this->title_ );
         $smarty->assign('items', $this->box_array);
 
-		return $smarty->fetch(get_tpl('box'));
+        return $smarty->fetch(get_tpl('box'));
     }
 }

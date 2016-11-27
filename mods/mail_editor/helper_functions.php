@@ -502,11 +502,11 @@ function getHelp() { // help information document type stuff.
         You can't add or delete items / involved parties.<br/>
         Might be slow with killmails with lots of involved parties / items.<br/>
         No integration into the kill list for the admin. (Too lazy atm - it conflicts
-		with oh so many other mods)<br/>
+        with oh so many other mods)<br/>
         After editing a pilot, his new corp might not reflect properly until the next
-		kill featuring said is posted. This is down to a limitation in the pilot class
-		of the core. This applies to corps and the alliances they belong to as well.
-		<br/><br/>
+        kill featuring said is posted. This is down to a limitation in the pilot class
+        of the core. This applies to corps and the alliances they belong to as well.
+        <br/><br/>
         <b>Disclaimer</b><br/>
         As you can potentially mess up kills in your database, I'm slapping
         this with the usual \"If you break something, dont blame me\" disclaimer.

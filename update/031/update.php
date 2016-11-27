@@ -39,10 +39,10 @@ function update031()
         // for this we need an up2date CCP DB first
         updateCCPDB();
 
-	global $url, $smarty;
-	
-	$NUMBER_OF_ITEMS_TO_UPDATE_PER_CALL = 50000;
-	$TABLE_NAME = "kb3_items_dropped";
+    global $url, $smarty;
+    
+    $NUMBER_OF_ITEMS_TO_UPDATE_PER_CALL = 50000;
+    $TABLE_NAME = "kb3_items_dropped";
         
         $updateSteps = array(
             /** step 1: convert 5 to 92 (rigs) */
@@ -60,8 +60,8 @@ function update031()
                 "flagNew" => 155,
                 "description" => "Fleet Hangar",
                 "method" => "convertEDKToCCPFlagDefault",
-				"tableName" => $TABLE_NAME,
-				"numberOfItemsPerCall" => $NUMBER_OF_ITEMS_TO_UPDATE_PER_CALL
+                "tableName" => $TABLE_NAME,
+                "numberOfItemsPerCall" => $NUMBER_OF_ITEMS_TO_UPDATE_PER_CALL
             ),
             /** step 3: convert 11 to 90 (Ship Maintenance Bay) */
             3 => array(
@@ -208,8 +208,8 @@ function update031()
         );
 
 
-	//Checking if this Update already done
-	if (CURRENT_DB_UPDATE < "031") {
+    //Checking if this Update already done
+    if (CURRENT_DB_UPDATE < "031") {
             
                 $configStatusKeyName = "031updatestatus";
                 // get last conversion step from config
@@ -266,11 +266,11 @@ function update031()
                     
                 }
 
-		$smarty->assign('refresh', 1);
-		$smarty->assign('content', $message);
-		$smarty->display('update.tpl');
-		die();
-	}
+        $smarty->assign('refresh', 1);
+        $smarty->assign('content', $message);
+        $smarty->display('update.tpl');
+        die();
+    }
         
 }
 
@@ -285,8 +285,8 @@ function update031()
  *      - int flagOld
  *      - int flagNew
  *      - string description
- *		- string tableName
- *		- string numberOfItemsPerCall
+ *        - string tableName
+ *        - string numberOfItemsPerCall
  * @return array
  *      - string stepMessage
  *      - boolean isStepComplete
@@ -294,33 +294,33 @@ function update031()
  */
 function convertEDKToCCPFlagDefault($slotsToConvert)
 {
-	$result = array(
-		"stepMessage" => "",
-		"isStepComplete" => FALSE
-	);
+    $result = array(
+        "stepMessage" => "",
+        "isStepComplete" => FALSE
+    );
 
-	$updateFlags = DBFactory::getDBQuery(true);
-	$conversionResult = $updateFlags->execute('UPDATE '.$slotsToConvert["tableName"].' SET itd_itl_id = '.$slotsToConvert["flagNew"].' WHERE itd_itl_id = '.$slotsToConvert["flagOld"].' LIMIT '.$slotsToConvert["numberOfItemsPerCall"]);
-	
-	if(!$conversionResult)
-	{
-		throw new UpdateException("Error while converting ".$slotsToConvert["description"]." for dropped items: ".$updateFlags->getErrorMsg());
-	}
+    $updateFlags = DBFactory::getDBQuery(true);
+    $conversionResult = $updateFlags->execute('UPDATE '.$slotsToConvert["tableName"].' SET itd_itl_id = '.$slotsToConvert["flagNew"].' WHERE itd_itl_id = '.$slotsToConvert["flagOld"].' LIMIT '.$slotsToConvert["numberOfItemsPerCall"]);
+    
+    if(!$conversionResult)
+    {
+        throw new UpdateException("Error while converting ".$slotsToConvert["description"]." for dropped items: ".$updateFlags->getErrorMsg());
+    }
 
-	$numberOfRowsAffected = $updateFlags->affectedRows();
-	// no rows affected means we're done updating this flag
-	if($numberOfRowsAffected === 0)
-	{
-		$result["stepMessage"] = "Done converting ".$slotsToConvert["description"];
-		$result["isStepComplete"] = TRUE;
-	}
+    $numberOfRowsAffected = $updateFlags->affectedRows();
+    // no rows affected means we're done updating this flag
+    if($numberOfRowsAffected === 0)
+    {
+        $result["stepMessage"] = "Done converting ".$slotsToConvert["description"];
+        $result["isStepComplete"] = TRUE;
+    }
 
-	else
-	{
-		$result["stepMessage"] = "Converted $numberOfRowsAffected items in ".$slotsToConvert["description"];
-		$result["stepMessage"] .= "<br/>Will continue with next chunk";
-	} 
-	return $result;
+    else
+    {
+        $result["stepMessage"] = "Converted $numberOfRowsAffected items in ".$slotsToConvert["description"];
+        $result["stepMessage"] .= "<br/>Will continue with next chunk";
+    } 
+    return $result;
 }
 
 /**
@@ -331,8 +331,8 @@ function convertEDKToCCPFlagDefault($slotsToConvert)
  * 
  * @param array $slotsToUpdate
  *      - string description
- *		- string tableName
- *		- string numberOfItemsPerCall
+ *        - string tableName
+ *        - string numberOfItemsPerCall
  * @return array
  *      - string stepMessage
  *      - boolean isStepComplete
@@ -340,43 +340,43 @@ function convertEDKToCCPFlagDefault($slotsToConvert)
  */
 function convertSlotsFromManualMails($slotsToConvert)
 {
-	$result = array(
-		"stepMessage" => "",
-		"isStepComplete" => FALSE
-	);
-	
-	$qry = DBFactory::getDBQuery(true);
-	// get 20 different items
-	$qry->execute('SELECT DISTINCT itd_itm_id FROM '.$slotsToConvert["tableName"].' WHERE itd_itl_id = -20 LIMIT 20');
+    $result = array(
+        "stepMessage" => "",
+        "isStepComplete" => FALSE
+    );
+    
+    $qry = DBFactory::getDBQuery(true);
+    // get 20 different items
+    $qry->execute('SELECT DISTINCT itd_itm_id FROM '.$slotsToConvert["tableName"].' WHERE itd_itl_id = -20 LIMIT 20');
 
-	if($qry->recordCount() > 0)
-	{
-		while($row = $qry->getRow())
-		{
-			$Item = Item::getByID($row['itd_itm_id']);
+    if($qry->recordCount() > 0)
+    {
+        while($row = $qry->getRow())
+        {
+            $Item = Item::getByID($row['itd_itm_id']);
 
-			if(!$Item->getName())
-			{
-				$result["stepMessage"] .= "<br/>Can't update slot for unknown item ".$row['itd_itm_id'];
-				
-				// convert it back to location ID 0
-				$updateQuery = DBFactory::getDBQuery(true);
-				$conversionResult = $updateQuery->execute('UPDATE '.$slotsToConvert["tableName"].' SET itd_itl_id = 0 WHERE itd_itl_id = -20 AND itd_itm_id = '.$row['itd_itm_id'].' LIMIT '.$slotsToConvert["numberOfItemsPerCall"]);
-								
-				if(!$conversionResult)
-				{
-					// we need to stop here, else we would be running in an endless loop
-					throw new UpdateException("unable to convert slot back to 0 for item ID ".$row['itd_itm_id']." with error: ".$qry->getErrorMsg());
-				}
-			}
-			
-			else
-			{
+            if(!$Item->getName())
+            {
+                $result["stepMessage"] .= "<br/>Can't update slot for unknown item ".$row['itd_itm_id'];
+                
+                // convert it back to location ID 0
+                $updateQuery = DBFactory::getDBQuery(true);
+                $conversionResult = $updateQuery->execute('UPDATE '.$slotsToConvert["tableName"].' SET itd_itl_id = 0 WHERE itd_itl_id = -20 AND itd_itm_id = '.$row['itd_itm_id'].' LIMIT '.$slotsToConvert["numberOfItemsPerCall"]);
+                                
+                if(!$conversionResult)
+                {
+                    // we need to stop here, else we would be running in an endless loop
+                    throw new UpdateException("unable to convert slot back to 0 for item ID ".$row['itd_itm_id']." with error: ".$qry->getErrorMsg());
+                }
+            }
+            
+            else
+            {
                                 // avoid any caching issues by using a normal query
                                 $slotLocationQuery = DBFactory::getDBQuery(true);
                                 $slotLocationResult = $slotLocationQuery->execute("select itt_slot from kb3_item_types types
-						inner join kb3_invtypes it ON it.groupID = types.itt_id
-						where it.typeID = ".$row['itd_itm_id']);
+                        inner join kb3_invtypes it ON it.groupID = types.itt_id
+                        where it.typeID = ".$row['itd_itm_id']);
                                 
                                 if(!$slotLocationResult)
                                 {
@@ -391,10 +391,10 @@ function convertSlotsFromManualMails($slotsToConvert)
                                 if (!$getSlotResult['itt_slot']) {
                                      // try getting location from parent item
                                     $slotLocationQuery->execute("select itt_slot from kb3_item_types
-						inner join kb3_dgmtypeattributes d
-						where itt_id = d.value
-						and d.typeID = ".$row['itd_itm_id']."
-						and d.attributeID in (137,602);");
+                        inner join kb3_dgmtypeattributes d
+                        where itt_id = d.value
+                        and d.typeID = ".$row['itd_itm_id']."
+                        and d.attributeID in (137,602);");
                                     $getSlotResult = $slotLocationQuery->getRow();
 
                                     if (!$getSlotResult['itt_slot']) 
@@ -413,26 +413,26 @@ function convertSlotsFromManualMails($slotsToConvert)
                                         $location = $getSlotResult['itt_slot'];
                                 }
 
-				// update slots for this item type, if location in database is -20
-				$updateQuery = DBFactory::getDBQuery(true);
-				$conversionResult = $updateQuery->execute('UPDATE '.$slotsToConvert["tableName"].' SET itd_itl_id = '.$location.' WHERE itd_itl_id = -20 AND itd_itm_id = '.$row['itd_itm_id'].' LIMIT '.$slotsToConvert["numberOfItemsPerCall"]);
-				if(!$conversionResult)
-				{
-					throw new UpdateException("Failed to update slots for item ".$Item->getName()." with error: ".$updateQuery->getErrorMsg());
-				}
-			}
-		}
-		$result["stepMessage"] = "Converted a batch of items from manually posted kills";
-	}
+                // update slots for this item type, if location in database is -20
+                $updateQuery = DBFactory::getDBQuery(true);
+                $conversionResult = $updateQuery->execute('UPDATE '.$slotsToConvert["tableName"].' SET itd_itl_id = '.$location.' WHERE itd_itl_id = -20 AND itd_itm_id = '.$row['itd_itm_id'].' LIMIT '.$slotsToConvert["numberOfItemsPerCall"]);
+                if(!$conversionResult)
+                {
+                    throw new UpdateException("Failed to update slots for item ".$Item->getName()." with error: ".$updateQuery->getErrorMsg());
+                }
+            }
+        }
+        $result["stepMessage"] = "Converted a batch of items from manually posted kills";
+    }
 
-	// completed
-	else
-	{
-		$result["stepMessage"] .= "Done converting ".$slotsToConvert["name"];
-		$result["isStepComplete"] = TRUE;
-	}
-	
-	return $result;
+    // completed
+    else
+    {
+        $result["stepMessage"] .= "Done converting ".$slotsToConvert["name"];
+        $result["isStepComplete"] = TRUE;
+    }
+    
+    return $result;
 }
 
 /**
@@ -467,13 +467,13 @@ function updateCCPDB()
     if(config::get('CCPDbVersion') < KB_CCP_DB_VERSION)
     {       
             $package = 'CCPDB';
-			if('update/'.is_dir($package)) require('update/'.$package.'/update.php');
-			else
-			{
-				$smarty->assign('content', "Specified package does not exist.");
-				$smarty->display('update.tpl');
-			}
-			die();
+            if('update/'.is_dir($package)) require('update/'.$package.'/update.php');
+            else
+            {
+                $smarty->assign('content', "Specified package does not exist.");
+                $smarty->display('update.tpl');
+            }
+            die();
     }
 }
 

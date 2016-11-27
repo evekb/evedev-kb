@@ -14,7 +14,7 @@
  * Smarty Internal Plugin Compile Function_Call Class
  */
 class Smarty_Internal_Compile_Call extends Smarty_Internal_CompileBase {
-	// attribute definitions
+    // attribute definitions
     public $required_attributes = array('name');
     public $shorttag_order = array('name');
     public $optional_attributes = array('_any'); 
@@ -77,16 +77,16 @@ class Smarty_Internal_Compile_Call extends Smarty_Internal_CompileBase {
         }
         //varibale name?
         if (!(strpos($_name,'$')===false)) {
-        	$call_cache = $_name;
-        	$call_function = '$tmp = "smarty_template_function_".'.$_name.'; $tmp';
-       	} else {
-        	$_name = trim($_name, "'\"");
-       		$call_cache = "'{$_name}'";
-         	$call_function = 'smarty_template_function_'.$_name;
+            $call_cache = $_name;
+            $call_function = '$tmp = "smarty_template_function_".'.$_name.'; $tmp';
+           } else {
+            $_name = trim($_name, "'\"");
+               $call_cache = "'{$_name}'";
+             $call_function = 'smarty_template_function_'.$_name;
         }
-      	
+          
         $_params = 'array(' . implode(",", $_paramsArray) . ')';
-    	$_hash = str_replace('-','_',$compiler->template->properties['nocache_hash']);
+        $_hash = str_replace('-','_',$compiler->template->properties['nocache_hash']);
         // was there an assign attribute
         if (isset($_assign)) {
             if ($compiler->template->caching) {

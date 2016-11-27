@@ -13,7 +13,7 @@
  * Smarty Internal Plugin Compile Object Function Class
  */
 class Smarty_Internal_Compile_Private_Object_Function extends Smarty_Internal_CompileBase {
-	// attribute definitions
+    // attribute definitions
     public $required_attributes = array();
     public $optional_attributes = array('_any'); 
 

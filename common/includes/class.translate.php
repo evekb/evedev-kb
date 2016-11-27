@@ -38,7 +38,7 @@ class Translate
                             'Beteiligte Parteien:','Anz:','Corporation:','(Fracht)', 'Schiff:','Waffe:','(Im Container)',
                             'Verursachter Schaden:','Erlittener Schaden:', '(gab den letzten Schuss ab)',
                             'Hinterlassene Gegenst'.chr(228).'nde:', 'Anz.:', 'Unbekannt', 'Dronenhangar', 'Drohnenhangar', 
-			    'Mond:', 'Kapsel', 'Menge:');
+                'Mond:', 'Kapsel', 'Menge:');
 
             $replace = array('Victim:','Victim:','Alliance: None','Alliance: None','Alliance: None',
                      'Alliance: None','Alliance: None','Alliance: None','Alliance:',
@@ -48,7 +48,7 @@ class Translate
                             'Involved parties:', 'Qty:', 'Corp:', '(Cargo)', 'Ship:', 'Weapon:','(In Container)',
                             'Damage Done:', 'Damage Taken:', '(laid the final blow)',
                             'Dropped items:', 'Qty:', 'Unknown', 'Drone Bay', 'Drone Bay', 
-			    'Moon:', 'Capsule', 'Qty:');
+                'Moon:', 'Capsule', 'Qty:');
 
             $this->killmail_ = str_replace($search, $replace, $this->killmail_);
             return  $this->killmail_;
@@ -211,13 +211,13 @@ class Translate
             $this->killmail_ = preg_replace($search, $replace, $this->killmail_);
         }
 
-	if($this->language_ == 'dom11')
-	{
-	    $search = 'Eifyr and Co ';
-	    $replace = 'Eifyr and Co. ';
-	    
+    if($this->language_ == 'dom11')
+    {
+        $search = 'Eifyr and Co ';
+        $replace = 'Eifyr and Co. ';
+        
             $this->killmail_ = str_replace($search, $replace, $this->killmail_);
-	}
+    }
     
         if($this->language_ == 'cru10')
         {

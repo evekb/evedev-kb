@@ -12,10 +12,10 @@ $page = new Page('Administration - Audit log');
 $page->setAdmin();
 
 $sql = 'SELECT log_kll_id, log_ip_address, log_timestamp, kll_timestamp, plt_name
-			FROM kb3_log log, kb3_kills kll, kb3_pilots plt
-			WHERE log.log_kll_id = kll.kll_id
-			AND plt.plt_id = kll_fb_plt_id
-			ORDER BY log_timestamp DESC limit 250';
+            FROM kb3_log log, kb3_kills kll, kb3_pilots plt
+            WHERE log.log_kll_id = kll.kll_id
+            AND plt.plt_id = kll_fb_plt_id
+            ORDER BY log_timestamp DESC limit 250';
 
 $qry = DBFactory::getDBQuery();;
 $qry->execute($sql) or die($qry->getErrorMsg());

@@ -23,35 +23,35 @@ event::register('mods_initialised', 'edk_xajax::lateProcess');
  */
 class edk_xajax
 {
-	public static function xajax()
-	{
-		global $xajax_enable;
-		$xajax_enable = true;
-	}
+    public static function xajax()
+    {
+        global $xajax_enable;
+        $xajax_enable = true;
+    }
 
-	// on page assembly check whether or not xajax is needed
-	public static function insertHTML($obj)
-	{
-		global $xajax_enable;
-		if (!isset($xajax_enable)) {
-			return;
-		}
+    // on page assembly check whether or not xajax is needed
+    public static function insertHTML($obj)
+    {
+        global $xajax_enable;
+        if (!isset($xajax_enable)) {
+            return;
+        }
 
-		global $xajax;
-		$obj->addHeader($xajax->getJavascript(config::get('cfg_kbhost')."/common/xajax/"));
-	}
+        global $xajax;
+        $obj->addHeader($xajax->getJavascript(config::get('cfg_kbhost')."/common/xajax/"));
+    }
 
-	public static function lateProcess()
-	{
-		// let all mods know we're here so they can register their functions
-		event::call('xajax_initialised', $this);
-		// Also register this for old mods registered to the ajax mod.
-		event::call('mod_xajax_initialised', $this);
+    public static function lateProcess()
+    {
+        // let all mods know we're here so they can register their functions
+        event::call('xajax_initialised', $this);
+        // Also register this for old mods registered to the ajax mod.
+        event::call('mod_xajax_initialised', $this);
 
-		// now process all xajax calls
-		global $xajax;
-		$xajax->processRequest();
-	}
+        // now process all xajax calls
+        global $xajax;
+        $xajax->processRequest();
+    }
 }
 
 /**
@@ -60,8 +60,8 @@ class edk_xajax
  */
 class mod_xajax
 {
-	public static function xajax()
-	{
-		edk_xajax::xajax();
-	}
+    public static function xajax()
+    {
+        edk_xajax::xajax();
+    }
 }

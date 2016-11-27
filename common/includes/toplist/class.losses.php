@@ -11,20 +11,20 @@
 
 class TopList_Losses extends TopList_Base
 {
-	function generate()
-	{
-		$this->setSQLTop("SELECT COUNT(*) AS cnt, plt.plt_id, "
-			."plt.plt_name, plt.plt_externalid FROM kb3_kills kll "
-			."JOIN kb3_pilots plt on plt.plt_id = kll.kll_victim_id");
-		$this->setSQLBottom("GROUP BY kll.kll_victim_id ORDER BY cnt DESC
+    function generate()
+    {
+        $this->setSQLTop("SELECT COUNT(*) AS cnt, plt.plt_id, "
+            ."plt.plt_name, plt.plt_externalid FROM kb3_kills kll "
+            ."JOIN kb3_pilots plt on plt.plt_id = kll.kll_victim_id");
+        $this->setSQLBottom("GROUP BY kll.kll_victim_id ORDER BY cnt DESC
                             LIMIT ".$this->limit);
-		if (count($this->inc_vic_scl))
-		{
-			$this->setPodsNoobShips(true);
-		}
-		else
-		{
-			$this->setPodsNoobShips(config::get('podnoobs'));
-		}
-	}
+        if (count($this->inc_vic_scl))
+        {
+            $this->setPodsNoobShips(true);
+        }
+        else
+        {
+            $this->setPodsNoobShips(config::get('podnoobs'));
+        }
+    }
 }

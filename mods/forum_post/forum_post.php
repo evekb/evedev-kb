@@ -1,4 +1,4 @@
-popup| <?php	
+popup| <?php    
 /**
  * @package EDK
  */
@@ -11,9 +11,9 @@ $klist = $contract->getKillList();
 $llist = $contract->getLossList();
 $killsummary = new KillSummaryTable($klist, $llist);
 $killsummary->setBreak(6);
-	if ($_GET['view'] == ""){
-		$killsummary->setFilter(false);
-	}
+    if ($_GET['view'] == ""){
+        $killsummary->setFilter(false);
+    }
 $name = $contract->getName();
 }
 
@@ -102,10 +102,10 @@ $name = $system->getName()." ".substr($firstts,0, 16)." ". substr($lastts,-8,5);
 <form>
 <table class="popup-table" height="100%" width="355px">
 <tr>
-	<td align="center"><strong>Forum Post</strong></td>
+    <td align="center"><strong>Forum Post</strong></td>
 </tr>
 <tr>
-	<td align="center"><input type="button" value="Close" onClick="ReverseContentDisplay('popup');"></td>
+    <td align="center"><input type="button" value="Close" onClick="ReverseContentDisplay('popup');"></td>
 </tr>
 <tr>
 <td valign="top" align="center">

@@ -20,106 +20,106 @@ class UpdateException extends Exception {}
 
 function update034()
 {
-	global $url, $smarty;
+    global $url, $smarty;
     
-	$DB_UPDATE = "034";
-	$TABLE_NAME = "kb3_items_destroyed";
-	$TABLE_NAME_TEMP = $TABLE_NAME . "_temp";
-	$NUMBER_OF_ENTRIES_PER_CHUNK = 200000;
-	 
+    $DB_UPDATE = "034";
+    $TABLE_NAME = "kb3_items_destroyed";
+    $TABLE_NAME_TEMP = $TABLE_NAME . "_temp";
+    $NUMBER_OF_ENTRIES_PER_CHUNK = 200000;
+     
         
-	$updateSteps = array(
-		1 => array(
-			"stepDescription" => "create temporary table",
-			"tableName" => $TABLE_NAME,
-			"tableNameTemp" => $TABLE_NAME_TEMP,
-			"chunkSize" => $NUMBER_OF_ENTRIES_PER_CHUNK,
-			"dbUpdate" => $DB_UPDATE
-		),
-		2 => array(
-			"stepDescription" => "copy table",
-			"tableName" => $TABLE_NAME,
-			"tableNameTemp" => $TABLE_NAME_TEMP,
-			"chunkSize" => $NUMBER_OF_ENTRIES_PER_CHUNK,
-			"dbUpdate" => $DB_UPDATE
-		),
-		3 => array(
-			"stepDescription" => "delete old and rename new table",
-			"tableName" => $TABLE_NAME,
-			"tableNameTemp" => $TABLE_NAME_TEMP,
-			"chunkSize" => $NUMBER_OF_ENTRIES_PER_CHUNK,
-			"dbUpdate" => $DB_UPDATE
-		)
-	);
-	
-	// change directory to make the class-loader functional
-	chdir("..");
+    $updateSteps = array(
+        1 => array(
+            "stepDescription" => "create temporary table",
+            "tableName" => $TABLE_NAME,
+            "tableNameTemp" => $TABLE_NAME_TEMP,
+            "chunkSize" => $NUMBER_OF_ENTRIES_PER_CHUNK,
+            "dbUpdate" => $DB_UPDATE
+        ),
+        2 => array(
+            "stepDescription" => "copy table",
+            "tableName" => $TABLE_NAME,
+            "tableNameTemp" => $TABLE_NAME_TEMP,
+            "chunkSize" => $NUMBER_OF_ENTRIES_PER_CHUNK,
+            "dbUpdate" => $DB_UPDATE
+        ),
+        3 => array(
+            "stepDescription" => "delete old and rename new table",
+            "tableName" => $TABLE_NAME,
+            "tableNameTemp" => $TABLE_NAME_TEMP,
+            "chunkSize" => $NUMBER_OF_ENTRIES_PER_CHUNK,
+            "dbUpdate" => $DB_UPDATE
+        )
+    );
+    
+    // change directory to make the class-loader functional
+    chdir("..");
 
-	//Checking if this Update already done
-	if (CURRENT_DB_UPDATE < $DB_UPDATE) 
-	{
+    //Checking if this Update already done
+    if (CURRENT_DB_UPDATE < $DB_UPDATE) 
+    {
             
-		$configStatusKeyName = $DB_UPDATE."updatestatus";
-		// get last conversion step from config
-		$updateStepNumber = config::get($configStatusKeyName);
-		if(!$updateStepNumber)
-		{
-			// initialize
-			reset($updateSteps);
-			$updateStepNumber = key($updateSteps);
-			config::set($configStatusKeyName, $updateStepNumber);
-		}
-		
-		// we're not done yet!
-		if($updateStepNumber <= count($updateSteps))
-		{
-			$message .= "<font size=\"4\">Destroyed items</font><br/>";
-			// does the actual logic
-			try
-			{
-				$result = performUpdateStep($updateStepNumber, $updateSteps[$updateStepNumber]);
-				$message .= $result["stepMessage"];
-				
-				if($result["isStepComplete"] === TRUE)
-				{
-					 // increase the step, so we can continue with the process
-					$updateStepNumber++;
-					config::set($configStatusKeyName, $updateStepNumber);
-				}
-				
-			}
-			
-			catch(UpdateException $e)
-			{
-				$message .= $e->getMessage();
-				$message .= "<br/>Update stopped.";
-				$smarty->assign('content', $message);
-				$smarty->display('update.tpl');
-				die();
-			}
-		}
-		
-		
-		// finished all steps
-		// conversion is done for this table
-		else
-		{
-			$message =  "Successfully updated ".$TABLE_NAME;
-			$message .= "<br/>Update $DB_UPDATE completed.";
-			$message .= "<br/>Page will reload in 1s";
-			
-			config::set("DBUpdate", $DB_UPDATE);
-			config::del($DB_UPDATE."chunkNumber");
-			$qry = DBFactory::getDBQuery(true);
-			$qry->execute("INSERT INTO kb3_config (cfg_site, cfg_key, cfg_value) SELECT cfg_site, 'DBUpdate', '".$DB_UPDATE."' FROM kb3_config GROUP BY cfg_site ON DUPLICATE KEY UPDATE cfg_value = '".$DB_UPDATE."'");
-			
-		}
+        $configStatusKeyName = $DB_UPDATE."updatestatus";
+        // get last conversion step from config
+        $updateStepNumber = config::get($configStatusKeyName);
+        if(!$updateStepNumber)
+        {
+            // initialize
+            reset($updateSteps);
+            $updateStepNumber = key($updateSteps);
+            config::set($configStatusKeyName, $updateStepNumber);
+        }
+        
+        // we're not done yet!
+        if($updateStepNumber <= count($updateSteps))
+        {
+            $message .= "<font size=\"4\">Destroyed items</font><br/>";
+            // does the actual logic
+            try
+            {
+                $result = performUpdateStep($updateStepNumber, $updateSteps[$updateStepNumber]);
+                $message .= $result["stepMessage"];
+                
+                if($result["isStepComplete"] === TRUE)
+                {
+                     // increase the step, so we can continue with the process
+                    $updateStepNumber++;
+                    config::set($configStatusKeyName, $updateStepNumber);
+                }
+                
+            }
+            
+            catch(UpdateException $e)
+            {
+                $message .= $e->getMessage();
+                $message .= "<br/>Update stopped.";
+                $smarty->assign('content', $message);
+                $smarty->display('update.tpl');
+                die();
+            }
+        }
+        
+        
+        // finished all steps
+        // conversion is done for this table
+        else
+        {
+            $message =  "Successfully updated ".$TABLE_NAME;
+            $message .= "<br/>Update $DB_UPDATE completed.";
+            $message .= "<br/>Page will reload in 1s";
+            
+            config::set("DBUpdate", $DB_UPDATE);
+            config::del($DB_UPDATE."chunkNumber");
+            $qry = DBFactory::getDBQuery(true);
+            $qry->execute("INSERT INTO kb3_config (cfg_site, cfg_key, cfg_value) SELECT cfg_site, 'DBUpdate', '".$DB_UPDATE."' FROM kb3_config GROUP BY cfg_site ON DUPLICATE KEY UPDATE cfg_value = '".$DB_UPDATE."'");
+            
+        }
 
-		$smarty->assign('refresh', 1);
-		$smarty->assign('content', $message);
-		$smarty->display('update.tpl');
-		die();
-	}
+        $smarty->assign('refresh', 1);
+        $smarty->assign('content', $message);
+        $smarty->display('update.tpl');
+        die();
+    }
 }
 
 /**
@@ -148,7 +148,7 @@ function performUpdateStep($updateStepNumber, $context)
         $xml = new sxml();
         $st = $xml->parse(file_get_contents('packages/database/'.$context["tableName"].'/table.xml'));
         $structureSql = $st['kb3']['structure'];
-		
+        
         // replace table name with temporary name
         $structureSql = str_replace($context["tableName"], $context["tableNameTemp"], $structureSql);
 
@@ -175,13 +175,13 @@ function performUpdateStep($updateStepNumber, $context)
         // get number of rows in target table
         $sql = "SELECT COUNT(*) AS num FROM ".$context["tableNameTemp"];
         $query->execute($sql);
-		$row = $query->getRow();
+        $row = $query->getRow();
         $numberOfRowsInTargetTable = $row["num"];
 
         // get number of rows in source table
         $sql = "SELECT COUNT(*) AS num FROM ".$context["tableName"];
         $query->execute($sql);
-		$row = $query->getRow();
+        $row = $query->getRow();
         $numberOfRowsInSourceTable = $row["num"];
 
         // are we done yet?
@@ -212,7 +212,7 @@ function performUpdateStep($updateStepNumber, $context)
                 $query = DBFactory::getDBQuery(TRUE);
                 $sql = "TRUNCATE TABLE ".$context["tableNameTemp"];
                 $query->execute($sql);
-				
+                
                 $chunkNumber = 0;
             }
             $offset = $context["chunkSize"] * $chunkNumber;
@@ -222,7 +222,7 @@ function performUpdateStep($updateStepNumber, $context)
             $query = DBFactory::getDBQuery(TRUE);
             $sqlResult = $query->execute($sql);
 
-			$numberOfRowsCopied = $query->affectedRows();
+            $numberOfRowsCopied = $query->affectedRows();
             if(!$sqlResult)
             {
                 throw new UpdateException($query->getErrorMsg());

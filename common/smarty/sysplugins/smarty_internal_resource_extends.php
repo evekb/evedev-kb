@@ -37,9 +37,9 @@ class Smarty_Internal_Resource_Extends {
      */
     public function isExisting($_template)
     {
-    	  $_template->getTemplateFilepath();
-    	  foreach ($this->allFilepaths as $_filepath) {
-        	if ($_filepath === false) {
+          $_template->getTemplateFilepath();
+          foreach ($this->allFilepaths as $_filepath) {
+            if ($_filepath === false) {
             return false;
           }
         }
@@ -58,9 +58,9 @@ class Smarty_Internal_Resource_Extends {
         foreach ($_files as $_file) {
             $_filepath = $_template->buildTemplateFilepath ($_file);
             if ($_filepath !== false) {
-            	if (is_object($_template->smarty->security_policy)) {
-                	$_template->smarty->security_policy->isTrustedResourceDir($_filepath);
-            	} 
+                if (is_object($_template->smarty->security_policy)) {
+                    $_template->smarty->security_policy->isTrustedResourceDir($_filepath);
+                } 
             } 
             $sha1String .= $_filepath;
             $this->allFilepaths[$_file] = $_filepath;
@@ -90,12 +90,12 @@ class Smarty_Internal_Resource_Extends {
     {
         $this->template = $_template;
         $_files = array_reverse($this->allFilepaths);
-    		$_first = reset($_files);
-    		$_last = end($_files);
+            $_first = reset($_files);
+            $_last = end($_files);
         foreach ($_files as $_file => $_filepath) {
-        		if ($_filepath === false) {
-            		throw new SmartyException("Unable to load template 'file : {$_file}'");
-        		}
+                if ($_filepath === false) {
+                    throw new SmartyException("Unable to load template 'file : {$_file}'");
+                }
             // read template file
             if ($_filepath != $_first) {
                 $_template->properties['file_dependency'][sha1($_filepath)] = array($_filepath, filemtime($_filepath),'file');
@@ -105,7 +105,7 @@ class Smarty_Internal_Resource_Extends {
             if ($_filepath != $_last) {
                 if (preg_match_all("!({$this->_ldl}block\s(.+?){$this->_rdl})!", $_content, $_open) !=
                         preg_match_all("!({$this->_ldl}/block{$this->_rdl})!", $_content, $_close)) {
-                    	throw new SmartyException("unmatched {block} {/block} pairs in file '$_filepath'");
+                        throw new SmartyException("unmatched {block} {/block} pairs in file '$_filepath'");
                 } 
                 preg_match_all("!{$this->_ldl}block\s(.+?){$this->_rdl}|{$this->_ldl}/block{$this->_rdl}!", $_content, $_result, PREG_OFFSET_CAPTURE);
                 $_result_count = count($_result[0]);

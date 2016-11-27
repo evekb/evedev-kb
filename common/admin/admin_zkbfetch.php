@@ -54,10 +54,10 @@ $fetchConfigs = ZKBFetch::getAll();
 // saving urls and options
 if ($_POST['submit'] || $_POST['fetch'])
 {
-	if(is_null($fetchConfigs)) 
+    if(is_null($fetchConfigs)) 
             {
-		$fetchConfigs = array();
-	}
+        $fetchConfigs = array();
+    }
     foreach($fetchConfigs AS &$fetchConfig) 
     {
         $id = $fetchConfig->getID();
@@ -88,7 +88,7 @@ if ($_POST['submit'] || $_POST['fetch'])
         else 
         {
             ZKBFetch::delete($id);
-	}
+    }
     }
 
     if($_POST['post_no_npc_only_zkb'])
@@ -133,7 +133,7 @@ foreach($fetchConfigs as &$fetchConfig)
     if (!isset($_POST['fetchApi'][$key]) || $_POST['fetchApi'][$key]) 
         {
             $fetch=false;
-	} else {
+    } else {
             $fetch = true;
 	}
         $lastKillTimestampFormatted = strftime('%Y-%m-%d %H:00:00', $fetchConfig->getLastKillTimestamp());
@@ -161,13 +161,13 @@ $page->generate();
  */
 function getZKBApi(&$fetchConfig)
 {
-	$html = '';
-	// Just in case, check for empty urls.
-	if(is_null($fetchConfig->getUrl())) 
+    $html = '';
+    // Just in case, check for empty urls.
+    if(is_null($fetchConfig->getUrl())) 
         {
             return 'No URL given<br />';
-	}
-	
+    }
+    
         if(!$fetchConfig->getLastKillTimestamp())
         {
             $fetchConfig->setLastKillTimestamp(time() - 60 * 60 * 24 * 7);
@@ -180,7 +180,7 @@ function getZKBApi(&$fetchConfig)
             $fetchConfig->processApi();
             $html .= "ZKBApi: ".$fetchConfig->getUrl()."<br />\n";
             $html .= count($fetchConfig->getPosted())." kills were posted and ".
-						count($fetchConfig->getSkipped())." were skipped "
+                        count($fetchConfig->getSkipped())." were skipped "
                                                 . "(".$fetchConfig->getNumberOfKillsFetched()." kills fetched).";
             $html .= " Timestamp of last kill: ".strftime('%Y-%m-%d %H:%M:%S', $fetchConfig->getLastKillTimestamp());
             $html .= "<br />\n";
@@ -199,6 +199,6 @@ function getZKBApi(&$fetchConfig)
             $html .= "<br/><br/>";
 
         }
-	
-	return $html;
+    
+    return $html;
 }

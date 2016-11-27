@@ -35,13 +35,13 @@ logCron('Time taken = '.(microtime(true) - $cronStartTime).' seconds.');
 
 function getZKBApi(&$fetchConfig)
 {
-	// Just in case, check for empty urls.
-	if(is_null($fetchConfig->getUrl())) 
+    // Just in case, check for empty urls.
+    if(is_null($fetchConfig->getUrl())) 
         {
             log('No URL given for zKBFetch, skipping');
             return;
-	}
-	
+    }
+    
         // if there is now timestamp to start fetching from,
         // set it to begin 7 days before this day
         if(!$fetchConfig->getLastKillTimestamp())

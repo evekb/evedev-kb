@@ -13,82 +13,82 @@
  */
 class API_Alliance extends API
 {
-	protected $sxe = null;
-	protected $CachedUntil_ = null;
-	protected $CurrentTime_ = null;
-	protected $data = null;
+    protected $sxe = null;
+    protected $CachedUntil_ = null;
+    protected $CurrentTime_ = null;
+    protected $data = null;
 
-	function getCachedUntil()
-	{
-		return $this->CachedUntil_;
-	}
+    function getCachedUntil()
+    {
+        return $this->CachedUntil_;
+    }
 
-	function getCurrentTime()
-	{
-		return $this->CurrentTime_;
-	}
+    function getCurrentTime()
+    {
+        return $this->CurrentTime_;
+    }
 
-	function fetchalliances($overide=false)
-	{
-		$this->data = $this->CallAPI( "eve", "AllianceList", null, null, null );
-	}
+    function fetchalliances($overide=false)
+    {
+        $this->data = $this->CallAPI( "eve", "AllianceList", null, null, null );
+    }
 
-	function LocateAlliance($name)
-	{
-		$res = array();
+    function LocateAlliance($name)
+    {
+        $res = array();
                 if(is_null($this->data) || (!is_array($this->data->alliances) && !$this->data->alliances instanceof Traversable))
                 {
                     return false;
                 }
-		foreach( $this->data->alliances as $alliance ) {
-			if( $alliance->name != $name ) {
-				continue;
-			}
-			$res['name'] = $alliance->name;
-			$res['shortName'] = $alliance->shortName;
-			$res['allianceID'] = $alliance->allianceID;
-			$res['executorCorpID'] = $alliance->executorCorpID;
-			$res['memberCount'] = $alliance->memberCount;
-			$res['startDate'] = $alliance->startDate;
-			$res['allianceName'] = $alliance->name; // @todo wtf?
-			
-			$res['memberCorps'] = array();
+        foreach( $this->data->alliances as $alliance ) {
+            if( $alliance->name != $name ) {
+                continue;
+            }
+            $res['name'] = $alliance->name;
+            $res['shortName'] = $alliance->shortName;
+            $res['allianceID'] = $alliance->allianceID;
+            $res['executorCorpID'] = $alliance->executorCorpID;
+            $res['memberCount'] = $alliance->memberCount;
+            $res['startDate'] = $alliance->startDate;
+            $res['allianceName'] = $alliance->name; // @todo wtf?
+            
+            $res['memberCorps'] = array();
                             foreach( $alliance->memberCorporations as $corp ) {
                                     $res['memberCorps'][] = array('corporationID'=>$corp->corporationID, 
                                                                                               'startDate'=>$corp->startDate);
                             }
-			return $res;
-		}
-		return false;	
-	}
+            return $res;
+        }
+        return false;    
+    }
 
-	function LocateAllianceID($id)
-	{
-		$res = array();
+    function LocateAllianceID($id)
+    {
+        $res = array();
                 if(is_null($this->data) || (!is_array($this->data->alliances) && !$this->data->alliances instanceof Traversable))
                 {
                     return false;
                 }
-				
-		foreach( $this->data->alliances as $alliance ) {
-			if( $alliance->allianceID != $id ) {
-				continue;
-			}
-			$res['name'] = $alliance->name;
-			$res['shortName'] = $alliance->shortName;
-			$res['allianceID'] = $alliance->allianceID;
-			$res['executorCorpID'] = $alliance->executorCorpID;
-			$res['memberCount'] = $alliance->memberCount;
-			$res['startDate'] = $alliance->startDate;
-			$res['allianceName'] = $alliance->name; // @todo wtf?
-			
-			$res['memberCorps'] = array();
-			foreach( $alliance->memberCorporations as $corp ) {
-				$res['memberCorps'][] = array('corporationID'=>$corp->corporationID, 
-											  'startDate'=>$corp->startDate);
-			}
-			return $res;
-		}
-		return false;
-	}
+                
+        foreach( $this->data->alliances as $alliance ) {
+            if( $alliance->allianceID != $id ) {
+                continue;
+            }
+            $res['name'] = $alliance->name;
+            $res['shortName'] = $alliance->shortName;
+            $res['allianceID'] = $alliance->allianceID;
+            $res['executorCorpID'] = $alliance->executorCorpID;
+            $res['memberCount'] = $alliance->memberCount;
+            $res['startDate'] = $alliance->startDate;
+            $res['allianceName'] = $alliance->name; // @todo wtf?
+            
+            $res['memberCorps'] = array();
+            foreach( $alliance->memberCorporations as $corp ) {
+                $res['memberCorps'][] = array('corporationID'=>$corp->corporationID, 
+                                              'startDate'=>$corp->startDate);
+            }
+            return $res;
+        }
+        return false;
+    }
 }

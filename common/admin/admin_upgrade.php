@@ -18,110 +18,110 @@ $page_error = array();
 
 //torch the update definition file. This forces it to be redownloaded.
 if (isset($_GET['refresh'])) {
-	if (file_exists(KB_CACHEDIR."/update/update2.xml")) {
-			unlink(KB_CACHEDIR."/update/update2.xml");
-	}
+    if (file_exists(KB_CACHEDIR."/update/update2.xml")) {
+            unlink(KB_CACHEDIR."/update/update2.xml");
+    }
 }
 
 $parser = new UpdateXMLParser();
 
 //check for errors
 switch ($parser->getXML()) {
-	//not validated
-	case 3:
-		$page_error[] = "The updates descriptor file was downloaded, but it has failed to validate correctly.";
-		break;
-	//file not found
-	case 4:
-		$page_error[] = "Could not download the update descriptor file. It may be that the host is down or that remote connections are disallowed.";
-		break;
+    //not validated
+    case 3:
+        $page_error[] = "The updates descriptor file was downloaded, but it has failed to validate correctly.";
+        break;
+    //file not found
+    case 4:
+        $page_error[] = "Could not download the update descriptor file. It may be that the host is down or that remote connections are disallowed.";
+        break;
 }
 
 $parser->retrieveData();
 
 if (isset($_GET['reset_db'])) {
-	Config::set('upd_dbVersion', $parser->getLatestDBVersion());
+    Config::set('upd_dbVersion', $parser->getLatestDBVersion());
 }
 
 if (count($page_error) == 0) {
-	$dbversion = Config::get('upd_dbVersion');
-	$codeversion = KB_VERSION;
+    $dbversion = Config::get('upd_dbVersion');
+    $codeversion = KB_VERSION;
 
-	if ($dbversion == '') {
-		Config::set('upd_dbVersion', '0.0.0');
-		$dbversion = '0.0.0';
-	}
+    if ($dbversion == '') {
+        Config::set('upd_dbVersion', '0.0.0');
+        $dbversion = '0.0.0';
+    }
 
-	if ($codeversion == '') {
-		Config::set('upd_codeVersion', KB_VERSION);
-		$codeversion = KB_VERSION;
-	}
+    if ($codeversion == '') {
+        Config::set('upd_codeVersion', KB_VERSION);
+        $codeversion = KB_VERSION;
+    }
 
 
-	//cache a code file update to the cache directory
-	if (isset($_GET['code_dl_ref'])) {
-		$code = $parser->getcodeInfo();
-		foreach ($code as $piece) {
-			//version number must be greater than current version, else do nothing
-			if (isNewerVersion($piece['version'], $codeversion)
-							&& $piece['version'] == $_GET['code_dl_ref']) {
-				if (!file_exists(getcwd()."/update")) {
-					mkdir(KB_CACHEDIR."/update", 0777);
-				}
+    //cache a code file update to the cache directory
+    if (isset($_GET['code_dl_ref'])) {
+        $code = $parser->getcodeInfo();
+        foreach ($code as $piece) {
+            //version number must be greater than current version, else do nothing
+            if (isNewerVersion($piece['version'], $codeversion)
+                            && $piece['version'] == $_GET['code_dl_ref']) {
+                if (!file_exists(getcwd()."/update")) {
+                    mkdir(KB_CACHEDIR."/update", 0777);
+                }
 
-				$hostFileName = $piece['url'];
-				$lastPart = explode('/', $hostFileName);
-				$cacheFileName = KB_CACHEDIR."/update/".$lastPart[count($lastPart) - 1];
-				new FileCacher($hostFileName, $cacheFileName);
-				break;
-			}
-		}
-	}
-	//unzip and overwrite existing code upgrade
-	else if (isset($_GET['code_apply_ref'])) {
-		$code = $parser->getCodeInfo();
-		foreach ($code as $piece) { //version number must be greater than current version, else do nothing
-			if (isNewerVersion($piece['version'], $codeversion) && $piece['version'] == $_GET['code_apply_ref']) {
-				if (!file_exists(KB_CACHEDIR."/update/backup")) {
-					mkdir(KB_CACHEDIR."/update/backup", 0777);
-				}
+                $hostFileName = $piece['url'];
+                $lastPart = explode('/', $hostFileName);
+                $cacheFileName = KB_CACHEDIR."/update/".$lastPart[count($lastPart) - 1];
+                new FileCacher($hostFileName, $cacheFileName);
+                break;
+            }
+        }
+    }
+    //unzip and overwrite existing code upgrade
+    else if (isset($_GET['code_apply_ref'])) {
+        $code = $parser->getCodeInfo();
+        foreach ($code as $piece) { //version number must be greater than current version, else do nothing
+            if (isNewerVersion($piece['version'], $codeversion) && $piece['version'] == $_GET['code_apply_ref']) {
+                if (!file_exists(KB_CACHEDIR."/update/backup")) {
+                    mkdir(KB_CACHEDIR."/update/backup", 0777);
+                }
 
-				$hostFileName = $piece['url'];
-				$lastPart = explode('/', $hostFileName);
-				$cacheFileName = KB_CACHEDIR."/update/".$lastPart[count($lastPart) - 1];
+                $hostFileName = $piece['url'];
+                $lastPart = explode('/', $hostFileName);
+                $cacheFileName = KB_CACHEDIR."/update/".$lastPart[count($lastPart) - 1];
 
-				//get the file list from the zip, and backup the existing files, this allows
-				//the board admin to roll back the source manually at a later time.
-				$readingZip = new Zip($cacheFileName);
-				$fileList = $readingZip->getFileList();
-				$deleteList = array();
-				if (is_array($fileList)) {
-					foreach ($fileList as $file) {
-						if ($file['filename'] == "cache/todelete.txt") {
-							$tmp = $readingZip->extractFile($file['index']);
-							$deleteList = explode("\n", $tmp[0]["content"]);
-						} else if (is_dir($file['filename'])) {
-							// Add empty directories to the backup list.
-							$dirlist = scandir($file['filename']);
-							if (count($dirList) == 2) {
-								$fileName[] = $file['filename'];
-							}
-							unset($dirlist);
-						}
-						else $fileName[] = $file['filename'];
-					}
-				}
-				if ($readingZip->getErrors()) {
-					$page_error[] = $readingZip->getErrors();
-				}
-				if ($deleteList) {
-					foreach ($deleteList as &$curFile) {
-						$curFile = trim($curFile);
-						if ($curFile && substr($curFile, 0, 1) != "/") {
-							$fileName[] = $curFile;
-						}
-					}
-				}
+                //get the file list from the zip, and backup the existing files, this allows
+                //the board admin to roll back the source manually at a later time.
+                $readingZip = new Zip($cacheFileName);
+                $fileList = $readingZip->getFileList();
+                $deleteList = array();
+                if (is_array($fileList)) {
+                    foreach ($fileList as $file) {
+                        if ($file['filename'] == "cache/todelete.txt") {
+                            $tmp = $readingZip->extractFile($file['index']);
+                            $deleteList = explode("\n", $tmp[0]["content"]);
+                        } else if (is_dir($file['filename'])) {
+                            // Add empty directories to the backup list.
+                            $dirlist = scandir($file['filename']);
+                            if (count($dirList) == 2) {
+                                $fileName[] = $file['filename'];
+                            }
+                            unset($dirlist);
+                        }
+                        else $fileName[] = $file['filename'];
+                    }
+                }
+                if ($readingZip->getErrors()) {
+                    $page_error[] = $readingZip->getErrors();
+                }
+                if ($deleteList) {
+                    foreach ($deleteList as &$curFile) {
+                        $curFile = trim($curFile);
+                        if ($curFile && substr($curFile, 0, 1) != "/") {
+                            $fileName[] = $curFile;
+                        }
+                    }
+                }
                                 
                                 // first check if all files to update/delete
                                 // a) do not exist right now
@@ -177,80 +177,80 @@ if (count($page_error) == 0) {
                                     break;
                                 }
 
-				$writingZip = new Zip(KB_CACHEDIR.'/update/backup/'.$codeversion.'.zip');
-				$writingZip->addFileArray($fileName);
-				if ($writingZip->createZip()) {
-					if ($writingZip->getErrors()) {
-						$page_error[] = $writingZip->getErrors();
-					}
-				}
+                $writingZip = new Zip(KB_CACHEDIR.'/update/backup/'.$codeversion.'.zip');
+                $writingZip->addFileArray($fileName);
+                if ($writingZip->createZip()) {
+                    if ($writingZip->getErrors()) {
+                        $page_error[] = $writingZip->getErrors();
+                    }
+                }
 
-				$readingZip->extractZip(getcwd());
-				if ($deleteList) {
-					foreach ($deleteList as $curFile) {
-						if ($curFile && substr($curFile, 0, 1) != "/") {
-							if (file_exists($curFile) && !@unlink($curFile)) {
-								$page_error[] = "Could not unlink ".$curFile;
-							}
-						}
-					}
-				}
+                $readingZip->extractZip(getcwd());
+                if ($deleteList) {
+                    foreach ($deleteList as $curFile) {
+                        if ($curFile && substr($curFile, 0, 1) != "/") {
+                            if (file_exists($curFile) && !@unlink($curFile)) {
+                                $page_error[] = "Could not unlink ".$curFile;
+                            }
+                        }
+                    }
+                }
 
-				if ($readingZip->getErrors()) {
-					$page_error[] = $readingZip->getErrors();
-				} else {
-					Config::set('upd_CodeVersion', $piece['version']);
-					$qry = DBFactory::getDBQuery(true);
-					$qry->execute("INSERT INTO `kb3_config` (cfg_site, cfg_key, cfg_value) ".
-									"SELECT cfg_site, 'upd_codeVersion', '{$piece['version']}' FROM `kb3_config` ".
-									"GROUP BY cfg_site ON DUPLICATE KEY UPDATE cfg_value = '{$piece['version']}';");
-					$codeversion = $piece['version'];
-				}
-				//kill the template and page caches
-				CacheHandler::removeByAge('store', 0, true);
-				CacheHandler::removeByAge('templates_c', 0, true);
-				break;
-			}
-		}
-	}
+                if ($readingZip->getErrors()) {
+                    $page_error[] = $readingZip->getErrors();
+                } else {
+                    Config::set('upd_CodeVersion', $piece['version']);
+                    $qry = DBFactory::getDBQuery(true);
+                    $qry->execute("INSERT INTO `kb3_config` (cfg_site, cfg_key, cfg_value) ".
+                                    "SELECT cfg_site, 'upd_codeVersion', '{$piece['version']}' FROM `kb3_config` ".
+                                    "GROUP BY cfg_site ON DUPLICATE KEY UPDATE cfg_value = '{$piece['version']}';");
+                    $codeversion = $piece['version'];
+                }
+                //kill the template and page caches
+                CacheHandler::removeByAge('store', 0, true);
+                CacheHandler::removeByAge('templates_c', 0, true);
+                break;
+            }
+        }
+    }
 
-	//if we've finished an action, reparse the xml
-	if (isset($_GET['code_apply_ref']) || isset($_GET['code_dl_ref'])) {
-		$parser->retrieveData();
-	}
+    //if we've finished an action, reparse the xml
+    if (isset($_GET['code_apply_ref']) || isset($_GET['code_dl_ref'])) {
+        $parser->retrieveData();
+    }
 
-	//list the code updates
-	$code = $parser->getCodeInfo();
-	$lowestCode = $parser->getLowestCodeVersion();
-	if (isNewerVersion($parser->getLatestCodeVersion(),$codeversion)) {
-		$i = 0;
-		foreach ($code as $piece) {
-			if ($piece['version'] == $lowestCode) {
-				$codeList[$i]['lowest'] = true;
-			}
-			if (isNewerVersion($piece['version'], $codeversion)) {
-				$codeList[$i]['hash'] = $piece['hash'];
-				$codeList[$i]['version'] = $piece['version'];
-				$codeList[$i]['desc'] = $piece['desc'];
-				$codeList[$i]['svnrev'] = $piece['svnrev'];
+    //list the code updates
+    $code = $parser->getCodeInfo();
+    $lowestCode = $parser->getLowestCodeVersion();
+    if (isNewerVersion($parser->getLatestCodeVersion(),$codeversion)) {
+        $i = 0;
+        foreach ($code as $piece) {
+            if ($piece['version'] == $lowestCode) {
+                $codeList[$i]['lowest'] = true;
+            }
+            if (isNewerVersion($piece['version'], $codeversion)) {
+                $codeList[$i]['hash'] = $piece['hash'];
+                $codeList[$i]['version'] = $piece['version'];
+                $codeList[$i]['desc'] = $piece['desc'];
+                $codeList[$i]['svnrev'] = $piece['svnrev'];
 
-				$hostFileName = $piece['url'];
-				$lastPart = explode('/', $hostFileName);
-				$codeList[$i]['short_name'] = $lastPart[count($lastPart) - 1];
-				$cacheFileName = KB_CACHEDIR."/update/".$lastPart[count($lastPart) - 1];
+                $hostFileName = $piece['url'];
+                $lastPart = explode('/', $hostFileName);
+                $codeList[$i]['short_name'] = $lastPart[count($lastPart) - 1];
+                $cacheFileName = KB_CACHEDIR."/update/".$lastPart[count($lastPart) - 1];
 
-				if (!file_exists($cacheFileName)) {
-					$codeList[$i]['cached'] = false;
-				} else {
-					$codeList[$i]['cached'] = true;
-					if ($piece['hash'] == md5_file($cacheFileName)) {
-						$codeList[$i]['hash_match'] = true;
-					}
-				}
-				$i++;
-			}
-		}
-	}
+                if (!file_exists($cacheFileName)) {
+                    $codeList[$i]['cached'] = false;
+                } else {
+                    $codeList[$i]['cached'] = true;
+                    if ($piece['hash'] == md5_file($cacheFileName)) {
+                        $codeList[$i]['hash_match'] = true;
+                    }
+                }
+                $i++;
+            }
+        }
+    }
 }
 
 $time = Config::get('upd_cacheTime') + 86400; // add a day

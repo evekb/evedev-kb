@@ -13,7 +13,7 @@
  * Smarty Internal Plugin Compile Print Expression Class
  */
 class Smarty_Internal_Compile_Private_Print_Expression extends Smarty_Internal_CompileBase {
-	// attribute definitions
+    // attribute definitions
     public $optional_attributes = array('assign'); 
     public $option_flags = array('nocache', 'nofilter'); 
 

@@ -11,9 +11,9 @@
  */
 class Region
 {
-	private $id = 0;
-	private $name = '';
-	private $coords = array();
+    private $id = 0;
+    private $name = '';
+    private $coords = array();
 
     function __construct($id = 0)
     {
@@ -39,10 +39,10 @@ class Region
 
     function execQuery()
     {
-		$qry = DBFactory::getDBQuery();
-		$qry->execute("select * from kb3_regions where reg_id = ".$this->id);
-		$row = $qry->getRow();
-		$this->name = $row['reg_name'];
-		$this->coords = array($row['reg_x'], $row['reg_y'], $row['reg_z']);
+        $qry = DBFactory::getDBQuery();
+        $qry->execute("select * from kb3_regions where reg_id = ".$this->id);
+        $row = $qry->getRow();
+        $this->name = $row['reg_name'];
+        $this->coords = array($row['reg_x'], $row['reg_y'], $row['reg_z']);
     }
 }

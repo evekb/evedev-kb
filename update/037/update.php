@@ -20,11 +20,11 @@ function update037()
         // change directory to make the class-loader functional
         chdir("..");
 
-	global $url, $smarty;
-	
+    global $url, $smarty;
+    
         $DB_UPDATE = "037";
-	$NUMBER_OF_ITEMS_TO_UPDATE_PER_CALL = 50000;
-	$TABLE_NAME = "kb3_items_destroyed";
+    $NUMBER_OF_ITEMS_TO_UPDATE_PER_CALL = 50000;
+    $TABLE_NAME = "kb3_items_destroyed";
         
         $updateSteps = array(
             /** step 1: convert -1 to 5 and singleton 2 (BPCs) */
@@ -37,8 +37,8 @@ function update037()
         );
 
 
-	//Checking if this Update already done
-	if (CURRENT_DB_UPDATE < $DB_UPDATE) {
+    //Checking if this Update already done
+    if (CURRENT_DB_UPDATE < $DB_UPDATE) {
             
                 $configStatusKeyName = $DB_UPDATE."updatestatus";
                 // get last conversion step from config
@@ -96,11 +96,11 @@ function update037()
                     
                 }
 
-		$smarty->assign('refresh', 1);
-		$smarty->assign('content', $message);
-		$smarty->display('update.tpl');
-		die();
-	}
+        $smarty->assign('refresh', 1);
+        $smarty->assign('content', $message);
+        $smarty->display('update.tpl');
+        die();
+    }
         
 }
 
@@ -115,8 +115,8 @@ function update037()
  *      - int flagOld
  *      - int flagNew
  *      - string description
- *		- string tableName
- *		- string numberOfItemsPerCall
+ *        - string tableName
+ *        - string numberOfItemsPerCall
  * @return array
  *      - string stepMessage
  *      - boolean isStepComplete
@@ -124,32 +124,32 @@ function update037()
  */
 function convertEDKBPCFlagAndUpdateSingleton($slotsToConvert)
 {
-	$result = array(
-		"stepMessage" => "",
-		"isStepComplete" => FALSE
-	);
+    $result = array(
+        "stepMessage" => "",
+        "isStepComplete" => FALSE
+    );
 
-	$updateFlags = DBFactory::getDBQuery(true);
-	$conversionResult = $updateFlags->execute('UPDATE '.$slotsToConvert["tableName"].' SET itd_itl_id = '.InventoryFlag::$CARGO.', itd_singleton = '.InventoryFlag::$SINGLETON_COPY.' WHERE itd_itl_id = '.InventoryFlag::$COPY.' LIMIT '.$slotsToConvert["numberOfItemsPerCall"]);
-	
-	if(!$conversionResult)
-	{
-		throw new UpdateException("Error while converting ".$slotsToConvert["description"]." for destroyed items: ".$updateFlags->getErrorMsg());
-	}
+    $updateFlags = DBFactory::getDBQuery(true);
+    $conversionResult = $updateFlags->execute('UPDATE '.$slotsToConvert["tableName"].' SET itd_itl_id = '.InventoryFlag::$CARGO.', itd_singleton = '.InventoryFlag::$SINGLETON_COPY.' WHERE itd_itl_id = '.InventoryFlag::$COPY.' LIMIT '.$slotsToConvert["numberOfItemsPerCall"]);
+    
+    if(!$conversionResult)
+    {
+        throw new UpdateException("Error while converting ".$slotsToConvert["description"]." for destroyed items: ".$updateFlags->getErrorMsg());
+    }
 
-	$numberOfRowsAffected = $updateFlags->affectedRows();
-	// no rows affected means we're done updating this flag
-	if($numberOfRowsAffected === 0)
-	{
-		$result["stepMessage"] = "Done converting ".$slotsToConvert["description"];
-		$result["isStepComplete"] = TRUE;
-	}
+    $numberOfRowsAffected = $updateFlags->affectedRows();
+    // no rows affected means we're done updating this flag
+    if($numberOfRowsAffected === 0)
+    {
+        $result["stepMessage"] = "Done converting ".$slotsToConvert["description"];
+        $result["isStepComplete"] = TRUE;
+    }
 
-	else
-	{
-		$result["stepMessage"] = "Converted $numberOfRowsAffected items in ".$slotsToConvert["description"];
-		$result["stepMessage"] .= "<br/>Will continue with next chunk";
-	} 
-	return $result;
+    else
+    {
+        $result["stepMessage"] = "Converted $numberOfRowsAffected items in ".$slotsToConvert["description"];
+        $result["stepMessage"] .= "<br/>Will continue with next chunk";
+    } 
+    return $result;
 }
 

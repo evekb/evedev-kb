@@ -76,13 +76,13 @@ class Smarty_Internal_CacheResource_File {
      */
     public function getCachedContents($_template, $no_render = false)
     {
-    	if (!$no_render) {
-        	ob_start();
-    	}
+        if (!$no_render) {
+            ob_start();
+        }
         $_smarty_tpl = $_template;
         include $_template->getCachedFilepath();
         if ($no_render) {
-        	return null;
+            return null;
         } else {
           return ob_get_clean();
         }
@@ -148,11 +148,11 @@ class Smarty_Internal_CacheResource_File {
             $this->smarty->caching = $_save_stat;
             if ($tpl->isExisting()) {
                 $_resourcename_parts = basename(str_replace('^', '/', $tpl->getCachedFilepath()));
-            	// remove from template cache
-            	unset($this->smarty->template_objects[sha1($tpl->template_resource . $tpl->cache_id . $tpl->compile_id)]);
+                // remove from template cache
+                unset($this->smarty->template_objects[sha1($tpl->template_resource . $tpl->cache_id . $tpl->compile_id)]);
             } else {
-            	// remove from template cache
-            	unset($this->smarty->template_objects[sha1($tpl->template_resource . $tpl->cache_id . $tpl->compile_id)]);
+                // remove from template cache
+                unset($this->smarty->template_objects[sha1($tpl->template_resource . $tpl->cache_id . $tpl->compile_id)]);
                 return 0;
             } 
         } 

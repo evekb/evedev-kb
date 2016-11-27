@@ -74,28 +74,28 @@ class admin_acache
                     CacheHandler::removeByAge('store', 0);
         }
         
-	static function optionClearCaches()
-	{
-		return '<input type="checkbox" name="option_clear_caches" />Clear caches ?';
-	}
-	
+    static function optionClearCaches()
+    {
+        return '<input type="checkbox" name="option_clear_caches" />Clear caches ?';
+    }
+    
         static function optionClearSum()
-	{
-		return '<input type="checkbox" name="option_clear_sum" />Clear cache ?';
-	}
+    {
+        return '<input type="checkbox" name="option_clear_sum" />Clear cache ?';
+    }
         
         static function optionFlushMemcached()
-	{
-		return '<input type="checkbox" name="option_flush_memcached" />Flush MemCache ?';
-	}
-	
+    {
+        return '<input type="checkbox" name="option_flush_memcached" />Flush MemCache ?';
+    }
+    
         static function optionFlushRedis()
-	{
-		return '<input type="checkbox" name="option_flush_redis" />Flush Redis ?';
-	}
-	
+    {
+        return '<input type="checkbox" name="option_flush_redis" />Flush Redis ?';
+    }
+    
         static function clearCaches()
-	{
+    {
                 if ($_POST['option_clear_caches'] == 'on') {
                                 CacheHandler::removeByAge('data', 0, true);
                                 CacheHandler::removeByAge('api', 0, true);
@@ -106,9 +106,9 @@ class admin_acache
                                 CacheHandler::removeByAge('SQL', 0, true);
                                 $_POST['option_clear_caches'] = 'off';
                 }
-	}
-	static function clearSumCache()
-	{
+    }
+    static function clearSumCache()
+    {
                 if ($_POST['option_clear_sum'] == 'on') {
                                 $qry = DBFactory::getDBQuery();;
                                 $qry->execute("DELETE FROM kb3_sum_alliance");
@@ -120,10 +120,10 @@ class admin_acache
                                 CacheHandler::removeByAge('store', 0, true);
                                 $_POST['option_clear_sum'] == 'off';
                 }
-	}
+    }
     
-	static function flushMemcached()
-	{
+    static function flushMemcached()
+    {
             global $mc;
             // Check for memcached
             if(defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE == true && !is_null($mc) && method_exists('Memcache', 'flush'))
@@ -131,10 +131,10 @@ class admin_acache
                 $mc->flush();
             }
             $_POST['option_flush_memcached'] = 'off';
-	}
-	
-	static function flushRedis()
-	{
+    }
+    
+    static function flushRedis()
+    {
             global $redis;
             // Check for Redis
             if(defined('DB_USE_REDIS') && DB_USE_REDIS == true && !is_null($redis) && method_exists('Redis', 'flushDb'))
@@ -142,5 +142,5 @@ class admin_acache
                 $redis->flushDb();
             }
             $_POST['option_flush_redis'] = 'off';
-	}
+    }
 }

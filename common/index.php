@@ -54,14 +54,14 @@ $requestScheme .= "://";
 // Check the install folder is not accessible
 if(file_exists("install") && !file_exists("install/install.lock"))
 {
-	$html = "<html><head><title>Installation in progress</title></head>";
-	$html .= "<body><p>Installation folder must be removed or locked to proceed.</p>";
-	$url = $_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
-	$url = substr($url, 0, strrpos($url, '/',1)).'/install/';
-	$url = preg_replace('/\/{2,}/','/',$url);
-	$html .= "<p>Go to <a href='".$requestScheme.$url."'>Install</a> to install a new killboard.</p>";
-	$html .= "</body></html>";
-	die($html);
+    $html = "<html><head><title>Installation in progress</title></head>";
+    $html .= "<body><p>Installation folder must be removed or locked to proceed.</p>";
+    $url = $_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
+    $url = substr($url, 0, strrpos($url, '/',1)).'/install/';
+    $url = preg_replace('/\/{2,}/','/',$url);
+    $html .= "<p>Go to <a href='".$requestScheme.$url."'>Install</a> to install a new killboard.</p>";
+    $html .= "</body></html>";
+    die($html);
 }
 
 @include_once('kbconfig.php');
@@ -69,15 +69,15 @@ if(file_exists("install") && !file_exists("install/install.lock"))
 // If there is no config then redirect to the install folder.
 if(!defined('KB_SITE'))
 {
-	$html = "<html><head><title>Board not configured</title></head>";
-	$html .= "<body>Killboard configuration not found. Go to ";
-	$url = $_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
-	$url = substr($url, 0, strrpos($url, '/',1)).'/install/';
-	$url = preg_replace('/\/{2,}/','/',$url);
-	$url = $requestScheme.$url;
-	$html .= "<a href='".$url."'>install</a> to install a new killboard";
-	$html .= "</body></html>";
-	die($html);
+    $html = "<html><head><title>Board not configured</title></head>";
+    $html .= "<body>Killboard configuration not found. Go to ";
+    $url = $_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
+    $url = substr($url, 0, strrpos($url, '/',1)).'/install/';
+    $url = preg_replace('/\/{2,}/','/',$url);
+    $url = $requestScheme.$url;
+    $html .= "<a href='".$url."'>install</a> to install a new killboard";
+    $html .= "</body></html>";
+    die($html);
 }
 
 require_once('common/includes/globals.php');
@@ -94,14 +94,14 @@ if(get_magic_quotes_runtime()) @set_magic_quotes_runtime(0);
 $config = new Config();
 if(!config::get('cfg_kbhost'))
 {
-	config::put('cfg_kbhost',
-			$requestScheme.$_SERVER['HTTP_HOST'].
-			substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'],"/")));
+    config::put('cfg_kbhost',
+            $requestScheme.$_SERVER['HTTP_HOST'].
+            substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'],"/")));
 }
 if(!config::get('cfg_img'))
 {
-	config::put('cfg_img',
-			config::get('cfg_kbhost')."/img");
+    config::put('cfg_img',
+            config::get('cfg_kbhost')."/img");
 }
 define('KB_HOST', config::get('cfg_kbhost'));
 define('IMG_URL', config::get('cfg_img'));
@@ -116,36 +116,36 @@ if(isset($_GET['xajax'])) require_once('common/includes/xajax.functions.php');
 
 // Serve feeds to feed fetchers.
 if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK Feedfetcher') !== false) {
-	$page = 'feed';
+    $page = 'feed';
 } else if(strpos($_SERVER['HTTP_USER_AGENT'], 'EDK IDFeedfetcher') !== false) {
 // Serve idfeeds to idfeed fetchers.
-	$page = 'idfeed';
+    $page = 'idfeed';
 } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'EVE-IGB') !== false) {
 // check for the igb
-	define('IS_IGB', true);
+    define('IS_IGB', true);
 } else {
-	define('IS_IGB', false);
+    define('IS_IGB', false);
 }
 
 // set up themes.
 if(isset($_GET['theme'])) {
-	$themename = preg_replace('/[^0-9a-zA-Z-_]/','',$_GET['theme']);
+    $themename = preg_replace('/[^0-9a-zA-Z-_]/','',$_GET['theme']);
 } else {
-	$themename = config::get('theme_name');
+    $themename = config::get('theme_name');
 }
 
 if(isset($_GET['style'])) {
-	$stylename = preg_replace('/[^0-9a-zA-Z-_]/','',$_GET['style']);
+    $stylename = preg_replace('/[^0-9a-zA-Z-_]/','',$_GET['style']);
 } else {
-	$stylename = config::get('style_name');
+    $stylename = config::get('style_name');
 }
 
 if(!is_dir("themes/".$themename."/templates")) {
-	$themename = 'default';
+    $themename = 'default';
 }
 
 if(!file_exists("themes/".$themename."/".$stylename.".css")) {
-	$stylename = 'default';
+    $stylename = 'default';
 }
 
 define('THEME_URL', config::get('cfg_kbhost').'/themes/'.$themename);
@@ -161,41 +161,41 @@ session::init();
 // or if we need to install a new CCP DB
 if((config::get('DBUpdate') < LATEST_DB_UPDATE) || (config::get('CCPDbVersion') < KB_CCP_DB_VERSION))
 {
-	// Check db is installed.
-	if(config::get('cfg_kbhost'))
-	{
-		$url = preg_replace('/^http(s)?:\/\//','',KB_HOST."/update/");
-		$url = preg_replace('/\/{2,}/','/',$url);
-		header('Location: '.$requestScheme.$url);
-		die;
-	}
-	// Should not be able to reach this point but have this just in case
-	else
-	{
-		$html = "<html><head><title>Board not configured</title></head>";
-		$html .= "<body>Killboard configuration not found. Go to ";
-		$url = $_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
-		$url = substr($url, 0, strrpos($url, '/',1)).'/install/';
-		$url = preg_replace('/\/+/','/',$url);
-		$url = $requestScheme.$url;
-		$html .= "<a href='".$url."'>install</a> to install a new killboard";
-		$html .= "</body></html>";
-		die($html);
-	}
+    // Check db is installed.
+    if(config::get('cfg_kbhost'))
+    {
+        $url = preg_replace('/^http(s)?:\/\//','',KB_HOST."/update/");
+        $url = preg_replace('/\/{2,}/','/',$url);
+        header('Location: '.$requestScheme.$url);
+        die;
+    }
+    // Should not be able to reach this point but have this just in case
+    else
+    {
+        $html = "<html><head><title>Board not configured</title></head>";
+        $html .= "<body>Killboard configuration not found. Go to ";
+        $url = $_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
+        $url = substr($url, 0, strrpos($url, '/',1)).'/install/';
+        $url = preg_replace('/\/+/','/',$url);
+        $url = $requestScheme.$url;
+        $html .= "<a href='".$url."'>install</a> to install a new killboard";
+        $html .= "</body></html>";
+        die($html);
+    }
 }
 
 // all admin files are now in the admin directory and preload the menu
 if (substr($page, 0, 5) == 'admin') {
-	require_once('common/admin/admin_menu.php');
-	$page = 'admin/'.$page;
+    require_once('common/admin/admin_menu.php');
+    $page = 'admin/'.$page;
 } else if(config::get('cfg_locked') && $page != 'login' && !session::isAdmin()) {
-	$page = "locked";
+    $page = "locked";
 }
 
 $settingsPage = (substr($page, 0, 9) == 'settings_');
 
 if(file_exists("themes/".$themename."/init.php")) {
-	include_once("themes/".$themename."/init.php");
+    include_once("themes/".$themename."/init.php");
 }
 
 require_once('common/xajax/xajax.php');
@@ -206,37 +206,37 @@ $modconflicts = array();
 
 $modInfo = array();
 foreach ($mods_active as $mod) {
-	// load all active modules which need initialization
-	if (file_exists('mods/'.$mod.'/init.php')) {
-		include('mods/'.$mod.'/init.php');
-	}
-	if(!isset($modInfo[$mod])) {
-		$modInfo[$mod] = array("name"=>$mod,
-			"abstract"=>"Purpose unknown",
-			"about"=>"");
-	}
-	if (file_exists('mods/'.$mod.'/'.$page.'.php')) {
-		$modconflicts[] = $mod;
-		$modOverrides = true;
-		$modOverride = $mod;
-	}
+    // load all active modules which need initialization
+    if (file_exists('mods/'.$mod.'/init.php')) {
+        include('mods/'.$mod.'/init.php');
+    }
+    if(!isset($modInfo[$mod])) {
+        $modInfo[$mod] = array("name"=>$mod,
+            "abstract"=>"Purpose unknown",
+            "about"=>"");
+    }
+    if (file_exists('mods/'.$mod.'/'.$page.'.php')) {
+        $modconflicts[] = $mod;
+        $modOverrides = true;
+        $modOverride = $mod;
+    }
 }
 if(count($modconflicts) > 1) {
-	echo "<html><head></head><body>There are multiple active mods ".
-			"for this page. Only one may be active at a time. All others ".
-			"must be deactivated in the admin panel.<br>";
-	foreach($modconflicts as $modname) {
-		echo $modname." <br> ";
-	}
-	echo "</body>";
-	die();
+    echo "<html><head></head><body>There are multiple active mods ".
+            "for this page. Only one may be active at a time. All others ".
+            "must be deactivated in the admin panel.<br>";
+    foreach($modconflicts as $modname) {
+        echo $modname." <br> ";
+    }
+    echo "</body>";
+    die();
 }
 
 $none = '';
 event::call('mods_initialised', $none);
 if (!$settingsPage && !file_exists('common/'.$page.'.php') && !$modOverrides)
 {
-	$page = 'home';
+    $page = 'home';
 }
 
 cache::check($page);
@@ -248,20 +248,20 @@ cache::check($page);
  */
 $smarty = new Smarty();
 if(!session::isAdmin()) {
-	// Disable checking of timestamps for templates to improve performance.
-	$smarty->compile_check = false;
+    // Disable checking of timestamps for templates to improve performance.
+    $smarty->compile_check = false;
 }
 $smarty->template_dir = "./themes/$themename/templates";
 
 if(!is_dir(KB_CACHEDIR.'/templates_c/'.$themename)) {
-	mkdir(KB_CACHEDIR.'/templates_c/'.$themename);
+    mkdir(KB_CACHEDIR.'/templates_c/'.$themename);
 }
 $smarty->compile_dir = KB_CACHEDIR.'/templates_c/'.$themename;
 
 $smarty->cache_dir = KB_CACHEDIR.'/data';
 $smarty->assign('theme_url', THEME_URL);
 if ($stylename != 'default' || $themename != 'default') {
-	$smarty->assign('style', $stylename);
+    $smarty->assign('style', $stylename);
 }
 $smarty->assign('img_url', IMG_URL);
 $smarty->assign('img_host', IMG_HOST);
@@ -273,30 +273,30 @@ $smarty->assign('is_IGB', IS_IGB);
 $owners = array();
 if(config::get('cfg_allianceid'))
 {
-	foreach(config::get('cfg_allianceid') as $owner)
-	{
-		$alliance=new Alliance($owner);
-		$owners[] = htmlentities($alliance->getName());
-	}
-	unset($alliance);
+    foreach(config::get('cfg_allianceid') as $owner)
+    {
+        $alliance=new Alliance($owner);
+        $owners[] = htmlentities($alliance->getName());
+    }
+    unset($alliance);
 }
 if (config::get('cfg_corpid'))
 {
-	foreach(config::get('cfg_corpid') as $owner)
-	{
-		$corp = new Corporation($owner);
-		$owners[] = htmlentities($corp->getName());
-	}
-	unset($corp);
+    foreach(config::get('cfg_corpid') as $owner)
+    {
+        $corp = new Corporation($owner);
+        $owners[] = htmlentities($corp->getName());
+    }
+    unset($corp);
 }
 if (config::get('cfg_pilotid'))
 {
-	foreach(config::get('cfg_corpid') as $owner)
-	{
-		$pilot = new Pilot($owner);
-		$owners[] = htmlentities($pilot->getName());
-	}
-	unset($pilot);
+    foreach(config::get('cfg_corpid') as $owner)
+    {
+        $pilot = new Pilot($owner);
+        $owners[] = htmlentities($pilot->getName());
+    }
+    unset($pilot);
 }
 if(!$owners) $smarty->assign('kb_owner', false);
 else $smarty->assign('kb_owner', implode(',', $owners));
@@ -305,22 +305,22 @@ else $smarty->assign('kb_owner', implode(',', $owners));
 if(isset($boardMessage)) $smarty->assign('message', $boardMessage);
 if ($settingsPage)
 {
-	if (!session::isAdmin())
-	{
-		header('Location: '.edkURI::build(array('a', 'login', true)));
-		echo '<a href="'.edkURI::build(array('a', 'login', true)).'">Login</a>';
-		exit;
-	}
+    if (!session::isAdmin())
+    {
+        header('Location: '.edkURI::build(array('a', 'login', true)));
+        echo '<a href="'.edkURI::build(array('a', 'login', true)).'">Login</a>';
+        exit;
+    }
 
-	include('mods/'.substr($page, 9, strlen($page)-9).'/settings.php');
+    include('mods/'.substr($page, 9, strlen($page)-9).'/settings.php');
 }
 elseif ($modOverrides)
 {
-	include('mods/'.$modOverride.'/'.$page.'.php');
+    include('mods/'.$modOverride.'/'.$page.'.php');
 }
 else
 {
-	include('common/'.$page.'.php');
+    include('common/'.$page.'.php');
 }
 
 cache::generate();

@@ -28,16 +28,16 @@ class Smarty_Internal_Register {
      * @param array $cache_attr caching attributes if any
      */
 
-	public function registerPlugin($type, $tag, $callback, $cacheable = true, $cache_attr = null)
-	{
-		if (isset($this->smarty->registered_plugins[$type][$tag])) {
-        	throw new Exception("Plugin tag \"{$tag}\" already registered");
-    	} elseif (!is_callable($callback)) {
-        	throw new Exception("Plugin \"{$tag}\" not callable");
-    	} else {
-       		$this->smarty->registered_plugins[$type][$tag] = array($callback, (bool) $cacheable, (array) $cache_attr);
-    	}
-	} 
+    public function registerPlugin($type, $tag, $callback, $cacheable = true, $cache_attr = null)
+    {
+        if (isset($this->smarty->registered_plugins[$type][$tag])) {
+            throw new Exception("Plugin tag \"{$tag}\" already registered");
+        } elseif (!is_callable($callback)) {
+            throw new Exception("Plugin \"{$tag}\" not callable");
+        } else {
+               $this->smarty->registered_plugins[$type][$tag] = array($callback, (bool) $cacheable, (array) $cache_attr);
+        }
+    } 
 
     /**
      * Unregister Plugin
@@ -58,9 +58,9 @@ class Smarty_Internal_Register {
      * @param string $type name of resource type
      * @param array $callback array of callbacks to handle resource
      */
- 	public function registerResource($type, $callback)
-	{
-       	$this->smarty->registered_resources[$type] = array($callback, false);
+     public function registerResource($type, $callback)
+    {
+           $this->smarty->registered_resources[$type] = array($callback, false);
     }
 
     /**

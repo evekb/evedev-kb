@@ -11,97 +11,97 @@
  */
 class pInvtype extends pageAssembly
 {
-	/** @var integer */
-	public $typeID;
-	/** @var Page */
-	public $page;
+    /** @var integer */
+    public $typeID;
+    /** @var Page */
+    public $page;
         /** @var array The list of menu options to display. */
-	protected $menuOptions = array();
-		
-	function __construct()
-	{
-		parent::__construct();
+    protected $menuOptions = array();
+        
+    function __construct()
+    {
+        parent::__construct();
 
-		$this->queue("start");
-		$this->queue("details");
-	}
+        $this->queue("start");
+        $this->queue("details");
+    }
 
-	function start()
-	{
-		$this->typeID = edkURI::getArg('id', 1);
-		$this->page = new Page('Item Details');
+    function start()
+    {
+        $this->typeID = edkURI::getArg('id', 1);
+        $this->page = new Page('Item Details');
 
-	}
+    }
         
         /**
-	 *  Reset the assembly object to prepare for creating the context.
-	 */
-	function context()
-	{       
+     *  Reset the assembly object to prepare for creating the context.
+     */
+    function context()
+    {       
                 parent::__construct();
                 $item = new dogma($this->typeID);
 
-		if (!$item->isValid())
-		{
-			$this->page->setTitle('Error');
-			return 'This ID is not a valid dogma ID.';
-		}
+        if (!$item->isValid())
+        {
+            $this->page->setTitle('Error');
+            return 'This ID is not a valid dogma ID.';
+        }
                
                 // display context menu only for ships
-		if ($item->get('itt_cat') == 6)
+        if ($item->get('itt_cat') == 6)
                 {
                     
                     $this->queue("menuSetup");
                     $this->queue("menu");
                 }
-	}
+    }
         
         /**
-	 * Set up the menu.
-	 *
-	 *  Prepare all the base menu options.
-	 */
-	function menuSetup()
-	{
-		$args = array();
-		$args[] = array('id', $this->typeID, true);
+     * Set up the menu.
+     *
+     *  Prepare all the base menu options.
+     */
+    function menuSetup()
+    {
+        $args = array();
+        $args[] = array('id', $this->typeID, true);
 
-		$this->addMenuItem("link","Description", edkURI::build($args));
-		$this->addMenuItem("link","Kills", edkURI::build($args, array('view', 'kills', true)));
-		$this->addMenuItem("link","Losses", edkURI::build($args, array('view', 'losses', true)));
-		return "";
-	}
-	/**
-	 * Build the menu.
-	 *
-	 *  Add all preset options to the menu.
-	 */
-	function menu()
-	{
-		$menubox = new box("Menu");
-		$menubox->setIcon("menu-item.gif");
-		foreach($this->menuOptions as $options)
-		{
-			if(isset($options[2]))
-				$menubox->addOption($options[0],$options[1], $options[2]);
-			else
-				$menubox->addOption($options[0],$options[1]);
-		}
-		return $menubox->generate();
-	}
+        $this->addMenuItem("link","Description", edkURI::build($args));
+        $this->addMenuItem("link","Kills", edkURI::build($args, array('view', 'kills', true)));
+        $this->addMenuItem("link","Losses", edkURI::build($args, array('view', 'losses', true)));
+        return "";
+    }
+    /**
+     * Build the menu.
+     *
+     *  Add all preset options to the menu.
+     */
+    function menu()
+    {
+        $menubox = new box("Menu");
+        $menubox->setIcon("menu-item.gif");
+        foreach($this->menuOptions as $options)
+        {
+            if(isset($options[2]))
+                $menubox->addOption($options[0],$options[1], $options[2]);
+            else
+                $menubox->addOption($options[0],$options[1]);
+        }
+        return $menubox->generate();
+    }
         
         /**
-	 * Add an item to the menu in standard box format.
-	 *
-	 *  Only links need all 3 attributes
-	 * @param string $type Types can be caption, img, link, points.
-	 * @param string $name The name to display.
-	 * @param string $url Only needed for URLs.
-	 */
-	function addMenuItem($type, $name, $url = '')
-	{
-		$this->menuOptions[] = array($type, $name, $url);
-	}
+     * Add an item to the menu in standard box format.
+     *
+     *  Only links need all 3 attributes
+     * @param string $type Types can be caption, img, link, points.
+     * @param string $name The name to display.
+     * @param string $url Only needed for URLs.
+     */
+    function addMenuItem($type, $name, $url = '')
+    {
+        $this->menuOptions[] = array($type, $name, $url);
+    }
     
     /**
     * Removes the menu item with the given name
@@ -119,26 +119,26 @@ class pInvtype extends pageAssembly
        }
    }
 
-	function details()
-	{
-		global $smarty;
-		$item = new dogma($this->typeID);
+    function details()
+    {
+        global $smarty;
+        $item = new dogma($this->typeID);
 
-		if (!$item->isValid())
-		{
-			$this->page->setTitle('Error');
-			return 'This ID is not a valid dogma ID.';
-		}
+        if (!$item->isValid())
+        {
+            $this->page->setTitle('Error');
+            return 'This ID is not a valid dogma ID.';
+        }
 
-		$this->page->setTitle('Item details - '.$item->get('typeName'));
-		$this->page->addHeader('<meta name="robots" content="noindex, nofollow" />');
-		$smarty->assignByRef('item', $item);
+        $this->page->setTitle('Item details - '.$item->get('typeName'));
+        $this->page->addHeader('<meta name="robots" content="noindex, nofollow" />');
+        $smarty->assignByRef('item', $item);
 
-		if ($item->get('itt_cat') == 6)
-		{
-			//we have a ship, so get it from the db
-			$ship = Ship::getByID($item->get('typeID'));
-			$smarty->assign('shipImage', $ship->getImage(64));
+        if ($item->get('itt_cat') == 6)
+        {
+            //we have a ship, so get it from the db
+            $ship = Ship::getByID($item->get('typeID'));
+            $smarty->assign('shipImage', $ship->getImage(64));
                         $smarty->assign('traits', $ship->getTraitsHtml());
                         
                         $view = edkURI::getArg('view', 2);
@@ -200,15 +200,15 @@ class pInvtype extends pageAssembly
                             
                         }
 
-		}
-		else
-		{
-			$i = new Item($this->typeID);
-			$smarty->assign('itemImage', $i->getIcon(64, false));
-			$html = $smarty->fetch(get_tpl('invtype_item'));
-		}
-		return $html;
-	}
+        }
+        else
+        {
+            $i = new Item($this->typeID);
+            $smarty->assign('itemImage', $i->getIcon(64, false));
+            $html = $smarty->fetch(get_tpl('invtype_item'));
+        }
+        return $html;
+    }
     
     function getTypeID() 
     {

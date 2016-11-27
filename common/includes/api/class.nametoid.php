@@ -8,40 +8,40 @@
 
 require_once("class.api.php");
 // **********************************************************************************************************************************************
-// ****************                                   API Name -> ID Conversion /eve/CharacterID.xml.aspx 	                     ****************
+// ****************                                   API Name -> ID Conversion /eve/CharacterID.xml.aspx                          ****************
 // **********************************************************************************************************************************************
 class API_NametoID extends API
 {
-	function setNames($names)
-	{
-		$this->API_Names_ = $names;
-	}
-	function getNameData()
-	{
-		return $this->NameData_;
-	}
+    function setNames($names)
+    {
+        $this->API_Names_ = $names;
+    }
+    function getNameData()
+    {
+        return $this->NameData_;
+    }
 
-	function clear()
-	{
-		$this->NameData_ = array();
-		unset($this->NameData_);
-	}
+    function clear()
+    {
+        $this->NameData_ = array();
+        unset($this->NameData_);
+    }
 
-	public function fetchXML()
-	{
-		if ($this->API_Names_ == "")
-			return "No Names have been input.";
+    public function fetchXML()
+    {
+        if ($this->API_Names_ == "")
+            return "No Names have been input.";
 
-		$data = $this->CallAPI( "eve", "CharacterID", array( "names" => $this->API_Names_ ) , null, null );
+        $data = $this->CallAPI( "eve", "CharacterID", array( "names" => $this->API_Names_ ) , null, null );
 
-		if($data == false) return "Error fetching IDs";
+        if($data == false) return "Error fetching IDs";
 
-		foreach($data->characters as $character) {
-			$this->NameData_[] = array(
-					'name'=>strval($character->name),
-					'characterID'=>intval($character->characterID));
-		}
+        foreach($data->characters as $character) {
+            $this->NameData_[] = array(
+                    'name'=>strval($character->name),
+                    'characterID'=>intval($character->characterID));
+        }
 
-		return "";
-	}
+        return "";
+    }
 }

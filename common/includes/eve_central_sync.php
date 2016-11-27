@@ -7,15 +7,15 @@
  */
 
 /**
- *	Verify that the EVE central tracking table exists.
+ *    Verify that the EVE central tracking table exists.
  */
 function verify_sync_table() {
-	$query = DBFactory::getDBQuery();;
+    $query = DBFactory::getDBQuery();;
 
-	$query->execute("SHOW TABLES LIKE 'kb3_eve_central'");
-	if ($query->recordCount() == 0) {
-		$query->execute("CREATE TABLE kb3_eve_central (item_id int unsigned not null, item_price varchar(20), last_updated timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, primary key (item_id)) engine=myisam comment='EVE central sync tracker'");
-	}
+    $query->execute("SHOW TABLES LIKE 'kb3_eve_central'");
+    if ($query->recordCount() == 0) {
+        $query->execute("CREATE TABLE kb3_eve_central (item_id int unsigned not null, item_price varchar(20), last_updated timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, primary key (item_id)) engine=myisam comment='EVE central sync tracker'");
+    }
 
         if (!file_exists(KB_CACHEDIR.'/evecentral'))
         {
@@ -28,7 +28,7 @@ function verify_sync_table() {
 }
 
 /**
- *	Retrieve the item value from EVE Central
+ *    Retrieve the item value from EVE Central
  */
 function ec_get_value($item_id) {
     $query = DBFactory::getDBQuery();;
@@ -51,61 +51,61 @@ function ec_get_value($item_id) {
 }
 
 /**
- *	Query EVE Central's XML feed.
+ *    Query EVE Central's XML feed.
  */
 function ask_eve_central($item_id) {
-	file_put_contents(KB_CACHEDIR.'/evecentral/activity.log', "Handling from live.\n", FILE_APPEND);
-	$query = DBFactory::getDBQuery();;
-	if (function_exists('curl_init'))
-	{
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, "http://api.eve-central.com/api/marketstat?regionlimit=10000002&typeid=".$item_id."");
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		$content = curl_exec($ch);
-		curl_close($ch);
-	}
-	else
-	{
-		$file = fopen("http://api.eve-central.com/api/marketstat?regionlimit=10000002&typeid=".$item_id."" , "r");
-		if (! $file)
-		{
-			return -99;
-		}
-		$content = stream_get_contents($file);
-		fclose($file);
-	}
+    file_put_contents(KB_CACHEDIR.'/evecentral/activity.log', "Handling from live.\n", FILE_APPEND);
+    $query = DBFactory::getDBQuery();;
+    if (function_exists('curl_init'))
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "http://api.eve-central.com/api/marketstat?regionlimit=10000002&typeid=".$item_id."");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $content = curl_exec($ch);
+        curl_close($ch);
+    }
+    else
+    {
+        $file = fopen("http://api.eve-central.com/api/marketstat?regionlimit=10000002&typeid=".$item_id."" , "r");
+        if (! $file)
+        {
+            return -99;
+        }
+        $content = stream_get_contents($file);
+        fclose($file);
+    }
 
 
-	if(strpos($content, '</evec_api>') == false) {
-		return -99;
-	}
-	else {
-		$parse = new XMLParser();
-		$parse->preparseXML();
-		$parse->parseXML($content);
+    if(strpos($content, '</evec_api>') == false) {
+        return -99;
+    }
+    else {
+        $parse = new XMLParser();
+        $parse->preparseXML();
+        $parse->parseXML($content);
 
-		$values = $parse->get_data();
+        $values = $parse->get_data();
 
-		if (0 == $values['WEIGHTED']) {
-	return -99;
-		}
-		$weighted_average = $values['WEIGHTED'];
-	}
+        if (0 == $values['WEIGHTED']) {
+    return -99;
+        }
+        $weighted_average = $values['WEIGHTED'];
+    }
 
-	file_put_contents(KB_CACHEDIR.'/evecentral/activity.log', "$content\n", FILE_APPEND);
-	
-	$query->execute("REPLACE INTO kb3_eve_central (item_id, item_price) VALUES ($item_id, '$weighted_average')");
-	return $weighted_average;
+    file_put_contents(KB_CACHEDIR.'/evecentral/activity.log', "$content\n", FILE_APPEND);
+    
+    $query->execute("REPLACE INTO kb3_eve_central (item_id, item_price) VALUES ($item_id, '$weighted_average')");
+    return $weighted_average;
 }
 
 /**
- *	Wrapper to do all to work.  Updates the items table based on the cached or live data.
+ *    Wrapper to do all to work.  Updates the items table based on the cached or live data.
  */
 function ec_update_value($item_id) {
     $query = DBFactory::getDBQuery();;
 
     // Don't try if we can't open URLs with fopen.
-	// Do to!
+    // Do to!
 //    if (1 != function_exists('curl_init')) {
 //            return;
 //    }
@@ -128,11 +128,11 @@ function ec_update_value($item_id) {
 
     $value = ec_get_value($e_item_id);
     if (-99 != $value) {
-		$query->execute("update kb3_item_price set price='$value' WHERE typeID=$item_id");
-		return true;
+        $query->execute("update kb3_item_price set price='$value' WHERE typeID=$item_id");
+        return true;
     } else {
             file_put_contents(KB_CACHEDIR.'/evecentral/activity.log', "Failed to find it.\n", FILE_APPEND);
-	}
+    }
     return false;
 }
 

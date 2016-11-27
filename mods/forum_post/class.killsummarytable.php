@@ -7,7 +7,7 @@ class KillSummaryTable
     function __construct($klist = null, $llist = null)
     {
         $this->klist_ = $klist;
-	    $this->llist_ = $llist;
+        $this->llist_ = $llist;
         $this->verbose_ = false;
         $this->filter_ = true;
         $this->inv_crp_ = array();
@@ -106,10 +106,10 @@ class KillSummaryTable
                                                      'losses' => 0, 'losses_isk' => 0);
         }
 
-		$sql = 'SELECT count(kll.kll_id) AS knb, scl_id, scl_class,';
-		$sql .= ' sum(kll_isk_loss) AS kisk FROM kb3_kills kll
+        $sql = 'SELECT count(kll.kll_id) AS knb, scl_id, scl_class,';
+        $sql .= ' sum(kll_isk_loss) AS kisk FROM kb3_kills kll
                     INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )';
-		$sql .= ' INNER JOIN kb3_ship_classes scl ON ( scl.scl_id = shp.shp_class )';
+        $sql .= ' INNER JOIN kb3_ship_classes scl ON ( scl.scl_id = shp.shp_class )';
 
         if ($this->inv_crp_)
         {
@@ -132,10 +132,10 @@ class KillSummaryTable
         }
 
 
-		$sql = 'SELECT count( kll_id) AS lnb, scl_id, scl_class,';
-		$sql .= ' sum(kll_isk_loss) AS lisk FROM kb3_kills kll
+        $sql = 'SELECT count( kll_id) AS lnb, scl_id, scl_class,';
+        $sql .= ' sum(kll_isk_loss) AS lisk FROM kb3_kills kll
                     INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )';
-		$sql .= ' INNER JOIN kb3_ship_classes scl ON ( scl.scl_id = shp.shp_class )';
+        $sql .= ' INNER JOIN kb3_ship_classes scl ON ( scl.scl_id = shp.shp_class )';
 
         if ($this->inv_crp_)
         {
@@ -293,8 +293,8 @@ class KillSummaryTable
                 $html .= "<td class=".$kclass." align=center>".round($v['kills_isk']/1000000, 2)."</td>";
 
             $html .= "<td class=".$lclass." align=center>".$v['losses']."</td>";
-	        if ($this->verbose_)
-	            $html .= "<td class=".$lclass." align=center>".round($v['losses_isk']/1000000, 2)."</td>";
+            if ($this->verbose_)
+                $html .= "<td class=".$lclass." align=center>".round($v['losses_isk']/1000000, 2)."</td>";
 
             $html .= "</tr>";
 
@@ -328,10 +328,10 @@ class KillSummaryTable
 
         return $html;
     }
-	
-	    function forum()
+    
+        function forum()
     {
-	
+    
         if ($this->klist_)
         {
             $entry = array();
@@ -382,94 +382,94 @@ class KillSummaryTable
             $entry = &$this->entry_;
         }
 
-		// Build our Post
-		$config = new config(KB_SITE);
-		$set_colours = config::get('forum_post_colours'); 	//load colour settings
-		if(!is_array($set_colours)) { $set_colours = array(); } 				// if the settings have been reset create an empty array so as not to brake the code later on
-		$set_styles = config::get('forum_post_styles');		//load style settings
-		if(!is_array($set_styles)) { $set_styles = array(); }					// if the settings have been reset create an empty array so as not to brake the code later on
-		$set_isk = config::get('forum_post_isk',$_POST['isk']);			// load isk setting
-		$forum_post_miss_empty_class = config::get(forum_post_miss_empty_class);
-		//print_r($set_styles);
+        // Build our Post
+        $config = new config(KB_SITE);
+        $set_colours = config::get('forum_post_colours');     //load colour settings
+        if(!is_array($set_colours)) { $set_colours = array(); }                 // if the settings have been reset create an empty array so as not to brake the code later on
+        $set_styles = config::get('forum_post_styles');        //load style settings
+        if(!is_array($set_styles)) { $set_styles = array(); }                    // if the settings have been reset create an empty array so as not to brake the code later on
+        $set_isk = config::get('forum_post_isk',$_POST['isk']);            // load isk setting
+        $forum_post_miss_empty_class = config::get(forum_post_miss_empty_class);
+        //print_r($set_styles);
         foreach ($entry as $k => $v)
         {
         if($forum_post_miss_empty_class == 1 && $v['kills'] == 0 && $v['losses'] == 0) {
-		
-		}
-		else {	
-			$class =  $k.$kclass;
-			$kills = $v['kills'];
-				if($set_isk == "yes")
-				{
-				$kills_isk = "(".round($v['kills_isk']/1000000, 2)."M)"; 
-				$loss_isk = "(".round($v['losses_isk']/1000000, 2)."M)";
-				}
-			$loss = $v['losses'];
-			$close = "\r\n";
-			$spacer = " / "; 
-			if(array_key_exists(str_replace(" ","",$class),$set_colours))
-			{
-			$colour_open = "[".$set_colours[str_replace(" ","",$class)]."]";
-			$colour_close = "[/".$set_colours[str_replace(" ","",$class)]."]";
-			}
-			else
-			{
-			$colour_open = "";
-			$colour_close = "";
-			}
-			if(array_key_exists(str_replace(" ","",$class),$set_styles))
-			{
-			$style_open = "[".$set_styles[str_replace(" ","",$class)]."]";
-			$style_close = "[/".$set_styles[str_replace(" ","",$class)]."]";
-			}
-			else
-			{
-			$style_open = "";
-			$style_close = "";
-			}		
-			$order = config::get('forum_post_order');
-			
-			if($order == "first"){
-			$kills_list .= $colour_open . $style_open . $class . $spacer . $kills . $kills_isk . $spacer . $loss . $loss_isk . $style_close . $colour_close. $close;
-			}
-			else
-			{
-			$kills_list .= $colour_open . $style_open . $kills . $kills_isk . $spacer . $loss . $loss_isk . $spacer . $class  . $style_close . $colour_close. $close;
-			}
-				$counter++;
-				$this->tkcount_ += $kcount;
-				$this->tlcount_ += $lcount;
-				$this->tkisk_ += $kisk;
-				$this->tlisk_ += $lisk;
-				$this->tkpoints_ += $kpoints;
-				$this->tlpoints_ += $lpoints;
-			}
+        
         }
-		
-		if($order == "first")
-		{ 
-		$html .= "Class / "; 
-		}
-		$html.= "Kills";
-			if($set_isk == "yes")
-			{ 
-			$html .= "(kills isk)";
-			}
-		$html .=" / losses ";
-			if($set_isk == "yes")
-			{ 
-			$html .= "(losses isk)";
-			}
-		if($order != "first")
-		{ 
-		$html .= " / Class"; 
-		}
-		$html .="\r\n";
-		$html .= $kills_list;
-		$html .= "Total / ".$this->tkcount_;
-		$html .= " (".round($this->tkisk_/1000000, 2)."M)";
-		$html .= " / ".$this->tlcount_;
-		$html .= " (".round($this->tlisk_/1000000, 2)."M)";
+        else {    
+            $class =  $k.$kclass;
+            $kills = $v['kills'];
+                if($set_isk == "yes")
+                {
+                $kills_isk = "(".round($v['kills_isk']/1000000, 2)."M)"; 
+                $loss_isk = "(".round($v['losses_isk']/1000000, 2)."M)";
+                }
+            $loss = $v['losses'];
+            $close = "\r\n";
+            $spacer = " / "; 
+            if(array_key_exists(str_replace(" ","",$class),$set_colours))
+            {
+            $colour_open = "[".$set_colours[str_replace(" ","",$class)]."]";
+            $colour_close = "[/".$set_colours[str_replace(" ","",$class)]."]";
+            }
+            else
+            {
+            $colour_open = "";
+            $colour_close = "";
+            }
+            if(array_key_exists(str_replace(" ","",$class),$set_styles))
+            {
+            $style_open = "[".$set_styles[str_replace(" ","",$class)]."]";
+            $style_close = "[/".$set_styles[str_replace(" ","",$class)]."]";
+            }
+            else
+            {
+            $style_open = "";
+            $style_close = "";
+            }        
+            $order = config::get('forum_post_order');
+            
+            if($order == "first"){
+            $kills_list .= $colour_open . $style_open . $class . $spacer . $kills . $kills_isk . $spacer . $loss . $loss_isk . $style_close . $colour_close. $close;
+            }
+            else
+            {
+            $kills_list .= $colour_open . $style_open . $kills . $kills_isk . $spacer . $loss . $loss_isk . $spacer . $class  . $style_close . $colour_close. $close;
+            }
+                $counter++;
+                $this->tkcount_ += $kcount;
+                $this->tlcount_ += $lcount;
+                $this->tkisk_ += $kisk;
+                $this->tlisk_ += $lisk;
+                $this->tkpoints_ += $kpoints;
+                $this->tlpoints_ += $lpoints;
+            }
+        }
+        
+        if($order == "first")
+        { 
+        $html .= "Class / "; 
+        }
+        $html.= "Kills";
+            if($set_isk == "yes")
+            { 
+            $html .= "(kills isk)";
+            }
+        $html .=" / losses ";
+            if($set_isk == "yes")
+            { 
+            $html .= "(losses isk)";
+            }
+        if($order != "first")
+        { 
+        $html .= " / Class"; 
+        }
+        $html .="\r\n";
+        $html .= $kills_list;
+        $html .= "Total / ".$this->tkcount_;
+        $html .= " (".round($this->tkisk_/1000000, 2)."M)";
+        $html .= " / ".$this->tlcount_;
+        $html .= " (".round($this->tlisk_/1000000, 2)."M)";
         return $html;
     }
 }

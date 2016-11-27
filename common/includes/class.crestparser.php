@@ -12,15 +12,15 @@ class CrestParserException extends Exception{}
  */
 class CrestParser
 {
-	private $error_ = array();
-	/** @var string the URL to the crest representation */
+    private $error_ = array();
+    /** @var string the URL to the crest representation */
     private $crestUrl;
     /** @var string the crest hash value */
     private $crestHash;
-	private $externalID = 0;
-	private $dupeid_ = 0;
-	private $hash = null;
-	private $trust = 0;
+    private $externalID = 0;
+    private $dupeid_ = 0;
+    private $hash = null;
+    private $trust = 0;
     /** @var Object (json decoded) */
     private $killmailRepresentation;
     /** @var boolean isNPCOnly flag indicating the killmail has only NPCs as involved parties */
@@ -32,12 +32,12 @@ class CrestParser
     * 
     * @param string $crestUrl the URL to the crest representation of the kill
     */
-	function __construct($crestUrl)
-	{                
+    function __construct($crestUrl)
+    {                
             $this->crestUrl = $crestUrl;
             // allow posting of CREST links using the old public-crest base URL
             $this->crestUrl = str_replace('https://public-crest.eveonline.com', CREST_PUBLIC_URL, $this->crestUrl);
-	}
+    }
         
         
     function validateCrestUrl()
@@ -57,8 +57,8 @@ class CrestParser
     }
         
         
-	function parse($checkauth = true)
-	{
+    function parse($checkauth = true)
+    {
         $this->validateCrestUrl();
 
         $urlPieces = explode("/", $this->crestUrl);
@@ -77,81 +77,81 @@ class CrestParser
             throw new CrestParserException($e->getMessage(), $e->getCode());
         }
 
-		$qry = DBFactory::getDBQuery();
+        $qry = DBFactory::getDBQuery();
 
-		// Check hashes with a prepared query.
-		// Make it static so we can reuse the same query for feed fetches.
-		static $timestamp;
-		static $checkHash;
-		static $hash;
-		static $trust;
-		static $kill_id;
-		$timestamp = str_replace('.', '-', $this->killmailRepresentation->killTime);
+        // Check hashes with a prepared query.
+        // Make it static so we can reuse the same query for feed fetches.
+        static $timestamp;
+        static $checkHash;
+        static $hash;
+        static $trust;
+        static $kill_id;
+        $timestamp = str_replace('.', '-', $this->killmailRepresentation->killTime);
 
-		// Check hashes.
-		$hash = self::hashMail($this->killmailRepresentation);
-		if(!isset($checkHash))
-		{
-			$checkHash = new DBPreparedQuery();
-			$checkHash->prepare('SELECT kll_id, kll_trust FROM kb3_mails WHERE kll_timestamp = ? AND kll_hash = ?');
-			$arr = array(&$kill_id, &$trust);
-			$checkHash->bind_results($arr);
-			$types = 'ss';
-			$arr2 = array(&$types, &$timestamp, &$hash);
-			$checkHash->bind_params($arr2);
-		}
-		$checkHash->execute();
+        // Check hashes.
+        $hash = self::hashMail($this->killmailRepresentation);
+        if(!isset($checkHash))
+        {
+            $checkHash = new DBPreparedQuery();
+            $checkHash->prepare('SELECT kll_id, kll_trust FROM kb3_mails WHERE kll_timestamp = ? AND kll_hash = ?');
+            $arr = array(&$kill_id, &$trust);
+            $checkHash->bind_results($arr);
+            $types = 'ss';
+            $arr2 = array(&$types, &$timestamp, &$hash);
+            $checkHash->bind_params($arr2);
+        }
+        $checkHash->execute();
 
-		if($checkHash->recordCount())
-		{
-			$checkHash->fetch();
-			$this->dupeid_ = $kill_id;
-			// We still want to update the external ID if we were given one.			
-			if($this->externalID)
-			{ 
+        if($checkHash->recordCount())
+        {
+            $checkHash->fetch();
+            $this->dupeid_ = $kill_id;
+            // We still want to update the external ID if we were given one.            
+            if($this->externalID)
+            { 
                 $victimDetails = self::getVictim($this->killmailRepresentation);
-				$qry->execute("UPDATE kb3_kills"
-						." JOIN kb3_mails ON kb3_mails.kll_id = kb3_kills.kll_id"
-						." SET kb3_kills.kll_external_id = ".$this->externalID
-						.", kb3_mails.kll_external_id = ".$this->externalID
-						.", kll_modified_time = UTC_TIMESTAMP()"
+                $qry->execute("UPDATE kb3_kills"
+                        ." JOIN kb3_mails ON kb3_mails.kll_id = kb3_kills.kll_id"
+                        ." SET kb3_kills.kll_external_id = ".$this->externalID
+                        .", kb3_mails.kll_external_id = ".$this->externalID
+                        .", kll_modified_time = UTC_TIMESTAMP()"
                                                 .", kb3_kills.kll_x = ".$victimDetails["x"]
                                                 .", kb3_kills.kll_y = ".$victimDetails["y"]
                                                 .", kb3_kills.kll_z = ".$victimDetails["z"]
-						." WHERE kb3_kills.kll_id = ".$this->dupeid_
-						." AND (kb3_kills.kll_external_id IS NULL OR kb3_kills.kll_x = 0)");
-				
-				if($trust >= 0 && $this->trust && $trust > $this->trust) {
-					$qry->execute("UPDATE kb3_mails SET kll_trust = "
-							.$this->trust." WHERE kll_id = ".$this->dupeid_);
-				}
-			}
+                        ." WHERE kb3_kills.kll_id = ".$this->dupeid_
+                        ." AND (kb3_kills.kll_external_id IS NULL OR kb3_kills.kll_x = 0)");
+                
+                if($trust >= 0 && $this->trust && $trust > $this->trust) {
+                    $qry->execute("UPDATE kb3_mails SET kll_trust = "
+                            .$this->trust." WHERE kll_id = ".$this->dupeid_);
+                }
+            }
                         
             // we also want to update the CREST hash
             $qry->execute("UPDATE kb3_mails SET kll_crest_hash = '"
                 .$this->crestHash."' WHERE kll_id = ".$this->dupeid_);
-				
-			if($trust < 0)
+                
+            if($trust < 0)
             {
                 throw new CrestParserException("That mail has been deleted. Kill id was "
             .$this->getDupeID(), -4);
             }
-			throw new CrestParserException("That killmail has already been posted <a href=\""
-						.edkURI::page('kill_detail', $this->getDupeID(), 'kll_id')
-						."\">here</a>.", -1);
-		}			
-		// Check external IDs
-		else if($this->externalID)
-		{
-			$qry->execute('SELECT kll_id FROM kb3_kills WHERE kll_external_id = '.$this->externalID);
-			if($qry->recordCount())
-			{
-				$row = $qry->getRow();
-				throw new CrestParserException("That killmail has already been posted <a href=\""
-						."?a=kill_detail&kll_id=".$row['kll_id']
-						."\">here</a>.", -1);
-			}
-		}
+            throw new CrestParserException("That killmail has already been posted <a href=\""
+                        .edkURI::page('kill_detail', $this->getDupeID(), 'kll_id')
+                        ."\">here</a>.", -1);
+        }            
+        // Check external IDs
+        else if($this->externalID)
+        {
+            $qry->execute('SELECT kll_id FROM kb3_kills WHERE kll_external_id = '.$this->externalID);
+            if($qry->recordCount())
+            {
+                $row = $qry->getRow();
+                throw new CrestParserException("That killmail has already been posted <a href=\""
+                        ."?a=kill_detail&kll_id=".$row['kll_id']
+                        ."\">here</a>.", -1);
+            }
+        }
         $this->hash = $hash;
 
         // get timestamp
@@ -196,33 +196,33 @@ class CrestParser
         return $Kill->add();
     }
 
-	function error($message, $debugtext = null)
-	{
-		$this->error_[] = array($message, $debugtext);
-	}
+    function error($message, $debugtext = null)
+    {
+        $this->error_[] = array($message, $debugtext);
+    }
 
-	function getError()
-	{
-		if (count($this->error_))
-		{
-			return $this->error_;
-		}
-		return false;
-	}
+    function getError()
+    {
+        if (count($this->error_))
+        {
+            return $this->error_;
+        }
+        return false;
+    }
 
-	/**
-	 *
-	 * @param mixed $mailRepresentation
-	 * @return string
-	 */
-	public static function hashMail($mailRepresentation = null)
-	{
-		if(is_null($mailRepresentation)) return false;
+    /**
+     *
+     * @param mixed $mailRepresentation
+     * @return string
+     */
+    public static function hashMail($mailRepresentation = null)
+    {
+        if(is_null($mailRepresentation)) return false;
 
-		$involvedParties = self::getAttackers($mailRepresentation);
+        $involvedParties = self::getAttackers($mailRepresentation);
                 $victim = self::getVictim($mailRepresentation);
-		$invListDamage = array();
-		foreach($involvedParties AS $attacker)
+        $invListDamage = array();
+        foreach($involvedParties AS $attacker)
         {
             $invListDamage[] = $attacker["damageDone"];
             // TODO check for NPCs/POSs etc
@@ -256,58 +256,58 @@ class CrestParser
             $invListName[] = $involvedPartyName;
         }
         // Sort the involved list by damage done then alphabetically.
-		array_multisort($invListDamage, SORT_DESC, SORT_NUMERIC, $invListName, SORT_ASC, SORT_STRING);
+        array_multisort($invListDamage, SORT_DESC, SORT_NUMERIC, $invListName, SORT_ASC, SORT_STRING);
 
-				
+                
         // timestamp
-		$hashIn = str_replace('.', '-', $mailRepresentation->killTime);
-		// cut off seconds from timestamp to keep compatibility with legacy parser mails
-		$hashIn = substr($hashIn, 0, 16);
-		
-		// victim's name
-		// was it a player?
-		if($victim["characterName"])
-		{
-			$hashIn .= $victim["characterName"];
-		}
-		
-		// was it a pos structure?
-		else if($victim["moonName"])
-		{
-			// cut off the first two characters (again, to keep compatibility with legacy parser killmails)
-			$hashIn .= substr($victim["moonName"], 2, strlen($victim["moonName"])-1);
-		}
-		
-		else
-		{
-			return false;
-		}
-		
-		// destroyed ship
-		$hashIn .= $victim["shipTypeName"];
-		// solar system
-		$hashIn .= (String) $mailRepresentation->solarSystem->name;
-		// damage taken
-		$hashIn .= $victim["damageTaken"];
-		// list of involved parties
-		$hashIn .= implode(',', $invListName);
+        $hashIn = str_replace('.', '-', $mailRepresentation->killTime);
+        // cut off seconds from timestamp to keep compatibility with legacy parser mails
+        $hashIn = substr($hashIn, 0, 16);
+        
+        // victim's name
+        // was it a player?
+        if($victim["characterName"])
+        {
+            $hashIn .= $victim["characterName"];
+        }
+        
+        // was it a pos structure?
+        else if($victim["moonName"])
+        {
+            // cut off the first two characters (again, to keep compatibility with legacy parser killmails)
+            $hashIn .= substr($victim["moonName"], 2, strlen($victim["moonName"])-1);
+        }
+        
+        else
+        {
+            return false;
+        }
+        
+        // destroyed ship
+        $hashIn .= $victim["shipTypeName"];
+        // solar system
+        $hashIn .= (String) $mailRepresentation->solarSystem->name;
+        // damage taken
+        $hashIn .= $victim["damageTaken"];
+        // list of involved parties
+        $hashIn .= implode(',', $invListName);
                 // list of involved parties' damage done
-		$hashIn .= implode(',', $invListDamage);
+        $hashIn .= implode(',', $invListDamage);
 
-		return md5($hashIn, true);
-	}
-	/**
-	 * @return integer
-	 */
-	public function getDupeID()
-	{
-		return $this->dupeid_;
-	}
+        return md5($hashIn, true);
+    }
+    /**
+     * @return integer
+     */
+    public function getDupeID()
+    {
+        return $this->dupeid_;
+    }
 
-	public function setTrust($trust)
-	{
-		$this->trust = intval($trust);
-	}
+    public function setTrust($trust)
+    {
+        $this->trust = intval($trust);
+    }
     
     /**
      * Sets the flag whether to allow posting of kills containing
@@ -315,9 +315,9 @@ class CrestParser
      * @param boolean $allowNpcOnlyKills
      */
     public function setAllowNpcOnlyKills($allowNpcOnlyKills)
-	{
-		$this->allowNpcOnlyKills = (boolean) $allowNpcOnlyKills;
-	}
+    {
+        $this->allowNpcOnlyKills = (boolean) $allowNpcOnlyKills;
+    }
    
     /**
      * Returns whether posting of kills with only NPCs as involved parties is allowed.
@@ -426,8 +426,8 @@ class CrestParser
         // If we have a character ID but no name then we give up - the needed
         // info is gone.
         // If we have no character ID and no name then it's a structure or NPC
-        //	- if we have a moonID (anchored at a moon) call it corpname - moonname
-        //	- if we don't have a moonID call it corpname - systemname
+        //    - if we have a moonID (anchored at a moon) call it corpname - moonname
+        //    - if we don't have a moonID call it corpname - systemname
         if (!strlen($victimDetails['characterName']) && $victimDetails['characterID'] > 0) {
         throw new CrestParserException("Insufficient victim information provided! Kill-ID: ".$this->externalID);
         } else if (!$victimDetails['corporationID'] && !$victimDetails['factionID']) {
@@ -528,7 +528,7 @@ class CrestParser
                 
             $Weapon = Cacheable::factory('Item', $involvedParty['weaponTypeID']);
             
-                	
+                    
             // get alliance
             $Alliance = Alliance::add("None");
             if ($involvedParty['allianceID'] > 0) 
@@ -537,7 +537,7 @@ class CrestParser
             }
             // only use faction as alliance if no corporation is given (faction NPC)
             else if ($involvedParty['factionID'] > 0 && strlen($involvedParty['corporationName']) > 0) 
-            {		
+            {        
                     $Alliance = Alliance::add($involvedParty['factionName'], $involvedParty['factionID']);
             }           
 
@@ -718,13 +718,13 @@ class CrestParser
         
         
     /**
-	 * Return corporation from cached list or look up a new name.
-	 *
-	 * @param string $corpName Corp name to look up.
-	 * @return Corporation Corporation object matching input name.
-	 */
-	private static function fetchCorp($corpName, $Alliance = null, $timestamp = null)
-	{
+     * Return corporation from cached list or look up a new name.
+     *
+     * @param string $corpName Corp name to look up.
+     * @return Corporation Corporation object matching input name.
+     */
+    private static function fetchCorp($corpName, $Alliance = null, $timestamp = null)
+    {
         $corp = Corporation::lookup($corpName);
         if (!$corp) {
             if ($Alliance == null) {      
@@ -743,6 +743,6 @@ class CrestParser
             }
         }
 
-		return $corp;
-	}
+        return $corp;
+    }
 }

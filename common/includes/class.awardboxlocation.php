@@ -11,13 +11,13 @@ class AwardBoxLocation extends AwardBox
 {
     
         protected $limit_;
-	/**
-	 * Create an AwardBox from the given TopList and descriptions.
-	 */
-	function __construct($list, $title, $comment, $entity, $award, $limit = 10)
-	{
+    /**
+     * Create an AwardBox from the given TopList and descriptions.
+     */
+    function __construct($list, $title, $comment, $entity, $award, $limit = 10)
+    {
             parent::__construct($list, $title, $comment, $entity, $award, $limit);
-	}
+    }
 
         
         protected function getEntityImageUrl($row, $size)

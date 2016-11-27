@@ -326,7 +326,7 @@ class Pheal
         curl_setopt(self::$curl, CURLOPT_CAINFO, getcwd() . DIRECTORY_SEPARATOR . KB_CACHEDIR . '/cert/cacert.pem');
         
         // call
-        $result	= curl_exec(self::$curl);
+        $result    = curl_exec(self::$curl);
         $errno = curl_errno(self::$curl);
         $error = curl_error(self::$curl);
 

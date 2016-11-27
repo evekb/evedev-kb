@@ -75,8 +75,8 @@ class Smarty_Internal_Data {
      */
     public function assign_by_ref($tpl_var, &$value)
     {
-       	if($this->smarty->deprecation_notices)
-        	trigger_error("function call 'assign_by_ref' is unknown or deprecated, use 'assignByRef'", E_USER_NOTICE);
+           if($this->smarty->deprecation_notices)
+            trigger_error("function call 'assign_by_ref' is unknown or deprecated, use 'assignByRef'", E_USER_NOTICE);
         $this->assignByRef($tpl_var, $value);
     }
     /**
@@ -171,8 +171,8 @@ class Smarty_Internal_Data {
      */
     public function append_by_ref($tpl_var, &$value, $merge = false)
     {
-       	if($this->smarty->deprecation_notices)
-        	trigger_error("function call 'append_by_ref' is unknown or deprecated, use 'appendByRef'", E_USER_NOTICE);
+           if($this->smarty->deprecation_notices)
+            trigger_error("function call 'append_by_ref' is unknown or deprecated, use 'appendByRef'", E_USER_NOTICE);
         $this->appendByRef($tpl_var, $value, $merge);
     }
     /**
@@ -286,10 +286,10 @@ class Smarty_Internal_Data {
         if ($this->smarty->error_unassigned && $error_enable) {
             throw new SmartyException('Undefined Smarty variable "' . $_variable . '"');
         } else {
-        	if ($error_enable) {
-				// force a notice
-				$x = $$_variable;
-        	}
+            if ($error_enable) {
+                // force a notice
+                $x = $$_variable;
+            }
             return new Undefined_Smarty_Variable;
         }
     }
@@ -313,8 +313,8 @@ class Smarty_Internal_Data {
         if ($this->smarty->error_unassigned) {
             throw new SmartyException('Undefined config variable "' . $_variable . '"');
         } else {
-			// force a notice
-			$x = $$_variable;
+            // force a notice
+            $x = $$_variable;
             return null;
         }
     }
@@ -351,26 +351,26 @@ class Smarty_Internal_Data {
      */
     function getConfigVars($varname = null, $search_parents = true)
     {
- //   	var_dump($this);
+ //       var_dump($this);
         $_ptr = $this;
         $var_array = array();
         while ($_ptr !== null) {
-        	if (isset($varname)) {
-            	if (isset($_ptr->config_vars[$varname])) {
-                	return $_ptr->config_vars[$varname];
+            if (isset($varname)) {
+                if (isset($_ptr->config_vars[$varname])) {
+                    return $_ptr->config_vars[$varname];
                 }
             } else {
-            	$var_array = array_merge($_ptr->config_vars, $var_array);
-        	}
+                $var_array = array_merge($_ptr->config_vars, $var_array);
+            }
              // not found, try at parent
             if ($search_parents) {
                 $_ptr = $_ptr->parent;
             } else {
                 $_ptr = null;
             }
-    	}
+        }
         if (isset($varname)) {
-    		return '';
+            return '';
         } else {
             return $var_array;
         }

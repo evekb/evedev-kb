@@ -11,21 +11,21 @@
  */
 class SolarSystem extends Cacheable
 {
-	/**
-	 * Whether the constructor has been executed.
-	 * @var boolean
-	 */
-	private $executed = false;
-	/**
-	 * The sys_id for this system.
-	 * @var integer
-	 */
-	private $id = 0;
-	/**
-	 * The data for this system.
-	 * @var array
-	 */
-	private $row = array();
+    /**
+     * Whether the constructor has been executed.
+     * @var boolean
+     */
+    private $executed = false;
+    /**
+     * The sys_id for this system.
+     * @var integer
+     */
+    private $id = 0;
+    /**
+     * The data for this system.
+     * @var array
+     */
+    private $row = array();
         
         /**
          * holds the IDs of all locations within this 
@@ -104,23 +104,23 @@ class SolarSystem extends Cacheable
     {
         if (!$this->executed)
         {
-			if ($this->isCached()) {
-				$cache = $this->getCache();
-				$this->row = $cache->row;
+            if ($this->isCached()) {
+                $cache = $this->getCache();
+                $this->row = $cache->row;
                                 $this->locationIDs = $cache->locationIDs;
-				$this->executed = true;
-			} else {
-		        $qry = DBFactory::getDBQuery();
-				$sql = "select sys.sys_id AS sys_id, sys_con_id, sys_name, sys_x, sys_y, sys_z, sys_sec, 
+                $this->executed = true;
+            } else {
+                $qry = DBFactory::getDBQuery();
+                $sql = "select sys.sys_id AS sys_id, sys_con_id, sys_name, sys_x, sys_y, sys_z, sys_sec, 
                                             con_id, con_name, con_reg_id, 
                                             reg_id, reg_name, reg_x, reg_y, reg_z
-						   from kb3_systems sys
+                           from kb3_systems sys
                                                    inner join kb3_constellations con ON con.con_id = sys.sys_con_id
-						   inner join kb3_regions reg ON reg.reg_id = con.con_reg_id
-						   where sys.sys_id = ".$this->id."
-						   ";
-				$qry->execute($sql);
-				$this->row = $qry->getRow();
+                           inner join kb3_regions reg ON reg.reg_id = con.con_reg_id
+                           where sys.sys_id = ".$this->id."
+                           ";
+                $qry->execute($sql);
+                $this->row = $qry->getRow();
                                 
                                 // now get all locationIDs for this system
                                 $sql = "select itemID
@@ -131,41 +131,41 @@ class SolarSystem extends Cacheable
                                 {
                                     $this->locationIDs[] = $locationRow['itemID'];
                                 }
-				
+                
                                 $this->executed = true;
-				$this->putCache();
-			}
+                $this->putCache();
+            }
         }
     }
 
-	/**
-	 * Lookup a SolarSystem by name.
-	 * 
-	 * @param string $name
-	 * @return Solarsystem|boolean
-	 */
+    /**
+     * Lookup a SolarSystem by name.
+     * 
+     * @param string $name
+     * @return Solarsystem|boolean
+     */
     static function lookup($name)
     {
-			$qry = DBFactory::getDBQuery();
-			$qry->execute("SELECT sys_id FROM kb3_systems "
-			." WHERE sys_name = '".$qry->escape($name)."'");
+            $qry = DBFactory::getDBQuery();
+            $qry->execute("SELECT sys_id FROM kb3_systems "
+            ." WHERE sys_name = '".$qry->escape($name)."'");
 
-			if (!$qry->recordCount()) {
-					return false;
-			} else {
-				$row = $qry->getRow();
-				return Cacheable::factory('SolarSystem', (int)$row['sys_id']);
-			}
+            if (!$qry->recordCount()) {
+                    return false;
+            } else {
+                $row = $qry->getRow();
+                return Cacheable::factory('SolarSystem', (int)$row['sys_id']);
+            }
     }
 
-	/**
-	 * Return a new object by ID. Will fetch from cache if enabled.
-	 *
-	 * @param mixed $id ID to fetch
-	 * @return Location
-	 */
-	static function getByID($id)
-	{
-		return Cacheable::factory(get_class(), $id);
-	}
+    /**
+     * Return a new object by ID. Will fetch from cache if enabled.
+     *
+     * @param mixed $id ID to fetch
+     * @return Location
+     */
+    static function getByID($id)
+    {
+        return Cacheable::factory(get_class(), $id);
+    }
 }

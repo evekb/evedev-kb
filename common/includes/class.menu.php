@@ -14,30 +14,30 @@
  */
 class Menu
 {
-	private $menu = array();
-	/**
-	 * Construct a blank side menu.
-	 */
-	function __construct()
-	{
-	}
-	/**
-	 * Return the array of menu options.
-	 *
-	 * @return array
-	 */
-	public function get()
-	{
-		return $this->menu;
-	}
-	/**
-	 * Add a link and text to the array of menu options.
-	 *
-	 * @param string $link URL for the menu option to link to.
-	 * @param string $text text for the menu option.
-	 */
-	public function add($link, $text)
-	{
-		$this->menu[] = array('link' => $link, 'text' => $text);
-	}
+    private $menu = array();
+    /**
+     * Construct a blank side menu.
+     */
+    function __construct()
+    {
+    }
+    /**
+     * Return the array of menu options.
+     *
+     * @return array
+     */
+    public function get()
+    {
+        return $this->menu;
+    }
+    /**
+     * Add a link and text to the array of menu options.
+     *
+     * @param string $link URL for the menu option to link to.
+     * @param string $text text for the menu option.
+     */
+    public function add($link, $text)
+    {
+        $this->menu[] = array('link' => $link, 'text' => $text);
+    }
 }

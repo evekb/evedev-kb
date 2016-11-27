@@ -38,7 +38,7 @@ class import_forward
 {
     public static function importhandler($object)
     {
-   		if (config::get('forward_active') == false)
+           if (config::get('forward_active') == false)
         {
             return;
         }

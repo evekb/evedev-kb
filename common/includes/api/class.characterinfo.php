@@ -13,33 +13,33 @@ require_once("class.api.php");
  */
 class API_CharacterInfo extends API
 {
-	private $API_ID = '';
-	private $data = array();
+    private $API_ID = '';
+    private $data = array();
         private $currentTime;
 
-	public function setID($ID)
-	{
-		$this->API_ID = $ID;
-	}
-	public function getData()
-	{
-		return $this->data;
-	}
+    public function setID($ID)
+    {
+        $this->API_ID = $ID;
+    }
+    public function getData()
+    {
+        return $this->data;
+    }
 
-	public function clear()
-	{
-		$this->data = array();
-		unset($this->data);
-	}
+    public function clear()
+    {
+        $this->data = array();
+        unset($this->data);
+    }
         
         public function getCurrentTime()
         {
             return $this->currentTime;
         }
 
-	public function fetchXML()
-	{
-		if ($this->API_ID == "")
+    public function fetchXML()
+    {
+        if ($this->API_ID == "")
                     return "No IDs have been input.";
 
                 
@@ -48,10 +48,10 @@ class API_CharacterInfo extends API
                 if($data == false) return "Error fetching IDs";
                 $this->currentTime = $data->currentTime;
                 $data = $data->toArray();
-                $this->data = $data['result'];	
+                $this->data = $data['result'];    
                 
 
 
-		return "";
-	}
+        return "";
+    }
 }

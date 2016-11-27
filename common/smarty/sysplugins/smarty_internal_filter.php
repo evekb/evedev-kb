@@ -24,10 +24,10 @@ class Smarty_Internal_Filter {
      * @param string $type filter type
      * @param callback $callback 
      */
-	public function registerFilter($type, $callback)
-	{
-   		$this->smarty->registered_filters[$type][$this->_get_filter_name($callback)] = $callback;
-	}
+    public function registerFilter($type, $callback)
+    {
+           $this->smarty->registered_filters[$type][$this->_get_filter_name($callback)] = $callback;
+    }
 
     /**
      * Unregisters a filter function
@@ -35,13 +35,13 @@ class Smarty_Internal_Filter {
      * @param string $type filter type
      * @param callback $callback 
      */
-	public function unregisterFilter($type, $callback)
-	{
-   		$name = $this->_get_filter_name($callback);
-   		if(isset($this->smarty->registered_filters[$type][$name])) {
-      		unset($this->smarty->registered_filters[$type][$name]);
-   		}
-	}
+    public function unregisterFilter($type, $callback)
+    {
+           $name = $this->_get_filter_name($callback);
+           if(isset($this->smarty->registered_filters[$type][$name])) {
+              unset($this->smarty->registered_filters[$type][$name]);
+           }
+    }
 
 
     /**

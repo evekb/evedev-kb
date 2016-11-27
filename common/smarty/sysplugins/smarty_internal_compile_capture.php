@@ -13,7 +13,7 @@
  * Smarty Internal Plugin Compile Capture Class
  */
 class Smarty_Internal_Compile_Capture extends Smarty_Internal_CompileBase {
-	// attribute definitions
+    // attribute definitions
     public $shorttag_order = array('name');
     public $optional_attributes = array('name', 'assign', 'append'); 
 

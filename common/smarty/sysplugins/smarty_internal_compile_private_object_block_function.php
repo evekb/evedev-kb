@@ -13,7 +13,7 @@
  * Smarty Internal Plugin Compile Object Block Function Class
  */
 class Smarty_Internal_Compile_Private_Object_Block_Function extends Smarty_Internal_CompileBase {
-	// attribute definitions
+    // attribute definitions
     public $required_attributes = array();
     public $optional_attributes = array('_any'); 
 
@@ -32,12 +32,12 @@ class Smarty_Internal_Compile_Private_Object_Block_Function extends Smarty_Inter
         $this->compiler = $compiler;
         if (strlen($tag) < 5 || substr($tag, -5) != 'close') {
             // opening tag of block plugin
-        	// check and get attributes
-        	$_attr = $this->_get_attributes($args); 
-        	if ($_attr['nocache'] === true) {
-            	$this->compiler->tag_nocache = true;
-        	}
-       		unset($_attr['nocache']);
+            // check and get attributes
+            $_attr = $this->_get_attributes($args); 
+            if ($_attr['nocache'] === true) {
+                $this->compiler->tag_nocache = true;
+            }
+               unset($_attr['nocache']);
             // convert attributes into parameter array string
             $_paramsArray = array();
             foreach ($_attr as $_key => $_value) {
@@ -66,10 +66,10 @@ class Smarty_Internal_Compile_Private_Object_Block_Function extends Smarty_Inter
             $this->compiler->has_output = true; 
             // compile code
             if (!isset($parameter['modifier_list'])) {
-            	$mod_pre = $mod_post ='';
+                $mod_pre = $mod_post ='';
             } else {
-            	$mod_pre = ' ob_start(); ';
-            	$mod_post = 'echo '.$this->compiler->compileTag('private_modifier',array(),array('modifierlist'=>$parameter['modifier_list'],'value'=>'ob_get_clean()')).';';
+                $mod_pre = ' ob_start(); ';
+                $mod_post = 'echo '.$this->compiler->compileTag('private_modifier',array(),array('modifierlist'=>$parameter['modifier_list'],'value'=>'ob_get_clean()')).';';
             }
             $output = "<?php \$_block_content = ob_get_contents(); ob_end_clean(); \$_block_repeat=false;".$mod_pre." echo \$_smarty_tpl->smarty->registered_objects['{$base_tag}'][0]->{$methode}({$_params}, \$_block_content, \$_smarty_tpl, \$_block_repeat); ".$mod_post."  } array_pop(\$_smarty_tpl->smarty->_tag_stack);?>";
         } 

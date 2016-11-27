@@ -51,7 +51,7 @@ class Box2 extends Box
 $menubox = new Box2();
 
 options::oldMenu('Features', "Campaigns", array(array('a', 'admin_cc',  true),
-	array('op', 'view',  false)));
+    array('op', 'view',  false)));
 options::oldMenu('Features', "Standings", array('a', 'admin_standings',  true));//
 
 options::oldMenu('Appearance', "Map Options", array('a', 'admin_mapoptions', true));

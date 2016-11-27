@@ -7,7 +7,7 @@
 $url_args = substr($_SERVER['REQUEST_URI'], strpos($_SERVER['REQUEST_URI'], 'sig.php')+8);
 
 if($_SERVER['PATH_INFO']) {
-	$_SERVER['PATH_INFO'] = '/sig'.$_SERVER['PATH_INFO'];
+    $_SERVER['PATH_INFO'] = '/sig'.$_SERVER['PATH_INFO'];
 }
 
 $args = explode('/', $url_args);
