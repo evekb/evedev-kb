@@ -16,17 +16,7 @@ $page = 'crestValueFetch';
 event::setCron(TRUE);
 loadMods($page);
 
-$cronStartTime = microtime(true);
-logCron("Starting CREST item value update");
-
-// get the configured CREST URL
-$url = config::get('itemPriceCrestUrl');
-if ($url == null || $url == "")
-{
-    $url = CREST_PUBLIC_URL . ValueFetcherCrest::$CREST_PRICES_ENDPOINT;
-}
-
-$fetch = new ValueFetcherCrest($url);
+$fetch = new ValueFetcherEsi();
 // Fetch
 $count = $fetch->fetchValues();
 

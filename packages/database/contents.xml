@@ -61,6 +61,10 @@
     <version>1.1</version>
   </table>
   <table>
+    <name>kb3_factions</name>
+    <version>1.0</version>
+  </table>
+  <table>
     <name>kb3_inv_all</name>
     <version>1.1</version>
   </table>

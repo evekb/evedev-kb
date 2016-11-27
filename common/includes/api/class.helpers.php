@@ -329,7 +329,7 @@ class API_Helpers
             if($timeLimit !== FALSE)
             {
                 // on average, we can fetch 2 kills per second (due to CREST response time limitations)
-                $maxNumberOfKillsPerRun = min(array(floor($timeLimit * 1), self::$MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MAX));
+                $maxNumberOfKillsPerRun = min(array(floor($timeLimit * 0.8), self::$MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MAX));
             }
             
             config::set('maxNumberOfKillsPerRun', $maxNumberOfKillsPerRun);

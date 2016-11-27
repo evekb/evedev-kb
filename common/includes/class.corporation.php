@@ -6,6 +6,9 @@
  * @package EDK
  */
 
+use EDK\ESI\ESI;
+use EsiClient\LiveApi;
+
 
 /**
  * Creates a new Corporation or fetches an existing one from the database.
@@ -94,11 +97,11 @@ class Corporation extends Entity
      */
     function getExternalID($populateList = false)
     {
-                // sanity check: no factions!
-                if(is_numeric($this->externalid) && $this->externalid < 1000000)
-                {
-                    return 0;
-                }
+        // sanity check: no factions!
+        if(is_numeric($this->externalid) && $this->externalid < 1000000)
+        {
+            return 0;
+        }
         if($this->externalid) return $this->externalid;
         $this->execQuery();
         if(!$populateList)
@@ -421,37 +424,52 @@ class Corporation extends Entity
      */
     public function fetchCorp()
     {
-        if(!$this->externalid) $this->execQuery();
-        if(!$this->externalid) return false;
-
-        $myAPI = new API_CorporationSheet();
-        $myAPI->setCorpID($this->externalid);
-        $result = $myAPI->fetchXML();
-
-        if($result == false) {
+        if(!$this->externalid) 
+        {
+            $this->execQuery();
+        }
+        
+        if(!$this->externalid) 
+        {
             return false;
         }
-                $allianceId = $myAPI->getAllianceID();
-                if($allianceId)
-                {
-                    $alliance = Alliance::add($myAPI->getAllianceName(),
-                                                    $myAPI->getAllianceID());
-                }
-                
-                else
-                {
-                    $alliance = Alliance::add("None");
-                }
-
-        if (!$alliance) {
+        
+        // create EDK ESI client
+        $EdkEsi = new ESI();
+        $LiveApi = new LiveApi($EdkEsi);
+        
+        try
+        {
+            // only get the ESI corp representation and the headers, we don't need the status code
+            list($EsiCorp, , $headers) = $LiveApi->getCorporationsCorporationIdWithHttpInfo($this->externalid);
+        } 
+        
+        catch (ApiException $ex) 
+        {
             return false;
         }
-        $crp = Corporation::add(slashfix($myAPI->getCorporationName()), $alliance,
-                $myAPI->getCurrentTime(), intval($myAPI->getCorporationID()));
+
+        $allianceId = $EsiCorp->getAllianceId();
+        if($allianceId)
+        {
+            $Alliance = new Alliance($allianceId, true);
+        }
+
+        else
+        {
+            $Alliance = Alliance::add("None");
+        }
+
+        if (!$Alliance)
+        {
+            return false;
+        }
+        $crp = Corporation::add(slashfix($EsiCorp->getCorporationName()), $Alliance, ESI_Helpers::formatRFC7231Timestamp($headers['Last-Modified']), (int) $this->externalid);
 
         $this->name = $crp->name;
         $this->alliance = $crp->alliance;
         $this->updated = $crp->updated;
+        $this->id = $crp->getID();
         return true;
     }
 

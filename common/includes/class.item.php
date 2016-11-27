@@ -406,7 +406,7 @@ class Item extends Cacheable
             try 
             {
                 $typeInfo = SimpleCrest::getReferenceByUrl($crestTypeUrl);
-            } 
+}
             catch (Exception $e) 
             {
                 // fallback: Use generic item name

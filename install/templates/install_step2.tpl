@@ -53,26 +53,9 @@ Now let's see if you've got the FreeType library needed for painting TrueType (.
 {/if}
 
 <br/><div class="block-header2"><img src="{$conn_image}" border="0" alt=""> Connectivity</div>
-I will now test if your web server allows remote connections. This is needed for anything relating to the API, EVE-Central syncing, and using CCPs portrait generator.<br/>
+I will now test if your web server allows remote connections. This is needed for anything relating to the API and using CCPs portrait generator.<br/>
 <br/>
-<b>Let's start with fopen:</b><br/>
-{if $conn_fopen_exists}
-    allow_url_fopen is enabled, I will try to fetch the test file: '{$conn_url}'<br/>
-    {if $conn_fopen_success}
-	Seems to be ok, I got the file.<br/>
-    {else}
-	I couldn't get the file. This might be a firewall related issue or the eve-dev server is not available.<br/>
-    {/if}
-{else}
-    allow_url_fopen is disabled, nevertheless I will try a socket connect now.<br/>
-    {if $conn_http_success}
-	Seems to be ok, I got the file.<br/>
-    {else}
-	I couldn't get the file. This might be a firewall related issue or the eve-dev server is not available.<br/>
-    {/if}
-{/if}
-<br/>
-<b>Let's try cURL now; it's used for some sections of the killboard but if it's absent we fall back to fopen:</b><br/>
+<b>Let's test for cURL; it's required for posting kills</b><br/>
 {if $conn_curl_exists}
     cURL seems to be available, I will try to fetch the test file: '{$conn_url}'<br/>
     {if $conn_curl_success}

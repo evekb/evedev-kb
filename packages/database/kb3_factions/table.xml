@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<kb3>
+  <name>kb3_factions</name>
+  <rows>21</rows>
+  <structure>CREATE TABLE `kb3_factions` (
+  `factionID` int(11) NOT NULL,
+  `factionName` varchar(100) DEFAULT NULL,
+  `description` varchar(1000) DEFAULT NULL,
+  `raceIDs` int(11) DEFAULT NULL,
+  `solarSystemID` int(11) DEFAULT NULL,
+  `corporationID` int(11) DEFAULT NULL,
+  `sizeFactor` float DEFAULT NULL,
+  `stationCount` int(11) DEFAULT NULL,
+  `stationSystemCount` int(11) DEFAULT NULL,
+  `militiaCorporationID` int(11) DEFAULT NULL,
+  `iconID` int(11) DEFAULT NULL,
+  PRIMARY KEY (`factionID`),
+  KEY `factionName` (`factionName`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8</structure>
+</kb3>

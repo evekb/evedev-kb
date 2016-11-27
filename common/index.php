@@ -81,6 +81,7 @@ if(!defined('KB_SITE'))
 }
 
 require_once('common/includes/globals.php');
+require_once('common/esi/autoload.php');
 
 // Set the default encoding to UTF-8
 header('Content-Type: text/html; charset=UTF-8');

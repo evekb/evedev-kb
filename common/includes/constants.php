@@ -26,6 +26,8 @@ define('API_SERVER', "https://api.eveonline.com");
 define('IMG_SERVER', "https://imageserver.eveonline.com");
 /** base URL for connecting to public CREST endpoints */
 define('CREST_PUBLIC_URL', 'https://crest-tq.eveonline.com');
+/** data source for ESI calls */
+define('ESI_DATA_SOURCE', 'tranquility');
 
 /** 
  * current version: major.minor.sub.ccpDBupdateNo
@@ -41,7 +43,7 @@ define('KB_CCP_DB_DATE', 'Mar 16, 2017');
 /** the version of IDFeed used by this killboard, gets reported to clients */
 define('ID_FEED_VERSION', 1.50);
 /** the version of zKBFetch used by this killboard */
-define('ZKB_FETCH_VERSION', 1.1);
+define('ZKB_FETCH_VERSION', 1.2);
 /** flag indicating an API key is a legacy key */
 define('KB_APIKEY_LEGACY', 1);
 /** flag indicating an API key is a corp key */
@@ -52,3 +54,5 @@ define('KB_APIKEY_CHAR', 4);
 define('KB_APIKEY_BADAUTH', 8);
 /** flag indicating an API key is expired */
 define('KB_APIKEY_EXPIRED', 16);
+/** user agent */
+define('EDK_USER_AGENT', 'Eve Development Killboard '.KB_VERSION.', Forums: http://evekb.org/forum Contact: Salvoxia <salvoxia@blindfish.info>');

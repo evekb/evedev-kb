@@ -28,7 +28,7 @@ class DestroyedItem
      * @param Item $item
      * @param integer $quantity
      * @param integer $singleton
-         * * @param string|integer $location
+     * @param string|integer $location
      * @param integer $locationID
      */
     function __construct($item, $quantity, $singleton, $location, $locationID = 0)

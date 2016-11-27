@@ -6,6 +6,9 @@
  * @package EDK
  */
 
+use EsiClient\LiveApi;
+use EDK\ESI\ESI;
+
 /**
  * Creates a new Alliance or fetches an existing one from the database.
  * @package EDK
@@ -346,24 +349,32 @@ class Alliance extends Entity
      */
     private function fetchAlliance()
     {
-        if (!$this->getExternalID()) {
+        if (!$this->getExternalID()) 
+        {
             return false;
         }
-
-        $myID = new API_IDtoName();
-        $myID->setIDs($this->externalid);
-        $myID->fetchXML();
-        $myNames = $myID->getIDData();
-                
-                if(!isset($myNames[0]['name']))
-                {
-                    return false;
-                }
+        
+        // create EDK ESI client
+        $EdkEsi = new ESI();
+        $LiveApi = new LiveApi($EdkEsi);
+        
+        try
+        {
+            // only get the ESI character representation and the headers, we don't need the status code
+            $EsiAlliance = $LiveApi->getAlliancesAllianceId($this->getExternalID());
+        } 
+        
+        catch (ApiException $ex) 
+        {
+            return false;
+        }
+        
         // Use ::add to make sure names are updated in the db and clashes are fixed.
-        $alliance = Alliance::add($myNames[0]['name'],
-                        (int) $myNames[0]['characterID']);
-        $this->name = $alliance->name;
-                $this->id = $alliance->getID();
+        $Alliance = Alliance::add($EsiAlliance->getAllianceName(), (int) $this->getExternalID());
+        $this->name = $Alliance->getName();
+        $this->id = $Alliance->getID();
+        
+        return true;
     }
 
     /**

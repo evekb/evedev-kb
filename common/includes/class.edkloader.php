@@ -35,6 +35,23 @@ class edkloader
      */
     public static function load($name)
     {
+        // check for EsiClient-specific files
+        // project-specific namespace prefix
+        $prefix = 'EsiClient\\';
+        
+        // does the class use the namespace prefix?
+        $len = strlen($prefix);
+        if (strncmp($prefix, $name, $len) === 0) 
+        {
+            // get the relative class name
+            $relative_class = substr($name, $len);
+            $esiLibPath = self::$dir."common/esi/lib/EsiClient/".$relative_class.".php";
+            if(file_exists($esiLibPath)) 
+            {
+                require_once $esiLibPath;
+            }
+        }
+    
         $name = strtolower($name);
         $splitpos = strpos($name, "_");
 

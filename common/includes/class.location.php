@@ -166,7 +166,7 @@ class Location extends Cacheable
     {
             $qry = DBFactory::getDBQuery();
             $qry->execute("SELECT itemID FROM kb3_mapdenormalize "
-            ." WHERE itemID = '".$qry->escape($name)."'");
+            ." WHERE itemName = '".$qry->escape($name)."'");
 
             if (!$qry->recordCount()) {
                     return false;

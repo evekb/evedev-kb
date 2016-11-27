@@ -2,30 +2,37 @@
 
 $page = new Page('Post kill');
 
-if (isset($_POST['undelete']) && isset($_POST['kll_id']) && $page->isAdmin()) {
+if (isset($_POST['undelete']) && isset($_POST['kll_id']) && $page->isAdmin()) 
+{
     $kll_id = intval($_POST['kll_id']);
     $qry = DBFactory::getDBQuery();
     $qry->execute("DELETE FROM kb3_mails WHERE kll_id = ".$kll_id);
-    if (isset($_POST['submit']) && isset($_POST['killmail'])) {
+    if (isset($_POST['submit']) && isset($_POST['killmail'])) 
+    {
         $html = post();
     } 
-    elseif (isset($_POST['submit_crest']) && isset($_POST['crest_url'])) {
-                $html = post_crest();
+    elseif (isset($_POST['submit_crest']) && isset($_POST['crest_url'])) 
+    {
+        $html = post_crest();
     }
     else {
         $html = "Mail lock has been removed.";
     }
 }
-else {
-    if (isset($_POST['submit']) && isset($_POST['killmail'])) {
+else
+{
+    if (isset($_POST['submit']) && isset($_POST['killmail'])) 
+    {
         $html = post();
     }
-    elseif (isset($_POST['submit_crest']) && isset($_POST['crest_url'])) {
-                $html = post_crest();
+    elseif (isset($_POST['submit_crest']) && isset($_POST['crest_url'])) 
+    {
+        $html = post_crest();
     }
 }
 
-if (isset($html)) {
+if (isset($html)) 
+{
     $smarty->assign('error', $html);
 }
 
@@ -117,24 +124,43 @@ function post_crest()
     || config::get("post_crest_password") == ''
         || crypt($_POST['password_crest'], config::get("post_crest_password")) == config::get("post_crest_password")
         || $page->isAdmin()) {
-
-        $CrestParser = new CrestParser($_POST['crest_url']);
-        // Filtering
-
+        
+        // validate the CREST URL
+        $url = $_POST['crest_url'];
         try
         {
-            $killid = $CrestParser->parse(true);
-            logger::logKill($killid);
+            validateCrestUrl($url);
+        } 
+        
+        catch (Exception $e) 
+        {
+            // abort
+            $html .= $e->getMessage();
+            return $html;
         }
-        catch(CrestParserException $e) {
+        
+        $EsiParser = new EsiParser(extractKillId($url), extractKillHash($url));
+        try
+        {
+            $killId = $EsiParser->parse();
+            logger::logKill($killId);
+        }
+        catch (ApiException $e) 
+        {
+            // abort
+            $html .= $e->getMessage();
+            return $html;
+        }
+        catch(EsiParserException $e) 
+        {
             if($e->getCode() == -4 )
             {
-                $html = "That mail has been deleted. Kill id was ".$CrestParser->getDupeID();
+                $html = "That mail has been deleted. Kill id was ".$EsiParser->getDupeID();
                 if($page->isAdmin()) {
                     $html .= '<br />
                         <form id="postform" name="postform" class="f_killmail" method="post" action="'.KB_HOST.'/?a=post">
-                                <input type="hidden" name="crest_url" id="crest_url" value = "'.htmlentities($_POST['crest_url']).'"/>
-                                <input type="hidden" name="kll_id" id="kill_id" value = "'.$CrestParser->getDupeID().'"/>
+                                <input type="hidden" name="crest_url" id="crest_url" value = "'.htmlentities($url).'"/>
+                                <input type="hidden" name="kll_id" id="kill_id" value = "'.$EsiParser->getDupeID().'"/>
                                 <input type="hidden" name="undelete" id="undelete" value = "1"/>
                         <input id="submit_crest" name="submit_crest" type="submit" value="Undelete" />
                         </form>';
@@ -148,15 +174,63 @@ function post_crest()
             return $html;
         }
 
-        header("Location: ".html_entity_decode(edkURI::page('kill_detail',
-                                        $killid, 'kll_id')));
+        header("Location: ".html_entity_decode(edkURI::page('kill_detail', $killId, 'kll_id')));
         exit();
     } 
 
-    else {
+    else 
+    {
         $html = "Invalid password for posting a CREST link.";
     }
     return $html;
+}
+
+/**
+ * Validates, that the given URL is a well-formed CREST kill URL.
+ * If the URL fails validation, an exception is thrown
+ * @param type $url
+ * @throws \EsiParserException
+ */
+function validateCrestUrl($url)
+{
+    // should look like this:
+    // https://crest-tq.eveonline.com/killmails/30290604/787fb3714062f1700560d4a83ce32c67640b1797/
+    $urlPieces = explode("/", $url);
+    if(count($urlPieces) < 6 || 
+            substr($url, 0, strlen(CREST_PUBLIC_URL)) != CREST_PUBLIC_URL || 
+            $urlPieces[3] != "killmails" ||
+            !is_numeric($urlPieces[4]) ||
+            strlen($urlPieces[5]) != 40)
+    {
+
+        throw new Exception("Invalid CREST URL: ".$url);
+    }        
+}
+
+/**
+ * Extracts the kill ID from a well-formed CREST kill URL
+ * @param string $url a well-formed CREST kill URL
+ * @return int the kill ID
+ */
+function extractKillId($url)
+{
+    // should look like this:
+    // https://crest-tq.eveonline.com/killmails/30290604/787fb3714062f1700560d4a83ce32c67640b1797/
+    $urlPieces = explode("/", $url);
+    return (int)$urlPieces[4];
+}
+
+/**
+ * Extracts the hash from a well-formed CREST kill URL
+ * @param string $url a well-formed CREST kill URL
+ * @return string the kill hash
+ */
+function extractKillHash($url)
+{
+    // should look like this:
+    // https://crest-tq.eveonline.com/killmails/30290604/787fb3714062f1700560d4a83ce32c67640b1797/
+    $urlPieces = explode("/", $url);
+    return $urlPieces[5];
 }
 ?>
 

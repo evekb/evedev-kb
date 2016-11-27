@@ -249,6 +249,9 @@ class Ship extends Cacheable
             {
                 $this->squadronSize = (int) $row['squadronSize'];
             }
+            
+            // handle special ship values, e.g. alliance tournament ships
+            $this->value = ValueFetcherEsi::handleSpecialItemValues($this->id, $this->value);
 
             if ($this->id) {
                 $this->putCache();

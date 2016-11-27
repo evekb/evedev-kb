@@ -6,6 +6,9 @@
  * @package EDK
  */
 
+use EDK\ESI\ESI;
+use EsiClient\LiveApi;
+use Swagger\Client\ApiException;
 /**
  * Creates a new Pilot or fetches an existing one from the database.
  * @package EDK
@@ -73,24 +76,25 @@ class Pilot extends Entity
      */
     public function getExternalID($populateList = false)
     {
-                // sanity-check: don't return external IDs that clearly aren't characterIDs (but might be typeIDs)
-                // player characters are above 90M, Drifters are above 3M
-                if(is_numeric($this->externalid) && $this->externalid > 0 && $this->externalid < 3000000)
-                {
-                    return 0;
-                }
+        // sanity-check: don't return external IDs that clearly aren't characterIDs (but might be typeIDs)
+        // player characters are above 90M, Drifters are above 3M
+        if(is_numeric($this->externalid) && $this->externalid > 0 && $this->externalid < 3000000)
+        {
+            return 0;
+        }
         if ($this->externalid) {
             return $this->externalid;
         }
         if (!$populateList) {
             $this->execQuery();
-                        // sanity-check: don't return external IDs that clearly aren't characterIDs (but might be typeIDs)
-                        // player characters are above 90M, Drifters are above 3M
-                        if(is_numeric($this->externalid) && $this->externalid < 3000000)
-                        {
-                            return 0;
-                        }
-            if ($this->externalid) {
+            // sanity-check: don't return external IDs that clearly aren't characterIDs (but might be typeIDs)
+            // player characters are above 90M, Drifters are above 3M
+            if(is_numeric($this->externalid) && $this->externalid < 3000000)
+            {
+                return 0;
+            }
+            if ($this->externalid) 
+            {
                 return $this->externalid;
             }
 
@@ -499,32 +503,29 @@ class Pilot extends Entity
      */
     private function fetchPilot()
     {
-        if (!$this->externalid) {
+        if (!$this->externalid) 
+        {
             return false;
         }
-            $apiInfo = new API_CharacterInfo();
-            $apiInfo->setID($this->externalid);
-            $result = $apiInfo->fetchXML();
-
-            if($result == "") {
-                $data = $apiInfo->getData();
-                if(isset($data['alliance']) && isset($data['allianceID']))
-                                {
-                                    $this->alliance = Alliance::add($data['alliance'], $data['allianceID']);
-                                }
-                                else {
-                                    $this->alliance = Alliance::add('None');
-                                }
-                                
-                $this->corp = Corporation::add($data['corporation'],
-                    $this->alliance, $apiInfo->getCurrentTime(),
-                    $data['corporationID']);
-                $this->name = $data['characterName'];
-                $Pilot = Pilot::add($data['characterName'], $this->corp, $apiInfo->getCurrentTime(), $data['characterID']);
-                                $this->id = $Pilot->getID();
-            } else {
-                return false;
-            }
+        
+        // create EDK ESI client
+        $EdkEsi = new ESI();
+        $LiveApi = new LiveApi($EdkEsi);
+        
+        try
+        {
+            // only get the ESI character representation and the headers, we don't need the status code
+            list($EsiCharacter, , $headers) = $LiveApi->getCharactersCharacterIdWithHttpInfo($this->externalid, $EdkEsi->getDataSource());
+        } 
+        
+        catch (ApiException $ex) 
+        {
+            return false;
+        }
+        $this->name = $EsiCharacter->getName();
+        $this->corp = new Corporation($EsiCharacter->getCorporationId(), true);
+        $Pilot = Pilot::add($this->name, $this->corp, ESI_Helpers::formatRFC7231Timestamp($headers['Last-Modified']), $this->externalid);
+        $this->id = $Pilot->getID();
     }
 
     /**
@@ -536,5 +537,32 @@ class Pilot extends Entity
     static function getByID($id)
     {
         return Cacheable::factory(get_class(), $id);
+    }
+    
+    /**
+     * Gets a pilot by his external ID. Will fetch from cache if enabled.
+     *
+     * @param mixed $externalId ID to fetch $id
+     * @return \Pilot the pilot, if found
+     */
+    static function getByExternalID($externalId)
+    {
+        $getIdByExternalId = new DBPreparedQuery();
+        $getIdByExternalId->prepare('SELECT plt_id FROM kb3_pilots WHERE plt_externalid = ?');
+        $pilotId = NULL;
+        $arr = array(&$pilotId);
+        $getIdByExternalId->bind_results($arr);
+        $types = 'i';
+        $arr2 = array(&$types, &$externalId);
+        $getIdByExternalId->bind_params($arr2);
+
+        $getIdByExternalId->execute();
+        if($getIdByExternalId->recordCount() > 0)
+        {
+            $getIdByExternalId->fetch();
+            return Cacheable::factory(get_class(), $pilotId);
+        }
+
+        return NULL;
     }
 }

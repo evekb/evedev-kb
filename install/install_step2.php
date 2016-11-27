@@ -44,7 +44,7 @@ if (file_exists('../kbconfig.php'))
 }
 
 //PHP version check
-$php_ok = phpversion() >= "5";
+$php_ok = version_compare(phpversion(), '5.4.0', '>=');
 $mysqli_ok = function_exists("mysqli_connect");
 
 $smarty->assign("php_ok", $php_ok);
@@ -138,11 +138,20 @@ if (function_exists('curl_init')) {
     $content = curl_exec($ch);
     curl_close($ch);
 
-    if($content) {
+    if($content) 
+        {
         $smarty->assign('conn_curl_success', true);
     }
+        else 
+        {
+            $stoppage = true;
+        }
 }
-
+// cURL is now requiured for using generated ESI libraries
+else 
+{
+    $stoppage = true;
+}
 $smarty->assign('stoppage', $stoppage);
 $smarty->assign('nextstep', $_SESSION['state']+1);
 $smarty->display('install_step2.tpl');

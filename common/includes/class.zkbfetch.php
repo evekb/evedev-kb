@@ -3,6 +3,7 @@
 /**
  * @package EDK
  */
+use Swagger\Client\ApiException;
 
 class ZKBFetchException extends Exception {}
 /**
@@ -583,14 +584,19 @@ class ZKBFetch
         }
         $Kill->setSolarSystem($solarSystem);
 
-
-        $CrestParser = new CrestParser($Kill->getCrestUrl());
-        $CrestParser->setAllowNpcOnlyKills(!$this->ignoreNPCOnly);
+        $EsiParser = new \EsiParser($Kill->getExternalID(), $Kill->getCrestHash());
+        $EsiParser->setAllowNpcOnlyKills(!$this->ignoreNPCOnly);
         try
         {
-            $killId = $CrestParser->parse(true);
+            $killId = $EsiParser->parse();
         } 
-        catch (CrestParserException $e) 
+        catch(ApiExtection $e)
+        {
+            $this->skipped[] = $killData->killID;
+            throw new ZKBFetchException($e->getMessage().", KillID = ".$killData->killID);
+        }
+        
+        catch (EsiParserException $e) 
         {
             // CREST error due to incorrect CREST hash
             if($e->getCode() == 403)
@@ -605,7 +611,7 @@ class ZKBFetch
                 else
                 {
                     $this->skipped[] = $killData->killID;
-                    throw new ZKBFetchException($e->getMessage().", KillID = ".$killData->killID);
+                    throw new ZKBFetchException($e->getMessage());
                 }
             }
             // tried posting an NPC only kill when not allowed
