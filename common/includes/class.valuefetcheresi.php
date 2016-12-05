@@ -1,7 +1,7 @@
 <?php
 
 use EDK\ESI\ESI;
-use EsiClient\LiveApi;
+use EsiClient\MarketApi;
 use Swagger\Client\ApiException;
 /**
  * Value fetcher for ESI
@@ -29,10 +29,10 @@ class ValueFetcherEsi
 
         // fetch and decode JSON
         $EsiClient = new ESI();
-        $LiveApi = new LiveApi($EsiClient);
+        $MarketApi = new MarketApi($EsiClient);
         try
         {
-            $MarketPrices = $LiveApi->getMarketsPrices($EsiClient->getDataSource());
+            $MarketPrices = $MarketApi->getMarketsPrices($EsiClient->getDataSource());
         } 
         
         catch (ApiException $ex) {

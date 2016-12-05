@@ -1,7 +1,7 @@
 <?php
 
 use EDK\ESI\ESI;
-use EsiClient\LiveApi;
+use EsiClient\UniverseApi;
 use Swagger\Client\Model\PostUniverseNamesIds;
 
 /**
@@ -20,11 +20,11 @@ class ESI_Helpers
     {
         // create EDK ESI client
         $EdkEsi = new ESI();
-        $LiveApi = new LiveApi($EdkEsi);
+        $UniverseApi = new UniverseApi($EdkEsi);
         
         try 
         {
-            $typeInfo = $LiveApi->getUniverseTypesTypeId($typeId, $EdkEsi->getDataSource());
+            $typeInfo = $UniverseApi->getUniverseTypesTypeId($typeId, $EdkEsi->getDataSource());
         } 
         catch (ApiException $e) 
         {
@@ -205,14 +205,14 @@ class ESI_Helpers
     {
         // create ESI client
         $EdkEsi = new ESI();
-        $LiveApi = new LiveApi($EdkEsi);
+        $UniverseApi = new UniverseApi($EdkEsi);
         
         // wrap IDs into container
         $EsiUniverseIds = new PostUniverseNamesIds();
         $EsiUniverseIds->setIds($entityIds);
         
         // resolve IDs to names
-        $EsiUniverseNames = $LiveApi->postUniverseNames($EsiUniverseIds, $EdkEsi->getDataSource());
+        $EsiUniverseNames = $UniverseApi->postUniverseNames($EsiUniverseIds, $EdkEsi->getDataSource());
         
         // create mapping
         $idNameMapping = array();

@@ -7,7 +7,8 @@
  */
 
 use EDK\ESI\ESI;
-use EsiClient\LiveApi;
+use EsiClient\CharacterApi;
+use EsiClient\SearchApi;
 use Swagger\Client\ApiException;
 /**
  * Creates a new Pilot or fetches an existing one from the database.
@@ -301,8 +302,9 @@ class Pilot extends Entity
     public static function add($name, $corp, $timestamp, $externalID = 0,
             $loadExternals = true)
     {
-        if (!$name) {
-            trigger_error("Attempt to add a pilot with no name. Aborting.", E_USER_ERROR);
+        if (!$name && !$externalID) 
+        {
+            trigger_error("Attempt to add a pilot with no name and no external ID. Aborting.", E_USER_ERROR);
             // If things are going this wrong, it's safer to die and prevent more harm
             die;
         } else if (!$corp->getID()) {
@@ -313,7 +315,43 @@ class Pilot extends Entity
         // Check if pilot exists with a non-cached query.
         $qry = DBFactory::getDBQuery(true);
         $name = stripslashes($name);
-                $mysqlTimestamp = toMysqlDateTime($timestamp);
+        $mysqlTimestamp = toMysqlDateTime($timestamp);
+        
+        // first check whether this pilot already exists by external ID
+        if($externalID > 0)
+        {
+            $externalID = (int)$externalID;
+            $Pilot = self::getByExternalID($externalID);
+            if(!is_null($Pilot))
+            {
+                // check if we can update this pilot
+                if($Pilot->isUpdatable($timestamp))
+                {
+                    $updatePilot = new DBPreparedQuery();
+                    $updatePilot->prepare('UPDATE kb3_pilots SET plt_name = ?, plt_crp_id = ?, plt_updated = ? WHERE plt_externalid = ?');
+                    $types = 'sssi';
+                    $corpID = $corp->getID();
+                    $arr = array(&$types, &$name, &$corpID, &$mysqlTimestamp, &$externalID);
+                    $updatePilot->bind_params($arr);
+                    $updatePilot->execute();
+                    
+                    Cacheable::delCache($Pilot);
+                    return new Pilot($Pilot->getID());
+                }
+                
+                return $Pilot;
+            }
+            
+            // we need to fetch this Pilot from the API
+            else if($loadExternals)
+            {
+                $Pilot = new Pilot(0, $externalID);
+                $Pilot->fetchPilot();
+                $Pilot->putCache();
+                return $Pilot;                
+            }
+        }
+        
         // Insert or update a pilot with a cached query to update cache.
         $qryI = DBFactory::getDBQuery(true);
         $qry->execute("SELECT * FROM kb3_pilots WHERE plt_name = '".$qry->escape($name)."'");
@@ -321,25 +359,29 @@ class Pilot extends Entity
         if (!$qry->recordCount()) {
             $externalID = (int)$externalID;
             // If no external id is given then look it up.
-            if (!$externalID && $loadExternals) {
-                $myID = new API_NametoID();
-                $myID->setNames($name);
-                $myID->fetchXML();
-                $myNames = $myID->getNameData();
-                $externalID = (int)$myNames[0]['characterID'];
+            if (!$externalID && $loadExternals) 
+            {
+                $EdkEsi = new ESI();
+                $SearchApi = new SearchApi($EdkEsi);
+                $charactersMatching = $SearchApi->getSearch($name, array('character'), null, true, $EdkEsi->getDataSource());
+                
+                if(count($charactersMatching) == 1)
+                {
+                    $externalID = $charactersMatching->getCharacter();
+                }
             }
             // If we have an external id then check it isn't already in use.
             // If we find it then update the old corp with the new name and
             // return.
-            if ($externalID) {
-                $qry->execute("SELECT * FROM kb3_pilots WHERE plt_externalid = "
-                        .$externalID);
-                if ($qry->recordCount()) {
-                    $row = $qry->getRow();
-                    $pilot = Pilot::getByID($row['plt_id']);
+            if ($externalID) 
+            {
+                $pilot = self::getByExternalID($externalID);
+                if ($pilot)
+                {
                     $qryI->execute("UPDATE kb3_pilots SET plt_name = '".$qry->escape($name)
                             ."' WHERE plt_externalid = ".$externalID);
-                    if ($qryI->affectedRows() > 0) {
+                    if ($qryI->affectedRows() > 0) 
+                    {
                         Cacheable::delCache($pilot);
                     }
                     $qryI->execute("UPDATE kb3_pilots SET plt_crp_id = "
@@ -410,7 +452,7 @@ class Pilot extends Entity
         $qry->execute("select plt_id
                         from kb3_pilots
                        where plt_id = ".$this->id."
-                         and ( plt_updated < '".$timestamp."')
+                         and ( plt_updated < '".$timestamp."'
                                or plt_updated is null )");
 
         return $qry->recordCount() == 1;
@@ -510,7 +552,7 @@ class Pilot extends Entity
         
         // create EDK ESI client
         $EdkEsi = new ESI();
-        $LiveApi = new LiveApi($EdkEsi);
+        $LiveApi = new CharacterApi($EdkEsi);
         
         try
         {
@@ -524,7 +566,7 @@ class Pilot extends Entity
         }
         $this->name = $EsiCharacter->getName();
         $this->corp = new Corporation($EsiCharacter->getCorporationId(), true);
-        $Pilot = Pilot::add($this->name, $this->corp, ESI_Helpers::formatRFC7231Timestamp($headers['Last-Modified']), $this->externalid);
+        $Pilot = Pilot::add($this->name, $this->corp, ESI_Helpers::formatRFC7231Timestamp($headers['Last-Modified']), $this->externalid, false);
         $this->id = $Pilot->getID();
     }
 

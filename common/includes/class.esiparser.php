@@ -450,12 +450,12 @@ class EsiParser
         
         if(isset($victimName))
         {
-            $Pilot = Pilot::add($victimName, $Corp, $timestamp, $characterId);
+            $Pilot = Pilot::add($victimName, $Corp, $timestamp, $characterId, false);
         }
         
         else
         {
-            $Pilot = Pilot::add($this->idNameMapping[$characterId], $Corp, $timestamp, $characterId);
+            $Pilot = Pilot::add($this->idNameMapping[$characterId], $Corp, $timestamp, $characterId, false);
         }
 
         // handle victim's ship
@@ -600,10 +600,6 @@ class EsiParser
             }
                 
             // victim's name
-
-            
-            $loadPilotExternals = true;
-
             // Fix for case that involved party is an actual pilot without corp
             // FoxFour is to blame!
             if(null !== $characterId && null === $corporationId)
@@ -630,17 +626,16 @@ class EsiParser
                     $isNPC = TRUE;
                 }
                 $characterId = 0;
-                $loadPilotExternals = false;
             }
                   
             if(!$characterId)
             {
-                $Pilot = Pilot::add($involvedPartyName, $Corp, $timestamp, $characterId, $loadPilotExternals);
+                $Pilot = Pilot::add($involvedPartyName, $Corp, $timestamp, $characterId, false);
             }
             
             else
             {
-                $Pilot = \Pilot::add($this->idNameMapping[$characterId], $Corp, $timestamp, $characterId);
+                $Pilot = \Pilot::add($this->idNameMapping[$characterId], $Corp, $timestamp, $characterId, false);
             }
 
             // create involvedParty

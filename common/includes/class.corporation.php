@@ -7,7 +7,7 @@
  */
 
 use EDK\ESI\ESI;
-use EsiClient\LiveApi;
+use EsiClient\CorporationApi;
 
 
 /**
@@ -436,12 +436,12 @@ class Corporation extends Entity
         
         // create EDK ESI client
         $EdkEsi = new ESI();
-        $LiveApi = new LiveApi($EdkEsi);
+        $CorporationApi = new CorporationApi($EdkEsi);
         
         try
         {
             // only get the ESI corp representation and the headers, we don't need the status code
-            list($EsiCorp, , $headers) = $LiveApi->getCorporationsCorporationIdWithHttpInfo($this->externalid);
+            list($EsiCorp, , $headers) = $CorporationApi->getCorporationsCorporationIdWithHttpInfo($this->externalid);
         } 
         
         catch (ApiException $ex) 

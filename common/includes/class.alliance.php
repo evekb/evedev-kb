@@ -6,7 +6,7 @@
  * @package EDK
  */
 
-use EsiClient\LiveApi;
+use EsiClient\AllianceApi;
 use EDK\ESI\ESI;
 
 /**
@@ -356,12 +356,12 @@ class Alliance extends Entity
         
         // create EDK ESI client
         $EdkEsi = new ESI();
-        $LiveApi = new LiveApi($EdkEsi);
+        $AllianceApi = new AllianceApi($EdkEsi);
         
         try
         {
             // only get the ESI character representation and the headers, we don't need the status code
-            $EsiAlliance = $LiveApi->getAlliancesAllianceId($this->getExternalID());
+            $EsiAlliance = $AllianceApi->getAlliancesAllianceId($this->getExternalID());
         } 
         
         catch (ApiException $ex) 
