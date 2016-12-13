@@ -16,7 +16,7 @@ define('KB_CACHEDIR', 'cache');
 define('KB_PAGECACHEDIR', KB_CACHEDIR . '/page');
 /** path to mail cache folder for caching killmails, relative to EDK root */
 define('KB_MAILCACHEDIR', KB_CACHEDIR . '/mails');
-/** path to SQL query cache folder, realtive to EDK root */
+/** path to SQL query cache folder, relative to EDK root */
 define('KB_QUERYCACHEDIR', KB_CACHEDIR . '/SQL');
 /** URL where to find EDK update information */
 define('KB_UPDATE_URL', 'http://evekb.org/downloads');
@@ -31,13 +31,13 @@ define('CREST_PUBLIC_URL', 'https://crest-tq.eveonline.com');
  * current version: major.minor.sub.ccpDBupdateNo
  * even numbers for minor = development version
  */
-define('KB_VERSION', '4.2.28.0');
+define('KB_VERSION', '4.2.29.0');
 /** release name */
-define('KB_RELEASE', '(Ascension 1.0)');
+define('KB_RELEASE', '(YC-118-10 1.0)');
 /** version of the SDE used to produce the current static database */
-define('KB_CCP_DB_VERSION', '20161114');
+define('KB_CCP_DB_VERSION', '20161213');
 /** release date of the SDE used to produce the current static database */
-define('KB_CCP_DB_DATE', 'Nov 14, 2016');
+define('KB_CCP_DB_DATE', 'Dec 13, 2016');
 /** the version of IDFeed used by this killboard, gets reported to clients */
 define('ID_FEED_VERSION', 1.50);
 /** the version of zKBFetch used by this killboard */
