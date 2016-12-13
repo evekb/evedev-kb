@@ -128,7 +128,7 @@ class ZKBFetch
         $fetchParams = new DBPreparedQuery();
         $fetchParams->prepare('INSERT INTO kb3_zkbfetch (`url`, `lastKillTimestamp`) VALUES (?, ?)');
         $types = 'ss';
-        $timeString = strftime('%Y-%m-%d %H:%M:%S', $this->lastKillTimestamp);
+        $timeString = strftime('%Y-%m-%d %H:00', $this->lastKillTimestamp);
         $arr2 = array(&$types, &$this->url, &$timeString);
         $fetchParams->bind_params($arr2);
 
@@ -233,7 +233,7 @@ class ZKBFetch
         {
             return;
         }
-        $timeString = strftime('%Y-%m-%d %H:%M:%S', $this->lastKillTimestamp);
+        $timeString = strftime('%Y-%m-%d %H:00', $this->lastKillTimestamp);
         $updateParams = new DBPreparedQuery();
         $updateParams->prepare('UPDATE kb3_zkbfetch SET lastKillTimestamp = ? WHERE fetchID = ?');
         $types = 'si';
@@ -329,7 +329,7 @@ class ZKBFetch
         if(strpos($this->fetchUrl, 'startTime') === FALSE && !is_null($this->lastKillTimestamp) && strlen(trim($this->lastKillTimestamp) > 0)
                 && strpos($this->fetchUrl, 'killID') === FALSE)
         {
-            $timestampFormattedForZkb = strftime("%Y%m%d%H%M", $this->lastKillTimestamp);
+            $timestampFormattedForZkb = strftime("%Y%m%d%H00", $this->lastKillTimestamp);
             $this->fetchUrl .= "startTime/$timestampFormattedForZkb/orderDirection/asc/";
         }
 
