@@ -12,13 +12,14 @@
 // include the base class providing all context data
 require_once('cron.base.php');
 
-$cronStartTime = microtime(true);
-logCron("Starting API Import");
-
 // load mods
 $page = 'cron_api';
 event::setCron(TRUE);
 loadMods($page);
+
+$cronStartTime = microtime(true);
+logCron("Starting API Import");
+
 
 $myEveAPI = new API_KillLog();
 $myEveAPI->iscronjob_ = true;

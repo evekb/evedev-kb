@@ -11,13 +11,13 @@
 // include the base class providing all context data
 require_once('cron.base.php');
 
-logCron("Starting IDFeed Import");
-$cronStartTime = microtime(true);
-
 // load mods
 $page = 'idfeedsyndication';
 event::setCron(TRUE);
 loadMods($page);
+
+logCron("Starting IDFeed Import");
+$cronStartTime = microtime(true);
 
 // get all configured feeds
 $feeds = config::get("fetch_idfeeds");

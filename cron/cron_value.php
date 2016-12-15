@@ -11,13 +11,13 @@
 // include the base class providing all context data
 require_once('cron.base.php');
 
-$cronStartTime = microtime(true);
-logCron("Starting CREST item value update");
-
 // load mods
 $page = 'crestValueFetch';
 event::setCron(TRUE);
 loadMods($page);
+
+$cronStartTime = microtime(true);
+logCron("Starting CREST item value update");
 
 // get the configured CREST URL
 $url = config::get('itemPriceCrestUrl');
