@@ -26,6 +26,8 @@ class Ship extends Cacheable
 	private $shipisfaction = null;
 	/** @var float */
 	private $value = 0;
+    /** @var integer squadron size for this ship (only differs from one for fighters) */
+    private $squadronSize = 1;
 
 	/**
 	 * Construct the Ship object.
@@ -175,6 +177,20 @@ class Ship extends Cacheable
 		}
 		return $this->value;
 	}
+    
+    /**
+     * Return the number of ships for a full squadron of this kind of Ships.
+     * @return integer 
+     */
+    function getSquadronSize()
+    {
+        if(!$this->executed)
+        {
+            $this->execQuery();
+        }
+        
+        return $this->squadronSize;
+    }
 
 	/**
 	 * Set the name of this ship.
@@ -213,11 +229,12 @@ class Ship extends Cacheable
 
 			$qry = DBFactory::getDBQuery();
 
-			$sql = "SELECT typeName, shp_id, shp_class, basePrice, price FROM kb3_ships
-						   INNER JOIN kb3_invtypes ON typeID=shp_id";
-			$sql .= " NATURAL LEFT JOIN kb3_item_price";
+			$sql = "SELECT typeName, shp_id, shp_class, basePrice, price, ds.value as squadronSize FROM kb3_ships s
+                        INNER JOIN kb3_invtypes it ON it.typeID = s.shp_id";
+			$sql .= " LEFT JOIN kb3_item_price p on p.typeID = s.shp_id";
+            $sql .= " LEFT JOIN kb3_dgmtypeattributes ds on ds.typeID = s.shp_id and ds.attributeID = ".Item::$ATTRIBUTE_ID_FIGHTER_SQUADRON_MAX_SIZE;
 			$sql .= " WHERE shp_id = ".$this->id;
-
+            
 			$qry->execute($sql);
 			$row = $qry->getRow();
 			$this->shipname = $row['shp_id'] ? $row['typeName'] : "Unknown";
@@ -227,6 +244,11 @@ class Ship extends Cacheable
 			if (!$this->value = (float) $row['price']) {
 				$this->value = (float) $row['basePrice'];
 			}
+            
+            if((int) $row['squadronSize'] > 0)
+            {
+                $this->squadronSize = (int) $row['squadronSize'];
+            }
 
 			if ($this->id) {
 				$this->putCache();

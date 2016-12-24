@@ -897,7 +897,7 @@ class pKillDetail extends pageAssembly
 		}
 
 		// Get Ship Value
-		$this->ShipValue = $this->kill->getVictimShip()->getPrice();
+		$this->ShipValue = $this->kill->getVictimShip()->getPrice() * $this->kill->getVictimShip()->getSquadronSize();
 
 		if (config::get('kd_droptototal')) {
 			$this->totalValue += $this->dropvalue;

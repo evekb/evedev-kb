@@ -11,14 +11,18 @@
  * @package EDK
  */
 class Item extends Cacheable
-{
+{       
+    /** @var int attribute ID holding the maximum size of a fighter squadron
+     */
+    public static $ATTRIBUTE_ID_FIGHTER_SQUADRON_MAX_SIZE = 2215;
+    
 	private $executed = false;
 	private $id = 0;
 	private $row_ = null;
-        private $slotId = 0;
-        
-        /** @param int category ID indicating this item is a drone */
-        public static $CATEGORY_ID_DRONE = 18;
+    private $slotId = 0;
+
+    /** @var int category ID indicating this item is a drone */
+    public static $CATEGORY_ID_DRONE = 18;
         
 	/**
 	 * Construct a new Item.
