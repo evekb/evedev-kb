@@ -127,6 +127,22 @@ class pCampaignList extends pageAssembly
 	{
 		$this->menuOptions[] = array($type, $name, $url);
 	}
+    
+    /**
+    * Removes the menu item with the given name
+    * 
+    * @param string $name the name of the menu item to remove
+    */
+   function removeMenuItem($name)
+   {
+       foreach((array)$this->menuOptions AS $menuItem)
+       {
+           if(count($menuItem) > 1 && $menuItem[1] == $name)
+           {
+               unset($this->menuOptions[key($this->menuOptions)]);
+           }
+       }
+   }
 
 	/**
 
@@ -139,24 +155,6 @@ class pCampaignList extends pageAssembly
 	function addView($view, $callback)
 	{
 		$this->viewList[$view] = $callback;
-	}
-
-	/**
-	 * Return the set month.
-	 * @return integer
-	 */
-	function getMonth()
-	{
-		return $this->month;
-	}
-
-	/**
-	 * Return the set year.
-	 * @return integer
-	 */
-	function getYear()
-	{
-		return $this->year;
 	}
 
 	/**

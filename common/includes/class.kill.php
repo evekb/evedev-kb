@@ -32,8 +32,8 @@ class Kill extends Cacheable
 	 * @var integer
 	 */
 	private $externalid = null;
-        /** @var string the crest hash for this kill */
-        private $crestHash = null;
+    /** @var string the crest hash for this kill */
+    private $crestHash = null;
 	public $involvedparties_ = array();
 	public $destroyeditems_ = array();
 	public $droppeditems_ = array();
@@ -59,15 +59,15 @@ class Kill extends Cacheable
 	private $executed = false;
 	private $involvedcount = null;
 	private $valid = null;
-        private $xCoordinate = null;
-        private $yCoordinate = null;
-        private $zCoordinate = null;
-        /**
-         * the nearest location for this kill
-         * @var Location 
-         */
-        private $nearestCelestial = null;
-        private $distanceToNearestCelestial = null;
+    private $xCoordinate = null;
+    private $yCoordinate = null;
+    private $zCoordinate = null;
+    /**
+     * the nearest location for this kill
+     * @var Location 
+     */
+    private $nearestCelestial = null;
+    private $distanceToNearestCelestial = null;
 
 	/**
 	 * @param integer $id The ID for this kill
@@ -501,7 +501,7 @@ class Kill extends Cacheable
 	 */
 	function getVictimShipValue()
 	{
-		return $this->getVictimShip()->getPrice();
+		return $this->getVictimShip()->getPrice() * $this->getVictimShip()->getSquadronSize();
 	}
 
 	/**
@@ -1410,7 +1410,8 @@ class Kill extends Cacheable
 				if(strpos($item->getName(), "Blueprint") === FALSE) $value += $itd->getValue() * $itd->getQuantity();
 			}
 		}
-		$value += $this->getVictimShip()->getPrice();
+        // respect squadron size for fighters, since a lost fighter killmail means a whole dead squadron
+		$value += $this->getVictimShip()->getPrice() * $this->getVictimShip()->getSquadronSize();
 		if($update) {
 			$qry = DBFactory::getDBQuery();
 			$qry->execute("UPDATE kb3_kills SET kll_isk_loss = '$value' WHERE
@@ -1874,15 +1875,16 @@ class Kill extends Cacheable
 
 		$qry = DBFactory::getDBQuery();
 		if(@$qry->execute("UPDATE kb3_kills SET kll_external_id = ".
-				$this->externalid." WHERE kll_id = ".$this->id)) {
+				$this->externalid." WHERE kll_id = ".$this->id)) 
+        {
 			$qry->execute("UPDATE kb3_mails SET kll_external_id = ".
 					$this->externalid.", kll_modified_time = UTC_TIMESTAMP()".
 					" WHERE kll_id = ".$this->id.
 					" AND kll_external_id IS NULL");
 
-				$this->externalid = $extID;
-				$this->putCache();
-			}
+            $this->externalid = $extID;
+            $this->putCache();
+        }
 	}
         
         /**
@@ -1892,44 +1894,45 @@ class Kill extends Cacheable
 	 */
 	function getCrestHash()
 	{
-		if(is_null($this->crestHash) && $this->id) {
+		if(is_null($this->crestHash) && $this->id)
+        {
 		    $qry = new DBPreparedQuery();
-                    $qry->prepare('SELECT kll_crest_hash FROM kb3_mails WHERE kll_id = ?');
+            $qry->prepare('SELECT kll_crest_hash FROM kb3_mails WHERE kll_id = ?');
 
-                    $resultArray = array(
-                        &$this->crestHash
-                    );
-                    // bind results
-                    $qry->bind_results($resultArray);
+            $resultArray = array(
+                &$this->crestHash
+            );
+            // bind results
+            $qry->bind_results($resultArray);
 
-                    // bind parameter
-                    $params = array('i', &$this->id);
-                    $qry->bind_params($params);
-                    $qry->execute();
-                    if($qry->recordCount())
-                    {
-                        $qry->fetch();
-                    }
-                }
-                
-                // kill has not been posted via CREST
-                if(!$this->crestHash)
-                {
-                     // calculate the crest hash
-                    $this->crestHash = $this->calculateCrestHash();
-                    // if successfully calculated
-                    if($this->crestHash)
-                    {
-                        // update the crest hash in the database
-                        // let's not do this just yet, first need to be sure it's working properly
-                        //$this->updateCrestHash($this->crestHash);
-                    }
-                }
-                
-                if($this->crestHash)
-                {
-                    $this->putCache();
-                }
+            // bind parameter
+            $params = array('i', &$this->id);
+            $qry->bind_params($params);
+            $qry->execute();
+            if($qry->recordCount())
+            {
+                $qry->fetch();
+            }
+        }
+
+        // kill has not been posted via CREST
+        if(!$this->crestHash)
+        {
+             // calculate the crest hash
+            $this->crestHash = $this->calculateCrestHash();
+            // if successfully calculated
+            if($this->crestHash)
+            {
+                // update the crest hash in the database
+                // let's not do this just yet, first need to be sure it's working properly
+                //$this->updateCrestHash($this->crestHash);
+            }
+        }
+
+        if($this->crestHash && $this->id)
+        {
+            $this->putCache();
+        }
 		
 		return $this->crestHash;
 	}
@@ -1943,181 +1946,181 @@ class Kill extends Cacheable
 	function getCrestUrl()
 	{
 		if(is_null($this->externalid)) 
-                {
-                    $this->execQuery();
+        {
+            $this->execQuery();
 		}
 
-                if($this->getCrestHash() && !is_null($this->externalid))
-                {
-                    return CREST_PUBLIC_URL . self::$CREST_KILLMAIL_ENDPOINT . $this->externalid.'/'.$this->getCrestHash().'/';
-                }
-                return NULL;
+        if($this->getCrestHash() && !is_null($this->externalid))
+        {
+            return CREST_PUBLIC_URL . self::$CREST_KILLMAIL_ENDPOINT . $this->externalid.'/'.$this->getCrestHash().'/';
+        }
+        return NULL;
 	}
         
-        /**
-         * sets the kill's CREST hash
-         * @param string $crestHash
-         */
-        function setCreshHash($crestHash)
+    /**
+     * sets the kill's CREST hash
+     * @param string $crestHash
+     */
+    function setCrestHash($crestHash)
 	{
 		$this->crestHash = $crestHash;
 	}
         
-        /**
-         * returns the xCoordinate
-         * @return float the x coordinate of the kill
-         */
-        public function getXCoordinate()
+    /**
+     * returns the xCoordinate
+     * @return float the x coordinate of the kill
+     */
+    public function getXCoordinate()
+    {
+        if(!isset($this->xCoordinate)) 
         {
-            if(!isset($this->xCoordinate)) 
-            {
-                    $this->execQuery();
-            }
-            return $this->xCoordinate;
+                $this->execQuery();
         }
+        return $this->xCoordinate;
+    }
         
-        /**
-         * returns the yCoordinate
-         * @return float the y coordinate of the kill
-         */
-        public function getYCoordinate()
+    /**
+     * returns the yCoordinate
+     * @return float the y coordinate of the kill
+     */
+    public function getYCoordinate()
+    {
+        if(!isset($this->yCoordinate)) 
         {
-            if(!isset($this->yCoordinate)) 
+                $this->execQuery();
+        }
+        return $this->yCoordinate;
+    }
+
+    /**
+     * returns the zCoordinate
+     * @return float the z coordinate of the kill
+     */
+    public function getZCoordinate()
+    {
+        if(!isset($this->zCoordinate)) 
+        {
+                $this->execQuery();
+        }
+        return $this->zCoordinate;
+    }
+
+    /** 
+     * sets the kill's x coordinate
+     * @param mixed $xCoordinate the kill's x coordinate, will be interpreted as float
+     */
+    public function setXCoordinate($xCoordinate)
+    {
+        $this->xCoordinate = $xCoordinate;
+    }
+
+    /** 
+     * sets the kill's y coordinate
+     * @param mixed $yCoordinate the kill's y coordinate, will be interpreted as float
+     */
+    public function setYCoordinate($yCoordinate)
+    {
+        $this->yCoordinate = $yCoordinate;
+    }
+
+    /** 
+     * sets the kill's z coordinate
+     * @param mixed $zCoordinate the kill's z coordinate, will be interpreted as float
+     */
+    public function setZCoordinate($zCoordinate)
+    {
+        $this->zCoordinate = $zCoordinate;
+    }
+
+    /**
+     * gets the name of the nearest celestial the kill happened
+     * @return string the name of the nearest celestial the kill happened at, or an empty string if no coordinates are available
+     */
+    public function getNearestCelestialName()
+    {
+        if(!isset($this->nearestCelestial))
+        {
+                $this->calculateNearestCelestial();
+        }
+
+        if(isset($this->nearestCelestial))
+        {
+            return $this->nearestCelestial->getName();
+        }
+
+        return null;
+    }
+
+    /**
+     * gets the nearest celestial the kill happened
+     * @return \Location the nearest celestial the kill happened at, or null if no coordinates are available
+     */
+    public function getNearestCelestial()
+    {
+        if(!isset($this->nearestCelestial))
+        {
+                $this->calculateNearestCelestial();
+        }
+        return $this->nearestCelestial;
+    }
+
+    /**
+     * gets the length of the line segment between the kill's 
+     * coordinates and the nearest celstial in kilometers
+     * @return float the distance to the nearest celstial in kilometers
+     */
+    public function getDistanceToNearestCelestial()
+    {
+        if(!isset($this->distanceToNearestCelestial))
+        {
+                $this->execQuery();
+        }
+        return $this->distanceToNearestCelestial;
+    }
+
+    /**
+     * gets the distance to the nearest celstial, but in short form with a quantifier (k, M, AU etc)
+     * @return string the distance to the nearest celstial, but in short form with a quantifier (k, M, AU etc)
+     */
+    public function getDistanceToNearestCelestialFormatted()
+    {
+        if(!isset($this->distanceToNearestCelestial))
+        {
+                $this->execQuery();
+        }
+        if(isset($this->distanceToNearestCelestial))
+        {
+            // all coordinates are in meters
+            $distanceToNearestCelestialFormatted = round($this->distanceToNearestCelestial, 1) . ' m';
+            // AU
+            if($this->distanceToNearestCelestial > 149597870700)
             {
-                    $this->execQuery();
+                $distanceToNearestCelestialFormatted = round($this->distanceToNearestCelestial/149597870700, 1) . ' AU';
             }
-            return $this->yCoordinate;
-        }
-        
-        /**
-         * returns the zCoordinate
-         * @return float the z coordinate of the kill
-         */
-        public function getZCoordinate()
-        {
-            if(!isset($this->zCoordinate)) 
+
+            // millions kilometers
+            else if($this->distanceToNearestCelestial > 1000000000)
             {
-                    $this->execQuery();
+                $distanceToNearestCelestialFormatted = round($this->distanceToNearestCelestial/1000000000, 1) . 'M km';
             }
-            return $this->zCoordinate;
-        }
-        
-        /** 
-         * sets the kill's x coordinate
-         * @param mixed $xCoordinate the kill's x coordinate, will be interpreted as float
-         */
-        public function setXCoordinate($xCoordinate)
-        {
-            $this->xCoordinate = $xCoordinate;
-        }
-        
-        /** 
-         * sets the kill's y coordinate
-         * @param mixed $yCoordinate the kill's y coordinate, will be interpreted as float
-         */
-        public function setYCoordinate($yCoordinate)
-        {
-            $this->yCoordinate = $yCoordinate;
-        }
-        
-        /** 
-         * sets the kill's z coordinate
-         * @param mixed $zCoordinate the kill's z coordinate, will be interpreted as float
-         */
-        public function setZCoordinate($zCoordinate)
-        {
-            $this->zCoordinate = $zCoordinate;
-        }
-        
-        /**
-         * gets the name of the nearest celestial the kill happened
-         * @return string the name of the nearest celestial the kill happened at, or an empty string if no coordinates are available
-         */
-        public function getNearestCelestialName()
-        {
-            if(!isset($this->nearestCelestial))
+
+            // thousands kilomters
+            else if($this->distanceToNearestCelestial > 1000000)
             {
-                    $this->calculateNearestCelestial();
+                $distanceToNearestCelestialFormatted = round($this->distanceToNearestCelestial/1000000, 1) . 'k km';
             }
-            
-            if(isset($this->nearestCelestial))
+
+            // kilomters
+            else if($this->distanceToNearestCelestial > 1000)
             {
-                return $this->nearestCelestial->getName();
+                $distanceToNearestCelestialFormatted = round($this->distanceToNearestCelestial/1000, 1) . ' km';
             }
-            
-            return null;
+
+            return $distanceToNearestCelestialFormatted;
         }
-        
-        /**
-         * gets the nearest celestial the kill happened
-         * @return \Location the nearest celestial the kill happened at, or null if no coordinates are available
-         */
-        public function getNearestCelestial()
-        {
-            if(!isset($this->nearestCelestial))
-            {
-                    $this->calculateNearestCelestial();
-            }
-            return $this->nearestCelestial;
-        }
-        
-        /**
-         * gets the length of the line segment between the kill's 
-         * coordinates and the nearest celstial in kilometers
-         * @return float the distance to the nearest celstial in kilometers
-         */
-        public function getDistanceToNearestCelestial()
-        {
-            if(!isset($this->distanceToNearestCelestial))
-            {
-                    $this->execQuery();
-            }
-            return $this->distanceToNearestCelestial;
-        }
-        
-        /**
-         * gets the distance to the nearest celstial, but in short form with a quantifier (k, M, AU etc)
-         * @return string the distance to the nearest celstial, but in short form with a quantifier (k, M, AU etc)
-         */
-        public function getDistanceToNearestCelestialFormatted()
-        {
-            if(!isset($this->distanceToNearestCelestial))
-            {
-                    $this->execQuery();
-            }
-            if(isset($this->distanceToNearestCelestial))
-            {
-                // all coordinates are in meters
-                $distanceToNearestCelestialFormatted = round($this->distanceToNearestCelestial, 1) . ' m';
-                // AU
-                if($this->distanceToNearestCelestial > 149597870700)
-                {
-                    $distanceToNearestCelestialFormatted = round($this->distanceToNearestCelestial/149597870700, 1) . ' AU';
-                }
-                
-                // millions kilometers
-                else if($this->distanceToNearestCelestial > 1000000000)
-                {
-                    $distanceToNearestCelestialFormatted = round($this->distanceToNearestCelestial/1000000000, 1) . 'M km';
-                }
-                
-                // thousands kilomters
-                else if($this->distanceToNearestCelestial > 1000000)
-                {
-                    $distanceToNearestCelestialFormatted = round($this->distanceToNearestCelestial/1000000, 1) . 'k km';
-                }
-                
-                // kilomters
-                else if($this->distanceToNearestCelestial > 1000)
-                {
-                    $distanceToNearestCelestialFormatted = round($this->distanceToNearestCelestial/1000, 1) . ' km';
-                }
-                
-                return $distanceToNearestCelestialFormatted;
-            }
-            
-            return null;
-        }
+
+        return null;
+    }
         
         /**
 	 * Update this kill's CREST hash.
@@ -2128,90 +2131,90 @@ class Kill extends Cacheable
 		$this->execQuery();
                 
 		$qry = new DBPreparedQuery();
-                $qry->prepare('UPDATE kb3_mails SET kll_crest_hash = ? WHERE kll_id = ?');
-                $params = array(
-                    'si',
-                    &$crestHash,
-                    &$this->id
-                );
+        $qry->prepare('UPDATE kb3_mails SET kll_crest_hash = ? WHERE kll_id = ?');
+        $params = array(
+            'si',
+            &$crestHash,
+            &$this->id
+        );
                 
-                $qry->bind_params($params);
+        $qry->bind_params($params);
                 
 		if(@$qry->execute())
-                {
-                    $this->crestHash = $crestHash;
-                    $this->putCache();
-                }
+        {
+            $this->crestHash = $crestHash;
+            $this->putCache();
+        }
 	}
         
-        /**
-         * tries to calculate the CREST hash using the external
-         * ID and some specific kill information
-         */
-        public function calculateCrestHash()
+    /**
+     * tries to calculate the CREST hash using the external
+     * ID and some specific kill information
+     */
+    public function calculateCrestHash()
+    {
+        // we need the external kill ID
+        if(!$this->getExternalID())
         {
-            // we need the external kill ID
-            if(!$this->getExternalID())
-            {
-                return NULL;
-            }
-            $finalBlowPilotId = $this->getFBPilotID();
-            $finalBlowPilot = Pilot::getByID($finalBlowPilotId);
-            $victimPilot = $this->getVictim();
-            $victimShip = $this->getVictimShip();
-            $time = $this->getTimeStamp();
-            
-            // check for timestmap existance
-            $defaultTimezone = date_default_timezone_get();
-            // set UTC as default timezone
-            date_default_timezone_set('UTC');
-            $timestamp = strtotime($time);
-            // restore default timezone
-            date_default_timezone_set($defaultTimezone);
-            if($timestamp === FALSE || $timestamp < 0)
-            {
-                return NULL;
-            }
-            
-            
-            // check final blow pilot, victim pilot and victim ship
-            if(!$finalBlowPilot || !$victimPilot || !$victimShip)
-            {
-                return NULL;
-            }
-            
-            // prepare the ship type ID
-            $shipTypeID = $victimShip->getID();
-            if(!$shipTypeID)
-            {
-                return NULL;
-            }
-            
-            // prepare the victim's characterID
-            $victimCharacterId = $victimPilot->getExternalID();
-            // make sure this is actually a real character ID; mustn be NULL, mustn't be less than 90M
-            if(!$victimCharacterId || $victimCharacterId < 90000000)
-            {
-                $victimCharacterId = "None";
-            }
-            
-            // prepare the final blow pilot's characterID
-            $finalBlowCharacterId = $finalBlowPilot->getExternalID();
-            // make sure this is actually a real character ID; mustn be NULL, mustn't be less than 3M
-            // player characters are above 90M, Drifters are above 3M
-            if(!$finalBlowCharacterId || $finalBlowCharacterId < 3000000)
-            {
-                $finalBlowCharacterId = "None";
-            }
-            
-            // prepare the timestamp
-            // this should be (unixtime * 10000000) + 116444736000000000 
-            // but let's cut some zeros in order to support 32bit systems
-            $timestamp = $timestamp  + 1644473600;
-            $timestamp = '1'.$timestamp.'0000000';
-            
-            return sha1($victimCharacterId . $finalBlowCharacterId . $shipTypeID . $timestamp);
+            return NULL;
         }
+        $finalBlowPilotId = $this->getFBPilotID();
+        $finalBlowPilot = Pilot::getByID($finalBlowPilotId);
+        $victimPilot = $this->getVictim();
+        $victimShip = $this->getVictimShip();
+        $time = $this->getTimeStamp();
+
+        // check for timestmap existance
+        $defaultTimezone = date_default_timezone_get();
+        // set UTC as default timezone
+        date_default_timezone_set('UTC');
+        $timestamp = strtotime($time);
+        // restore default timezone
+        date_default_timezone_set($defaultTimezone);
+        if($timestamp === FALSE || $timestamp < 0)
+        {
+            return NULL;
+        }
+
+
+        // check final blow pilot, victim pilot and victim ship
+        if(!$finalBlowPilot || !$victimPilot || !$victimShip)
+        {
+            return NULL;
+        }
+
+        // prepare the ship type ID
+        $shipTypeID = $victimShip->getID();
+        if(!$shipTypeID)
+        {
+            return NULL;
+        }
+
+        // prepare the victim's characterID
+        $victimCharacterId = $victimPilot->getExternalID();
+        // make sure this is actually a real character ID; mustn be NULL, mustn't be less than 90M
+        if(!$victimCharacterId || $victimCharacterId < 90000000)
+        {
+            $victimCharacterId = "None";
+        }
+
+        // prepare the final blow pilot's characterID
+        $finalBlowCharacterId = $finalBlowPilot->getExternalID();
+        // make sure this is actually a real character ID; mustn be NULL, mustn't be less than 3M
+        // player characters are above 90M, Drifters are above 3M
+        if(!$finalBlowCharacterId || $finalBlowCharacterId < 3000000)
+        {
+            $finalBlowCharacterId = "None";
+        }
+
+        // prepare the timestamp
+        // this should be (unixtime * 10000000) + 116444736000000000 
+        // but let's cut some zeros in order to support 32bit systems
+        $timestamp = $timestamp  + 1644473600;
+        $timestamp = '1'.$timestamp.'0000000';
+
+        return sha1($victimCharacterId . $finalBlowCharacterId . $shipTypeID . $timestamp);
+    }
         
 	/**
 	 * Compares two InvolvedParty objects for sorting by damage then name.

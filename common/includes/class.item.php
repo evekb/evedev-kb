@@ -11,14 +11,18 @@
  * @package EDK
  */
 class Item extends Cacheable
-{
+{       
+    /** @var int attribute ID holding the maximum size of a fighter squadron
+     */
+    public static $ATTRIBUTE_ID_FIGHTER_SQUADRON_MAX_SIZE = 2215;
+    
 	private $executed = false;
 	private $id = 0;
 	private $row_ = null;
-        private $slotId = 0;
-        
-        /** @param int category ID indicating this item is a drone */
-        public static $CATEGORY_ID_DRONE = 18;
+    private $slotId = 0;
+
+    /** @var int category ID indicating this item is a drone */
+    public static $CATEGORY_ID_DRONE = 18;
         
 	/**
 	 * Construct a new Item.
@@ -377,7 +381,7 @@ class Item extends Cacheable
                 if(is_null($Item->getName()))
                 {
                     // try fetching it from the API
-                    $typeName = API_Helpers::gettypeIDname($id, TRUE);
+                    $typeName = API_Helpers::getTypeIDname($id, TRUE);
                     if(!is_null($typeName))
                     {
                         // remove the item with no info from the cache
@@ -396,7 +400,7 @@ class Item extends Cacheable
          */
         static function fetchItem($typeId)
         {
-            $crestTypeUrl = CREST_PUBLIC_URL . '/types/' . $typeId . '/';
+            $crestTypeUrl = CREST_PUBLIC_URL . '/inventory/types/' . $typeId . '/';
             $typeInfo = NULL;
 
             try 
@@ -405,7 +409,20 @@ class Item extends Cacheable
             } 
             catch (Exception $e) 
             {
-                return null;
+                // fallback: Use generic item name
+                // this database entry will be corrected with the next database update
+                // store the item in the database
+                $typeName = "Unknown Type ".$typeId;
+                
+                $query = new DBPreparedQuery();
+                $query->prepare('INSERT INTO kb3_invtypes (`typeID`, `typeName`) '
+                        . 'VALUES (?, ?)');
+                $types = 'is';
+                $arr2 = array(&$types, &$typeId, &$typeName);
+                $query->bind_params($arr2);
+                $query->execute();
+                
+                return self::lookup($typeName);
             }
 
             if($typeInfo != NULL)
@@ -440,7 +457,7 @@ class Item extends Cacheable
                         
                         if(count($attributeInserts) > 0) 
                         {
-                            $sql = 'INSERT INTO kb3_dgmtypeattributes (`typeID`, `attributeID`, `value`) VALUES '. implode(", ", $attributeInserts);
+                            $sql = 'REPLACE INTO kb3_dgmtypeattributes (`typeID`, `attributeID`, `value`) VALUES '. implode(", ", $attributeInserts);
                             $query->execute($sql);
                         }
                     }
@@ -456,7 +473,7 @@ class Item extends Cacheable
                         
                         if(count($effectInserts) > 0) 
                         {
-                            $sql = 'INSERT INTO kb3_dgmtypeeffects (`typeID`, `effectID`, `isDefault`) VALUES '. implode(", ", $effectInserts);
+                            $sql = 'REPLACE INTO kb3_dgmtypeeffects (`typeID`, `effectID`, `isDefault`) VALUES '. implode(", ", $effectInserts);
                             $query->execute($sql);
                         }
                     }

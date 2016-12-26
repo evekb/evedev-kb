@@ -639,7 +639,7 @@ class KillWrapper extends Kill
 				}
 			}
 		}
-		$value += $this->victimship->getPrice();
+		$value += $this->victimship->getPrice() * $this->victimship->getSquadronSize();;
 		if ($update) {
 			$qry = DBFactory::getDBQuery();
 			$qry->execute("UPDATE kb3_kills SET kll_isk_loss = '$value' WHERE

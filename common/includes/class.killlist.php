@@ -310,7 +310,7 @@ class KillList
 			if (!count($this->groupby_))
 			{
 				$this->sqltop_ = 'SELECT ';
-				if(count($this->inv_all_) + count($this->inv_crp_) + count($this->inv_plt_) + count($this->inv_shp_) > 1)
+				if(count($this->inv_all_) + count($this->inv_crp_) + count($this->inv_plt_) > 1 || count($this->inv_shp_) > 0)
 					$this->sqltop_ .= ' DISTINCT ';
 				$this->sqltop_ .= implode(', ', $this->expr);
 				event::call('killlist_select_expr', $this->sqltop_);

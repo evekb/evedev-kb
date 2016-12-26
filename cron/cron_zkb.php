@@ -12,13 +12,13 @@
 // include the base class providing all context data
 require_once('cron.base.php');
 
-$cronStartTime = microtime(true);
-logCron("Starting zKB Import");
-
 // load mods
 $page = 'zkbfetch';
 event::setCron(TRUE);
 loadMods($page);
+
+$cronStartTime = microtime(true);
+logCron("Starting zKB Import");
 
 // get all zKB Fetch configurations
 $fetchConfigs = ZKBFetch::getAll();
@@ -26,7 +26,6 @@ $html = '';
 
 foreach($fetchConfigs AS &$fetchConfig)
 {
-    
     getZKBApi($fetchConfig);
 }
 

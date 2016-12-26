@@ -58,6 +58,11 @@ class pInvtype extends pageAssembly
 		$smarty->assign('rows', $rows);
 		return $smarty->fetch(get_tpl('groupdb'));
 	}
+    
+    function getGroupID() 
+    {
+        return $this->groupID;
+    }
 }
 
 

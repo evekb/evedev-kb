@@ -6,6 +6,20 @@
 	{/if}
 {assign var=width_victim value=190}
 {if !$config->get('killlist_alogo')}{assign var=width_victim value=$width_victim+33}{/if}
+{if $daybreak && $show_summary}
+	{if isset($killlist[day].summary.efficiency)}
+		{assign var=width_summary_kills value=258}
+	{else}
+		{assign var=width_summary_kills value=772}
+	{/if}
+	<table class="kb-table kb-kl-table" style="width: 772px; margin-left: auto; margin-right: auto; text-align: left;" cellspacing="1">
+		<tr class="kb-kl-table-summary">
+			{if $killlist[day].summary.numberOfKills > 0 || isset($killlist[day].summary.efficiency)}<td class="" style="width: {$width_summary_kills}px; font-weight: bold; text-align:center">Kills: {$killlist[day].summary.numberOfKills}</td>{/if}
+			{if $killlist[day].summary.numberOfLosses > 0 || isset($killlist[day].summary.efficiency)}<td class="" style="width: {$width_summary_kills}px; font-weight: bold; color: #dd0000; text-align:center">Losses: {$killlist[day].summary.numberOfLosses}</td>{/if}
+			{if isset($killlist[day].summary.efficiency)}<td class="" style="width: 258px; font-weight: bold; text-align:center">Efficiency: {$killlist[day].summary.efficiency}%</td>{/if}
+		</tr>
+	</table>
+{/if}
 	<table class="kb-table kb-kl-table" style="margin-left: auto; margin-right: auto; text-align: left;" cellspacing="1">
 		<tr class="kb-table-header">
 			<td class="kb-table-header" colspan="2" style="width:170px; text-align:center">Ship type</td>

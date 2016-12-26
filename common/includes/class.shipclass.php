@@ -12,6 +12,9 @@
  */
 class ShipClass extends Cacheable
 {
+    /** ship class ID for citadels */
+    public static $SHIP_CLASS_ID_CITADELS = 50;
+    
 	private $executed = false;
 	private $id = 0;
 	private $name = '';

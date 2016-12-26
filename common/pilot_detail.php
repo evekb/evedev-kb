@@ -16,8 +16,8 @@ class pPilotDetail extends pageAssembly
 	/** @var integer */
 	public $plt_id = false;
         
-        /** @var Pilot the pilot */
-        public $pilot = null;
+    /** @var Pilot the pilot */
+    public $pilot = null;
 	/** @var string The selected view. */
 	protected $view = null;
 	/** @var array The list of views and their callbacks. */
@@ -28,8 +28,8 @@ class pPilotDetail extends pageAssembly
 	protected $lpoints = 0;
 	/** @var integer */
 	protected $points = 0;
-        /** @var double efficiency The pilot's efficiency */
-        protected $efficiency = 0;
+    /** @var double efficiency The pilot's efficiency */
+    protected $efficiency = 0;
 
 	/**
 
@@ -415,6 +415,22 @@ class pPilotDetail extends pageAssembly
 	{
 		$this->menuOptions[] = array($type, $name, $url);
 	}
+    
+    /**
+    * Removes the menu item with the given name
+    * 
+    * @param string $name the name of the menu item to remove
+    */
+   function removeMenuItem($name)
+   {
+       foreach((array)$this->menuOptions AS $menuItem)
+       {
+           if(count($menuItem) > 1 && $menuItem[1] == $name)
+           {
+               unset($this->menuOptions[key($this->menuOptions)]);
+           }
+       }
+   }
 
 	/**
 
@@ -438,14 +454,29 @@ class pPilotDetail extends pageAssembly
 		return $this->view;
 	}
         
-        /**
-         * Return the Pilot
-         * @return Pilot
-         */
-        function getPilot()
-        {
-            return $this->pilot;
-        }
+    /**
+     * Return the Pilot
+     * @return Pilot
+     */
+    function getPilot()
+    {
+        return $this->pilot;
+    }
+    
+    function getLossPoints() 
+    {
+        return $this->lpoints;
+    }
+
+    function getPoints() 
+    {
+        return $this->points;
+    }
+
+    function getEfficiency() 
+    {
+        return $this->efficiency;
+    }
 }
 
 

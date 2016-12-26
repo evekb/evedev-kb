@@ -102,6 +102,22 @@ class pInvtype extends pageAssembly
 	{
 		$this->menuOptions[] = array($type, $name, $url);
 	}
+    
+    /**
+    * Removes the menu item with the given name
+    * 
+    * @param string $name the name of the menu item to remove
+    */
+   function removeMenuItem($name)
+   {
+       foreach((array)$this->menuOptions AS $menuItem)
+       {
+           if(count($menuItem) > 1 && $menuItem[1] == $name)
+           {
+               unset($this->menuOptions[key($this->menuOptions)]);
+           }
+       }
+   }
 
 	function details()
 	{
@@ -193,6 +209,12 @@ class pInvtype extends pageAssembly
 		}
 		return $html;
 	}
+    
+    function getTypeID() 
+    {
+        return $this->typeID;
+    }
+
 }
 
 

@@ -63,7 +63,7 @@ if ($_POST['submit'] || $_POST['fetch'])
         $id = $fetchConfig->getID();
         if ($_POST[$id]) 
         {
-            $lastKillTimestampFormatted = strftime('%Y-%m-%d %H:%M:%S', $fetchConfig->getLastKillTimestamp());
+            $lastKillTimestampFormatted = strftime('%Y-%m-%d %H:00:00', $fetchConfig->getLastKillTimestamp());
             if($_POST['lastKillTimestamp'.$id] != $lastKillTimestampFormatted) 
             {
                 $lastKillTimestampNew = strtotime($_POST['lastKillTimestamp'.$id]);
@@ -136,7 +136,7 @@ foreach($fetchConfigs as &$fetchConfig)
 	} else {
             $fetch = true;
 	}
-        $lastKillTimestampFormatted = strftime('%Y-%m-%d %H:%M:%S', $fetchConfig->getLastKillTimestamp());
+        $lastKillTimestampFormatted = strftime('%Y-%m-%d %H:00:00', $fetchConfig->getLastKillTimestamp());
 	$rows[] = array('id'=>$key, 'uri'=>$fetchConfig->getUrl(), 'lastKillTimestmap'=>$lastKillTimestampFormatted,  'fetch'=>!$fetch);
 }
 
@@ -149,7 +149,7 @@ if(is_null($killTimestampOffset) || !is_numeric($killTimestampOffset))
     $killTimestampOffset = ZKBFetch::$KILL_TIMESTAMP_OFFSET_DEFAULT;
 }
 $smarty->assign('killTimestampOffset', $killTimestampOffset);
-$smarty->assign("currentTimeUtc", gmdate("Y-m-d H:i:s", time()));
+$smarty->assign("currentTimeUtc", gmdate("Y-m-d H:00:00", time()));
 $page->addContext($menubox->generate());
 $page->setContent($smarty->fetch(get_tpl('admin_zkbfetch')));
 $page->generate();

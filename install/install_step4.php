@@ -181,7 +181,7 @@ if (!empty($_REQUEST['sub']) && $_REQUEST['sub'] == 'data')
 						#echo $query;
 						if (!$id)
 						{
-							$error .= 'error: '.mysql_error().'<br/>';
+							$error .= 'error: '.$db->error.'<br/>';
 							$errors++;
 						}
 					}

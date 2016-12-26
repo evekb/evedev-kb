@@ -19,6 +19,8 @@ class KillListTable
 	private $daybreak_;
 	/** @var boolean */
 	private $combined_;
+    /** @var boolean */
+    private $show_summary_;
 
 	/**
 	 * @param KillList $kill_list
@@ -44,6 +46,11 @@ class KillListTable
 	{
 		$this->combined_ = $combined;
 	}
+        
+        function setShowSummary($show_summary = false)
+	{
+		$this->show_summary_ = $show_summary;
+	}
 
 	function generate()
 	{
@@ -52,6 +59,7 @@ class KillListTable
 		$this->kill_list_->rewind();
 		$smarty->assign('daybreak', $this->daybreak_);
 		$smarty->assign('comments_count', config::get('comments_count'));
+        $smarty->assign('show_summary', $this->show_summary_);
 
 		// evil hardcode-hack, don't do this at home kids ! ;)
 		if (config::get('style_name') == 'revelations')
@@ -63,6 +71,11 @@ class KillListTable
 		$kdpage = array('a', 'kill_detail', true);
 		$krpage = array('a', 'kill_related', true);
 		$kills = array();
+        $killsInPeriod = 0;
+        $lossesInPeriod = 0;
+        $iskKilledInPeriod = 0.0;
+        $iskLostInPeriod = 0.0;
+                
 		while ($kill  = $this->kill_list_->getKill())
 		{
 			if ($this->limit_ && $c >= $this->limit_)
@@ -79,8 +92,25 @@ class KillListTable
 			{
 				if (count($kills) && $this->daybreak_)
 				{
-					$kl[] = array('kills' => $kills, 'date' => strtotime($prevdate));
+                    $structuredKillInfo = array('kills' => $kills, 'date' => strtotime($prevdate), 
+                            'summary' => array('numberOfKills' => $killsInPeriod, 'numberOfLosses' => $lossesInPeriod));    
+                    // only calculate efficiency if this is a combined list
+                    if($this->combined_)
+                    {
+                        $efficiency = 1;
+                        if($iskLostInPeriod + $iskKilledInPeriod > 0)
+                        {
+                            $efficiency = $iskKilledInPeriod / ($iskLostInPeriod + $iskKilledInPeriod);
+                        }
+                        $structuredKillInfo['summary']['efficiency'] = round($efficiency*100, 2);
+                    }
+
+                    $kl[] = $structuredKillInfo;
 					$kills = array();
+                    $killsInPeriod = 0;
+                    $lossesInPeriod = 0;
+                    $iskKilledInPeriod = 0.0;
+                    $iskLostInPeriod = 0.0;
 				}
 				$prevdate = $curdate;
 			}
@@ -162,23 +192,35 @@ class KillListTable
 
 			$kll['loss'] = false;
 			$kll['kill'] = false;
-			if ($this->combined_)
-			{
-				if(config::get('cfg_allianceid')
-						&& in_array($kill->getVictimAllianceID(),
-								config::get('cfg_allianceid'))) {
-					$kll['loss'] = true;
-				} else if (config::get('cfg_corpid')
-						&& in_array($kill->getVictimCorpID(),
-								config::get('cfg_corpid'))) {
-					$kll['loss'] = true;
-				} else if (config::get('cfg_pilotid')
-						&& in_array($kill->getVictimID(),
-								config::get('cfg_pilotid'))) {
-					$kll['loss'] = true;
-				}
-				$kll['kill'] = !$kll['loss'];
-			}
+            // determine kill or loss
+            if(config::get('cfg_allianceid')
+                            && in_array($kill->getVictimAllianceID(),
+                                            config::get('cfg_allianceid'))) {
+                    $kll['loss'] = true;
+            } else if (config::get('cfg_corpid')
+                            && in_array($kill->getVictimCorpID(),
+                                            config::get('cfg_corpid'))) {
+                    $kll['loss'] = true;
+            } else if (config::get('cfg_pilotid')
+                            && in_array($kill->getVictimID(),
+                                            config::get('cfg_pilotid'))) {
+                    $kll['loss'] = true;
+            }
+            $kll['kill'] = !$kll['loss'];
+
+            // calculate summary
+            if($kll['kill'])
+            {
+                $killsInPeriod++;
+                $iskKilledInPeriod += $kill->getISKLoss();
+            }
+
+            else
+            {
+                $lossesInPeriod++;
+                $iskLostInPeriod += $kill->getISKLoss();
+            }
+                        
 			$kll['urldetail'] = edkURI::build($kdpage,
 					array('kll_id', $kll['id'], true));
 			if (!$kill->isClassified()) {
@@ -207,7 +249,20 @@ class KillListTable
 		event::call('killlist_table_kills', $kills);
 		if (count($kills))
 		{
-			$kl[] = array('kills' => $kills, 'date' => strtotime($prevdate));
+			$structuredKillInfo = array('kills' => $kills, 'date' => strtotime($prevdate), 
+                                'summary' => array('numberOfKills' => $killsInPeriod, 'numberOfLosses' => $lossesInPeriod));    
+            // only calculate efficiency if this is a combined list
+            if($this->combined_)
+            {
+                $efficiency = 1;
+                if($iskLostInPeriod + $iskKilledInPeriod > 0)
+                {
+                    $efficiency = $iskKilledInPeriod / ($iskLostInPeriod + $iskKilledInPeriod);
+                }
+                $structuredKillInfo['summary']['efficiency'] = round($efficiency*100, 2);
+            }
+
+            $kl[] = $structuredKillInfo;
 		}
 
 		$smarty->assignByRef('killlist', $kl);

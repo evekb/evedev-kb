@@ -69,7 +69,7 @@ function checkAll(checkname, exby)
 		</tr>
                 <tr>
 			<td colspan='3'>
-				<i>Example: https://zkillboard.com/api/combined/corporationID/12345567890/</i>
+				<i>Example: https://zkillboard.com/api/corporationID/12345567890/</i>
 			</td>
                 </tr>
         </table>

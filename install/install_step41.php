@@ -7,8 +7,8 @@ if(!$installrunning) {header('Location: index.php');die();}
 $stoppage = false;
 
 include_once('./kbconfig.php');
-$db = mysql_connect(DB_HOST, DB_USER, DB_PASS);
-mysql_select_db(DB_NAME);
+$db = new mysqli($_SESSION['sql']['host'], $_SESSION['sql']['user'], $_SESSION['sql']['pass'], $_SESSION['sql']['db']);
+$db->select_db(DB_NAME);
 
 $site = KB_SITE;
 $adminpw = ADMIN_PASSWORD;
@@ -44,11 +44,11 @@ FROM kb3_items_destroyed
 LEFT JOIN kb3_items ON itd_itm_id = itm_id
 LEFT JOIN kb3_invtypes ON itm_name = typeName
 WHERE invtypes.typeID IS NULL";
-$result = mysql_query($query);
+$result = $db->query($query);
 $smarty->assign('sql_error');
 
 $notice = '';
-while ($row = mysql_fetch_array($result))
+while ($row = $result->fetch_assoc())
 {
     $notice .= 'Killmail id '.$row['itd_kll_id'].' contains an item named "'.$row['itm_name'].'" (id '.$row['itm_id'].') that will be orphaned.<br/>';
 }
@@ -58,16 +58,16 @@ $smarty->display('install_step41.tpl');
 
 function insertConfig($key, $value)
 {
-    $result = mysql_query('SELECT * FROM kb3_config WHERE cfg_site=\''.KB_SITE.'\' AND cfg_key=\''.$key.'\'');
-    if (!$row = mysql_fetch_row($result))
+    $result = $db->query('SELECT * FROM kb3_config WHERE cfg_site=\''.KB_SITE.'\' AND cfg_key=\''.$key.'\'');
+    if (!$row = $result->fetch_assoc())
     {
         $sql = "INSERT INTO kb3_config VALUES ('".KB_SITE."','".$key."','".$value."')";
-        mysql_query($sql);
+        $db->query($sql);
     }
-	$result = mysql_query('SELECT * FROM kb3_config WHERE cfg_site=\'\' AND cfg_key=\''.$key.'\'');
-	if (!$row = mysql_fetch_row($result))
-	{
-		$sql = "INSERT INTO kb3_config VALUES ('','".$key."','".$value."')";
-		mysql_query($sql);
-	}
+    $result = $db->query('SELECT * FROM kb3_config WHERE cfg_site=\'\' AND cfg_key=\''.$key.'\'');
+    if (!$row = $result->fetch_assoc())
+    {
+        $sql = "INSERT INTO kb3_config VALUES ('','".$key."','".$value."')";
+        $db->query($sql);
+    }
 }
