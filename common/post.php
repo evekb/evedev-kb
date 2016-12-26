@@ -98,28 +98,6 @@ function post()
 </form>';
 			}
 		} else {
-			if (config::get('post_mailto') != "") {
-				$mailer = new PHPMailer();
-				$kill = new Kill($killid);
-
-				if (!$server = config::get('post_mailserver')) {
-					$server = 'localhost';
-				}
-				$mailer->From = "mailer@".config::get('post_mailhost');
-				$mailer->FromName = config::get('post_mailhost');
-				$mailer->Subject = "Killmail #".$killid;
-				$mailer->Host = $server;
-				$mailer->Port = 25;
-				$mailer->Helo = $server;
-				$mailer->Mailer = "smtp";
-				$mailer->AddReplyTo("no_reply@".config::get('post_mailhost'),
-						"No-Reply");
-				$mailer->Sender = "mailer@".config::get('post_mailhost');
-				$mailer->Body = $_POST['killmail'];
-				$mailer->AddAddress(config::get('post_mailhost'));
-				$mailer->Send();
-			}
-
 			logger::logKill($killid);
 			header("Location: ".html_entity_decode(edkURI::page('kill_detail',
 							$killid, 'kll_id')));
