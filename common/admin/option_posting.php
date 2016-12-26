@@ -18,9 +18,6 @@ options::fadd('Killmail post password', 'post_password', 'password', '', array('
 options::fadd('CREST link post password', 'post_crest_password', 'password', '', array('admin_posting', 'setCrestPostPassword'));
 options::fadd('Comment post password', 'comment_password', 'password', '', array('admin_posting', 'setCommentPassword'));
 
-options::fadd('Killmail CC', 'post_mailto', 'edit');
-options::fadd('Mailhost', 'post_mailhost', 'edit');
-options::fadd('Mailserver', 'post_mailserver', 'edit', '', '', 'This is the server where php connects to send the mail.');
 options::fadd('Disallow any killmails before', 'filter_date', 'custom', array('admin_posting', 'dateSelector'), array('admin_posting', 'postDateSelector'));
 
 class admin_posting

@@ -757,7 +757,6 @@
 ./common/includes/class.contract.php:311d0d733ab1effed8bde96cfd08ff873b45045d
 ./common/includes/class.alliancesummary.php:1c4597dfe802507e902190e09dcfaefc83fd9a2a
 ./common/includes/class.involvedparty.php:e8804cdc7db849d1a2d10a2df774c398d7289d3d
-./common/includes/smtp.php:50944feb5f87c7c8949891db123ccdac7de18012
 ./common/includes/class.dbconnection.php:2fecc61237ef407c41868f4e604e05a6197b2d0c
 ./common/includes/class.killsummarytable.php:fdd32e042f099bcb8e102794961f63c78d3cb04c
 ./common/includes/class.killboard.php:89cf284c7c334cb18b0a7d69156672a774f43089
@@ -805,7 +804,6 @@
 ./common/includes/class.edkuri.php:3e3ff16b09083fa803de24f6e547fb3962046661
 ./common/includes/class.imageurl.php:29788fa00929c422921381f7667ec68be4e6a59e
 ./common/includes/class.httprequest.php:cb05466dc411c4dbab90acb02feb532ac45cf3e4
-./common/includes/class.phpmailer.php:0487c1a51e50c74b9f92a33c3bbefd0bf287b8f9
 ./common/includes/class.pilotsummary.php:2ab3ca3b42a2a62742576581249562df53b9bab2
 ./common/includes/class.language.php:ecd7875b992dd9b3395896bee87af29498d592ac
 ./common/includes/class.itemlist.php:9a75b3edc9a30b85df27929c677f58a4f6787524
@@ -992,8 +990,7 @@
 ./common/groupdb.php:fa4ce1dc4451f24f361d91f017f80f4c1e1a7418
 ./common/system_detail.php:a32b42206f8234f23ac93e2daf7b6e468e0d4b0e
 ./common/self_detail.php:f81c1db11899109d936714c6204e0f815ef2d754
-./common/post.php:56cf2d7dd2cc9bf19e6de9005c496db839ca8b05
-./common/awards.php:887ea76db89c429b354e400d1ab0568729970e84
+./common/post.php:7b10ecd24e53070962dc2e387fe63fcb32ee6734
 ./common/language/en.php:38c6c938a782c47ef28325829406859d9fc4c6f4
 ./common/idfeed.php:fa013af81a99941dd33d689c46939d53c6327962
 ./common/logout.php:305e0ca65144a636e348c10c162ef70f53df21f7
@@ -1057,8 +1054,7 @@
 ./common/admin/admin_standings.php:2d574e22afd97ae8ffa915d12a619178456f29c7
 ./common/admin/admin_menu.php:d84ea56decf56f8b4babcee56e5009291116df4d
 ./common/admin/admin_verify.php:aefcf62a356b29bf4097fbdd9b201f12eda802ef
-./common/admin/admin_api.php:35b2eb59200a00fd4c23e4a34204004f0ba0596c
-./common/admin/option_posting.php:f0192bad26183db82486409423b98dc884587f87
+./common/admin/option_posting.php:da476da77ecde72cab635d63cdb3400f15283813
 ./common/admin/admin_postperm.php:98a20be5edec9188052831dcd7e5122267e93c52
 ./common/admin/admin_value_editor.php:2999a339bba228fa6e7d815a61ca26c88b31a1cf
 ./common/admin/admin_mods.php:9bd0c5bbac863c4ca5fbe3a77a34edfb68a7b013
