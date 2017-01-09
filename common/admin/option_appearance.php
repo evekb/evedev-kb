@@ -18,7 +18,7 @@ options::fadd('Display standings', 'show_standings', 'checkbox');
 options::fadd('Enable lost item values', 'item_values', 'checkbox');
 options::fadd('Display a link instead of POD on Battlesummary', 'bs_podlink', 'checkbox');
 options::fadd('Include Capsules, Shuttles and Noobships in kills', 'podnoobs', 'checkbox');
-options::fadd('Classify kills for hours:', 'kill_classified', 'edit:size:4', '', '', '0 to disable, 1-24hrs');
+options::fadd('Classify kills for hours', 'kill_classified', 'edit:size:4', '', '', '0 to disable, 1-24hrs');
 
 options::cat('Appearance', 'Global Options', 'User Registration');
 options::fadd('Show user-menu on every page', 'user_showmenu', 'checkbox');
