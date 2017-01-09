@@ -29,7 +29,8 @@ edkloader::register('TopDamageDealerList', 'common/includes/class.toplist.php');
 edkloader::register('TopSoloKillerList', 'common/includes/class.toplist.php');
 edkloader::register('TopPodKillerList', 'common/includes/class.toplist.php');
 edkloader::register('TopGrieferList', 'common/includes/class.toplist.php');
-edkloader::register('TopCapitalShipKillerList', 'common/includes/class.toplist.php');
+edkloader::register('TopCapitalShipKillerList',
+		'common/includes/class.toplist.php');
 edkloader::register('TopContractKillsList', 'common/includes/class.toplist.php');
 edkloader::register('TopContractScoreList', 'common/includes/class.toplist.php');
 edkloader::register('TopPilotTable', 'common/includes/class.toplist.php');
