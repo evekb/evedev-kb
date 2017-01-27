@@ -25,7 +25,7 @@ require_once(__DIR__ . '/vendor/autoload.php');
 Swagger\Client\Configuration::getDefaultConfiguration()->setAccessToken('YOUR_ACCESS_TOKEN');
 
 $api_instance = new Swagger\Client\Api\CalendarApi();
-$character_id = 789; // int | The character to retrieve events from
+$character_id = 56; // int | The character to retrieve events from
 $from_event = 56; // int | The event ID to retrieve events from
 $datasource = "tranquility"; // string | The server name you would like data from
 
@@ -77,7 +77,7 @@ require_once(__DIR__ . '/vendor/autoload.php');
 Swagger\Client\Configuration::getDefaultConfiguration()->setAccessToken('YOUR_ACCESS_TOKEN');
 
 $api_instance = new Swagger\Client\Api\CalendarApi();
-$character_id = 789; // int | The character id requesting the event
+$character_id = 56; // int | The character id requesting the event
 $event_id = 56; // int | The id of the event requested
 $datasource = "tranquility"; // string | The server name you would like data from
 

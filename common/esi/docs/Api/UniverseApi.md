@@ -4,21 +4,27 @@ All URIs are relative to *https://esi.tech.ccp.is/latest*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**getUniversePlanetsPlanetId**](UniverseApi.md#getUniversePlanetsPlanetId) | **GET** /universe/planets/{planet_id}/ | Get planet information
+[**getUniverseCategories**](UniverseApi.md#getUniverseCategories) | **GET** /universe/categories/ | Get item categories
+[**getUniverseCategoriesCategoryId**](UniverseApi.md#getUniverseCategoriesCategoryId) | **GET** /universe/categories/{category_id}/ | Get item category information
+[**getUniverseFactions**](UniverseApi.md#getUniverseFactions) | **GET** /universe/factions/ | Get factions
+[**getUniverseGroups**](UniverseApi.md#getUniverseGroups) | **GET** /universe/groups/ | Get item groups
+[**getUniverseGroupsGroupId**](UniverseApi.md#getUniverseGroupsGroupId) | **GET** /universe/groups/{group_id}/ | Get item group information
+[**getUniverseRaces**](UniverseApi.md#getUniverseRaces) | **GET** /universe/races/ | Get character races
 [**getUniverseStationsStationId**](UniverseApi.md#getUniverseStationsStationId) | **GET** /universe/stations/{station_id}/ | Get station information
 [**getUniverseStructures**](UniverseApi.md#getUniverseStructures) | **GET** /universe/structures/ | List all public structures
 [**getUniverseStructuresStructureId**](UniverseApi.md#getUniverseStructuresStructureId) | **GET** /universe/structures/{structure_id}/ | Get structure information
 [**getUniverseSystemsSystemId**](UniverseApi.md#getUniverseSystemsSystemId) | **GET** /universe/systems/{system_id}/ | Get solar system information
+[**getUniverseTypes**](UniverseApi.md#getUniverseTypes) | **GET** /universe/types/ | Get types
 [**getUniverseTypesTypeId**](UniverseApi.md#getUniverseTypesTypeId) | **GET** /universe/types/{type_id}/ | Get type information
 [**postUniverseNames**](UniverseApi.md#postUniverseNames) | **POST** /universe/names/ | Get names and categories for a set of ID&#39;s
 
 
-# **getUniversePlanetsPlanetId**
-> \Swagger\Client\Model\GetUniversePlanetsPlanetIdOk getUniversePlanetsPlanetId($planet_id, $datasource)
+# **getUniverseCategories**
+> int[] getUniverseCategories($datasource)
 
-Get planet information
+Get item categories
 
-Information on a planet  ---  Alternate route: `/v1/universe/planets/{planet_id}/`  Alternate route: `/legacy/universe/planets/{planet_id}/`  Alternate route: `/dev/universe/planets/{planet_id}/`
+Get a list of item categories  ---  Alternate route: `/v1/universe/categories/`  Alternate route: `/legacy/universe/categories/`  Alternate route: `/dev/universe/categories/`   ---  This route is cached for up to 3600 seconds
 
 ### Example
 ```php
@@ -26,14 +32,13 @@ Information on a planet  ---  Alternate route: `/v1/universe/planets/{planet_id}
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\UniverseApi();
-$planet_id = 56; // int | An Eve planet ID
 $datasource = "tranquility"; // string | The server name you would like data from
 
 try {
-    $result = $api_instance->getUniversePlanetsPlanetId($planet_id, $datasource);
+    $result = $api_instance->getUniverseCategories($datasource);
     print_r($result);
 } catch (Exception $e) {
-    echo 'Exception when calling UniverseApi->getUniversePlanetsPlanetId: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling UniverseApi->getUniverseCategories: ', $e->getMessage(), PHP_EOL;
 }
 ?>
 ```
@@ -42,12 +47,250 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **planet_id** | **int**| An Eve planet ID |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
 
 ### Return type
 
-[**\Swagger\Client\Model\GetUniversePlanetsPlanetIdOk**](../Model/GetUniversePlanetsPlanetIdOk.md)
+**int[]**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
+
+# **getUniverseCategoriesCategoryId**
+> \Swagger\Client\Model\GetUniverseCategoriesCategoryIdOk getUniverseCategoriesCategoryId($category_id, $language, $datasource)
+
+Get item category information
+
+Get information of an item category  ---  Alternate route: `/v1/universe/categories/{category_id}/`  Alternate route: `/legacy/universe/categories/{category_id}/`  Alternate route: `/dev/universe/categories/{category_id}/`   ---  This route is cached for up to 3600 seconds
+
+### Example
+```php
+<?php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+$api_instance = new Swagger\Client\Api\UniverseApi();
+$category_id = 56; // int | An Eve item category ID
+$language = "en-us"; // string | Language to use in the response
+$datasource = "tranquility"; // string | The server name you would like data from
+
+try {
+    $result = $api_instance->getUniverseCategoriesCategoryId($category_id, $language, $datasource);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling UniverseApi->getUniverseCategoriesCategoryId: ', $e->getMessage(), PHP_EOL;
+}
+?>
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **category_id** | **int**| An Eve item category ID |
+ **language** | **string**| Language to use in the response | [optional] [default to en-us]
+ **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+
+### Return type
+
+[**\Swagger\Client\Model\GetUniverseCategoriesCategoryIdOk**](../Model/GetUniverseCategoriesCategoryIdOk.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
+
+# **getUniverseFactions**
+> \Swagger\Client\Model\GetUniverseFactions200Ok[] getUniverseFactions($language, $datasource)
+
+Get factions
+
+Get a list of factions  ---  Alternate route: `/v1/universe/factions/`  Alternate route: `/legacy/universe/factions/`  Alternate route: `/dev/universe/factions/`   ---  This route is cached for up to 3600 seconds
+
+### Example
+```php
+<?php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+$api_instance = new Swagger\Client\Api\UniverseApi();
+$language = "en-us"; // string | Language to use in the response
+$datasource = "tranquility"; // string | The server name you would like data from
+
+try {
+    $result = $api_instance->getUniverseFactions($language, $datasource);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling UniverseApi->getUniverseFactions: ', $e->getMessage(), PHP_EOL;
+}
+?>
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **language** | **string**| Language to use in the response | [optional] [default to en-us]
+ **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+
+### Return type
+
+[**\Swagger\Client\Model\GetUniverseFactions200Ok[]**](../Model/GetUniverseFactions200Ok.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
+
+# **getUniverseGroups**
+> int[] getUniverseGroups($page, $datasource)
+
+Get item groups
+
+Get a list of item groups  ---  Alternate route: `/v1/universe/groups/`  Alternate route: `/legacy/universe/groups/`  Alternate route: `/dev/universe/groups/`   ---  This route is cached for up to 3600 seconds
+
+### Example
+```php
+<?php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+$api_instance = new Swagger\Client\Api\UniverseApi();
+$page = 56; // int | Which page to query
+$datasource = "tranquility"; // string | The server name you would like data from
+
+try {
+    $result = $api_instance->getUniverseGroups($page, $datasource);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling UniverseApi->getUniverseGroups: ', $e->getMessage(), PHP_EOL;
+}
+?>
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **page** | **int**| Which page to query | [optional]
+ **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+
+### Return type
+
+**int[]**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
+
+# **getUniverseGroupsGroupId**
+> \Swagger\Client\Model\GetUniverseGroupsGroupIdOk getUniverseGroupsGroupId($group_id, $language, $datasource)
+
+Get item group information
+
+Get information on an item group  ---  Alternate route: `/v1/universe/groups/{group_id}/`  Alternate route: `/legacy/universe/groups/{group_id}/`  Alternate route: `/dev/universe/groups/{group_id}/`   ---  This route is cached for up to 3600 seconds
+
+### Example
+```php
+<?php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+$api_instance = new Swagger\Client\Api\UniverseApi();
+$group_id = 56; // int | An Eve item group ID
+$language = "en-us"; // string | Language to use in the response
+$datasource = "tranquility"; // string | The server name you would like data from
+
+try {
+    $result = $api_instance->getUniverseGroupsGroupId($group_id, $language, $datasource);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling UniverseApi->getUniverseGroupsGroupId: ', $e->getMessage(), PHP_EOL;
+}
+?>
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **group_id** | **int**| An Eve item group ID |
+ **language** | **string**| Language to use in the response | [optional] [default to en-us]
+ **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+
+### Return type
+
+[**\Swagger\Client\Model\GetUniverseGroupsGroupIdOk**](../Model/GetUniverseGroupsGroupIdOk.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
+
+# **getUniverseRaces**
+> \Swagger\Client\Model\GetUniverseRaces200Ok[] getUniverseRaces($language, $datasource)
+
+Get character races
+
+Get a list of character races  ---  Alternate route: `/v1/universe/races/`  Alternate route: `/legacy/universe/races/`  Alternate route: `/dev/universe/races/`   ---  This route is cached for up to 3600 seconds
+
+### Example
+```php
+<?php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+$api_instance = new Swagger\Client\Api\UniverseApi();
+$language = "en-us"; // string | Language to use in the response
+$datasource = "tranquility"; // string | The server name you would like data from
+
+try {
+    $result = $api_instance->getUniverseRaces($language, $datasource);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling UniverseApi->getUniverseRaces: ', $e->getMessage(), PHP_EOL;
+}
+?>
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **language** | **string**| Language to use in the response | [optional] [default to en-us]
+ **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+
+### Return type
+
+[**\Swagger\Client\Model\GetUniverseRaces200Ok[]**](../Model/GetUniverseRaces200Ok.md)
 
 ### Authorization
 
@@ -249,12 +492,59 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
+# **getUniverseTypes**
+> int[] getUniverseTypes($page, $datasource)
+
+Get types
+
+Get a list of type ids  ---  Alternate route: `/v1/universe/types/`  Alternate route: `/legacy/universe/types/`  Alternate route: `/dev/universe/types/`   ---  This route is cached for up to 3600 seconds
+
+### Example
+```php
+<?php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+$api_instance = new Swagger\Client\Api\UniverseApi();
+$page = 56; // int | Which page to query
+$datasource = "tranquility"; // string | The server name you would like data from
+
+try {
+    $result = $api_instance->getUniverseTypes($page, $datasource);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling UniverseApi->getUniverseTypes: ', $e->getMessage(), PHP_EOL;
+}
+?>
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **page** | **int**| Which page to query | [optional]
+ **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+
+### Return type
+
+**int[]**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
+
 # **getUniverseTypesTypeId**
-> \Swagger\Client\Model\GetUniverseTypesTypeIdOk getUniverseTypesTypeId($type_id, $datasource)
+> \Swagger\Client\Model\GetUniverseTypesTypeIdOk getUniverseTypesTypeId($type_id, $language, $datasource)
 
 Get type information
 
-Get information on a type  ---  Alternate route: `/v1/universe/types/{type_id}/`  Alternate route: `/legacy/universe/types/{type_id}/`  Alternate route: `/dev/universe/types/{type_id}/`   ---  This route is cached for up to 3600 seconds
+Get information on a type  ---  Alternate route: `/v2/universe/types/{type_id}/`  Alternate route: `/dev/universe/types/{type_id}/`   ---  This route is cached for up to 3600 seconds
 
 ### Example
 ```php
@@ -263,10 +553,11 @@ require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $type_id = 56; // int | An Eve item type ID
+$language = "en-us"; // string | Language to use in the response
 $datasource = "tranquility"; // string | The server name you would like data from
 
 try {
-    $result = $api_instance->getUniverseTypesTypeId($type_id, $datasource);
+    $result = $api_instance->getUniverseTypesTypeId($type_id, $language, $datasource);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseTypesTypeId: ', $e->getMessage(), PHP_EOL;
@@ -279,6 +570,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **type_id** | **int**| An Eve item type ID |
+ **language** | **string**| Language to use in the response | [optional] [default to en-us]
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
 
 ### Return type

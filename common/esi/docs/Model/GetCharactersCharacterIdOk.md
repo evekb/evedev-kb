@@ -3,7 +3,7 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**ancestry_id** | **int** | ancestry_id integer | 
+**ancestry_id** | **int** | ancestry_id integer | [optional] 
 **birthday** | [**\DateTime**](\DateTime.md) | Creation date of the character | 
 **bloodline_id** | **int** | bloodline_id integer | 
 **corporation_id** | **int** | The character&#39;s corporation ID | 
