@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.28.0
+Eve Development Network Killboard v4.2.29.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -26,6 +26,21 @@ o/ EVE Development Network
 VERSION HISTORY
 ===============
 
+v4.2.29.0
+
+Features:
+Updated CCP DB to YC-119-1 1.0.20170112
+
+Enhancements:
+Remove Killmail CC via Email functionality - Remove old and vulnerable PHPMailer classes
+Respect squadron size for Fighter losses
+Cron jobs: Load mods before first log output
+Updated zKBFetch for comaptibility with API changes
+
+Bugfixes:
+Fix for zKB Fetch for entities with > 200 kills/h
+
+-------------------------------------------
 v4.2.28.0
 
 Features:
