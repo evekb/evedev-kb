@@ -21,6 +21,4 @@ Daily
 cron_clearup.php: Remove old files from the cache.
 cron_value.php: Updated the values of items.
 
-(Not essential)
-cron_cache.php: Fetch some commonly used files from the API to reduce the occasional slow page load.
 

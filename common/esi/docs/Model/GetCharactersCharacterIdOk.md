@@ -3,13 +3,14 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**alliance_id** | **int** | The character&#39;s alliance ID | [optional] 
 **ancestry_id** | **int** | ancestry_id integer | [optional] 
 **birthday** | [**\DateTime**](\DateTime.md) | Creation date of the character | 
 **bloodline_id** | **int** | bloodline_id integer | 
 **corporation_id** | **int** | The character&#39;s corporation ID | 
-**description** | **string** | description string | 
+**description** | **string** | description string | [optional] 
 **gender** | **string** | gender string | 
-**name** | **string** | The name of the character | 
+**name** | **string** | name string | 
 **race_id** | **int** | race_id integer | 
 **security_status** | **float** | security_status number | [optional] 
 

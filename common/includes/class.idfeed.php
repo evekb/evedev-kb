@@ -467,9 +467,9 @@ class IDFeed
                     $this->processKill($row);
                 }
 
-                catch(CrestParserException $e)
+                catch(EsiParserException $e)
                 {
-                    $this->parsemsg[] = "Error communicating with CREST, aborting!";
+                    $this->parsemsg[] = "Error communicating with ESI, aborting!";
                     $this->parsemsg[] = $e->getMessage();
                     break;
                 }
@@ -567,13 +567,13 @@ class IDFeed
                 // check if we can fetch from CREST
                 if(!is_null($kill->getCrestUrl()))
                 {
-                    $CrestParser = new CrestParser($kill->getCrestUrl());
-                    $CrestParser->setAllowNpcOnlyKills(!$this->skipNpcOnly);
+                    $EsiParser = new EsiParser($kill->getExternalID(), $kill->getCrestHash());
+                    $EsiParser->setAllowNpcOnlyKills(!$this->skipNpcOnly);
                     try
                     {
-                        $id = $CrestParser->parse(true);
+                        $id = $EsiParser->parse();
                     } 
-                    catch (CrestParserException $e) 
+                    catch (EsiParserException $e) 
                     {
                         $killException = $e;
                         $id = 0;
@@ -584,8 +584,8 @@ class IDFeed
                             $id = $e->getCode();
                         }
 
-                        // CREST error due to incorrect CREST hash
-                        else if($e->getCode() == 403)
+                        // ESI error due to incorrect ESI hash
+                        else if($e->getCode() == 422)
                         {
                             // check if kills with invalid CREST hash should be posted as non-verified kills
                             if(!config::get('skipNonVerifyableKills'))
@@ -791,7 +791,7 @@ class IDFeed
             $alliance = Alliance::add("None");
         }
         $corp = Corporation::add(strval($victim['corporationName']), $alliance, $time,
-                    (int)$victim['corporationID']);
+                    (int)$victim['corporationID'], false);
 
         if (!strval($victim['characterName'])) {
             if ((int)$row['moonID']) {
@@ -819,13 +819,13 @@ class IDFeed
             $name = strval($victim['characterName']);
         }
 
-        $pilot = Pilot::add($name, $corp, $time, (int)$victim['characterID']);
+        $pilot = Pilot::add($name, $corp, $time, (int)$victim['characterID'], false);
         $ship = Ship::getByID((int)$victim['shipTypeID']);
 
-                // coordinates default to 0
-                $xCoordinate = (float) @$victim['x'];
-                $yCoordinate = (float) @$victim['y'];
-                $zCoordinate = (float) @$victim['z'];
+        // coordinates default to 0
+        $xCoordinate = (float) @$victim['x'];
+        $yCoordinate = (float) @$victim['y'];
+        $zCoordinate = (float) @$victim['z'];
          
         $kill->setVictim($pilot);
         $kill->setVictimID($pilot->getID());
@@ -833,9 +833,9 @@ class IDFeed
         $kill->setVictimAllianceID($alliance->getID());
         $kill->setVictimShip($ship);
         $kill->set('dmgtaken', (int)$victim['damageTaken']);
-                $kill->setXCoordinate($xCoordinate);
-                $kill->setYCoordinate($yCoordinate);
-                $kill->setZCoordinate($zCoordinate);
+        $kill->setXCoordinate($xCoordinate);
+        $kill->setYCoordinate($yCoordinate);
+        $kill->setZCoordinate($zCoordinate);
         return true;
     }
 
@@ -893,18 +893,17 @@ class IDFeed
             }
         }
         $corp = Corporation::add(strval($inv['corporationName']), $alliance, $time,
-                    (int)$inv['corporationID']);
+                    (int)$inv['corporationID'], false);
 
         $charid = (int)$inv['characterID'];
         $charname = (string)$inv['characterName'];
-                $loadPilotExternals = true;
+        $loadPilotExternals = true;
         // Allow for blank names for consistency with CCP API.
                 // @deprecated? API doesn't supply a character name here
         if (preg_match("/(Mobile (Large|Medium|Small) Warp Disruptor I?I?|\w+ Control Tower( \w+)?)/",
                 $charname)) {
             $charname = $inv['corporationName'].' - '.$charname;
             $charid = 0;
-                        $loadPilotExternals = false;
         } 
                 // @deprecated? API doesn't supply a weapon here
                 else if ($charname == ""
@@ -912,7 +911,6 @@ class IDFeed
                    $weapon->getName()))) {
             $charname = $inv['corporationName'].' - '.$weapon->getName();
             $charid = 0;
-                        $loadPilotExternals = false;
         } 
                 // this should be up-to-date for current state of the API
         // needs verification for Mobile Warpdisruptors
@@ -922,7 +920,6 @@ class IDFeed
             $charname = $inv['corporationName'].' - '.$ship->getName();
             $weapon = $ship;
             $charid = 0;
-                        $loadPilotExternals = false;
         } else if ($charname == "" && !$charid) {
             // NPC ship
             $ship = Ship::getByID((int) $inv['shipTypeID']); 
@@ -933,7 +930,6 @@ class IDFeed
                 $npc = true;
             }
             $charid = 0;
-            $loadPilotExternals = false;
             if(!$charname)
             {
                 $this->parsemsg[] = "Involved party is an NPC with a ship type not found in the database!";
@@ -945,7 +941,7 @@ class IDFeed
             return false;
         }
 
-        $pilot = Pilot::add((string)$charname, $corp, $time, $charid, $loadPilotExternals);
+        $pilot = Pilot::add((string)$charname, $corp, $time, $charid, false);
 
         $iparty = new InvolvedParty($pilot->getID(), $corp->getID(),
                 $alliance->getID(), (float) $inv['securityStatus'],

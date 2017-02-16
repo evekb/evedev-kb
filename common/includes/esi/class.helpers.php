@@ -2,7 +2,7 @@
 
 use EDK\ESI\ESI;
 use EsiClient\UniverseApi;
-use Swagger\Client\Model\PostUniverseNamesIds;
+use Swagger\Client\Model\GetSearchOk;
 
 /**
  * A collection of helper methods for interacting with the ESI API
@@ -208,11 +208,12 @@ class ESI_Helpers
         $UniverseApi = new UniverseApi($EdkEsi);
         
         // wrap IDs into container
-        $EsiUniverseIds = new PostUniverseNamesIds();
-        $EsiUniverseIds->setIds($entityIds);
+        // this used to work and is the intended way - seems broken!
+        //$EsiUniverseIds = new PostUniverseNamesIds();
+        //$EsiUniverseIds->setIds($entityIds);
         
         // resolve IDs to names
-        $EsiUniverseNames = $UniverseApi->postUniverseNames($EsiUniverseIds, $EdkEsi->getDataSource());
+        $EsiUniverseNames = $UniverseApi->postUniverseNames($entityIds, $EdkEsi->getDataSource());
         
         // create mapping
         $idNameMapping = array();
@@ -222,5 +223,34 @@ class ESI_Helpers
         }
         
         return $idNameMapping;
+    }
+    
+    /**
+     * Accepts the name and type of an entity to find using ESI's
+     * search endpoint. This will perform an exact search for the given
+     * entity type and name and only return an ID, if an exact match was found.
+     * 
+     * @param string $entityName the name of the entity
+     * @param string $entityType the type of the entity, allowed values: agent, 
+     *                           alliance, character, constellation, corporation, 
+     *                           faction, inventorytype, region, solarsystem, station, 
+     *                           wormhole
+     * @return int the external ID for the given entity or <code>null</code>
+     * @throws \Swagger\Client\ApiException on ESI communication error
+     */
+    public static function getExternalIdForEntity($entityName, $entityType)
+    {
+        // search for the corp in order to get the external ID
+        $EdkEsi = new ESI();
+        $SearchApi = new SearchApi($EdkEsi);
+        $entitiesMatching = $SearchApi->getSearch($entityName, array($entityType), null, true, $EdkEsi->getDataSource());
+
+        if(count($entitiesMatching) == 1)
+        {
+            $getter = GetSearchOk::getters()[$entityType];
+            return $entitiesMatching->$getter();
+        }
+        
+        return null;
     }
 }

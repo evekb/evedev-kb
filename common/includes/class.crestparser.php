@@ -447,12 +447,12 @@ class CrestParser
         // if corp is not present, use faction
         if($victimDetails['corporationID'] > 0)
         {
-            $Corp = Corporation::add(strval($victimDetails['corporationName']), $Alliance, $timestamp, (int)$victimDetails['corporationID']);
+            $Corp = Corporation::add(strval($victimDetails['corporationName']), $Alliance, $timestamp, (int)$victimDetails['corporationID'], false);
         }   
 
         else
         {
-            $Corp = Corporation::add(strval($victimDetails['factionName']), $Alliance, $timestamp, (int)$victimDetails['factionID']);
+            $Corp = Corporation::add(strval($victimDetails['factionName']), $Alliance, $timestamp, (int)$victimDetails['factionID'], false);
         }
 
         // victim's name
@@ -474,7 +474,7 @@ class CrestParser
             $victimName = $victimDetails["characterName"];
         }
 
-        $Pilot = $pilot = Pilot::add($victimName, $Corp, $timestamp, $victimDetails["characterID"]);
+        $Pilot = $pilot = Pilot::add($victimName, $Corp, $timestamp, $victimDetails["characterID"], false);
 
         // handle victim's ship
         $Ship = Ship::getByID($victimDetails["shipTypeID"]);

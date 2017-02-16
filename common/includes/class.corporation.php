@@ -8,6 +8,7 @@
 
 use EDK\ESI\ESI;
 use EsiClient\CorporationApi;
+use EsiClient\SearchApi;
 
 
 /**
@@ -176,8 +177,7 @@ class Corporation extends Entity
                 // check for success to prevent endless recursive calls
                 if($this->fetchCorp())
                 {
-                    // after adding the alliance to DB we need to read its properties
-                    $this->execQuery();
+                    $this->putCache();
                 }
             } 
             else if($qry->recordCount())
@@ -197,13 +197,14 @@ class Corporation extends Entity
      * @param string $name The name of the new corporation.
      * @param Alliance $alliance The alliance this corporation belongs to.
      * @param string $timestamp The timestamp the corporation's details were updated.
-     * @param integer $externalid The external CCP ID for the corporation.
+     * @param integer $externalID The external CCP ID for the corporation.
      * @param boolean $loadExternals Whether to fetch unknown information from the API.
      * @return Corporation
      */
-    static function add($name, $alliance, $timestamp, $externalid = 0, $loadExternals = true)
+    static function add($name, $alliance, $timestamp, $externalID = 0, $loadExternals = true)
     {
-        if (!$name) {
+        if (!$name && !$externalID) 
+            {
             trigger_error("Attempt to add a corporation with no name. Aborting.", E_USER_ERROR);
             // If things are going this wrong, it's safer to die and prevent more harm
             die;
@@ -213,97 +214,114 @@ class Corporation extends Entity
             die;
         }
         $name = stripslashes($name);
-        $externalid = (int) $externalid;
-                $mysqlTimestamp = toMysqlDateTime($timestamp);
-        $qry = DBFactory::getDBQuery(true);
-        $qry->execute("select * from kb3_corps
-                       where crp_name = '".$qry->escape($name)."'");
-        // If the corp name is not present in the db add it.
-        if (!$qry->recordCount()) {
-            // If no external id is given then look it up.
-            if (!$externalid && $loadExternals) {
-                $myID = new API_NametoID();
-                $myID->setNames($name);
-                $myID->fetchXML();
-                $myNames = $myID->getNameData();
-                $externalid = (int) $myNames[0]['characterID'];
-            }
-            // If we have an external id then check it isn't already in use
-            // If we find it then update the old corp with the new name and
-            // return.
-            if ($externalid) {
-                $qry->execute("SELECT * FROM kb3_corps WHERE crp_external_id = "
-                                .$externalid);
-                if ($qry->recordCount()) {
-                    $row = $qry->getRow();
-                    $qry->execute("UPDATE kb3_corps SET crp_name = '".$qry->escape($name)
-                                    ."' WHERE crp_external_id = ".$externalid);
+        $externalID = (int) $externalID;
+        $mysqlTimestamp = toMysqlDateTime($timestamp);
+        
+        // we don't have an external ID, but we do have a name
+        if(!$externalID && $name)
+        {
+            // check whether we have that corp name in the database, for
+            $qry = DBFactory::getDBQuery(true);
+            $qry->execute("select * from kb3_corps
+                           where crp_name = '".$qry->escape($name)."'");
+            // If the corp name is not present or wie should load externals
+            if (!$qry->recordCount() || $loadExternals) 
+            {
+                // search for the corp in order to get the external ID
+                $EdkEsi = new ESI();
+                $SearchApi = new SearchApi($EdkEsi);
+                $corpsMatching = $SearchApi->getSearch($name, array('corporation'), null, true, $EdkEsi->getDataSource());
 
-                    $crp = Corporation::getByID((int)$row['crp_id']);
-                    Cacheable::delCache($crp);
-                    $crp->name = $name;
-                    $crp->externalid = $row['crp_external_id'];
-                    if (!is_null($row['crp_updated'])) {
-                        $crp->updated = strtotime($row['crp_updated']." UTC");
-                    } else {
-                        $crp->updated = null;
-                    }
-                    // Now check if the alliance needs to be updated.
-                    if ($row['crp_all_id'] != $alliance->getID()
-                                    && $crp->isUpdatable($timestamp)) {
-                        $sql = 'update kb3_corps
-                                       set crp_all_id = '.$alliance->getID().', ';
-                        $sql .= "crp_updated = '".$mysqlTimestamp."' ".
-                                        "where crp_id = ".$crp->getID();
-                        $qry->execute($sql);
-                        $crp->alliance = $alliance;
-                    }
-                    return $crp;
+                if(count($corpsMatching) == 1)
+                {
+                    $externalID = $corpsMatching->getCorporation();
                 }
+            
             }
-            // Neither corp name or external id was found so add this corp as new
-            if ($externalid) {
-                $qry->execute("insert into kb3_corps ".
+            
+            // we already know this corp
+            else
+            {
+                $row = $qry->getRow();
+                $crp = Corporation::getByID((int)$row['crp_id']);
+                $crp->name = $row['crp_name'];
+                $crp->externalid = (int) $row['crp_external_id'];
+                $crp->alliance = $row['crp_all_id'];
+                if (!is_null($row['crp_updated'])) {
+                    $crp->updated = strtotime($row['crp_updated']." UTC");
+                } else {
+                    $crp->updated = null;
+                }
+                if ($row['crp_all_id'] != $alliance->getID()
+                                && $crp->isUpdatable($timestamp)) {
+                    $sql = 'update kb3_corps set crp_all_id = '.$alliance->getID().', ';
+                    $sql .= "crp_updated = '".$mysqlTimestamp."' ".
+                                    "where crp_id = ".$crp->id;
+                    $qry->execute($sql);
+                    $crp->alliance = $alliance->getID();
+                }
+                if (!$crp->externalid && $externalID) {
+                    $crp->setExternalID((int)$externalID);
+                }
+                return $crp;
+            }
+        }
+        
+        // first check whether this corporation already exists by external ID
+        if($externalID > 0)
+        {
+            $Corp = self::getByExternalID($externalID);
+            if(!is_null($Corp))
+            {
+                // check if we can update this corp
+                if($Corp->isUpdatable($timestamp))
+                {
+                    $updateCorp = new DBPreparedQuery();
+                    $updateCorp->prepare('UPDATE kb3_corps SET crp_name = ?, crp_all_id = ?, crp_updated = ? WHERE crp_external_id = ?');
+                    $types = 'sisi';
+                    $allianceID = $alliance->getID();
+                    $arr = array(&$types, &$name, &$allianceID, &$mysqlTimestamp, &$externalID);
+                    $updateCorp->bind_params($arr);
+                    $updateCorp->execute();
+                    
+                    Cacheable::delCache($Corp);
+                    return new Corporation($externalID, true);
+                }
+                
+                return $Corp;
+            }
+            
+            // we need to fetch this Corp from the API
+            else if($loadExternals)
+            {
+                $Corp = new Corporation($externalID, true);
+                $Corp->fetchCorp();
+                $Corp->putCache();
+                return $Corp;                
+            }
+            
+            // add this corp with the given data
+            $qry = DBFactory::getDBQuery(true);
+            $qry->execute("insert into kb3_corps ".
                                 "(crp_name, crp_all_id, crp_external_id, crp_updated) ".
                                 "values ('".$qry->escape($name)."',".$alliance->getID().
-                                ", ".$externalid.", '".$mysqlTimestamp."')");
-            } else {
-                $qry->execute("insert into kb3_corps ".
+                                ", ".$externalID.", '".$mysqlTimestamp."') on duplicate key update crp_external_id = ".$externalID.", crp_updated = '".$mysqlTimestamp."'");
+            
+            return new Corporation($externalID, true);
+        }
+        
+        else
+        {
+            // Neither corp name or external id was found so add this corp as new
+            $qry = DBFactory::getDBQuery(true);
+            $qry->execute("insert into kb3_corps ".
                                 "(crp_name, crp_all_id, crp_updated) ".
                                 "values ('".$qry->escape($name)."',".$alliance->getID().
                                 ", '".$mysqlTimestamp."')");
-            }
-            $crp = Corporation::getByID((int)$qry->getInsertID());
-            $crp->name = $name;
-            $crp->externalid = ((int)$externalid);
-            $crp->alliance = $alliance->getID();
-            $crp->updated = strtotime(preg_replace("/\./", "-", $timestamp)." UTC");
-
-            return $crp;
-        } else {
-            $row = $qry->getRow();
-            $crp = Corporation::getByID((int)$row['crp_id']);
-            $crp->name = $row['crp_name'];
-            $crp->externalid = (int) $row['crp_external_id'];
-            $crp->alliance = $row['crp_all_id'];
-            if (!is_null($row['crp_updated'])) {
-                $crp->updated = strtotime($row['crp_updated']." UTC");
-            } else {
-                $crp->updated = null;
-            }
-            if ($row['crp_all_id'] != $alliance->getID()
-                            && $crp->isUpdatable($timestamp)) {
-                $sql = 'update kb3_corps set crp_all_id = '.$alliance->getID().', ';
-                $sql .= "crp_updated = '".$mysqlTimestamp."' ".
-                                "where crp_id = ".$crp->id;
-                $qry->execute($sql);
-                $crp->alliance = $alliance->getID();
-            }
-            if (!$crp->externalid && $externalid) {
-                $crp->setExternalID((int)$externalid);
-            }
-            return $crp;
+            
+            return new Corporation($qry->getInsertID(), false);
         }
+        
         return false;
     }
     /**
@@ -464,11 +482,11 @@ class Corporation extends Entity
         {
             return false;
         }
-        $crp = Corporation::add(slashfix($EsiCorp->getCorporationName()), $Alliance, ESI_Helpers::formatRFC7231Timestamp($headers['Last-Modified']), (int) $this->externalid);
+        $crp = Corporation::add(slashfix($EsiCorp->getCorporationName()), $Alliance, ESI_Helpers::formatRFC7231Timestamp($headers['Last-Modified']), (int) $this->externalid, false);
 
-        $this->name = $crp->name;
-        $this->alliance = $crp->alliance;
-        $this->updated = $crp->updated;
+        $this->name = $crp->getName();
+        $this->alliance = $crp->getAlliance();
+        $this->updated = ESI_Helpers::formatRFC7231Timestamp($headers['Last-Modified']);
         $this->id = $crp->getID();
         return true;
     }
@@ -482,5 +500,32 @@ class Corporation extends Entity
     static function getByID($id)
     {
         return Cacheable::factory(get_class(), $id);
+    }
+    
+    /**
+     * Gets a corp by its external ID. Will fetch from cache if enabled.
+     *
+     * @param mixed $externalId ID to fetch $id
+     * @return \Corporation the corp, if found
+     */
+    static function getByExternalID($externalId)
+    {
+        $getIdByExternalId = new DBPreparedQuery();
+        $getIdByExternalId->prepare('SELECT crp_id FROM kb3_corps WHERE crp_external_id = ?');
+        $corpId = NULL;
+        $arr = array(&$corpId);
+        $getIdByExternalId->bind_results($arr);
+        $types = 'i';
+        $arr2 = array(&$types, &$externalId);
+        $getIdByExternalId->bind_params($arr2);
+
+        $getIdByExternalId->execute();
+        if($getIdByExternalId->recordCount() > 0)
+        {
+            $getIdByExternalId->fetch();
+            return Cacheable::factory(get_class(), $corpId);
+        }
+
+        return NULL;
     }
 }

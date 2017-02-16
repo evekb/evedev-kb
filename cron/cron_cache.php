@@ -5,6 +5,7 @@
  * 
  * Recommended frequency: once a day
  * @package EDK
+ * @deprecated
  */
 
 // include the base class providing all context data
@@ -12,19 +13,7 @@ require_once('cron.base.php');
 
 logCron("Starting Alliance list update");
 $cronStartTime = microtime(true);
-
-// Alliance
-$allianceApi = new API_Alliance();
-$allianceApi->fetchalliances();
-if(!is_null($allianceApi->getError()))
-{
-    logCron("Error occurred while fetching Alliance list:");
-    logCron($allianceApi->getMessage());
-}
-
-else
-{
-    logCron("Finished successfully");
-}
+// DELETE ME
+logCron("This cronjob is deprecated!");
 
 logCron('Time taken = '.(microtime(true) - $cronStartTime).' seconds.');

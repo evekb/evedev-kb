@@ -21,6 +21,9 @@ class ESI extends ApiClient
     /** the data source for the ESI client */
     protected $dataSource = ESI_DATA_SOURCE;
     
+    /** the total time [s] we spent talking to ESI during this request */
+    protected static $totalEsiTime = 0.0;
+    
     
     public function __construct(\Swagger\Client\Configuration $esiConfig = null) 
     {    
@@ -150,12 +153,14 @@ class ESI extends ApiClient
         curl_setopt($curl, CURLOPT_HEADER, 1);
 
         // Make the request
+        $startTime = microtime(true);
         $response = curl_exec($curl);
         $http_header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
         $http_header = $this->httpParseHeaders(substr($response, 0, $http_header_size));
         $http_body = substr($response, $http_header_size);
         $response_info = curl_getinfo($curl);
-
+        self::$totalEsiTime += microtime(true) - $startTime;
+        
         // debug HTTP response body
         if ($this->config->getDebug()) {
             error_log("[DEBUG] HTTP Response body ~BEGIN~".PHP_EOL.print_r($http_body, true).PHP_EOL."~END~".PHP_EOL, 3, $this->config->getDebugFile());
@@ -218,5 +223,14 @@ class ESI extends ApiClient
     public function setDataSource($dataSource) 
     {
         $this->dataSource = $dataSource;
+    }
+    
+    /**
+     * Gets the total ESI time
+     * @return int the total ESI time in seconds
+     */
+    static function getTotalEsiTime() 
+    {
+        return self::$totalEsiTime;
     }
 }

@@ -5,6 +5,7 @@
  * $HeadURL$
  * @package EDK
  */
+use EDK\ESI\ESI;
 
 /**
  * Construct an output page.
@@ -176,6 +177,7 @@ class Page
         $smarty->assign('profile_sql', $qry->queryCount());
         $smarty->assign('profile_time', $processingtime);
         $smarty->assign('sql_time', number_format($qry->getTotalTime(), 4));
+        $smarty->assign('esi_time', round(ESI::getTotalEsiTime(), 4));
         if ($this->isAdmin()
                 || config::get('cfg_profile')
                 || intval(KB_PROFILE)) {

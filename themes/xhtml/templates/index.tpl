@@ -54,7 +54,7 @@
 {/section}
 {/if}
 {if $profile}
-		<div id="profile"><!-- profile -->{$profile_sql} queries{if $profile_sql_cached} (+{$profile_sql_cached} cached) {/if} SQL time {$sql_time}s, Total time {$profile_time}s<!-- /profile --></div>
+		<div id="profile"><!-- profile -->{$profile_sql} queries{if $profile_sql_cached} (+{$profile_sql_cached} cached) {/if} SQL time {$sql_time}s, {if $esi_time > 0}ESI time {$esi_time}s, {/if}Total time {$profile_time}s<!-- /profile --></div>
 {/if}
 		<div class="counter"></div>
 	</div>

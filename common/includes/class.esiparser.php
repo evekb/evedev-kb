@@ -405,7 +405,7 @@ class EsiParser
         // if corp is not present, use faction
         if(null !== $corporationId)
         {
-            $Corp = \Corporation::add($this->idNameMapping[$corporationId], $Alliance, $timestamp, $corporationId);
+            $Corp = \Corporation::add($this->idNameMapping[$corporationId], $Alliance, $timestamp, $corporationId, false);
         }   
 
         else if(null !== $factionId)
@@ -424,7 +424,7 @@ class EsiParser
                     $factionName = $Faction->getName();
                 }
                         
-                $Corp = Corporation::add($factionName, $Alliance, $timestamp, $factionId);
+                $Corp = Corporation::add($factionName, $Alliance, $timestamp, $factionId, false);
         }
         
         // NPCs without Corp/Alliance/Faction (e.g. Rogue Drones)
@@ -556,7 +556,7 @@ class EsiParser
             // if corp is not present, use faction
             if(null !== $corporationId)
             {
-                $Corp = Corporation::add(strval($this->idNameMapping[$corporationId]), $Alliance, $timestamp, $corporationId);
+                $Corp = Corporation::add(strval($this->idNameMapping[$corporationId]), $Alliance, $timestamp, $corporationId, false);
             }   
 
             else if(null !== $factionId)
@@ -575,7 +575,7 @@ class EsiParser
                     $factionName = $Faction->getName();
                 }
                         
-                $Corp = Corporation::add($factionName, $Alliance, $timestamp, $factionId);
+                $Corp = Corporation::add($factionName, $Alliance, $timestamp, $factionId, false);
             }
 
             // NPCs without Corp/Alliance/Faction (e.g. Rogue Drones)

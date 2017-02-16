@@ -599,7 +599,7 @@ class ZKBFetch
         catch (EsiParserException $e) 
         {
             // CREST error due to incorrect CREST hash
-            if($e->getCode() == 403)
+            if($e->getCode() == 422)
             {
                 // check if kills with invalid CREST hash should be posted as non-verified kills
                 if(!config::get('skipNonVerifyableKills'))

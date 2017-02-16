@@ -20,7 +20,7 @@ class ValueFetcherEsi
      * Fetch item values.
      * 
      * @return int The count of values fetched
-     * @throws ValueFetcherCrestException
+     * @throws ValueFetcherEsiException
      */
     public function fetchValues()
     {
