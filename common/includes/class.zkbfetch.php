@@ -325,12 +325,6 @@ class ZKBFetch
             $this->fetchUrl .= '/';
         }
 
-        // force API verified mails only
-        if(strpos($this->fetchUrl, 'api-only') === FALSE)
-        {
-            $this->fetchUrl .= 'api-only/';
-        }
-
         // add startTime, if not already in URL and if given and the URL is not for a specific kill
         if(strpos($this->fetchUrl, 'startTime') === FALSE && !is_null($this->startTimestamp) && strlen(trim($this->startTimestamp) > 0)
                 && strpos($this->fetchUrl, 'killID') === FALSE)
