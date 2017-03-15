@@ -14,6 +14,10 @@ class ShipClass extends Cacheable
 {
     /** ship class ID for citadels */
     public static $SHIP_CLASS_ID_CITADELS = 50;
+    public static $SHIP_CLASS_ID_CAPSULES = 2;
+    public static $SHIP_CLASS_ID_NOOBSHIPS = 3;
+    public static $SHIP_CLASS_ID_SHUTTLES = 11;
+    public static $SHIP_CLASS_ID_MOBILE_WARP_DISRUPTORS = 53;
     
 	private $executed = false;
 	private $id = 0;

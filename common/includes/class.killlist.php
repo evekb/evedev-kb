@@ -1036,18 +1036,21 @@ class KillList
 	{
 		if (!$flag)
 		{
-			array_push($this->exclude_scl_, 2);
-			array_push($this->exclude_scl_, 3);
-			array_push($this->exclude_scl_, 11);
+			array_push($this->exclude_scl_, ShipClass::$SHIP_CLASS_ID_CAPSULES);
+			array_push($this->exclude_scl_, ShipClass::$SHIP_CLASS_ID_NOOBSHIPS);
+			array_push($this->exclude_scl_, ShipClass::$SHIP_CLASS_ID_SHUTTLES);
+            array_push($this->exclude_scl_, ShipClass::$SHIP_CLASS_ID_MOBILE_WARP_DISRUPTORS);
 		}
 
 		if ($flag)
 		{
-			if (($idx = array_search(2, $this->exclude_scl_)) !== FALSE)
+			if (($idx = array_search(ShipClass::$SHIP_CLASS_ID_CAPSULES, $this->exclude_scl_)) !== FALSE)
 				unset($this->exclude_scl_[$idx]);
-			if (($idx = array_search(3, $this->exclude_scl_)) !== FALSE)
+			if (($idx = array_search(hipClass::$SHIP_CLASS_ID_NOOBSHIPS, $this->exclude_scl_)) !== FALSE)
 				unset($this->exclude_scl_[$idx]);
-			if (($idx = array_search(11, $this->exclude_scl_)) !== FALSE)
+			if (($idx = array_search(ShipClass::$SHIP_CLASS_ID_SHUTTLES, $this->exclude_scl_)) !== FALSE)
+				unset($this->exclude_scl_[$idx]);
+            if (($idx = array_search(ShipClass::$SHIP_CLASS_ID_MOBILE_WARP_DISRUPTORS, $this->exclude_scl_)) !== FALSE)
 				unset($this->exclude_scl_[$idx]);
 		}
 	}
