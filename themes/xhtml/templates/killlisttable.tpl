@@ -77,7 +77,7 @@
 				</div>
 			</td>
 			<td style="width: 160px" class="kb-table-cell">
-			<div class="no_stretch" style="text-align:left; width: 160px; height:auto">{if $config->get('killlist_regionnames')} {$k.region}, {$k.system}{else}<b>{$k.system}</b>{/if} ({if $k.loss || $k.kill}{$k.systemsecurity|max:0|string_format:"%01.1f"}{else}<span style="color:{if $k.systemsecurity >= 0.5}green{elseif $k.systemsecurity < 0.05}red{else}orange{/if};">{$k.systemsecurity|max:0|string_format:"%01.1f"}</span>{/if})<br /></div>
+			<div class="no_stretch" style="text-align:left; width: 160px; height:auto">{if $config->get('killlist_regionnames')} {$k.region}, {$k.system}{else}<b>{$k.system}</b>{/if} (<span style="color:{if $k.systemsecurity >= 0.5}green{elseif $k.systemsecurity < 0.05}red{else}orange{/if};">{$k.systemsecurity|max:0|string_format:"%01.1f"}</span>)<br /></div>
 	{if $k.inv || $comments_count}
 				<div style="float:left">
 		{if $k.inv}<img src="{$theme_url}/img/involved10_10.png"  style="vertical-align: middle" alt="I:" /> {$k.inv}{/if}
