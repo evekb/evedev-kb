@@ -1046,7 +1046,7 @@ class KillList
 		{
 			if (($idx = array_search(ShipClass::$SHIP_CLASS_ID_CAPSULES, $this->exclude_scl_)) !== FALSE)
 				unset($this->exclude_scl_[$idx]);
-			if (($idx = array_search(hipClass::$SHIP_CLASS_ID_NOOBSHIPS, $this->exclude_scl_)) !== FALSE)
+			if (($idx = array_search(ShipClass::$SHIP_CLASS_ID_NOOBSHIPS, $this->exclude_scl_)) !== FALSE)
 				unset($this->exclude_scl_[$idx]);
 			if (($idx = array_search(ShipClass::$SHIP_CLASS_ID_SHUTTLES, $this->exclude_scl_)) !== FALSE)
 				unset($this->exclude_scl_[$idx]);
