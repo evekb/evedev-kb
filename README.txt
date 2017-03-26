@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.29.0
+Eve Development Network Killboard v4.2.30.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -26,6 +26,19 @@ o/ EVE Development Network
 VERSION HISTORY
 ===============
 
+Features:
+Updated EDK to 4.2.30.0 and CCP DB to YC-119-3 1.0.20170316
+
+Enhancements:
+Added Syndicate Mobile Warp Disruptors to correct ship class
+Exclude Mobile Warp Disruptors from kill lists
+
+Bugfixes:
+ZKBFetch: Removed zKB API modifier "api-only"
+Show system sec status colored in kill list tables
+
+
+-------------------------------------------
 v4.2.29.0
 
 Features:
