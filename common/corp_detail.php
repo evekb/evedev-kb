@@ -5,6 +5,7 @@
  * $HeadURL$
  * @package EDK
  */
+use Swagger\Client\ApiException;
 
 /*
  * @package EDK
@@ -205,33 +206,40 @@ class pCorpDetail extends pageAssembly
         global $smarty;
         // The summary table is also used by the stats. Whichever is called
         // first generates the table.
-
-        $myAPI = new API_CorporationSheet();
-        $myAPI->setCorpID($this->corp->getExternalID());
-        $result .= $myAPI->fetchXML();
-        // Update the name if it has changed.
-        if($result == "" && $myAPI->getCorporationName())
+        
+        // update the corp's details
+        try
         {
-            $this->alliance = Alliance::add($myAPI->getAllianceName(),
-                $myAPI->getAllianceID());
-            $this->corp = Corporation::add($myAPI->getCorporationName(),
-                $this->alliance, $myAPI->getCurrentTime(),
-                $externalid = $this->corp->getExternalID());
+            $EsiCorp = $this->corp->fetchCorp();
+            $this->alliance = $this->corp->getAlliance(); 
+            $this->corpDetails = array('ticker' => $EsiCorp->getTicker());
+            $this->page->setTitle('Corporation details - '.$this->corp->getName() . " [" . $EsiCorp->getTicker() . "]");
         }
-                $this->corpDetails = array('ticker' => $myAPI->getTicker());
-        $this->page->setTitle('Corporation details - '.$this->corp->getName() . " [" . $myAPI->getTicker() . "]");
+        
+        catch(ApiException $e)
+        {
+            EDKError::log(ESI::getApiExceptionReason($e) . PHP_EOL . $e->getTraceAsString());
+            $this->page->setTitle('Corporation details - '.$this->corp->getName() . " []");
+        }
 
         $smarty->assign('portrait_url', $this->corp->getPortraitURL(128));
 
-        if($this->alliance->getName() == "None") {
+        if($this->alliance->getName() == "None") 
+        {
             $smarty->assign('alliance_url', false);
-        } else if($this->alliance->getExternalID()) {
-                        $this->corpDetails['allianceName'] = $this->alliance->getName();
+        } 
+        
+        else if($this->alliance->getExternalID()) 
+        {
+            $this->corpDetails['allianceName'] = $this->alliance->getName();
             $smarty->assign('alliance_url', edkURI::build(
                     array('a', 'alliance_detail', true),
                     array('all_ext_id', $this->alliance->getExternalID(), true)));
-        } else {
-                        $this->corpDetails['allianceName'] = $this->alliance->getName();
+        } 
+        
+        else 
+        {
+            $this->corpDetails['allianceName'] = $this->alliance->getName();
             $smarty->assign('alliance_url', edkURI::build(
                     array('a', 'alliance_detail', true),
                     array('all_id', $this->alliance->getID(), true)));
@@ -252,14 +260,20 @@ class pCorpDetail extends pageAssembly
                 
                 $smarty->assign('efficiency', $this->efficiency);
 
-        if ($result != "Corporation is not part of alliance.") {
-                        $this->corpDetails['pilotIdCeo'] = $myAPI->getCeoID();
-                        $this->corpDetails['pilotNameCeo'] = $myAPI->getCeoName();
-                        $this->corpDetails['headQuartersName'] = $myAPI->getStationName();
-                        $this->corpDetails['memberCount'] = $myAPI->getMemberCount();
-                        $this->corpDetails['shareCount'] = $myAPI->getShares();
-                        $this->corpDetails['taxRate'] = $myAPI->getTaxRate();
-                        $this->corpDetails['externalUrl'] = $myAPI->getUrl();
+        if (isset($EsiCorp)) 
+        {
+            $ceoPilotId = $EsiCorp->getCeoId();
+            $CeoPilot = new Pilot(0, $ceoPilotId);
+            $CeoPilot->fetchPilot();
+            $this->corpDetails['pilotIdCeo'] = $ceoPilotId;
+            $this->corpDetails['pilotNameCeo'] = $CeoPilot->getName();
+            // FIXME not provided by ESI!
+            $this->corpDetails['headQuartersName'] = "";
+            $this->corpDetails['memberCount'] = $EsiCorp->getMemberCount();
+            // FIXME not provided by ESI!
+            $this->corpDetails['shareCount'] = "";
+            $this->corpDetails['taxRate'] = $EsiCorp->getTaxRate() * 100;
+            $this->corpDetails['externalUrl'] = $EsiCorp->getUrl();
             $smarty->assign('ceo_url', edkURI::build(
                     array('a', 'pilot_detail', true),
                     array('plt_ext_id', $this->corpDetails['pilotIdCeo'], true)));
@@ -269,15 +283,15 @@ class pCorpDetail extends pageAssembly
             $smarty->assign('share_count', $this->corpDetails['shareCount']);
             $smarty->assign('tax_rate', $this->corpDetails['taxRate']);
             $smarty->assign('external_url', $this->corpDetails['externalUrl']);
-                        $description = $myAPI->getDescription();
-                        $description = preg_replace('/<br>/', '<br />', $description);
-                        // replace non-html size
-                        $description = preg_replace('/<font size=\"[1-9]+\"/', '<font', $description);
-                        //strip out broken cyan color tag
-                        $description = preg_replace('/color=\"#bfffffff\"/', '', $description);
-                        // replace character links
-                        $description = preg_replace_callback('/showinfo:[1-9]+\/\//', array($this, 'parseShowInfoLink'), $description);
-                        $this->corpDetails['description'] = $description;
+            $description = $EsiCorp->getCorporationDescription();
+            $description = preg_replace('/<br>/', '<br />', $description);
+            // replace non-html size
+            $description = preg_replace('/<font size=\"[1-9]+\"/', '<font', $description);
+            //strip out broken cyan color tag
+            $description = preg_replace('/color=\"#bfffffff\"/', '', $description);
+            // replace character links
+            $description = preg_replace_callback('/showinfo:[1-9]+\/\//', array($this, 'parseShowInfoLink'), $description);
+            $this->corpDetails['description'] = $description;
             $smarty->assign('corp_description', $this->corpDetails['description']);
         }
         return $smarty->fetch(get_tpl('corp_detail_stats'));

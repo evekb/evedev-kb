@@ -9,7 +9,7 @@ Method | HTTP request | Description
 
 
 # **getCharactersCharacterIdSearch**
-> \Swagger\Client\Model\GetCharactersCharacterIdSearchOk getCharactersCharacterIdSearch($character_id, $search, $categories, $language, $strict, $datasource)
+> \Swagger\Client\Model\GetCharactersCharacterIdSearchOk getCharactersCharacterIdSearch($categories, $character_id, $search, $datasource, $language, $strict, $token, $user_agent, $x_user_agent)
 
 Search on a string
 
@@ -24,15 +24,18 @@ require_once(__DIR__ . '/vendor/autoload.php');
 Swagger\Client\Configuration::getDefaultConfiguration()->setAccessToken('YOUR_ACCESS_TOKEN');
 
 $api_instance = new Swagger\Client\Api\SearchApi();
+$categories = array("categories_example"); // string[] | Type of entities to search for
 $character_id = 56; // int | An EVE character ID
 $search = "search_example"; // string | The string to search on
-$categories = array("categories_example"); // string[] | Type of entities to search for
+$datasource = "tranquility"; // string | The server name you would like data from
 $language = "en-us"; // string | Search locale
 $strict = false; // bool | Whether the search should be a strict match
-$datasource = "tranquility"; // string | The server name you would like data from
+$token = "token_example"; // string | Access token to use, if preferred over a header
+$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
+$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getCharactersCharacterIdSearch($character_id, $search, $categories, $language, $strict, $datasource);
+    $result = $api_instance->getCharactersCharacterIdSearch($categories, $character_id, $search, $datasource, $language, $strict, $token, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling SearchApi->getCharactersCharacterIdSearch: ', $e->getMessage(), PHP_EOL;
@@ -44,12 +47,15 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
+ **categories** | [**string[]**](../Model/string.md)| Type of entities to search for |
  **character_id** | **int**| An EVE character ID |
  **search** | **string**| The string to search on |
- **categories** | [**string[]**](../Model/string.md)| Type of entities to search for |
+ **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
  **language** | **string**| Search locale | [optional] [default to en-us]
  **strict** | **bool**| Whether the search should be a strict match | [optional] [default to false]
- **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **token** | **string**| Access token to use, if preferred over a header | [optional]
+ **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
+ **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -67,7 +73,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getSearch**
-> \Swagger\Client\Model\GetSearchOk getSearch($search, $categories, $language, $strict, $datasource)
+> \Swagger\Client\Model\GetSearchOk getSearch($categories, $search, $datasource, $language, $strict, $user_agent, $x_user_agent)
 
 Search on a string
 
@@ -79,14 +85,16 @@ Search for entities that match a given sub-string.  ---  Alternate route: `/v1/s
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\SearchApi();
-$search = "search_example"; // string | The string to search on
 $categories = array("categories_example"); // string[] | Type of entities to search for
+$search = "search_example"; // string | The string to search on
+$datasource = "tranquility"; // string | The server name you would like data from
 $language = "en-us"; // string | Search locale
 $strict = false; // bool | Whether the search should be a strict match
-$datasource = "tranquility"; // string | The server name you would like data from
+$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
+$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getSearch($search, $categories, $language, $strict, $datasource);
+    $result = $api_instance->getSearch($categories, $search, $datasource, $language, $strict, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling SearchApi->getSearch: ', $e->getMessage(), PHP_EOL;
@@ -98,11 +106,13 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **search** | **string**| The string to search on |
  **categories** | [**string[]**](../Model/string.md)| Type of entities to search for |
+ **search** | **string**| The string to search on |
+ **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
  **language** | **string**| Search locale | [optional] [default to en-us]
  **strict** | **bool**| Whether the search should be a strict match | [optional] [default to false]
- **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
+ **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 

@@ -2,6 +2,7 @@
 
 use EDK\ESI\ESI;
 use EsiClient\UniverseApi;
+use EsiClient\SearchApi;
 use Swagger\Client\Model\GetSearchOk;
 
 /**
@@ -120,49 +121,9 @@ class ESI_Helpers
     {
         $EdkEsi = new ESI();
         $KillmailsApi = new \EsiClient\KillmailsApi($EdkEsi);
-        return $KillmailsApi->getKillmailsKillmailIdKillmailHash($killId, $hash);
+        return $KillmailsApi->getKillmailsKillmailIdKillmailHash($hash, $killId);
     }
-    
-    
-    /**
-     * Fetches the pilot with the given external ID from ESI and adds
-     * him to the database.
-     * 
-     * @param int $externalId the external ID of the pilot to fetch
-     * @return \Pilot
-     * 
-     * @throws \Swagger\Client\ApiException on non-2xx response
-     */
-    private function fetchPilot($externalId)
-    {
-        if (!$this->externalid) {
-            return false;
-        }
-            $apiInfo = new API_CharacterInfo();
-            $apiInfo->setID($this->externalid);
-            $result = $apiInfo->fetchXML();
 
-            if($result == "") {
-                $data = $apiInfo->getData();
-                if(isset($data['alliance']) && isset($data['allianceID']))
-                                {
-                                    $this->alliance = Alliance::add($data['alliance'], $data['allianceID']);
-                                }
-                                else {
-                                    $this->alliance = Alliance::add('None');
-                                }
-                                
-                $this->corp = Corporation::add($data['corporation'],
-                    $this->alliance, $apiInfo->getCurrentTime(),
-                    $data['corporationID']);
-                $this->name = $data['characterName'];
-                $Pilot = Pilot::add($data['characterName'], $this->corp, $apiInfo->getCurrentTime(), $data['characterID']);
-                                $this->id = $Pilot->getID();
-            } else {
-                return false;
-            }
-    }
-    
     /**
      * Formats the given DateTime to an EDK compatible timestamp string
      *
@@ -243,12 +204,12 @@ class ESI_Helpers
         // search for the corp in order to get the external ID
         $EdkEsi = new ESI();
         $SearchApi = new SearchApi($EdkEsi);
-        $entitiesMatching = $SearchApi->getSearch($entityName, array($entityType), null, true, $EdkEsi->getDataSource());
+        $entitiesMatching = $SearchApi->getSearch(array($entityType), $entityName, $EdkEsi->getDataSource(), null, true);
 
         if(count($entitiesMatching) == 1)
         {
             $getter = GetSearchOk::getters()[$entityType];
-            return $entitiesMatching->$getter();
+            return reset($entitiesMatching->$getter());
         }
         
         return null;

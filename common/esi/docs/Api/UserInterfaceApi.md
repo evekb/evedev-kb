@@ -12,7 +12,7 @@ Method | HTTP request | Description
 
 
 # **postUiAutopilotWaypoint**
-> postUiAutopilotWaypoint($destination_id, $clear_other_waypoints, $add_to_beginning, $datasource)
+> postUiAutopilotWaypoint($add_to_beginning, $clear_other_waypoints, $destination_id, $datasource, $token, $user_agent, $x_user_agent)
 
 Set Autopilot Waypoint
 
@@ -27,13 +27,16 @@ require_once(__DIR__ . '/vendor/autoload.php');
 Swagger\Client\Configuration::getDefaultConfiguration()->setAccessToken('YOUR_ACCESS_TOKEN');
 
 $api_instance = new Swagger\Client\Api\UserInterfaceApi();
-$destination_id = 789; // int | The destination to travel to, can be solar system, station or structure's id
-$clear_other_waypoints = false; // bool | Whether clean other waypoints beforing adding this one
 $add_to_beginning = false; // bool | Whether this solar system should be added to the beginning of all waypoints
+$clear_other_waypoints = false; // bool | Whether clean other waypoints beforing adding this one
+$destination_id = 789; // int | The destination to travel to, can be solar system, station or structure's id
 $datasource = "tranquility"; // string | The server name you would like data from
+$token = "token_example"; // string | Access token to use, if preferred over a header
+$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
+$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $api_instance->postUiAutopilotWaypoint($destination_id, $clear_other_waypoints, $add_to_beginning, $datasource);
+    $api_instance->postUiAutopilotWaypoint($add_to_beginning, $clear_other_waypoints, $destination_id, $datasource, $token, $user_agent, $x_user_agent);
 } catch (Exception $e) {
     echo 'Exception when calling UserInterfaceApi->postUiAutopilotWaypoint: ', $e->getMessage(), PHP_EOL;
 }
@@ -44,10 +47,13 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **destination_id** | **int**| The destination to travel to, can be solar system, station or structure&#39;s id |
- **clear_other_waypoints** | **bool**| Whether clean other waypoints beforing adding this one | [default to false]
  **add_to_beginning** | **bool**| Whether this solar system should be added to the beginning of all waypoints | [default to false]
+ **clear_other_waypoints** | **bool**| Whether clean other waypoints beforing adding this one | [default to false]
+ **destination_id** | **int**| The destination to travel to, can be solar system, station or structure&#39;s id |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **token** | **string**| Access token to use, if preferred over a header | [optional]
+ **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
+ **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -65,7 +71,7 @@ void (empty response body)
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **postUiOpenwindowContract**
-> postUiOpenwindowContract($contract_id, $datasource)
+> postUiOpenwindowContract($contract_id, $datasource, $token, $user_agent, $x_user_agent)
 
 Open Contract Window
 
@@ -82,9 +88,12 @@ Swagger\Client\Configuration::getDefaultConfiguration()->setAccessToken('YOUR_AC
 $api_instance = new Swagger\Client\Api\UserInterfaceApi();
 $contract_id = 56; // int | The contract to open
 $datasource = "tranquility"; // string | The server name you would like data from
+$token = "token_example"; // string | Access token to use, if preferred over a header
+$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
+$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $api_instance->postUiOpenwindowContract($contract_id, $datasource);
+    $api_instance->postUiOpenwindowContract($contract_id, $datasource, $token, $user_agent, $x_user_agent);
 } catch (Exception $e) {
     echo 'Exception when calling UserInterfaceApi->postUiOpenwindowContract: ', $e->getMessage(), PHP_EOL;
 }
@@ -97,6 +106,9 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **contract_id** | **int**| The contract to open |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **token** | **string**| Access token to use, if preferred over a header | [optional]
+ **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
+ **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -114,7 +126,7 @@ void (empty response body)
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **postUiOpenwindowInformation**
-> postUiOpenwindowInformation($target_id, $datasource)
+> postUiOpenwindowInformation($target_id, $datasource, $token, $user_agent, $x_user_agent)
 
 Open Information Window
 
@@ -131,9 +143,12 @@ Swagger\Client\Configuration::getDefaultConfiguration()->setAccessToken('YOUR_AC
 $api_instance = new Swagger\Client\Api\UserInterfaceApi();
 $target_id = 56; // int | The target to open
 $datasource = "tranquility"; // string | The server name you would like data from
+$token = "token_example"; // string | Access token to use, if preferred over a header
+$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
+$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $api_instance->postUiOpenwindowInformation($target_id, $datasource);
+    $api_instance->postUiOpenwindowInformation($target_id, $datasource, $token, $user_agent, $x_user_agent);
 } catch (Exception $e) {
     echo 'Exception when calling UserInterfaceApi->postUiOpenwindowInformation: ', $e->getMessage(), PHP_EOL;
 }
@@ -146,6 +161,9 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **target_id** | **int**| The target to open |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **token** | **string**| Access token to use, if preferred over a header | [optional]
+ **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
+ **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -163,7 +181,7 @@ void (empty response body)
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **postUiOpenwindowMarketdetails**
-> postUiOpenwindowMarketdetails($type_id, $datasource)
+> postUiOpenwindowMarketdetails($type_id, $datasource, $token, $user_agent, $x_user_agent)
 
 Open Market Details
 
@@ -180,9 +198,12 @@ Swagger\Client\Configuration::getDefaultConfiguration()->setAccessToken('YOUR_AC
 $api_instance = new Swagger\Client\Api\UserInterfaceApi();
 $type_id = 56; // int | The item type to open in market window
 $datasource = "tranquility"; // string | The server name you would like data from
+$token = "token_example"; // string | Access token to use, if preferred over a header
+$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
+$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $api_instance->postUiOpenwindowMarketdetails($type_id, $datasource);
+    $api_instance->postUiOpenwindowMarketdetails($type_id, $datasource, $token, $user_agent, $x_user_agent);
 } catch (Exception $e) {
     echo 'Exception when calling UserInterfaceApi->postUiOpenwindowMarketdetails: ', $e->getMessage(), PHP_EOL;
 }
@@ -195,6 +216,9 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **type_id** | **int**| The item type to open in market window |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **token** | **string**| Access token to use, if preferred over a header | [optional]
+ **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
+ **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -212,7 +236,7 @@ void (empty response body)
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **postUiOpenwindowNewmail**
-> postUiOpenwindowNewmail($new_mail, $datasource)
+> postUiOpenwindowNewmail($new_mail, $datasource, $token, $user_agent, $x_user_agent)
 
 Open New Mail Window
 
@@ -229,9 +253,12 @@ Swagger\Client\Configuration::getDefaultConfiguration()->setAccessToken('YOUR_AC
 $api_instance = new Swagger\Client\Api\UserInterfaceApi();
 $new_mail = new \Swagger\Client\Model\PostUiOpenwindowNewmailNewMail(); // \Swagger\Client\Model\PostUiOpenwindowNewmailNewMail | The details of mail to create
 $datasource = "tranquility"; // string | The server name you would like data from
+$token = "token_example"; // string | Access token to use, if preferred over a header
+$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
+$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $api_instance->postUiOpenwindowNewmail($new_mail, $datasource);
+    $api_instance->postUiOpenwindowNewmail($new_mail, $datasource, $token, $user_agent, $x_user_agent);
 } catch (Exception $e) {
     echo 'Exception when calling UserInterfaceApi->postUiOpenwindowNewmail: ', $e->getMessage(), PHP_EOL;
 }
@@ -244,6 +271,9 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **new_mail** | [**\Swagger\Client\Model\PostUiOpenwindowNewmailNewMail**](../Model/\Swagger\Client\Model\PostUiOpenwindowNewmailNewMail.md)| The details of mail to create |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **token** | **string**| Access token to use, if preferred over a header | [optional]
+ **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
+ **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 

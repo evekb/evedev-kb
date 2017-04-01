@@ -8,7 +8,7 @@ Method | HTTP request | Description
 
 
 # **getInsurancePrices**
-> \Swagger\Client\Model\GetInsurancePrices200Ok[] getInsurancePrices($language, $datasource)
+> \Swagger\Client\Model\GetInsurancePrices200Ok[] getInsurancePrices($datasource, $language, $user_agent, $x_user_agent)
 
 List insurance levels
 
@@ -20,11 +20,13 @@ Return available insurance levels for all ship types  ---  Alternate route: `/v1
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\InsuranceApi();
-$language = "en-us"; // string | Language to use in the response
 $datasource = "tranquility"; // string | The server name you would like data from
+$language = "en-us"; // string | Language to use in the response
+$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
+$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getInsurancePrices($language, $datasource);
+    $result = $api_instance->getInsurancePrices($datasource, $language, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling InsuranceApi->getInsurancePrices: ', $e->getMessage(), PHP_EOL;
@@ -36,8 +38,10 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **language** | **string**| Language to use in the response | [optional] [default to en-us]
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **language** | **string**| Language to use in the response | [optional] [default to en-us]
+ **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
+ **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 

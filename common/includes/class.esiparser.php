@@ -2,6 +2,8 @@
 
 use Swagger\Client\Model\GetKillmailsKillmailIdKillmailHashOk;
 use Swagger\Client\ApiException;
+use EDK\ESI\ESI;
+
 /**
  * ESI Kill Parser
  * @author Salvoxia <salvoxia@blindfish.info>
@@ -57,7 +59,8 @@ class EsiParser
 
         catch(ApiException $e)
         {
-            throw new EsiParserException($e->getMessage(), $e->getCode());
+            EDKError::log(ESI::getApiExceptionReason($e) . PHP_EOL . $e->getTraceAsString());
+            throw new EsiParserException(ESI::getApiExceptionReason($e), $e->getCode());
         }
         
         // gather all involved entity IDs for bulk translating to names

@@ -10,7 +10,7 @@ Method | HTTP request | Description
 
 
 # **getCharactersCharacterIdCalendar**
-> \Swagger\Client\Model\GetCharactersCharacterIdCalendar200Ok[] getCharactersCharacterIdCalendar($character_id, $from_event, $datasource)
+> \Swagger\Client\Model\GetCharactersCharacterIdCalendar200Ok[] getCharactersCharacterIdCalendar($character_id, $datasource, $from_event, $token, $user_agent, $x_user_agent)
 
 List calendar event summaries
 
@@ -26,11 +26,14 @@ Swagger\Client\Configuration::getDefaultConfiguration()->setAccessToken('YOUR_AC
 
 $api_instance = new Swagger\Client\Api\CalendarApi();
 $character_id = 56; // int | The character to retrieve events from
-$from_event = 56; // int | The event ID to retrieve events from
 $datasource = "tranquility"; // string | The server name you would like data from
+$from_event = 56; // int | The event ID to retrieve events from
+$token = "token_example"; // string | Access token to use, if preferred over a header
+$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
+$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getCharactersCharacterIdCalendar($character_id, $from_event, $datasource);
+    $result = $api_instance->getCharactersCharacterIdCalendar($character_id, $datasource, $from_event, $token, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling CalendarApi->getCharactersCharacterIdCalendar: ', $e->getMessage(), PHP_EOL;
@@ -43,8 +46,11 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **character_id** | **int**| The character to retrieve events from |
- **from_event** | **int**| The event ID to retrieve events from | [optional]
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **from_event** | **int**| The event ID to retrieve events from | [optional]
+ **token** | **string**| Access token to use, if preferred over a header | [optional]
+ **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
+ **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -62,7 +68,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getCharactersCharacterIdCalendarEventId**
-> \Swagger\Client\Model\GetCharactersCharacterIdCalendarEventIdOk getCharactersCharacterIdCalendarEventId($character_id, $event_id, $datasource)
+> \Swagger\Client\Model\GetCharactersCharacterIdCalendarEventIdOk getCharactersCharacterIdCalendarEventId($character_id, $event_id, $datasource, $token, $user_agent, $x_user_agent)
 
 Get an event
 
@@ -80,9 +86,12 @@ $api_instance = new Swagger\Client\Api\CalendarApi();
 $character_id = 56; // int | The character id requesting the event
 $event_id = 56; // int | The id of the event requested
 $datasource = "tranquility"; // string | The server name you would like data from
+$token = "token_example"; // string | Access token to use, if preferred over a header
+$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
+$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getCharactersCharacterIdCalendarEventId($character_id, $event_id, $datasource);
+    $result = $api_instance->getCharactersCharacterIdCalendarEventId($character_id, $event_id, $datasource, $token, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling CalendarApi->getCharactersCharacterIdCalendarEventId: ', $e->getMessage(), PHP_EOL;
@@ -97,6 +106,9 @@ Name | Type | Description  | Notes
  **character_id** | **int**| The character id requesting the event |
  **event_id** | **int**| The id of the event requested |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **token** | **string**| Access token to use, if preferred over a header | [optional]
+ **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
+ **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -114,7 +126,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **putCharactersCharacterIdCalendarEventId**
-> putCharactersCharacterIdCalendarEventId($character_id, $event_id, $response, $datasource)
+> putCharactersCharacterIdCalendarEventId($character_id, $event_id, $response, $datasource, $token, $user_agent, $x_user_agent)
 
 Respond to an event
 
@@ -133,9 +145,12 @@ $character_id = 56; // int | The character ID requesting the event
 $event_id = 56; // int | The ID of the event requested
 $response = new \Swagger\Client\Model\PutCharactersCharacterIdCalendarEventIdResponse(); // \Swagger\Client\Model\PutCharactersCharacterIdCalendarEventIdResponse | The response value to set, overriding current value.
 $datasource = "tranquility"; // string | The server name you would like data from
+$token = "token_example"; // string | Access token to use, if preferred over a header
+$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
+$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $api_instance->putCharactersCharacterIdCalendarEventId($character_id, $event_id, $response, $datasource);
+    $api_instance->putCharactersCharacterIdCalendarEventId($character_id, $event_id, $response, $datasource, $token, $user_agent, $x_user_agent);
 } catch (Exception $e) {
     echo 'Exception when calling CalendarApi->putCharactersCharacterIdCalendarEventId: ', $e->getMessage(), PHP_EOL;
 }
@@ -150,6 +165,9 @@ Name | Type | Description  | Notes
  **event_id** | **int**| The ID of the event requested |
  **response** | [**\Swagger\Client\Model\PutCharactersCharacterIdCalendarEventIdResponse**](../Model/\Swagger\Client\Model\PutCharactersCharacterIdCalendarEventIdResponse.md)| The response value to set, overriding current value. |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **token** | **string**| Access token to use, if preferred over a header | [optional]
+ **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
+ **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 

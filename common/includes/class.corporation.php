@@ -8,8 +8,8 @@
 
 use EDK\ESI\ESI;
 use EsiClient\CorporationApi;
-use EsiClient\SearchApi;
-
+use Swagger\Client\ApiException;
+use Swagger\Client\Model\GetCorporationsCorporationIdOk;
 
 /**
  * Creates a new Corporation or fetches an existing one from the database.
@@ -109,15 +109,20 @@ class Corporation extends Entity
         {
             if($this->externalid && is_numeric($this->externalid) && $this->externalid > 1000000) return $this->externalid;
 
-            $myID = new API_NametoID();
-            $myID->setNames($this->getName());
-            $myID->fetchXML();
-            $myNames = $myID->getNameData();
-            if($this->setExternalID($myNames[0]['characterID']))
+            // If we still don't have an external ID then try to fetch it from CCP.
+            try
+            {
+                $this->setExternalID(ESI_Helpers::getExternalIdForEntity($this->getName(), 'corporation'));
                 return $this->externalid;
-            else return 0;
+            } 
+
+            catch (ApiException $ex) 
+            {
+                EDKError::log($ex->getMessage() . PHP_EOL . $ex->getTraceAsString());
+            }
         }
-        else return 0;
+        
+        return 0;
     }
 
     /**
@@ -227,16 +232,7 @@ class Corporation extends Entity
             // If the corp name is not present or wie should load externals
             if (!$qry->recordCount() || $loadExternals) 
             {
-                // search for the corp in order to get the external ID
-                $EdkEsi = new ESI();
-                $SearchApi = new SearchApi($EdkEsi);
-                $corpsMatching = $SearchApi->getSearch($name, array('corporation'), null, true, $EdkEsi->getDataSource());
-
-                if(count($corpsMatching) == 1)
-                {
-                    $externalID = $corpsMatching->getCorporation();
-                }
-            
+                $externalID = ESI_Helpers::getExternalIdForEntity($name, 'corporation');
             }
             
             // we already know this corp
@@ -436,9 +432,13 @@ class Corporation extends Entity
     }
 
     /**
-     * Fetch corporation name and alliance from CCP using the stored external ID.
+     * Fetch corporation details and alliance from CCP using the external ID.
+     * The corporation and alliance will be added to the database, or an existing entry will be updated.
+     * <p>
+     * This always executes an ESI call!
      *
-     * @return boolean TRUE on success, FALSE on failure.
+     * @return GetCorporationsCorporationIdOk the ESI corporation object
+     * @throws ApiException
      */
     public function fetchCorp()
     {
@@ -455,17 +455,9 @@ class Corporation extends Entity
         // create EDK ESI client
         $EdkEsi = new ESI();
         $CorporationApi = new CorporationApi($EdkEsi);
-        
-        try
-        {
-            // only get the ESI corp representation and the headers, we don't need the status code
-            list($EsiCorp, , $headers) = $CorporationApi->getCorporationsCorporationIdWithHttpInfo($this->externalid);
-        } 
-        
-        catch (ApiException $ex) 
-        {
-            return false;
-        }
+
+        // only get the ESI corp representation and the headers, we don't need the status code
+        list($EsiCorp, , $headers) = $CorporationApi->getCorporationsCorporationIdWithHttpInfo($this->externalid);
 
         $allianceId = $EsiCorp->getAllianceId();
         if($allianceId)
@@ -478,17 +470,14 @@ class Corporation extends Entity
             $Alliance = Alliance::add("None");
         }
 
-        if (!$Alliance)
-        {
-            return false;
-        }
         $crp = Corporation::add(slashfix($EsiCorp->getCorporationName()), $Alliance, ESI_Helpers::formatRFC7231Timestamp($headers['Last-Modified']), (int) $this->externalid, false);
 
         $this->name = $crp->getName();
-        $this->alliance = $crp->getAlliance();
+        $this->alliance = $crp->getAlliance()->getID();
         $this->updated = ESI_Helpers::formatRFC7231Timestamp($headers['Last-Modified']);
         $this->id = $crp->getID();
-        return true;
+
+        return $EsiCorp;
     }
 
     /**

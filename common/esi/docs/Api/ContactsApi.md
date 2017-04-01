@@ -12,7 +12,7 @@ Method | HTTP request | Description
 
 
 # **deleteCharactersCharacterIdContacts**
-> deleteCharactersCharacterIdContacts($character_id, $contact_ids, $datasource)
+> deleteCharactersCharacterIdContacts($character_id, $contact_ids, $datasource, $token, $user_agent, $x_user_agent)
 
 Delete contacts
 
@@ -30,9 +30,12 @@ $api_instance = new Swagger\Client\Api\ContactsApi();
 $character_id = 56; // int | ID for a character
 $contact_ids = array(new int[]()); // int[] | A list of contacts to edit
 $datasource = "tranquility"; // string | The server name you would like data from
+$token = "token_example"; // string | Access token to use, if preferred over a header
+$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
+$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $api_instance->deleteCharactersCharacterIdContacts($character_id, $contact_ids, $datasource);
+    $api_instance->deleteCharactersCharacterIdContacts($character_id, $contact_ids, $datasource, $token, $user_agent, $x_user_agent);
 } catch (Exception $e) {
     echo 'Exception when calling ContactsApi->deleteCharactersCharacterIdContacts: ', $e->getMessage(), PHP_EOL;
 }
@@ -46,6 +49,9 @@ Name | Type | Description  | Notes
  **character_id** | **int**| ID for a character |
  **contact_ids** | **int[]**| A list of contacts to edit |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **token** | **string**| Access token to use, if preferred over a header | [optional]
+ **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
+ **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -63,7 +69,7 @@ void (empty response body)
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getCharactersCharacterIdContacts**
-> \Swagger\Client\Model\GetCharactersCharacterIdContacts200Ok[] getCharactersCharacterIdContacts($character_id, $page, $datasource)
+> \Swagger\Client\Model\GetCharactersCharacterIdContacts200Ok[] getCharactersCharacterIdContacts($character_id, $datasource, $page, $token, $user_agent, $x_user_agent)
 
 Get contacts
 
@@ -79,11 +85,14 @@ Swagger\Client\Configuration::getDefaultConfiguration()->setAccessToken('YOUR_AC
 
 $api_instance = new Swagger\Client\Api\ContactsApi();
 $character_id = 56; // int | ID for a character
-$page = 1; // int | page integer
 $datasource = "tranquility"; // string | The server name you would like data from
+$page = 1; // int | page integer
+$token = "token_example"; // string | Access token to use, if preferred over a header
+$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
+$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getCharactersCharacterIdContacts($character_id, $page, $datasource);
+    $result = $api_instance->getCharactersCharacterIdContacts($character_id, $datasource, $page, $token, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling ContactsApi->getCharactersCharacterIdContacts: ', $e->getMessage(), PHP_EOL;
@@ -96,8 +105,11 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **character_id** | **int**| ID for a character |
- **page** | **int**| page integer | [optional] [default to 1]
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **page** | **int**| page integer | [optional] [default to 1]
+ **token** | **string**| Access token to use, if preferred over a header | [optional]
+ **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
+ **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -115,7 +127,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getCharactersCharacterIdContactsLabels**
-> \Swagger\Client\Model\GetCharactersCharacterIdContactsLabels200Ok[] getCharactersCharacterIdContactsLabels($character_id, $datasource)
+> \Swagger\Client\Model\GetCharactersCharacterIdContactsLabels200Ok[] getCharactersCharacterIdContactsLabels($character_id, $datasource, $token, $user_agent, $x_user_agent)
 
 Get contact labels
 
@@ -132,9 +144,12 @@ Swagger\Client\Configuration::getDefaultConfiguration()->setAccessToken('YOUR_AC
 $api_instance = new Swagger\Client\Api\ContactsApi();
 $character_id = 56; // int | ID for a character
 $datasource = "tranquility"; // string | The server name you would like data from
+$token = "token_example"; // string | Access token to use, if preferred over a header
+$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
+$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getCharactersCharacterIdContactsLabels($character_id, $datasource);
+    $result = $api_instance->getCharactersCharacterIdContactsLabels($character_id, $datasource, $token, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling ContactsApi->getCharactersCharacterIdContactsLabels: ', $e->getMessage(), PHP_EOL;
@@ -148,6 +163,9 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **character_id** | **int**| ID for a character |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **token** | **string**| Access token to use, if preferred over a header | [optional]
+ **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
+ **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -165,7 +183,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **postCharactersCharacterIdContacts**
-> int[] postCharactersCharacterIdContacts($character_id, $standing, $contact_ids, $watched, $label_id, $datasource)
+> int[] postCharactersCharacterIdContacts($character_id, $contact_ids, $standing, $datasource, $label_id, $token, $user_agent, $watched, $x_user_agent)
 
 Add contacts
 
@@ -181,14 +199,17 @@ Swagger\Client\Configuration::getDefaultConfiguration()->setAccessToken('YOUR_AC
 
 $api_instance = new Swagger\Client\Api\ContactsApi();
 $character_id = 56; // int | ID for a character
-$standing = 3.4; // float | Standing for the new contact
 $contact_ids = array(new int[]()); // int[] | A list of contacts to add
-$watched = false; // bool | Whether the new contact should be watched, note this is only effective on characters
-$label_id = 0; // int | Add a custom label to the new contact
+$standing = 3.4; // float | Standing for the new contact
 $datasource = "tranquility"; // string | The server name you would like data from
+$label_id = 0; // int | Add a custom label to the new contact
+$token = "token_example"; // string | Access token to use, if preferred over a header
+$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
+$watched = false; // bool | Whether the new contact should be watched, note this is only effective on characters
+$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->postCharactersCharacterIdContacts($character_id, $standing, $contact_ids, $watched, $label_id, $datasource);
+    $result = $api_instance->postCharactersCharacterIdContacts($character_id, $contact_ids, $standing, $datasource, $label_id, $token, $user_agent, $watched, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling ContactsApi->postCharactersCharacterIdContacts: ', $e->getMessage(), PHP_EOL;
@@ -201,11 +222,14 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **character_id** | **int**| ID for a character |
- **standing** | **float**| Standing for the new contact |
  **contact_ids** | **int[]**| A list of contacts to add |
- **watched** | **bool**| Whether the new contact should be watched, note this is only effective on characters | [optional] [default to false]
- **label_id** | **int**| Add a custom label to the new contact | [optional] [default to 0]
+ **standing** | **float**| Standing for the new contact |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **label_id** | **int**| Add a custom label to the new contact | [optional] [default to 0]
+ **token** | **string**| Access token to use, if preferred over a header | [optional]
+ **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
+ **watched** | **bool**| Whether the new contact should be watched, note this is only effective on characters | [optional] [default to false]
+ **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -223,7 +247,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **putCharactersCharacterIdContacts**
-> putCharactersCharacterIdContacts($character_id, $standing, $contact_ids, $watched, $label_id, $datasource)
+> putCharactersCharacterIdContacts($character_id, $contact_ids, $standing, $datasource, $label_id, $token, $user_agent, $watched, $x_user_agent)
 
 Edit contacts
 
@@ -239,14 +263,17 @@ Swagger\Client\Configuration::getDefaultConfiguration()->setAccessToken('YOUR_AC
 
 $api_instance = new Swagger\Client\Api\ContactsApi();
 $character_id = 56; // int | ID for a character
-$standing = 3.4; // float | Standing for the contact
 $contact_ids = array(new int[]()); // int[] | A list of contacts to edit
-$watched = false; // bool | Whether the contact should be watched, note this is only effective on characters
-$label_id = 0; // int | Add a custom label to the contact, use 0 for clearing label
+$standing = 3.4; // float | Standing for the contact
 $datasource = "tranquility"; // string | The server name you would like data from
+$label_id = 0; // int | Add a custom label to the contact, use 0 for clearing label
+$token = "token_example"; // string | Access token to use, if preferred over a header
+$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
+$watched = false; // bool | Whether the contact should be watched, note this is only effective on characters
+$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $api_instance->putCharactersCharacterIdContacts($character_id, $standing, $contact_ids, $watched, $label_id, $datasource);
+    $api_instance->putCharactersCharacterIdContacts($character_id, $contact_ids, $standing, $datasource, $label_id, $token, $user_agent, $watched, $x_user_agent);
 } catch (Exception $e) {
     echo 'Exception when calling ContactsApi->putCharactersCharacterIdContacts: ', $e->getMessage(), PHP_EOL;
 }
@@ -258,11 +285,14 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **character_id** | **int**| ID for a character |
- **standing** | **float**| Standing for the contact |
  **contact_ids** | **int[]**| A list of contacts to edit |
- **watched** | **bool**| Whether the contact should be watched, note this is only effective on characters | [optional] [default to false]
- **label_id** | **int**| Add a custom label to the contact, use 0 for clearing label | [optional] [default to 0]
+ **standing** | **float**| Standing for the contact |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **label_id** | **int**| Add a custom label to the contact, use 0 for clearing label | [optional] [default to 0]
+ **token** | **string**| Access token to use, if preferred over a header | [optional]
+ **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
+ **watched** | **bool**| Whether the contact should be watched, note this is only effective on characters | [optional] [default to false]
+ **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 

@@ -10,7 +10,7 @@ Method | HTTP request | Description
 
 
 # **getWars**
-> int[] getWars($max_war_id, $datasource)
+> int[] getWars($datasource, $max_war_id, $user_agent, $x_user_agent)
 
 List wars
 
@@ -22,11 +22,13 @@ Return a list of wars  ---  Alternate route: `/v1/wars/`  Alternate route: `/leg
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\WarsApi();
-$max_war_id = 56; // int | Only return wars with ID smaller than this.
 $datasource = "tranquility"; // string | The server name you would like data from
+$max_war_id = 56; // int | Only return wars with ID smaller than this.
+$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
+$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getWars($max_war_id, $datasource);
+    $result = $api_instance->getWars($datasource, $max_war_id, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling WarsApi->getWars: ', $e->getMessage(), PHP_EOL;
@@ -38,8 +40,10 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **max_war_id** | **int**| Only return wars with ID smaller than this. | [optional]
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **max_war_id** | **int**| Only return wars with ID smaller than this. | [optional]
+ **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
+ **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -57,7 +61,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getWarsWarId**
-> \Swagger\Client\Model\GetWarsWarIdOk getWarsWarId($war_id, $datasource)
+> \Swagger\Client\Model\GetWarsWarIdOk getWarsWarId($war_id, $datasource, $user_agent, $x_user_agent)
 
 Get war information
 
@@ -71,9 +75,11 @@ require_once(__DIR__ . '/vendor/autoload.php');
 $api_instance = new Swagger\Client\Api\WarsApi();
 $war_id = 56; // int | ID for a war
 $datasource = "tranquility"; // string | The server name you would like data from
+$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
+$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getWarsWarId($war_id, $datasource);
+    $result = $api_instance->getWarsWarId($war_id, $datasource, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling WarsApi->getWarsWarId: ', $e->getMessage(), PHP_EOL;
@@ -87,6 +93,8 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **war_id** | **int**| ID for a war |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
+ **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -104,7 +112,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getWarsWarIdKillmails**
-> \Swagger\Client\Model\GetWarsWarIdKillmails200Ok[] getWarsWarIdKillmails($war_id, $page, $datasource)
+> \Swagger\Client\Model\GetWarsWarIdKillmails200Ok[] getWarsWarIdKillmails($war_id, $datasource, $page, $user_agent, $x_user_agent)
 
 List kills for a war
 
@@ -117,11 +125,13 @@ require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\WarsApi();
 $war_id = 56; // int | A valid war ID
-$page = 1; // int | Which page to query, starting at 1, 2000 killmails per page.
 $datasource = "tranquility"; // string | The server name you would like data from
+$page = 1; // int | Which page to query, starting at 1, 2000 killmails per page.
+$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
+$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getWarsWarIdKillmails($war_id, $page, $datasource);
+    $result = $api_instance->getWarsWarIdKillmails($war_id, $datasource, $page, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling WarsApi->getWarsWarIdKillmails: ', $e->getMessage(), PHP_EOL;
@@ -134,8 +144,10 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **war_id** | **int**| A valid war ID |
- **page** | **int**| Which page to query, starting at 1, 2000 killmails per page. | [optional] [default to 1]
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **page** | **int**| Which page to query, starting at 1, 2000 killmails per page. | [optional] [default to 1]
+ **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
+ **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 

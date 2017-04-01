@@ -8,8 +8,8 @@
 
 use EDK\ESI\ESI;
 use EsiClient\CharacterApi;
-use EsiClient\SearchApi;
 use Swagger\Client\ApiException;
+use Swagger\Client\Model\GetCharactersCharacterIdOk;
 /**
  * Creates a new Pilot or fetches an existing one from the database.
  * @package EDK
@@ -105,29 +105,31 @@ class Pilot extends Entity
             $pqry->prepare($sql);
             $pqry->bind_param('i', $this->id);
             $pqry->bind_result($id);
-            if ($pqry->execute()) {
-                if ($pqry->recordCount()) {
-                    $pqry->fetch();
-                    $this->setCharacterID($id);
-                    return $this->externalid;
-                }
+            if ($pqry->execute() && $pqry->recordCount()) 
+            {
+                $pqry->fetch();
+                $this->setCharacterID($id);
+                return $this->externalid;
             }
             // If getName() != name_ then this is a structure, not a pilot.
-            if ($this->getName() != $this->name) {
+            if ($this->getName() != $this->name) 
+            {
                 return 0;
             }
-            $myID = new API_NametoID();
-            $myID->setNames($this->getName());
-            $myID->fetchXML();
-            $myNames = $myID->getNameData();
-
-            if ($this->setCharacterID($myNames[0]['characterID'])) {
+           
+            // If we still don't have an external ID then try to fetch it from CCP.
+            try
+            {
+                $this->setCharacterID(ESI_Helpers::getExternalIdForEntity($this->getName(), 'character'));
                 return $this->externalid;
-            } else {
-                return 0;
+            } 
+
+            catch (ApiException $ex) 
+            {
+                EDKError::log($ex->getMessage() . PHP_EOL . $ex->getTraceAsString());
             }
         }
-        else return 0;
+        return 0;
     }
 
     /**
@@ -361,14 +363,7 @@ class Pilot extends Entity
             // If no external id is given then look it up.
             if (!$externalID && $loadExternals) 
             {
-                $EdkEsi = new ESI();
-                $SearchApi = new SearchApi($EdkEsi);
-                $charactersMatching = $SearchApi->getSearch($name, array('character'), null, true, $EdkEsi->getDataSource());
-                
-                if(count($charactersMatching) == 1)
-                {
-                    $externalID = $charactersMatching->getCharacter();
-                }
+                $externalID = ESI_Helpers::getExternalIdForEntity($name, 'character');
             }
             // If we have an external id then check it isn't already in use.
             // If we find it then update the old corp with the new name and
@@ -539,11 +534,14 @@ class Pilot extends Entity
     }
 
     /**
-     * Fetch the pilot name from CCP using the stored external ID.
+     * Fetch the pilot and corporation from CCP using the external ID.
+     * <p>
+     * This always executes an ESI call!
      *
-     * Corporation will be set to Unknown.
+     * @return GetCharactersCharacterIdOk the ESI character object
+     * @throws ApiException
      */
-    private function fetchPilot()
+    public function fetchPilot()
     {
         if (!$this->externalid) 
         {
@@ -554,20 +552,15 @@ class Pilot extends Entity
         $EdkEsi = new ESI();
         $LiveApi = new CharacterApi($EdkEsi);
         
-        try
-        {
-            // only get the ESI character representation and the headers, we don't need the status code
-            list($EsiCharacter, , $headers) = $LiveApi->getCharactersCharacterIdWithHttpInfo($this->externalid, $EdkEsi->getDataSource());
-        } 
-        
-        catch (ApiException $ex) 
-        {
-            return false;
-        }
+        // only get the ESI character representation and the headers, we don't need the status code
+        list($EsiCharacter, , $headers) = $LiveApi->getCharactersCharacterIdWithHttpInfo($this->externalid, $EdkEsi->getDataSource());
+
         $this->name = $EsiCharacter->getName();
         $this->corp = new Corporation($EsiCharacter->getCorporationId(), true);
         $Pilot = Pilot::add($this->name, $this->corp, ESI_Helpers::formatRFC7231Timestamp($headers['Last-Modified']), $this->externalid, false);
         $this->id = $Pilot->getID();
+        
+        return $EsiCharacter;
     }
 
     /**

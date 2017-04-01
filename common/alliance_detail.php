@@ -249,6 +249,7 @@ class pAllianceDetail extends pageAssembly
                 
                 catch(ApiException $e) 
                 {
+                    EDKError::log(ESI::getApiExceptionReason($e) . PHP_EOL . $e->getTraceAsString());
                     continue;
                 }
 
@@ -353,6 +354,7 @@ class pAllianceDetail extends pageAssembly
             catch(ApiException $e)
             {
                 // do nothing, alliance join date is not available
+                EDKError::log(ESI::getApiExceptionReason($e) . PHP_EOL . $e->getTraceAsString());
             }
             $tempcorp['url'] = htmlspecialchars(html_entity_decode(urldecode($tempcorp['url'])));
             if ($tempcorp['url'] == 'http://') $tempcorp['url'] = '';

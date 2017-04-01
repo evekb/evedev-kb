@@ -11,11 +11,14 @@
  */
 class EDKError
 {
+    protected static $LOG_FILE = "cache/error.log";
+    /** the maximum allowed log file size in megabytes before rolling */
+    protected static $LOG_FILE_SIZE_MAX = 10;
+    
     public static $errors = array();
     public static function handler  ( $errno  , $errstr  , $errfile, $errline, $errcontext)
     {
         $output = '';
-        $logfile = "cache/error.log";
         switch ($errno)
         {
             case E_ERROR:
@@ -60,12 +63,8 @@ class EDKError
             error_log(sprintf("PHP %s:  %s in %s on line %d", $errno, $errstr, $errfile, $errline));
         if(class_exists('config') && config::get('cfg_log'))
         {
-            error_log(sprintf("PHP %s %s:  %s in %s on line %d\n", gmdate("Y-m-d H:i:s"), $errno, $errstr, $errfile, $errline), 3, $logfile);
-            if(filesize($logfile) > 1024*1024*10)
-            {
-                @unlink($logfile.".old");
-                rename($logfile, $logfile.".old");
-            }
+            self::checkAndRollLogFile();
+            error_log(sprintf("PHP %s %s:  %s in %s on line %d\n", gmdate("Y-m-d H:i:s"), $errno, $errstr, $errfile, $errline), 3, self::$LOG_FILE);
         }
         if (ini_get('display_errors'))
         {
@@ -73,5 +72,32 @@ class EDKError
             self::$errors[] = $output;
         }
         return true;
+    }
+    
+    /**
+     * Checks the size of the error log file.
+     * If it is above the maximum allowed size, it is renamed to .old.
+     */
+    protected static function checkAndRollLogFile()
+    {
+        if(filesize(self::$LOG_FILE) > 1024*1024*self::$LOG_FILE_SIZE_MAX)
+        {
+            @unlink(self::$LOG_FILE.".old");
+            rename(self::$LOG_FILE, self::$LOG_FILE.".old");
+        }
+    }
+    
+    /**
+     * Logs the given error text to the log file.
+     * 
+     * @param string $errorText the text to log
+     */
+    public static function log($errorText)
+    {
+        if(class_exists('config') && config::get('cfg_log'))
+        {
+            self::checkAndRollLogFile();
+            error_log(sprintf("EDK %s:  %s\n", gmdate("Y-m-d H:i:s"), $errorText), 3, self::$LOG_FILE);
+        }
     }
 }

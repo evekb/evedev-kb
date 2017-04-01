@@ -183,7 +183,7 @@ class admin_config
                 $qry->execute("SELECT `plt_name`, `plt_id` FROM `kb3_pilots`"
                         ." WHERE `plt_externalid` = ".$plt_id);
                 if (!$qry->recordCount()) {
-                    return admin_config::nameToId('idtoname', 'p', $plt_id);
+                    return admin_config::nameToId('idtoname', 'character', $plt_id);
                 }
                 $res = $qry->getRow();
                 $_POST['option_add_pilotid'] = $plt_id = intval($res['plt_id']);
@@ -219,7 +219,7 @@ class admin_config
                     ." `plt_name` like '".$qry->escape($plt_id)."'");
 
             if (!$qry->recordCount()) {//name not found, let's look it up
-                return admin_config::nameToId('nametoid', 'p', $plt_id);
+                return admin_config::nameToId('nametoid', 'character', $plt_id);
             } else { //name is found
                 $res = $qry->getRow();
                 $_POST['option_add_pilotid'] = $plt_id = intval($res['plt_id']);
@@ -274,7 +274,7 @@ class admin_config
                 $qry->execute("SELECT `crp_name`, `crp_id` FROM `kb3_corps`"
                         ." WHERE `crp_external_id` = ".$crp_id);
                 if (!$qry->recordCount()) {
-                    return admin_config::nameToId('idtoname', 'c', $crp_id);
+                    return admin_config::nameToId('idtoname', 'corporation', $crp_id);
                 }
                 $res = $qry->getRow();
                 $_POST['option_add_corpid'] = $crp_id = intval($res['crp_id']);
@@ -310,7 +310,7 @@ class admin_config
                     ." `crp_name` like '".$qry->escape($crp_id)."'");
 
             if (!$qry->recordCount()) {//name not found, let's look it up
-                return admin_config::nameToId('nametoid', 'c', $crp_id);
+                return admin_config::nameToId('nametoid', 'corporation', $crp_id);
             } else { //name is found
                 $res = $qry->getRow();
                 $_POST['option_add_corpid'] = $crp_id = intval($res['crp_id']);
@@ -365,7 +365,7 @@ class admin_config
                 $qry->execute("SELECT `all_name`, `all_id` FROM `kb3_alliances`"
                         ." WHERE `all_external_id` = ".$all_id);
                 if (!$qry->recordCount()) {
-                    return admin_config::nameToId('idtoname', 'a', $all_id);
+                    return admin_config::nameToId('idtoname', 'alliance', $all_id);
                 }
                 $res = $qry->getRow();
                 $all_id = $res['all_id'];
@@ -401,7 +401,7 @@ class admin_config
                     ." WHERE `all_name` like '".$qry->escape($all_id)."'");
 
             if (!$qry->recordCount()) {//name not found, let's look it up
-                return admin_config::nameToId('nametoid', 'a', $all_id);
+                return admin_config::nameToId('nametoid', 'alliance', $all_id);
             } else { //name is found
                 $res = $qry->getRow();
                 $_POST['option_add_allianceid'] = $all_id = $res['all_id'];
@@ -518,67 +518,87 @@ class admin_config
     public static function nameToId($type, $set, $value)
     {
         if ($type == 'nametoid') {
-            $api = new API_NametoID();
-            $api->setNames($value);
+            $char_info = ESI_Helpers::getExternalIdForEntity($value, $set);
         } else if ($type == 'idtoname') {
-            $api = new API_IDtoName();
-            $api->setIDs($value);
-        }
-        $api->fetchXML();
-
-        if ($type == 'nametoid') {
-            $char_info = $api->getNameData();
-        } else if ($type == 'idtoname') {
-            $char_info = $api->getIDData();
+            $char_info = ESI_Helpers::resolveEntityIds(array($value));
         }
 
-        if (isset($char_info[0]['characterID'])
-                && strlen($char_info[0]['characterID']) > 0) {
-            $timestamp = gmdate('Y.m.d H:i:s', time());
+        if (isset($char_info)) {
+            
+            try
+            {
+                if ($set == 'character') {
+                    if ($type == 'nametoid') 
+                    {
+                        $plt = new Pilot(0, ESI_Helpers::getExternalIdForEntity($value, $set));
+                    }
+                    else if ($type == 'idtoname') 
+                    {
+                        $plt = new Pilot(0, $value);
+                    }
+                    $plt->fetchPilot();
 
-            if ($set == 'p') {
-                $all = Alliance::add('Unknown');
+                    $_POST['option_cfg_pilotid'] = $value = $plt->getID();
+                    $pilots = config::get('cfg_pilotid');
+                    $pilots[] = intval($value);
+                    config::set('cfg_pilotid', $pilots);
 
-                $crp = Corporation::add('Unknown', $all, $timestamp, 0, false);
+                    $html = '<input type="text" id="option_cfg_pilotid"'
+                            .' name="option_cfg_pilotid" value="" size="40"'
+                            .' maxlength="64" />';
+                } 
 
-                $plt = Pilot::add($char_info[0]['name'], $crp, $timestamp,
-                        $char_info[0]['characterID'], false);
+                else if ($set == 'corporation') 
+                {
+                    if ($type == 'nametoid') 
+                    {
+                        $crp = new Corporation(ESI_Helpers::getExternalIdForEntity($value, $set), true);
+                    }
+                    else if ($type == 'idtoname') 
+                    {
+                        $crp = new Corporation($value, true);
+                    }
 
-                $_POST['option_cfg_pilotid'] = $value = $plt->getID();
-                $pilots = config::get('cfg_pilotid');
-                $pilots[] = intval($value);
-                config::set('cfg_pilotid', $pilots);
+                    $crp->fetchCorp();
 
-                $html = '<input type="text" id="option_cfg_pilotid"'
-                        .' name="option_cfg_pilotid" value="" size="40"'
-                        .' maxlength="64" />';
-            } else if ($set == 'c') {
-                $all = Alliance::add('Unknown');
+                    $_POST['option_cfg_corpid'] = $value = $crp->getID();
+                    $corps = config::get('cfg_corpid');
+                    $corps[] = intval($value);
+                    config::set('cfg_corpid', $corps);
 
-                $crp = Corporation::add($char_info[0]['name'], $all, $timestamp,
-                        $char_info[0]['characterID'], false);
+                    $html = '<input type="text" id="option_cfg_corpid"'
+                            .' name="option_cfg_corpid" value="" size="40"'
+                            .' maxlength="64" />';
+                } 
 
-                $_POST['option_cfg_corpid'] = $value = $crp->getID();
-                $corps = config::get('cfg_corpid');
-                $corps[] = intval($value);
-                config::set('cfg_corpid', $corps);
+                else if ($set == 'alliance') 
+                {
+                    if ($type == 'nametoid') 
+                    {
+                        $all = new Alliance(ESI_Helpers::getExternalIdForEntity($value, $set), true);
+                    }
+                    else if ($type == 'idtoname') 
+                    {
+                        $all = new Alliance($value, true);
+                    }
+                    $all->fetchAlliance();
 
-                $html = '<input type="text" id="option_cfg_corpid"'
-                        .' name="option_cfg_corpid" value="" size="40"'
-                        .' maxlength="64" />';
-            } else if ($set == 'a') {
-                $all = Alliance::add($char_info[0]['name'], $char_info[0]['characterID']);
+                    $_POST['option_cfg_allianceid'] = $value = $all->getID();
+                    $alliances = config::get('cfg_allianceid');
+                    $alliances[] = intval($value);
+                    config::set('cfg_allianceid', $alliances);
 
-                $_POST['option_cfg_allianceid'] = $value = $all->getID();
-                $alliances = config::get('cfg_allianceid');
-                $alliances[] = intval($value);
-                config::set('cfg_allianceid', $alliances);
-
-                $html = '<input type="text" id="option_cfg_allianceid"'
-                        .' name="option_cfg_allianceid" value="" size="40"'
-                        .' maxlength="64" />';
+                    $html = '<input type="text" id="option_cfg_allianceid"'
+                            .' name="option_cfg_allianceid" value="" size="40"'
+                            .' maxlength="64" />';
+                }
+                return $html;
             }
-            return $html;
+            catch(Swagger\Client\ApiException $e)
+            {
+                EDKError::log($e->getMessage() . PHP_EOL . $e->getTraceAsString());
+                return "";
+            }
         } else {
             return $html;
         }

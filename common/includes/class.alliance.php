@@ -8,6 +8,8 @@
 
 use EsiClient\AllianceApi;
 use EDK\ESI\ESI;
+use Swagger\Client\ApiException;
+use Swagger\Client\Model\GetAlliancesAllianceIdOk;
 
 /**
  * Creates a new Alliance or fetches an existing one from the database.
@@ -58,15 +60,18 @@ class Alliance extends Entity
             return $this->externalid;
         }
         // If we still don't have an external ID then try to fetch it from CCP.
-        $myID = new API_NametoID();
-        $myID->setNames($this->getName());
-        $myID->fetchXML();
-        $myNames = $myID->getNameData();
-        if ($this->setExternalID($myNames[0]['characterID'])) {
-            return $this->externalid;
-        } else {
+        try
+        {
+            $this->setExternalID(ESI_Helpers::getExternalIdForEntity($this->getName(), 'alliance'));
+        } 
+        
+        catch (ApiException $ex) 
+        {
+            EDKError::log($ex->getMessage() . PHP_EOL . $ex->getTraceAsString());
             return 0;
         }
+        
+        return $this->externalid;
     }
 
     /**
@@ -174,17 +179,15 @@ class Alliance extends Entity
 
         if (!$qry->recordCount()) {
             $externalid = (int) $externalid;
-            if (!$externalid && strcasecmp($name, 'None') != 0) {
-                $myID = new API_NametoID();
-                $myID->setNames($name);
-                $myID->fetchXML();
-                $myNames = $myID->getNameData();
-                $externalid = (int) $myNames[0]['characterID'];
+            if (!$externalid && strcasecmp($name, 'None') != 0) 
+            {
+                $externalid = ESI_Helpers::getExternalIdForEntity($name, 'alliance');
             }
             // If we have an external id then check it isn't already in use
             // If we find it then update the old alliance with the new name
             // then return.
-            if ($externalid) {
+            if ($externalid) 
+            {
                 $qry->execute("SELECT * FROM kb3_alliances WHERE all_external_id = ".$externalid);
                 if ($qry->recordCount() > 0) {
                     $row = $qry->getRow();
@@ -345,9 +348,15 @@ class Alliance extends Entity
     }
 
     /**
-     * Fetch the alliance name from CCP using the stored external ID.
+     * Fetch the alliance details from CCP using the external ID.
+     * The alliance will be added to the database, or an existing entry will be updated.
+     * <p>
+     * This always executes an ESI call!
+     * 
+     * @return GetAlliancesAllianceIdOk the ESI alliance object
+     * @throws ApiException
      */
-    private function fetchAlliance()
+    public function fetchAlliance()
     {
         if (!$this->getExternalID()) 
         {
@@ -357,24 +366,16 @@ class Alliance extends Entity
         // create EDK ESI client
         $EdkEsi = new ESI();
         $AllianceApi = new AllianceApi($EdkEsi);
-        
-        try
-        {
-            // only get the ESI character representation and the headers, we don't need the status code
-            $EsiAlliance = $AllianceApi->getAlliancesAllianceId($this->getExternalID());
-        } 
-        
-        catch (ApiException $ex) 
-        {
-            return false;
-        }
-        
+
+        // only get the ESI character representation and the headers, we don't need the status code
+        $EsiAlliance = $AllianceApi->getAlliancesAllianceId($this->getExternalID());
+
         // Use ::add to make sure names are updated in the db and clashes are fixed.
         $Alliance = Alliance::add($EsiAlliance->getAllianceName(), (int) $this->getExternalID());
         $this->name = $Alliance->getName();
         $this->id = $Alliance->getID();
         
-        return true;
+        return $EsiAlliance;
     }
 
     /**

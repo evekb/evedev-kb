@@ -9,7 +9,7 @@ Method | HTTP request | Description
 
 
 # **getCharactersCharacterIdKillmailsRecent**
-> \Swagger\Client\Model\GetCharactersCharacterIdKillmailsRecent200Ok[] getCharactersCharacterIdKillmailsRecent($character_id, $max_count, $max_kill_id, $datasource)
+> \Swagger\Client\Model\GetCharactersCharacterIdKillmailsRecent200Ok[] getCharactersCharacterIdKillmailsRecent($character_id, $datasource, $max_count, $max_kill_id, $token, $user_agent, $x_user_agent)
 
 List kills and losses
 
@@ -25,12 +25,15 @@ Swagger\Client\Configuration::getDefaultConfiguration()->setAccessToken('YOUR_AC
 
 $api_instance = new Swagger\Client\Api\KillmailsApi();
 $character_id = 56; // int | An EVE character ID
+$datasource = "tranquility"; // string | The server name you would like data from
 $max_count = 50; // int | How many killmails to return at maximum
 $max_kill_id = 56; // int | Only return killmails with ID smaller than this.
-$datasource = "tranquility"; // string | The server name you would like data from
+$token = "token_example"; // string | Access token to use, if preferred over a header
+$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
+$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getCharactersCharacterIdKillmailsRecent($character_id, $max_count, $max_kill_id, $datasource);
+    $result = $api_instance->getCharactersCharacterIdKillmailsRecent($character_id, $datasource, $max_count, $max_kill_id, $token, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling KillmailsApi->getCharactersCharacterIdKillmailsRecent: ', $e->getMessage(), PHP_EOL;
@@ -43,9 +46,12 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **character_id** | **int**| An EVE character ID |
+ **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
  **max_count** | **int**| How many killmails to return at maximum | [optional] [default to 50]
  **max_kill_id** | **int**| Only return killmails with ID smaller than this. | [optional]
- **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **token** | **string**| Access token to use, if preferred over a header | [optional]
+ **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
+ **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -63,7 +69,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getKillmailsKillmailIdKillmailHash**
-> \Swagger\Client\Model\GetKillmailsKillmailIdKillmailHashOk getKillmailsKillmailIdKillmailHash($killmail_id, $killmail_hash, $datasource)
+> \Swagger\Client\Model\GetKillmailsKillmailIdKillmailHashOk getKillmailsKillmailIdKillmailHash($killmail_hash, $killmail_id, $datasource, $user_agent, $x_user_agent)
 
 Get a single killmail
 
@@ -75,12 +81,14 @@ Return a single killmail from its ID and hash  ---  Alternate route: `/v1/killma
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\KillmailsApi();
-$killmail_id = 56; // int | The killmail ID to be queried
 $killmail_hash = "killmail_hash_example"; // string | The killmail hash for verification
+$killmail_id = 56; // int | The killmail ID to be queried
 $datasource = "tranquility"; // string | The server name you would like data from
+$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
+$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getKillmailsKillmailIdKillmailHash($killmail_id, $killmail_hash, $datasource);
+    $result = $api_instance->getKillmailsKillmailIdKillmailHash($killmail_hash, $killmail_id, $datasource, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling KillmailsApi->getKillmailsKillmailIdKillmailHash: ', $e->getMessage(), PHP_EOL;
@@ -92,9 +100,11 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **killmail_id** | **int**| The killmail ID to be queried |
  **killmail_hash** | **string**| The killmail hash for verification |
+ **killmail_id** | **int**| The killmail ID to be queried |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
+ **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 

@@ -27,12 +27,12 @@ class SolarSystem extends Cacheable
      */
     private $row = array();
         
-        /**
-         * holds the IDs of all locations within this 
-         * solarsystem
-         * @var array
-         */
-        protected $locationIDs = array();
+    /**
+     * holds the IDs of all locations within this 
+     * solarsystem
+     * @var array
+     */
+    protected $locationIDs = array();
 
     function __construct($id = 0)
     {
@@ -122,17 +122,17 @@ class SolarSystem extends Cacheable
                 $qry->execute($sql);
                 $this->row = $qry->getRow();
                                 
-                                // now get all locationIDs for this system
-                                $sql = "select itemID
-                                            from kb3_mapdenormalize
-                                            where solarSystemID = ".$this->id;
-                                $qry->execute($sql);
-                                while($locationRow = $qry->getRow())
-                                {
-                                    $this->locationIDs[] = $locationRow['itemID'];
-                                }
-                
-                                $this->executed = true;
+                // now get all locationIDs for this system
+                $sql = "select itemID
+                            from kb3_mapdenormalize
+                            where solarSystemID = ".$this->id;
+                $qry->execute($sql);
+                while($locationRow = $qry->getRow())
+                {
+                    $this->locationIDs[] = $locationRow['itemID'];
+                }
+
+                $this->executed = true;
                 $this->putCache();
             }
         }

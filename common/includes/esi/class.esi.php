@@ -233,4 +233,30 @@ class ESI extends ApiClient
     {
         return self::$totalEsiTime;
     }
+    
+    /**
+     * Gets the reason for the API exception as text.
+     * 
+     * @param ApiException $e
+     * @return string the reason for the API exception
+     */
+    public static function getApiExceptionReason($e)
+    {
+        $reason = $e->getMessage();
+        $responseBody = $e->getResponseBody();
+        if(!is_null($responseBody))
+        {
+            if(is_string($responseBody))
+            {
+                $reason = $responseBody;
+            }
+            else if(isset($responseBody->error))
+            {
+                $reason = $responseBody->error;
+            }
+        }
+        return "ESI Exception: ".$e->getMessage()." ($reason, Code: ".$e->getCode().")";
+    }
+    
+    
 }

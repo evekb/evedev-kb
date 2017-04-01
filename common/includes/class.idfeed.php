@@ -796,22 +796,9 @@ class IDFeed
         if (!strval($victim['characterName'])) {
             if ((int)$row['moonID']) {
                 $name = API_Helpers::getMoonName((int)$row['moonID']);
-                if (!$name) {
-                    $idtoname = new API_IDtoName();
-                    $idtoname->setIDs((int)$row['moonID']);
-
-                    if ($idtoname->fetchXML()) {
-                        return false;
-                    }
-
-                    $namedata = $idtoname->getIDData();
-
-                    $name = strval($victim['corporationName'])." - ".$namedata[0]['name'];
-                }
                 $name = strval($victim['corporationName'])." - ".$name;
             } else {
-                $name = strval($victim['corporationName'])." - "
-                        .$kill->getSystem()->getName();
+                $name = strval($victim['corporationName'])." - ".$kill->getSystem()->getName();
             }
         } else if (!(int)$victim['shipTypeID']) {
             return false;
