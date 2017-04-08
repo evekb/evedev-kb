@@ -136,6 +136,10 @@ class corpSummary extends statSummary
 					"csm_loss_count = csm_loss_count + 1, ".
 					"csm_loss_isk = csm_loss_isk + ".$kill->getISKLoss();
 			$qry->execute($sql);
+                        
+                        // prevent the kill to be added as kill if there are corp mates of victim involved
+                        // count as loss only
+                        $alls[$kill->getVictimCorpID()] = 1;
 		}
 		foreach ($kill->getInvolved() as $inv) {
 			if (isset($alls[$inv->getCorpID()])) {
@@ -172,6 +176,10 @@ class corpSummary extends statSummary
 					" WHERE csm_crp_id = ".$kill->getVictimCorpID().
 					" AND csm_shp_id = ".$kill->getVictimShip()->getClass()->getID();
 			$qry->execute($sql);
+                        
+                        // prevent the kill from being subtracted from the kills if there are corp mates of the victim involved
+                        // subtract from losses only
+                        $alls[$kill->getVictimCorpID()] = 1;
 		}
 		foreach ($kill->getInvolved() as $inv) {
 			if (isset($alls[$inv->getCorpID()])) {

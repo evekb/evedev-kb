@@ -138,6 +138,10 @@ class allianceSummary extends statSummary
 					"asm_loss_count = asm_loss_count + 1, ".
 					"asm_loss_isk = asm_loss_isk + ".$kill->getISKLoss();
 			$qry->execute($sql);
+                        
+                        // prevent the kill to be added as kill if there are alliance mates of victim involved
+                        // count as loss only
+                        $alls[$kill->getVictimAllianceID()] = 1;
 		}
 		foreach ($kill->getInvolved() as $inv) {
 			if (isset($alls[$inv->getAllianceID()])) {
@@ -177,6 +181,10 @@ class allianceSummary extends statSummary
 					" WHERE asm_all_id = ".$kill->getVictimAllianceID().
 					" AND asm_shp_id = ".$kill->getVictimShip()->getClass()->getID();
 			$qry->execute($sql);
+                        
+                        // prevent the kill from being subtracted from the kills if there are alliance mates of the victim involved
+                        // subtract from losses only
+                        $alls[$kill->getVictimCorpID()] = 1;
 		}
 		foreach ($kill->getInvolved() as $inv) {
 			if (isset($alls[$inv->getAllianceID()])) {
