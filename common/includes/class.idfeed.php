@@ -469,6 +469,12 @@ class IDFeed
 
                 catch(EsiParserException $e)
                 {
+                    $this->parsemsg[] = $e->getMessage();
+                    continue;
+                }
+                
+                catch(\Swagger\Client\ApiException $e)
+                {
                     $this->parsemsg[] = "Error communicating with ESI, aborting!";
                     $this->parsemsg[] = $e->getMessage();
                     break;
