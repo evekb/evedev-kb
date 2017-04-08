@@ -356,21 +356,25 @@ class KillSummaryTable
 			$sql .= "INNER JOIN (";
 			$involved = array();
 			if ($this->inv_all)
-			{
-				$invsql = "SELECT ina_kll_id as kll_id FROM kb3_inv_all
-					WHERE ina_all_id in (".implode(',', $this->inv_all).") ";
-				if($startdate) $invsql .=" AND ina_timestamp >= '".gmdate('Y-m-d H:i:s',$startdate)."' ";
-				if($enddate) $invsql .=" AND ina_timestamp <= '".gmdate('Y-m-d H:i:s',$enddate)."' ";
-				$involved[] = $invsql;
-			}
-			if ($this->inv_crp)
-			{
-				$invsql = "SELECT inc_kll_id as kll_id FROM kb3_inv_crp
-					WHERE inc_crp_id in (".implode(',', $this->inv_crp).") ";
-				if($startdate) $invsql .=" AND inc_timestamp >= '".gmdate('Y-m-d H:i:s',$startdate)."' ";
-				if($enddate) $invsql .=" AND inc_timestamp <= '".gmdate('Y-m-d H:i:s',$enddate)."' ";
-				$involved[] = $invsql;
-			}
+                        {
+                                $invsql = "SELECT ina_kll_id as kll_id FROM kb3_inv_all ina
+                                    inner join kb3_kills kll on ina.ina_kll_id = kll.kll_id
+                                    WHERE ina_all_id in (".implode(',', $this->inv_all).") 
+                                        and kll.kll_all_id not in (".implode(',', $this->inv_all).") ";
+                                if($startdate) $invsql .=" AND ina_timestamp >= '".gmdate('Y-m-d H:i:s',$startdate)."' ";
+                                if($enddate) $invsql .=" AND ina_timestamp <= '".gmdate('Y-m-d H:i:s',$enddate)."' ";
+                                $involved[] = $invsql;
+                        }
+                        if ($this->inv_crp)
+                        {
+                                $invsql = "SELECT inc_kll_id as kll_id FROM kb3_inv_crp inc
+                                    inner join kb3_kills kll on inc.inc_kll_id = kll.kll_id
+                                    WHERE inc_crp_id in (".implode(',', $this->inv_crp).") 
+                                        and kll.kll_crp_id not in (".implode(',', $this->inv_crp).") ";
+                                if($startdate) $invsql .=" AND inc_timestamp >= '".gmdate('Y-m-d H:i:s',$startdate)."' ";
+                                if($enddate) $invsql .=" AND inc_timestamp <= '".gmdate('Y-m-d H:i:s',$enddate)."' ";
+                                $involved[] = $invsql;
+                        }     
 			if ($this->inv_plt)
 			{
 				$invsql = "SELECT ind_kll_id as kll_id FROM kb3_inv_detail
@@ -408,10 +412,11 @@ class KillSummaryTable
 
 		// LEFT JOIN to kb3_inv_all or kb3_inv_crp if only one type of entity
 		// otherwise LEFT JOIN to kb3_inv_detail
-		$sql = 'SELECT count( kll_id) AS lnb, scl_id, scl_class,';
-		$sql .= ' sum(kll_isk_loss) AS lisk FROM kb3_kills kll
-                    INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )';
-		$sql .= ' INNER JOIN kb3_ship_classes scl ON ( scl.scl_id = shp.shp_class )';
+		$sql = 'SELECT 
+                    count(DISTINCT kll_id) AS lnb, scl_id, scl_class,sum(kll_isk_loss) AS lisk
+                    FROM kb3_kills kll
+                                INNER JOIN kb3_ships shp ON ( shp.shp_id = kll.kll_ship_id )
+                                INNER JOIN kb3_ship_classes scl ON ( scl.scl_id = shp.shp_class )';
 
 		if ($this->inv_all)
 		{
@@ -455,21 +460,29 @@ class KillSummaryTable
 
 		if($invcount)
 		{
-			if ($this->inv_all && !($this->inv_crp || $this->inv_plt))
-			{
-				$sql .= $sqlop.' ina.ina_kll_id IS NULL ';
-				$sqlop = " AND ";
-			}
-			else if ($this->inv_crp && !($this->inv_plt || $this->inv_all))
-			{
-				$sql .= $sqlop.' inc.inc_kll_id IS NULL ';
-				$sqlop = " AND ";
-			}
-			else if(!($this->inv_plt && !($this->inv_crp || $this->inv_all)))
-			{
-				$sql .= $sqlop.' ind.ind_kll_id IS NULL ';
-				$sqlop = " AND ";
-			}
+                        // this block made sure that only kills are counted as losses
+                        // that only had involved parties not belonging to any of the 
+                        // involved parties (scope of the summary table);
+                        // by remonving this block, all kills are counted as losses, for which
+                        // the victim is a member of ony involved party (scope of this summary table);
+
+                        /*
+                        if ($this->inv_all && !($this->inv_crp || $this->inv_plt))
+                        {
+                            $sql .= $sqlop.' ina.ina_kll_id IS NULL ';
+                            $sqlop = " AND ";
+                        }
+                        else if ($this->inv_crp && !($this->inv_plt || $this->inv_all))
+                        {
+                            $sql .= $sqlop.' inc.inc_kll_id IS NULL ';
+                            $sqlop = " AND ";
+                        }
+                        else if(!($this->inv_plt && !($this->inv_crp || $this->inv_all)))
+                        {
+                            $sql .= $sqlop.' ind.ind_kll_id IS NULL ';
+                            $sqlop = " AND ";
+                        }
+                        */
 
 			$invP = array();
 			if ($this->inv_all)
