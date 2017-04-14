@@ -36,7 +36,7 @@ if(isset($_POST['submit'])) //workings
 {
 	$sql = "select scl_id, scl_class
 			from kb3_ship_classes
-		   where scl_class not in ( 'Drone', 'Unknown' )
+		   where scl_class not in ( 'Unknown' )
 		  order by scl_class";
 
 	$qry = DBFactory::getDBQuery();
@@ -80,7 +80,7 @@ $miss_empty_class = config::get('forum_post_miss_empty_class');
 
 	$sql = "select scl_id, scl_class
 			from kb3_ship_classes
-		   where scl_class not in ( 'Drone', 'Unknown' )
+		   where scl_class not in ( 'Unknown' )
 		  order by scl_class";
 
 	$qry = DBFactory::getDBQuery();

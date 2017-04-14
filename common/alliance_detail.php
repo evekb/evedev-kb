@@ -465,7 +465,7 @@ class pAllianceDetail extends pageAssembly
 
 				// Get all ShipClasses
 				$sql = "select scl_id, scl_class from kb3_ship_classes
-					where scl_class not in ('Drone','Unknown') order by scl_class";
+					where scl_class not in ('Unknown') order by scl_class";
 
 				$qry = DBFactory::getDBQuery();
 				$qry->execute($sql);
@@ -494,7 +494,7 @@ class pAllianceDetail extends pageAssembly
 
 				// Get all ShipClasses
 				$sql = "select scl_id, scl_class from kb3_ship_classes
-					where scl_class not in ('Drone','Unknown') order by scl_class";
+					where scl_class not in ('Unknown') order by scl_class";
 
 				$qry = DBFactory::getDBQuery();
 				$qry->execute($sql);
@@ -519,7 +519,7 @@ class pAllianceDetail extends pageAssembly
 
 				// Get all ShipClasses
 				$sql = "select scl_id, scl_class from kb3_ship_classes
-					where scl_class not in ('Drone','Unknown') order by scl_class";
+					where scl_class not in ('Unknown') order by scl_class";
 
 				$qry = DBFactory::getDBQuery();
 				$qry->execute($sql);
@@ -545,7 +545,7 @@ class pAllianceDetail extends pageAssembly
 
 				// Get all ShipClasses
 				$sql = "select scl_id, scl_class from kb3_ship_classes
-					where scl_class not in ('Drone','Unknown') order by scl_class";
+					where scl_class not in ('Unknown') order by scl_class";
 
 				$qry = DBFactory::getDBQuery();
 				$qry->execute($sql);

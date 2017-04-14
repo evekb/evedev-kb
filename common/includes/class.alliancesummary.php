@@ -49,7 +49,7 @@ class allianceSummary extends statSummary
 		$sql = "SELECT scl_class, scl_id, kb3_sum_alliance.*
 			FROM kb3_ship_classes left join kb3_sum_alliance
 				ON (asm_shp_id = scl_id AND asm_all_id = ".$this->all_id.")
-			WHERE scl_class not in ('Drone','Unknown')
+			WHERE scl_class not in ('Unknown')
 				ORDER BY scl_class";
 		$qry->execute($sql);
 		while ($row = $qry->getRow()) {
