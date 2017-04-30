@@ -1,11 +1,16 @@
 <?php
 namespace EDK\ESI;
 
+require_once("common/esi/autoload.php");
+require_once("common/phpfastcache/src/autoload.php");
+
 use Swagger\Client\ApiClient;
 use Swagger\Client\Configuration;
 use Swagger\Client\ApiException;
 
-require_once("common/esi/autoload.php");
+use phpFastCache\CacheManager;
+use phpFastCache\Core\phpFastCache;
+
 /**
  * EDK Wrapper class for the auto-generated ESI Client.
  * <br>
@@ -24,21 +29,35 @@ class ESI extends ApiClient
     /** the total time [s] we spent talking to ESI during this request */
     protected static $totalEsiTime = 0.0;
     
+    /** the PHPFastCache instance */
+    protected static $cacheInstance;
+    
+    /** maximum number of retries for a specific call after a timeout occurred */
+    protected static $MAX_NUMBER_OF_RETRIES = 3;
+    
+    /** cURL timeout in seconds, deliberately chosen very short */
+    protected static $CURL_TIMEOUT = 3;
     
     public function __construct(\Swagger\Client\Configuration $esiConfig = null) 
     {    
         if($esiConfig == null)
         {
             $esiConfig = Configuration::getDefaultConfiguration();
-            $esiConfig->setCurlTimeout(60);
+            $esiConfig->setCurlTimeout(self::$CURL_TIMEOUT);
             $esiConfig->setUserAgent(EDK_USER_AGENT);
             // disable the expect header, because the ESI server reacts with HTTP 502
             $esiConfig->addDefaultHeader('Expect', '');
         }
         
+        // initialze phpFastCache instance
+        if(!self::$cacheInstance)
+        {
+            $this->initCacheHandler();
+        }
+        
         parent::__construct($esiConfig);     
     }
-    
+        
     /**
      * Sets the access token for OAuth
      * @param string $accessToken
@@ -152,14 +171,29 @@ class ESI extends ApiClient
         // obtain the HTTP response headers
         curl_setopt($curl, CURLOPT_HEADER, 1);
 
+        $cacheKey = md5($url);
+        // check cache first
+        if(self::$GET == $method)
+        {
+            $cachedData = $this->getFromCache($cacheKey);
+            if(!is_null($cachedData))
+            {
+                return $cachedData;
+            }
+        }
+        
         // Make the request
-        $startTime = microtime(true);
-        $response = curl_exec($curl);
-        $http_header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
-        $http_header = $this->httpParseHeaders(substr($response, 0, $http_header_size));
-        $http_body = substr($response, $http_header_size);
-        $response_info = curl_getinfo($curl);
-        self::$totalEsiTime += microtime(true) - $startTime;
+        $numberOfTries = 0;
+        do {
+            $startTime = microtime(true);
+            $response = curl_exec($curl);
+            $http_header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+            $http_header = $this->httpParseHeaders(substr($response, 0, $http_header_size));
+            $http_body = substr($response, $http_header_size);
+            $response_info = curl_getinfo($curl);
+            self::$totalEsiTime += microtime(true) - $startTime;
+            $numberOfTries++;
+        } while ($numberOfTries <= self::$MAX_NUMBER_OF_RETRIES && (curl_errno($curl) == 28 || $response_info['http_code'] >= 500 ));
         
         // debug HTTP response body
         if ($this->config->getDebug()) {
@@ -204,7 +238,15 @@ class ESI extends ApiClient
                 $data
             );
         }
-        return array($data, $response_info['http_code'], $http_header);
+        
+        $reply = array($data, $response_info['http_code'], $http_header);
+        
+        // cache the reply
+        if($method == self::$GET)
+        {
+            $this->putIntoCache($cacheKey, $reply, new \DateTime($http_header['Expires']));
+        }
+        return $reply;
     }
     
     /**
@@ -259,4 +301,85 @@ class ESI extends ApiClient
     }
     
     
+    protected function initCacheHandler()
+    {
+        // use Memcached
+        if(defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE == true) 
+        {
+            self::$cacheInstance = CacheManager::getInstance('memcache', ['servers' => [
+                [
+                  'host' => \Config::get('cfg_memcache_server'),
+                  'port' => \Config::get('cfg_memcache_port'),
+                  // 'sasl_user' => false, // optional
+                  // 'sasl_password' => false // optional
+                ],
+            ]]);
+        } 
+
+        // use Redis
+        elseif(defined('DB_USE_REDIS') && DB_USE_REDIS == true) 
+        {
+            self::$cacheInstance =  CacheManager::getInstance('redis', [
+                'host' => \Config::get('cfg_redis_server'),
+                'port' => \Config::get('cfg_redis_port'),
+            ]);
+        } 
+        
+        // fall back to file caching
+        else 
+        {
+            self::$cacheInstance =  CacheManager::getInstance('files', [
+              "path" => KB_CACHEDIR . DIRECTORY_SEPARATOR . 'esi',
+            ]);
+        }
+    }
+    
+    
+    /**
+     * Tries to get the object for the given key from the cache handler.
+     * 
+     * @param string $cacheKey the key for the object to retrieve
+     * @return mixed the cached data or null
+     */
+    protected function getFromCache($cacheKey)
+    {   
+        if(isset(self::$cacheInstance))
+        {
+            $CachedObject = self::$cacheInstance->getItem($cacheKey);
+            if(!is_null($CachedObject->get()))
+            {
+                return $CachedObject->get();
+            }
+            return null;
+        }
+    }
+    
+    /**
+     * Stores the given data under the given key with the given
+     * expiration date in the cache.
+     * 
+     * @param string $cacheKey  the key for the object to store
+     * @param mixed $data the payload to cache
+     * @param \DateTimeInterface $expirationDate the date of expiration
+     */
+    protected function putIntoCache($cacheKey, $data, $expirationDate)
+    {
+        if(isset(self::$cacheInstance))
+        {
+            $CachedObject = self::$cacheInstance->getItem($cacheKey);
+            $CachedObject->set($data);
+            $CachedObject->setExpirationDate($expirationDate);
+            self::$cacheInstance->save($CachedObject);
+        }
+    }
+    
+    /**
+     * Returns the cache instance used by the ESI Client
+     * 
+     * @return \phpFastCache\Core\Pool\ExtendedCacheItemPoolInterface
+     */
+    public static function getCacheInstance()
+    {
+        return self::$cacheInstance;
+    }
 }

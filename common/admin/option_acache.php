@@ -98,7 +98,7 @@ class admin_acache
     {
                 if ($_POST['option_clear_caches'] == 'on') {
                                 CacheHandler::removeByAge('data', 0, true);
-                                CacheHandler::removeByAge('api', 0, true);
+                                CacheHandler::removeByAge('esi', 0, true);
                                 CacheHandler::removeByAge('store', 0, true);
                                 CacheHandler::removeByAge('mails', 0, true);
                                 CacheHandler::removeByAge('img', 0, true);
