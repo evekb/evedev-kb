@@ -63,6 +63,7 @@ class pAbout extends pageAssembly
             'Coni',
             'bunjiboys',
             'EDG',
+            'Snitch Ashor'
         );
         sort($developer);
         sort($contributor);
