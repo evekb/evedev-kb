@@ -115,17 +115,17 @@ class admin_config
             // check datatype, lower and upper limits
             if(!is_numeric($maxNumberOfKillsPerRun))
             {
-                API_Helpers::autoSetMaxNumberOfKillsToProcess();
+                ESI_Helpers::autoSetMaxNumberOfKillsToProcess();
             }
             
-            else if($maxNumberOfKillsPerRun < API_Helpers::$MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MIN)
+            else if($maxNumberOfKillsPerRun < ESI_Helpers::$MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MIN)
             {
-                config::set('maxNumberOfKillsPerRun', API_Helpers::$MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MIN);
+                config::set('maxNumberOfKillsPerRun', ESI_Helpers::$MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MIN);
             }
             
-            else if($maxNumberOfKillsPerRun > API_Helpers::$MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MAX)
+            else if($maxNumberOfKillsPerRun > ESI_Helpers::$MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MAX)
             {
-                config::set('maxNumberofKillsPerRun', API_Helpers::$MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MAX);
+                config::set('maxNumberofKillsPerRun', ESI_Helpers::$MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MAX);
             }
         }
 

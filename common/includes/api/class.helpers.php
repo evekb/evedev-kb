@@ -15,134 +15,6 @@ class EDKApiConnectionException extends Exception {}
 // **********************************************************************************************************************************************
 class API_Helpers
 {
-        public static $MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_DEFAULT = 60;
-        public static $MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MAX = 200;
-        public static $MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MIN = 10;
-        
-    // **********************************************************************************************************************************************
-    // ****************                                             Convert ID -> Name                                                ****************
-    // **********************************************************************************************************************************************
-    public static function getTypeIDname($id, $update = false)
-    {
-        $id = intval($id);
-        $sql = 'select inv.typeName from kb3_invtypes inv where inv.typeID = ' . $id;
-
-        $qry = DBFactory::getDBQuery();
-        $qry->execute($sql);
-        if($qry->recordCount())
-        {
-            $row = $qry->getRow();
-
-            return $row['typeName'];
-        }
-        else
-        {
-                        $Item = Item::fetchItem($id);
-                        return $Item->getName();
-        }
-    }
-
-    // **********************************************************************************************************************************************
-    // ****************                                             Get GroupID from ID                                                ****************
-    // **********************************************************************************************************************************************
-    public static function getgroupID($id)
-    {
-        $sql = 'select inv.groupID from kb3_invtypes inv where inv.typeID = ' . $id;
-
-        $qry = DBFactory::getDBQuery();
-        $qry->execute($sql);
-        $row = $qry->getRow();
-
-        return $row['groupID'];
-    }
-
-    // **********************************************************************************************************************************************
-    // ****************                                         Convert groupID -> groupName                                            ****************
-    // **********************************************************************************************************************************************
-    public static function getgroupIDname($id)
-    {
-        $sql = 'select itt.itt_name from kb3_item_types itt where itt.itt_id = ' . $id;
-
-        $qry = DBFactory::getDBQuery();
-        $qry->execute($sql);
-        $row = $qry->getRow();
-
-        return $row['itt_name'];
-    }
-
-    // **********************************************************************************************************************************************
-    // ****************                                             Get Skill Rank from ID                                             ****************
-    // **********************************************************************************************************************************************
-    public static function gettypeIDrank($id)
-    {
-        $sql = 'select att.value from kb3_dgmtypeattributes att where att.typeID = ' . $id . ' and att.attributeID = 275';
-
-        $qry = DBFactory::getDBQuery();
-        $qry->execute($sql);
-        $row = $qry->getRow();
-
-        return $row['value'];
-    }
-
-    // **********************************************************************************************************************************************
-    // ****************                                         Convert MoonID -> MoonName                                            ****************
-    // **********************************************************************************************************************************************
-    public static function getMoonName($id)
-    {
-        if ($id != 0)
-        {
-            $qry = DBFactory::getDBQuery();
-            $sql = 'select itemName FROM kb3_moons WHERE itemID = '.$id;
-
-            $qry->execute($sql);
-            $row = $qry->getRow();
-
-            return $row['itemName'];
-        } else {
-            return false;
-        }
-    }
-        
-        
-    // **********************************************************************************************************************************************
-    // ****************                                         Convert MoonName -> MoonID                                            ****************
-    // **********************************************************************************************************************************************
-    public static function getMoonID($moonName)
-    {
-        if (!is_null($moonName))
-        {
-            $qry = DBFactory::getDBQuery();
-            $sql = "select itemID FROM kb3_moons WHERE itemName = '".$qry->escape($moonName)."'";
-
-            $qry->execute($sql);
-            $row = $qry->getRow();
-
-            return $row['itemID'];
-        } else {
-            return false;
-        }
-    }
-
-    // **********************************************************************************************************************************************
-    // ****************                                                 Find Thunky                                                    ****************
-    // **********************************************************************************************************************************************
-    public static function FindThunk()
-    { // round about now would probably be a good time for apologising about my sense of humour :oD
-        $sql = 'select plts.plt_id, plts.plt_externalid from kb3_pilots plts where plts.plt_name = "Captain Thunk"';
-
-        $qry = DBFactory::getDBQuery();
-        $qry->execute($sql);
-        $row = $qry->getRow();
-
-        $pilot_id = $row['plt_id'];
-        $pilot_charid = $row['plt_externalid'];
-
-        if ( $pilot_id != 0 )    {
-            return '<a href="'.KB_HOST.'/?a=pilot_detail&amp;plt_id=' . $pilot_id . '" ><font size="2">Captain Thunk</font></a>';
-        } else {
-            return "Captain Thunk";
-        }
-    }
 
     // **********************************************************************************************************************************************
    
@@ -214,7 +86,7 @@ class API_Helpers
          */
         public static function testCrestApiConnection()
         {
-            $CREST_TESTING_URL = CREST_PUBLIC_URL . Kill::$CREST_KILLMAIL_ENDPOINT . '33493676/553ac7e2aeabe48092bde10958de0a44dc6f35ef/';
+            $CREST_TESTING_URL = CREST_PUBLIC_URL . Kill::$ESI_KILLMAIL_ENDPOINT . '33493676/553ac7e2aeabe48092bde10958de0a44dc6f35ef/';
             try
             {
                 $kill = SimpleCrest::getReferenceByUrl($CREST_TESTING_URL);
@@ -269,32 +141,4 @@ class API_Helpers
                 config::set('apiConnectionMethod', 'file');
             }
         }
-        
-        
-         /**
-         * sets the maximum number of kills to process per run (if not already set),
-          * based on the time limit set in the PHP configuration
-         */
-        public static function autoSetMaxNumberOfKillsToProcess()
-        {
-            // has the maximum number of kills to process already been set?
-            if(is_numeric(config::get('maxNumberOfKillsPerRun')))
-            {
-                return;
-            }
-            
-            $timeLimit = ini_get('max_execution_time');
-            $maxNumberOfKillsPerRun = self::$MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_DEFAULT;
-            
-            if($timeLimit !== FALSE)
-            {
-                // on average, we can fetch 2 kills per second (due to CREST response time limitations)
-                $maxNumberOfKillsPerRun = min(array(floor($timeLimit * 0.8), self::$MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MAX));
-            }
-            
-            config::set('maxNumberOfKillsPerRun', $maxNumberOfKillsPerRun);
-        }
-                
-        
-        
 }

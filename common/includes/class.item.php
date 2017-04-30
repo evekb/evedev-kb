@@ -6,6 +6,10 @@
  * @package EDK
  */
 
+use EDK\ESI\ESI;
+use Swagger\Client\ApiException;
+use EsiClient\UniverseApi;
+
 /**
  * Contains the details about an Item.
  * @package EDK
@@ -377,109 +381,120 @@ class Item extends Cacheable
     {
         $Item = Cacheable::factory(get_class(), $id);
                 
-                // unknown item?
-                if(is_null($Item->getName()))
-                {
-                    // try fetching it from the API
-                    $typeName = API_Helpers::getTypeIDname($id, TRUE);
-                    if(!is_null($typeName))
-                    {
-                        // remove the item with no info from the cache
-                        self::delCache($Item);
-                        return self::lookup($typeName);
-                    }
-                }
-                return $Item;
+        // unknown item?
+        if(is_null($Item->getName()))
+        {
+            // try fetching it from the API
+            $typeName = ESI_Helpers::getTypeNameById($id, TRUE);
+            if(!is_null($typeName))
+            {
+                // remove the item with no info from the cache
+                self::delCache($Item);
+                return self::lookup($typeName);
+            }
+        }
+        return $Item;
     }
         
-        /**
-         * Fetches the type with the given ID from CREST, adds it to the database
-         * along with dogma attributes and effects
-         * @param int $typeId
-         * @return \Item
-         */
-        static function fetchItem($typeId)
+    /**
+     * Fetches the type with the given ID from ESI, adds it to the database
+     * along with dogma attributes and effects
+     * @param int $typeId
+     * @return \Item
+     */
+    static function fetchItem($typeId)
+    {
+        // create EDK ESI client
+        $EdkEsi = new ESI();
+        $UniverseApi = new UniverseApi($EdkEsi);
+
+        try 
         {
-            $crestTypeUrl = CREST_PUBLIC_URL . '/inventory/types/' . $typeId . '/';
-            $typeInfo = NULL;
+            $typeInfo = $UniverseApi->getUniverseTypesTypeId($typeId, $EdkEsi->getDataSource());
+        } 
+        catch (ApiException $e) 
+        {
+            // fallback: Use generic item name
+            // this database entry will be corrected with the next database update
+            // store the item in the database
+            $typeName = "Unknown Type ".$typeId;
 
-            try 
-            {
-                $typeInfo = SimpleCrest::getReferenceByUrl($crestTypeUrl);
-}
-            catch (Exception $e) 
-            {
-                // fallback: Use generic item name
-                // this database entry will be corrected with the next database update
-                // store the item in the database
-                $typeName = "Unknown Type ".$typeId;
-                
-                $query = new DBPreparedQuery();
-                $query->prepare('INSERT INTO kb3_invtypes (`typeID`, `typeName`) '
-                        . 'VALUES (?, ?)');
-                $types = 'is';
-                $arr2 = array(&$types, &$typeId, &$typeName);
-                $query->bind_params($arr2);
-                $query->execute();
-                
-                return self::lookup($typeName);
-            }
+            $query = new DBPreparedQuery();
+            $query->prepare('INSERT INTO kb3_invtypes (`typeID`, `typeName`) VALUES (?, ?)');
+            $types = 'is';
+            $arr2 = array(&$types, &$typeId, &$typeName);
+            $query->bind_params($arr2);
+            $query->execute();
 
-            if($typeInfo != NULL)
-            {
-                $typeName = $typeInfo->name;
-                if($typeName == NULL)
-                {
-                    $typeName = "Unknown Item ".$typeId;
-                }
-                 
-                // store the item in the database
-                $query = new DBPreparedQuery();
-                $query->prepare('INSERT INTO kb3_invtypes (`typeID`, `typeName`, `icon`, `description`, `mass`, `volume`, `capacity`, `portionSize` ) '
-                        . 'VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
-                $types = 'isssdddi';
-                $arr2 = array(&$types, &$typeId, &$typeName, &$typeInfo->iconID_str, &$typeInfo->description, &$typeInfo->mass, &$typeInfo->volume, &$typeInfo->capacity, &$typeInfo->portionSize);
-                $query->bind_params($arr2);
-                $query->execute();
-                
-                if($typeInfo->dogma != NULL)
-                {
-                    $query = DBFactory::getDBQuery();
-                    
-                    // store attributes in database
-                    if($typeInfo->dogma->attributes != NULL && is_array($typeInfo->dogma->attributes))
-                    {                        
-                        $attributeInserts = array();
-                        foreach($typeInfo->dogma->attributes AS $attributeInfo)
-                        {
-                            $attributeInserts[] = '('.$typeId.', '.$query->escape($attributeInfo->attribute->id_str).',  '.$query->escape($attributeInfo->value).')';
-                        }
-                        
-                        if(count($attributeInserts) > 0) 
-                        {
-                            $sql = 'REPLACE INTO kb3_dgmtypeattributes (`typeID`, `attributeID`, `value`) VALUES '. implode(", ", $attributeInserts);
-                            $query->execute($sql);
-                        }
-                    }
-                    
-                    // store effects in database
-                    if($typeInfo->dogma->effects != NULL && is_array($typeInfo->dogma->effects))
-                    {                        
-                        $effectInserts = array();
-                        foreach($typeInfo->dogma->effects AS $effectInfo)
-                        {
-                            $effectInserts[] = "(".$typeId.", ".$query->escape($effectInfo->effect->id_str).",  ".(int) $effectInfo->isDefault.")";
-                        }
-                        
-                        if(count($effectInserts) > 0) 
-                        {
-                            $sql = 'REPLACE INTO kb3_dgmtypeeffects (`typeID`, `effectID`, `isDefault`) VALUES '. implode(", ", $effectInserts);
-                            $query->execute($sql);
-                        }
-                    }
-                }
-                return self::lookup($typeName);
-            }
-            return null;
+            return Item::lookup($typeName);
         }
+
+        $typeName = $typeInfo->getName();
+        if($typeName == NULL)
+        {
+            $typeName = "Unknown Item ".$typeId;
+        }
+
+        $description = $typeInfo->getDescription();
+        $iconId = $typeInfo->getGraphicId();
+        $mass = $typeInfo->getMass();
+        $volume = $typeInfo->getVolume();
+        $capacity = $typeInfo->getCapacity();
+        $portionSize = $typeInfo->getPortionSize();
+        $groupId = $typeInfo->getGroupId();
+
+        // this is no yet available via ESI
+        $marketGroupId = null;
+
+        // store the item in the database
+        $query = new DBPreparedQuery();
+        $query->prepare('INSERT INTO kb3_invtypes (`typeID`, `groupID`, `typeName`, `icon`, `description`, `mass`, `volume`, `capacity`, `portionSize`, `marketGroupID` ) '
+                . 'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $types = 'iisssdddii';
+        $arr2 = array(&$types, &$typeId, &$groupId, &$typeName, &$iconId, &$description, &$mass, &$volume, &$capacity, &$portionSize, &$marketGroupId);
+        $query->bind_params($arr2);
+        $query->execute();
+
+        // add dogma attributes (if any)
+        $dogmaAttributes = $typeInfo->getDogmaAttributes();
+        if($dogmaAttributes)
+        {
+            $query = DBFactory::getDBQuery();
+
+            // store attributes in database  
+            $attributeInserts = array();
+            foreach($dogmaAttributes AS $dogmaAttribute)
+            {
+                $attributeInserts[] = '('.$typeId.', '.$query->escape($dogmaAttribute->getAttributeId()).',  '.$query->escape($dogmaAttribute->getValue()).')';
+            }
+
+            if(count($attributeInserts) > 0) 
+            {
+                $sql = 'REPLACE INTO kb3_dgmtypeattributes (`typeID`, `attributeID`, `value`) VALUES '. implode(", ", $attributeInserts);
+                $query->execute($sql);
+            }
+
+        }
+
+        // add dogma effects (if any)
+        $dogmaEffects = $typeInfo->getDogmaEffects();
+        if($dogmaEffects)
+        {
+            $query = DBFactory::getDBQuery();
+            $effectInserts = array();
+            foreach($dogmaEffects AS $dogmaEffect)
+            {
+                $effectInserts[] = "(".$typeId.", ".$query->escape($dogmaEffect->getEffectId()).",  ".(int) $dogmaEffect->getIsDefault().")";
+            }
+
+            if(count($effectInserts) > 0) 
+            {
+                $sql = 'REPLACE INTO kb3_dgmtypeeffects (`typeID`, `effectID`, `isDefault`) VALUES '. implode(", ", $effectInserts);
+                $query->execute($sql);
+            }
+
+        }
+
+        return self::lookup($typeName);
+    }
 }

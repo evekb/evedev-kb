@@ -317,83 +317,83 @@ class Ship extends Cacheable
     static function getByID($id)
     {
         $Ship = Cacheable::factory(get_class(), $id);
-                // check if the ship actually has an ID, but we don't know the name
-                // (there are cases when we don't have an ID and DO WANT to return
-                // an "Unknown" ship, for example in killmails with no ship information)
-                if((int) $id != 0 && $Ship->getName() == "Unknown")
-                {
-                    $shipName = API_Helpers::getTypeIDname($id, TRUE);
-                    // sucess?
-                    if(!is_null($shipName))
-                    {
-                        // add new ship with Unknown ship class
-                        return self::lookup($shipName);
-                    }
-                }
-                return $Ship;                
+        // check if the ship actually has an ID, but we don't know the name
+        // (there are cases when we don't have an ID and DO WANT to return
+        // an "Unknown" ship, for example in killmails with no ship information)
+        if((int) $id != 0 && $Ship->getName() == "Unknown")
+        {
+            $shipName = ESI_Helpers::getTypeNameById($id, TRUE);
+            // sucess?
+            if(!is_null($shipName))
+            {
+                // add new ship with Unknown ship class
+                return self::lookup($shipName);
+            }
+        }
+        return $Ship;                
     }
         
-        /**
-         * returns the ship's traits as array of readable HTML text
-         * @return array an array grouping a ship's traits by skill the bonuses are related to
-         */
-        public function getTraitsHtml()
-        {
-            $qry = DBFactory::getDBQuery();
+    /**
+     * returns the ship's traits as array of readable HTML text
+     * @return array an array grouping a ship's traits by skill the bonuses are related to
+     */
+    public function getTraitsHtml()
+    {
+        $qry = DBFactory::getDBQuery();
 
-            $sql = "SELECT 
-                itr.typeID AS typeID, it.typeName AS skillName, itr.bonus, eu.displayName AS unit, bonusText   
-                FROM kb3_invtraits itr
-                    LEFT JOIN kb3_invtypes it ON itr.skillID = it.typeID
-                    LEFT JOIN kb3_eveunits eu ON eu.unitID = itr.unitID 
-                    WHERE itr.typeID = ".$this->id;
-            
-            $qry->execute($sql);
-            
-            $traits = array();
-            
-            while($row = $qry->getRow())
+        $sql = "SELECT 
+            itr.typeID AS typeID, it.typeName AS skillName, itr.bonus, eu.displayName AS unit, bonusText   
+            FROM kb3_invtraits itr
+                LEFT JOIN kb3_invtypes it ON itr.skillID = it.typeID
+                LEFT JOIN kb3_eveunits eu ON eu.unitID = itr.unitID 
+                WHERE itr.typeID = ".$this->id;
+
+        $qry->execute($sql);
+
+        $traits = array();
+
+        while($row = $qry->getRow())
+        {
+            // build trait text
+            $trait = '';
+            if($row['bonus'] != NULL)
             {
-                // build trait text
-                $trait = '';
-                if($row['bonus'] != NULL)
-                {
-                    $trait .= $row['bonus'].' '.$row['unit'].' ';
-                }
-                $trait .= $row['bonusText'];
-                
-                // replace showinfo links
-                $trait = preg_replace_callback('/showinfo:[0-9]+/', array($this, 'parseShowInfoLink'), $trait);
-                
-                // check for role bonus
-                if($row['skillName'] == NULL)
-                {
-                    $row['skillName'] = 'Role';
-                }
-               
-                // group trait texts by skill
-                if(!isset($traits[$row['skillName']]))
-                {
-                    $traits[$row['skillName']] = array();
-                }
-                $traits[$row['skillName']][] = $trait;
+                $trait .= $row['bonus'].' '.$row['unit'].' ';
             }
-            return $traits;
-        }
-        
-        /**
-         * callback for showinfo links in corp description;
-         * replaces the showinfo-link with a link to the correct invtype
-         * @param array $showInfoLinks
-         */
-        static function parseShowInfoLink($showInfoLinks)
-        {
-            // showInfoLinks[0] looks like this: showinfo:1378
-            $showInfoLink = $showInfoLinks[0];
-            // 1378
-            $typeID = substr($showInfoLink, strpos($showInfoLink, ':')+1, strlen($showInfoLink)-strpos($showInfoLink, ':'));
+            $trait .= $row['bonusText'];
 
-            return edkURI::page('invtype', $typeID);
+            // replace showinfo links
+            $trait = preg_replace_callback('/showinfo:[0-9]+/', array($this, 'parseShowInfoLink'), $trait);
+
+            // check for role bonus
+            if($row['skillName'] == NULL)
+            {
+                $row['skillName'] = 'Role';
+            }
+
+            // group trait texts by skill
+            if(!isset($traits[$row['skillName']]))
+            {
+                $traits[$row['skillName']] = array();
+            }
+            $traits[$row['skillName']][] = $trait;
         }
+        return $traits;
+    }
+
+    /**
+     * callback for showinfo links in corp description;
+     * replaces the showinfo-link with a link to the correct invtype
+     * @param array $showInfoLinks
+     */
+    static function parseShowInfoLink($showInfoLinks)
+    {
+        // showInfoLinks[0] looks like this: showinfo:1378
+        $showInfoLink = $showInfoLinks[0];
+        // 1378
+        $typeID = substr($showInfoLink, strpos($showInfoLink, ':')+1, strlen($showInfoLink)-strpos($showInfoLink, ':'));
+
+        return edkURI::page('invtype', $typeID);
+    }
 
 }

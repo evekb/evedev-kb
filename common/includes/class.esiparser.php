@@ -288,7 +288,7 @@ class EsiParser
         // was it a pos structure?
         else if(null !== $EsiKill->getMoonId())
         {
-            $moonName = \API_Helpers::getMoonName($EsiKill->getMoonId());
+            $moonName = \ESI_Helpers::getMoonName($EsiKill->getMoonId());
             // cut off the first two characters (again, to keep compatibility with legacy parser killmails)
             $hashIn .= substr($moonName, 2, strlen($moonName)-1);
         }
@@ -441,7 +441,7 @@ class EsiParser
         {
             if(null !== $this->EsiKill->getMoonId())
             {
-                $moonName = \API_Helpers::getMoonName($this->EsiKill->getMoonId());
+                $moonName = \ESI_Helpers::getMoonName($this->EsiKill->getMoonId());
                 $victimName = $Corp->getName()." - ".$moonName;
             }
 

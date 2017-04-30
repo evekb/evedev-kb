@@ -32,13 +32,9 @@ if($_POST['submit'])
 else
 {
     // Get from config
-    $url = config::get('itemPriceCrestUrl');
+
     $timestamp = config::get('lastfetch');
     $time = date('r', $timestamp);
-    if ($url == null)
-    {
-        $url = CREST_PUBLIC_URL . ValueFetcherCrest::$CREST_PRICES_ENDPOINT;
-    }
 
     $html .= 'Last update: '.$time.'<br /><br />';
 

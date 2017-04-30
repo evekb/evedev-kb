@@ -17,9 +17,10 @@ class KillException extends Exception {}
 class Kill extends Cacheable
 {
     
-        /** @const the base URL for the public CREST killmail endpoint */
-        public static $CREST_KILLMAIL_ENDPOINT = '/killmails/';
-        
+    /** @const the base URL for the public CREST killmail endpoint */
+    public static $ESI_KILLMAIL_ENDPOINT = '/killmails/';
+    /** @const the base URL for the latest version of the ESI API */
+    public static $ESI_URL_LATEST = "https://esi.tech.ccp.is/latest";
         
         
     /**
@@ -1952,7 +1953,7 @@ class Kill extends Cacheable
 
         if($this->getCrestHash() && !is_null($this->externalid))
         {
-            return CREST_PUBLIC_URL . self::$CREST_KILLMAIL_ENDPOINT . $this->externalid.'/'.$this->getCrestHash().'/';
+            return self::$ESI_URL_LATEST . self::$ESI_KILLMAIL_ENDPOINT . $this->externalid.'/'.$this->getCrestHash().'/';
         }
         return NULL;
     }

@@ -11,102 +11,76 @@ use Swagger\Client\Model\GetSearchOk;
  */
 class ESI_Helpers
 {
-    /**
-     * Fetches the type with the given ID from ESI, adds it to the database
-     * along with dogma attributes and effects
-     * @param int $typeId
-     * @return \Item
-     */
-    public static function fetchItem($typeId)
+    
+    public static $MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_DEFAULT = 60;
+    public static $MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MAX = 200;
+    public static $MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MIN = 10;
+    
+    public static function getTypeNameById($id, $update = false)
     {
-        // create EDK ESI client
-        $EdkEsi = new ESI();
-        $UniverseApi = new UniverseApi($EdkEsi);
-        
-        try 
-        {
-            $typeInfo = $UniverseApi->getUniverseTypesTypeId($typeId, $EdkEsi->getDataSource());
-        } 
-        catch (ApiException $e) 
-        {
-            // fallback: Use generic item name
-            // this database entry will be corrected with the next database update
-            // store the item in the database
-            $typeName = "Unknown Type ".$typeId;
+        $id = intval($id);
+        $sql = 'select inv.typeName from kb3_invtypes inv where inv.typeID = ' . $id;
 
-            $query = new DBPreparedQuery();
-            $query->prepare('INSERT INTO kb3_invtypes (`typeID`, `typeName`) VALUES (?, ?)');
-            $types = 'is';
-            $arr2 = array(&$types, &$typeId, &$typeName);
-            $query->bind_params($arr2);
-            $query->execute();
+        $qry = DBFactory::getDBQuery();
+        $qry->execute($sql);
+        if($qry->recordCount())
+        {
+            $row = $qry->getRow();
 
-            return Item::lookup($typeName);
+            return $row['typeName'];
         }
-
-        $typeName = $typeInfo->getTypeName();
-        if($typeName == NULL)
+        else
         {
-            $typeName = "Unknown Item ".$typeId;
+            $Item = Item::fetchItem($id);
+            return $Item->getName();
         }
-        
-        $description = $typeInfo->getTypeDescription();
-        $iconId = $typeInfo->getGraphicId();
-        
-        // this is no yet available via ESI
-        $dogma = null;
-        $mass = null;
-        $volume = null;
-        $capactiy = null;
-        $portionSize = null;        
-       
-        // store the item in the database
-        $query = new DBPreparedQuery();
-        $query->prepare('INSERT INTO kb3_invtypes (`typeID`, `typeName`, `icon`, `description`, `mass`, `volume`, `capacity`, `portionSize` ) '
-                . 'VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
-        $types = 'isssdddi';
-        $arr2 = array(&$types, &$typeId, &$typeName, &$iconId, &$description, &$mass, &$volume, &$capacity, &$portionSize);
-        $query->bind_params($arr2);
-        $query->execute();
-
-        if($dogma != NULL)
+    }
+    
+    
+    /**
+     * Get the name of a moon by its ID
+     * 
+     * @param int $id the moon ID
+     * @return mixed the name of the moon or false if not found
+     */
+    public static function getMoonName($id)
+    {
+        if ($id != 0)
         {
-            $query = DBFactory::getDBQuery();
+            $qry = DBFactory::getDBQuery();
+            $sql = 'select itemName FROM kb3_moons WHERE itemID = '.$id;
 
-            // store attributes in database
-            if($dogma>attributes != NULL && is_array($dogma->attributes))
-            {                        
-                $attributeInserts = array();
-                foreach($dogma->attributes AS $attributeInfo)
-                {
-                    $attributeInserts[] = '('.$typeId.', '.$query->escape($attributeInfo->attribute->id_str).',  '.$query->escape($attributeInfo->value).')';
-                }
+            $qry->execute($sql);
+            $row = $qry->getRow();
 
-                if(count($attributeInserts) > 0) 
-                {
-                    $sql = 'REPLACE INTO kb3_dgmtypeattributes (`typeID`, `attributeID`, `value`) VALUES '. implode(", ", $attributeInserts);
-                    $query->execute($sql);
-                }
-            }
-
-            // store effects in database
-            if($dogma->effects != NULL && is_array($dogma->effects))
-            {                        
-                $effectInserts = array();
-                foreach($dogma->effects AS $effectInfo)
-                {
-                    $effectInserts[] = "(".$typeId.", ".$query->escape($effectInfo->effect->id_str).",  ".(int) $effectInfo->isDefault.")";
-                }
-
-                if(count($effectInserts) > 0) 
-                {
-                    $sql = 'REPLACE INTO kb3_dgmtypeeffects (`typeID`, `effectID`, `isDefault`) VALUES '. implode(", ", $effectInserts);
-                    $query->execute($sql);
-                }
-            }
+            return $row['itemName'];
+        } else {
+            return false;
         }
-        return self::lookup($typeName);
-    } 
+    }
+        
+        
+    /**
+     * Get the ID of a moon by its name
+     * 
+     * @param string $moonName the name of the moon
+     * @return mixed the moon's ID or false if not found
+     */
+    public static function getMoonID($moonName)
+    {
+        if (!is_null($moonName))
+        {
+            $qry = DBFactory::getDBQuery();
+            $sql = "select itemID FROM kb3_moons WHERE itemName = '".$qry->escape($moonName)."'";
+
+            $qry->execute($sql);
+            $row = $qry->getRow();
+
+            return $row['itemID'];
+        } else {
+            return false;
+        }
+    }
     
     
     /**
@@ -121,6 +95,7 @@ class ESI_Helpers
     {
         $EdkEsi = new ESI();
         $KillmailsApi = new \EsiClient\KillmailsApi($EdkEsi);
+        
         return $KillmailsApi->getKillmailsKillmailIdKillmailHash($hash, $killId);
     }
 
@@ -213,5 +188,29 @@ class ESI_Helpers
         }
         
         return null;
+    }
+    
+    /**
+     * sets the maximum number of kills to process per run (if not already set),
+     * based on the time limit set in the PHP configuration
+     */
+    public static function autoSetMaxNumberOfKillsToProcess()
+    {
+        // has the maximum number of kills to process already been set?
+        if(is_numeric(config::get('maxNumberOfKillsPerRun')))
+        {
+            return;
+        }
+
+        $timeLimit = ini_get('max_execution_time');
+        $maxNumberOfKillsPerRun = self::$MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_DEFAULT;
+
+        if($timeLimit !== FALSE)
+        {
+            // on average, we can fetch 2 kills per second (due to CREST response time limitations)
+            $maxNumberOfKillsPerRun = min(array(floor($timeLimit * 0.8), self::$MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MAX));
+        }
+
+        config::set('maxNumberOfKillsPerRun', $maxNumberOfKillsPerRun);
     }
 }

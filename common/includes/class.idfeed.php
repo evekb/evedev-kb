@@ -405,7 +405,7 @@ class IDFeed
      */
     function processFeed()
     {
-                API_Helpers::autoSetMaxNumberOfKillsToProcess();
+        ESI_Helpers::autoSetMaxNumberOfKillsToProcess();
         // Remove error messages at the top.
         if (strpos($this->xml, "<?xml") !== 0) {
             $this->xml = substr($this->xml, strpos($this->xml, "<?xml"));
@@ -801,7 +801,7 @@ class IDFeed
 
         if (!strval($victim['characterName'])) {
             if ((int)$row['moonID']) {
-                $name = API_Helpers::getMoonName((int)$row['moonID']);
+                $name = ESI_Helpers::getMoonName((int)$row['moonID']);
                 $name = strval($victim['corporationName'])." - ".$name;
             } else {
                 $name = strval($victim['corporationName'])." - ".$kill->getSystem()->getName();
