@@ -48,7 +48,7 @@ class pilotSummary extends statSummary
 		$sql = "SELECT scl_class, scl_id, kb3_sum_pilot.*
 			FROM kb3_ship_classes left join kb3_sum_pilot
 				ON (psm_shp_id = scl_id AND psm_plt_id = ".$this->plt_id.")
-			WHERE scl_class not in (,'Unknown')
+			WHERE scl_class not in ('Unknown')
 				ORDER BY scl_class";
 		$qry->execute($sql);
 		while ($row = $qry->getRow()) {
