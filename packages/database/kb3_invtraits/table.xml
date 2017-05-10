@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <kb3>
   <name>kb3_invtraits</name>
-  <rows>1954</rows>
+  <rows>2043</rows>
   <structure>CREATE TABLE `kb3_invtraits` (
   `typeID` int(11) DEFAULT NULL,
   `skillID` int(11) DEFAULT NULL,
