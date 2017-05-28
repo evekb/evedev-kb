@@ -1009,7 +1009,7 @@ class pKillDetail extends pageAssembly
             $this->page->addHeader('<meta name="og:image" content="'.$this->kill->getVictimShipImage(128).'">');
             $this->page->addHeader('<meta name="twitter:image" content="'.$this->kill->getVictimShipImage(128).'">');
             // meta tag: URL
-            $this->page->addHeader('<meta name="og:url" content="'.edkURI::build(array('kll_id', $this->kll_id), true).'">');
+            $this->page->addHeader('<meta name="og:url" content="'.edkURI::page('kill_detail', $this->kll_id, 'kll_id').'">');
             // meta tag: Twitter summary
             $this->page->addHeader('<meta name="twitter:card" content="summary">');
         }
