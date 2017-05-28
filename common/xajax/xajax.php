@@ -38,15 +38,16 @@ class edk_xajax
         }
 
         global $xajax;
+        $xajax->configure("javascript URI", config::get('cfg_kbhost')."/common/xajax/");
         $obj->addHeader($xajax->getJavascript(config::get('cfg_kbhost')."/common/xajax/"));
     }
 
     public static function lateProcess()
     {
         // let all mods know we're here so they can register their functions
-        event::call('xajax_initialised', $this);
+        event::call('xajax_initialised', get_class());
         // Also register this for old mods registered to the ajax mod.
-        event::call('mod_xajax_initialised', $this);
+        event::call('mod_xajax_initialised', get_class());
 
         // now process all xajax calls
         global $xajax;
