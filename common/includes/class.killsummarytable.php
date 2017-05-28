@@ -315,7 +315,7 @@ class KillSummaryTable
         // as there is no way to do this elegantly in sql
         // i'll keep it in php
         $sql = "select scl_id, scl_class from kb3_ship_classes
-               where scl_class not in ('Drone','Unknown') order by scl_class";
+               where scl_class not in ('Unknown') order by scl_class";
         $startdate = makeStartDate($this->weekno, $this->yearno, $this->monthno, $this->startweekno, $this->startDate);
         $enddate = makeEndDate($this->weekno, $this->yearno, $this->monthno, $this->endDate);
 
@@ -521,7 +521,7 @@ class KillSummaryTable
             // build array
             $sql = "select scl_id, scl_class
                     from kb3_ship_classes
-                   where scl_class not in ( 'Drone', 'Unknown' )
+                   where scl_class not in ( 'Unknown' )
                   order by scl_class";
 
             $qry = DBFactory::getDBQuery();
