@@ -38,6 +38,7 @@ class edk_xajax
 		}
 
 		global $xajax;
+                $xajax->configure("javascript URI", config::get('cfg_kbhost')."/common/xajax/");
 		$obj->addHeader($xajax->getJavascript(config::get('cfg_kbhost')."/common/xajax/"));
 	}
 
