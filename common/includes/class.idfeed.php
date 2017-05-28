@@ -1146,7 +1146,7 @@ class IDFeed
                             {
                                 $moonName = $victimName;
                             }
-                            $moonId = API_Helpers::getMoonID($moonName);
+                            $moonId = ESI_Helpers::getMoonID($moonName);
                             if($moonId)
                             {
                                 $row->addAttribute('moonID', $moonId);

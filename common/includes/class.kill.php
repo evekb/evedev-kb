@@ -599,7 +599,7 @@ class Kill extends Cacheable
             else
                         {
                             // is the victim's name a moon?
-                            $moonID = API_Helpers::getMoonID($this->getVictimName());
+                            $moonID = ESI_Helpers::getMoonID($this->getVictimName());
                             if($moonID)
                             {
                                 $mail .= "Moon: ".$this->getVictimName()."\r\n";
