@@ -38,6 +38,8 @@ class ESI extends ApiClient
     /** cURL timeout in seconds, deliberately chosen very short */
     protected static $CURL_TIMEOUT = 3;
     
+    protected static $curlMultiProcessor;
+    
     public function __construct(\Swagger\Client\Configuration $esiConfig = null) 
     {    
         if($esiConfig == null)
@@ -186,7 +188,7 @@ class ESI extends ApiClient
         $numberOfTries = 0;
         do {
             $startTime = microtime(true);
-            $response = curl_exec($curl);
+            $response = $this->curlExecWithMulti($curl);
             $http_header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
             $http_header = $this->httpParseHeaders(substr($response, 0, $http_header_size));
             $http_body = substr($response, $http_header_size);
@@ -381,5 +383,72 @@ class ESI extends ApiClient
     public static function getCacheInstance()
     {
         return self::$cacheInstance;
+    }
+    
+    /**
+     * Tries to use curl multi, if available.
+     * Even though we do not execute requests concurrently, curl multi
+     * keeps the HTTP connection open (if the requested server allows it),
+     * so we save the overhead of establishing a new connection every time.
+     * 
+     * We use curl multi for this, instead or re-using a normal cURL handle,
+     * because of the multitude of options that can be set for each request, which
+     * would need to be reset for every new request.
+     * 
+     * If curl_multi_init() is not available, a simple curl_exec() is used.
+     * 
+     * @param resource $handle a cURL handle
+     * @return mixed the result of the curl request
+     */
+    function curlExecWithMulti(&$handle) 
+    {
+        // Create a multi if necessary.
+        if (empty(self::$curlMultiProcessor) && function_exists('curl_multi_init')) 
+        {
+          self::$curlMultiProcessor = curl_multi_init();
+        }
+
+        if(!empty(self::$curlMultiProcessor))
+        {
+            // Add the handle to be processed.
+            curl_multi_add_handle(self::$curlMultiProcessor, $handle);
+
+            // Do all the processing.
+            $active = NULL;
+            do 
+            {
+              $ret = curl_multi_exec(self::$curlMultiProcessor, $active);
+            } while ($ret == CURLM_CALL_MULTI_PERFORM);
+
+            while ($active && $ret == CURLM_OK)
+            {
+                // because of the way some PHP versions implement curl_multi_select,
+                // it always returns -1; so we must wait ourselves; libcurl suggests
+                // to wait 100ms
+                if (curl_multi_select(self::$curlMultiProcessor) == -1) 
+                {
+                    usleep(100000);
+                }
+
+                do 
+                {
+                   $mrc = curl_multi_exec(self::$curlMultiProcessor, $active);
+                } while ($mrc == CURLM_CALL_MULTI_PERFORM);
+
+            }
+
+            $response = curl_multi_getcontent($handle);
+
+            // remove the handle from the multi processor
+            curl_multi_remove_handle(self::$curlMultiProcessor, $handle);	
+        }
+      
+        // fallback to default 
+        else
+        {
+            $response = curl_exec($handle);
+        }
+
+	return $response;
     }
 }

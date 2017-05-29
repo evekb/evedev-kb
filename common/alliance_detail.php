@@ -269,7 +269,7 @@ class pAllianceDetail extends pageAssembly
 
                 // Check if corp is known to EDK DB, if not, add it.
                 $tempMyCorp = Corporation::getByExternalID($allianceCorpId);
-                if ($tempMyCorp) {
+                if (!$tempMyCorp) {
                     $tempMyCorp = Corporation::add($membercorp["corpName"], $this->alliance,
                             $membercorp["joinDate"], $allianceCorpId);
                 }
