@@ -9,7 +9,6 @@ use Swagger\Client\Configuration;
 use Swagger\Client\ApiException;
 
 use phpFastCache\CacheManager;
-use phpFastCache\Core\phpFastCache;
 
 /**
  * EDK Wrapper class for the auto-generated ESI Client.
@@ -205,10 +204,10 @@ class ESI extends ApiClient
         // Handle the response
         if ($response_info['http_code'] == 0) {
             $curl_error_message = curl_error($curl);
-
+            $curl_error_code = curl_errno($curl);
             // curl_exec can sometimes fail but still return a blank message from curl_error().
             if (!empty($curl_error_message)) {
-                $error_message = "API call to $url failed: $curl_error_message";
+                $error_message = "API call to $url failed: $curl_error_message (cURL error code: $curl_error_code, tried $numberOfTries times)";
             } else {
                 $error_message = "API call to $url failed, but for an unknown reason. " .
                     "This could happen if you are disconnected from the network.";
@@ -331,7 +330,7 @@ class ESI extends ApiClient
         else 
         {
             self::$cacheInstance =  CacheManager::getInstance('files', [
-              "path" => KB_CACHEDIR . DIRECTORY_SEPARATOR . 'esi',
+              "path" => getcwd() . DIRECTORY_SEPARATOR . KB_CACHEDIR . DIRECTORY_SEPARATOR . 'esi',
             ]);
         }
     }
