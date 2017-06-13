@@ -333,4 +333,9 @@ class edkURI {
     {
         self::$pathinfo = !!$pathinfo;
     }
+    
+    public static function isUsePathSet()
+    {
+        return self::$pathInfo;
+    }
 }

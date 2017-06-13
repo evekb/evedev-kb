@@ -516,11 +516,8 @@ class pKillDetail extends pageAssembly
                 $this->involved[$i]['pilotName'] = $weapon->getName();
                 $this->involved[$i]['secStatus'] = 0;
                 $this->involved[$i]['portrait'] = $corp->getPortraitURL(64);
-                $this->involved[$i]['externalID'] = $corp->getExternalID(true);
-
-                if ($this->involved[$i]['externalID'] == 0) {
-                    $fetchExternalIDs[] = $corp->getName();
-                }
+                // this triggers fetching the external ID from ESI
+                $this->involved[$i]['externalID'] = $corp->getExternalID(false);
 
                 $this->involved[$i]['typeID'] = 2; //type number for corporations.
 
@@ -549,7 +546,8 @@ class pKillDetail extends pageAssembly
                 $this->involved[$i]['secStatus'] = $inv->getSecStatus();
 
                 $this->involved[$i]['portrait'] = $pilot->getPortraitURL(64);
-                $this->involved[$i]['externalID'] = $pilot->getExternalID(true);
+                // this triggers fetching the external ID from ESI
+                $this->involved[$i]['externalID'] = $pilot->getExternalID(false);
 
                 //get the external ID from the pilot class - if not found then add it to a list of pilots
                 //and check the api in bulk
@@ -580,45 +578,6 @@ class pKillDetail extends pageAssembly
                 $this->involved[$i]['finalBlow'] = false;
             }
             ++$i;
-        }
-
-        //prod CCP for the entire list of names
-        if (count($fetchExternalIDs) > 0) {
-            $names = new API_NametoID();
-            $names->setNames(implode(',', $fetchExternalIDs));
-            $names->fetchXML();
-            $nameIDPair = $names->getNameData();
-
-            //fill in the pilot external IDs.. could potentially be slow
-            //but it beats the alternative. Do nothing if no names need loading.
-            if (count($nameIDPair) > 0) {
-                foreach ($nameIDPair as $idpair) {
-                    //store the IDs
-                    foreach ($this->kill->getInvolved() as $inv) {
-                        $pilot = Cacheable::factory('Pilot', $inv->getPilotID());
-                        $corp = Cacheable::factory('Corporation', $inv->getCorpID());
-
-                        if ($idpair['name'] == $corp->getName()) {
-                            $corp->setExternalID($idpair['characterID']);
-                        } else if ($idpair['name'] == $pilot->getName()) {
-                            $pilot->setCharacterID($idpair['characterID']);
-                        }
-                    }
-
-                    //as we've already populated the structures for the template
-                    //we need to quickly retrofit it.
-                    foreach ($this->involved as $inv) {
-                        $pname = $inv['pilotName'];
-                        $cname = $inv['corpName'];
-
-                        if ($cname == $idpair['name']) {
-                            $inv['externalID'] = $idpair['characterID'];
-                        } else if ($pname == $idpair['name']) {
-                            $inv['externalID'] = $idpair['characterID'];
-                        }
-                    }
-                }
-            }
         }
     }
 

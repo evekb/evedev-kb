@@ -181,9 +181,10 @@ class ESI_Helpers
         $SearchApi = new SearchApi($EdkEsi);
         $entitiesMatching = $SearchApi->getSearch(array($entityType), $entityName, $EdkEsi->getDataSource(), null, true);
 
-        if(count($entitiesMatching) == 1)
+        $getter = GetSearchOk::getters()[$entityType];
+		
+        if(!is_null($entitiesMatching->$getter()) && count($entitiesMatching->$getter()) == 1)
         {
-            $getter = GetSearchOk::getters()[$entityType];
             return reset($entitiesMatching->$getter());
         }
         

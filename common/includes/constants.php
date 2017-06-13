@@ -28,6 +28,8 @@ define('IMG_SERVER', "https://imageserver.eveonline.com");
 define('CREST_PUBLIC_URL', 'https://crest-tq.eveonline.com');
 /** data source for ESI calls */
 define('ESI_DATA_SOURCE', 'tranquility');
+/** SOO OAuth base URL */
+define('OAUTH_BASE_URL', 'https://login.eveonline.com/oauth');
 
 /** 
  * current version: major.minor.sub.ccpDBupdateNo

@@ -152,7 +152,16 @@ class pPilotDetail extends pageAssembly
         if($this->pilot->getExternalID())
         {
             $Pilot = new Pilot(0, $this->pilot->getExternalID());
-            $Pilot->fetchPilot();
+            try
+            {
+                // try fetching / updating pilot information
+                $Pilot->fetchPilot();
+            }
+            
+            catch(Swagger\Client\ApiException $e)
+            {
+                // do nothing, error has been logged
+            }
         }
         global $smarty;
         $smarty->assign('portrait_URL',$this->pilot->getPortraitURL(128));

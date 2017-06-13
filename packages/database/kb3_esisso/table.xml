@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kb3>
-  <name>kb3_alliances</name>
+  <name>kb3_esisso</name>
   <rows>0</rows>
-  <structure>CREATE TABLE `kb3_alliances` (
-  `all_id` int(11) NOT NULL auto_increment,
-  `all_name` char(64) NOT NULL default &#039;&#039;,
-  `all_external_id` int(11) unsigned default NULL,
-  PRIMARY KEY  (`all_id`),
-  UNIQUE KEY `all_name` (`all_name`),
-  UNIQUE KEY `all_external_id` (`all_external_id`)
+  <structure>CREATE TABLE `kb3_esisso` (
+  `id` int(11) NOT NULL,
+  `characterID` int(11) NOT NULL,
+  `keyType` varchar(16) NOT NULL,
+  `refreshToken` varchar(255) NOT NULL,
+  `ownerHash` varchar(255) NOT NULL,
+  `failCount` int(11) DEFAULT NULL,
+  `isEnabled` tinyint(1) NOT NULL,
+  `lastKillID` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) Engine=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;</structure>
 </kb3>

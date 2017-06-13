@@ -782,14 +782,14 @@ class pKillRelated extends pageAssembly
        return $this->kill_summary;
    }
 }
-$killRelated = new pKillRelated();
-event::call("killRelated_assembling", $killRelated);
-$html = $killRelated->assemble();
-$killRelated->page->setContent($html);
+$ssoRegistration = new pKillRelated();
+event::call("killRelated_assembling", $ssoRegistration);
+$html = $ssoRegistration->assemble();
+$ssoRegistration->page->setContent($html);
 
-$killRelated->context();
-event::call("killRelated_context_assembling", $killRelated);
-$context = $killRelated->assemble();
-$killRelated->page->addContext($context);
+$ssoRegistration->context();
+event::call("killRelated_context_assembling", $ssoRegistration);
+$context = $ssoRegistration->assemble();
+$ssoRegistration->page->addContext($context);
 
-$killRelated->page->generate();
+$ssoRegistration->page->generate();
