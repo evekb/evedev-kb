@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.31.0
+Eve Development Network Killboard v4.2.32.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -25,6 +25,18 @@ o/ EVE Development Network
 
 VERSION HISTORY
 ===============
+
+Features:
+Updated EDK to 4.2.32.0 and CCP DB to YC-119-6 1.0.20170613
+
+Enhancements:
+Added explicit JS path configuration to xAjax Proxy
+
+Bugfixes:
+Fix: Fixed URL in meta info tags for Kill Details page
+
+-------------------------------------------
+v4.2.31.0
 
 Features:
 Updated EDK to 4.2.31.0 and CCP DB to YC-119-5 1.0.20170509
