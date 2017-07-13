@@ -35,13 +35,13 @@ define('OAUTH_BASE_URL', 'https://login.eveonline.com/oauth');
  * current version: major.minor.sub.ccpDBupdateNo
  * even numbers for minor = development version
  */
-define('KB_VERSION', '4.2.32.0');
+define('KB_VERSION', '4.2.33.0');
 /** release name */
-define('KB_RELEASE', '(YC-119-6 1.0)');
+define('KB_RELEASE', '(YC-119-7 1.0)');
 /** version of the SDE used to produce the current static database */
-define('KB_CCP_DB_VERSION', '20170613');
+define('KB_CCP_DB_VERSION', '20170712');
 /** release date of the SDE used to produce the current static database */
-define('KB_CCP_DB_DATE', 'Jun 13, 2017');
+define('KB_CCP_DB_DATE', 'Jul 12, 2017');
 /** the version of IDFeed used by this killboard, gets reported to clients */
 define('ID_FEED_VERSION', 1.50);
 /** the version of zKBFetch used by this killboard */
