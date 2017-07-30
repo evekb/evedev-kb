@@ -8,7 +8,7 @@
   `kll_id` int(11) NOT NULL,
   `comment` text NOT NULL,
   `name` tinytext NOT NULL,
-  `posttime` timestamp NOT NULL default &#039;0000-00-00 00:00:00&#039;,
+  `posttime` timestamp NOT NULL default CURRENT_TIMESTAMP,
   `ip` varbinary(39) NOT NULL DEFAULT &#039;0:0:0:0&#039;,
   PRIMARY KEY  (`id`),
   KEY `kll_site_id` (`kll_id`,`site`)

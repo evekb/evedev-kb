@@ -4,7 +4,7 @@
   <rows>0</rows>
   <structure>CREATE TABLE `kb3_inv_detail` (
   `ind_kll_id` int(6) NOT NULL,
-  `ind_timestamp` datetime NOT NULL DEFAULT &#039;0000-00-00 00:00:00&#039;,
+  `ind_timestamp` datetime NOT NULL default &#039;1000-01-01 00:00:00&#039;,
   `ind_plt_id` int(6) NOT NULL,
   `ind_sec_status` float NOT NULL default 0,
   `ind_all_id` int(3) NOT NULL,
