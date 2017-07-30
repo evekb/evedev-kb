@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.32.0
+Eve Development Network Killboard v4.2.33.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -25,6 +25,12 @@ o/ EVE Development Network
 
 VERSION HISTORY
 ===============
+
+Features:
+Updated EDK to 4.2.33.0 and CCPDB to YC-119-7 1.0.20170712
+
+-------------------------------------------
+v4.2.32.0
 
 Features:
 Updated EDK to 4.2.32.0 and CCP DB to YC-119-6 1.0.20170613
