@@ -6,7 +6,7 @@
   `log_kll_id` int(11) NOT NULL default &#039;0&#039;,
   `log_site` char(20) NOT NULL,
   `log_ip_address` VARCHAR(100) NOT NULL,
-  `log_timestamp` datetime NOT NULL default &#039;0000-00-00 00:00:00&#039;,
+  `log_timestamp` datetime NOT NULL default &#039;1000-01-01 00:00:00&#039;,
   UNIQUE KEY `log_kll_id` (`log_kll_id`)
 ) Engine=MyISAM  DEFAULT CHARSET=utf8;</structure>
 </kb3>

@@ -4,7 +4,7 @@
   <rows>0</rows>
   <structure>CREATE TABLE `kb3_mails` (
   `kll_id` int(11) NOT NULL AUTO_INCREMENT,
-  `kll_timestamp` datetime NOT NULL DEFAULT &#039;0000-00-00 00:00:00&#039;,
+  `kll_timestamp` datetime NOT NULL default &#039;1000-01-01 00:00:00&#039;,
   `kll_external_id` int(8) DEFAULT NULL,
   `kll_hash` binary(16) NOT NULL,
   `kll_trust` tinyint(4) NOT NULL DEFAULT &#039;0&#039;,
