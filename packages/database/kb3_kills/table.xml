@@ -4,7 +4,7 @@
   <rows>0</rows>
   <structure>CREATE TABLE `kb3_kills` (
   `kll_id` int(11) NOT NULL auto_increment,
-  `kll_timestamp` datetime NOT NULL default "0000-00-00 00:00:00",
+  `kll_timestamp` datetime NOT NULL default "1000-01-01 00:00:00",
   `kll_victim_id` int(6) NOT NULL default 0,
   `kll_all_id` int(3) NOT NULL default 0,
   `kll_crp_id` int(6) NOT NULL default 0,
