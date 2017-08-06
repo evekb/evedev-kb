@@ -71,7 +71,7 @@ class EsiParser
         $timestamp = ESI_Helpers::formatDateTime($this->EsiKill->getKillmailTime());
         
         // Check hashes.
-        $hash = self::hashMail($this->killmailRepresentation);
+        $hash = $this->hashMail($this->EsiKill);
 
         $trust = null;
         $kill_id = null;
@@ -139,7 +139,7 @@ class EsiParser
                 throw new EsiParserException("That mail has been deleted permanently. Kill id was ".$this->getDupeID(), -4);
             }
             
-            throw new EsiParserException("That killmail has already been posted <a href=\"".edkURI::page('kill_detail', $this->getDupeID(), 'kll_id')."\">here</a>.", -1);
+            throw new EsiParserException("That killmail has already been posted <a href=\"".\edkURI::page('kill_detail', $this->getDupeID(), 'kll_id')."\">here</a>.", -1);
         }
         
         // Check external IDs
@@ -210,7 +210,7 @@ class EsiParser
      * @return string the killmail hash
      * @throws EsiParserException if any entity ID cannot be resolved to a name
      */
-    public static function hashMail($EsiKill = null)
+    public function hashMail($EsiKill = null)
     {
         if(is_null($EsiKill)) return false;
 
@@ -238,11 +238,18 @@ class EsiParser
                 $corpName = "Unknown";
                 if(null !== $Attacker->getFactionId())
                 {
-                    if(!isset($this->idNameMapping[$Attacker->getFactionId()]))
+                    // hardcoded workaround for the "Unknown" faction (for sleepers) which is not contained in the SDE, hopefully this can be removed soon!
+                    if($Attacker->getFactionId() == 500021)
                     {
-                        throw new EsiParserException("Unable to resolve involved party faction ID ".$Attacker->getFactionId().", Kill-ID: ".$this->externalID);
+                        $corpName = "Unknown";
                     }
-                    $corpName = $this->idNameMapping[$Attacker->getFactionId()];
+
+                    else
+                    {   
+                        // try getting the corp from our database
+                        $Faction = Cacheable::factory('Faction', $Attacker->getFactionId());
+                        $corpName = $Faction->getName();
+                    }
                 }
 
                 if(null !== $Attacker->getCorporationId())

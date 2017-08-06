@@ -20,6 +20,7 @@ edkloader::register('Smarty', 'common/smarty/Smarty.class.php');
 edkloader::register('API', 'common/includes/api/class.api.php');
 edkloader::register('EDK\ESI\ESI', 'common/includes/esi/class.esi.php');
 edkloader::register('EDK\ESI\ESISSO', 'common/includes/esi/class.esisso.php');
+edkloader::register('EDK\ESI\ESIFetch', 'common/includes/esi/class.esifetch.php');
 edkloader::register('TopList', 'common/includes/class.toplist.php');
 edkloader::register('TopKillsList', 'common/includes/class.toplist.php');
 edkloader::register('TopCorpKillsList', 'common/includes/class.toplist.php');

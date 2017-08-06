@@ -8,7 +8,8 @@ class pSsoRegistration extends pageAssembly
     public $page;
     /** @var string error message */
     protected $errorMessage = '';
-        
+    /** @var string info message */
+    protected $infoMessage = '';    
     /**
      * Construct the SSO Register page object.
      * Add the functions to the build queue.
@@ -80,7 +81,7 @@ class pSsoRegistration extends pageAssembly
             
             Session::create();
             $authUrl = OAUTH_BASE_URL . "/authorize/";
-            $state = self::generateRandomString(32);
+            $state = uniqid();
             $_SESSION['authstate'] = $state;
             $url = $authUrl."?response_type=code&redirect_uri=".edkURI::page('ssoregistration')."&client_id=".config::get('cfg_sso_client_id')."&scope=".$scopes."&state=".$state;
             header('Location: '.$url);
@@ -93,7 +94,8 @@ class pSsoRegistration extends pageAssembly
      * the SSO config gets saved or updated.
      */
     function handleFinishSsoRegistration()
-    {
+    {   
+        global $smarty;
         if(strlen($this->errorMessage) > 0 )
         {
             return;
@@ -119,11 +121,13 @@ class pSsoRegistration extends pageAssembly
             {
                 $EsiSso->fetchToken($code);
                 $EsiSso->add();
+                $Pilot = new \Pilot(0, $EsiSso->getCharacterID());
+                
+                $smarty->assign('infoMessage', 'Successfully registered '.$Pilot->getName().' for ESI killmail fetching!');
             }
             
             catch(EsiSsoException $e)
             {
-                global $smarty;
                 $smarty->assign('errorMessage', $e->getMessage());
             }
         }

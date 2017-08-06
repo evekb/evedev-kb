@@ -4,6 +4,6 @@
 	<br />
 {/if}
 {if isset($infoMessage)}
-	<div>{$infoMessage}</div>
+        <div><b>{$infoMessage}</b></div>
 	<br />
 {/if}

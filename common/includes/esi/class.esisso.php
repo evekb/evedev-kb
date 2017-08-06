@@ -73,7 +73,7 @@ class ESISSO
             {
                 $fetchParams->fetch();
                 // get a new access token, no need to verify it
-                $this->refresh(false);
+                $this->refreshAccessToken(false);
             }
         } 
         
@@ -274,7 +274,6 @@ class ESISSO
         
         $this->ownerHash = $response->CharacterOwnerHash;
         $Pilot = new \Pilot(0, $this->characterID);
-        $Pilot->
         $isOwner = false;
         
         // check whether the Pilot, their corp or alliances is a killboard owner
@@ -363,7 +362,7 @@ class ESISSO
             
             $updateSsoParams = new \DBPreparedQuery();
             $updateSsoParams->prepare('UPDATE kb3_esisso SET characterID = ?, keyType = ?, refreshToken = ?, ownerHash = ?, failCount = ?, isEnabled = ? WHERE id = ?');
-            $types = 'isssii';
+            $types = 'isssiis';
             $arr = array(&$types, &$characterID, &$keyType, &$refreshToken, &$ownerHash, &$failCount, &$isEnabled, &$id);
             
             $updateSsoParams->bind_params($arr);
@@ -402,27 +401,27 @@ class ESISSO
         $url = OAUTH_BASE_URL . '/token';
         $header = 'Authorization: Basic '.base64_encode(Config::get('cfg_sso_client_id').':'.Config::get('cfg_sso_secret'));
 
-        foreach ($$postFields  as $arrKey => $value) 
+        foreach ($postFields  as $arrKey => $value) 
         {
             $postFieldsString .= $arrKey.'='.$value.'&';
         }
         $postFieldsString = rtrim($postFieldsString, '&');
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_USERAGENT, self::$USER_AGENT);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array($header));
-        curl_setopt($ch, CURLOPT_POST, count($$postFields ));
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $postFieldsString);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_USERAGENT, self::$USER_AGENT);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array($header));
+        curl_setopt($curl, CURLOPT_POST, count($postFields));
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $postFieldsString);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
         // make sure we can verify the peer's certificate
-         url_setopt($curl, CURLOPT_CAINFO, getcwd() . DIRECTORY_SEPARATOR . KB_CACHEDIR . '/cert/cacert.pem');
+        curl_setopt($curl, CURLOPT_CAINFO, getcwd() . DIRECTORY_SEPARATOR . KB_CACHEDIR . '/cert/cacert.pem');
 
-        $result = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+        $result = curl_exec($curl);
+        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
 
         if ($result === false) 
         {
@@ -470,7 +469,7 @@ class ESISSO
         return $this->refreshToken;
     }
 
-    public function getKeytype() 
+    public function getKeyType() 
     { 
         return $this->keyType;
     }
