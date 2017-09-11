@@ -19,7 +19,7 @@ class ESISSO
 {
     // scopes for reading killmails
     const SSO_SCOPE_CHARACTER_READ_KILLMAILS = 'esi-killmails.read_killmails.v1';
-    const SSO_SCOPE_CORPORATION_READ_KILLMAILS = 'placeholder';
+    const SSO_SCOPE_CORPORATION_READ_KILLMAILS = 'esi-killmails.read_corporation_killmails.v1';
     
     // key types
     const KEY_TYPE_PILOT = 'pilot';
