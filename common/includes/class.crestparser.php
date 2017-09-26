@@ -37,13 +37,14 @@ class CrestParser
             $this->crestUrl = $crestUrl;
             // allow posting of CREST links using the old public-crest base URL
             $this->crestUrl = str_replace('https://public-crest.eveonline.com', CREST_PUBLIC_URL, $this->crestUrl);
+            $this->crestUrl = preg_replace('https://esi\.tech\.ccp\.is/(.)+/', CREST_PUBLIC_URL.'/', $this->crestUrl);
 	}
         
         
     function validateCrestUrl()
     {
         // should look like this:
-        // https://public-crest.eveonline.com/killmails/30290604/787fb3714062f1700560d4a83ce32c67640b1797/
+        // https://crest-tq.eveonline.com/killmails/30290604/787fb3714062f1700560d4a83ce32c67640b1797/
         $urlPieces = explode("/", $this->crestUrl);
         if(count($urlPieces) < 6 || 
                 substr($this->crestUrl, 0, strlen(CREST_PUBLIC_URL)) != CREST_PUBLIC_URL || 

@@ -1338,6 +1338,8 @@ class pKillDetail extends pageAssembly
                 $crestUrl = $this->kill->getCrestUrl();
                 if(!is_null($crestUrl) && strlen($crestUrl) > 0)
                 {
+                    // FIXME
+                    $crestUrl = str_replace(CREST_PUBLIC_URL, 'https://esi.tech.ccp.is/latest', $crestUrl);
                     $smarty->assign('crest_url', $crestUrl);
                 }
 
@@ -1460,7 +1462,9 @@ class pKillDetail extends pageAssembly
                 $crestUrl = $this->kill->getCrestUrl();
                 if(!is_null($crestUrl))
                 {
-                    $this->addMenuItem("link", "CREST Link", $crestUrl);
+                    // FIXME
+                    $crestUrl = str_replace(CREST_PUBLIC_URL, 'https://esi.tech.ccp.is/latest', $crestUrl);
+                    $this->addMenuItem("link", "ESI Link", $crestUrl);
                 }
                 
 		if (config::get('kd_EFT')) {
