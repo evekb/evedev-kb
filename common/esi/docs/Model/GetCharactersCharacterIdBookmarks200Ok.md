@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 **memo** | **string** | memo string | 
 **note** | **string** | note string | 
 **owner_id** | **int** | owner_id integer | 
-**target** | [**\Swagger\Client\Model\CharacterscharacterIdbookmarksTarget**](CharacterscharacterIdbookmarksTarget.md) |  | [optional] 
+**target** | [**\Swagger\Client\Model\V1characterscharacterIdbookmarksTarget**](V1characterscharacterIdbookmarksTarget.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

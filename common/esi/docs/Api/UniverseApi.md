@@ -1,35 +1,36 @@
 # Swagger\Client\UniverseApi
 
-All URIs are relative to *https://esi.tech.ccp.is/latest*
+All URIs are relative to *https://esi.tech.ccp.is/*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**getUniverseBloodlines**](UniverseApi.md#getUniverseBloodlines) | **GET** /universe/bloodlines/ | Get bloodlines
-[**getUniverseCategories**](UniverseApi.md#getUniverseCategories) | **GET** /universe/categories/ | Get item categories
-[**getUniverseCategoriesCategoryId**](UniverseApi.md#getUniverseCategoriesCategoryId) | **GET** /universe/categories/{category_id}/ | Get item category information
-[**getUniverseConstellations**](UniverseApi.md#getUniverseConstellations) | **GET** /universe/constellations/ | Get constellations
-[**getUniverseConstellationsConstellationId**](UniverseApi.md#getUniverseConstellationsConstellationId) | **GET** /universe/constellations/{constellation_id}/ | Get constellation information
-[**getUniverseFactions**](UniverseApi.md#getUniverseFactions) | **GET** /universe/factions/ | Get factions
-[**getUniverseGraphics**](UniverseApi.md#getUniverseGraphics) | **GET** /universe/graphics/ | Get graphics
-[**getUniverseGraphicsGraphicId**](UniverseApi.md#getUniverseGraphicsGraphicId) | **GET** /universe/graphics/{graphic_id}/ | Get graphic information
-[**getUniverseGroups**](UniverseApi.md#getUniverseGroups) | **GET** /universe/groups/ | Get item groups
-[**getUniverseGroupsGroupId**](UniverseApi.md#getUniverseGroupsGroupId) | **GET** /universe/groups/{group_id}/ | Get item group information
-[**getUniverseMoonsMoonId**](UniverseApi.md#getUniverseMoonsMoonId) | **GET** /universe/moons/{moon_id}/ | Get moon information
-[**getUniversePlanetsPlanetId**](UniverseApi.md#getUniversePlanetsPlanetId) | **GET** /universe/planets/{planet_id}/ | Get planet information
-[**getUniverseRaces**](UniverseApi.md#getUniverseRaces) | **GET** /universe/races/ | Get character races
-[**getUniverseRegions**](UniverseApi.md#getUniverseRegions) | **GET** /universe/regions/ | Get regions
-[**getUniverseRegionsRegionId**](UniverseApi.md#getUniverseRegionsRegionId) | **GET** /universe/regions/{region_id}/ | Get region information
-[**getUniverseStargatesStargateId**](UniverseApi.md#getUniverseStargatesStargateId) | **GET** /universe/stargates/{stargate_id}/ | Get stargate information
-[**getUniverseStationsStationId**](UniverseApi.md#getUniverseStationsStationId) | **GET** /universe/stations/{station_id}/ | Get station information
-[**getUniverseStructures**](UniverseApi.md#getUniverseStructures) | **GET** /universe/structures/ | List all public structures
-[**getUniverseStructuresStructureId**](UniverseApi.md#getUniverseStructuresStructureId) | **GET** /universe/structures/{structure_id}/ | Get structure information
-[**getUniverseSystemJumps**](UniverseApi.md#getUniverseSystemJumps) | **GET** /universe/system_jumps/ | Get system jumps
-[**getUniverseSystemKills**](UniverseApi.md#getUniverseSystemKills) | **GET** /universe/system_kills/ | Get system kills
-[**getUniverseSystems**](UniverseApi.md#getUniverseSystems) | **GET** /universe/systems/ | Get solar systems
-[**getUniverseSystemsSystemId**](UniverseApi.md#getUniverseSystemsSystemId) | **GET** /universe/systems/{system_id}/ | Get solar system information
-[**getUniverseTypes**](UniverseApi.md#getUniverseTypes) | **GET** /universe/types/ | Get types
-[**getUniverseTypesTypeId**](UniverseApi.md#getUniverseTypesTypeId) | **GET** /universe/types/{type_id}/ | Get type information
-[**postUniverseNames**](UniverseApi.md#postUniverseNames) | **POST** /universe/names/ | Get names and categories for a set of ID&#39;s
+[**getUniverseBloodlines**](UniverseApi.md#getUniverseBloodlines) | **GET** /v1/universe/bloodlines/ | Get bloodlines
+[**getUniverseCategories**](UniverseApi.md#getUniverseCategories) | **GET** /v1/universe/categories/ | Get item categories
+[**getUniverseCategoriesCategoryId**](UniverseApi.md#getUniverseCategoriesCategoryId) | **GET** /v1/universe/categories/{category_id}/ | Get item category information
+[**getUniverseConstellations**](UniverseApi.md#getUniverseConstellations) | **GET** /v1/universe/constellations/ | Get constellations
+[**getUniverseConstellationsConstellationId**](UniverseApi.md#getUniverseConstellationsConstellationId) | **GET** /v1/universe/constellations/{constellation_id}/ | Get constellation information
+[**getUniverseFactions**](UniverseApi.md#getUniverseFactions) | **GET** /v1/universe/factions/ | Get factions
+[**getUniverseGraphics**](UniverseApi.md#getUniverseGraphics) | **GET** /v1/universe/graphics/ | Get graphics
+[**getUniverseGraphicsGraphicId**](UniverseApi.md#getUniverseGraphicsGraphicId) | **GET** /v1/universe/graphics/{graphic_id}/ | Get graphic information
+[**getUniverseGroups**](UniverseApi.md#getUniverseGroups) | **GET** /v1/universe/groups/ | Get item groups
+[**getUniverseGroupsGroupId**](UniverseApi.md#getUniverseGroupsGroupId) | **GET** /v1/universe/groups/{group_id}/ | Get item group information
+[**getUniverseMoonsMoonId**](UniverseApi.md#getUniverseMoonsMoonId) | **GET** /v1/universe/moons/{moon_id}/ | Get moon information
+[**getUniversePlanetsPlanetId**](UniverseApi.md#getUniversePlanetsPlanetId) | **GET** /v1/universe/planets/{planet_id}/ | Get planet information
+[**getUniverseRaces**](UniverseApi.md#getUniverseRaces) | **GET** /v1/universe/races/ | Get character races
+[**getUniverseRegions**](UniverseApi.md#getUniverseRegions) | **GET** /v1/universe/regions/ | Get regions
+[**getUniverseRegionsRegionId**](UniverseApi.md#getUniverseRegionsRegionId) | **GET** /v1/universe/regions/{region_id}/ | Get region information
+[**getUniverseStargatesStargateId**](UniverseApi.md#getUniverseStargatesStargateId) | **GET** /v1/universe/stargates/{stargate_id}/ | Get stargate information
+[**getUniverseStarsStarId**](UniverseApi.md#getUniverseStarsStarId) | **GET** /v1/universe/stars/{star_id}/ | Get star information
+[**getUniverseStationsStationId**](UniverseApi.md#getUniverseStationsStationId) | **GET** /v2/universe/stations/{station_id}/ | Get station information
+[**getUniverseStructures**](UniverseApi.md#getUniverseStructures) | **GET** /v1/universe/structures/ | List all public structures
+[**getUniverseStructuresStructureId**](UniverseApi.md#getUniverseStructuresStructureId) | **GET** /v1/universe/structures/{structure_id}/ | Get structure information
+[**getUniverseSystemJumps**](UniverseApi.md#getUniverseSystemJumps) | **GET** /v1/universe/system_jumps/ | Get system jumps
+[**getUniverseSystemKills**](UniverseApi.md#getUniverseSystemKills) | **GET** /v2/universe/system_kills/ | Get system kills
+[**getUniverseSystems**](UniverseApi.md#getUniverseSystems) | **GET** /v1/universe/systems/ | Get solar systems
+[**getUniverseSystemsSystemId**](UniverseApi.md#getUniverseSystemsSystemId) | **GET** /v3/universe/systems/{system_id}/ | Get solar system information
+[**getUniverseTypes**](UniverseApi.md#getUniverseTypes) | **GET** /v1/universe/types/ | Get types
+[**getUniverseTypesTypeId**](UniverseApi.md#getUniverseTypesTypeId) | **GET** /v2/universe/types/{type_id}/ | Get type information
+[**postUniverseNames**](UniverseApi.md#postUniverseNames) | **POST** /v2/universe/names/ | Get names and categories for a set of ID&#39;s
 
 
 # **getUniverseBloodlines**
@@ -37,7 +38,7 @@ Method | HTTP request | Description
 
 Get bloodlines
 
-Get a list of bloodlines  ---  Alternate route: `/v1/universe/bloodlines/`  Alternate route: `/legacy/universe/bloodlines/`  Alternate route: `/dev/universe/bloodlines/`   ---  This route is cached for up to 3600 seconds
+Get a list of bloodlines  ---  This route expires daily at 11:05
 
 ### Example
 ```php
@@ -88,7 +89,7 @@ No authorization required
 
 Get item categories
 
-Get a list of item categories  ---  Alternate route: `/v1/universe/categories/`  Alternate route: `/legacy/universe/categories/`  Alternate route: `/dev/universe/categories/`   ---  This route is cached for up to 3600 seconds
+Get a list of item categories  ---  This route expires daily at 11:05
 
 ### Example
 ```php
@@ -137,7 +138,7 @@ No authorization required
 
 Get item category information
 
-Get information of an item category  ---  Alternate route: `/v1/universe/categories/{category_id}/`  Alternate route: `/legacy/universe/categories/{category_id}/`  Alternate route: `/dev/universe/categories/{category_id}/`   ---  This route is cached for up to 3600 seconds
+Get information of an item category  ---  This route expires daily at 11:05
 
 ### Example
 ```php
@@ -190,7 +191,7 @@ No authorization required
 
 Get constellations
 
-Get a list of constellations  ---  Alternate route: `/v1/universe/constellations/`  Alternate route: `/legacy/universe/constellations/`  Alternate route: `/dev/universe/constellations/`   ---  This route is cached for up to 3600 seconds
+Get a list of constellations  ---  This route expires daily at 11:05
 
 ### Example
 ```php
@@ -239,7 +240,7 @@ No authorization required
 
 Get constellation information
 
-Get information on a constellation  ---  Alternate route: `/v1/universe/constellations/{constellation_id}/`  Alternate route: `/legacy/universe/constellations/{constellation_id}/`  Alternate route: `/dev/universe/constellations/{constellation_id}/`   ---  This route is cached for up to 3600 seconds
+Get information on a constellation  ---  This route expires daily at 11:05
 
 ### Example
 ```php
@@ -292,7 +293,7 @@ No authorization required
 
 Get factions
 
-Get a list of factions  ---  Alternate route: `/v1/universe/factions/`  Alternate route: `/legacy/universe/factions/`  Alternate route: `/dev/universe/factions/`   ---  This route is cached for up to 3600 seconds
+Get a list of factions  ---  This route expires daily at 11:05
 
 ### Example
 ```php
@@ -343,7 +344,7 @@ No authorization required
 
 Get graphics
 
-Get a list of graphics  ---  Alternate route: `/v1/universe/graphics/`  Alternate route: `/legacy/universe/graphics/`  Alternate route: `/dev/universe/graphics/`   ---  This route is cached for up to 3600 seconds
+Get a list of graphics  ---  This route expires daily at 11:05
 
 ### Example
 ```php
@@ -392,7 +393,7 @@ No authorization required
 
 Get graphic information
 
-Get information on a graphic  ---  Alternate route: `/v1/universe/graphics/{graphic_id}/`  Alternate route: `/legacy/universe/graphics/{graphic_id}/`  Alternate route: `/dev/universe/graphics/{graphic_id}/`   ---  This route is cached for up to 3600 seconds
+Get information on a graphic  ---  This route expires daily at 11:05
 
 ### Example
 ```php
@@ -443,7 +444,7 @@ No authorization required
 
 Get item groups
 
-Get a list of item groups  ---  Alternate route: `/v1/universe/groups/`  Alternate route: `/legacy/universe/groups/`  Alternate route: `/dev/universe/groups/`   ---  This route is cached for up to 3600 seconds
+Get a list of item groups  ---  This route expires daily at 11:05
 
 ### Example
 ```php
@@ -452,7 +453,7 @@ require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $datasource = "tranquility"; // string | The server name you would like data from
-$page = 56; // int | Which page to query
+$page = 1; // int | Which page of results to return
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
@@ -470,7 +471,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
- **page** | **int**| Which page to query | [optional]
+ **page** | **int**| Which page of results to return | [optional] [default to 1]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
@@ -494,7 +495,7 @@ No authorization required
 
 Get item group information
 
-Get information on an item group  ---  Alternate route: `/v1/universe/groups/{group_id}/`  Alternate route: `/legacy/universe/groups/{group_id}/`  Alternate route: `/dev/universe/groups/{group_id}/`   ---  This route is cached for up to 3600 seconds
+Get information on an item group  ---  This route expires daily at 11:05
 
 ### Example
 ```php
@@ -547,7 +548,7 @@ No authorization required
 
 Get moon information
 
-Get information on a moon  ---  Alternate route: `/v1/universe/moons/{moon_id}/`  Alternate route: `/legacy/universe/moons/{moon_id}/`  Alternate route: `/dev/universe/moons/{moon_id}/`   ---  This route is cached for up to 3600 seconds
+Get information on a moon  ---  This route expires daily at 11:05
 
 ### Example
 ```php
@@ -598,7 +599,7 @@ No authorization required
 
 Get planet information
 
-Get information on a planet  ---  Alternate route: `/v1/universe/planets/{planet_id}/`  Alternate route: `/legacy/universe/planets/{planet_id}/`  Alternate route: `/dev/universe/planets/{planet_id}/`   ---  This route is cached for up to 3600 seconds
+Get information on a planet  ---  This route expires daily at 11:05
 
 ### Example
 ```php
@@ -649,7 +650,7 @@ No authorization required
 
 Get character races
 
-Get a list of character races  ---  Alternate route: `/v1/universe/races/`  Alternate route: `/legacy/universe/races/`  Alternate route: `/dev/universe/races/`   ---  This route is cached for up to 3600 seconds
+Get a list of character races  ---  This route expires daily at 11:05
 
 ### Example
 ```php
@@ -700,7 +701,7 @@ No authorization required
 
 Get regions
 
-Get a list of regions  ---  Alternate route: `/v1/universe/regions/`  Alternate route: `/legacy/universe/regions/`  Alternate route: `/dev/universe/regions/`   ---  This route is cached for up to 3600 seconds
+Get a list of regions  ---  This route expires daily at 11:05
 
 ### Example
 ```php
@@ -749,7 +750,7 @@ No authorization required
 
 Get region information
 
-Get information on a region  ---  Alternate route: `/v1/universe/regions/{region_id}/`  Alternate route: `/legacy/universe/regions/{region_id}/`  Alternate route: `/dev/universe/regions/{region_id}/`   ---  This route is cached for up to 3600 seconds
+Get information on a region  ---  This route expires daily at 11:05
 
 ### Example
 ```php
@@ -802,7 +803,7 @@ No authorization required
 
 Get stargate information
 
-Get information on a stargate  ---  Alternate route: `/v1/universe/stargates/{stargate_id}/`  Alternate route: `/legacy/universe/stargates/{stargate_id}/`  Alternate route: `/dev/universe/stargates/{stargate_id}/`   ---  This route is cached for up to 3600 seconds
+Get information on a stargate  ---  This route expires daily at 11:05
 
 ### Example
 ```php
@@ -848,12 +849,63 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
+# **getUniverseStarsStarId**
+> \Swagger\Client\Model\GetUniverseStarsStarIdOk getUniverseStarsStarId($star_id, $datasource, $user_agent, $x_user_agent)
+
+Get star information
+
+Get information on a star  ---  This route expires daily at 11:05
+
+### Example
+```php
+<?php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+$api_instance = new Swagger\Client\Api\UniverseApi();
+$star_id = 56; // int | star_id integer
+$datasource = "tranquility"; // string | The server name you would like data from
+$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
+$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
+
+try {
+    $result = $api_instance->getUniverseStarsStarId($star_id, $datasource, $user_agent, $x_user_agent);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling UniverseApi->getUniverseStarsStarId: ', $e->getMessage(), PHP_EOL;
+}
+?>
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **star_id** | **int**| star_id integer |
+ **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
+ **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
+
+### Return type
+
+[**\Swagger\Client\Model\GetUniverseStarsStarIdOk**](../Model/GetUniverseStarsStarIdOk.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
+
 # **getUniverseStationsStationId**
 > \Swagger\Client\Model\GetUniverseStationsStationIdOk getUniverseStationsStationId($station_id, $datasource, $user_agent, $x_user_agent)
 
 Get station information
 
-Get information on a station  ---  Alternate route: `/v2/universe/stations/{station_id}/`  Alternate route: `/dev/universe/stations/{station_id}/`   ---  This route is cached for up to 300 seconds
+Get information on a station  ---  This route is cached for up to 300 seconds
 
 ### Example
 ```php
@@ -904,7 +956,7 @@ No authorization required
 
 List all public structures
 
-List all public structures  ---  Alternate route: `/v1/universe/structures/`  Alternate route: `/legacy/universe/structures/`  Alternate route: `/dev/universe/structures/`   ---  This route is cached for up to 3600 seconds
+List all public structures  ---  This route is cached for up to 3600 seconds
 
 ### Example
 ```php
@@ -953,7 +1005,7 @@ No authorization required
 
 Get structure information
 
-Returns information on requested structure, if you are on the ACL. Otherwise, returns \"Forbidden\" for all inputs.  ---  Alternate route: `/v1/universe/structures/{structure_id}/`  Alternate route: `/legacy/universe/structures/{structure_id}/`  Alternate route: `/dev/universe/structures/{structure_id}/`   ---  This route is cached for up to 3600 seconds
+Returns information on requested structure, if you are on the ACL. Otherwise, returns \"Forbidden\" for all inputs.  ---  This route is cached for up to 3600 seconds
 
 ### Example
 ```php
@@ -966,7 +1018,7 @@ Swagger\Client\Configuration::getDefaultConfiguration()->setAccessToken('YOUR_AC
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $structure_id = 789; // int | An Eve structure ID
 $datasource = "tranquility"; // string | The server name you would like data from
-$token = "token_example"; // string | Access token to use, if preferred over a header
+$token = "token_example"; // string | Access token to use if unable to set a header
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
@@ -985,7 +1037,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **structure_id** | **int**| An Eve structure ID |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
- **token** | **string**| Access token to use, if preferred over a header | [optional]
+ **token** | **string**| Access token to use if unable to set a header | [optional]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
@@ -1009,7 +1061,7 @@ Name | Type | Description  | Notes
 
 Get system jumps
 
-Get the number of jumps in solar systems within the last hour, excluding wormhole space. Only systems with jumps will be listed  ---  Alternate route: `/v1/universe/system_jumps/`  Alternate route: `/legacy/universe/system_jumps/`  Alternate route: `/dev/universe/system_jumps/`   ---  This route is cached for up to 3600 seconds
+Get the number of jumps in solar systems within the last hour ending at the timestamp of the Last-Modified header, excluding wormhole space. Only systems with jumps will be listed  ---  This route is cached for up to 3600 seconds
 
 ### Example
 ```php
@@ -1058,7 +1110,7 @@ No authorization required
 
 Get system kills
 
-Get the number of ship, pod and NPC kills per solar system within the last hour, excluding wormhole space. Only systems with kills will be listed  ---  Alternate route: `/v1/universe/system_kills/`  Alternate route: `/legacy/universe/system_kills/`  Alternate route: `/dev/universe/system_kills/`   ---  This route is cached for up to 3600 seconds
+Get the number of ship, pod and NPC kills per solar system within the last hour ending at the timestamp of the Last-Modified header, excluding wormhole space. Only systems with kills will be listed  ---  This route is cached for up to 3600 seconds
 
 ### Example
 ```php
@@ -1107,7 +1159,7 @@ No authorization required
 
 Get solar systems
 
-Get a list of solar systems  ---  Alternate route: `/v1/universe/systems/`  Alternate route: `/legacy/universe/systems/`  Alternate route: `/dev/universe/systems/`   ---  This route is cached for up to 3600 seconds
+Get a list of solar systems  ---  This route expires daily at 11:05
 
 ### Example
 ```php
@@ -1156,7 +1208,7 @@ No authorization required
 
 Get solar system information
 
-Get information on a solar system  ---  Alternate route: `/v2/universe/systems/{system_id}/`  Alternate route: `/dev/universe/systems/{system_id}/`   ---  This route is cached for up to 3600 seconds
+Get information on a solar system  ---  This route expires daily at 11:05
 
 ### Example
 ```php
@@ -1209,7 +1261,7 @@ No authorization required
 
 Get types
 
-Get a list of type ids  ---  Alternate route: `/v1/universe/types/`  Alternate route: `/legacy/universe/types/`  Alternate route: `/dev/universe/types/`   ---  This route is cached for up to 3600 seconds
+Get a list of type ids  ---  This route expires daily at 11:05
 
 ### Example
 ```php
@@ -1218,7 +1270,7 @@ require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $datasource = "tranquility"; // string | The server name you would like data from
-$page = 56; // int | Which page to query
+$page = 1; // int | Which page of results to return
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
@@ -1236,7 +1288,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
- **page** | **int**| Which page to query | [optional]
+ **page** | **int**| Which page of results to return | [optional] [default to 1]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
@@ -1260,7 +1312,7 @@ No authorization required
 
 Get type information
 
-Get information on a type  ---  Alternate route: `/v2/universe/types/{type_id}/`   ---  This route is cached for up to 3600 seconds
+Get information on a type  ---  This route expires daily at 11:05
 
 ### Example
 ```php
@@ -1313,7 +1365,7 @@ No authorization required
 
 Get names and categories for a set of ID's
 
-Resolve a set of IDs to names and categories. Supported ID's for resolving are: Characters, Corporations, Alliances, Stations, Solar Systems, Constellations, Regions, Types.  ---  Alternate route: `/v2/universe/names/`  Alternate route: `/dev/universe/names/`
+Resolve a set of IDs to names and categories. Supported ID's for resolving are: Characters, Corporations, Alliances, Stations, Solar Systems, Constellations, Regions, Types.  ---
 
 ### Example
 ```php

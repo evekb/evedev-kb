@@ -3,7 +3,7 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**category_id** | **float** | category_id number | 
+**category_id** | **int** | category_id integer | 
 **group_id** | **int** | group_id integer | 
 **name** | **string** | name string | 
 **published** | **bool** | published boolean | 

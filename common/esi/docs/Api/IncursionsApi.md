@@ -1,10 +1,10 @@
 # Swagger\Client\IncursionsApi
 
-All URIs are relative to *https://esi.tech.ccp.is/latest*
+All URIs are relative to *https://esi.tech.ccp.is/*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**getIncursions**](IncursionsApi.md#getIncursions) | **GET** /incursions/ | List incursions
+[**getIncursions**](IncursionsApi.md#getIncursions) | **GET** /v1/incursions/ | List incursions
 
 
 # **getIncursions**
@@ -12,7 +12,7 @@ Method | HTTP request | Description
 
 List incursions
 
-Return a list of current incursions  ---  Alternate route: `/v1/incursions/`  Alternate route: `/legacy/incursions/`  Alternate route: `/dev/incursions/`   ---  This route is cached for up to 300 seconds
+Return a list of current incursions  ---  This route is cached for up to 300 seconds
 
 ### Example
 ```php

@@ -1,14 +1,14 @@
 # Swagger\Client\AllianceApi
 
-All URIs are relative to *https://esi.tech.ccp.is/latest*
+All URIs are relative to *https://esi.tech.ccp.is/*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**getAlliances**](AllianceApi.md#getAlliances) | **GET** /alliances/ | List all alliances
-[**getAlliancesAllianceId**](AllianceApi.md#getAlliancesAllianceId) | **GET** /alliances/{alliance_id}/ | Get alliance information
-[**getAlliancesAllianceIdCorporations**](AllianceApi.md#getAlliancesAllianceIdCorporations) | **GET** /alliances/{alliance_id}/corporations/ | List alliance&#39;s corporations
-[**getAlliancesAllianceIdIcons**](AllianceApi.md#getAlliancesAllianceIdIcons) | **GET** /alliances/{alliance_id}/icons/ | Get alliance icon
-[**getAlliancesNames**](AllianceApi.md#getAlliancesNames) | **GET** /alliances/names/ | Get alliance names
+[**getAlliances**](AllianceApi.md#getAlliances) | **GET** /v1/alliances/ | List all alliances
+[**getAlliancesAllianceId**](AllianceApi.md#getAlliancesAllianceId) | **GET** /v2/alliances/{alliance_id}/ | Get alliance information
+[**getAlliancesAllianceIdCorporations**](AllianceApi.md#getAlliancesAllianceIdCorporations) | **GET** /v1/alliances/{alliance_id}/corporations/ | List alliance&#39;s corporations
+[**getAlliancesAllianceIdIcons**](AllianceApi.md#getAlliancesAllianceIdIcons) | **GET** /v1/alliances/{alliance_id}/icons/ | Get alliance icon
+[**getAlliancesNames**](AllianceApi.md#getAlliancesNames) | **GET** /v1/alliances/names/ | Get alliance names
 
 
 # **getAlliances**
@@ -16,7 +16,7 @@ Method | HTTP request | Description
 
 List all alliances
 
-List all active player alliances  ---  Alternate route: `/v1/alliances/`  Alternate route: `/legacy/alliances/`  Alternate route: `/dev/alliances/`   ---  This route is cached for up to 3600 seconds
+List all active player alliances  ---  This route is cached for up to 3600 seconds
 
 ### Example
 ```php
@@ -65,7 +65,7 @@ No authorization required
 
 Get alliance information
 
-Public information about an alliance  ---  Alternate route: `/v2/alliances/{alliance_id}/`   ---  This route is cached for up to 3600 seconds
+Public information about an alliance  ---  This route is cached for up to 3600 seconds
 
 ### Example
 ```php
@@ -73,7 +73,7 @@ Public information about an alliance  ---  Alternate route: `/v2/alliances/{alli
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\AllianceApi();
-$alliance_id = 56; // int | An Eve alliance ID
+$alliance_id = 56; // int | An EVE alliance ID
 $datasource = "tranquility"; // string | The server name you would like data from
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
@@ -91,7 +91,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **alliance_id** | **int**| An Eve alliance ID |
+ **alliance_id** | **int**| An EVE alliance ID |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
@@ -116,7 +116,7 @@ No authorization required
 
 List alliance's corporations
 
-List all current member corporations of an alliance  ---  Alternate route: `/v1/alliances/{alliance_id}/corporations/`  Alternate route: `/legacy/alliances/{alliance_id}/corporations/`  Alternate route: `/dev/alliances/{alliance_id}/corporations/`   ---  This route is cached for up to 3600 seconds
+List all current member corporations of an alliance  ---  This route is cached for up to 3600 seconds
 
 ### Example
 ```php
@@ -167,7 +167,7 @@ No authorization required
 
 Get alliance icon
 
-Get the icon urls for a alliance  ---  Alternate route: `/v1/alliances/{alliance_id}/icons/`  Alternate route: `/legacy/alliances/{alliance_id}/icons/`  Alternate route: `/dev/alliances/{alliance_id}/icons/`   ---  This route is cached for up to 3600 seconds
+Get the icon urls for a alliance  ---  This route is cached for up to 3600 seconds
 
 ### Example
 ```php
@@ -218,7 +218,7 @@ No authorization required
 
 Get alliance names
 
-Resolve a set of alliance IDs to alliance names  ---  Alternate route: `/v1/alliances/names/`  Alternate route: `/legacy/alliances/names/`  Alternate route: `/dev/alliances/names/`   ---  This route is cached for up to 3600 seconds
+Resolve a set of alliance IDs to alliance names  ---  This route is cached for up to 3600 seconds
 
 ### Example
 ```php

@@ -1,10 +1,10 @@
 # Swagger\Client\RoutesApi
 
-All URIs are relative to *https://esi.tech.ccp.is/latest*
+All URIs are relative to *https://esi.tech.ccp.is/*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**getRouteOriginDestination**](RoutesApi.md#getRouteOriginDestination) | **GET** /route/{origin}/{destination}/ | Get route
+[**getRouteOriginDestination**](RoutesApi.md#getRouteOriginDestination) | **GET** /v1/route/{origin}/{destination}/ | Get route
 
 
 # **getRouteOriginDestination**
@@ -12,7 +12,7 @@ Method | HTTP request | Description
 
 Get route
 
-Get the systems between origin and destination  ---  Alternate route: `/legacy/route/{origin}/{destination}/`  Alternate route: `/dev/route/{origin}/{destination}/`  Alternate route: `/v1/route/{origin}/{destination}/`   ---  This route is cached for up to 86400 seconds
+Get the systems between origin and destination  ---  This route is cached for up to 86400 seconds
 
 ### Example
 ```php

@@ -4,11 +4,11 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **corporation_id** | **int** | ID of the corporation that owns the structure | 
-**current_vul** | [**\Swagger\Client\Model\CorporationscorporationIdstructuresCurrentVul[]**](CorporationscorporationIdstructuresCurrentVul.md) | This week&#39;s vulnerability windows, Monday is day 0 | 
+**current_vul** | [**\Swagger\Client\Model\V1corporationscorporationIdstructuresCurrentVul[]**](V1corporationscorporationIdstructuresCurrentVul.md) | This week&#39;s vulnerability windows, Monday is day 0 | 
 **fuel_expires** | [**\DateTime**](Date.md) | Date on which the structure will run out of fuel | [optional] 
-**next_vul** | [**\Swagger\Client\Model\CorporationscorporationIdstructuresNextVul[]**](CorporationscorporationIdstructuresNextVul.md) | Next week&#39;s vulnerability windows, Monday is day 0 | 
+**next_vul** | [**\Swagger\Client\Model\V1corporationscorporationIdstructuresNextVul[]**](V1corporationscorporationIdstructuresNextVul.md) | Next week&#39;s vulnerability windows, Monday is day 0 | 
 **profile_id** | **int** | The id of the ACL profile for this citadel | 
-**services** | [**\Swagger\Client\Model\CorporationscorporationIdstructuresServices[]**](CorporationscorporationIdstructuresServices.md) | Contains a list of service upgrades, and their state | [optional] 
+**services** | [**\Swagger\Client\Model\V1corporationscorporationIdstructuresServices[]**](V1corporationscorporationIdstructuresServices.md) | Contains a list of service upgrades, and their state | [optional] 
 **state_timer_end** | [**\DateTime**](Date.md) | Date at which the structure will move to it&#39;s next state | [optional] 
 **state_timer_start** | [**\DateTime**](Date.md) | Date at which the structure entered it&#39;s current state | [optional] 
 **structure_id** | **int** | The Item ID of the structure | 

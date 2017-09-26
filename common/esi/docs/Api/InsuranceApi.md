@@ -1,10 +1,10 @@
 # Swagger\Client\InsuranceApi
 
-All URIs are relative to *https://esi.tech.ccp.is/latest*
+All URIs are relative to *https://esi.tech.ccp.is/*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**getInsurancePrices**](InsuranceApi.md#getInsurancePrices) | **GET** /insurance/prices/ | List insurance levels
+[**getInsurancePrices**](InsuranceApi.md#getInsurancePrices) | **GET** /v1/insurance/prices/ | List insurance levels
 
 
 # **getInsurancePrices**
@@ -12,7 +12,7 @@ Method | HTTP request | Description
 
 List insurance levels
 
-Return available insurance levels for all ship types  ---  Alternate route: `/v1/insurance/prices/`  Alternate route: `/legacy/insurance/prices/`  Alternate route: `/dev/insurance/prices/`   ---  This route is cached for up to 3600 seconds
+Return available insurance levels for all ship types  ---  This route is cached for up to 3600 seconds
 
 ### Example
 ```php

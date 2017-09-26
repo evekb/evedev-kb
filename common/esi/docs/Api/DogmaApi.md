@@ -1,13 +1,13 @@
 # Swagger\Client\DogmaApi
 
-All URIs are relative to *https://esi.tech.ccp.is/latest*
+All URIs are relative to *https://esi.tech.ccp.is/*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**getDogmaAttributes**](DogmaApi.md#getDogmaAttributes) | **GET** /dogma/attributes/ | Get attributes
-[**getDogmaAttributesAttributeId**](DogmaApi.md#getDogmaAttributesAttributeId) | **GET** /dogma/attributes/{attribute_id}/ | Get attribute information
-[**getDogmaEffects**](DogmaApi.md#getDogmaEffects) | **GET** /dogma/effects/ | Get effects
-[**getDogmaEffectsEffectId**](DogmaApi.md#getDogmaEffectsEffectId) | **GET** /dogma/effects/{effect_id}/ | Get effect information
+[**getDogmaAttributes**](DogmaApi.md#getDogmaAttributes) | **GET** /v1/dogma/attributes/ | Get attributes
+[**getDogmaAttributesAttributeId**](DogmaApi.md#getDogmaAttributesAttributeId) | **GET** /v1/dogma/attributes/{attribute_id}/ | Get attribute information
+[**getDogmaEffects**](DogmaApi.md#getDogmaEffects) | **GET** /v1/dogma/effects/ | Get effects
+[**getDogmaEffectsEffectId**](DogmaApi.md#getDogmaEffectsEffectId) | **GET** /v2/dogma/effects/{effect_id}/ | Get effect information
 
 
 # **getDogmaAttributes**
@@ -15,7 +15,7 @@ Method | HTTP request | Description
 
 Get attributes
 
-Get a list of dogma attribute ids  ---  Alternate route: `/v1/dogma/attributes/`  Alternate route: `/legacy/dogma/attributes/`  Alternate route: `/dev/dogma/attributes/`   ---  This route is cached for up to 3600 seconds
+Get a list of dogma attribute ids  ---  This route expires daily at 11:05
 
 ### Example
 ```php
@@ -64,7 +64,7 @@ No authorization required
 
 Get attribute information
 
-Get information on a dogma attribute  ---  Alternate route: `/v1/dogma/attributes/{attribute_id}/`  Alternate route: `/legacy/dogma/attributes/{attribute_id}/`  Alternate route: `/dev/dogma/attributes/{attribute_id}/`   ---  This route is cached for up to 3600 seconds
+Get information on a dogma attribute  ---  This route expires daily at 11:05
 
 ### Example
 ```php
@@ -115,7 +115,7 @@ No authorization required
 
 Get effects
 
-Get a list of dogma effect ids  ---  Alternate route: `/v1/dogma/effects/`  Alternate route: `/legacy/dogma/effects/`  Alternate route: `/dev/dogma/effects/`   ---  This route is cached for up to 3600 seconds
+Get a list of dogma effect ids  ---  This route expires daily at 11:05
 
 ### Example
 ```php
@@ -164,7 +164,7 @@ No authorization required
 
 Get effect information
 
-Get information on a dogma effect  ---  Alternate route: `/v1/dogma/effects/{effect_id}/`  Alternate route: `/legacy/dogma/effects/{effect_id}/`  Alternate route: `/dev/dogma/effects/{effect_id}/`   ---  This route is cached for up to 3600 seconds
+Get information on a dogma effect  ---  This route expires daily at 11:05
 
 ### Example
 ```php

@@ -9,7 +9,9 @@ Name | Type | Description | Notes
 **position** | [**\Swagger\Client\Model\GetUniverseSystemsSystemIdOkPosition**](GetUniverseSystemsSystemIdOkPosition.md) |  | [optional] 
 **security_class** | **string** | security_class string | [optional] 
 **security_status** | **float** | security_status number | 
-**stargates** | **int[]** | stargates array | 
+**star_id** | **int** | star_id integer | 
+**stargates** | **int[]** | stargates array | [optional] 
+**stations** | **int[]** | stations array | [optional] 
 **system_id** | **int** | system_id integer | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

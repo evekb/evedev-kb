@@ -6,7 +6,7 @@ Name | Type | Description | Notes
 **corporation_id** | **int** | corporation_id integer | 
 **date** | [**\DateTime**](\DateTime.md) | date string | 
 **description** | **string** | description string | 
-**graphics** | [**\Swagger\Client\Model\CharacterscharacterIdmedalsGraphics[]**](CharacterscharacterIdmedalsGraphics.md) | graphics array | 
+**graphics** | [**\Swagger\Client\Model\V1characterscharacterIdmedalsGraphics[]**](V1characterscharacterIdmedalsGraphics.md) | graphics array | 
 **issuer_id** | **int** | issuer_id integer | 
 **medal_id** | **int** | medal_id integer | 
 **reason** | **string** | reason string | 
