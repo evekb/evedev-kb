@@ -803,27 +803,72 @@ class EsiParser
         
         // bulk resolve character IDs
         $CharacterApi = new CharacterApi($EdkEsi);
-        $characterNames = $CharacterApi->getCharactersNames($characterIds);
-        foreach($characterNames as $characterName)
+        while(count($characterIds) > 0)
         {
-            $idToNameMap[$characterName->getCharacterId()] = $characterName->getCharacterName();
+            // since this is a GET call, we need to observe the maximum URL length;
+            // thus, we need to split our IDs into chunks no longer than 1950 characters (to allow for a bit of safety margin)
+            $characterIdsWithLengthLimit = array();
+            $characterIdsLength = 0;
+            while($characterIdsLength < 950 && count($characterIds) > 0)
+            {
+                $characterId = array_pop($characterIds);
+                $characterIdsWithLengthLimit[] = $characterId;
+                $characterIdsLength += strlen($characterId)+1;
+            }
+            $characterNames = $CharacterApi->getCharactersNames($characterIdsWithLengthLimit);
+            foreach($characterNames as $characterName)
+            {
+                $idToNameMap[$characterName->getCharacterId()] = $characterName->getCharacterName();
+            }
         }
-        
+
         // bulk resolve corporation IDs
         $CorporationApi = new CorporationApi($EdkEsi);
-        $corporationNames = $CorporationApi->getCorporationsNames($corporationIds);
-        foreach($corporationNames as $corporationName)
+        while(count($corporationIds) > 0)
         {
-            $idToNameMap[$corporationName->getCorporationId()] = $corporationName->getCorporationName();
+            // since this is a GET call, we need to observe the maximum URL length;
+            // thus, we need to split our IDs into chunks no longer than 1950 characters (to allow for a bit of safety margin)
+            $corporationIdsWithLengthLimit = array();
+            $corporationIdsLength = 0;
+            while($corporationIdsLength < 950 && count($corporationIds) > 0)
+            {
+                $corporationId = array_pop($corporationIds);
+                $corporationIdsWithLengthLimit[] = $corporationId;
+                $corporationIdsLength += strlen($corporationId)+1;
+            }
+            
+            $corporationNames = $CorporationApi->getCorporationsNames($corporationIdsWithLengthLimit);
+            foreach($corporationNames as $corporationName)
+            {
+                $idToNameMap[$corporationName->getCorporationId()] = $corporationName->getCorporationName();
+            }
         }
+        
+       
+       
         
         // bulk resolve alliance IDs
         $AllianceApi = new AllianceApi($EdkEsi);
-        $allianceNames = $AllianceApi->getAlliancesNames($allianceIds);
-        foreach($allianceNames as $allianceName)
+        while(count($allianceIds) > 0)
         {
-            $idToNameMap[$allianceName->getAllianceId()] = $allianceName->getAllianceName();
+            // since this is a GET call, we need to observe the maximum URL length;
+            // thus, we need to split our IDs into chunks no longer than 1950 characters (to allow for a bit of safety margin)
+            $allianceIdsWithLengthLimit = array();
+            $allianceIdsLength = 0;
+            while($allianceIdsLength < 950 && count($allianceIds) > 0)
+            {
+                $allianceId = array_pop($allianceIds);
+                $allianceIdsWithLengthLimit[] = $allianceId;
+                $allianceIdsLength += strlen($allianceId)+1;
+            }
+            
+           $allianceNames = $AllianceApi->getAlliancesNames($allianceIdsWithLengthLimit);
+            foreach($allianceNames as $allianceName)
+            {
+                $idToNameMap[$allianceName->getAllianceId()] = $allianceName->getAllianceName();
+            }
         }
+        
         return $idToNameMap;
     }
 }
