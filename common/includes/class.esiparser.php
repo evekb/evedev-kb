@@ -2,6 +2,9 @@
 
 use Swagger\Client\Model\GetKillmailsKillmailIdKillmailHashOk;
 use Swagger\Client\ApiException;
+use EsiClient\CharacterApi;
+use EsiClient\CorporationApi;
+use EsiClient\AllianceApi;
 use EDK\ESI\ESI;
 
 /**
@@ -64,8 +67,7 @@ class EsiParser
         }
         
         // gather all involved entity IDs for bulk translating to names
-        $entityIds = self::getEntityIds($this->EsiKill);
-        $this->idNameMapping = ESI_Helpers::resolveEntityIds($entityIds);
+        $this->idNameMapping = self::getEntityIds($this->EsiKill);
         
 
         $timestamp = ESI_Helpers::formatDateTime($this->EsiKill->getKillmailTime());
@@ -756,23 +758,31 @@ class EsiParser
      * 
      * @param GetKillmailsKillmailIdKillmailHashOk $EsiKill the ESI kill representations to get the entity IDs from
      * @return int[] an array of entity IDs
+     * @throws ApiException
      */
     protected static function getEntityIds($EsiKill)
-    {
-        $entityIds = array();
+    {       
+        $characterIds = array();
+        $corporationIds = array();
+        $allianceIds = array();
+        $factionIds = array();
         
         // victim IDs
         $Victim = $EsiKill->getVictim();
         $characterId = $Victim->getCharacterId();
         $corporationId = $Victim->getCorporationId();
         $allianceId = $Victim->getAllianceId();
+        $factionId = $Victim->getFactionId();
         
-        if(!is_null($characterId) && !in_array($characterId, $entityIds)) $entityIds[] = $characterId;
-        if(!is_null($corporationId) && !in_array($corporationId, $entityIds)) $entityIds[] = $corporationId;
-        if(!is_null($allianceId) && !in_array($allianceId, $entityIds)) $entityIds[] = $allianceId;
+        if(!is_null($characterId) && !in_array($characterId, $characterIds)) $characterIds[] = $characterId;
+        if(!is_null($corporationId) && !in_array($corporationId, $corporationIds)) $corporationIds[] = $corporationId;
+        if(!is_null($allianceId) && !in_array($allianceId, $allianceIds)) $allianceIds[] = $allianceId;
+        if(!is_null($factionId) && !in_array($factionId, $factionIds)) $factionIds[] = $factionId;
         
         // involved party IDs
         $InvolvedParties = $EsiKill->getAttackers();
+        
+        
         foreach($InvolvedParties as $InvolvedParty)
         {
             $characterId = $InvolvedParty->getCharacterId();
@@ -780,12 +790,40 @@ class EsiParser
             $allianceId = $InvolvedParty->getAllianceId();
             $factionId = $InvolvedParty->getFactionId();
 
-            if(!is_null($characterId) && !in_array($characterId, $entityIds)) $entityIds[] = $characterId;
-            if(!is_null($corporationId) && !in_array($corporationId, $entityIds)) $entityIds[] = $corporationId;
-            if(!is_null($allianceId) && !in_array($allianceId, $entityIds)) $entityIds[] = $allianceId;
+            if(!is_null($characterId) && !in_array($characterId, $characterIds)) $characterIds[] = $characterId;
+            if(!is_null($corporationId) && !in_array($corporationId, $corporationIds)) $corporationIds[] = $corporationId;
+            if(!is_null($allianceId) && !in_array($allianceId, $allianceIds)) $allianceIds[] = $allianceId;
+            if(!is_null($factionId) && !in_array($factionId, $factionIds)) $factionIds[] = $factionId;
         }
         
+        $idToNameMap = array();
         
-        return $entityIds;
+        // create ESI client
+        $EdkEsi = new ESI();
+        
+        // bulk resolve character IDs
+        $CharacterApi = new CharacterApi($EdkEsi);
+        $characterNames = $CharacterApi->getCharactersNames($characterIds);
+        foreach($characterNames as $characterName)
+        {
+            $idToNameMap[$characterName->getCharacterId()] = $characterName->getCharacterName();
+        }
+        
+        // bulk resolve corporation IDs
+        $CorporationApi = new CorporationApi($EdkEsi);
+        $corporationNames = $CorporationApi->getCorporationsNames($corporationIds);
+        foreach($corporationNames as $corporationName)
+        {
+            $idToNameMap[$corporationName->getCorporationId()] = $corporationName->getCorporationName();
+        }
+        
+        // bulk resolve alliance IDs
+        $AllianceApi = new AllianceApi($EdkEsi);
+        $allianceNames = $AllianceApi->getAlliancesNames($allianceIds);
+        foreach($allianceNames as $allianceName)
+        {
+            $idToNameMap[$allianceName->getAllianceId()] = $allianceName->getAllianceName();
+        }
+        return $idToNameMap;
     }
 }
