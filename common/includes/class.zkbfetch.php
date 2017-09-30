@@ -479,8 +479,9 @@ class ZKBFetch
         // Check hashes with a prepared query.
         // Make it static so we can reuse the same query for feed fetches.
         $trust;
-        $killId;        
+        $killId;
         $this->lastKillTimestamp = strtotime($killData->killmail_time);
+        $timestamp = date('Y-m-d H:m:i', $this->lastKillTimestamp);
         
 
         
@@ -497,11 +498,11 @@ class ZKBFetch
         // Filtering
         if(config::get('filter_apply'))
         {
-            $filterdate = config::get('filter_date');
-            if ($timestamp < $filterdate) {
+            $filterdate = intval(config::get('filter_date'));
+            if (strtotime($timestamp) < $filterdate) {
                 $filterdate = kbdate("j F Y", config::get("filter_date"));
                 $this->skipped[] = $killData->killmail_id;
-                throw new ZKBFetchException("Kill ".$killData->killmail_id." is older than the oldes allowed date (" .$filterdate. ")", -3);
+                throw new ZKBFetchException("Kill ".$killData->killmail_id." (time: $timestamp) is older than the oldest allowed date (" .$filterdate. ")", -3);
             }
         }
 
@@ -613,17 +614,4 @@ class ZKBFetch
    {
        return $this->skipped;
    }
-   
-   /**
-     * Formats the given ESI timestamp as EDK compatible.
-     *
-     * @param string $esiTimestamp the ISO formatted timestamp string
-     * @return string the timestamp in EDK timestamp format (%Y-%m-%d %H:%M:%S);
-     */
-    public static function formatEsiTimestamp($esiTimestamp)
-    {
-        $DateTime = \DateTime::createFromFormat('D, d M Y H:i:s O+', $esiTimestamp, new \DateTimeZone('UTC'));
-        return $DateTime->format('Y-m-d H:m:i');
-    }
-
 }
