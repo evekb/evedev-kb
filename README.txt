@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.33.0
+Eve Development Network Killboard v4.2.34.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -25,6 +25,22 @@ o/ EVE Development Network
 
 VERSION HISTORY
 ===============
+
+Features:
+Updated EDK to 4.2.34.0 and CCPDB to YC-119-8 1.0.20170818
+
+Enhancements:
+Added fitting panel for 4-subsystem T3 Cruisers
+
+Bugfixes:
+Fix: Killmail posting prevention by date for zKBFetch
+Hotfix: Made zKBFetch compatible with ESI format
+ESI to CREST workaround derp fix
+Transform ESI killmail URLs to CREST URLs
+Database: Changed default values for datetime/timestamp columns
+
+-------------------------------------------
+v4.2.33.0
 
 Features:
 Updated EDK to 4.2.33.0 and CCPDB to YC-119-7 1.0.20170712
