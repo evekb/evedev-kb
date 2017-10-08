@@ -206,14 +206,17 @@ class pCorpDetail extends pageAssembly
         global $smarty;
         // The summary table is also used by the stats. Whichever is called
         // first generates the table.
-        
+        $this->page->setTitle('Corporation details - '.$this->corp->getName());
         // update the corp's details
         try
         {
             $EsiCorp = $this->corp->fetchCorp();
-            $this->alliance = $this->corp->getAlliance(); 
-            $this->corpDetails = array('ticker' => $EsiCorp->getTicker());
-            $this->page->setTitle('Corporation details - '.$this->corp->getName() . " [" . $EsiCorp->getTicker() . "]");
+            if($EsiCorp)
+            {
+                $this->alliance = $this->corp->getAlliance(); 
+                $this->corpDetails = array('ticker' => $EsiCorp->getTicker());
+                $this->page->setTitle('Corporation details - '.$this->corp->getName() . " [" . $EsiCorp->getTicker() . "]");
+            }
         }
         
         catch(ApiException $e)
@@ -260,7 +263,7 @@ class pCorpDetail extends pageAssembly
                 
                 $smarty->assign('efficiency', $this->efficiency);
 
-        if (isset($EsiCorp)) 
+        if ($EsiCorp) 
         {
             $ceoPilotId = $EsiCorp->getCeoId();
             $CeoPilot = new Pilot(0, $ceoPilotId);
