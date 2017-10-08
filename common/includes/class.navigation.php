@@ -116,8 +116,9 @@ class Navigation
             " ('top',1,'Awards','".edkURI::build(array('a', 'awards', true))."','_self',5,'ALL_PAGES',0,'".$this->site."'),".
             " ('top',1,'Standings','".edkURI::build(array('a', 'standings', true))."','_self',6,'ALL_PAGES',0,'".$this->site."'),".
             " ('top',1,'Search','".edkURI::build(array('a', 'search', true))."','_self',7,'ALL_PAGES',0,'".$this->site."'),".
-            " ('top',1,'Admin','".edkURI::build(array('a', 'admin', true))."','_self',8,'ALL_PAGES',0,'".$this->site."'),".
-            " ('top',1,'About','".edkURI::build(array('a', 'about', true))."','_self',9,'ALL_PAGES',0,'".$this->site."');";
+            " ('top',1,'SSO Registration','".edkURI::build(array('a', 'ssoregistration', true))."','_self',8,'ALL_PAGES',0,'".$this->site."'),".
+            " ('top',1,'Admin','".edkURI::build(array('a', 'admin', true))."','_self',9,'ALL_PAGES',0,'".$this->site."'),".
+            " ('top',1,'About','".edkURI::build(array('a', 'about', true))."','_self',10,'ALL_PAGES',0,'".$this->site."');";
         $qry->execute($sql);
         $qry->autocommit(true);
         return true;
