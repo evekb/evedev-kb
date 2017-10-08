@@ -3,7 +3,12 @@
 use EDK\ESI\ESI;
 use EsiClient\UniverseApi;
 use EsiClient\SearchApi;
+use EsiClient\CharacterApi;
+use EsiClient\CorporationApi;
+use EsiClient\AllianceApi;
 use Swagger\Client\Model\GetSearchOk;
+
+use phpFastCache\CacheManager;
 
 /**
  * A collection of helper methods for interacting with the ESI API
@@ -15,6 +20,13 @@ class ESI_Helpers
     public static $MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_DEFAULT = 60;
     public static $MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MAX = 200;
     public static $MAX_NUMBER_OF_KILLS_TO_PROCESS_PER_RUN_MIN = 10;
+    
+    /** the PHPFastCache instance */
+    protected static $CACHE_INSTANCE;
+    /** int the number of seconds to cache ID to name mappings */
+    protected static $ID_NAME_MAPPING_CACHE_TIME = 120;
+    /** string the cache key prefix for caching ID to name resolutions */
+    const ID_NAME_MAPPING_CACHE_KEY_PREFIX = 'idNameMapping.';
     
     public static function getTypeNameById($id, $update = false)
     {
@@ -125,12 +137,13 @@ class ESI_Helpers
     /**
      * Accepts an array if entity IDs to resolve to entity names.
      * <br/>
-     * Uses the universe/names ESI endpoint, which is able to translate
+     * First, tries to get ID-name-resolutions from the local cache.
+     * Then uses the universe/names ESI endpoint, which is able to translate
      * IDs of various entity types to names.
      * This is possible, because all entity types use non-overlapping
      * ID ranges, making them globally unique.
      * <br/>
-     * IDs that cannot be translated are missing in returned mapping-
+     * IDs that cannot be translated are missing in returned mapping.
      * 
      * @param int[] $entityIds an array of entity IDs
      * @return array an indexed array, using the input IDs as index
@@ -143,6 +156,12 @@ class ESI_Helpers
         $EdkEsi = new ESI();
         $UniverseApi = new UniverseApi($EdkEsi);
         
+        self::initCacheHandler();
+        // create mapping
+        $idNameMapping = array();
+        // resolve as many IDs as possible using local cache
+        self::resolveEntityIdsFromCache($entityIds, $idNameMapping);
+        
         // wrap IDs into container
         // this used to work and is the intended way - seems broken!
         //$EsiUniverseIds = new PostUniverseNamesIds();
@@ -150,15 +169,174 @@ class ESI_Helpers
         
         // resolve IDs to names
         $EsiUniverseNames = $UniverseApi->postUniverseNames($entityIds, $EdkEsi->getDataSource());
-        
-        // create mapping
-        $idNameMapping = array();
+  
         foreach($EsiUniverseNames as $EsiUniverseName)
         {
             $idNameMapping[$EsiUniverseName->getId()] = $EsiUniverseName->getName();
+            // store in cache
+            self::putIdNameMappingIntoCache($EsiUniverseName->getId(), $EsiUniverseName->getName(), $EsiUniverseName->getCategory());
         }
         
         return $idNameMapping;
+    }
+    
+    
+    /**
+     * The same as {@link ESI_Helpers::resolveEntityIds($entityIds)}, but
+     * only works for character IDs and uses a different ESI endpoint.
+     * 
+     * @param int[] $characterIds an array of entity IDs
+     * @return array an indexed array, using the input IDs as index
+     * 
+     * @throws \Swagger\Client\ApiException on ESI communication error
+     */
+    public static function resolveCharacterIds($characterIds)
+    {        
+        self::initCacheHandler();
+        // create mapping
+        $idNameMapping = array();
+        // resolve as many IDs as possible using local cache
+        self::resolveEntityIdsFromCache($characterIds, $idNameMapping);
+        
+        // create ESI client
+        $EdkEsi = new ESI();
+        
+        // bulk resolve character IDs
+        $CharacterApi = new CharacterApi($EdkEsi);
+        while(count($characterIds) > 0)
+        {
+            // since this is a GET call, we need to observe the maximum URL length;
+            // thus, we need to split our IDs into chunks no longer than 1950 characters (to allow for a bit of safety margin)
+            $characterIdsWithLengthLimit = array();
+            $characterIdsLength = 0;
+            while($characterIdsLength < 950 && count($characterIds) > 0)
+            {
+                $characterId = array_pop($characterIds);
+                $characterIdsWithLengthLimit[] = $characterId;
+                $characterIdsLength += strlen($characterId)+1;
+            }
+            $characterNames = $CharacterApi->getCharactersNames($characterIdsWithLengthLimit);
+            foreach($characterNames as $characterName)
+            {
+                $idNameMapping[$characterName->getCharacterId()] = $characterName->getCharacterName();
+                self::putIdNameMappingIntoCache($characterName->getCharacterId(), $characterName->getCharacterName(), 'character');
+            }
+        }
+        
+        return $idNameMapping;
+    }
+    
+    /**
+     * The same as {@link ESI_Helpers::resolveEntityIds($entityIds)}, but
+     * only works for corporation IDs and uses a different ESI endpoint.
+     * 
+     * @param int[] $corporationIds an array of entity IDs
+     * @return array an indexed array, using the input IDs as index
+     * 
+     * @throws \Swagger\Client\ApiException on ESI communication error
+     */
+    public static function resolveCorporationIds($corporationIds)
+    {        
+        self::initCacheHandler();
+        // create mapping
+        $idNameMapping = array();
+        // resolve as many IDs as possible using local cache
+        self::resolveEntityIdsFromCache($corporationIds, $idNameMapping);
+        
+        // create ESI client
+        $EdkEsi = new ESI();
+        
+        $CorporationApi = new CorporationApi($EdkEsi);
+        while(count($corporationIds) > 0)
+        {
+            // since this is a GET call, we need to observe the maximum URL length;
+            // thus, we need to split our IDs into chunks no longer than 1950 characters (to allow for a bit of safety margin)
+            $corporationIdsWithLengthLimit = array();
+            $corporationIdsLength = 0;
+            while($corporationIdsLength < 950 && count($corporationIds) > 0)
+            {
+                $corporationId = array_pop($corporationIds);
+                $corporationIdsWithLengthLimit[] = $corporationId;
+                $corporationIdsLength += strlen($corporationId)+1;
+            }
+            
+            $corporationNames = $CorporationApi->getCorporationsNames($corporationIdsWithLengthLimit);
+            foreach($corporationNames as $corporationName)
+            {
+                $idNameMapping[$corporationName->getCorporationId()] = $corporationName->getCorporationName();
+                self::putIdNameMappingIntoCache($corporationName->getCorporationId(), $corporationName->getCorporationName(), 'corporation');
+            }
+        }
+        
+        return $idNameMapping;
+    }
+    
+    
+    /**
+     * The same as {@link ESI_Helpers::resolveEntityIds($entityIds)}, but
+     * only works for alliance IDs and uses a different ESI endpoint.
+     * 
+     * @param int[] $allianceIds an array of entity IDs
+     * @return array an indexed array, using the input IDs as index
+     * 
+     * @throws \Swagger\Client\ApiException on ESI communication error
+     */
+    public static function resolveAllianceIds($allianceIds)
+    {        
+        self::initCacheHandler();
+        // create mapping
+        $idNameMapping = array();
+        // resolve as many IDs as possible using local cache
+        self::resolveEntityIdsFromCache($allianceIds, $idNameMapping);
+        
+        // create ESI client
+        $EdkEsi = new ESI();
+        
+        $AllianceApi = new AllianceApi($EdkEsi);
+        while(count($allianceIds) > 0)
+        {
+            // since this is a GET call, we need to observe the maximum URL length;
+            // thus, we need to split our IDs into chunks no longer than 1950 characters (to allow for a bit of safety margin)
+            $allianceIdsWithLengthLimit = array();
+            $allianceIdsLength = 0;
+            while($allianceIdsLength < 950 && count($allianceIds) > 0)
+            {
+                $allianceId = array_pop($allianceIds);
+                $allianceIdsWithLengthLimit[] = $allianceId;
+                $allianceIdsLength += strlen($allianceId)+1;
+            }
+            
+           $allianceNames = $AllianceApi->getAlliancesNames($allianceIdsWithLengthLimit);
+            foreach($allianceNames as $allianceName)
+            {
+                $idNameMapping[$allianceName->getAllianceId()] = $allianceName->getAllianceName();
+                self::putIdNameMappingIntoCache($allianceName->getAllianceId(), $allianceName->getAllianceName(), 'alliance');
+            }
+        }
+        
+        return $idNameMapping;
+    }
+    
+    /**
+     * Tries to look up the given entity IDs in the local cache to resolve to a name.
+     * <br>
+     * If an ID is found in the cache, it gets removed from the $enttiyIds array and the mapping
+     * is stored in the $idNameMapping array.
+     * 
+     * @param int[] $entityIds an array of entity IDs to resolve
+     * @param array $idNameMapping a key-value array for the output
+     */
+    protected static function resolveEntityIdsFromCache($entityIds, &$idNameMapping)
+    {
+        foreach($entityIds as $key => $entityId)
+        {
+            $cachedMapping = self::getIdNameMappingFromCache($entityId);
+            if(!is_null($cachedMapping))
+            {
+                $idNameMapping[$cachedMapping['id']] = $cachedMapping['name'];
+                unset($entityIds[$key]);
+            }
+        }
     }
     
     /**
@@ -213,5 +391,90 @@ class ESI_Helpers
         }
 
         config::set('maxNumberOfKillsPerRun', $maxNumberOfKillsPerRun);
+    }
+    
+    /**
+     * initialize the phpFastCache handler for caching ID-to-name resolutions
+     */
+    protected static function initCacheHandler()
+    {
+        if(isset(self::$CACHE_INSTANCE))
+        {
+            return;
+        }
+        // use Memcached
+        if(defined('DB_USE_MEMCACHE') && DB_USE_MEMCACHE == true) 
+        {
+            self::$CACHE_INSTANCE = CacheManager::getInstance('memcache', ['servers' => [
+                [
+                  'host' => \Config::get('cfg_memcache_server'),
+                  'port' => \Config::get('cfg_memcache_port'),
+                  // 'sasl_user' => false, // optional
+                  // 'sasl_password' => false // optional
+                ],
+            ]]);
+        } 
+
+        // use Redis
+        elseif(defined('DB_USE_REDIS') && DB_USE_REDIS == true) 
+        {
+            self::$CACHE_INSTANCE =  CacheManager::getInstance('redis', [
+                'host' => \Config::get('cfg_redis_server'),
+                'port' => \Config::get('cfg_redis_port'),
+            ]);
+        } 
+        
+        // fall back to file caching
+        else 
+        {
+            self::$CACHE_INSTANCE =  CacheManager::getInstance('files', [
+              "path" => getcwd() . DIRECTORY_SEPARATOR . KB_CACHEDIR . DIRECTORY_SEPARATOR . 'esi',
+            ]);
+        }
+    }
+    
+    
+     /**
+     * Tries to get the object for the given key from the cache handler.
+     * 
+     * @param string $id the key for the object to retrieve
+     * @return array the cached array with the keys id, name and type
+     */
+    protected static function getIdNameMappingFromCache($id)
+    {   
+        $cacheKey = self::ID_NAME_MAPPING_CACHE_KEY_PREFIX.$id;
+        if(isset(self::$CACHE_INSTANCE))
+        {
+            $CachedObject = self::$CACHE_INSTANCE->getItem($cacheKey);
+            if(!is_null($CachedObject->get()))
+            {
+                return $CachedObject->get();
+            }
+            return null;
+        }
+    }
+    
+    /**
+     * Stores the given data under the given key with the given
+     * expiration date in the cache.
+     * 
+     * @param string $id the entity ID for which to store the mapping
+     * @param string $name the entity name for the given ID
+     * @param string $type the entity type, one of character, corporation, alliance, faction
+     */
+    protected static function putIdNameMappingIntoCache($id, $name, $type)
+    {
+        if(isset(self::$CACHE_INSTANCE))
+        {
+            $cacheKey = self::ID_NAME_MAPPING_CACHE_KEY_PREFIX.$id;
+            
+            $CachedObject = self::$CACHE_INSTANCE->getItem($cacheKey);
+            $data = array('id' => $id, 'name' => $name, 'type' => $type);
+            $CachedObject->set($data);
+            $expirationTime = new DateTime();
+            $expirationTime->add(new DateInterval('PT'.self::$ID_NAME_MAPPING_CACHE_TIME.'S'));
+            $CachedObject->setExpirationDate($expirationTime);
+            self::$CACHE_INSTANCE->save($CachedObject);
+        }
     }
 }

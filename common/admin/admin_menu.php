@@ -62,7 +62,7 @@ options::oldMenu('Advanced', "Item Values", array('a', 'admin_value_fetch', true
 options::oldMenu('Features', "Modules", array('a', 'admin_mods', true));
 
 options::oldMenu('Features', "Feed Syndication", array('a', 'admin_idfeedsyndication', true));
-options::oldMenu('Features', "API Killlog", array('a', 'admin_api', true));
+options::oldMenu('Features', "SSO Keys", array('a', 'admin_esisso', true));
 options::oldMenu('Features', "zKB Fetch", array('a', 'admin_zkbfetch', true));
 
 options::oldMenu('Maintenance', "Auditing", array('a', 'admin_audit', true));

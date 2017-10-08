@@ -9,9 +9,6 @@ ini_set('display_errors', 'On');
 error_reporting(E_ALL | E_STRICT);
 require_once('common/admin/admin_menu.php');
 
-use Swagger\Client\Model\GetKillmailsKillmailIdKillmailHashOk;
-use Swagger\Client\ApiException;
-
 $page = new Page('Administration - ESI SSO');
 $page->setAdmin();
 $confirm = "";
@@ -20,6 +17,13 @@ if(isset($_POST['submit-key']))
 {
   config::set('cfg_sso_client_id',$_POST['client_id']);
   config::set('cfg_sso_secret',$_POST['secret']);
+  config::set('cfg_max_proc_time_per_sso_key', (int)$_POST['cfg_max_proc_time_per_sso_key']);
+ 
+  if (isset($_POST['post_no_npc_only']) && $_POST['post_no_npc_only']) {
+    config::set('post_no_npc_only', '1');
+  } else {
+    config::set('post_no_npc_only', '0');
+  }
   $confirm = "<span style='color:green'>Settings Saved</span><br/>";
 }
 
@@ -47,8 +51,14 @@ $html .= "<tr><td colspan=\"4\"><div class=block-header2>SSO options</div></td><
 $html .= "<tr><td><b>EVE SSO Client id:</b></td><td><input type='text' size='45' name='client_id' value='".config::get('cfg_sso_client_id')."'/></td></tr>";
 $html .= "<tr><td><b>EVE SSO Client secret:</b></td><td><input type='text' size='45' name='secret' value='".config::get('cfg_sso_secret')."'/></td></tr>";
 $html .= "<tr><td colspan=\"4\">Your EVE SSO callback URL should be set to ".edkURI::page('ssoregistration')."</td></tr>";
-$html .= "<tr><td colspan=\"4\"><br/>Register and application here: <a href=https://developers.eveonline.com/>https://developers.eveonline.com</a> (valid subscription needed)<br/>Select CREST access and the following scopes: publicData, characterKillsRead, corporationKillsRead, characterFittingsWrite </td></tr>";
-$html .= "<tr></tr><tr><td></td><td colspan=3 ><input type=submit name=submit-key value=\"Save\"></td></tr>";
+$html .= "<tr><td colspan=\"4\"><br/>Register and application here: <a href=https://developers.eveonline.com/ target=\"_blank\">https://developers.eveonline.com</a> (valid subscription needed)<br/>In the Permissions section, select the following scopes: esi-killmails.read_killmails.v1, esi-killmails.read_corporation_killmails.v1</td></tr>";
+$html .= "<tr><td><b>Maximum processing time per ESI SSO key [s]:</b></td><td><input type='text' size='10' name='cfg_max_proc_time_per_sso_key' value='".config::get('cfg_max_proc_time_per_sso_key')."'/></td></tr>";
+
+$html .= "<tr><td><b>Ignore NPC only deaths?</b></td>";
+$html .= "<td><input type='checkbox' name='post_no_npc_only' id='post_no_npc_only'";
+if (config::get('post_no_npc_only')) $html .= " checked=\"checked\"";
+$html .= " /></td></tr>";
+$html .= "<tr></tr><tr><td></td><td colspan=\"4\" ><input type=\"submit\" name=\"submit-key\" value=\"Save\"></td></tr>";
 $html .= "<tr><td colspan=\"4\">&nbsp;</td></tr>";
 $html .= "</table>";
 $html .= "</form><br/>";
@@ -88,15 +98,37 @@ $html .= "<style>#loader{zoom:1;display:block;width:16px;height:16px;margin:20px
 if(isset($_SESSION['esiapis'])) {
   if(count($_SESSION['esiapis'])) {
     $api = $_SESSION['esiapis'][0];
+    $api->setIgnoreNpcOnlyKills((boolean)(config::get('post_no_npc_only')));
+    $api->setMaximumProcessingTime((int)config::get('cfg_max_proc_time_per_sso_key'));
     array_shift($_SESSION['esiapis']);
-    $_SESSION['esimsg'] .= $api->processAPI();
-    if(count($_SESSION['esiapis'])) {
-      $_SESSION['esimsg'] .= '<div class="block-header2">Fetching for Killlog for '.$plt->getName()." (".$apis[0]->getKeyType()."):</div>";
+    try
+    {
+        $_SESSION['esimsg'] .= $api->processAPI();
+    }
+    
+    catch(Exception $e)
+    {
+        EDKError::log($e->getMessage());
+        $_SESSION['esimsg'] .= $e->getMessage();
+    }
+    
+    // display header for next key to fetch
+    if(count($_SESSION['esiapis'])) 
+    {
+      $api = $_SESSION['esiapis'][0];
+      $plt = new Pilot(0, $api->getCharacterID());
+      $_SESSION['esimsg'] .= '<div class="block-header2">Fetching for Killlog for '.$plt->getName()." (".$api->getKeyType()."):</div>";
       $page->addHeader('<meta http-equiv="refresh" content="2">');
     }
     $html .= $_SESSION['esimsg'];
     if(count($_SESSION['esiapis'])) $html .='<div id="loader"></div>';
   }
+}
+
+else if(isset($_SESSION['esimsg']))
+{
+    $html .= $_SESSION['esimsg'];
+    unset($_SESSION['esimsg']);
 }
 
 if(isset($_POST['fetch-kills']))

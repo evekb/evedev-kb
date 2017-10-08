@@ -9,7 +9,7 @@ namespace EDK\ESI;
 
 use EDK\ESI\ESI;
 use EsiClient\KillmailsApi;
-use Swagger\Client\Model\GetCharactersCharacterIdKillmailsRecent200Ok;
+use Swagger\Client\ApiException;
 
 class ESIFetchException extends \Exception {}
 /**
@@ -19,16 +19,7 @@ class ESIFetchException extends \Exception {}
  * @author Salvoxia
  */
 class ESIFetch extends ESISSO 
-{
-    /* @param array list of external alliance ID */
-    protected $allianceIds = array();
-    /** @param array list of external corp ID */
-    protected $corporationIds = array();
-    /** @param array  of external pilotId */
-    protected $pilotIds = array();
-    /** @param string additional modifiers */
-    protected $additionalModifiers = '';
-    
+{    
     /** @param JSON formatted raw data from the zkb API */
     protected $killLog;
     protected $maxID = 0;
@@ -51,7 +42,9 @@ class ESIFetch extends ESISSO
     
     /** field for counting the number of kills fetched from ESI; we need to keep track for not running into PHP's time limit */
     protected static $NUMBER_OF_KILLS_FETCHED_FROM_ESI = 0;
-    private $processTimeout = 55;
+    /** the maximum number of seconds to be spent on fetching kills for this particular configuration */
+    protected $maximumProcessingTime = 55;
+
     /** the ID of thje last fetched kill */
     protected $lastKillID;
    
@@ -68,7 +61,7 @@ class ESIFetch extends ESISSO
     }
     
     /**
-     * gets all ESISSO configurations from the database
+     * gets all enabled ESISSO configurations from the database
      * @return array of \ZKBFetch objects
      */
     public static function getAll($orderByLastFetchTimestamp = false)
@@ -172,13 +165,45 @@ class ESIFetch extends ESISSO
             $EdkEsi = new ESI();
             $EdkEsi->setAccessToken($this->accessToken);
             $KillmailsApi = new KillmailsApi($EdkEsi);
-            $this->killLog = $KillmailsApi->getCharactersCharacterIdKillmailsRecent($this->characterID, $EdkEsi->getDataSource(), self::$NUMBER_OF_KILLS_PER_CALL, $this->maxID);
+            if($this->keyType == ESISSO::KEY_TYPE_PILOT)
+            {
+                $this->killLog = $KillmailsApi->getCharactersCharacterIdKillmailsRecent($this->characterID, $EdkEsi->getDataSource(), self::$NUMBER_OF_KILLS_PER_CALL, $this->maxID);
+            }
+            
+            else
+            {
+                $Pilot = new \Pilot(0, $this->characterID);
+                $Corporation = $Pilot->getCorp();
+                $this->killLog = $KillmailsApi->getCorporationsCorporationIdKillmailsRecent($Corporation->getExternalID(), $EdkEsi->getDataSource(), $this->maxID);
+            }
+            $this->resetFailCount();
         }
 
-        catch(Exception $e)
+        catch(ApiException $e)
         {
+            $this->increaseFailCount();
             throw new ESIFetchException($e->getMessage(), $e->getCode());
         }
+    }
+    
+    /**
+     * Increases the failCount for this SSO key
+     */
+    protected function increaseFailCount()
+    {
+        $qry = \DBFactory::getDBQuery();
+        $sql = 'UPDATE kb3_esisso SET failCount = failCount+1 WHERE id = '.$this->id;
+        $qry->execute($sql);
+    }
+    
+    /**
+     * Resets the failCount for this SSO key
+     */
+    protected function resetFailCount()
+    {
+        $qry = \DBFactory::getDBQuery();
+        $sql = 'UPDATE kb3_esisso SET failCount = 0 WHERE id = '.$this->id;
+        $qry->execute($sql);
     }
     
     /**
@@ -217,12 +242,13 @@ class ESIFetch extends ESISSO
             catch(ESIFetchException $e)
             {
                 $this->parsemsg[] = $e->getMessage();
+                break;
             }
             catch(Exception $e)
             {
                 throw $e;
             }
-	    $cyclesFetched++;
+            $cyclesFetched++;
             //Check if the last known is in the current killlog
             if ($this->maxID <= $startKill && $this->killLog[0]->getKillmailId() > $startKill) {
                 break;
@@ -254,9 +280,9 @@ class ESIFetch extends ESISSO
         foreach(array_reverse($this->killLog) AS $killData)
         {
             // check if we reached the maximum number of kills we may fetch
-            if((microtime(true)-$time_start) >= $this->processTimeout)
+            if((microtime(true)-$time_start) >= $this->maximumProcessingTime)
             {
-                $this->parsemsg[] = "Stopped parsing after ".$this->processTimeout." seconds.";
+                $this->parsemsg[] = "Stopped parsing after reaching maximum processing time of ".$this->maximumProcessingTime." seconds.";
                 break;
             }
             
@@ -292,11 +318,16 @@ class ESIFetch extends ESISSO
                   }
         if (count($this->posted))
         {
-            foreach ($this->posted as $killid) {
+            foreach ($this->posted as $killid) 
+            {
+                // simple URLs cannot handle links with an external kill ID, always use
+                // default URL scheme
+                \edkURI::usePath(false);
                 $output .= "<div><a href='"
                            .\edkURI::page('kill_detail', $killid, 'kll_ext_id')
                            ."'>Kill ".$killid."</a></div>";
-                   
+                // reset URL scheme to configured setting
+                \edkURI::usePath(\Config::get('cfg_pathinfo'));  
     	    }
     	}
         return $output;
@@ -487,9 +518,17 @@ class ESIFetch extends ESISSO
    {
        return $this->skipped;
    }
-
-   function setTimeout($timeout)
+   
+   
+   function getMaximumProcessingTime() 
    {
-       $this->processTimeout = $timeout;
+       return $this->maximumProcessingTime;
    }
+
+   function setMaximumProcessingTime($maximumProcessingTime) 
+   {
+       $this->maximumProcessingTime = $maximumProcessingTime;
+   }
+
+
 }

@@ -6,6 +6,8 @@
  * @package EDK
  */
 
+use EDK\ESI\ESI;
+
 /**
  * thrown whenever anything goes wrong while handling a kill
  */
@@ -18,9 +20,7 @@ class Kill extends Cacheable
 {
     
     /** @const the base URL for the public CREST killmail endpoint */
-    public static $ESI_KILLMAIL_ENDPOINT = '/killmails/';
-    /** @const the base URL for the latest version of the ESI API */
-    public static $ESI_URL_LATEST = "https://esi.tech.ccp.is/latest";
+    public static $ESI_KILLMAIL_ENDPOINT = 'killmails';
         
         
     /**
@@ -1939,10 +1939,12 @@ class Kill extends Cacheable
     }
         
         
-        /**
-     * Get the crest URL of this kill.
+    /**
+     * Get the ESI URL of this kill.
+     * <br>
+     * The method name is kept for compatibility reasons.
      *
-     * @return string the crest URL for this kill
+     * @return string the ESI URL for this kill
      */
     function getCrestUrl()
     {
@@ -1952,8 +1954,14 @@ class Kill extends Cacheable
         }
 
         if($this->getCrestHash() && !is_null($this->externalid))
-        {
-            return self::$ESI_URL_LATEST . self::$ESI_KILLMAIL_ENDPOINT . $this->externalid.'/'.$this->getCrestHash().'/';
+        {   
+            $Esi = new ESI();
+            $esiHost = $Esi->getConfig()->getHost();
+            if(substr($esiHost, -1) !== '/')
+            {
+                $esiHost .= '/';
+            }
+            return $esiHost . 'latest/' . self::$ESI_KILLMAIL_ENDPOINT . '/' . $this->externalid.'/'.$this->getCrestHash().'/';
         }
         return NULL;
     }

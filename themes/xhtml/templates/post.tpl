@@ -6,11 +6,11 @@
     Posting kills is currently disabled!
   {else}
     {if !$post_crest_forbid}
-      <b><u>Post CREST Link:</u></b>
-      <p>Paste the CREST link from your kill report (Copy External Kill Link) into the box below.<br />
+      <b><u>Post ESI Link:</u></b>
+      <p>Paste the ESI link from your kill report (Copy External Kill Link) into the box below.<br />
       Remember to post your losses as well.<br /></p>
       <br />
-      <b>CREST-Link:</b>
+      <b>ESI-Link:</b>
       <form id="postform" name="postform" class="f_killmail" method="post" action="{$kb_host}/?a=post">
       <input type="text" name="crest_url" id="crest_url" class="f_killmail" size="100">
       {if !$isadmin && $crest_pw_needed}

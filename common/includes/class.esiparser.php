@@ -1,4 +1,5 @@
 <?php
+require_once("common/phpfastcache/src/autoload.php");
 
 use Swagger\Client\Model\GetKillmailsKillmailIdKillmailHashOk;
 use Swagger\Client\ApiException;
@@ -6,6 +7,8 @@ use EsiClient\CharacterApi;
 use EsiClient\CorporationApi;
 use EsiClient\AllianceApi;
 use EDK\ESI\ESI;
+
+
 
 /**
  * ESI Kill Parser
@@ -29,6 +32,7 @@ class EsiParser
     protected $trust = 0;
     /** @var array an indexed array, using the input IDs as index */
     protected $idNameMapping;
+    
 
     /** @var boolean isNPCOnly flag indicating the killmail has only NPCs as involved parties */
     private $isNPCOnly = true;
@@ -67,7 +71,7 @@ class EsiParser
         }
         
         // gather all involved entity IDs for bulk translating to names
-        $this->idNameMapping = self::getEntityIds($this->EsiKill);
+        $this->idNameMapping = $this->getEntityIds($this->EsiKill);
         
 
         $timestamp = ESI_Helpers::formatDateTime($this->EsiKill->getKillmailTime());
@@ -760,7 +764,7 @@ class EsiParser
      * @return int[] an array of entity IDs
      * @throws ApiException
      */
-    protected static function getEntityIds($EsiKill)
+    protected function getEntityIds($EsiKill)
     {       
         $characterIds = array();
         $corporationIds = array();
@@ -796,79 +800,25 @@ class EsiParser
             if(!is_null($factionId) && !in_array($factionId, $factionIds)) $factionIds[] = $factionId;
         }
         
-        $idToNameMap = array();
+       // using universe/names endpoint
+       // $entityIds = array_merge($characterIds, $corporationIds, $allianceIds);
+       // $idToNameMap = ESI_Helpers::resolveEntityIds($entityIds);
         
-        // create ESI client
-        $EdkEsi = new ESI();
+        // using separate endpoints (slower, but more reliable in case CCP messes with universe/names again)
+        $characterIdNameMap = ESI_Helpers::resolveCharacterIds($characterIds);
+        $corporationIdNameMap = ESI_Helpers::resolveCorporationIds($corporationIds);
+        $allianceIdNameMap = ESI_Helpers::resolveAllianceIds($allianceIds);
+        // merge mappings
+        $idToNameMap = $characterIdNameMap + $corporationIdNameMap + $allianceIdNameMap;
         
-        // bulk resolve character IDs
-        $CharacterApi = new CharacterApi($EdkEsi);
-        while(count($characterIds) > 0)
+        // now resolve factions
+        foreach($factionIds as $factionId)
         {
-            // since this is a GET call, we need to observe the maximum URL length;
-            // thus, we need to split our IDs into chunks no longer than 1950 characters (to allow for a bit of safety margin)
-            $characterIdsWithLengthLimit = array();
-            $characterIdsLength = 0;
-            while($characterIdsLength < 950 && count($characterIds) > 0)
-            {
-                $characterId = array_pop($characterIds);
-                $characterIdsWithLengthLimit[] = $characterId;
-                $characterIdsLength += strlen($characterId)+1;
-            }
-            $characterNames = $CharacterApi->getCharactersNames($characterIdsWithLengthLimit);
-            foreach($characterNames as $characterName)
-            {
-                $idToNameMap[$characterName->getCharacterId()] = $characterName->getCharacterName();
-            }
+            $Faction = new Faction($factionId);
+            $idToNameMap[$Faction->getID()] = $Faction->getName();
         }
 
-        // bulk resolve corporation IDs
-        $CorporationApi = new CorporationApi($EdkEsi);
-        while(count($corporationIds) > 0)
-        {
-            // since this is a GET call, we need to observe the maximum URL length;
-            // thus, we need to split our IDs into chunks no longer than 1950 characters (to allow for a bit of safety margin)
-            $corporationIdsWithLengthLimit = array();
-            $corporationIdsLength = 0;
-            while($corporationIdsLength < 950 && count($corporationIds) > 0)
-            {
-                $corporationId = array_pop($corporationIds);
-                $corporationIdsWithLengthLimit[] = $corporationId;
-                $corporationIdsLength += strlen($corporationId)+1;
-            }
-            
-            $corporationNames = $CorporationApi->getCorporationsNames($corporationIdsWithLengthLimit);
-            foreach($corporationNames as $corporationName)
-            {
-                $idToNameMap[$corporationName->getCorporationId()] = $corporationName->getCorporationName();
-            }
-        }
-        
-       
-       
-        
-        // bulk resolve alliance IDs
-        $AllianceApi = new AllianceApi($EdkEsi);
-        while(count($allianceIds) > 0)
-        {
-            // since this is a GET call, we need to observe the maximum URL length;
-            // thus, we need to split our IDs into chunks no longer than 1950 characters (to allow for a bit of safety margin)
-            $allianceIdsWithLengthLimit = array();
-            $allianceIdsLength = 0;
-            while($allianceIdsLength < 950 && count($allianceIds) > 0)
-            {
-                $allianceId = array_pop($allianceIds);
-                $allianceIdsWithLengthLimit[] = $allianceId;
-                $allianceIdsLength += strlen($allianceId)+1;
-            }
-            
-           $allianceNames = $AllianceApi->getAlliancesNames($allianceIdsWithLengthLimit);
-            foreach($allianceNames as $allianceName)
-            {
-                $idToNameMap[$allianceName->getAllianceId()] = $allianceName->getAllianceName();
-            }
-        }
-        
         return $idToNameMap;
     }
+
 }

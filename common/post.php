@@ -1,4 +1,5 @@
 <?php
+use EDK\ESI\ESI;
 
 $page = new Page('Post kill');
 
@@ -129,7 +130,7 @@ function post_crest()
         $url = $_POST['crest_url'];
         try
         {
-            validateCrestUrl($url);
+            validateUrl($url);
         } 
         
         catch (Exception $e) 
@@ -191,19 +192,22 @@ function post_crest()
  * @param type $url
  * @throws \EsiParserException
  */
-function validateCrestUrl($url)
+function validateUrl($url)
 {
     // should look like this:
-    // https://crest-tq.eveonline.com/killmails/30290604/787fb3714062f1700560d4a83ce32c67640b1797/
+    // https://esi.tech.ccp.is/latest/killmails/65053820/6607d2104caa8a7ffd06f438bb370bb0ef7ba8a8/
     $urlPieces = explode("/", $url);
-    if(count($urlPieces) < 6 || 
-            substr($url, 0, strlen(CREST_PUBLIC_URL)) != CREST_PUBLIC_URL || 
-            $urlPieces[3] != "killmails" ||
-            !is_numeric($urlPieces[4]) ||
-            strlen($urlPieces[5]) != 40)
+    
+    $Esi = new ESI();
+    $esiHost = $Esi->getConfig()->getHost();
+    if(count($urlPieces) < 7 || 
+            substr($url, 0, strlen($esiHost)) != $esiHost ||
+            $urlPieces[4] != "killmails" ||
+            !is_numeric($urlPieces[5]) ||
+            strlen($urlPieces[6]) != 40)
     {
 
-        throw new Exception("Invalid CREST URL: ".$url);
+        throw new Exception("Invalid URL: ".$url);
     }        
 }
 
@@ -215,9 +219,9 @@ function validateCrestUrl($url)
 function extractKillId($url)
 {
     // should look like this:
-    // https://crest-tq.eveonline.com/killmails/30290604/787fb3714062f1700560d4a83ce32c67640b1797/
+    // https://esi.tech.ccp.is/latest/killmails/65053820/6607d2104caa8a7ffd06f438bb370bb0ef7ba8a8/
     $urlPieces = explode("/", $url);
-    return (int)$urlPieces[4];
+    return (int)$urlPieces[5];
 }
 
 /**
@@ -228,9 +232,9 @@ function extractKillId($url)
 function extractKillHash($url)
 {
     // should look like this:
-    // https://crest-tq.eveonline.com/killmails/30290604/787fb3714062f1700560d4a83ce32c67640b1797/
+    // https://esi.tech.ccp.is/latest/killmails/65053820/6607d2104caa8a7ffd06f438bb370bb0ef7ba8a8/
     $urlPieces = explode("/", $url);
-    return $urlPieces[5];
+    return $urlPieces[6];
 }
 ?>
 

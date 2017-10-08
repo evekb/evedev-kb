@@ -1420,7 +1420,7 @@ class pKillDetail extends pageAssembly
                 $crestUrl = $this->kill->getCrestUrl();
                 if(!is_null($crestUrl))
                 {
-                    $this->addMenuItem("link", "CREST Link", $crestUrl);
+                    $this->addMenuItem("link", "ESI Link", $crestUrl);
                 }
                 
         if (config::get('kd_EFT')) {

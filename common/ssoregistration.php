@@ -75,8 +75,7 @@ class pSsoRegistration extends pageAssembly
         
             else 
             {
-                $this->errorMessage .= "Corp Level Access is not yet supported.";
-                return;
+                 $scopes = ESISSO::SSO_SCOPE_CORPORATION_READ_KILLMAILS;
             }
             
             Session::create();
@@ -123,7 +122,16 @@ class pSsoRegistration extends pageAssembly
                 $EsiSso->add();
                 $Pilot = new \Pilot(0, $EsiSso->getCharacterID());
                 
-                $smarty->assign('infoMessage', 'Successfully registered '.$Pilot->getName().' for ESI killmail fetching!');
+                if(ESISSO::KEY_TYPE_CORPORATION == $EsiSso->getKeyType())
+                {
+                    $Corporation = $Pilot->getCorp();
+                    $smarty->assign('infoMessage', 'Successfully registered Corporation '.$Corporation->getName().' for ESI killmail fetching!');
+                }
+                
+                else if(ESISSO::KEY_TYPE_PILOT == $EsiSso->getKeyType())
+                {
+                    $smarty->assign('infoMessage', 'Successfully registered Pilot '.$Pilot->getName().' for ESI killmail fetching!');
+                }
             }
             
             catch(EsiSsoException $e)
