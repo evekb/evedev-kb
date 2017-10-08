@@ -29,7 +29,7 @@ function update041()
         $qry->execute("INSERT IGNORE INTO `kb3_navigation` (`nav_type`,`intern`,`descr` ,`url` ,`target`,`posnr` ,`page`,`hidden`,`KBSITE`) VALUES ('top',1,'SSO Registration','?a=ssoregistration','_self',$ssoRegistrationPosition,'ALL_PAGES',0,'".KB_SITE."');");
         
         // add kb3_esisso table
-        $qry->execute("CREATE TABLE `kb3_esisso` (
+        $qry->execute("CREATE TABLE IF NOT EXISTS `kb3_esisso` (
             `id` int(11) NOT NULL auto_increment,
             `characterID` int(11) NOT NULL,
             `keyType` varchar(16) NOT NULL,

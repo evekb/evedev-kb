@@ -7,7 +7,7 @@
  * @package EDK
  */
 if (!defined('LATEST_DB_UPDATE')) {
-    define('LATEST_DB_UPDATE', "040");
+    define('LATEST_DB_UPDATE', "041");
 }
 
 /** path to cache folder, relative to EDK root */
