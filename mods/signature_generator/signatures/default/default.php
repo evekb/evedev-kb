@@ -23,6 +23,10 @@ $list->setLimit(1);
 $list->setPodsNoobships(false);
 $list->addInvolvedPilot($pilot);
 $kill = $list->getKill();
+if(!$kill)
+{
+	errorPic('No kills!');
+}
 
 // corp
 $box = imagettfbbox(10, 0, MPATH.'GUNSHIP2.TTF', $corp->getName());
@@ -58,7 +62,7 @@ if (!$pid)
 {
     $pid = 0;
 }
-$img = imagecreatefromjpeg(Pilot::getPortraitPath(256,$pid));
+$img = imagecreatefromjpeg($pilot->getPortraitPath(256,$pid));
 imagefilledrectangle($im, 318, 18, 392, 92, $greyred_trans);
 imagecopyresampled($im, $img, 320, 20, 0, 0, 70, 70, 256, 256);
 imagedestroy($img);
