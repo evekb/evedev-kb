@@ -25,6 +25,10 @@ $list->setOrdered(true);
 $list->setPodsNoobships(false);
 $list->addInvolvedPilot($pilot);
 $kill = $list->getKill();
+if(!$kill)
+{
+	errorPic('No kills!');
+}
 $list->getallKills();
 
 imagefttext($im, FSIZE, 0, 80, 21, $grey_trans, MFONT, $name);
@@ -70,7 +74,7 @@ imagecopyresampled($im, $img, 354, 6, 0, 0, 40, 40, 64, 64);
 bevel(354, 6, 40);
 
 // player portrait
-$img = imagecreatefromjpeg(Pilot::getPortraitPath(256,$pid));
+$img = imagecreatefromjpeg($pilot->getPortraitPath(256,$pid));
 //imagefilledrectangle($im, 318, 18, 392, 92, $greyred_trans);
 imagecopyresampled($im, $img, 6, 6, 0, 0, 63, 63, 256,256);
 imagedestroy($img);
