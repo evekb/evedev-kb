@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.34.0
+Eve Development Network Killboard v4.2.35.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -25,6 +25,15 @@ o/ EVE Development Network
 
 VERSION HISTORY
 ===============
+
+Features:
+Updated EDK to 4.2.35.0 and CCPDB to YC-119-10 1.0.20171024
+
+Bugfixes:
+Fix: PHP7 compatibility for signature mod
+
+-------------------------------------------
+v4.2.34.0
 
 Features:
 Updated EDK to 4.2.34.0 and CCPDB to YC-119-8 1.0.20170818
