@@ -17,14 +17,10 @@ cache/api/
 !cache/api/.htaccess
 cache/SQL/
 !cache/SQL/.htaccess
-cache/pheal/
-!cache/pheal/.htaccess
 cache/error.log
 cache/evecentral/
 cache/img
 cache/update
-cache/pheal_access.log
-cache/pheal_error.log
 
 # IDE/Editor temporary files
 *~
