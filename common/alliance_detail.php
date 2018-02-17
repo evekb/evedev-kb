@@ -206,35 +206,34 @@ class pAllianceDetail extends pageAssembly
                 $this->alliance->setExternalID($allianceID);
             }
         }
-        
-        $EdkEsi = new ESI();
-        $AllianceApi = new AllianceApi($EdkEsi);
-        $AllianceDetails = $AllianceApi->getAlliancesAllianceId($this->alliance->getExternalID(), $EdkEsi->getDataSource());
-        // initialize array holding the alliance details
-        $myAlliance = array(
-            "shortName" => $AllianceDetails->getTicker(),
-            "memberCount" => 0,
-            "executorCorpID" => null,
-            "executorCorpName" => null,
-            "startDate" => ESI_Helpers::formatDateTime($AllianceDetails->getDateFounded())
-        );
-        
-        if ($this->alliance->isFaction()) 
-        {
-            $this->page->setTitle(Language::get('page_faction_det').' - '
-                    .$this->alliance->getName()." [".$myAlliance["shortName"]
-                    ."]");
-        } 
-        
-        else 
-        {
-            $this->page->setTitle(Language::get('page_all_det').' - '
-                    .$this->alliance->getName()." [".$myAlliance["shortName"]
-                    ."]");
-        }
-
         if ($this->alliance->getExternalID()) 
         {
+            $EdkEsi = new ESI();
+            $AllianceApi = new AllianceApi($EdkEsi);
+            $AllianceDetails = $AllianceApi->getAlliancesAllianceId($this->alliance->getExternalID(), $EdkEsi->getDataSource());
+            // initialize array holding the alliance details
+            $myAlliance = array(
+                "shortName" => $AllianceDetails->getTicker(),
+                "memberCount" => 0,
+                "executorCorpID" => null,
+                "executorCorpName" => null,
+                "startDate" => ESI_Helpers::formatDateTime($AllianceDetails->getDateFounded())
+            );
+
+            if ($this->alliance->isFaction()) 
+            {
+                $this->page->setTitle(Language::get('page_faction_det').' - '
+                        .$this->alliance->getName()." [".$myAlliance["shortName"]
+                        ."]");
+            } 
+
+            else 
+            {
+                $this->page->setTitle(Language::get('page_all_det').' - '
+                        .$this->alliance->getName()." [".$myAlliance["shortName"]
+                        ."]");
+            }
+
             // fetch the alliance's corps
             $allianceCorps = $AllianceApi->getAlliancesAllianceIdCorporations($this->alliance->getExternalID(), $EdkEsi->getDataSource());
             
