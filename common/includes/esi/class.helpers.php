@@ -363,7 +363,8 @@ class ESI_Helpers
 		
         if(!is_null($entitiesMatching->$getter()) && count($entitiesMatching->$getter()) == 1)
         {
-            return reset($entitiesMatching->$getter());
+            $method = $entitiesMatching->$getter();
+            return reset($method);
         }
         
         return null;
