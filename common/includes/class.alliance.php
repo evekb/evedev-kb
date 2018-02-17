@@ -371,7 +371,7 @@ class Alliance extends Entity
         $EsiAlliance = $AllianceApi->getAlliancesAllianceId($this->getExternalID());
 
         // Use ::add to make sure names are updated in the db and clashes are fixed.
-        $Alliance = Alliance::add($EsiAlliance->getAllianceName(), (int) $this->getExternalID());
+        $Alliance = Alliance::add($EsiAlliance->getName(), (int) $this->getExternalID());
         $this->name = $Alliance->getName();
         $this->id = $Alliance->getID();
         
