@@ -2,6 +2,20 @@
 /**
  * @package EDK
  */
+require_once("../common/esi/autoload.php");
+require_once("../common/includes/class.edkloader.php");
+edkloader::setRoot("..");
+spl_autoload_register('edkloader::load');
+
+
+use Swagger\Client\ApiClient;
+use Swagger\Client\Configuration;
+use EsiClient\SearchApi;
+use EsiClient\AllianceApi;
+use EsiClient\CharacterApi;
+use EsiClient\CorporationApi;
+use Swagger\Client\ApiException;
+use Swagger\Client\Model\GetSearchOk;
 
 if(!$installrunning)
 {
@@ -15,87 +29,21 @@ $db = new mysqli($_SESSION['sql']['host'], $_SESSION['sql']['user'], $_SESSION['
 
 if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'create')
 {
+    $Api = new Api();
     if (!empty($_REQUEST['a']))
     {
-        $result = $db->query('SELECT all_id FROM kb3_alliances WHERE all_name LIKE \'%'.addslashes(stripslashes($_REQUEST['a'])).'%\'');
-        if ($row = @$result->fetch_assoc())
-        {
-            $id = $row['all_id'];
-        }
-        else
-        {
-            $query = 'INSERT INTO kb3_alliances (all_name) VALUES (\''.addslashes(stripslashes($_REQUEST['a'])).'\')';
-            $db->query($query);
-            $id = $db->insert_id;
-        }
-        $_REQUEST['a'] = $id;
+        $externalId = $_REQUEST['a'];
+        $_REQUEST['a'] = $Api->createAlliance($externalId);
     }
     else if(!empty($_REQUEST['c']))
     {
-        $result = $db->query('SELECT all_id FROM kb3_alliances WHERE all_name like \'%Unknown%\'');
-        if ($row = @$result->fetch_assoc())
-        {
-            $id = $row['all_id'];
-        }
-        else
-        {
-            $query = 'INSERT INTO kb3_alliances (all_name) VALUES (\'Unknown\')';
-            $db->query($query);
-            $id = $db->insert_id;
-        }
-        $query = 'SELECT crp_id FROM kb3_corps WHERE crp_name LIKE \'%'.addslashes(stripslashes($_REQUEST['c'])).'%\'';
-        $result = $db->query($query);
-
-        if ($row = @$result->fetch_assoc())
-        {
-            $id = $row['crp_id'];
-        }
-        else
-        {
-            $query = 'INSERT INTO kb3_corps (crp_name, crp_all_id) VALUES (\''.addslashes(stripslashes($_REQUEST['c'])).'\','.$id.')';
-            $db->query($query);
-            $id = $db->insert_id;
-        }
-        $_REQUEST['c'] = $id;
+        $externalId = $_REQUEST['c'];
+        $_REQUEST['c'] = $Api->createCorporation($externalId);
     }
     else
     {
-        $result = $db->query('SELECT all_id FROM kb3_alliances WHERE all_name like \'%Unknown%\'');
-        if ($row = @$result->fetch_assoc())
-        {
-            $id = $row['all_id'];
-        }
-        else
-        {
-            $query = 'INSERT INTO kb3_alliances (all_name) VALUES (\'Unknown\')';
-            $db->query($query);
-            $id = $db->insert_id;
-        }
-        $result = $db->query('SELECT crp_id FROM kb3_corps WHERE crp_name like \'%Unknown%\'');
-        if ($row = @$result->fetch_assoc())
-        {
-            $id = $row['crp_id'];
-        }
-        else
-        {
-            $query = 'INSERT INTO kb3_corps (crp_name, crp_all_id) VALUES (\'Unknown\', '.$id.')';
-            $db->query($query);
-            $id = $db->insert_id;
-        }
-        $query = 'SELECT plt_id FROM kb3_pilots WHERE plt_name LIKE \'%'.addslashes(stripslashes($_REQUEST['p'])).'%\'';
-        $result = $db->query($query);
-
-        if ($row = @$result->fetch_assoc())
-        {
-            $id = $row['plt_id'];
-        }
-        else
-        {
-            $query = 'INSERT INTO kb3_pilots (plt_name, plt_crp_id) VALUES (\''.addslashes(stripslashes($_REQUEST['p'])).'\','.$id.')';
-            $db->query($query);
-            $id = $db->insert_id;
-        }
-        $_REQUEST['p'] = $id;
+        $externalId = $_REQUEST['p'];
+        $_REQUEST['p'] = $Api->createCharacter($externalId);
     }
     $_SESSION['sett']['aid'] = $_REQUEST['a'];
     $_SESSION['sett']['cid'] = $_REQUEST['c'];
@@ -175,58 +123,52 @@ if ($stoppage)
         }
         if (!count($results) || $unsharp)
         {
-            $name = str_replace(" ", "%20", stripslashes($_REQUEST['searchphrase']) );
+            $name = stripslashes($_REQUEST['searchphrase']);
             $api = new Api();
-            $idArr = $api->getCharId($name);
-
-            // If a name was found check if it belongs to a corp.
-            if(!empty($idArr['characterID']))
-            {
-                $api = new Api();
-                $cidArr = $api->getCorpInfo($idArr['characterID']);
-            }
 
             if ($_REQUEST['searchtype'] == 'corp')
             {
-                // If a name was found check that it belongs to a corp.
-                if(empty($cidArr['corporationID']))
+                $id = $api->getCorporationId($name);
+                // check for result
+                if(!$id)
                 {
                     $link = '?step=5&amp;do=create&amp;c='.stripslashes($_REQUEST['searchphrase']).'&amp;a=0">Create';
                     $descr = 'Corporation not found. Check spelling.';
                 }
                 else
                 {
-                    $link = '?step=5&amp;do=create&amp;c='.htmlentities($idArr['characterName']).'&amp;a=0">Create';
-                    $descr = 'Corporation: '.htmlentities($idArr['characterName']);
+                    $link = '?step=5&amp;do=create&amp;c='.$id.'&amp;a=0">Create';
+                    $descr = 'Corporation: '.$name;
                 }
             }
             else if($_REQUEST['searchtype'] == 'alliance')
             {
-                // Could check against the alliance xml but the download is big
-                // enough to risk timeouts. For now just check if name exists
-                // and is not a corporation.
-                if(empty($idArr['characterID']) || !empty($cidArr['corporationID']))
+               $id = $api->getAllianceId($name);
+                // check for result
+                if(!$id)
                 {
                     $link = '?step=5&amp;do=create&amp;a='.stripslashes($_REQUEST['searchphrase']).'&amp;c=0&amp;p=0">Create';
                     $descr = 'Alliance not found. Check spelling.';
                 }
                 else
                 {
-                    $link = '?step=5&amp;do=create&amp;a='.htmlentities($idArr['characterName']).'&amp;c=0&amp;p=0">Create';
-                    $descr = 'Alliance: '.htmlentities($idArr['characterName']);
+                    $link = '?step=5&amp;do=create&amp;a='.$id.'&amp;c=0&amp;p=0">Create';
+                    $descr = 'Alliance: '.$name;
                 }
             }
             else
             {
-                if(empty($idArr['characterID']) || !empty($cidArr['corporationID']))
+                $id = $api->getCharacterId($name);
+                // check for result
+                if(!$id)
                 {
                     $link = '?step=5&amp;do=create&amp;p='.stripslashes($_REQUEST['searchphrase']).'&amp;c=0&amp;a=0">Create';
                     $descr = 'Pilot not found. Check spelling.';
                 }
                 else
                 {
-                    $link = '?step=5&amp;do=create&amp;p='.htmlentities($idArr['characterName']).'&amp;c=0&amp;a=0">Create';
-                    $descr = 'Pilot: '.htmlentities($idArr['characterName']);
+                    $link = '?step=5&amp;do=create&amp;p='.$id.'&amp;c=0&amp;a=0">Create';
+                    $descr = 'Pilot: '.$name;
                 }
             }
             $results[] = array('descr' => $descr, 'link' => $link);
@@ -242,82 +184,163 @@ $smarty->display('install_step5.tpl');
 
 class Api
 {
+    private $esiClient;
+    private $db;
+    
     function __construct()
     {
-        $this->apiroot_ = "api.eveonline.com";
+        $ApiConfiguration = Configuration::getDefaultConfiguration();
+        // if the root CA bundle does not contain the signee of CCP's certificate,
+        // we wouldn't be able to talk to the API. Disable SSL verification for now.
+        $ApiConfiguration->setSSLVerification(false);
+        $ApiConfiguration->setDebug(true);
+        $ApiConfiguration->setDebugFile("debug.log");
+        $this->esiClient = new ApiClient($ApiConfiguration);
+        $this->db = new mysqli($_SESSION['sql']['host'], $_SESSION['sql']['user'], $_SESSION['sql']['pass'], $_SESSION['sql']['db']);
     }
+    
 
-    function getCharId($name)
+    /**
+     * Accepts the name and type of an entity to find using ESI's
+     * search endpoint. This will perform an exact search for the given
+     * entity type and name and only return an ID, if an exact match was found.
+     * 
+     * @param string $entityName the name of the entity
+     * @param string $entityType the type of the entity, allowed values: agent, 
+     *                           alliance, character, constellation, corporation, 
+     *                           faction, inventorytype, region, solarsystem, station, 
+     *                           wormhole
+     * @return int the external ID for the given entity or <code>null</code> if not found
+     * @throws ApiException on ESI communication error
+     */
+    public function getExternalIdForEntity($entityName, $entityType)
     {
-        // make the Namelist
-        $query="names=".str_replace(' ', '%20', $name);
+        // search for the corp in order to get the external ID
+        $SearchApi = new SearchApi($this->esiClient);
 
-        return getdata($this->apiroot_,"/eve/CharacterID.xml.aspx",$query);
+        $entitiesMatching = $SearchApi->getSearch(array($entityType), $entityName, null, null, true);
+
+        $getter = GetSearchOk::getters()[$entityType];
+
+        if(!is_null($entitiesMatching->$getter()) && count($entitiesMatching->$getter()) == 1)
+        {
+            $method = $entitiesMatching->$getter();
+            return reset($method);
+        }
+        
+        return null;
     }
-    function getCorpInfo($id)
+    
+    /**
+     * 
+     * @param type $name
+     * @return type
+     * @throws ApiException on ESI communication error
+     */
+    function getCharacterId($name)
     {
-        $query = "corporationID=".$id;
-        return getdata($this->apiroot_,"/corp/CorporationSheet.xml.aspx",$query);
+        return $this->getExternalIdForentity($name, 'character');
     }
-}
-
-function getdata($apiroot, $target, $query)
-{
-    $fp = fsockopen("ssl://".$apiroot, 443);
-
-    if (!$fp)
+    
+    /**
+     * 
+     * @param type $id
+     * @return type
+     * @throws ApiException on ESI communication error
+     */
+    function getCorporationId($name)
     {
-        $id = 0;
-        $name = "";
-        $corp = "";
-    } else {
-        // request the xml
-        fputs ($fp, "POST $target HTTP/1.0\r\n");
-        fputs ($fp, "Host: $apiroot\r\n");
-        fputs ($fp, "Content-Type: application/x-www-form-urlencoded\r\n");
-        fputs ($fp, "User-Agent: EDKInstaller\r\n");
-        fputs ($fp, "Content-Length: " . strlen($query) . "\r\n");
-        fputs ($fp, "Connection: close\r\n\r\n");
-        fputs ($fp, "$query\r\n");
-
-        // retrieve contents
-        $contents = "";
-        $id = "";
-        $name = "";
-        $corp = "";
-        while (!feof($fp))
-            $contents .= fgets($fp);
-
-        // close connection
-        fclose($fp);
-        // Retrieve Char ID
-        $start = strpos($contents, "characterID=\"");
-        if ($start !== FALSE)
-            $id = substr($contents, $start + strlen("characterID=\""));
-
-        $start = strpos($id, "\"");
-        if ($start !== FALSE)
-            $id = substr($id, 0, (strlen(substr($id, $start)))*(-1));
-        $id = intval($id);
-
-        // Retrieve Char Name
-        $start = strpos($contents, "row name=\"");
-        if ($start !== FALSE)
-            $name = substr($contents, $start + strlen("row name=\""));
-
-        $start = strpos($name, "\"");
-        if ($start !== FALSE)
-            $name = substr($name, 0, (strlen(substr($name, $start)))*(-1));
-
-        // Retrieve Corporation ID
-        $start = strpos($contents, "<corporationID>");
-        if ($start !== FALSE)
-            $corp = substr($contents, $start + strlen("<corporationID>"));
-
-        $start = strpos($corp, "</corporationID>");
-        if ($start !== FALSE)
-            $corp = substr($corp, 0, (strlen(substr($corp, $start)))*(-1));
-        $corp = intval($corp);
+        return $this->getExternalIdForentity($name, 'corporation');
     }
-    return array('characterID' => $id, 'characterName' => $name, 'corporationID' => $corp);
+    /**
+     * 
+     * @param type $id
+     * @return type
+     * @throws ApiException on ESI communication error
+     */
+    function getAllianceId($name)
+    {
+        return $this->getExternalIdForentity($name, 'alliance');
+    }
+    
+    /**
+     * Fetch character details and create the character with the given external ID 
+     * in the database. The character's corporation is created as well.
+     * 
+     * @param int $id the external character ID
+     * @throws ApiException on ESI communication error
+     */
+    function createCharacter($id)
+    {
+        $CharacterApi = new CharacterApi($this->esiClient);
+        $EsiCharacter = $CharacterApi->getCharactersCharacterId($id);
+        
+        // check for and create alliance
+        $corporationExternalId = $EsiCharacter->getCorporationId();
+        $corporationId = $this->createCorporation($corporationExternalId);
+
+
+        $query = "INSERT INTO kb3_pilots (plt_name, plt_crp_id, plt_externalid) VALUES ('".$this->db->escape_string($EsiCharacter->getName())."', ".$corporationId.", ".$id.")";
+        $this->db->query($query);
+        return $this->db->insert_id;
+    }
+    
+    /**
+     * Fetch corporation details and create the corporation with the given external ID 
+     * in the database. If the corporation is part of an alliance, the alliance
+     * is created as well.
+     * 
+     * @param int $id the external corporation ID
+     * @throws ApiException on ESI communication error
+     */
+    function createCorporation($id)
+    {
+        $CorporationApi = new CorporationApi($this->esiClient);
+        $EsiCorporation = $CorporationApi->getCorporationsCorporationId($id);
+        
+        // check for and create alliance
+        $allianceExternalId = $EsiCorporation->getAllianceId();
+        $allianceId = null;
+        if($allianceExternalId != null)
+        {
+            $allianceId = $this->createAlliance($allianceExternalId);
+        }
+        
+        else
+        {
+            $result = $this->db->query('SELECT all_id FROM kb3_alliances WHERE all_name like \'%None%\'');
+            if ($row = @$result->fetch_assoc())
+            {
+                $allianceId = $row['all_id'];
+            }
+            else
+            {
+                $query = 'INSERT INTO kb3_alliances (all_name) VALUES (\'None\')';
+                $this->db->query($query);
+                $allianceId = $this->db->insert_id;
+            }
+        }
+
+        $query = "INSERT INTO kb3_corps (crp_name, crp_all_id, crp_external_id) VALUES ('".$this->db->escape_string($EsiCorporation->getName())."', ".$allianceId.", ".$id.")";
+        $this->db->query($query);
+        return $this->db->insert_id;
+    }
+    
+    /**
+     * Fetch alliance details and create the alliance with the given external ID 
+     * in the database.
+     * 
+     * @param int $id the external alliance ID
+     * @return the internal alliance ID the was created
+     * @throws ApiException on ESI communication error
+     */
+    function createAlliance($id)
+    {
+        $AllianceApi = new AllianceApi($this->esiClient);
+        $EsiAlliance = $AllianceApi->getAlliancesAllianceId($id);
+        
+        $query = "INSERT INTO kb3_alliances (all_name, all_external_id) VALUES ('".$this->db->escape_string($EsiAlliance->getName())."', ".$id.")";
+        $this->db->query($query);
+        return $this->db->insert_id;
+    }
 }
