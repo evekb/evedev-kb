@@ -20,12 +20,8 @@ define('KB_MAILCACHEDIR', KB_CACHEDIR . '/mails');
 define('KB_QUERYCACHEDIR', KB_CACHEDIR . '/SQL');
 /** URL where to find EDK update information */
 define('KB_UPDATE_URL', 'http://evekb.org/downloads');
-/** base URL for connecting to CCP's XML API */
-define('API_SERVER', "https://api.eveonline.com");
 /** base URL for the image server */
 define('IMG_SERVER', "https://imageserver.eveonline.com");
-/** base URL for connecting to public CREST endpoints */
-define('CREST_PUBLIC_URL', 'https://crest-tq.eveonline.com');
 /** data source for ESI calls */
 define('ESI_DATA_SOURCE', 'tranquility');
 /** SOO OAuth base URL */
@@ -46,15 +42,5 @@ define('KB_CCP_DB_DATE', 'Feb 13, 2018');
 define('ID_FEED_VERSION', 1.50);
 /** the version of zKBFetch used by this killboard */
 define('ZKB_FETCH_VERSION', 1.2);
-/** flag indicating an API key is a legacy key */
-define('KB_APIKEY_LEGACY', 1);
-/** flag indicating an API key is a corp key */
-define('KB_APIKEY_CORP', 2);
-/** flag indicating an API key is a character key */
-define('KB_APIKEY_CHAR', 4);
-/** flag indicating an API key/vcode is incorrect and rejected by the API */
-define('KB_APIKEY_BADAUTH', 8);
-/** flag indicating an API key is expired */
-define('KB_APIKEY_EXPIRED', 16);
 /** user agent */
 define('EDK_USER_AGENT', 'Eve Development Killboard '.KB_VERSION.', Forums: http://evekb.org/forum Contact: Salvoxia <salvoxia@blindfish.info>');
