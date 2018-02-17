@@ -4,13 +4,14 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **bookmark_id** | **int** | bookmark_id integer | 
-**create_date** | [**\DateTime**](\DateTime.md) | create_date string | 
-**creator_id** | **int** | creator_id integer | 
 **folder_id** | **int** | folder_id integer | [optional] 
-**memo** | **string** | memo string | 
-**note** | **string** | note string | 
-**owner_id** | **int** | owner_id integer | 
-**target** | [**\Swagger\Client\Model\V1characterscharacterIdbookmarksTarget**](V1characterscharacterIdbookmarksTarget.md) |  | [optional] 
+**created** | [**\DateTime**](\DateTime.md) | created string | 
+**label** | **string** | label string | 
+**notes** | **string** | notes string | 
+**location_id** | **int** | location_id integer | 
+**creator_id** | **int** | creator_id integer | 
+**item** | [**\Swagger\Client\Model\V2characterscharacterIdbookmarksItem**](V2characterscharacterIdbookmarksItem.md) |  | [optional] 
+**coordinates** | [**\Swagger\Client\Model\V2characterscharacterIdbookmarksCoordinates**](V2characterscharacterIdbookmarksCoordinates.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

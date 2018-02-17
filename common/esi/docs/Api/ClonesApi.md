@@ -1,10 +1,10 @@
 # Swagger\Client\ClonesApi
 
-All URIs are relative to *https://esi.tech.ccp.is/*
+All URIs are relative to *https://esi.tech.ccp.is*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**getCharactersCharacterIdClones**](ClonesApi.md#getCharactersCharacterIdClones) | **GET** /v2/characters/{character_id}/clones/ | Get clones
+[**getCharactersCharacterIdClones**](ClonesApi.md#getCharactersCharacterIdClones) | **GET** /v3/characters/{character_id}/clones/ | Get clones
 [**getCharactersCharacterIdImplants**](ClonesApi.md#getCharactersCharacterIdImplants) | **GET** /v1/characters/{character_id}/implants/ | Get active implants
 
 
@@ -69,7 +69,7 @@ Name | Type | Description  | Notes
 
 Get active implants
 
-Return implants on the active clone of a character  ---  This route is cached for up to 3600 seconds
+Return implants on the active clone of a character  ---  This route is cached for up to 300 seconds
 
 ### Example
 ```php

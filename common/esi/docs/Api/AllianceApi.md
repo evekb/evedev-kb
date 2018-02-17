@@ -1,14 +1,14 @@
 # Swagger\Client\AllianceApi
 
-All URIs are relative to *https://esi.tech.ccp.is/*
+All URIs are relative to *https://esi.tech.ccp.is*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**getAlliances**](AllianceApi.md#getAlliances) | **GET** /v1/alliances/ | List all alliances
-[**getAlliancesAllianceId**](AllianceApi.md#getAlliancesAllianceId) | **GET** /v2/alliances/{alliance_id}/ | Get alliance information
+[**getAlliancesAllianceId**](AllianceApi.md#getAlliancesAllianceId) | **GET** /v3/alliances/{alliance_id}/ | Get alliance information
 [**getAlliancesAllianceIdCorporations**](AllianceApi.md#getAlliancesAllianceIdCorporations) | **GET** /v1/alliances/{alliance_id}/corporations/ | List alliance&#39;s corporations
 [**getAlliancesAllianceIdIcons**](AllianceApi.md#getAlliancesAllianceIdIcons) | **GET** /v1/alliances/{alliance_id}/icons/ | Get alliance icon
-[**getAlliancesNames**](AllianceApi.md#getAlliancesNames) | **GET** /v1/alliances/names/ | Get alliance names
+[**getAlliancesNames**](AllianceApi.md#getAlliancesNames) | **GET** /v2/alliances/names/ | Get alliance names
 
 
 # **getAlliances**

@@ -6,8 +6,7 @@ class UpdateException extends Exception {}
 
 
 /**
- * adds location column to the kb3_kills table in order to store
- * the nearest celestial of the kill
+ * Creates table for for storing SSO information.
  * 
  * @package EDK
  */

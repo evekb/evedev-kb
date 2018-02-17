@@ -3,10 +3,10 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**constellations** | **int[]** | constellations array | 
-**description** | **string** | description string | [optional] 
-**name** | **string** | name string | 
 **region_id** | **int** | region_id integer | 
+**name** | **string** | name string | 
+**description** | **string** | description string | [optional] 
+**constellations** | **int[]** | constellations array | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

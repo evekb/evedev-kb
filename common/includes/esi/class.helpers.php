@@ -206,7 +206,7 @@ class ESI_Helpers
         while(count($characterIds) > 0)
         {
             // since this is a GET call, we need to observe the maximum URL length;
-            // thus, we need to split our IDs into chunks no longer than 1950 characters (to allow for a bit of safety margin)
+            // thus, we need to split our IDs into chunks no longer than 950 characters (to allow for a bit of safety margin)
             $characterIdsWithLengthLimit = array();
             $characterIdsLength = 0;
             while($characterIdsLength < 950 && count($characterIds) > 0)
@@ -250,7 +250,7 @@ class ESI_Helpers
         while(count($corporationIds) > 0)
         {
             // since this is a GET call, we need to observe the maximum URL length;
-            // thus, we need to split our IDs into chunks no longer than 1950 characters (to allow for a bit of safety margin)
+            // thus, we need to split our IDs into chunks no longer than 950 characters (to allow for a bit of safety margin)
             $corporationIdsWithLengthLimit = array();
             $corporationIdsLength = 0;
             while($corporationIdsLength < 950 && count($corporationIds) > 0)
@@ -296,7 +296,7 @@ class ESI_Helpers
         while(count($allianceIds) > 0)
         {
             // since this is a GET call, we need to observe the maximum URL length;
-            // thus, we need to split our IDs into chunks no longer than 1950 characters (to allow for a bit of safety margin)
+            // thus, we need to split our IDs into chunks no longer than 950 characters (to allow for a bit of safety margin)
             $allianceIdsWithLengthLimit = array();
             $allianceIdsLength = 0;
             while($allianceIdsLength < 950 && count($allianceIds) > 0)

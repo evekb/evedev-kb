@@ -286,7 +286,7 @@ class pCorpDetail extends pageAssembly
             $smarty->assign('share_count', $this->corpDetails['shareCount']);
             $smarty->assign('tax_rate', $this->corpDetails['taxRate']);
             $smarty->assign('external_url', $this->corpDetails['externalUrl']);
-            $description = $EsiCorp->getCorporationDescription();
+            $description = $EsiCorp->getDescription();
             $description = preg_replace('/<br>/', '<br />', $description);
             // replace non-html size
             $description = preg_replace('/<font size=\"[1-9]+\"/', '<font', $description);

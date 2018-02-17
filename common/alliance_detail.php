@@ -253,14 +253,14 @@ class pAllianceDetail extends pageAssembly
                     continue;
                 }
 
-                if ($AllianceDetails->getExecutorCorp() == $allianceCorpId) 
+                if ($AllianceDetails->getExecutorCorporationId() == $allianceCorpId) 
                 {
-                    $myAlliance["executorCorpName"] = $CorporationDetails->getCorporationName();
-                    $myAlliance["executorCorpID"] = $AllianceDetails->getExecutorCorp();
+                    $myAlliance["executorCorpName"] = $CorporationDetails->getName();
+                    $myAlliance["executorCorpID"] = $AllianceDetails->getExecutorCorporationId();
                 }
                 // Build Data array
                 $membercorp["corpExternalID"] = $allianceCorpId;
-                $membercorp["corpName"] = $CorporationDetails->getCorporationName();
+                $membercorp["corpName"] = $CorporationDetails->getName();
                 $membercorp["ticker"] = $CorporationDetails->getTicker();
                 $membercorp["members"] = $CorporationDetails->getMemberCount();
                 $myAlliance["memberCount"] += $membercorp["members"];
@@ -341,12 +341,13 @@ class pAllianceDetail extends pageAssembly
                 $CorporationAllianceJoinDetails = null;
                 foreach($corporationAllianceHistory as $corpAllianceHistoryRecord)
                 {
-                    if($corpAllianceHistoryRecord->getAlliance()->getAllianceId() == $this->alliance->getExternalID())
+                    if($corpAllianceHistoryRecord->getAllianceId() == $this->alliance->getExternalID())
                     {
                         $tempcorp["joinDate"] = ESI_Helpers::formatDateTime($corpAllianceHistoryRecord->getStartDate());
+                        $Corporation = new Corporation($tempcorp["corpExternalID"], true);
                         // FIXME
                         $membercorp["taxRate"] = "";
-                        $membercorp["url"] = "";
+                        $membercorp["url"] = $Corporation->getDetailsURL();
                         break;
                     }
                 }

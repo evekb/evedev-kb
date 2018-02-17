@@ -3,9 +3,11 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**implants** | **int[]** | implants array | [optional] 
-**location_id** | **int** | location_id integer | [optional] 
-**location_type** | **string** | location_type string | [optional] 
+**jump_clone_id** | **int** | jump_clone_id integer | 
+**name** | **string** | name string | [optional] 
+**location_id** | **int** | location_id integer | 
+**location_type** | **string** | location_type string | 
+**implants** | **int[]** | implants array | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

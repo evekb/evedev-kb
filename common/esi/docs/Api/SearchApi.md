@@ -1,11 +1,11 @@
 # Swagger\Client\SearchApi
 
-All URIs are relative to *https://esi.tech.ccp.is/*
+All URIs are relative to *https://esi.tech.ccp.is*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**getCharactersCharacterIdSearch**](SearchApi.md#getCharactersCharacterIdSearch) | **GET** /v2/characters/{character_id}/search/ | Search on a string
-[**getSearch**](SearchApi.md#getSearch) | **GET** /v1/search/ | Search on a string
+[**getCharactersCharacterIdSearch**](SearchApi.md#getCharactersCharacterIdSearch) | **GET** /v3/characters/{character_id}/search/ | Search on a string
+[**getSearch**](SearchApi.md#getSearch) | **GET** /v2/search/ | Search on a string
 
 
 # **getCharactersCharacterIdSearch**

@@ -22,3 +22,5 @@ define('DB_PASS', '{$pass}');
 define('DB_TYPE', 'mysqli');
 define('DB_PORT', '3306');
 
+// misc settings
+define('ESI_DEBUG', false);

@@ -1,6 +1,6 @@
 # Swagger\Client\KillmailsApi
 
-All URIs are relative to *https://esi.tech.ccp.is/*
+All URIs are relative to *https://esi.tech.ccp.is*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -74,7 +74,7 @@ Name | Type | Description  | Notes
 
 Get corporation kills and losses
 
-Get a list of corporation's recent kills and losses  ---  This route is cached for up to 3600 seconds
+Get a list of corporation's recent kills and losses  ---  This route is cached for up to 300 seconds  --- Requires one of the following EVE corporation role(s): Director
 
 ### Example
 ```php
@@ -132,7 +132,7 @@ Name | Type | Description  | Notes
 
 Get a single killmail
 
-Return a single killmail from its ID and hash  ---  This route is cached for up to 3600 seconds
+Return a single killmail from its ID and hash  ---  This route is cached for up to 1209600 seconds
 
 ### Example
 ```php

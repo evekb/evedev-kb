@@ -470,7 +470,7 @@ class Corporation extends Entity
             $Alliance = Alliance::add("None");
         }
 
-        $crp = Corporation::add(slashfix($EsiCorp->getCorporationName()), $Alliance, ESI_Helpers::formatRFC7231Timestamp($headers['Last-Modified']), (int) $this->externalid, false);
+        $crp = Corporation::add(slashfix($EsiCorp->getName()), $Alliance, ESI_Helpers::formatRFC7231Timestamp($headers['Last-Modified']), (int) $this->externalid, false);
 
         $this->name = $crp->getName();
         $this->alliance = $crp->getAlliance()->getID();
