@@ -477,4 +477,21 @@ class ESI_Helpers
             self::$CACHE_INSTANCE->save($CachedObject);
         }
     }
+    
+     /**
+         * Executes a call against the ESI API to test connection.
+      * 
+         * @throws \Swagger\Client\ApiException
+         */
+        public static function testEsiApiConnection()
+        {
+            $API_TESTING_CHARACTER_ID = 800263173;
+            
+            // create EDK ESI client
+            $EdkEsi = new ESI();
+            $CharacterApi = new CharacterApi($EdkEsi);
+
+            // only get the ESI character representation and the headers, we don't need the status code
+            list($EsiCharacter, , $headers) = $CharacterApi->getCharactersCharacterIdWithHttpInfo($API_TESTING_CHARACTER_ID, $EdkEsi->getDataSource());
+        }
 }

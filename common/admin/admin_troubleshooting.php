@@ -6,6 +6,8 @@
  * @package EDK
  */
 
+use Swagger\Client\ApiException;
+
 $URL_FETCHING_TEST_URL = 'http://www.evekb.org/downloads/update2.xml';
 
 require_once('common/admin/admin_menu.php');
@@ -132,7 +134,7 @@ $sqlver = 'MYSQL version: ' . find_SQL_Version();
 $phpver = 'PHP version: ' . phpversion();
 
 $html = "$phpver  <br />";
-if(phpversion() >= "5.1.2") $trouble['Server'][] = array('passed'=>true, 'text'=> $html);
+if(phpversion() >= "5.6") $trouble['Server'][] = array('passed'=>true, 'text'=> $html);
 else $trouble['Server'][] = array('passed'=>false, 'text'=> $html);
 
 $html = "  $sqlver";
@@ -142,7 +144,7 @@ else $trouble['Server'][] = array('passed'=>false, 'text'=> $html);
 // checks for API caching
 $sections['API Caching'] = 'API Caching';
 // get current API caching folder
-$cachingFolderApi = getcwd() . DIRECTORY_SEPARATOR . KB_CACHEDIR. DIRECTORY_SEPARATOR . "api";
+$cachingFolderApi = getcwd() . DIRECTORY_SEPARATOR . KB_CACHEDIR. DIRECTORY_SEPARATOR . "esi";
 $html = 'Current API caching folder is set to '.$cachingFolderApi;
 $trouble['API Caching'][] = array('passed'=>true, 'text'=>$html);
 
@@ -159,32 +161,18 @@ if(file_exists($cachingFolderApi))
         $trouble['API Caching'][] = array('passed'=>true, 'text'=> $html);
         @unlink($cachingFolderApi. DIRECTORY_SEPARATOR . "write_check.tst");
         
-        // test XML API connection
+        // test ESI API connection
         try 
         {
-            API_Helpers::testXmlApiConnection();
-            $html =  '  Successfully connected to XML API';
+            ESI_Helpers::testEsiApiConnection();
+            $html =  '  Successfully connected to ESI API';
             $trouble['API Caching'][] = array('passed'=>true, 'text'=> $html);
         } 
-        catch (EDKApiConnectionException $e) 
+        catch (ApiException $e) 
         {
-            $html =  '  Connection to XML API NOT successul, Error: '.$e->getMessage().' (Code: '.$e->getCode().')';
+            $html =  '  Connection to ESI API NOT successul, Error: '.$e->getMessage().' (Code: '.$e->getCode().')';
             $trouble['API Caching'][] = array('passed'=>false, 'text'=> $html);
         }
-               
-        // connectivity check for CREST
-        try
-        {
-            API_Helpers::testCrestApiConnection();
-            $html =  '  Successfully connected to CREST API';
-            $trouble['API Caching'][] = array('passed'=>true, 'text'=> $html);
-        }
-        catch(EDKApiConnectionException $e)
-        {
-            $html =  '  Connection to CREST API NOT successul, Error: '.$e->getMessage().' (Code: '.$e->getCode().')';
-            $trouble['API Caching'][] = array('passed'=>false, 'text'=> $html);
-        }
-        
     }
     else 
     {
