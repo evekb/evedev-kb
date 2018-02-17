@@ -46,6 +46,11 @@ class ESI extends ApiClient
             $esiConfig = Configuration::getDefaultConfiguration();
             $esiConfig->setCurlTimeout(self::$CURL_TIMEOUT);
             $esiConfig->setUserAgent(EDK_USER_AGENT);
+            $esiConfig->setDebugFile(KB_CACHEDIR . DIRECTORY_SEPARATOR . 'esi' . DIRECTORY_SEPARATOR . 'debug.log');
+            if(defined('ESI_DEBUG'))
+            {
+                $esiConfig->setDebug(ESI_DEBUG);
+            }
             // disable the expect header, because the ESI server reacts with HTTP 502
             $esiConfig->addDefaultHeader('Expect', '');
         }
@@ -186,15 +191,30 @@ class ESI extends ApiClient
         // Make the request
         $numberOfTries = 0;
         do {
+            if($numberOfTries > 0 && $this->config->getDebug())
+            {
+                error_log("[DEBUG] Retry no ".$numberOfTries . PHP_EOL, 3, $this->config->getDebugFile());
+            }
             $startTime = microtime(true);
             $response = $this->curlExecWithMulti($curl);
             $http_header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
             $http_header = $this->httpParseHeaders(substr($response, 0, $http_header_size));
             $http_body = substr($response, $http_header_size);
             $response_info = curl_getinfo($curl);
-            self::$totalEsiTime += microtime(true) - $startTime;
+            $timeForRequest = microtime(true) - $startTime;
+            self::$totalEsiTime += $timeForRequest;
+            if($this->config->getDebug())
+            {
+                error_log("[DEBUG] Request took ".$timeForRequest."s" . PHP_EOL, 3, $this->config->getDebugFile());
+            }
             $numberOfTries++;
-        } while ($numberOfTries <= self::$MAX_NUMBER_OF_RETRIES && (curl_errno($curl) == 28 || $response_info['http_code'] >= 500 ));
+        } while ($numberOfTries <= self::$MAX_NUMBER_OF_RETRIES && 
+                    (
+                        curl_errno($curl) == 28 // Timeout
+                        ||   (curl_errno($curl) == 0 && !empty(curl_error($curl))) // in some cases, error code 0 is reported with a timeout error message 
+                        || $response_info['http_code'] >= 500   // retry in case of server errors
+                    )
+                );
         
         // debug HTTP response body
         if ($this->config->getDebug()) {
