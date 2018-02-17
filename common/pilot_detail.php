@@ -5,6 +5,7 @@
  * $HeadURL$
  * @package EDK
  */
+use Swagger\Client\ApiException;
 
 /*
  * @package EDK
@@ -158,9 +159,9 @@ class pPilotDetail extends pageAssembly
                 $Pilot->fetchPilot();
             }
             
-            catch(Swagger\Client\ApiException $e)
+            catch (ApiException $e) 
             {
-                // do nothing, error has been logged
+                EDKError::log(ESI::getApiExceptionReason($e) . PHP_EOL . $e->getTraceAsString());
             }
         }
         global $smarty;

@@ -65,9 +65,9 @@ class Alliance extends Entity
             $this->setExternalID(ESI_Helpers::getExternalIdForEntity($this->getName(), 'alliance'));
         } 
         
-        catch (ApiException $ex) 
+        catch (ApiException $e) 
         {
-            EDKError::log($ex->getMessage() . PHP_EOL . $ex->getTraceAsString());
+            EDKError::log(ESI::getApiExceptionReason($e) . PHP_EOL . $e->getTraceAsString());
             return 0;
         }
         
@@ -141,14 +141,24 @@ class Alliance extends Entity
                 }
                 $qry->execute($sql);
                 if ($this->externalid && !$qry->recordCount()) 
-                                {
+                {
                     // check for success to prevent endless recursive calls
-                    if($this->fetchAlliance())
+                    try
                     {
-                        // after adding the alliance to DB we need to read its properties
-                        $this->execQuery();
+                        if($this->fetchAlliance())
+                        {
+                            // after adding the alliance to DB we need to read its properties
+                            $this->execQuery();
+                        }
                     }
-                } else if ($qry->recordCount()) {
+
+                    catch (ApiException $e) 
+                    {
+                        EDKError::log(ESI::getApiExceptionReason($e) . PHP_EOL . $e->getTraceAsString());
+                    }
+                } 
+                
+                else if ($qry->recordCount()) {
                     $row = $qry->getRow();
                     $this->id = (int) $row['all_id'];
                     $this->name = $row['all_name'];

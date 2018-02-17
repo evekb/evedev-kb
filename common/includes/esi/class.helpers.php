@@ -493,6 +493,21 @@ class ESI_Helpers
             $CharacterApi = new CharacterApi($EdkEsi);
 
             // only get the ESI character representation and the headers, we don't need the status code
-            list($EsiCharacter, , $headers) = $CharacterApi->getCharactersCharacterIdWithHttpInfo($API_TESTING_CHARACTER_ID, $EdkEsi->getDataSource());
+            $CharacterApi->getCharactersCharacterIdWithHttpInfo($API_TESTING_CHARACTER_ID, $EdkEsi->getDataSource());
+        }
+        
+        public static function isCurlSupported()
+        {
+            if(in_array  ('curl', get_loaded_extensions()))
+            {
+                // check for SSL support with cURL
+                $version = curl_version();
+                return ($version['features'] & CURL_VERSION_SSL) && in_array  ('openssl', get_loaded_extensions());
+            }
+            
+            else
+            {
+                return false;
+            }
         }
 }

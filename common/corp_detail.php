@@ -112,10 +112,13 @@ class pCorpDetail extends pageAssembly
         }
 
         if(!$this->crp_id) {
-            if($this->crp_external_id) {
+            if($this->crp_external_id) 
+            {
                 $this->corp = new Corporation($this->crp_external_id, true);
                 $this->crp_id = $this->corp->getID();
-            } else {
+            } 
+            if(!$this->crp_id)
+            {
                 $html = 'That corporation does not exist.';
                 $this->page->setContent($html);
                 $this->page->generate();
@@ -266,10 +269,17 @@ class pCorpDetail extends pageAssembly
         if ($EsiCorp) 
         {
             $ceoPilotId = $EsiCorp->getCeoId();
-            $CeoPilot = new Pilot(0, $ceoPilotId);
-            $CeoPilot->fetchPilot();
-            $this->corpDetails['pilotIdCeo'] = $ceoPilotId;
-            $this->corpDetails['pilotNameCeo'] = $CeoPilot->getName();
+            try
+            {
+                $CeoPilot = new Pilot(0, $ceoPilotId);
+                $CeoPilot->fetchPilot();
+                $this->corpDetails['pilotIdCeo'] = $ceoPilotId;
+                $this->corpDetails['pilotNameCeo'] = $CeoPilot->getName();
+            }
+            catch (ApiException $e) 
+            {
+                EDKError::log(ESI::getApiExceptionReason($e) . PHP_EOL . $e->getTraceAsString());
+            }
             // FIXME not provided by ESI!
             $this->corpDetails['headQuartersName'] = "";
             $this->corpDetails['memberCount'] = $EsiCorp->getMemberCount();

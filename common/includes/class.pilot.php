@@ -124,9 +124,9 @@ class Pilot extends Entity
                 return $this->externalid;
             } 
 
-            catch (ApiException $ex) 
+            catch (ApiException $e) 
             {
-                EDKError::log($ex->getMessage() . PHP_EOL . $ex->getTraceAsString());
+                EDKError::log(ESI::getApiExceptionReason($e) . PHP_EOL . $e->getTraceAsString());
             }
         }
         return 0;
@@ -243,9 +243,17 @@ class Pilot extends Entity
             }
             $qry->execute($sql) or die($qry->getErrorMsg());
             if ($this->externalid && !$qry->recordCount()) {
-                $this->fetchPilot();
-                if ($this->id) {
-                    $this->valid = true;
+                try
+                {
+                    $this->fetchPilot();
+                    if ($this->id) {
+                        $this->valid = true;
+                    }
+                }
+                
+                catch (ApiException $e) 
+                {
+                    EDKError::log(ESI::getApiExceptionReason($e) . PHP_EOL . $e->getTraceAsString());
                 }
             } else if (!$qry->recordCount()) {
                 $this->valid = false;

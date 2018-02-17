@@ -109,7 +109,7 @@ else
     $trouble['Connectivity'][] = array('passed'=>false, 'text'=> $html);
 }
 
-if(API_Helpers::isCurlSupported())
+if(ESI_Helpers::isCurlSupported())
 {
     $html =  '  cURL with SSL support is available.';
     $trouble['Connectivity'][] = array('passed'=>true, 'text'=> $html);

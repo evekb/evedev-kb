@@ -114,11 +114,11 @@ class Corporation extends Entity
             {
                 $this->setExternalID(ESI_Helpers::getExternalIdForEntity($this->getName(), 'corporation'));
                 return $this->externalid;
-            } 
+            }
 
-            catch (ApiException $ex) 
+            catch (ApiException $e) 
             {
-                EDKError::log($ex->getMessage() . PHP_EOL . $ex->getTraceAsString());
+                EDKError::log(ESI::getApiExceptionReason($e) . PHP_EOL . $e->getTraceAsString());
             }
         }
         
@@ -180,9 +180,16 @@ class Corporation extends Entity
             if($this->externalid && !$qry->recordCount())
             {
                 // check for success to prevent endless recursive calls
-                if($this->fetchCorp())
+                try
                 {
-                    $this->putCache();
+                    if($this->fetchCorp())
+                    {
+                        $this->putCache();
+                    }
+                }
+                catch (ApiException $e) 
+                {
+                    EDKError::log(ESI::getApiExceptionReason($e) . PHP_EOL . $e->getTraceAsString());
                 }
             } 
             else if($qry->recordCount())

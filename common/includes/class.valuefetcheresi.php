@@ -35,8 +35,9 @@ class ValueFetcherEsi
             $MarketPrices = $MarketApi->getMarketsPrices($EsiClient->getDataSource());
         } 
         
-        catch (ApiException $ex) {
-
+        catch (ApiException $e) 
+        {
+            EDKError::log(ESI::getApiExceptionReason($e) . PHP_EOL . $e->getTraceAsString());
         }
         if(count($MarketPrices) < 1)
         {
