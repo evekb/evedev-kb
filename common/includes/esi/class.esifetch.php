@@ -153,7 +153,7 @@ class ESIFetch extends ESISSO
      */
     public function fetch()
     {
-        if (!$this->id) 
+        if (is_null($this->id)) 
         {
             return false;
         }
