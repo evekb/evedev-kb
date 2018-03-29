@@ -1,11 +1,11 @@
 -------------------------------------------
-Eve Development Network Killboard v4.2.36.0
+Eve Development Network Killboard v4.3.0.0
 -------------------------------------------
 
 // REQUIREMENTS
 -------------------------------------------
 - Webserver (Apache, IIS)
-- PHP 5.2+
+- PHP 5.6+ with cURL support
 - Mysql 5+
 - GD 2 or higher
 
