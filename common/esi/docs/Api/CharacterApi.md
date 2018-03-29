@@ -412,7 +412,7 @@ Name | Type | Description  | Notes
 
 Get character notifications
 
-Return character notifications  ---  This route is cached for up to 600 seconds
+Return character notifications  ---  This route is cached for up to 600 seconds  --- [This route has an available update](https://esi.tech.ccp.is/diff/latest/dev/#GET-/characters/{character_id}/notifications/)
 
 ### Example
 ```php
