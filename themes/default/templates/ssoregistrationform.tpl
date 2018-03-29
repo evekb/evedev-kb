@@ -6,6 +6,6 @@ Choose the type of Killlog access you want to grant:
 	<input type="radio" name="keytype" value="corp"> Corporation
 	<br />
 	<br />
-	<input type="submit" name="submit" value="Submit">
+	<input class="ssobutton" type="submit" name="submit" value="Submit" />
 </form>
 <br />

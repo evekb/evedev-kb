@@ -1768,3 +1768,12 @@ div.login table td:first-child
 {
 	width: 160px; font-weight: bold;
 }
+
+.ssobutton
+{
+    background : url("https://web.ccpgamescdn.com/eveonlineassets/developers/eve-sso-login-white-small.png") no-repeat center center;
+    border : none;
+    width: 195px;
+    height: 30px;
+    color : transparent;
+}
