@@ -85,7 +85,19 @@ if (count($page_error) == 0) {
 				if (!file_exists(KB_CACHEDIR."/update/backup")) {
 					mkdir(KB_CACHEDIR."/update/backup", 0777);
 				}
-
+                
+                // execute checks to verify whether the new version can be installed
+                try 
+                {
+                    checkPrerequisites($piece);
+                } 
+                
+                catch (Exception $ex) 
+                {
+                    $page_error[] = $ex->getMessage();
+                    break;
+                }
+                
 				$hostFileName = $piece['url'];
 				$lastPart = explode('/', $hostFileName);
 				$cacheFileName = KB_CACHEDIR."/update/".$lastPart[count($lastPart) - 1];
@@ -123,59 +135,59 @@ if (count($page_error) == 0) {
 					}
 				}
                                 
-                                // first check if all files to update/delete
-                                // a) do not exist right now
-                                // b) exist and are writable
-                                foreach($fileList as $file)
-                                {
-                                    // file exists and is not writeable
-                                    if(file_exists($file['filename']) && !is_writeable($file['filename']))
-                                    {
-                                        // try to make it writable!
-                                        if(@chmod($file['filename'], 0777))
-                                        {
-                                            // clear cache, check again
-                                            clearstatcache(TRUE, $file['filename']);
-                                            if(is_writable($file['filename']))
-                                            {
-                                                continue;
-                                            }
-                                        }
-                                        
-                                        // at this point the file is nor writeable
-                                        // and an attempt to make it writeable has failed
-                                        $page_error[] = $file['filename']." is not writeable. Please manually set file permissions.";
-                                    }
-                                }
-                                
-                                // check for deleteList
-                                foreach($deleteList as $file)
-                                {
-                                    // file exists and is not writeable
-                                    if(file_exists($file) && !is_writeable($file))
-                                    {
-                                        // try to make it writable!
-                                        if(@chmod($file, 0777))
-                                        {
-                                            // clear cache, check again
-                                            clearstatcache(TRUE, $file);
-                                            if(is_writable($file))
-                                            {
-                                                continue;
-                                            }
-                                        }
-                                        
-                                        // at this point the file is nor writeable
-                                        // and an attempt to make it writeable has failed
-                                        $page_error[] = $file['filename']." is not writeable. Please manually set file permissions.";
-                                    }
-                                }
-                                
-                                if(!empty($page_error))
-                                {
-                                    $page_error[] = "Update has NOT been applied";
-                                    break;
-                                }
+                // first check if all files to update/delete
+                // a) do not exist right now
+                // b) exist and are writable
+                foreach($fileList as $file)
+                {
+                    // file exists and is not writeable
+                    if(file_exists($file['filename']) && !is_writeable($file['filename']))
+                    {
+                        // try to make it writable!
+                        if(@chmod($file['filename'], 0777))
+                        {
+                            // clear cache, check again
+                            clearstatcache(TRUE, $file['filename']);
+                            if(is_writable($file['filename']))
+                            {
+                                continue;
+                            }
+                        }
+
+                        // at this point the file is nor writeable
+                        // and an attempt to make it writeable has failed
+                        $page_error[] = $file['filename']." is not writeable. Please manually set file permissions.";
+                    }
+                }
+
+                // check for deleteList
+                foreach($deleteList as $file)
+                {
+                    // file exists and is not writeable
+                    if(file_exists($file) && !is_writeable($file))
+                    {
+                        // try to make it writable!
+                        if(@chmod($file, 0777))
+                        {
+                            // clear cache, check again
+                            clearstatcache(TRUE, $file);
+                            if(is_writable($file))
+                            {
+                                continue;
+                            }
+                        }
+
+                        // at this point the file is nor writeable
+                        // and an attempt to make it writeable has failed
+                        $page_error[] = $file['filename']." is not writeable. Please manually set file permissions.";
+                    }
+                }
+
+                if(!empty($page_error))
+                {
+                    $page_error[] = "Update has NOT been applied";
+                    break;
+                }
 
 				$writingZip = new Zip(KB_CACHEDIR.'/update/backup/'.$codeversion.'.zip');
 				$writingZip->addFileArray($fileName);
@@ -266,3 +278,56 @@ $smarty->assign('codeversion', KB_VERSION);
 $page->addContext($menubox->generate());
 $page->setContent($smarty->fetch(get_tpl('admin_upgrade')));
 $page->generate();
+
+
+/**
+ * Checks whether prerequisites for the given version to update are met. 
+ * 
+ * @param array $versionInfo array containing the following indices:
+ * <ul><li>version - the EDK version string</li>
+ * <li>svnrev - the SVN revision, no longer contains a valid value since moved to GIT</li>
+ * <li>hash - the MD5 hash of the zip-file containing the update</li>
+ * <li>url - the download URL for the zip-file containing the update</li>
+ * <li>desc - a description of the new version</li>
+ * </ul>
+ * @throws Exception if any check fails
+ */
+function checkPrerequisites($versionInfo)
+{
+   checkPhpVersion($versionInfo);  
+}
+
+/**
+ * Checks whether the current PHP version meets the requirements of the EDK version
+ * to upgrade to.
+ * 
+ * @param array $versionInfo array containing the following indices:
+ * <ul><li>version - the EDK version string</li>
+ * <li>svnrev - the SVN revision, no longer contains a valid value since moved to GIT</li>
+ * <li>hash - the MD5 hash of the zip-file containing the update</li>
+ * <li>url - the download URL for the zip-file containing the update</li>
+ * <li>desc - a description of the new version</li>
+ * </ul>
+ * @throws Exception if the minimum PHP version is not met.
+ */
+function checkPhpVersion($versionInfo)
+{
+    $edkVersionToUpdateTo = $versionInfo['version'];
+    $edkVersionParsed = explode('.', $edkVersionToUpdateTo);
+    if(count($edkVersionParsed) > 1)
+    {
+        // initialize the minimal required PHP version
+        $minimalPhpVersion = PHP_VERSION;
+        // do we want to update to EDK 4.3 or above?
+        if(intval($edkVersionParsed[0]) >= 4 && intval($edkVersionParsed[1]) >= 3)
+        {
+            $minimalPhpVersion = '5.6';
+        }
+        
+        // execute PHP version check
+        if(!version_compare(PHP_VERSION, $minimalPhpVersion, '>='))
+        {
+            throw new Exception("EDK $edkVersionToUpdateTo requires PHP version $minimalPhpVersion or above! You are running PHP version ".PHP_VERSION.".");
+        }
+    }
+}
