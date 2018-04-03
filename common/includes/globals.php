@@ -332,7 +332,7 @@ function isNewerVersion($newVersion, $baseVersion)
         // version is older
         if($newVersionPart < $baseVersionPart)
         {
-                return FALSE;
+            return FALSE;
         }
 
         // at this point the two version parts are identical, keep comparing
