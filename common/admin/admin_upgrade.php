@@ -85,6 +85,18 @@ if (count($page_error) == 0) {
                 if (!file_exists(KB_CACHEDIR."/update/backup")) {
                     mkdir(KB_CACHEDIR."/update/backup", 0777);
                 }
+                
+                // execute checks to verify whether the new version can be installed
+                try 
+                {
+                    checkPrerequisites($piece);
+                } 
+                
+                catch (Exception $ex) 
+                {
+                    $page_error[] = $ex->getMessage();
+                    break;
+                }
 
                 $hostFileName = $piece['url'];
                 $lastPart = explode('/', $hostFileName);
