@@ -12,7 +12,7 @@
 {if $php_ok}
 Your version of PHP is OK.
 {else}
-Your version of PHP does not meet the minimum requirements. You must be running at least PHP5. Ask your host to fix this.
+Your version of PHP does not meet the minimum requirements. You must be running at least PHP {$php_version_minimum}. Ask your host to fix this.
 {/if}
 <br />
 {if $mysqli_ok}

@@ -44,7 +44,8 @@ if (file_exists('../kbconfig.php'))
 }
 
 //PHP version check
-$php_ok = version_compare(phpversion(), '5.4.0', '>=');
+$minimumPhpVersion = '5.6';
+$php_ok = version_compare(PHP_VERSION, $minimumPhpVersion, '>=');
 $mysqli_ok = function_exists("mysqli_connect");
 
 $smarty->assign("php_ok", $php_ok);
@@ -57,6 +58,7 @@ if ($php_ok && $mysqli_ok)
 else
 {
     $smarty->assign("php_image", $fail_img);
+    $smarty->assign("php_version_minimum", $minimumPhpVersion);
     $stoppage = true;
 }
 
