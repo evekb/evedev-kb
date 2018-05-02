@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.3.0.0
+Eve Development Network Killboard v4.4.0.0
 -------------------------------------------
 
 // REQUIREMENTS

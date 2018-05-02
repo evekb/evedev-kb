@@ -31,7 +31,7 @@ define('OAUTH_BASE_URL', 'https://login.eveonline.com/oauth');
  * current version: major.minor.sub.ccpDBupdateNo
  * even numbers for minor = development version
  */
-define('KB_VERSION', '4.3.0.0');
+define('KB_VERSION', '4.4.0.0');
 /** release name */
 define('KB_RELEASE', '(YC-120-3 1.0)');
 /** version of the SDE used to produce the current static database */
