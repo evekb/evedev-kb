@@ -1,10 +1,11 @@
 # Swagger\Client\UniverseApi
 
-All URIs are relative to *https://esi.tech.ccp.is*
+All URIs are relative to *https://esi.evetech.net*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**getUniverseAncestries**](UniverseApi.md#getUniverseAncestries) | **GET** /v1/universe/ancestries/ | Get ancestries
+[**getUniverseAsteroidBeltsAsteroidBeltId**](UniverseApi.md#getUniverseAsteroidBeltsAsteroidBeltId) | **GET** /v1/universe/asteroid_belts/{asteroid_belt_id}/ | Get asteroid belt information
 [**getUniverseBloodlines**](UniverseApi.md#getUniverseBloodlines) | **GET** /v1/universe/bloodlines/ | Get bloodlines
 [**getUniverseCategories**](UniverseApi.md#getUniverseCategories) | **GET** /v1/universe/categories/ | Get item categories
 [**getUniverseCategoriesCategoryId**](UniverseApi.md#getUniverseCategoriesCategoryId) | **GET** /v1/universe/categories/{category_id}/ | Get item category information
@@ -36,7 +37,7 @@ Method | HTTP request | Description
 
 
 # **getUniverseAncestries**
-> \Swagger\Client\Model\GetUniverseAncestries200Ok[] getUniverseAncestries($datasource, $language, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetUniverseAncestries200Ok[] getUniverseAncestries($datasource, $if_none_match, $language, $user_agent, $x_user_agent)
 
 Get ancestries
 
@@ -49,12 +50,13 @@ require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $language = "en-us"; // string | Language to use in the response
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseAncestries($datasource, $language, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseAncestries($datasource, $if_none_match, $language, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseAncestries: ', $e->getMessage(), PHP_EOL;
@@ -67,6 +69,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **language** | **string**| Language to use in the response | [optional] [default to en-us]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
@@ -81,13 +84,66 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
+
+# **getUniverseAsteroidBeltsAsteroidBeltId**
+> \Swagger\Client\Model\GetUniverseAsteroidBeltsAsteroidBeltIdOk getUniverseAsteroidBeltsAsteroidBeltId($asteroid_belt_id, $datasource, $if_none_match, $user_agent, $x_user_agent)
+
+Get asteroid belt information
+
+Get information on an asteroid belt  ---  This route expires daily at 11:05
+
+### Example
+```php
+<?php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+$api_instance = new Swagger\Client\Api\UniverseApi();
+$asteroid_belt_id = 56; // int | asteroid_belt_id integer
+$datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
+$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
+$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
+
+try {
+    $result = $api_instance->getUniverseAsteroidBeltsAsteroidBeltId($asteroid_belt_id, $datasource, $if_none_match, $user_agent, $x_user_agent);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling UniverseApi->getUniverseAsteroidBeltsAsteroidBeltId: ', $e->getMessage(), PHP_EOL;
+}
+?>
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **asteroid_belt_id** | **int**| asteroid_belt_id integer |
+ **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
+ **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
+ **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
+
+### Return type
+
+[**\Swagger\Client\Model\GetUniverseAsteroidBeltsAsteroidBeltIdOk**](../Model/GetUniverseAsteroidBeltsAsteroidBeltIdOk.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseBloodlines**
-> \Swagger\Client\Model\GetUniverseBloodlines200Ok[] getUniverseBloodlines($datasource, $language, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetUniverseBloodlines200Ok[] getUniverseBloodlines($datasource, $if_none_match, $language, $user_agent, $x_user_agent)
 
 Get bloodlines
 
@@ -100,12 +156,13 @@ require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $language = "en-us"; // string | Language to use in the response
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseBloodlines($datasource, $language, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseBloodlines($datasource, $if_none_match, $language, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseBloodlines: ', $e->getMessage(), PHP_EOL;
@@ -118,6 +175,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **language** | **string**| Language to use in the response | [optional] [default to en-us]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
@@ -132,13 +190,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseCategories**
-> int[] getUniverseCategories($datasource, $user_agent, $x_user_agent)
+> int[] getUniverseCategories($datasource, $if_none_match, $user_agent, $x_user_agent)
 
 Get item categories
 
@@ -151,11 +209,12 @@ require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseCategories($datasource, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseCategories($datasource, $if_none_match, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseCategories: ', $e->getMessage(), PHP_EOL;
@@ -168,6 +227,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
@@ -181,13 +241,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseCategoriesCategoryId**
-> \Swagger\Client\Model\GetUniverseCategoriesCategoryIdOk getUniverseCategoriesCategoryId($category_id, $datasource, $language, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetUniverseCategoriesCategoryIdOk getUniverseCategoriesCategoryId($category_id, $datasource, $if_none_match, $language, $user_agent, $x_user_agent)
 
 Get item category information
 
@@ -201,12 +261,13 @@ require_once(__DIR__ . '/vendor/autoload.php');
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $category_id = 56; // int | An Eve item category ID
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $language = "en-us"; // string | Language to use in the response
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseCategoriesCategoryId($category_id, $datasource, $language, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseCategoriesCategoryId($category_id, $datasource, $if_none_match, $language, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseCategoriesCategoryId: ', $e->getMessage(), PHP_EOL;
@@ -220,6 +281,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **category_id** | **int**| An Eve item category ID |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **language** | **string**| Language to use in the response | [optional] [default to en-us]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
@@ -234,13 +296,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseConstellations**
-> int[] getUniverseConstellations($datasource, $user_agent, $x_user_agent)
+> int[] getUniverseConstellations($datasource, $if_none_match, $user_agent, $x_user_agent)
 
 Get constellations
 
@@ -253,11 +315,12 @@ require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseConstellations($datasource, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseConstellations($datasource, $if_none_match, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseConstellations: ', $e->getMessage(), PHP_EOL;
@@ -270,6 +333,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
@@ -283,13 +347,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseConstellationsConstellationId**
-> \Swagger\Client\Model\GetUniverseConstellationsConstellationIdOk getUniverseConstellationsConstellationId($constellation_id, $datasource, $language, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetUniverseConstellationsConstellationIdOk getUniverseConstellationsConstellationId($constellation_id, $datasource, $if_none_match, $language, $user_agent, $x_user_agent)
 
 Get constellation information
 
@@ -303,12 +367,13 @@ require_once(__DIR__ . '/vendor/autoload.php');
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $constellation_id = 56; // int | constellation_id integer
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $language = "en-us"; // string | Language to use in the response
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseConstellationsConstellationId($constellation_id, $datasource, $language, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseConstellationsConstellationId($constellation_id, $datasource, $if_none_match, $language, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseConstellationsConstellationId: ', $e->getMessage(), PHP_EOL;
@@ -322,6 +387,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **constellation_id** | **int**| constellation_id integer |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **language** | **string**| Language to use in the response | [optional] [default to en-us]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
@@ -336,13 +402,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseFactions**
-> \Swagger\Client\Model\GetUniverseFactions200Ok[] getUniverseFactions($datasource, $language, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetUniverseFactions200Ok[] getUniverseFactions($datasource, $if_none_match, $language, $user_agent, $x_user_agent)
 
 Get factions
 
@@ -355,12 +421,13 @@ require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $language = "en-us"; // string | Language to use in the response
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseFactions($datasource, $language, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseFactions($datasource, $if_none_match, $language, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseFactions: ', $e->getMessage(), PHP_EOL;
@@ -373,6 +440,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **language** | **string**| Language to use in the response | [optional] [default to en-us]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
@@ -387,13 +455,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseGraphics**
-> int[] getUniverseGraphics($datasource, $user_agent, $x_user_agent)
+> int[] getUniverseGraphics($datasource, $if_none_match, $user_agent, $x_user_agent)
 
 Get graphics
 
@@ -406,11 +474,12 @@ require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseGraphics($datasource, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseGraphics($datasource, $if_none_match, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseGraphics: ', $e->getMessage(), PHP_EOL;
@@ -423,6 +492,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
@@ -436,13 +506,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseGraphicsGraphicId**
-> \Swagger\Client\Model\GetUniverseGraphicsGraphicIdOk getUniverseGraphicsGraphicId($graphic_id, $datasource, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetUniverseGraphicsGraphicIdOk getUniverseGraphicsGraphicId($graphic_id, $datasource, $if_none_match, $user_agent, $x_user_agent)
 
 Get graphic information
 
@@ -456,11 +526,12 @@ require_once(__DIR__ . '/vendor/autoload.php');
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $graphic_id = 56; // int | graphic_id integer
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseGraphicsGraphicId($graphic_id, $datasource, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseGraphicsGraphicId($graphic_id, $datasource, $if_none_match, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseGraphicsGraphicId: ', $e->getMessage(), PHP_EOL;
@@ -474,6 +545,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **graphic_id** | **int**| graphic_id integer |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
@@ -487,13 +559,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseGroups**
-> int[] getUniverseGroups($datasource, $page, $user_agent, $x_user_agent)
+> int[] getUniverseGroups($datasource, $if_none_match, $page, $user_agent, $x_user_agent)
 
 Get item groups
 
@@ -506,12 +578,13 @@ require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $page = 1; // int | Which page of results to return
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseGroups($datasource, $page, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseGroups($datasource, $if_none_match, $page, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseGroups: ', $e->getMessage(), PHP_EOL;
@@ -524,6 +597,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **page** | **int**| Which page of results to return | [optional] [default to 1]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
@@ -538,13 +612,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseGroupsGroupId**
-> \Swagger\Client\Model\GetUniverseGroupsGroupIdOk getUniverseGroupsGroupId($group_id, $datasource, $language, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetUniverseGroupsGroupIdOk getUniverseGroupsGroupId($group_id, $datasource, $if_none_match, $language, $user_agent, $x_user_agent)
 
 Get item group information
 
@@ -558,12 +632,13 @@ require_once(__DIR__ . '/vendor/autoload.php');
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $group_id = 56; // int | An Eve item group ID
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $language = "en-us"; // string | Language to use in the response
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseGroupsGroupId($group_id, $datasource, $language, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseGroupsGroupId($group_id, $datasource, $if_none_match, $language, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseGroupsGroupId: ', $e->getMessage(), PHP_EOL;
@@ -577,6 +652,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **group_id** | **int**| An Eve item group ID |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **language** | **string**| Language to use in the response | [optional] [default to en-us]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
@@ -591,13 +667,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseMoonsMoonId**
-> \Swagger\Client\Model\GetUniverseMoonsMoonIdOk getUniverseMoonsMoonId($moon_id, $datasource, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetUniverseMoonsMoonIdOk getUniverseMoonsMoonId($moon_id, $datasource, $if_none_match, $user_agent, $x_user_agent)
 
 Get moon information
 
@@ -611,11 +687,12 @@ require_once(__DIR__ . '/vendor/autoload.php');
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $moon_id = 56; // int | moon_id integer
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseMoonsMoonId($moon_id, $datasource, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseMoonsMoonId($moon_id, $datasource, $if_none_match, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseMoonsMoonId: ', $e->getMessage(), PHP_EOL;
@@ -629,6 +706,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **moon_id** | **int**| moon_id integer |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
@@ -642,13 +720,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniversePlanetsPlanetId**
-> \Swagger\Client\Model\GetUniversePlanetsPlanetIdOk getUniversePlanetsPlanetId($planet_id, $datasource, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetUniversePlanetsPlanetIdOk getUniversePlanetsPlanetId($planet_id, $datasource, $if_none_match, $user_agent, $x_user_agent)
 
 Get planet information
 
@@ -662,11 +740,12 @@ require_once(__DIR__ . '/vendor/autoload.php');
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $planet_id = 56; // int | planet_id integer
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniversePlanetsPlanetId($planet_id, $datasource, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniversePlanetsPlanetId($planet_id, $datasource, $if_none_match, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniversePlanetsPlanetId: ', $e->getMessage(), PHP_EOL;
@@ -680,6 +759,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **planet_id** | **int**| planet_id integer |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
@@ -693,13 +773,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseRaces**
-> \Swagger\Client\Model\GetUniverseRaces200Ok[] getUniverseRaces($datasource, $language, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetUniverseRaces200Ok[] getUniverseRaces($datasource, $if_none_match, $language, $user_agent, $x_user_agent)
 
 Get character races
 
@@ -712,12 +792,13 @@ require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $language = "en-us"; // string | Language to use in the response
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseRaces($datasource, $language, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseRaces($datasource, $if_none_match, $language, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseRaces: ', $e->getMessage(), PHP_EOL;
@@ -730,6 +811,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **language** | **string**| Language to use in the response | [optional] [default to en-us]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
@@ -744,13 +826,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseRegions**
-> int[] getUniverseRegions($datasource, $user_agent, $x_user_agent)
+> int[] getUniverseRegions($datasource, $if_none_match, $user_agent, $x_user_agent)
 
 Get regions
 
@@ -763,11 +845,12 @@ require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseRegions($datasource, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseRegions($datasource, $if_none_match, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseRegions: ', $e->getMessage(), PHP_EOL;
@@ -780,6 +863,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
@@ -793,13 +877,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseRegionsRegionId**
-> \Swagger\Client\Model\GetUniverseRegionsRegionIdOk getUniverseRegionsRegionId($region_id, $datasource, $language, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetUniverseRegionsRegionIdOk getUniverseRegionsRegionId($region_id, $datasource, $if_none_match, $language, $user_agent, $x_user_agent)
 
 Get region information
 
@@ -813,12 +897,13 @@ require_once(__DIR__ . '/vendor/autoload.php');
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $region_id = 56; // int | region_id integer
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $language = "en-us"; // string | Language to use in the response
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseRegionsRegionId($region_id, $datasource, $language, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseRegionsRegionId($region_id, $datasource, $if_none_match, $language, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseRegionsRegionId: ', $e->getMessage(), PHP_EOL;
@@ -832,6 +917,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **region_id** | **int**| region_id integer |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **language** | **string**| Language to use in the response | [optional] [default to en-us]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
@@ -846,13 +932,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseStargatesStargateId**
-> \Swagger\Client\Model\GetUniverseStargatesStargateIdOk getUniverseStargatesStargateId($stargate_id, $datasource, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetUniverseStargatesStargateIdOk getUniverseStargatesStargateId($stargate_id, $datasource, $if_none_match, $user_agent, $x_user_agent)
 
 Get stargate information
 
@@ -866,11 +952,12 @@ require_once(__DIR__ . '/vendor/autoload.php');
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $stargate_id = 56; // int | stargate_id integer
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseStargatesStargateId($stargate_id, $datasource, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseStargatesStargateId($stargate_id, $datasource, $if_none_match, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseStargatesStargateId: ', $e->getMessage(), PHP_EOL;
@@ -884,6 +971,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **stargate_id** | **int**| stargate_id integer |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
@@ -897,13 +985,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseStarsStarId**
-> \Swagger\Client\Model\GetUniverseStarsStarIdOk getUniverseStarsStarId($star_id, $datasource, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetUniverseStarsStarIdOk getUniverseStarsStarId($star_id, $datasource, $if_none_match, $user_agent, $x_user_agent)
 
 Get star information
 
@@ -917,11 +1005,12 @@ require_once(__DIR__ . '/vendor/autoload.php');
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $star_id = 56; // int | star_id integer
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseStarsStarId($star_id, $datasource, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseStarsStarId($star_id, $datasource, $if_none_match, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseStarsStarId: ', $e->getMessage(), PHP_EOL;
@@ -935,6 +1024,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **star_id** | **int**| star_id integer |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
@@ -948,13 +1038,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseStationsStationId**
-> \Swagger\Client\Model\GetUniverseStationsStationIdOk getUniverseStationsStationId($station_id, $datasource, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetUniverseStationsStationIdOk getUniverseStationsStationId($station_id, $datasource, $if_none_match, $user_agent, $x_user_agent)
 
 Get station information
 
@@ -968,11 +1058,12 @@ require_once(__DIR__ . '/vendor/autoload.php');
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $station_id = 56; // int | station_id integer
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseStationsStationId($station_id, $datasource, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseStationsStationId($station_id, $datasource, $if_none_match, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseStationsStationId: ', $e->getMessage(), PHP_EOL;
@@ -986,6 +1077,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **station_id** | **int**| station_id integer |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
@@ -999,13 +1091,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseStructures**
-> int[] getUniverseStructures($datasource, $user_agent, $x_user_agent)
+> int[] getUniverseStructures($datasource, $if_none_match, $user_agent, $x_user_agent)
 
 List all public structures
 
@@ -1018,11 +1110,12 @@ require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseStructures($datasource, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseStructures($datasource, $if_none_match, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseStructures: ', $e->getMessage(), PHP_EOL;
@@ -1035,6 +1128,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
@@ -1048,13 +1142,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseStructuresStructureId**
-> \Swagger\Client\Model\GetUniverseStructuresStructureIdOk getUniverseStructuresStructureId($structure_id, $datasource, $token, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetUniverseStructuresStructureIdOk getUniverseStructuresStructureId($structure_id, $datasource, $if_none_match, $token, $user_agent, $x_user_agent)
 
 Get structure information
 
@@ -1071,12 +1165,13 @@ Swagger\Client\Configuration::getDefaultConfiguration()->setAccessToken('YOUR_AC
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $structure_id = 789; // int | An Eve structure ID
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $token = "token_example"; // string | Access token to use if unable to set a header
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseStructuresStructureId($structure_id, $datasource, $token, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseStructuresStructureId($structure_id, $datasource, $if_none_match, $token, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseStructuresStructureId: ', $e->getMessage(), PHP_EOL;
@@ -1090,6 +1185,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **structure_id** | **int**| An Eve structure ID |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **token** | **string**| Access token to use if unable to set a header | [optional]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
@@ -1104,13 +1200,13 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseSystemJumps**
-> \Swagger\Client\Model\GetUniverseSystemJumps200Ok[] getUniverseSystemJumps($datasource, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetUniverseSystemJumps200Ok[] getUniverseSystemJumps($datasource, $if_none_match, $user_agent, $x_user_agent)
 
 Get system jumps
 
@@ -1123,11 +1219,12 @@ require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseSystemJumps($datasource, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseSystemJumps($datasource, $if_none_match, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseSystemJumps: ', $e->getMessage(), PHP_EOL;
@@ -1140,6 +1237,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
@@ -1153,13 +1251,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseSystemKills**
-> \Swagger\Client\Model\GetUniverseSystemKills200Ok[] getUniverseSystemKills($datasource, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetUniverseSystemKills200Ok[] getUniverseSystemKills($datasource, $if_none_match, $user_agent, $x_user_agent)
 
 Get system kills
 
@@ -1172,11 +1270,12 @@ require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseSystemKills($datasource, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseSystemKills($datasource, $if_none_match, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseSystemKills: ', $e->getMessage(), PHP_EOL;
@@ -1189,6 +1288,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
@@ -1202,13 +1302,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseSystems**
-> int[] getUniverseSystems($datasource, $user_agent, $x_user_agent)
+> int[] getUniverseSystems($datasource, $if_none_match, $user_agent, $x_user_agent)
 
 Get solar systems
 
@@ -1221,11 +1321,12 @@ require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseSystems($datasource, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseSystems($datasource, $if_none_match, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseSystems: ', $e->getMessage(), PHP_EOL;
@@ -1238,6 +1339,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
@@ -1251,13 +1353,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseSystemsSystemId**
-> \Swagger\Client\Model\GetUniverseSystemsSystemIdOk getUniverseSystemsSystemId($system_id, $datasource, $language, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetUniverseSystemsSystemIdOk getUniverseSystemsSystemId($system_id, $datasource, $if_none_match, $language, $user_agent, $x_user_agent)
 
 Get solar system information
 
@@ -1271,12 +1373,13 @@ require_once(__DIR__ . '/vendor/autoload.php');
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $system_id = 56; // int | system_id integer
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $language = "en-us"; // string | Language to use in the response
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseSystemsSystemId($system_id, $datasource, $language, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseSystemsSystemId($system_id, $datasource, $if_none_match, $language, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseSystemsSystemId: ', $e->getMessage(), PHP_EOL;
@@ -1290,6 +1393,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **system_id** | **int**| system_id integer |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **language** | **string**| Language to use in the response | [optional] [default to en-us]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
@@ -1304,13 +1408,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseTypes**
-> int[] getUniverseTypes($datasource, $page, $user_agent, $x_user_agent)
+> int[] getUniverseTypes($datasource, $if_none_match, $page, $user_agent, $x_user_agent)
 
 Get types
 
@@ -1323,12 +1427,13 @@ require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $page = 1; // int | Which page of results to return
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseTypes($datasource, $page, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseTypes($datasource, $if_none_match, $page, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseTypes: ', $e->getMessage(), PHP_EOL;
@@ -1341,6 +1446,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **page** | **int**| Which page of results to return | [optional] [default to 1]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
@@ -1355,13 +1461,13 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getUniverseTypesTypeId**
-> \Swagger\Client\Model\GetUniverseTypesTypeIdOk getUniverseTypesTypeId($type_id, $datasource, $language, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetUniverseTypesTypeIdOk getUniverseTypesTypeId($type_id, $datasource, $if_none_match, $language, $user_agent, $x_user_agent)
 
 Get type information
 
@@ -1375,12 +1481,13 @@ require_once(__DIR__ . '/vendor/autoload.php');
 $api_instance = new Swagger\Client\Api\UniverseApi();
 $type_id = 56; // int | An Eve item type ID
 $datasource = "tranquility"; // string | The server name you would like data from
+$if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $language = "en-us"; // string | Language to use in the response
 $user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getUniverseTypesTypeId($type_id, $datasource, $language, $user_agent, $x_user_agent);
+    $result = $api_instance->getUniverseTypesTypeId($type_id, $datasource, $if_none_match, $language, $user_agent, $x_user_agent);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling UniverseApi->getUniverseTypesTypeId: ', $e->getMessage(), PHP_EOL;
@@ -1394,6 +1501,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **type_id** | **int**| An Eve item type ID |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
+ **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **language** | **string**| Language to use in the response | [optional] [default to en-us]
  **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
@@ -1408,7 +1516,7 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
@@ -1461,7 +1569,7 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
@@ -1512,7 +1620,7 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)

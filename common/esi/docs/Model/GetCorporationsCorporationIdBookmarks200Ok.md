@@ -4,14 +4,14 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **bookmark_id** | **int** | bookmark_id integer | 
+**coordinates** | [**\Swagger\Client\Model\V1corporationscorporationIdbookmarksCoordinates**](V1corporationscorporationIdbookmarksCoordinates.md) |  | [optional] 
+**created** | [**\DateTime**](\DateTime.md) | created string | 
 **creator_id** | **int** | creator_id integer | 
 **folder_id** | **int** | folder_id integer | [optional] 
-**created** | [**\DateTime**](\DateTime.md) | created string | 
-**label** | **string** | label string | 
-**notes** | **string** | notes string | 
-**location_id** | **int** | location_id integer | 
 **item** | [**\Swagger\Client\Model\V1corporationscorporationIdbookmarksItem**](V1corporationscorporationIdbookmarksItem.md) |  | [optional] 
-**coordinates** | [**\Swagger\Client\Model\V1corporationscorporationIdbookmarksCoordinates**](V1corporationscorporationIdbookmarksCoordinates.md) |  | [optional] 
+**label** | **string** | label string | 
+**location_id** | **int** | location_id integer | 
+**notes** | **string** | notes string | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

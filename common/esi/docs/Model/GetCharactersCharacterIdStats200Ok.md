@@ -3,7 +3,6 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**year** | **int** | Gregorian year for this set of aggregates | 
 **character** | [**\Swagger\Client\Model\V2characterscharacterIdstatsCharacter**](V2characterscharacterIdstatsCharacter.md) |  | [optional] 
 **combat** | [**\Swagger\Client\Model\V2characterscharacterIdstatsCombat**](V2characterscharacterIdstatsCombat.md) |  | [optional] 
 **industry** | [**\Swagger\Client\Model\V2characterscharacterIdstatsIndustry**](V2characterscharacterIdstatsIndustry.md) |  | [optional] 
@@ -16,6 +15,7 @@ Name | Type | Description | Notes
 **pve** | [**\Swagger\Client\Model\V2characterscharacterIdstatsPve**](V2characterscharacterIdstatsPve.md) |  | [optional] 
 **social** | [**\Swagger\Client\Model\V2characterscharacterIdstatsSocial**](V2characterscharacterIdstatsSocial.md) |  | [optional] 
 **travel** | [**\Swagger\Client\Model\V2characterscharacterIdstatsTravel**](V2characterscharacterIdstatsTravel.md) |  | [optional] 
+**year** | **int** | Gregorian year for this set of aggregates | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
