@@ -52,7 +52,7 @@ function getESIApi(&$fetchConfig)
         $fetchConfig->setIgnoreNpcOnlyKills((boolean)(config::get('post_no_npc_only')));
         $fetchConfig->setMaximumProcessingTime((int)config::get('cfg_max_proc_time_per_sso_key'));
         $fetchConfig->processApi();
-        logCron("ESI SOO Key: ".$Pilot->getName()." (type: ".$fetchConfig->getKeyType().")");
+        logCron("ESI SSO Key: ".$Pilot->getName()." (type: ".$fetchConfig->getKeyType().")");
         logCron(count($fetchConfig->getPosted())." kills were posted and ".count($fetchConfig->getSkipped())." were skipped "
                                             . "(".$fetchConfig->getNumberOfKillsFetched()." kills fetched)");
         logCron("Last kill ID: ".$fetchConfig->getLastKillID());
