@@ -35,7 +35,7 @@ define('KB_VERSION', '4.4.0.0');
 /** release name */
 define('KB_RELEASE', '(YC-120-3 1.0)');
 /** version of the SDE used to produce the current static database */
-define('KB_CCP_DB_VERSION', '20180323');
+define('KB_CCP_DB_VERSION', '20180502');
 /** release date of the SDE used to produce the current static database */
 define('KB_CCP_DB_DATE', 'Mar 23, 2018');
 /** the version of IDFeed used by this killboard, gets reported to clients */
