@@ -37,7 +37,7 @@ class ESIFetch extends ESISSO
     protected $ignoreNPCOnly = FALSE;
     
     /** @param int maximum number of cycles tried to fetch to get new kills before stopping as a safety measure */
-    public static $MAXIMUM_NUMBER_OF_CYCLES = 10;
+    public static $MAXIMUM_NUMBER_OF_CYCLES = 100;
     public static $NUMBER_OF_KILLS_PER_CALL = 500;
     
     /** field for counting the number of kills fetched from ESI; we need to keep track for not running into PHP's time limit */
@@ -167,14 +167,14 @@ class ESIFetch extends ESISSO
             $KillmailsApi = new KillmailsApi($EdkEsi);
             if($this->keyType == ESISSO::KEY_TYPE_PILOT)
             {
-                $this->killLog = $KillmailsApi->getCharactersCharacterIdKillmailsRecent($this->characterID, $EdkEsi->getDataSource(), self::$NUMBER_OF_KILLS_PER_CALL, $this->maxID);
+                $this->killLog = $KillmailsApi->getCharactersCharacterIdKillmailsRecent($this->characterID, $EdkEsi->getDataSource(), null, self::$NUMBER_OF_KILLS_PER_CALL, $this->maxID);
             }
             
             else
             {
                 $Pilot = new \Pilot(0, $this->characterID);
                 $Corporation = $Pilot->getCorp();
-                $this->killLog = $KillmailsApi->getCorporationsCorporationIdKillmailsRecent($Corporation->getExternalID(), $EdkEsi->getDataSource(), $this->maxID);
+                $this->killLog = $KillmailsApi->getCorporationsCorporationIdKillmailsRecent($Corporation->getExternalID(), $EdkEsi->getDataSource(), null, $this->maxID);
             }
             $this->resetFailCount();
         }
