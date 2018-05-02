@@ -218,7 +218,7 @@ class Api
         // search for the corp in order to get the external ID
         $SearchApi = new SearchApi($this->esiClient);
 
-        $entitiesMatching = $SearchApi->getSearch(array($entityType), $entityName, null, null, true);
+        $entitiesMatching = $SearchApi->getSearch(array($entityType), $entityName, null, null, null, true);
 
         $getter = GetSearchOk::getters()[$entityType];
 

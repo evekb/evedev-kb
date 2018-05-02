@@ -357,7 +357,7 @@ class ESI_Helpers
         // search for the corp in order to get the external ID
         $EdkEsi = new ESI();
         $SearchApi = new SearchApi($EdkEsi);
-        $entitiesMatching = $SearchApi->getSearch(array($entityType), $entityName, $EdkEsi->getDataSource(), null, true);
+        $entitiesMatching = $SearchApi->getSearch(array($entityType), $entityName, $EdkEsi->getDataSource(), null, null, true);
 
         $getter = GetSearchOk::getters()[$entityType];
 		
