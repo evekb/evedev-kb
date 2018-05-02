@@ -219,21 +219,31 @@ class ESIFetch extends ESISSO
         $cyclesFetched = 0;
         $startKill = $this->lastKillID;
         $previousParseCount = 0;
+        $latestKillIdFetched = 0;
         // we need this loop to keep fetching until we don't get any data (because there is no new data)
         // or we get data containing a kill with a timestamp newer than the timestamp we started with
         $previousLog = array();
         // start time to calculate Processing time
         $time_start = microtime(true);
         $this->updateLastFetchTimestamp();
+        // this will first fetch the oldest kills available, then work its way to the newest ones
         do
         {
             try
             {
                 $previousLog = $this->killLog;
                 $this->fetch();
-                //Check if we reached the end which seems to append an empty array:
-                if (count(array_slice($this->killLog, -1)) == 0) 
+                //Check if we reached the end which seems to append an empty array
+                //  OR if the latest kill ID fetched is the last kill ID we posted - in which case we need to process the previously fetched kills (if any)
+                if (count(array_slice($this->killLog, -1)) == 0 
+                        || ($this->killLog[0]->getKillmailId() > 0 && $this->killLog[0]->getKillmailId() == $startKill))
                 {
+
+                	// if we fetched previously, use the previous killLog, the last requested was just to make sure we hit the end
+                	if(!is_null($previousLog))
+                	{
+                		$this->killLog = $previousLog;
+                	}
                     break;
                 }
                 $oldest = array_values(array_slice($this->killLog, -1))[0];
@@ -248,21 +258,22 @@ class ESIFetch extends ESISSO
             {
                 throw $e;
             }
+            echo "oldest Kill fetched: $this->maxID<br/>";
+            echo "start kill from DB: $startKill<br/>";
+            echo "newest kill fetched: ".$this->killLog[0]->getKillmailId()."<br/>";
             $cyclesFetched++;
-            //Check if the last known is in the current killlog
-            if ($this->maxID <= $startKill && $this->killLog[0]->getKillmailId() > $startKill) {
-                break;
-            } elseif ($this->maxID <= $startKill && $cyclesFetched > 1) {
-                $this->killLog = $previousLog;
-                break;
-            }
+            $latestKillIdFetched = $this->killLog[0]->getKillmailId();
+
 
             if($cyclesFetched >= self::$MAXIMUM_NUMBER_OF_CYCLES)
             {
                 $this->parsemsg[] = "Stopped fetching after ".(self::$MAXIMUM_NUMBER_OF_CYCLES*self::$NUMBER_OF_KILLS_PER_CALL)." kills.";
                 break;
             }
-        }  while($startKill > 0 && $this->maxID > $startKill);
+            // 	the first fetch ever does not have a start kill and needs to        || if we have a start kill, continue fetching until the oldest kill fetched is less 
+            // 	to continue fetching until the end, which seems to append an empty  || than the start kill, and the newest is either newer or the same (no new kills)
+            // 	array                                                               || 
+        }  while(($startKill == 0 && count(array_slice($this->killLog, -1)) != 0) || ($startKill > 0 && !($startKill > $this->maxID && $startKill <= $latestKillIdFetched)));
 
         //If the last call returned ampty check the previous one
         if(count($this->killLog) <= 1)
