@@ -258,9 +258,7 @@ class ESIFetch extends ESISSO
             {
                 throw $e;
             }
-            echo "oldest Kill fetched: $this->maxID<br/>";
-            echo "start kill from DB: $startKill<br/>";
-            echo "newest kill fetched: ".$this->killLog[0]->getKillmailId()."<br/>";
+
             $cyclesFetched++;
             $latestKillIdFetched = $this->killLog[0]->getKillmailId();
 
