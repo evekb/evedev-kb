@@ -459,7 +459,7 @@ class ESI extends ApiClient
             $response = curl_multi_getcontent($handle);
 
             // remove the handle from the multi processor
-            curl_multi_remove_handle(self::$curlMultiProcessor, $handle);	
+            curl_multi_remove_handle(self::$curlMultiProcessor, $handle);
         }
       
         // fallback to default 
@@ -468,6 +468,6 @@ class ESI extends ApiClient
             $response = curl_exec($handle);
         }
 
-	return $response;
+        return $response;
     }
 }
