@@ -198,10 +198,26 @@ function validateUrl($url)
     // https://esi.tech.ccp.is/latest/killmails/65053820/6607d2104caa8a7ffd06f438bb370bb0ef7ba8a8/
     $urlPieces = explode("/", $url);
     
+    
     $Esi = new ESI();
-    $esiHost = $Esi->getConfig()->getHost();
+    $allowedEsiHosts = array(
+        $Esi->getConfig()->getHost(), // from the current ESI cliebt
+        'https://esi.tech.ccp.is'     // legacy, for example for allowing zKB links
+    );
+    
+    // check host
+    $isHostValid = false;
+    foreach($allowedEsiHosts as $host)
+    {
+        if(substr($url, 0, strlen($host)) == $host)
+        {
+            $isHostValid = true;
+            break;
+        }
+    }
+    
     if(count($urlPieces) < 7 || 
-            substr($url, 0, strlen($esiHost)) != $esiHost ||
+            !$isHostValid ||
             $urlPieces[4] != "killmails" ||
             !is_numeric($urlPieces[5]) ||
             strlen($urlPieces[6]) != 40)

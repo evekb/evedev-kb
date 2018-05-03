@@ -9,7 +9,7 @@ class CrestParserException extends Exception{}
 
 /**
  * @package EDK
- * @deprecated since version number
+ * @deprecated since 4.4
  */
 class CrestParser
 {
