@@ -10,6 +10,7 @@
  */
 
 use EDK\ESI\ESIFetch;
+use EDK\ESI\ESI;
 
 // include the base class providing all context data
 require_once('cron.base.php');
@@ -31,7 +32,7 @@ foreach($fetchConfigs AS &$fetchConfig)
     getESIApi($fetchConfig);
 }
 
-
+logCron('Spent '.ESI::getTotalEsiTime().'s talking to ESI');
 logCron('Time taken = '.(microtime(true) - $cronStartTime).' seconds.');
 
 /**
