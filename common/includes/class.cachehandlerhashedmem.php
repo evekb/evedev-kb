@@ -80,7 +80,7 @@ class CacheHandlerHashedMem extends CacheHandlerHashed
      *
      * @return boolean false. There is no valid path to a memcached object.
      */
-    public static function getExternal()
+    public static function getExternal($key, $location = null)
     {
         return false;
     }
@@ -89,7 +89,7 @@ class CacheHandlerHashedMem extends CacheHandlerHashed
      *
      * @return boolean false. There is no valid path to a memcached object.
      */
-    public static function getInternal()
+    public static function getInternal($key, $location = null)
     {
         return false;
     }
