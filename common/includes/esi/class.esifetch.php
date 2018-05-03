@@ -239,11 +239,11 @@ class ESIFetch extends ESISSO
                         || ($this->killLog[0]->getKillmailId() > 0 && $this->killLog[0]->getKillmailId() == $startKill))
                 {
 
-                	// if we fetched previously, use the previous killLog, the last requested was just to make sure we hit the end
-                	if(!is_null($previousLog))
-                	{
-                		$this->killLog = $previousLog;
-                	}
+                    // if we fetched previously, use the previous killLog, the last requested was just to make sure we hit the end
+                    if(!empty($previousLog))
+                    {
+                        $this->killLog = $previousLog;
+                    }
                     break;
                 }
                 $oldest = array_values(array_slice($this->killLog, -1))[0];
@@ -270,9 +270,9 @@ class ESIFetch extends ESISSO
                 $this->parsemsg[] = "Stopped fetching after ".(self::$MAXIMUM_NUMBER_OF_CYCLES*self::$NUMBER_OF_KILLS_PER_CALL)." kills.";
                 break;
             }
-            // 	the first fetch ever does not have a start kill and needs to        || if we have a start kill, continue fetching until the oldest kill fetched is less 
-            // 	to continue fetching until the end, which seems to append an empty  || than the start kill, and the newest is either newer or the same (no new kills)
-            // 	array                                                               || 
+            //  the first fetch ever does not have a start kill and needs to        || if we have a start kill, continue fetching until the oldest kill fetched is less 
+            //  to continue fetching until the end, which seems to append an empty  || than the start kill, and the newest is either newer or the same (no new kills)
+            //  array                                                               || 
         }  while(($startKill == 0 && count(array_slice($this->killLog, -1)) != 0) || ($startKill > 0 && !($startKill > $this->maxID && $startKill <= $latestKillIdFetched)));
 
         //If the last call returned ampty check the previous one
@@ -339,8 +339,8 @@ class ESIFetch extends ESISSO
                            ."'>Kill ".$killid."</a></div>";
                 // reset URL scheme to configured setting
                 \edkURI::usePath(\Config::get('cfg_pathinfo'));  
-    	    }
-    	}
+            }
+        }
         return $output;
     }
     
