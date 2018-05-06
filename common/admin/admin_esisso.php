@@ -15,16 +15,31 @@ $confirm = "";
 
 if(isset($_POST['submit-key']))
 {
-  config::set('cfg_sso_client_id',$_POST['client_id']);
-  config::set('cfg_sso_secret',$_POST['secret']);
-  config::set('cfg_max_proc_time_per_sso_key', (int)$_POST['cfg_max_proc_time_per_sso_key']);
- 
-  if (isset($_POST['post_no_npc_only']) && $_POST['post_no_npc_only']) {
-    config::set('post_no_npc_only', '1');
-  } else {
-    config::set('post_no_npc_only', '0');
-  }
-  $confirm = "<span style='color:green'>Settings Saved</span><br/>";
+    config::set('cfg_sso_client_id',$_POST['client_id']);
+    config::set('cfg_sso_secret',$_POST['secret']);
+    config::set('cfg_max_proc_time_per_sso_key', (int)$_POST['cfg_max_proc_time_per_sso_key']);
+
+    if (isset($_POST['post_no_npc_only']) && $_POST['post_no_npc_only']) 
+    {
+      config::set('post_no_npc_only', '1');
+    } 
+    
+    else 
+    {
+      config::set('post_no_npc_only', '0');
+    }
+
+    if (isset($_POST['sso_allow_owners_only']) && $_POST['sso_allow_owners_only']) 
+    {
+      config::set('sso_allow_owners_only', '1');
+    } 
+    
+    else 
+    {
+      config::set('sso_allow_owners_only', '0');
+    }
+
+    $confirm = "<span style='color:green'>Settings Saved</span><br/>";
 }
 
 $qry = DBFactory::getDBQuery();
@@ -54,10 +69,19 @@ $html .= "<tr><td colspan=\"4\">Your EVE SSO callback URL should be set to ".edk
 $html .= "<tr><td colspan=\"4\"><br/>Register and application here: <a href=https://developers.eveonline.com/ target=\"_blank\">https://developers.eveonline.com</a> (valid subscription needed)<br/>In the Permissions section, select the following scopes: esi-killmails.read_killmails.v1, esi-killmails.read_corporation_killmails.v1</td></tr>";
 $html .= "<tr><td><b>Maximum processing time per ESI SSO key [s]:</b></td><td><input type='text' size='10' name='cfg_max_proc_time_per_sso_key' value='".config::get('cfg_max_proc_time_per_sso_key')."'/></td></tr>";
 
+// option: ignore NPC only kills
 $html .= "<tr><td><b>Ignore NPC only deaths?</b></td>";
 $html .= "<td><input type='checkbox' name='post_no_npc_only' id='post_no_npc_only'";
 if (config::get('post_no_npc_only')) $html .= " checked=\"checked\"";
 $html .= " /></td></tr>";
+
+
+// option: only allow board owners to register for ESI fetch
+$html .= "<tr><td><b>Only allow board owners to register?</b></td>";
+$html .= "<td><input type='checkbox' name='sso_allow_owners_only' id='sso_allow_owners_only'";
+if (config::get('sso_allow_owners_only')) $html .= " checked=\"checked\"";
+$html .= " /></td></tr>";
+
 $html .= "<tr></tr><tr><td></td><td colspan=\"4\" ><input type=\"submit\" name=\"submit-key\" value=\"Save\"></td></tr>";
 $html .= "<tr><td colspan=\"4\">&nbsp;</td></tr>";
 $html .= "</table>";

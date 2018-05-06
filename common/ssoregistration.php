@@ -1,6 +1,7 @@
 <?php
 
 use EDK\ESI\ESISSO;
+use EDK\ESI\EdkSsoException;
 
 class pSsoRegistration extends pageAssembly
 {
@@ -119,8 +120,13 @@ class pSsoRegistration extends pageAssembly
             try
             {
                 $EsiSso->fetchToken($code);
-                $EsiSso->add();
                 $Pilot = new \Pilot(0, $EsiSso->getCharacterID());
+                
+                // verify whether that pilot is allowed to register
+                $this->verifyPilotForRegistration($Pilot);
+
+                $EsiSso->add();
+                
                 
                 if(ESISSO::KEY_TYPE_CORPORATION == $EsiSso->getKeyType())
                 {
@@ -134,9 +140,9 @@ class pSsoRegistration extends pageAssembly
                 }
             }
             
-            catch(EsiSsoException $e)
+            catch(EdkSsoException $e)
             {
-                $smarty->assign('errorMessage', $e->getMessage());
+                $this->errorMessage .= $e->getMessage();
             }
         }
     }
@@ -171,6 +177,57 @@ class pSsoRegistration extends pageAssembly
         global $smarty;
         $smarty->assign('errorMessage', $this->errorMessage);
         return $smarty->fetch(get_tpl('ssoregistration'));
+    }
+    
+    /**
+     * Executes verifications to check whether that pilot is allowed
+     * to register.
+     * 
+     * @param \Pilot $Pilot the Pilot trying to register
+     * @throws EdkSsoException if the verifications fail
+     */
+    function verifyPilotForRegistration($Pilot)
+    {
+        // do we need to check for board owners?
+        if(Config::get('sso_allow_owners_only'))
+        {
+            $isPilotAllowed = false;
+            // make sure the pilot information is up-to-date
+            $Pilot->fetchPilot();
+            
+            $Corporation = $Pilot->getCorp();
+            $Corporation->fetchCorp();
+            
+            if (count(config::get('cfg_pilotid')) > 0)
+            {
+                if (in_array($Pilot->getID(), config::get('cfg_pilotid')))
+                {
+                    $isPilotAllowed = true;
+                }
+            }
+            if ($Corporation && count(config::get('cfg_corpid')) > 0)
+            {
+                if (in_array($Corporation->getID(), config::get('cfg_corpid')))
+                {
+                    $isPilotAllowed = true;
+                }
+            }
+            if ($Corporation && count(config::get('cfg_allianceid')) > 0)
+            {
+                $Alliance = $Corporation->getAlliance();
+                $Alliance->fetchAlliance();
+                if ($Alliance && in_array($Alliance->getID(), config::get('cfg_allianceid')))
+                {
+                    $isPilotAllowed = true;
+                }
+            }
+            
+            if(!$isPilotAllowed)
+            {
+                EDKError::log("Pilot ".$Pilot->getName()." is not allowed to register for ESI fetching! (Corp: ".$Pilot->getCorp()->getName().", Alliance: ".$Pilot->getCorp()->getAlliance()->getName().")");
+                throw new EdkSsoException('Only killboard owners are allowed to register!');
+            }
+        }
     }
     
 }
