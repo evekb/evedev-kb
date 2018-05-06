@@ -11,11 +11,11 @@ options::cat('Advanced', 'Posting Options', 'Posting Options');
 options::fadd('Enable Comments', 'comments', 'checkbox');
 options::fadd('Require password for Comments', 'comments_pw', 'checkbox');
 options::fadd('Forbid killmail posting', 'post_forbid', 'checkbox');
-options::fadd('Forbid CREST link posting', 'post_crest_forbid', 'checkbox');
-options::fadd('Require password for CREST link posting', 'crest_pw_needed', 'checkbox');
+options::fadd('Forbid ESI link posting', 'post_crest_forbid', 'checkbox');
+options::fadd('Require password for ESI link posting', 'crest_pw_needed', 'checkbox');
 
 options::fadd('Killmail post password', 'post_password', 'password', '', array('admin_posting', 'setPostPassword'));
-options::fadd('CREST link post password', 'post_crest_password', 'password', '', array('admin_posting', 'setCrestPostPassword'));
+options::fadd('ESI link post password', 'post_crest_password', 'password', '', array('admin_posting', 'setCrestPostPassword'));
 options::fadd('Comment post password', 'comment_password', 'password', '', array('admin_posting', 'setCommentPassword'));
 
 options::fadd('Disallow any killmails before', 'filter_date', 'custom', array('admin_posting', 'dateSelector'), array('admin_posting', 'postDateSelector'));

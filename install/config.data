@@ -27,7 +27,7 @@ map_map_showlines	1
 map_region_cache	1
 map_reg_security	1
 map_reg_showlines	1
-post_forbid	0
+post_forbid	1
 post_crest_forbid	0
 post_permission	all
 public_losses	0
@@ -65,3 +65,4 @@ cfg_redis_port	0
 cfg_redis_db	0
 skipNonVerifyableKills	1
 cfg_max_proc_time_per_sso_key	55
+sso_allow_owners_only	1
