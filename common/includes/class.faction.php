@@ -111,7 +111,6 @@ class Faction extends Cacheable
             {
                 $cache = $this->getCache();
                 $this->id = $cache->getID();
-                $this->factionID = $cache->factionID;
                 $this->factionName = $cache->factionName;
                 $this->description = $cache->description;
                 $this->raceIDs = $cache->raceIDs;

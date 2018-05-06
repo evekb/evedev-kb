@@ -295,7 +295,7 @@ class EsiParser
             {
                 throw new EsiParserException("Unable to resolve victim ID ".$Victim->getCharacterId());
             }
-            $hashIn .= $this->idNameMapping[$Attacker->getCharacterId()];
+            $hashIn .= $this->idNameMapping[$Victim->getCharacterId()];
         }
         
         // was it a pos structure?
