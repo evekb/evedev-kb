@@ -152,6 +152,12 @@ function post_crest()
             $html .= $e->getMessage();
             return $html;
         }
+        catch (KillException $e) 
+        {
+            // abort
+            $html .= $e->getMessage();
+            return $html;
+        }
         catch(EsiParserException $e) 
         {
             if($e->getCode() == -4 )

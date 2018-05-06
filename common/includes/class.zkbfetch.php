@@ -431,9 +431,9 @@ class ZKBFetch
                     $this->parsemsg[] = $e->getMessage();
                 }
                 
-                catch(CrestParserException $e)
+                catch(ApiException $e)
                 {
-                        $this->parsemsg[] = "Error communicating with CREST, aborting!";
+                        $this->parsemsg[] = "Error communicating with ESI, aborting!";
                         $this->parsemsg[] = $e->getMessage();
                         break;
                 }
@@ -465,7 +465,9 @@ class ZKBFetch
     
     /**
      * processes a single kill from the zKB API
-     * @param json $killData a json decoeded kill
+     * @param json $killData a json decoded kill
+     * @throws ZKBFetchException if kill cannot be parsed
+     * @throws ApiException on error when fetching the kill from ESI
      */
     protected function processKill($killData)
     {
@@ -538,27 +540,47 @@ class ZKBFetch
         {
             $killId = $EsiParser->parse();
         } 
-        catch(ApiExtection $e)
-        {
-            $this->skipped[] = $killData->killmail_id;
-            throw new ZKBFetchException($e->getMessage().", KillID = ".$killData->killmail_id);
-        }
         
         catch (EsiParserException $e) 
         {
-            if($e->getCode() == -5)
+            // tried posting an NPC only kill when not allowed (-5)
+            // kill deleted permanently (-4)
+            // kill too old to be posted (-3)
+            // kill already posted, but not detected during pre-check (should not happen) (-1)
+            if($e->getCode() < 0)
             {
                 $this->skipped[] = $killData->killmail_id;
                 return;
             }
-            
+
             else
             {
                 $this->skipped[] = $killData->killmail_id;
                 throw new ZKBFetchException($e->getMessage().", KillID = ".$killData->killmail_id);
             }
         }
-       self::$NUMBER_OF_KILLS_FETCHED_FROM_CREST++;
+        
+        catch(ApiException $e)
+        {
+            // ESI error due to incorrect ESI hash
+            if($e->getCode() == 422 && config::get('skipNonVerifyableKills'))
+            {
+                $this->skipped[] = $killData->killmail_id;
+                throw new ZKBFetchException($e->getMessage().", KillID = ".$killData->killmail_id);
+            }
+
+            else
+            {
+                throw $e;
+            }
+        }
+        
+        catch(KillException $e)
+        {
+            $this->skipped[] = $killData->killmail_id;
+            throw new ZKBFetchException($e->getMessage().", KillID = ".$killData->killmail_id);
+        }
+        self::$NUMBER_OF_KILLS_FETCHED_FROM_CREST++;
 
         if($killId > 0)
         {

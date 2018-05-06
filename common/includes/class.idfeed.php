@@ -486,7 +486,8 @@ class IDFeed
 
     /**
      * @param SimpleXMLElement $row The row for a single kill.
-     * @throws CrestException
+     * @throws EsiParserException on error when parsing the kill
+     * @throws \Swagger\Client\ApiException on error when fetching the kill from ESI
      */
     private function processKill($row)
     {
@@ -578,20 +579,12 @@ class IDFeed
                     try
                     {
                         $id = $EsiParser->parse();
-                    } 
-                    catch (EsiParserException $e) 
+                    }
+                    
+                    catch(ApiException $e)
                     {
-                        $killException = $e;
-                        $id = 0;
-
-                        // special treatment for dupes (-1) / permanently deleted kills (-4)
-                        if($e->getCode() < 0)
-                        {
-                            $id = $e->getCode();
-                        }
-
                         // ESI error due to incorrect ESI hash
-                        else if($e->getCode() == 422)
+                        if($e->getCode() == 422)
                         {
                             // check if kills with invalid CREST hash should be posted as non-verified kills
                             if(!config::get('skipNonVerifyableKills'))
@@ -615,17 +608,34 @@ class IDFeed
                             }
                         }
                         
-                        // tried posting an NPC only kill when not allowed
-                        else if($e->getCode() == -5)
-                        {
-                            $skip = true;
-                        }
-
-                        // there seems to be a problem communicating with CREST, stop fetching
                         else
                         {
                             throw $e;
                         }
+                    }
+                    catch (EsiParserException $e) 
+                    {
+                        $killException = $e;
+                        $id = 0;
+
+                        // tried posting an NPC only kill when not allowed (-5)
+                        // kill deleted permanently (-4)
+                        // kill too old to be posted (-3)
+                        // kill already posted, but not detected during pre-check (should not happen) (-1)
+                        if($e->getCode() < 0)
+                        {
+                            $id = $e->getCode();
+                        }
+
+                        else
+                        {
+                            throw $e;
+                        }
+                    }
+                    
+                    catch(KillException $e)
+                    {
+                        $killException = new KillException($e->getMessage().'Kill-ID: '.$kill->getExternalID(), $e->getCode());
                     }
                     self::$NUMBER_OF_KILLS_FETCHED_FROM_CREST++;
                 }

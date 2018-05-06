@@ -10,6 +10,7 @@ namespace EDK\ESI;
 use EDK\ESI\ESI;
 use EsiClient\KillmailsApi;
 use Swagger\Client\ApiException;
+use EsiParserException;
 
 class ESIFetchException extends \Exception {}
 /**
@@ -307,9 +308,7 @@ class ESIFetch extends ESISSO
             
             catch(EsiParserException $e)
             {
-                $this->parsemsg[] = "Error communicating with ESI, aborting!";
-                $this->parsemsg[] = $e->getMessage();
-                break;
+                $this->parsemsg[] = "Error communicating with ESI: ".$e->getMessage();
             }
         }
         
@@ -376,40 +375,45 @@ class ESIFetch extends ESISSO
         {
             $killId = $EsiParser->parse();
         } 
-        catch(ApiExtection $e)
+        
+        catch(ApiException $e)
         {
-            $this->skipped[] = $id;
-            throw new ESIFetchException($e->getMessage().", KillID = ".$id);
+            // ESI error due to incorrect ESI hash
+            if($e->getCode() == 422 && config::get('skipNonVerifyableKills'))
+            {
+                $this->skipped[] = $id;
+                throw new ESIFetchException($e->getMessage().", KillID = ".$killData->killmail_id);
+            }
+
+            else
+            {
+                throw $e;
+            }
         }
 
         catch (EsiParserException $e) 
         {
-            // CREST error due to incorrect CREST hash
-            if($e->getCode() == 403)
-            {
-                // check if kills with invalid CREST hash should be posted as non-verified kills
-                if(!config::get('skipNonVerifyableKills'))
-                {
-                    // reset external ID and CREST has so the kill is not API verified
-                    $Kill->setExternalID(null);
-                    $Kill->setCrestHash(null);
-                }
-                else
-                {
-                    $this->skipped[] = $id;
-                    throw new ESIFetchException($e->getMessage());
-                }
-            }
-            // tried posting an NPC only kill when not allowed
-            else if($e->getCode() == -5)
+             // tried posting an NPC only kill when not allowed (-5)
+            // kill deleted permanently (-4)
+            // kill too old to be posted (-3)
+            // kill already posted, but not detected during pre-check (should not happen) (-1)
+            if($e->getCode() < 0)
             {
                 $this->skipped[] = $id;
                 return;
             }
-            
-            // post kill using provided information, without using CREST
-            $this->skipped[] = $killData->killID;
-            throw new ESIFetchException($e->getMessage().", KillID = ".$killData->killID);
+
+            else
+            {
+                $this->skipped[] = $id;
+                throw new ESIFetchException($e->getMessage().", KillID = ".$id);
+            }
+        }
+        
+        catch(KillException $e)
+        {
+            $this->skipped[] = $id;
+            throw new ESIFetchException($e->getMessage().", KillID = ".$id);
         }
         self::$NUMBER_OF_KILLS_FETCHED_FROM_ESI++;
         if ($id > $this->lastKillID) 

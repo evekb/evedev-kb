@@ -54,6 +54,7 @@ class EsiParser
      * @return mixed the internal kill ID if posted successfully, <code>false</code> if an error occurs while adding the kill to the database
      * @throws EsiParserException if there's an error parsing the kill
      * @throws ApiException if there's an error while communicating with ESI 
+     * @throws KillException if there's an error adding the kill
      */
     function parse()
     {
@@ -67,7 +68,7 @@ class EsiParser
         catch(ApiException $e)
         {
             EDKError::log(ESI::getApiExceptionReason($e) . PHP_EOL . $e->getTraceAsString());
-            throw new EsiParserException(ESI::getApiExceptionReason($e), $e->getCode());
+            throw $e;
         }
         
         // gather all involved entity IDs for bulk translating to names
@@ -97,10 +98,16 @@ class EsiParser
             // We still want to update the external ID if we were given one.            
             if($this->externalID)
             { 
+                $x = null;
+                $y = null;
+                $z = null;
                 $Position = $this->EsiKill->getVictim()->getPosition();
-                $x = $Position->getX();
-                $y = $Position->getY();
-                $z = $Position->getZ();
+                if(!is_null($Position))
+                {
+                    $x = $Position->getX();
+                    $y = $Position->getY();
+                    $z = $Position->getZ();
+                }
                 
                 // update the kill's coordinates, if the we don't know them already
                 $updateParams = new \DBPreparedQuery();
@@ -172,10 +179,10 @@ class EsiParser
         if(config::get('filter_apply'))
         {
             $filterdate = config::get('filter_date');
-            if ($timestamp < $filterdate) 
+            if (strtotime($timestamp) < $filterdate) 
             {
                 $filterdate = kbdate("j F Y", config::get("filter_date"));
-                throw new EsiParserException("You are not allowed to post killmails older than" .$filterdate, -3);
+                throw new EsiParserException("You are not allowed to post killmails older than " .$filterdate, -3);
             }
         }
 
@@ -206,6 +213,7 @@ class EsiParser
         {
             throw new EsiParserException("Kill is a loss to NPCs only, but posting NPC kills is not allowed!", -5);
         }
+        
         return $Kill->add();
     }
 
