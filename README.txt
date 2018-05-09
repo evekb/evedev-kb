@@ -5,13 +5,14 @@ Eve Development Network Killboard v4.4.0.0
 // REQUIREMENTS
 -------------------------------------------
 - Webserver (Apache, IIS)
-- PHP 5.6+ with cURL support
+- PHP 5.6+
 - Mysql 5+
 - GD 2 or higher
 
 
 // SETUP
 -------------------------------------------
+
 - Upload the whole package to a webhost
 - Point your webbrowser to /install inside the
     EDK-Directory
@@ -26,6 +27,37 @@ o/ EVE Development Network
 VERSION HISTORY
 ===============
 
+v4.4.0.0
+Features:
+Updated EDK to 4.4.0.0 and CCPDB to YC-120-3 1.0.20180502
+Support ESI for fetching kills
+Use ESI for item value updates
+Remove old XML API and CREST completely - they are now shutdown by CCP and down work anymore!
+
+Enhancements:
+Installer: Updated minimum PHP version (and check) to 5.6
+Installer: Updated Eve-Dev URL to evekb.org in page footer
+Generated new ESI client library from _latest 20180502
+ESI Link posting: Allowed legacy ESI link for zKB link support
+SSO: Added setting to only allow board owners to register for ESI fetching
+Updated readme file for cron jobs with cron for ESI fetching
+Added PHP version check to auto updater (at least 5.6 for EDK 4.3 and above)
+Default theme: Use official login image for SSO registration
+
+Note: This is just a rough overview of what went in. For more details see
+the git history.
+
+-------------------------------------------
+-------------------------------------------
+v4.2.37.0
+Features:
+Updated EDK to 4.2.37.0 and CCPDB to YC-120-3 1.0.20180323
+
+Enhancements:
+Added PHP version check to auto updater (at least 5.6 for EDK 4.3 and above)
+
+-------------------------------------------
+v4.2.36.0
 Features:
 Updated EDK to 4.2.36.0 and CCPDB to Arms Race 1.0.20171205
 
