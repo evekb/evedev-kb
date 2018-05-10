@@ -110,21 +110,24 @@ class EsiParser
                 }
                 
                 // update the kill's coordinates, if the we don't know them already
-                $updateParams = new \DBPreparedQuery();
-                $updateParams->prepare("UPDATE kb3_kills"
-                        ." JOIN kb3_mails ON kb3_mails.kll_id = kb3_kills.kll_id"
-                        ." SET kb3_kills.kll_external_id = ?"
-                            .", kb3_mails.kll_external_id = ?"
-                            .", kll_modified_time = UTC_TIMESTAMP()"
-                            .", kb3_kills.kll_x = ?"
-                            .", kb3_kills.kll_y = ?"
-                            .", kb3_kills.kll_z = ?"
-                        ." WHERE kb3_kills.kll_id = ?"
-                        ." AND (kb3_kills.kll_external_id IS NULL OR kb3_kills.kll_x = 0)");
-                $types = 'iidddi';
-                $arr = array(&$types, &$this->externalID, &$this->externalID, &$x, &$y, &$z, &$this->dupeid_);
-                $updateParams->bind_params($arr);
-                $updateParams->execute();
+                if(!is_null($x) && !is_null($y) && !is_null($z))
+                {
+                    $updateParams = new \DBPreparedQuery();
+                    $updateParams->prepare("UPDATE kb3_kills"
+                            ." JOIN kb3_mails ON kb3_mails.kll_id = kb3_kills.kll_id"
+                            ." SET kb3_kills.kll_external_id = ?"
+                                .", kb3_mails.kll_external_id = ?"
+                                .", kll_modified_time = UTC_TIMESTAMP()"
+                                .", kb3_kills.kll_x = ?"
+                                .", kb3_kills.kll_y = ?"
+                                .", kb3_kills.kll_z = ?"
+                            ." WHERE kb3_kills.kll_id = ?"
+                            ." AND (kb3_kills.kll_external_id IS NULL OR kb3_kills.kll_x = 0)");
+                    $types = 'iidddi';
+                    $arr = array(&$types, &$this->externalID, &$this->externalID, &$x, &$y, &$z, &$this->dupeid_);
+                    $updateParams->bind_params($arr);
+                    $updateParams->execute();
+                }
                 
                 // update trust level
                 if($trust >= 0 && $this->trust && $trust > $this->trust) 
@@ -725,7 +728,7 @@ class EsiParser
 
         // process container-items
         // check, if $EsiItem is a root-level item, that may have items inside
-        if(count($EsiItem->getItems()) > 0)
+        if(!is_null($EsiItem->getItems()) && count($EsiItem->getItems()) > 0)
         {
             foreach($EsiItem->getItems() AS $ItemInContainer)
             {
