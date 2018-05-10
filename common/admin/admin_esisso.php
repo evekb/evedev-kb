@@ -5,8 +5,7 @@
  * $HeadURL$
  * @package EDK
  */
-ini_set('display_errors', 'On');
-error_reporting(E_ALL | E_STRICT);
+
 require_once('common/admin/admin_menu.php');
 
 $page = new Page('Administration - ESI SSO');
