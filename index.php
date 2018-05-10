@@ -10,6 +10,7 @@ require_once ('common/includes/class.edkerror.php');
 
 set_error_handler(array('EDKError', 'handler'), E_ALL & ~(E_STRICT | E_NOTICE | E_USER_NOTICE) );
 @error_reporting(E_ALL & ~(E_STRICT | E_NOTICE | E_USER_NOTICE));
+date_default_timezone_set("UTC");
 
 // Set up include paths.
 if (!substr_compare(PHP_OS, 'win', 0, 3, true))
