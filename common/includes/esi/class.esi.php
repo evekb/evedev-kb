@@ -5,7 +5,7 @@ require_once("common/esi/autoload.php");
 require_once("common/phpfastcache/src/autoload.php");
 
 use Swagger\Client\ApiClient;
-use Swagger\Client\Configuration;
+use EDK\ESI\EsiConfiguration;
 use Swagger\Client\ApiException;
 
 use phpFastCache\CacheManager;
@@ -34,26 +34,19 @@ class ESI extends ApiClient
     /** maximum number of retries for a specific call after a timeout occurred */
     protected static $MAX_NUMBER_OF_RETRIES = 3;
     
-    /** cURL timeout in seconds, deliberately chosen very short */
-    protected static $CURL_TIMEOUT = 3;
+    /** @param EsiConfiguration the EDK ESI configuration */
+    protected $esiConfig;
     
     protected static $curlMultiProcessor;
     
-    public function __construct(\Swagger\Client\Configuration $esiConfig = null) 
+    public function __construct(EsiConfiguration $esiConfig = null) 
     {    
         if($esiConfig == null)
         {
-            $esiConfig = Configuration::getDefaultConfiguration();
-            $esiConfig->setCurlTimeout(self::$CURL_TIMEOUT);
-            $esiConfig->setUserAgent(EDK_USER_AGENT);
-            $esiConfig->setDebugFile(KB_CACHEDIR . DIRECTORY_SEPARATOR . 'esi' . DIRECTORY_SEPARATOR . 'debug.log');
-            if(defined('ESI_DEBUG'))
-            {
-                $esiConfig->setDebug(ESI_DEBUG);
-            }
-            // disable the expect header, because the ESI server reacts with HTTP 502
-            $esiConfig->addDefaultHeader('Expect', '');
+            $esiConfig = EsiConfiguration::getDefaultEsiConfiguration();
         }
+        
+        $this->esiConfig = $esiConfig;
         
         // initialze phpFastCache instance
         if(!self::$cacheInstance)
@@ -61,7 +54,7 @@ class ESI extends ApiClient
             $this->initCacheHandler();
         }
         
-        parent::__construct($esiConfig);     
+        parent::__construct($this->esiConfig);     
     }
         
     /**
@@ -70,7 +63,7 @@ class ESI extends ApiClient
      */
     public function setAccessToken($accessToken)
     {
-        $this->config->setAccessToken($accessToken);
+        $this->getConfig()->setAccessToken($accessToken);
     }
 
     /**
@@ -95,7 +88,7 @@ class ESI extends ApiClient
 
         // construct the http header
         $headerParams = array_merge(
-            (array)$this->config->getDefaultHeaders(),
+            (array)$this->getConfig()->getDefaultHeaders(),
             (array)$headerParams
         );
 
@@ -110,12 +103,12 @@ class ESI extends ApiClient
             $postData = json_encode(\Swagger\Client\ObjectSerializer::sanitizeForSerialization($postData));
         }
 
-        $url = $this->config->getHost() . $resourcePath;
+        $url = $this->getConfig()->getHost() . $resourcePath;
 
         $curl = curl_init();
         // set timeout, if needed
-        if ($this->config->getCurlTimeout() != 0) {
-            curl_setopt($curl, CURLOPT_TIMEOUT, $this->config->getCurlTimeout());
+        if ($this->getConfig()->getCurlTimeout() != 0) {
+            curl_setopt($curl, CURLOPT_TIMEOUT, $this->getConfig()->getCurlTimeout());
         }
         // return the result on success, rather than just true
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -124,7 +117,7 @@ class ESI extends ApiClient
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
         // disable SSL verification, if needed
-        if ($this->config->getSSLVerification() == false) {
+        if ($this->getConfig()->getSSLVerification() == false) {
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
             curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
         }
@@ -162,14 +155,14 @@ class ESI extends ApiClient
         curl_setopt($curl, CURLOPT_URL, $url);
 
         // Set user agent
-        curl_setopt($curl, CURLOPT_USERAGENT, $this->config->getUserAgent());
+        curl_setopt($curl, CURLOPT_USERAGENT, $this->getConfig()->getUserAgent());
 
         // debugging for curl
         if ($this->config->getDebug()) {
             error_log("[DEBUG] HTTP Request body  ~BEGIN~".PHP_EOL.print_r($postData, true).PHP_EOL."~END~".PHP_EOL, 3, $this->config->getDebugFile());
 
             curl_setopt($curl, CURLOPT_VERBOSE, 1);
-            curl_setopt($curl, CURLOPT_STDERR, fopen($this->config->getDebugFile(), 'a'));
+            curl_setopt($curl, CURLOPT_STDERR, fopen($this->getConfig()->getDebugFile(), 'a'));
         } else {
             curl_setopt($curl, CURLOPT_VERBOSE, 0);
         }
@@ -191,9 +184,9 @@ class ESI extends ApiClient
         // Make the request
         $numberOfTries = 0;
         do {
-            if($numberOfTries > 0 && $this->config->getDebug())
+            if($numberOfTries > 0 && $this->getConfig()->getDebug())
             {
-                error_log("[DEBUG] Retry no ".$numberOfTries . PHP_EOL, 3, $this->config->getDebugFile());
+                error_log("[DEBUG] Retry no ".$numberOfTries . PHP_EOL, 3, $this->getConfig()->getDebugFile());
             }
             $startTime = microtime(true);
             $response = $this->curlExecWithMulti($curl);
@@ -203,12 +196,12 @@ class ESI extends ApiClient
             $response_info = curl_getinfo($curl);
             $timeForRequest = microtime(true) - $startTime;
             self::$totalEsiTime += $timeForRequest;
-            if($this->config->getDebug())
+            if($this->getConfig()->getDebug())
             {
-                error_log("[DEBUG] Request took ".$timeForRequest."s" . PHP_EOL, 3, $this->config->getDebugFile());
+                error_log("[DEBUG] Request took ".$timeForRequest."s" . PHP_EOL, 3, $this->getConfig()->getDebugFile());
             }
             $numberOfTries++;
-        } while ($numberOfTries <= self::$MAX_NUMBER_OF_RETRIES && 
+        } while ($numberOfTries <= $this->esiConfig->getMaxNumberOfRetries() && 
                     (
                         curl_errno($curl) == 28 // Timeout
                         ||   (curl_errno($curl) == 0 && !empty(curl_error($curl))) // in some cases, error code 0 is reported with a timeout error message 
@@ -217,8 +210,8 @@ class ESI extends ApiClient
                 );
         
         // debug HTTP response body
-        if ($this->config->getDebug()) {
-            error_log("[DEBUG] HTTP Response body ~BEGIN~".PHP_EOL.print_r($http_body, true).PHP_EOL."~END~".PHP_EOL, 3, $this->config->getDebugFile());
+        if ($this->getConfig()->getDebug()) {
+            error_log("[DEBUG] HTTP Response body ~BEGIN~".PHP_EOL.print_r($http_body, true).PHP_EOL."~END~".PHP_EOL, 3, $this->getConfig()->getDebugFile());
         }
 
         // Handle the response
