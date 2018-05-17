@@ -580,10 +580,10 @@ class ZKBFetch
             $this->skipped[] = $killData->killmail_id;
             throw new ZKBFetchException($e->getMessage().", KillID = ".$killData->killmail_id);
         }
-        self::$NUMBER_OF_KILLS_FETCHED_FROM_CREST++;
-
+        
         if($killId > 0)
         {
+            self::$NUMBER_OF_KILLS_FETCHED_FROM_CREST++;
             $this->posted[] = $killData->killmail_id;
             $logaddress = "ZKB:".$this->url;
             $baseUrlEndIndex = strpos($logaddress, 'api/');
