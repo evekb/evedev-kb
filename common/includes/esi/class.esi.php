@@ -200,6 +200,11 @@ class ESI extends ApiClient
             {
                 error_log("[DEBUG] Request took ".$timeForRequest."s" . PHP_EOL, 3, $this->getConfig()->getDebugFile());
             }
+            
+            if(isset($http_header['Warning']))
+            {
+                error_log("[WARNING] Endpoint ".$this->getConfig()->getHost() . $resourcePath." warning: ".$http_header['Warning']);
+            }
             $numberOfTries++;
         } while ($numberOfTries <= $this->esiConfig->getMaxNumberOfRetries() && 
                     (

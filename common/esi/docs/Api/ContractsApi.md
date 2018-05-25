@@ -13,7 +13,7 @@ Method | HTTP request | Description
 
 
 # **getCharactersCharacterIdContracts**
-> \Swagger\Client\Model\GetCharactersCharacterIdContracts200Ok[] getCharactersCharacterIdContracts($character_id, $datasource, $if_none_match, $page, $token, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetCharactersCharacterIdContracts200Ok[] getCharactersCharacterIdContracts($character_id, $datasource, $if_none_match, $page, $token)
 
 Get contracts
 
@@ -33,11 +33,9 @@ $datasource = "tranquility"; // string | The server name you would like data fro
 $if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $page = 1; // int | Which page of results to return
 $token = "token_example"; // string | Access token to use if unable to set a header
-$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
-$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getCharactersCharacterIdContracts($character_id, $datasource, $if_none_match, $page, $token, $user_agent, $x_user_agent);
+    $result = $api_instance->getCharactersCharacterIdContracts($character_id, $datasource, $if_none_match, $page, $token);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling ContractsApi->getCharactersCharacterIdContracts: ', $e->getMessage(), PHP_EOL;
@@ -54,8 +52,6 @@ Name | Type | Description  | Notes
  **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **page** | **int**| Which page of results to return | [optional] [default to 1]
  **token** | **string**| Access token to use if unable to set a header | [optional]
- **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
- **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -73,7 +69,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getCharactersCharacterIdContractsContractIdBids**
-> \Swagger\Client\Model\GetCharactersCharacterIdContractsContractIdBids200Ok[] getCharactersCharacterIdContractsContractIdBids($character_id, $contract_id, $datasource, $if_none_match, $token, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetCharactersCharacterIdContractsContractIdBids200Ok[] getCharactersCharacterIdContractsContractIdBids($character_id, $contract_id, $datasource, $if_none_match, $token)
 
 Get contract bids
 
@@ -93,11 +89,9 @@ $contract_id = 56; // int | ID of a contract
 $datasource = "tranquility"; // string | The server name you would like data from
 $if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $token = "token_example"; // string | Access token to use if unable to set a header
-$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
-$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getCharactersCharacterIdContractsContractIdBids($character_id, $contract_id, $datasource, $if_none_match, $token, $user_agent, $x_user_agent);
+    $result = $api_instance->getCharactersCharacterIdContractsContractIdBids($character_id, $contract_id, $datasource, $if_none_match, $token);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling ContractsApi->getCharactersCharacterIdContractsContractIdBids: ', $e->getMessage(), PHP_EOL;
@@ -114,8 +108,6 @@ Name | Type | Description  | Notes
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
  **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **token** | **string**| Access token to use if unable to set a header | [optional]
- **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
- **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -133,7 +125,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getCharactersCharacterIdContractsContractIdItems**
-> \Swagger\Client\Model\GetCharactersCharacterIdContractsContractIdItems200Ok[] getCharactersCharacterIdContractsContractIdItems($character_id, $contract_id, $datasource, $if_none_match, $token, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetCharactersCharacterIdContractsContractIdItems200Ok[] getCharactersCharacterIdContractsContractIdItems($character_id, $contract_id, $datasource, $if_none_match, $token)
 
 Get contract items
 
@@ -153,11 +145,9 @@ $contract_id = 56; // int | ID of a contract
 $datasource = "tranquility"; // string | The server name you would like data from
 $if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $token = "token_example"; // string | Access token to use if unable to set a header
-$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
-$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getCharactersCharacterIdContractsContractIdItems($character_id, $contract_id, $datasource, $if_none_match, $token, $user_agent, $x_user_agent);
+    $result = $api_instance->getCharactersCharacterIdContractsContractIdItems($character_id, $contract_id, $datasource, $if_none_match, $token);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling ContractsApi->getCharactersCharacterIdContractsContractIdItems: ', $e->getMessage(), PHP_EOL;
@@ -174,8 +164,6 @@ Name | Type | Description  | Notes
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
  **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **token** | **string**| Access token to use if unable to set a header | [optional]
- **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
- **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -193,7 +181,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getCorporationsCorporationIdContracts**
-> \Swagger\Client\Model\GetCorporationsCorporationIdContracts200Ok[] getCorporationsCorporationIdContracts($corporation_id, $datasource, $if_none_match, $page, $token, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetCorporationsCorporationIdContracts200Ok[] getCorporationsCorporationIdContracts($corporation_id, $datasource, $if_none_match, $page, $token)
 
 Get coporation contracts
 
@@ -213,11 +201,9 @@ $datasource = "tranquility"; // string | The server name you would like data fro
 $if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $page = 1; // int | Which page of results to return
 $token = "token_example"; // string | Access token to use if unable to set a header
-$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
-$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getCorporationsCorporationIdContracts($corporation_id, $datasource, $if_none_match, $page, $token, $user_agent, $x_user_agent);
+    $result = $api_instance->getCorporationsCorporationIdContracts($corporation_id, $datasource, $if_none_match, $page, $token);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling ContractsApi->getCorporationsCorporationIdContracts: ', $e->getMessage(), PHP_EOL;
@@ -234,8 +220,6 @@ Name | Type | Description  | Notes
  **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **page** | **int**| Which page of results to return | [optional] [default to 1]
  **token** | **string**| Access token to use if unable to set a header | [optional]
- **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
- **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -253,7 +237,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getCorporationsCorporationIdContractsContractIdBids**
-> \Swagger\Client\Model\GetCorporationsCorporationIdContractsContractIdBids200Ok[] getCorporationsCorporationIdContractsContractIdBids($contract_id, $corporation_id, $datasource, $if_none_match, $page, $token, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetCorporationsCorporationIdContractsContractIdBids200Ok[] getCorporationsCorporationIdContractsContractIdBids($contract_id, $corporation_id, $datasource, $if_none_match, $page, $token)
 
 Get corporation contract bids
 
@@ -274,11 +258,9 @@ $datasource = "tranquility"; // string | The server name you would like data fro
 $if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $page = 1; // int | Which page of results to return
 $token = "token_example"; // string | Access token to use if unable to set a header
-$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
-$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getCorporationsCorporationIdContractsContractIdBids($contract_id, $corporation_id, $datasource, $if_none_match, $page, $token, $user_agent, $x_user_agent);
+    $result = $api_instance->getCorporationsCorporationIdContractsContractIdBids($contract_id, $corporation_id, $datasource, $if_none_match, $page, $token);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling ContractsApi->getCorporationsCorporationIdContractsContractIdBids: ', $e->getMessage(), PHP_EOL;
@@ -296,8 +278,6 @@ Name | Type | Description  | Notes
  **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **page** | **int**| Which page of results to return | [optional] [default to 1]
  **token** | **string**| Access token to use if unable to set a header | [optional]
- **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
- **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -315,7 +295,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getCorporationsCorporationIdContractsContractIdItems**
-> \Swagger\Client\Model\GetCorporationsCorporationIdContractsContractIdItems200Ok[] getCorporationsCorporationIdContractsContractIdItems($contract_id, $corporation_id, $datasource, $if_none_match, $token, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetCorporationsCorporationIdContractsContractIdItems200Ok[] getCorporationsCorporationIdContractsContractIdItems($contract_id, $corporation_id, $datasource, $if_none_match, $token)
 
 Get corporation contract items
 
@@ -335,11 +315,9 @@ $corporation_id = 56; // int | An EVE corporation ID
 $datasource = "tranquility"; // string | The server name you would like data from
 $if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $token = "token_example"; // string | Access token to use if unable to set a header
-$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
-$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getCorporationsCorporationIdContractsContractIdItems($contract_id, $corporation_id, $datasource, $if_none_match, $token, $user_agent, $x_user_agent);
+    $result = $api_instance->getCorporationsCorporationIdContractsContractIdItems($contract_id, $corporation_id, $datasource, $if_none_match, $token);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling ContractsApi->getCorporationsCorporationIdContractsContractIdItems: ', $e->getMessage(), PHP_EOL;
@@ -356,8 +334,6 @@ Name | Type | Description  | Notes
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
  **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **token** | **string**| Access token to use if unable to set a header | [optional]
- **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
- **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 

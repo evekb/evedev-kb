@@ -16,7 +16,7 @@ Method | HTTP request | Description
 
 
 # **deleteCharactersCharacterIdContacts**
-> deleteCharactersCharacterIdContacts($character_id, $contact_ids, $datasource, $token, $user_agent, $x_user_agent)
+> deleteCharactersCharacterIdContacts($character_id, $contact_ids, $datasource, $token)
 
 Delete contacts
 
@@ -35,11 +35,9 @@ $character_id = 56; // int | An EVE character ID
 $contact_ids = array(56); // int[] | A list of contacts to delete
 $datasource = "tranquility"; // string | The server name you would like data from
 $token = "token_example"; // string | Access token to use if unable to set a header
-$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
-$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $api_instance->deleteCharactersCharacterIdContacts($character_id, $contact_ids, $datasource, $token, $user_agent, $x_user_agent);
+    $api_instance->deleteCharactersCharacterIdContacts($character_id, $contact_ids, $datasource, $token);
 } catch (Exception $e) {
     echo 'Exception when calling ContactsApi->deleteCharactersCharacterIdContacts: ', $e->getMessage(), PHP_EOL;
 }
@@ -54,8 +52,6 @@ Name | Type | Description  | Notes
  **contact_ids** | [**int[]**](../Model/int.md)| A list of contacts to delete |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
  **token** | **string**| Access token to use if unable to set a header | [optional]
- **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
- **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -73,11 +69,11 @@ void (empty response body)
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getAlliancesAllianceIdContacts**
-> \Swagger\Client\Model\GetAlliancesAllianceIdContacts200Ok[] getAlliancesAllianceIdContacts($alliance_id, $datasource, $if_none_match, $page, $token, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetAlliancesAllianceIdContacts200Ok[] getAlliancesAllianceIdContacts($alliance_id, $datasource, $if_none_match, $page, $token)
 
 Get alliance contacts
 
-Return contacts of an alliance  ---  This route is cached for up to 300 seconds  --- [This route has an available update](https://esi.evetech.net/diff/latest/dev/#GET-/alliances/{alliance_id}/contacts/)
+Return contacts of an alliance  ---  This route is cached for up to 300 seconds  --- Warning: This route has an upgrade available.  --- [Diff of the upcoming changes](https://esi.evetech.net/diff/latest/dev/#GET-/alliances/{alliance_id}/contacts/)
 
 ### Example
 ```php
@@ -93,11 +89,9 @@ $datasource = "tranquility"; // string | The server name you would like data fro
 $if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $page = 1; // int | Which page of results to return
 $token = "token_example"; // string | Access token to use if unable to set a header
-$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
-$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getAlliancesAllianceIdContacts($alliance_id, $datasource, $if_none_match, $page, $token, $user_agent, $x_user_agent);
+    $result = $api_instance->getAlliancesAllianceIdContacts($alliance_id, $datasource, $if_none_match, $page, $token);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling ContactsApi->getAlliancesAllianceIdContacts: ', $e->getMessage(), PHP_EOL;
@@ -114,8 +108,6 @@ Name | Type | Description  | Notes
  **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **page** | **int**| Which page of results to return | [optional] [default to 1]
  **token** | **string**| Access token to use if unable to set a header | [optional]
- **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
- **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -133,7 +125,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getAlliancesAllianceIdContactsLabels**
-> \Swagger\Client\Model\GetAlliancesAllianceIdContactsLabels200Ok[] getAlliancesAllianceIdContactsLabels($alliance_id, $datasource, $if_none_match, $token, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetAlliancesAllianceIdContactsLabels200Ok[] getAlliancesAllianceIdContactsLabels($alliance_id, $datasource, $if_none_match, $token)
 
 Get alliance contact labels
 
@@ -152,11 +144,9 @@ $alliance_id = 56; // int | An EVE alliance ID
 $datasource = "tranquility"; // string | The server name you would like data from
 $if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $token = "token_example"; // string | Access token to use if unable to set a header
-$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
-$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getAlliancesAllianceIdContactsLabels($alliance_id, $datasource, $if_none_match, $token, $user_agent, $x_user_agent);
+    $result = $api_instance->getAlliancesAllianceIdContactsLabels($alliance_id, $datasource, $if_none_match, $token);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling ContactsApi->getAlliancesAllianceIdContactsLabels: ', $e->getMessage(), PHP_EOL;
@@ -172,8 +162,6 @@ Name | Type | Description  | Notes
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
  **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **token** | **string**| Access token to use if unable to set a header | [optional]
- **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
- **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -191,11 +179,11 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getCharactersCharacterIdContacts**
-> \Swagger\Client\Model\GetCharactersCharacterIdContacts200Ok[] getCharactersCharacterIdContacts($character_id, $datasource, $if_none_match, $page, $token, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetCharactersCharacterIdContacts200Ok[] getCharactersCharacterIdContacts($character_id, $datasource, $if_none_match, $page, $token)
 
 Get contacts
 
-Return contacts of a character  ---  This route is cached for up to 300 seconds  --- [This route has an available update](https://esi.evetech.net/diff/latest/dev/#GET-/characters/{character_id}/contacts/)
+Return contacts of a character  ---  This route is cached for up to 300 seconds  --- Warning: This route has an upgrade available.  --- [Diff of the upcoming changes](https://esi.evetech.net/diff/latest/dev/#GET-/characters/{character_id}/contacts/)
 
 ### Example
 ```php
@@ -211,11 +199,9 @@ $datasource = "tranquility"; // string | The server name you would like data fro
 $if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $page = 1; // int | Which page of results to return
 $token = "token_example"; // string | Access token to use if unable to set a header
-$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
-$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getCharactersCharacterIdContacts($character_id, $datasource, $if_none_match, $page, $token, $user_agent, $x_user_agent);
+    $result = $api_instance->getCharactersCharacterIdContacts($character_id, $datasource, $if_none_match, $page, $token);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling ContactsApi->getCharactersCharacterIdContacts: ', $e->getMessage(), PHP_EOL;
@@ -232,8 +218,6 @@ Name | Type | Description  | Notes
  **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **page** | **int**| Which page of results to return | [optional] [default to 1]
  **token** | **string**| Access token to use if unable to set a header | [optional]
- **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
- **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -251,7 +235,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getCharactersCharacterIdContactsLabels**
-> \Swagger\Client\Model\GetCharactersCharacterIdContactsLabels200Ok[] getCharactersCharacterIdContactsLabels($character_id, $datasource, $if_none_match, $token, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetCharactersCharacterIdContactsLabels200Ok[] getCharactersCharacterIdContactsLabels($character_id, $datasource, $if_none_match, $token)
 
 Get contact labels
 
@@ -270,11 +254,9 @@ $character_id = 56; // int | An EVE character ID
 $datasource = "tranquility"; // string | The server name you would like data from
 $if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $token = "token_example"; // string | Access token to use if unable to set a header
-$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
-$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getCharactersCharacterIdContactsLabels($character_id, $datasource, $if_none_match, $token, $user_agent, $x_user_agent);
+    $result = $api_instance->getCharactersCharacterIdContactsLabels($character_id, $datasource, $if_none_match, $token);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling ContactsApi->getCharactersCharacterIdContactsLabels: ', $e->getMessage(), PHP_EOL;
@@ -290,8 +272,6 @@ Name | Type | Description  | Notes
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
  **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **token** | **string**| Access token to use if unable to set a header | [optional]
- **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
- **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -309,11 +289,11 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getCorporationsCorporationIdContacts**
-> \Swagger\Client\Model\GetCorporationsCorporationIdContacts200Ok[] getCorporationsCorporationIdContacts($corporation_id, $datasource, $if_none_match, $page, $token, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetCorporationsCorporationIdContacts200Ok[] getCorporationsCorporationIdContacts($corporation_id, $datasource, $if_none_match, $page, $token)
 
 Get corporation contacts
 
-Return contacts of a corporation  ---  This route is cached for up to 300 seconds  --- [This route has an available update](https://esi.evetech.net/diff/latest/dev/#GET-/corporations/{corporation_id}/contacts/)
+Return contacts of a corporation  ---  This route is cached for up to 300 seconds  --- Warning: This route has an upgrade available.  --- [Diff of the upcoming changes](https://esi.evetech.net/diff/latest/dev/#GET-/corporations/{corporation_id}/contacts/)
 
 ### Example
 ```php
@@ -329,11 +309,9 @@ $datasource = "tranquility"; // string | The server name you would like data fro
 $if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $page = 1; // int | Which page of results to return
 $token = "token_example"; // string | Access token to use if unable to set a header
-$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
-$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getCorporationsCorporationIdContacts($corporation_id, $datasource, $if_none_match, $page, $token, $user_agent, $x_user_agent);
+    $result = $api_instance->getCorporationsCorporationIdContacts($corporation_id, $datasource, $if_none_match, $page, $token);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling ContactsApi->getCorporationsCorporationIdContacts: ', $e->getMessage(), PHP_EOL;
@@ -350,8 +328,6 @@ Name | Type | Description  | Notes
  **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **page** | **int**| Which page of results to return | [optional] [default to 1]
  **token** | **string**| Access token to use if unable to set a header | [optional]
- **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
- **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -369,7 +345,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **getCorporationsCorporationIdContactsLabels**
-> \Swagger\Client\Model\GetCorporationsCorporationIdContactsLabels200Ok[] getCorporationsCorporationIdContactsLabels($corporation_id, $datasource, $if_none_match, $token, $user_agent, $x_user_agent)
+> \Swagger\Client\Model\GetCorporationsCorporationIdContactsLabels200Ok[] getCorporationsCorporationIdContactsLabels($corporation_id, $datasource, $if_none_match, $token)
 
 Get corporation contact labels
 
@@ -388,11 +364,9 @@ $corporation_id = 56; // int | An EVE corporation ID
 $datasource = "tranquility"; // string | The server name you would like data from
 $if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
 $token = "token_example"; // string | Access token to use if unable to set a header
-$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
-$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->getCorporationsCorporationIdContactsLabels($corporation_id, $datasource, $if_none_match, $token, $user_agent, $x_user_agent);
+    $result = $api_instance->getCorporationsCorporationIdContactsLabels($corporation_id, $datasource, $if_none_match, $token);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling ContactsApi->getCorporationsCorporationIdContactsLabels: ', $e->getMessage(), PHP_EOL;
@@ -408,8 +382,6 @@ Name | Type | Description  | Notes
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
  **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
  **token** | **string**| Access token to use if unable to set a header | [optional]
- **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
- **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -427,11 +399,11 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **postCharactersCharacterIdContacts**
-> int[] postCharactersCharacterIdContacts($character_id, $contact_ids, $standing, $datasource, $label_id, $token, $user_agent, $watched, $x_user_agent)
+> int[] postCharactersCharacterIdContacts($character_id, $contact_ids, $standing, $datasource, $label_id, $token, $watched)
 
 Add contacts
 
-Bulk add contacts with same settings  ---  [This route has an available update](https://esi.evetech.net/diff/latest/dev/#POST-/characters/{character_id}/contacts/)
+Bulk add contacts with same settings  ---  Warning: This route has an upgrade available.  --- [Diff of the upcoming changes](https://esi.evetech.net/diff/latest/dev/#POST-/characters/{character_id}/contacts/)
 
 ### Example
 ```php
@@ -448,12 +420,10 @@ $standing = 3.4; // float | Standing for the contact
 $datasource = "tranquility"; // string | The server name you would like data from
 $label_id = 0; // int | Add a custom label to the new contact
 $token = "token_example"; // string | Access token to use if unable to set a header
-$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $watched = false; // bool | Whether the contact should be watched, note this is only effective on characters
-$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $result = $api_instance->postCharactersCharacterIdContacts($character_id, $contact_ids, $standing, $datasource, $label_id, $token, $user_agent, $watched, $x_user_agent);
+    $result = $api_instance->postCharactersCharacterIdContacts($character_id, $contact_ids, $standing, $datasource, $label_id, $token, $watched);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling ContactsApi->postCharactersCharacterIdContacts: ', $e->getMessage(), PHP_EOL;
@@ -471,9 +441,7 @@ Name | Type | Description  | Notes
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
  **label_id** | **int**| Add a custom label to the new contact | [optional] [default to 0]
  **token** | **string**| Access token to use if unable to set a header | [optional]
- **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **watched** | **bool**| Whether the contact should be watched, note this is only effective on characters | [optional] [default to false]
- **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
@@ -491,11 +459,11 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **putCharactersCharacterIdContacts**
-> putCharactersCharacterIdContacts($character_id, $contact_ids, $standing, $datasource, $label_id, $token, $user_agent, $watched, $x_user_agent)
+> putCharactersCharacterIdContacts($character_id, $contact_ids, $standing, $datasource, $label_id, $token, $watched)
 
 Edit contacts
 
-Bulk edit contacts with same settings  ---  [This route has an available update](https://esi.evetech.net/diff/latest/dev/#PUT-/characters/{character_id}/contacts/)
+Bulk edit contacts with same settings  ---  Warning: This route has an upgrade available.  --- [Diff of the upcoming changes](https://esi.evetech.net/diff/latest/dev/#PUT-/characters/{character_id}/contacts/)
 
 ### Example
 ```php
@@ -512,12 +480,10 @@ $standing = 3.4; // float | Standing for the contact
 $datasource = "tranquility"; // string | The server name you would like data from
 $label_id = 0; // int | Add a custom label to the contact, use 0 for clearing label
 $token = "token_example"; // string | Access token to use if unable to set a header
-$user_agent = "user_agent_example"; // string | Client identifier, takes precedence over headers
 $watched = false; // bool | Whether the contact should be watched, note this is only effective on characters
-$x_user_agent = "x_user_agent_example"; // string | Client identifier, takes precedence over User-Agent
 
 try {
-    $api_instance->putCharactersCharacterIdContacts($character_id, $contact_ids, $standing, $datasource, $label_id, $token, $user_agent, $watched, $x_user_agent);
+    $api_instance->putCharactersCharacterIdContacts($character_id, $contact_ids, $standing, $datasource, $label_id, $token, $watched);
 } catch (Exception $e) {
     echo 'Exception when calling ContactsApi->putCharactersCharacterIdContacts: ', $e->getMessage(), PHP_EOL;
 }
@@ -534,9 +500,7 @@ Name | Type | Description  | Notes
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
  **label_id** | **int**| Add a custom label to the contact, use 0 for clearing label | [optional] [default to 0]
  **token** | **string**| Access token to use if unable to set a header | [optional]
- **user_agent** | **string**| Client identifier, takes precedence over headers | [optional]
  **watched** | **bool**| Whether the contact should be watched, note this is only effective on characters | [optional] [default to false]
- **x_user_agent** | **string**| Client identifier, takes precedence over User-Agent | [optional]
 
 ### Return type
 
