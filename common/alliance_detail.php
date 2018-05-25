@@ -208,23 +208,22 @@ class pAllianceDetail extends pageAssembly
         }
         if ($this->alliance->getExternalID()) 
         {
-            $EdkEsi = new ESI();
-            $AllianceApi = new AllianceApi($EdkEsi);
-            $AllianceDetails = $AllianceApi->getAlliancesAllianceId($this->alliance->getExternalID(), $EdkEsi->getDataSource());
-            // initialize array holding the alliance details
-            $myAlliance = array(
-                "shortName" => $AllianceDetails->getTicker(),
-                "memberCount" => 0,
-                "executorCorpID" => null,
-                "executorCorpName" => null,
-                "startDate" => ESI_Helpers::formatDateTime($AllianceDetails->getDateFounded())
-            );
-
             if ($this->alliance->isFaction()) 
             {
                 $this->page->setTitle(Language::get('page_faction_det').' - '
                         .$this->alliance->getName()." [".$myAlliance["shortName"]
                         ."]");
+                
+                $Faction = Faction::getByID($this->alliance->getExternalID());
+                $FactionCorp = new Corporation($Faction->getCorporationID(), true);
+                $EsiFactionCorp = $FactionCorp->fetchCorp();
+                $myAlliance = array(
+                    "shortName" => $EsiFactionCorp->getTicker(),
+                    "memberCount" => $EsiFactionCorp->getMemberCount(),
+                    "executorCorpID" => $FactionCorp->getExternalID(),
+                    "executorCorpName" => $FactionCorp->getName(),
+                    "startDate" => null
+                );
             } 
 
             else 
@@ -232,50 +231,64 @@ class pAllianceDetail extends pageAssembly
                 $this->page->setTitle(Language::get('page_all_det').' - '
                         .$this->alliance->getName()." [".$myAlliance["shortName"]
                         ."]");
+                
+                $EdkEsi = new ESI();
+                $AllianceApi = new AllianceApi($EdkEsi);
+                $AllianceDetails = $AllianceApi->getAlliancesAllianceId($this->alliance->getExternalID(), $EdkEsi->getDataSource());
+                // initialize array holding the alliance details
+                $myAlliance = array(
+                    "shortName" => $AllianceDetails->getTicker(),
+                    "memberCount" => 0,
+                    "executorCorpID" => null,
+                    "executorCorpName" => null,
+                    "startDate" => ESI_Helpers::formatDateTime($AllianceDetails->getDateFounded())
+                );
+                
+                // fetch the alliance's corps
+                $allianceCorps = $AllianceApi->getAlliancesAllianceIdCorporations($this->alliance->getExternalID(), $EdkEsi->getDataSource());
+
+                $CorporationApi = new CorporationApi($EdkEsi);
+                // fetch details for each member corp
+                foreach ($allianceCorps as $allianceCorpId) 
+                {
+                    try
+                    {
+                        $CorporationDetails = $CorporationApi->getCorporationsCorporationId($allianceCorpId, $EdkEsi->getDataSource());
+                    }
+
+                    catch(ApiException $e) 
+                    {
+                        EDKError::log(ESI::getApiExceptionReason($e) . PHP_EOL . $e->getTraceAsString());
+                        continue;
+                    }
+
+                    if ($AllianceDetails->getExecutorCorporationId() == $allianceCorpId) 
+                    {
+                        $myAlliance["executorCorpName"] = $CorporationDetails->getName();
+                        $myAlliance["executorCorpID"] = $AllianceDetails->getExecutorCorporationId();
+                    }
+                    // Build Data array
+                    $membercorp["corpExternalID"] = $allianceCorpId;
+                    $membercorp["corpName"] = $CorporationDetails->getName();
+                    $membercorp["ticker"] = $CorporationDetails->getTicker();
+                    $membercorp["members"] = $CorporationDetails->getMemberCount();
+                    $myAlliance["memberCount"] += $membercorp["members"];
+
+                    $this->allianceCorps[] = $membercorp;
+
+                    // Check if corp is known to EDK DB, if not, add it.
+                    $tempMyCorp = Corporation::getByExternalID($allianceCorpId);
+                    if (!$tempMyCorp) {
+                        $tempMyCorp = Corporation::add($membercorp["corpName"], $this->alliance,
+                                $membercorp["joinDate"], $allianceCorpId);
+                    }
+
+                    $membercorp = array();
+                    unset($membercorp);
+                }
             }
 
-            // fetch the alliance's corps
-            $allianceCorps = $AllianceApi->getAlliancesAllianceIdCorporations($this->alliance->getExternalID(), $EdkEsi->getDataSource());
             
-            $CorporationApi = new CorporationApi($EdkEsi);
-            // fetch details for each member corp
-            foreach ($allianceCorps as $allianceCorpId) 
-            {
-                try
-                {
-                    $CorporationDetails = $CorporationApi->getCorporationsCorporationId($allianceCorpId, $EdkEsi->getDataSource());
-                }
-                
-                catch(ApiException $e) 
-                {
-                    EDKError::log(ESI::getApiExceptionReason($e) . PHP_EOL . $e->getTraceAsString());
-                    continue;
-                }
-
-                if ($AllianceDetails->getExecutorCorporationId() == $allianceCorpId) 
-                {
-                    $myAlliance["executorCorpName"] = $CorporationDetails->getName();
-                    $myAlliance["executorCorpID"] = $AllianceDetails->getExecutorCorporationId();
-                }
-                // Build Data array
-                $membercorp["corpExternalID"] = $allianceCorpId;
-                $membercorp["corpName"] = $CorporationDetails->getName();
-                $membercorp["ticker"] = $CorporationDetails->getTicker();
-                $membercorp["members"] = $CorporationDetails->getMemberCount();
-                $myAlliance["memberCount"] += $membercorp["members"];
-                
-                $this->allianceCorps[] = $membercorp;
-
-                // Check if corp is known to EDK DB, if not, add it.
-                $tempMyCorp = Corporation::getByExternalID($allianceCorpId);
-                if (!$tempMyCorp) {
-                    $tempMyCorp = Corporation::add($membercorp["corpName"], $this->alliance,
-                            $membercorp["joinDate"], $allianceCorpId);
-                }
-
-                $membercorp = array();
-                unset($membercorp);
-            }
 
             if (!isset($this->kill_summary)) 
                 {

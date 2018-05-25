@@ -195,7 +195,7 @@ class Faction extends Cacheable
      * Return a new object by ID. Will fetch from cache if enabled.
      *
      * @param mixed $id ID to fetch
-     * @return Location
+     * @return Faction
      */
     static function getByID($id)
     {
