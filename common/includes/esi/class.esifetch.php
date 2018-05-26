@@ -21,9 +21,11 @@ class ESIFetchException extends \Exception {}
  */
 class ESIFetch extends ESISSO 
 {    
-    /** @param JSON formatted raw data from the zkb API */
+    /** @param \Swagger\Client\Model\GetCorporationsCorporationIdKillmailsRecent200Ok[] JSON formatted raw data from the API */
     protected $killLog;
-    protected $maxID = 0;
+  
+    protected $page;
+    protected $numberOfPages = 1;
     /** @param array of posted kills with external ID */
     private $posted = array();
     /** @param array of skipped kills with external ID */
@@ -166,18 +168,20 @@ class ESIFetch extends ESISSO
             $EdkEsi = new ESI();
             $EdkEsi->setAccessToken($this->accessToken);
             $KillmailsApi = new KillmailsApi($EdkEsi);
+            $headers = array();
             if($this->keyType == ESISSO::KEY_TYPE_PILOT)
             {
-                $this->killLog = $KillmailsApi->getCharactersCharacterIdKillmailsRecent($this->characterID, $EdkEsi->getDataSource(), null, self::$NUMBER_OF_KILLS_PER_CALL, $this->maxID);
+                list($this->killLog, , $headers) = $KillmailsApi->getCharactersCharacterIdKillmailsRecentWithHttpInfo($this->characterID, $EdkEsi->getDataSource(), null, $this->page);
             }
             
             else
             {
                 $Pilot = new \Pilot(0, $this->characterID);
                 $Corporation = $Pilot->getCorp();
-                $this->killLog = $KillmailsApi->getCorporationsCorporationIdKillmailsRecent($Corporation->getExternalID(), $EdkEsi->getDataSource(), null, $this->maxID);
+                list($this->killLog, , $headers) = $KillmailsApi->getCorporationsCorporationIdKillmailsRecentWithHttpInfo($Corporation->getExternalID(), $EdkEsi->getDataSource(), null, $this->page);
             }
             $this->resetFailCount();
+            $this->numberOfPages = $headers['X-Pages'];
         }
 
         catch(ApiException $e)
@@ -214,7 +218,7 @@ class ESIFetch extends ESISSO
     public function processApi()
     {
         // remember the timestamp we started with
-        $this->maxID = null;
+        $this->page = 0;
         $this->killLog = array(); 
         // initialize fetch counter
         $cyclesFetched = 0;
@@ -230,25 +234,26 @@ class ESIFetch extends ESISSO
         // this will first fetch the oldest kills available, then work its way to the newest ones
         do
         {
+            $this->page = $this->page + 1;
             try
             {
                 $previousLog = $this->killLog;
                 $this->fetch();
-                //Check if we reached the end which seems to append an empty array
-                //  OR if the latest kill ID fetched is the last kill ID we posted - in which case we need to process the previously fetched kills (if any)
-                if (count(array_slice($this->killLog, -1)) == 0 
-                        || ($this->killLog[0]->getKillmailId() > 0 && $this->killLog[0]->getKillmailId() == $startKill))
+                // no kills received
+                if(empty($this->killLog))
                 {
-
-                    // if we fetched previously, use the previous killLog, the last requested was just to make sure we hit the end
-                    if(!empty($previousLog))
-                    {
-                        $this->killLog = $previousLog;
-                    }
                     break;
                 }
-                $oldest = array_values(array_slice($this->killLog, -1))[0];
-                $this->maxID=($oldest->getKillmailId());
+                $oldestKillIdOnPage = array_values(array_slice($this->killLog, -1))[0]->getKillmailId();
+                $newestKillIdOnPage = $this->killLog[0]->getKillmailId();
+                //Check if we reached the end which seems to append an empty array
+                //  OR if the latest kill ID fetched is the last kill ID we posted - in which case we need to process the previously fetched kills (if any)
+                if ($this->page == $this->numberOfPages
+                        || ($this->killLog[0]->getKillmailId() > 0 && $oldestKillIdOnPage <= $startKill && $newestKillIdOnPage > $startKill))
+                {
+                    break;
+                }
+                
             }
             catch(ESIFetchException $e)
             {
@@ -261,7 +266,6 @@ class ESIFetch extends ESISSO
             }
 
             $cyclesFetched++;
-            $latestKillIdFetched = $this->killLog[0]->getKillmailId();
 
 
             if($cyclesFetched >= self::$MAXIMUM_NUMBER_OF_CYCLES)
@@ -272,7 +276,7 @@ class ESIFetch extends ESISSO
             //  the first fetch ever does not have a start kill and needs to        || if we have a start kill, continue fetching until the oldest kill fetched is less 
             //  to continue fetching until the end, which seems to append an empty  || than the start kill, and the newest is either newer or the same (no new kills)
             //  array                                                               || 
-        }  while(($startKill == 0 && count(array_slice($this->killLog, -1)) != 0) || ($startKill > 0 && !($startKill > $this->maxID && $startKill <= $latestKillIdFetched)));
+        }  while(($startKill == 0 && $this->page == $this->numberOfPages )|| ($startKill > 0 && !($startKill > $oldestKillIdOnPage && $startKill <= $newestKillIdOnPage)));
 
         //If the last call returned ampty check the previous one
         if(count($this->killLog) <= 1)
