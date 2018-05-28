@@ -206,16 +206,15 @@ class ESI_Helpers
         while(count($characterIds) > 0)
         {
             // since this is a GET call, we need to observe the maximum URL length;
-            // thus, we need to split our IDs into chunks no longer than 950 characters (to allow for a bit of safety margin)
-            $characterIdsWithLengthLimit = array();
-            $characterIdsLength = 0;
-            while($characterIdsLength < 950 && count($characterIds) > 0)
+            // however, the endpoint only accepts < 100 IDs (manually tested with corporation endpoint, not documented) IDs at once, which will
+            // keep us below the URL length limit
+            $characterIdsForSingleCall = array();
+            while(count($characterIdsForSingleCall) <= 90 && count($characterIds) > 0)
             {
                 $characterId = array_pop($characterIds);
-                $characterIdsWithLengthLimit[] = $characterId;
-                $characterIdsLength += strlen($characterId)+1;
+                $characterIdsForSingleCall[] = $characterId;
             }
-            $characterNames = $CharacterApi->getCharactersNames($characterIdsWithLengthLimit);
+            $characterNames = $CharacterApi->getCharactersNames($characterIdsForSingleCall);
             foreach($characterNames as $characterName)
             {
                 $idNameMapping[$characterName->getCharacterId()] = $characterName->getCharacterName();
@@ -245,22 +244,21 @@ class ESI_Helpers
         
         // create ESI client
         $EdkEsi = new ESI();
-        
+
         $CorporationApi = new CorporationApi($EdkEsi);
         while(count($corporationIds) > 0)
         {
             // since this is a GET call, we need to observe the maximum URL length;
-            // thus, we need to split our IDs into chunks no longer than 950 characters (to allow for a bit of safety margin)
-            $corporationIdsWithLengthLimit = array();
-            $corporationIdsLength = 0;
-            while($corporationIdsLength < 950 && count($corporationIds) > 0)
+            // however, the endpoint only accepts < 100 IDs (manually tested with corporation endpoint, not documented) IDs at once, which will
+            // keep us below the URL length limit
+            $corporationIdsForSingleCall = array();
+            while(count($corporationIdsForSingleCall) <= 90 && count($corporationIds) > 0)
             {
                 $corporationId = array_pop($corporationIds);
-                $corporationIdsWithLengthLimit[] = $corporationId;
-                $corporationIdsLength += strlen($corporationId)+1;
+                $corporationIdsForSingleCall[] = $corporationId;
             }
             
-            $corporationNames = $CorporationApi->getCorporationsNames($corporationIdsWithLengthLimit);
+            $corporationNames = $CorporationApi->getCorporationsNames($corporationIdsForSingleCall);
             foreach($corporationNames as $corporationName)
             {
                 $idNameMapping[$corporationName->getCorporationId()] = $corporationName->getCorporationName();
@@ -296,17 +294,16 @@ class ESI_Helpers
         while(count($allianceIds) > 0)
         {
             // since this is a GET call, we need to observe the maximum URL length;
-            // thus, we need to split our IDs into chunks no longer than 950 characters (to allow for a bit of safety margin)
-            $allianceIdsWithLengthLimit = array();
-            $allianceIdsLength = 0;
-            while($allianceIdsLength < 950 && count($allianceIds) > 0)
+            // however, the endpoint only accepts < 100 IDs (manually tested with corporation endpoint, not documented) IDs at once, which will
+            // keep us below the URL length limit
+            $allianceIdsForSingleCall = array();
+            while(count($allianceIdsForSingleCall) <= 90 && count($allianceIds) > 0)
             {
                 $allianceId = array_pop($allianceIds);
-                $allianceIdsWithLengthLimit[] = $allianceId;
-                $allianceIdsLength += strlen($allianceId)+1;
+                $allianceIdsForSingleCall[] = $allianceId;
             }
             
-           $allianceNames = $AllianceApi->getAlliancesNames($allianceIdsWithLengthLimit);
+           $allianceNames = $AllianceApi->getAlliancesNames($allianceIdsForSingleCall);
             foreach($allianceNames as $allianceName)
             {
                 $idNameMapping[$allianceName->getAllianceId()] = $allianceName->getAllianceName();
