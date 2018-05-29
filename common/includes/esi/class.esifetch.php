@@ -187,7 +187,7 @@ class ESIFetch extends ESISSO
         catch(ApiException $e)
         {
             $this->increaseFailCount();
-            throw new ESIFetchException($e->getMessage(), $e->getCode());
+            throw new ESIFetchException(ESI::getApiExceptionReason($e), $e->getCode());
         }
     }
     
