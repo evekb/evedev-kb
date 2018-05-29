@@ -3,6 +3,7 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**is_blueprint_copy** | **bool** | is_blueprint_copy boolean | [optional] 
 **is_singleton** | **bool** | is_singleton boolean | 
 **item_id** | **int** | item_id integer | 
 **location_flag** | **string** | location_flag string | 

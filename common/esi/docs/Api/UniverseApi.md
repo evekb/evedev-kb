@@ -1084,7 +1084,7 @@ No authorization required
 
 Get structure information
 
-Returns information on requested structure, if you are on the ACL. Otherwise, returns \"Forbidden\" for all inputs.  ---  This route is cached for up to 3600 seconds
+Returns information on requested structure, if you are on the ACL. Otherwise, returns \"Forbidden\" for all inputs.  ---  This route is cached for up to 3600 seconds  --- Warning: This route has an upgrade available.  --- [Diff of the upcoming changes](https://esi.evetech.net/diff/latest/dev/#GET-/universe/structures/{structure_id}/)
 
 ### Example
 ```php
@@ -1279,7 +1279,7 @@ No authorization required
 
 Get solar system information
 
-Get information on a solar system  ---  This route expires daily at 11:05
+Get information on a solar system. NOTE: This route does not work with abyssal systems.  ---  This route expires daily at 11:05  --- Warning: This route has an upgrade available.  --- [Diff of the upcoming changes](https://esi.evetech.net/diff/latest/dev/#GET-/universe/systems/{system_id}/)
 
 ### Example
 ```php
