@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <kb3>
   <name>kb3_factions</name>
-  <rows>21</rows>
+  <rows>24</rows>
   <structure>CREATE TABLE `kb3_factions` (
   `factionID` int(11) NOT NULL,
   `factionName` varchar(100) DEFAULT NULL,

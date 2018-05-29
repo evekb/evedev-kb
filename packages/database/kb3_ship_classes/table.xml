@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <kb3>
   <name>kb3_ship_classes</name>
-  <rows>54</rows>
+  <rows>55</rows>
   <structure>CREATE TABLE `kb3_ship_classes` (
   `scl_id` int(11) NOT NULL AUTO_INCREMENT,
   `scl_class` char(32) NOT NULL,
@@ -9,5 +9,5 @@
   `scl_points` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`scl_id`),
   UNIQUE KEY `scl_class` (`scl_class`)
-) ENGINE=MyISAM AUTO_INCREMENT=56 DEFAULT CHARSET=utf8</structure>
+) ENGINE=MyISAM AUTO_INCREMENT=57 DEFAULT CHARSET=utf8</structure>
 </kb3>
