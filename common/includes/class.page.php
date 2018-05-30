@@ -180,7 +180,7 @@ class Page
         $smarty->assign('esi_time', round(ESI::getTotalEsiTime(), 4));
         if ($this->isAdmin()
                 || config::get('cfg_profile')
-                || intval(KB_PROFILE)) {
+                || (defined('KB_PROFILE') && intval(KB_PROFILE))) {
             $smarty->assign('profile', 1);
         }
         $smarty->assign('content_html', $this->contenthtml);
