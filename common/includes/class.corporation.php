@@ -459,6 +459,12 @@ class Corporation extends Entity
             return false;
         }
         
+        // sanity check: no Factions!
+        if(Faction::isFaction($this->externalid))
+        {
+            return false;
+        }
+        
         // create EDK ESI client
         $EdkEsi = new ESI();
         $CorporationApi = new CorporationApi($EdkEsi);

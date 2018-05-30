@@ -201,4 +201,16 @@ class Faction extends Cacheable
     {
         return Cacheable::factory(get_class(), $id);
     }
+    
+    /**
+     * Checks whether the given ID belongs to a known faction.
+     * 
+     * @param int $id the ID to check
+     * @return boolean <code>true</code> if the ID belongs to a known faction, otherwise <code>false</code>
+     */
+    public static function isFaction($id)
+    {
+        $Faction = Faction::getByID($id);
+        return !is_null($Faction->getName());
+    }
 }
