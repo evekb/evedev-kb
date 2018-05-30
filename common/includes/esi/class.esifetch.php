@@ -279,7 +279,7 @@ class ESIFetch extends ESISSO
         }  while(($startKill == 0 && $this->page == $this->numberOfPages )|| ($startKill > 0 && !($startKill > $oldestKillIdOnPage && $startKill <= $newestKillIdOnPage)));
 
         //If the last call returned ampty check the previous one
-        if(count($this->killLog) <= 1)
+        if(empty($this->killLog))
         {
             if($cyclesFetched > 1) {
                 $this->killLog = $previousLog;
