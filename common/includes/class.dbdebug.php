@@ -18,11 +18,11 @@ class DBDebug
     }
     public static function profile($sql, $time = 0)
     {
-        if (KB_PROFILE == 2)
+        if (defined('KB_PROFILE') && KB_PROFILE == 2)
         {
             file_put_contents(self::$qerrfile, $sql . "\nExecution time: " . $time . "\n", FILE_APPEND);
         }
-        if (KB_PROFILE == 3)
+        if (defined('KB_PROFILE') && KB_PROFILE == 3)
         {
             if(DB_TYPE == 'mysqli' && strtolower(substr($sql,0,6))=='select')
             {
@@ -42,7 +42,7 @@ class DBDebug
             else file_put_contents(self::$qerrfile, $sql."\nExecution time: ".$time."\n", FILE_APPEND);
         }
 
-        if (KB_PROFILE == 4)
+        if (defined('KB_PROFILE') && KB_PROFILE == 4)
         {
             if($time > 0.1 && strtolower(substr($sql,0,6))=='select')
             {
