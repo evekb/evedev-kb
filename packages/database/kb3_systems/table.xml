@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <kb3>
   <name>kb3_systems</name>
-  <rows>8035</rows>
+  <rows>8235</rows>
   <structure>CREATE TABLE `kb3_systems` (
   `sys_id` int(11) NOT NULL AUTO_INCREMENT,
   `sys_con_id` int(11) NOT NULL DEFAULT '0',
@@ -13,5 +13,5 @@
   PRIMARY KEY (`sys_id`),
   KEY `sys_con_id` (`sys_con_id`),
   KEY `sys_name` (`sys_name`)
-) ENGINE=MyISAM AUTO_INCREMENT=31002605 DEFAULT CHARSET=utf8</structure>
+) ENGINE=MyISAM AUTO_INCREMENT=32000201 DEFAULT CHARSET=utf8</structure>
 </kb3>

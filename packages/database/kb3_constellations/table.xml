@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <kb3>
   <name>kb3_constellations</name>
-  <rows>1120</rows>
+  <rows>1145</rows>
   <structure>CREATE TABLE `kb3_constellations` (
   `con_id` int(11) NOT NULL DEFAULT '0',
   `con_name` char(128) NOT NULL DEFAULT '',

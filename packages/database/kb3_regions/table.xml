@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <kb3>
   <name>kb3_regions</name>
-  <rows>100</rows>
+  <rows>105</rows>
   <structure>CREATE TABLE `kb3_regions` (
   `reg_id` int(11) NOT NULL DEFAULT '0',
   `reg_name` char(64) NOT NULL,
