@@ -6,7 +6,7 @@
   `id` int(11) NOT NULL auto_increment,
   `characterID` int(11) NOT NULL,
   `keyType` varchar(16) NOT NULL,
-  `refreshToken` varchar(255) NOT NULL,
+  `refreshToken` varchar(1024) NOT NULL,
   `ownerHash` varchar(255) NOT NULL,
   `failCount` int(11) DEFAULT NULL,
   `isEnabled` tinyint(1) NOT NULL,
