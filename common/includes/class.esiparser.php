@@ -562,9 +562,6 @@ class EsiParser
             {
                 $Ship = Ship::getByID($involvedParty->getShipTypeId());
             }
-                
-            $Weapon = Item::getByID($involvedParty->getWeaponTypeId());
-            
                     
             // get alliance
             $Alliance = Alliance::add("None");
@@ -653,6 +650,11 @@ class EsiParser
                     $isNPC = TRUE;
                 }
                 $characterId = 0;
+            }
+            
+            else
+            {
+                $Weapon = Item::getByID($involvedParty->getWeaponTypeId());
             }
                   
             if(!$characterId)
