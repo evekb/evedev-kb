@@ -563,7 +563,7 @@ class EsiParser
                 $Ship = Ship::getByID($involvedParty->getShipTypeId());
             }
                 
-            $Weapon = Cacheable::factory('Item', $involvedParty->getWeaponTypeId());
+            $Weapon = Item::getByID($involvedParty->getWeaponTypeId());
             
                     
             // get alliance
