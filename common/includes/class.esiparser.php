@@ -813,16 +813,9 @@ class EsiParser
             if(!is_null($factionId) && !in_array($factionId, $factionIds)) $factionIds[] = $factionId;
         }
         
-       // using universe/names endpoint
-       // $entityIds = array_merge($characterIds, $corporationIds, $allianceIds);
-       // $idToNameMap = ESI_Helpers::resolveEntityIds($entityIds);
-        
-        // using separate endpoints (slower, but more reliable in case CCP messes with universe/names again)
-        $characterIdNameMap = ESI_Helpers::resolveCharacterIds($characterIds);
-        $corporationIdNameMap = ESI_Helpers::resolveCorporationIds($corporationIds);
-        $allianceIdNameMap = ESI_Helpers::resolveAllianceIds($allianceIds);
-        // merge mappings
-        $idToNameMap = $characterIdNameMap + $corporationIdNameMap + $allianceIdNameMap;
+        // using universe/names endpoint
+        $entityIds = array_merge($characterIds, $corporationIds, $allianceIds);
+        $idToNameMap = ESI_Helpers::resolveEntityIds($entityIds);
         
         // now resolve factions
         foreach($factionIds as $factionId)
