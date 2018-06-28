@@ -325,13 +325,19 @@ class ZKBFetch
         {
             $this->fetchUrl .= '/';
         }
-
-        // add startTime, if not already in URL and if given and the URL is not for a specific kill
-        if(strpos($this->fetchUrl, 'startTime') === FALSE && !is_null($this->startTimestamp) && strlen(trim($this->startTimestamp) > 0)
+        
+        // remove any user-input startTime
+        $this->fetchUrl = preg_replace("/\/startTime\/[0-9]*/i", "", $this->fetchUrl);
+        
+        // add startTime, if given and the URL is not for a specific kill
+        if(!is_null($this->startTimestamp) && strlen(trim($this->startTimestamp) > 0)
                 && strpos($this->fetchUrl, 'killID') === FALSE)
         {
+            // sanity check for start timestamp
+            // timestamp before 2007 don't make sense
+            self::checkTimestamp($this->startTimestamp);
             $timestampFormattedForZkb = strftime("%Y%m%d%H00", $this->startTimestamp);
-            $this->fetchUrl .= "startTime/$timestampFormattedForZkb/orderDirection/asc/";
+            $this->fetchUrl .= "startTime/$timestampFormattedForZkb/";
         }
         
         $this->fetchUrl .= "page/$this->pageNumber/";
@@ -433,9 +439,9 @@ class ZKBFetch
                 
                 catch(ApiException $e)
                 {
-                        $this->parsemsg[] = "Error communicating with ESI, aborting!";
-                        $this->parsemsg[] = $e->getMessage();
-                        break;
+                    $this->parsemsg[] = "Error communicating with ESI, aborting!";
+                    $this->parsemsg[] = $e->getMessage();
+                    break;
                 }
                 $this->setLastKillTimestamp($this->lastKillTimestamp);
             }
@@ -639,6 +645,20 @@ class ZKBFetch
    function getSkipped()
    {
        return $this->skipped;
+   }
+   
+   /**
+    * Checks whether the given timestamp is valid for
+    * fetching from zKillboard
+    * @param int $timestamp the timestamp to check
+    * @throws ZKBFetchException
+    */
+   public static function checkTimestamp($timestamp)
+   {
+        if(is_null($timestamp) || $timestamp === FALSE || (int) $timestamp < mktime(0, 0, 0, 0, 0, 2007))
+        {
+            throw new ZKBFetchException("You must use a timestamp starting 2007 or newer!");
+        }
    }
 
 }

@@ -67,10 +67,19 @@ if ($_POST['submit'] || $_POST['fetch'])
             if($_POST['lastKillTimestamp'.$id] != $lastKillTimestampFormatted) 
             {
                 $lastKillTimestampNew = strtotime($_POST['lastKillTimestamp'.$id]);
-                if($lastKillTimestampNew !== FALSE)
+                try
                 {
+                    // check the timestamp first
+                    ZKBFetch::checkTimestamp($lastKillTimestampNew);
                     $fetchConfig->setLastKillTimestamp($lastKillTimestampNew);
+                } 
+                
+                catch (ZKBFetchException $ex) 
+                {
+                    $html .= "Error: ".$ex->getMessage();
+                    break;
                 }
+                
             }
             
             // reset the feed lastkill details if the URL or api status has changed
