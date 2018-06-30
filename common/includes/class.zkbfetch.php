@@ -303,7 +303,7 @@ class ZKBFetch
             $this->rawData = SimpleCrest::getReferenceByUrl($this->fetchUrl);
             // since the orderDirection modifier is no longer supported,
             // we need to reverse the order of the results for our algorithms to work properly
-            $this->rawData = arra_reverse($this->rawData);
+            $this->rawData = arra_yreverse($this->rawData);
         }
 
         catch(Exception $e)
