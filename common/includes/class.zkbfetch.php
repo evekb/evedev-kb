@@ -301,6 +301,9 @@ class ZKBFetch
         try
         {
             $this->rawData = SimpleCrest::getReferenceByUrl($this->fetchUrl);
+            // since the orderDirection modifier is no longer supported,
+            // we need to reverse the order of the results for our algorithms to work properly
+            $this->rawData = arra_reverse($this->rawData);
         }
 
         catch(Exception $e)
@@ -339,6 +342,9 @@ class ZKBFetch
             $timestampFormattedForZkb = strftime("%Y%m%d%H00", $this->startTimestamp);
             $this->fetchUrl .= "startTime/$timestampFormattedForZkb/";
         }
+        
+        // the orderDirection modifier is no longer supported - 
+        // results will be ordered by kill ID descending!
         
         $this->fetchUrl .= "page/$this->pageNumber/";
 
