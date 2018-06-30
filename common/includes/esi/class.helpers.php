@@ -162,19 +162,21 @@ class ESI_Helpers
         // resolve as many IDs as possible using local cache
         self::resolveEntityIdsFromCache($entityIds, $idNameMapping);
         
-        // wrap IDs into container
-        // this used to work and is the intended way - seems broken!
-        //$EsiUniverseIds = new PostUniverseNamesIds();
-        //$EsiUniverseIds->setIds($entityIds);
+         // the universe/names endpoint resolves up to 1000 entity IDs per call,
+        // but really large kills might top that. So we need to make sure to respect that limit
+        $entityIdsChunked = array_chunk($entityIds, 999);
         
-        // resolve IDs to names
-        $EsiUniverseNames = $UniverseApi->postUniverseNames($entityIds, $EdkEsi->getDataSource());
-  
-        foreach($EsiUniverseNames as $EsiUniverseName)
+        foreach($entityIdsChunked AS $entityIdsForSingleCall)
         {
-            $idNameMapping[$EsiUniverseName->getId()] = $EsiUniverseName->getName();
-            // store in cache
-            self::putIdNameMappingIntoCache($EsiUniverseName->getId(), $EsiUniverseName->getName(), $EsiUniverseName->getCategory());
+            // resolve IDs to names
+            $EsiUniverseNames = $UniverseApi->postUniverseNames($entityIdsForSingleCall, $EdkEsi->getDataSource());
+
+            foreach($EsiUniverseNames as $EsiUniverseName)
+            {
+                $idNameMapping[$EsiUniverseName->getId()] = $EsiUniverseName->getName();
+                // store in cache
+                self::putIdNameMappingIntoCache($EsiUniverseName->getId(), $EsiUniverseName->getName(), $EsiUniverseName->getCategory());
+            }
         }
         
         return $idNameMapping;
