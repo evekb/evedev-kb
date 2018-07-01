@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.4.0.0
+Eve Development Network Killboard v4.4.1.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -27,6 +27,34 @@ o/ EVE Development Network
 VERSION HISTORY
 ===============
 
+v4.4.1.0
+Features:
+Updated EDK to 4.4.1.0 and CCPDB to Into The Abyss 1.0.20180529
+Cleanups for PHP7.2 compatibility
+
+Enhancements:
+Set default timezone for EDK to "UTC"
+Added customized configuration for EDK ESI client library
+Created new ESI Client from _latest as of 20180529
+ESI name resolution: Reduced number of IDs per call
+ESIFetch: Implemented pagination
+Added proper faction check for corporations
+
+Bugfixes:
+Respect ID count limit when resolving entity IDs with /universe/names
+zKBFetch: Sort results from zKB API due to missing orderDirection modifier
+ZKBFetch: Removed orderDirection API URL modifier
+Fix for breaking ESI changes: Resolve entity IDs using universe/names
+Fix: Fetch unknown weapon type IDs for attackers from ESI
+ESISSO: Increased database column width holding the refreshTokens to 1024
+ESIFetch: Fixed wrong "Did not get any kills" message
+ESIFetch: Enhanced error message if refresh token is invalid
+Fixed viewing faction details
+ZKBFetch: Fixed bug leading to potential hang while fetching
+ESIParser: Fix for old kills with legacy containers or no coordinates
+Fixed error reporting for SSO admin page
+
+-------------------------------------------
 v4.4.0.0
 Features:
 Updated EDK to 4.4.0.0 and CCPDB to YC-120-3 1.0.20180502
