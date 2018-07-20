@@ -303,9 +303,9 @@ class ZKBFetch
             $this->rawData = SimpleCrest::getReferenceByUrl($this->fetchUrl);
             
             // check whether the zKB API returned an error
-            if(isset($this->rawData['error']))
+            if(isset($this->rawData->error))
             {
-                throw new ZKBFetchException($this->rawData['error']);
+                throw new ZKBFetchException($this->rawData->error);
             }
             // since the orderDirection modifier is no longer supported,
             // we need to reverse the order of the results for our algorithms to work properly
