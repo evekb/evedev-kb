@@ -79,30 +79,37 @@ class ajcron
         }
     }
 
-    public static function getNextRun($intervall)
+    public static function getNextRun($interval_string)
     {
         $time = time();
 
-        if (strstr($intervall, ':'))
+        if (strstr($interval_string, ':'))
         {
-            $nextrun = strtotime($intervall);
+            $nextrun = strtotime($interval_string);
             if ($nextrun < $time)
             {
-                $nextrun = strtotime('tomorrow '.$intervall);
+                $nextrun = strtotime('tomorrow '.$interval_string);
             }
         }
-        elseif (strstr($intervall, '/'))
+        elseif (strstr($interval_string, '/'))
         {
-            $int = substr($intervall, 1);
+            $last_full_hour = $time - ($time % 3600);//get last full hour for base to calculate from
 
-            // seconds till interval has passed (counts from 0 to int)
-            $seconds_passed = $time % ($int*60);
+            list($start,$int) = explode("/", $interval_string);
 
-            // reverse, how many seconds are left til 0
-            $seconds_to_go = ($int*60) - $seconds_passed;
+            $start = (empty($start)) ? 0 : $start;//set start to 0 if it is left out, because intdiv will complain
 
-            // just add to current time and we have the next intervall
-            $nextrun = $time + $seconds_to_go;
+            for ($i=0; $i < 60; $i+= $int) {//go through interval steps of current hour, until it is in the future and after starting point
+                if($last_full_hour+($i*60)>$time&&$i>$start){
+                    $nextrun =$last_full_hour+($i*60);
+                    break;
+                }
+            }
+            
+            if(!isset($nextrun)){//if next interval would be in next hour, it sets nextrun 0min of next hour plus offset from start
+                $nextrun = $last_full_hour + 3600 + 60*(ceil($start/$int))*$int;
+            }
+
         }
         return $nextrun;
     }
@@ -267,7 +274,8 @@ class ajcron
     }
     public static function helpFormat()
     {
-        return "<div id='ajcron_help'>/65 ".KB_HOST."/cron/cron_fetcher.php [FeedSync]<br />
-01:00 ".KB_HOST."/cron/cron_clearup.php [CleanUp]<br /></div>";
+        return "<div id='ajcron_help'>/10 ".KB_HOST."/cron/cron_esi.php [ESISync]<br />
+        20/17 ".KB_HOST."/cron/cron_zkb.php [zKbSync]<br />
+        01:00 ".KB_HOST."/cron/cron_clearup.php [CleanUp]<br /></div>";
     }
 }
