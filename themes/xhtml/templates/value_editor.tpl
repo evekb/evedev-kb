@@ -24,7 +24,6 @@
 		&nbsp;&nbsp;<input type='submit' value='Save'>
 		</form>
 	</td>
-	{if $eve_central_exists eq "1"}<td><a href='{$kb_host}/?a=admin_value_editor&amp;itm_id={$results[opt].id}&amp;d=eve_central&amp;item_type={$type}'>Sync to EVE Central</a></td>{/if}
 	</td>
 </tr>
 {sectionelse}
