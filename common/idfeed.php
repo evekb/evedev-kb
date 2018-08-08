@@ -25,9 +25,11 @@
  * alliancename = alliance name to retrieve kills for
  * system = restrict kills to a specific system
  * region = restrict kills to a specific region
- * kll_id = show one kill only.
- * kll_ext_id = show one kill only.
- * limit = maximum number of kills to return.
+ * kll_id = show one kill only
+ * kll_ext_id = show one kill only
+ * limit = maximum number of kills to return
+ * output = [json|xml|edk]; default = xml; changes output, edk means it only
+ *          outputs id's and hashes as json; only works with kll_id or kll_ext_id
  *
  */
 
@@ -175,8 +177,57 @@ if (isset($_GET['startdate']))
 if (isset($_GET['enddate']))
         $list->setEndDate(gmdate('Y-m-d H:i:s', intval($_GET['enddate'])));
 
-header("Content-Type: text/xml");
-echo IDFeed::killListToXML($list);
+
+if (isset($_GET['output'])&&($_GET['output']=='json'||$_GET['output']=='edk')){
+
+    header("Access-Control-Allow-Origin: *");//CORS
+    header("Content-Type: application/json; charset=UTF-8");
+
+    $extkllid=0;
+    $intkllid=0;
+    $hash="";
+    $pqry = new DBPreparedQuery();
+
+    if(isset($_GET['kll_id'])){
+        $pqry->prepare('SELECT kll_external_id, kll_id, kll_crest_hash FROM kb3_mails WHERE kll_id=?');
+        $pqry->bind_param('i',$_GET['kll_id']);
+    } else if(isset($_GET['kll_ext_id'])) {
+        $pqry->prepare('SELECT kll_external_id, kll_id, kll_crest_hash FROM kb3_mails WHERE kll_external_id=?');
+        $pqry->bind_param('i',$_GET['kll_ext_id']);
+    }
+
+    $pqry->bind_result($extkllid,$intkllid,$hash);
+    $pqry->execute();
+    if($pqry->recordCount()<=0) {
+        print_r(json_encode(array('error'=>'No valid external or internal kill!')));
+        die;
+    } else {
+        $pqry->fetch();
+    }
+
+    if ($_GET['output']=='edk') {
+        print_r(json_encode(array("external_kill_id"=>$extkllid,"internal_kill_id"=>$intkllid,"hash"=>$hash)));
+    } else if ($_GET['output']=='json') {
+        $json_kill = file_get_contents("https://esi.evetech.net/latest/killmails/".$extkllid."/".$hash."/?datasource=tranquility");
+
+        foreach ($http_response_header as $value) {
+            if(preg_match('/HTTP\/[0-9\.]+\s+([0-9]+)/',$value,$retarr)){
+                break;
+            };
+        }
+
+        if($retarr[1]==200){
+            print_r($json_kill);
+        } else {
+            print_r(json_encode(array('error'=>'Error when calling ESI for killmail')));
+            die;
+        }
+    }
+} else {
+    header("Content-Type: text/xml");
+    echo IDFeed::killListToXML($list);
+}
+
 //echo "<!-- ".$timing."\n -->";
 //echo "<!-- Finished: ".(microtime(true)-$starttime)." -->";
 
