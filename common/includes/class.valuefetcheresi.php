@@ -97,7 +97,7 @@ class ValueFetcherEsi
     /**
      *  handle item values not correctly represented by market/adjustedPrice, e.g. super capitals
      * @param int $typeId the typeID for the item
-     * @param double $itemPrice the item price returned by CREST
+     * @param double $itemPrice the item price returned by ESI
      */
     public static function handleSpecialItemValues($typeId, $itemPrice)
     {
@@ -223,6 +223,12 @@ class ValueFetcherEsi
         else if(in_array($typeId, array(13202, 26840, 11936, 11938, 26842)))
         {
             return "750000000000";
+        }
+
+        // Keepstar => 300b
+        else if($typeId == 35834)
+        {
+            return "300000000000";
         }
         
         
