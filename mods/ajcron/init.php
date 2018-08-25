@@ -94,9 +94,7 @@ class ajcron
         elseif (strstr($interval_string, '/'))
         {
             $last_full_hour = $time - ($time % 3600);//get last full hour for base to calculate from
-
             list($start,$int) = explode("/", $interval_string);
-
             $start = (empty($start)) ? 0 : $start;//set start to 0 if it is left out, because intdiv will complain
 
             for ($i=0; $i < 60; $i+= $int) {//go through interval steps of current hour, until it is in the future and after starting point
@@ -110,6 +108,23 @@ class ajcron
                 $nextrun = $last_full_hour + 3600 + 60*(ceil($start/$int))*$int;
             }
 
+        }
+        elseif (strstr($interval_string,'['))
+        {
+            $last_full_hour = $time - ($time % 3600);//get last full hour for base to calculate from
+            $current_minutes = date("i");
+            $execute_minutes = preg_split("/\s*,\s*/",trim($interval_string,"[]"), NULL, PREG_SPLIT_NO_EMPTY);
+
+            foreach ($execute_minutes as $min) {
+                if($min>$current_minutes){
+                    $nextrun = $last_full_hour + ($min*60);
+                    break;
+                }
+            }
+
+            if(!isset($nextrun)){//if next interval would be in next hour, it sets nextrun to first execute minute in next hour
+                $nextrun = $last_full_hour + 3600 + ($execute_minutes[0]*60);
+            }
         }
         return $nextrun;
     }
@@ -274,8 +289,8 @@ class ajcron
     }
     public static function helpFormat()
     {
-        return "<div id='ajcron_help'>/10 ".KB_HOST."/cron/cron_esi.php [ESISync]<br />
-        20/17 ".KB_HOST."/cron/cron_zkb.php [zKbSync]<br />
+        return "<div id='ajcron_help'>20/10 ".KB_HOST."/cron/cron_esi.php [ESISync]<br />
+        [10,30,45] ".KB_HOST."/cron/cron_zkb.php [zKbSync]<br />
         01:00 ".KB_HOST."/cron/cron_clearup.php [CleanUp]<br /></div>";
     }
 }
