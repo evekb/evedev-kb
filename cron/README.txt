@@ -25,8 +25,9 @@ cron_value.php: Updated the values of items.
 =========
 Format
 =========
-ajcron supports 2 1/2 different formats for cronjob.
+ajcron supports 4 different formats for cronjob.
 a simple time (hh:mm) eg. 06:43 means, the job will be executed once per day at that time
-a format like this "/13" means, the the jobs will be executed every 13 minutes during the hours eg. 0,13,26,39,52
-a format like this "25/13" means, the the jobs will be executed every 13 minutes during the hours after the 25 of eg. 26,39,52
+a format like this "/13" means, the jobs will be executed every 13 minutes during the hours eg. 0,13,26,39,52
+a format like this "25/13" means, the jobs will be executed every 13 minutes during the hours after the 25 of eg. 26,39,52
+a format like this "[10,23,43]" means, the job will be execute evey hour at the minutes 10,23 and 43
 
