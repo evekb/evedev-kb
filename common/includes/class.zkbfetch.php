@@ -462,7 +462,10 @@ class ZKBFetch
                     $this->parsemsg[] = $e->getMessage();
                     break;
                 }
-                $this->setLastKillTimestamp($this->lastKillTimestamp);
+                if(!is_null($this->lastKillTimestamp))
+                {
+                    $this->setLastKillTimestamp($this->lastKillTimestamp);
+                }
             }
             
             // no timestamp given at all
@@ -510,8 +513,7 @@ class ZKBFetch
         $hash;
         $trust;
         $killId;        
-        $this->lastKillTimestamp = strtotime($killData->killmail_time);
-        $timestamp = date('Y-m-d H:m:i', $this->lastKillTimestamp);
+        
       
         
         // Check for duplicate by external ID
@@ -523,47 +525,33 @@ class ZKBFetch
             return;
         }
 
-        // Filtering
-        if(config::get('filter_apply'))
-        {
-            $filterdate =  intval(config::get('filter_date'));
-            if (strtotime($timestamp) < $filterdate) {
-                $filterdate = kbdate("j F Y", config::get("filter_date"));
-                $this->skipped[] = $killData->killmail_id;
-                throw new ZKBFetchException("Kill ".$killData->killmail_id." (time: $timestamp) is older than the oldest allowed date (" .$filterdate. ")", -3);
-            }
-        }
-
         // check for non-api kill
         if($killData->killmail_id < 0)
         {
             throw new ZKBFetchException("Only API-verified kills are supported, this is a non-verified kill: ".$killData->killmail_id);
         }
-        
-        // create the kill
-        $Kill = new Kill();
-        // set external ID
-        $Kill->setExternalID($killData->killmail_id);
-        $Kill->setCrestHash(strval($killData->zkb->hash));
-        // set timestamp
-        $Kill->setTimeStamp($timestamp);
-        
-        
-        // handle solarSystem
-        $solarSystemID = (int)$killData->solar_system_id;
-        $solarSystem = SolarSystem::getByID($solarSystemID);
-        if (!$solarSystem->getName()) 
-        {
-            $this->skipped[] = $killData->killmail_id;
-            throw new ZKBFetchException("Unknown solar system ID: ".$solarSystemID);
-        }
-        $Kill->setSolarSystem($solarSystem);
 
-        $EsiParser = new \EsiParser($Kill->getExternalID(), $Kill->getCrestHash());
+
+
+        $EsiParser = new \EsiParser($killData->killmail_id, strval($killData->zkb->hash));
         $EsiParser->setAllowNpcOnlyKills(!$this->ignoreNPCOnly);
         try
         {
             $killId = $EsiParser->parse();
+            $Kill = Kill::getByID($killId);
+            $this->lastKillTimestamp = strtotime($Kill->getTimeStamp());
+            $timestamp = date('Y-m-d H:m:i', $this->lastKillTimestamp);
+            // Filtering
+            if(config::get('filter_apply'))
+            {
+                $filterdate =  intval(config::get('filter_date'));
+                if (strtotime($timestamp) < $filterdate) {
+                    $filterdate = kbdate("j F Y", config::get("filter_date"));
+                    $this->skipped[] = $killData->killmail_id;
+                    throw new ZKBFetchException("Kill ".$killData->killmail_id." (time: $timestamp) is older than the oldest allowed date (" .$filterdate. ")", -3);
+                }
+            }
+            
         } 
         
         catch (EsiParserException $e) 
