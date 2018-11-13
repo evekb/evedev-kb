@@ -210,10 +210,7 @@ class pAllianceDetail extends pageAssembly
         {
             if ($this->alliance->isFaction()) 
             {
-                $this->page->setTitle(Language::get('page_faction_det').' - '
-                        .$this->alliance->getName()." [".$myAlliance["shortName"]
-                        ."]");
-                
+               
                 $Faction = Faction::getByID($this->alliance->getExternalID());
                 $FactionCorp = new Corporation($Faction->getCorporationID(), true);
                 $EsiFactionCorp = $FactionCorp->fetchCorp();
@@ -224,13 +221,14 @@ class pAllianceDetail extends pageAssembly
                     "executorCorpName" => $FactionCorp->getName(),
                     "startDate" => null
                 );
+                
+                $this->page->setTitle(Language::get('page_faction_det').' - '
+                        .$this->alliance->getName()." [".$myAlliance["shortName"]
+                        ."]");
             } 
 
             else 
             {
-                $this->page->setTitle(Language::get('page_all_det').' - '
-                        .$this->alliance->getName()." [".$myAlliance["shortName"]
-                        ."]");
                 
                 $EdkEsi = new ESI();
                 $AllianceApi = new AllianceApi($EdkEsi);
@@ -243,6 +241,10 @@ class pAllianceDetail extends pageAssembly
                     "executorCorpName" => null,
                     "startDate" => ESI_Helpers::formatDateTime($AllianceDetails->getDateFounded())
                 );
+                
+                $this->page->setTitle(Language::get('page_all_det').' - '
+                        .$this->alliance->getName()." [".$myAlliance["shortName"]
+                        ."]");
                 
                 // fetch the alliance's corps
                 $allianceCorps = $AllianceApi->getAlliancesAllianceIdCorporations($this->alliance->getExternalID(), $EdkEsi->getDataSource());
