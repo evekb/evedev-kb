@@ -284,7 +284,7 @@ class pCorpDetail extends pageAssembly
             $this->corpDetails['headQuartersName'] = "";
             $this->corpDetails['memberCount'] = $EsiCorp->getMemberCount();
             // FIXME not provided by ESI!
-            $this->corpDetails['shareCount'] = "";
+            $this->corpDetails['shareCount'] = $EsiCorp->getShares();
             $this->corpDetails['taxRate'] = $EsiCorp->getTaxRate() * 100;
             $this->corpDetails['externalUrl'] = $EsiCorp->getUrl();
             $smarty->assign('ceo_url', edkURI::build(
