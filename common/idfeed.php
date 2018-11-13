@@ -1,5 +1,6 @@
 <?php
 
+use EDK\ESI\EsiConfiguration;
 /**
  * $Date$
  * $Revision$
@@ -208,7 +209,8 @@ if (isset($_GET['output'])&&($_GET['output']=='json'||$_GET['output']=='edk')){
     if ($_GET['output']=='edk') {
         print_r(json_encode(array("external_kill_id"=>$extkllid,"internal_kill_id"=>$intkllid,"hash"=>$hash)));
     } else if ($_GET['output']=='json') {
-        $json_kill = file_get_contents("https://esi.evetech.net/latest/killmails/".$extkllid."/".$hash."/?datasource=tranquility");
+        $EsiConfig = new EsiConfiguration();
+        $json_kill = file_get_contents($EsiConfig->getHost()."/latest/killmails/".$extkllid."/".$hash."/?datasource=".ESI_DATA_SOURCE);
 
         foreach ($http_response_header as $value) {
             if(preg_match('/HTTP\/[0-9\.]+\s+([0-9]+)/',$value,$retarr)){
