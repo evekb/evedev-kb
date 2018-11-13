@@ -42,8 +42,8 @@ logCron('Time taken = '.(microtime(true) - $cronStartTime).' seconds.');
 function getESIApi(&$fetchConfig)
 {
     $Pilot = new Pilot(0, $fetchConfig->getCharacterID());
-    // Just in case, check for empty urls.
-    if($fetchConfig->getFailcount() >= 5) 
+    $ssoMaxFailCount = config::get('cfg_sso_max_fail_count');
+    if($fetchConfig->getFailcount() >= $ssoMaxFailCount) 
     {
         logCron('Skipping key for '.$Pilot->getName().' (type: '.$fetchConfig->getKeyType().'), because the last '.$fetchConfig->getFailcount().' attempts failed!');
         return;

@@ -17,6 +17,13 @@ if(isset($_POST['submit-key']))
     config::set('cfg_sso_client_id',$_POST['client_id']);
     config::set('cfg_sso_secret',$_POST['secret']);
     config::set('cfg_max_proc_time_per_sso_key', (int)$_POST['cfg_max_proc_time_per_sso_key']);
+    
+    // max SSO fail count must be > 0
+    $ssoMaxFailCount = (int)$_POST['cfg_sso_max_fail_count'];
+    if($ssoMaxFailCount > 0)
+    {
+        config::set('cfg_sso_max_fail_count', (int)$_POST['cfg_sso_max_fail_count']);
+    }
 
     if (isset($_POST['post_no_npc_only']) && $_POST['post_no_npc_only']) 
     {
@@ -67,6 +74,7 @@ $html .= "<tr><td><b>EVE SSO Client secret:</b></td><td><input type='text' size=
 $html .= "<tr><td colspan=\"4\">Your EVE SSO callback URL should be set to ".edkURI::page('ssoregistration')."</td></tr>";
 $html .= "<tr><td colspan=\"4\"><br/>Register and application here: <a href=https://developers.eveonline.com/ target=\"_blank\">https://developers.eveonline.com</a> (valid subscription needed)<br/>In the Permissions section, select the following scopes: esi-killmails.read_killmails.v1, esi-killmails.read_corporation_killmails.v1</td></tr>";
 $html .= "<tr><td><b>Maximum processing time per ESI SSO key [s]:</b></td><td><input type='text' size='10' name='cfg_max_proc_time_per_sso_key' value='".config::get('cfg_max_proc_time_per_sso_key')."'/></td></tr>";
+$html .= "<tr><td><b>Number of failed SSO attempts per key until key is ignored in cron jobs:</b></td><td><input type='text' size='10' name='cfg_sso_max_fail_count' value='".config::get('cfg_sso_max_fail_count')."'/></td></tr>";
 
 // option: ignore NPC only kills
 $html .= "<tr><td><b>Ignore NPC only deaths?</b></td>";

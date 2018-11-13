@@ -66,3 +66,4 @@ cfg_redis_db	0
 skipNonVerifyableKills	1
 cfg_max_proc_time_per_sso_key	55
 sso_allow_owners_only	1
+cfg_sso_max_fail_count	5
