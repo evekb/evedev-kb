@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.4.1.0
+Eve Development Network Killboard v4.4.2.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -27,6 +27,26 @@ o/ EVE Development Network
 VERSION HISTORY
 ===============
 
+v4.4.2.0
+Features:
+Updated EDK to 4.4.2.0 and CCPDB to Onslaught 1.0.20181113
+Update ESI client with _latest version on 2018-11-13
+
+Enhancements:
+SSO: Introduce max number of failed SSO attempts to config
+IDFeed: New json output now observes configured ESI host and data source
+ZKBFetch: Updated to work with recent changes in ZKB API which only returns the kill ID, hash and some other context information, but no longer the complete kill data. Updated zKBFetch versio
+extended ajcron with 1 additional format
+extend idfeed with json for single killmails and ids/hashes
+added keepstar to valuefetcher and removed evecentral sync
+ZKBFetch: Properly recognize errors thrown by zKB API (with HTTP 200)
+
+Bugfixes:
+Fix for zkBFetch error recognition
+Corp Details: Fixed displaying shares
+Alliance Details: Fixed displaying ally ticker
+
+-------------------------------------------
 v4.4.1.0
 Features:
 Updated EDK to 4.4.1.0 and CCPDB to Into The Abyss 1.0.20180529
