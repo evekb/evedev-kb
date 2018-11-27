@@ -421,7 +421,6 @@ class ESISSO
 
         $result = curl_exec($curl);
         $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        curl_close($curl);
 
         if ($result === false) 
         {
@@ -431,6 +430,8 @@ class ESISSO
             throw new EdkSsoException($errorMessage, $httpCode);
         }
 
+	// Now we can close the cURL handle safely.
+        curl_close($curl);
 
         $response = json_decode($result, true);
         
