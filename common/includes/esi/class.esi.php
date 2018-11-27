@@ -115,6 +115,12 @@ class ESI extends ApiClient
         curl_setopt($curl, CURLOPT_ENCODING, "");
         
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        
+        // Force cURL to use IPv4 address resolution, since the ESI base URL is
+        // not IPv6 ready.
+        // We don't need to check if the constant exists, since it does since PHP v5.3,
+        // and we set 5.6 as prerequisite
+        curl_setopt($curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 
         // disable SSL verification, if needed
         if ($this->getConfig()->getSSLVerification() == false) {
