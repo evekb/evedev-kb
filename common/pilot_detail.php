@@ -6,6 +6,7 @@
  * @package EDK
  */
 use Swagger\Client\ApiException;
+use EDK\ESI\ESI;
 
 /*
  * @package EDK
