@@ -631,32 +631,37 @@ class EsiParser
                 $Pilot = new \Pilot($id, $characterId);
                 $Corp = $Pilot->getCorp();
             }
-
-            // special case:
-            // NPC/Tower/other structure
-            if(null === $characterId && null === $involvedParty->getWeaponTypeId() && null === $allianceId)
+            
+            
+            // check for NPC
+            if($Corp->isNPCCorp())
             {
-                $Alliance = $Corp->getAlliance();
-                $Ship = Ship::getByID($involvedParty->getShipTypeId());
-                $Weapon = Item::getByID($involvedParty->getShipTypeId());
+                $isNPC = TRUE;
+            }
+            
+            // case if no weapon type ID is given (NPCs/Towers/Structures/...)
+            if(null === $involvedParty->getWeaponTypeId())
+            {
+                $Weapon = $Ship;
                 if(!$Weapon->getName())
                 {
                     throw new EsiParserException("Involved party is an NPC with a ship type not found in the database! Kill-ID: ".$this->externalID);
                 }
-                $involvedPartyName = $Corp->getName().' - '.$Weapon->getName();
-                // citadels are no NPCs!
-                if($Ship->getClass()->getID() != ShipClass::$SHIP_CLASS_ID_CITADELS)
-                {
-                    $isNPC = TRUE;
-                }
-                $characterId = 0;
             }
             
             else
             {
                 $Weapon = Item::getByID($involvedParty->getWeaponTypeId());
             }
-                  
+            
+            // special case:
+            // NPC/Tower/other structure
+            if(null === $characterId)
+            {
+                $involvedPartyName = $Corp->getName().' - '.$Weapon->getName();
+            }
+          
+            // the victim
             if(!$characterId)
             {
                 $Pilot = Pilot::add($involvedPartyName, $Corp, $timestamp, $characterId, false);
