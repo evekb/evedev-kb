@@ -46,10 +46,12 @@ class Corporation extends Entity
      */
     function isNPCCorp()
     {
-        if($this->externalid > 1000001 && $this->externalid < 1000183)
+        if($this->name == 'Unknown' && is_null($this->externalid))
+            return true;
+        if($this->externalid > 1000001 && $this->externalid < 1000999)
             return true;
         // These are NPC alliances but they may show up as corps on mails.
-        else if($this->externalid > 500000 && $this->externalid < 500021)
+        else if($this->externalid > 500000 && $this->externalid < 500099)
             return true;
         else return false;
     }
