@@ -1054,7 +1054,11 @@ class pKillDetail extends pageAssembly
                 // high slot ammo
                 for($i = InventoryFlag::$HIGH_SLOT_1; $i <= InventoryFlag::$HIGH_SLOT_8; $i++)
                 {
-                    $length = count($this->ammo_array[$i]);
+                    $length = 0;
+                    if(is_array($this->ammo_array[$i]))
+                    {
+                        count($this->ammo_array[$i]);
+                    }
 
                     $temp = array();
 
@@ -1123,7 +1127,11 @@ class pKillDetail extends pageAssembly
 
                 for($i = InventoryFlag::$MED_SLOT_1; $i <= InventoryFlag::$MED_SLOT_8; $i++)
                 {
-                    $length = count($this->ammo_array[$i]);
+                    $length = 0;
+                    if(is_array($this->ammo_array[$i]))
+                    {
+                        count($this->ammo_array[$i]);
+                    }
 
                     if (is_array($this->fitting_array[$i])) {
                             $midammo = array();
@@ -1185,7 +1193,11 @@ class pKillDetail extends pageAssembly
                 
                 for($i = InventoryFlag::$LOW_SLOT_1; $i <= InventoryFlag::$LOW_SLOT_8; $i++)
                 {
-                    $length = count($this->ammo_array[$i]);
+                    $length = 0;
+                    if(is_array($this->ammo_array[$i]))
+                    {
+                        count($this->ammo_array[$i]);
+                    }
 
                     if (is_array($this->fitting_array[$i])) {
                             $lowammo = array();

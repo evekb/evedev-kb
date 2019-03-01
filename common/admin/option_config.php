@@ -129,7 +129,15 @@ class admin_config
     {
         $numeric = false;
         $qry = DBFactory::getDBQuery();
-        $plt_id = PILOT_ID;
+        if(defined('PILOT_ID'))
+        {
+            $plt_id = PILOT_ID;
+        }
+
+        else
+        {
+            $plt_id = 0;
+        }
         if (isset($_POST['option_add_pilotid'])
                 && $_POST['option_add_pilotid']) {
             $_POST['option_add_pilotid'] = preg_replace("/[^0-9a-zA-Z-_.' ]/",
