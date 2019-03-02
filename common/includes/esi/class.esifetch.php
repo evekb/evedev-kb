@@ -181,7 +181,7 @@ class ESIFetch extends ESISSO
                 list($this->killLog, , $headers) = $KillmailsApi->getCorporationsCorporationIdKillmailsRecentWithHttpInfo($Corporation->getExternalID(), $EdkEsi->getDataSource(), null, $this->page);
             }
             $this->resetFailCount();
-            $this->numberOfPages = $headers['X-Pages'];
+            $this->numberOfPages = $headers['x-pages'];
         }
 
         catch(ApiException $e)

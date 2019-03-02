@@ -565,7 +565,7 @@ class Pilot extends Entity
 
         $this->name = $EsiCharacter->getName();
         $this->corp = new Corporation($EsiCharacter->getCorporationId(), true);
-        $Pilot = Pilot::add($this->name, $this->corp, ESI_Helpers::formatRFC7231Timestamp($headers['Last-Modified']), $this->externalid, false);
+        $Pilot = Pilot::add($this->name, $this->corp, ESI_Helpers::formatRFC7231Timestamp($headers['last-modified']), $this->externalid, false);
         $this->id = $Pilot->getID();
         
         return $EsiCharacter;

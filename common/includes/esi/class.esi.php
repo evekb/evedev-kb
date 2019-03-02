@@ -198,6 +198,8 @@ class ESI extends ApiClient
             $response = $this->curlExecWithMulti($curl);
             $http_header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
             $http_header = $this->httpParseHeaders(substr($response, 0, $http_header_size));
+            // make all header keys lower case, since HTTP headers are case-insensitive
+            $http_header = array_change_key_case($http_header, CASE_LOWER);
             $http_body = substr($response, $http_header_size);
             $response_info = curl_getinfo($curl);
             $timeForRequest = microtime(true) - $startTime;
@@ -207,9 +209,9 @@ class ESI extends ApiClient
                 error_log("[DEBUG] Request took ".$timeForRequest."s" . PHP_EOL, 3, $this->getConfig()->getDebugFile());
             }
             
-            if(isset($http_header['Warning']))
+            if(isset($http_header['warning']))
             {
-                error_log("[WARNING] Endpoint ".$this->getConfig()->getHost() . $resourcePath." warning: ".$http_header['Warning']);
+                error_log("[WARNING] Endpoint ".$this->getConfig()->getHost() . $resourcePath." warning: ".$http_header['warning']);
             }
             $numberOfTries++;
         } while ($numberOfTries <= $this->esiConfig->getMaxNumberOfRetries() && 
@@ -269,7 +271,7 @@ class ESI extends ApiClient
         // cache the reply
         if($method == self::$GET)
         {
-            $this->putIntoCache($cacheKey, $reply, new \DateTime($http_header['Expires']));
+            $this->putIntoCache($cacheKey, $reply, new \DateTime($http_header['expires']));
         }
         return $reply;
     }
