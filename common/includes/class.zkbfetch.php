@@ -50,12 +50,13 @@ class ZKBFetch
     protected $pageNumber = 1;
     /** @param int the unix formatted timestamp to use as startTime for fetching */
     protected $startTimestamp;
+    protected $endTimestamp;
     
     /** @param int default for the negative offset in hours to apply to the last kill timestamp before fetching */
     public static $KILL_TIMESTAMP_OFFSET_DEFAULT = 2;
     
     /** @param int maximum number of cycles tried to fetch to get new kills before stopping as a safety measure */
-    public static $MAXIMUM_NUMBER_OF_CYCLES = 6;
+    public static $MAXIMUM_NUMBER_OF_CYCLES = 25;
     
     /** field for counting the number of kills fetched from CREST; we need to keep track for not running into PHP's time limit */
     protected static $NUMBER_OF_KILLS_FETCHED_FROM_CREST = 0;
@@ -360,6 +361,11 @@ class ZKBFetch
         // results will be ordered by kill ID descending!
         
         $this->fetchUrl .= "page/$this->pageNumber/";
+        if(!is_null($this->endTimestamp))
+        {
+        	$endTimestampFormattedForZkb = strftime("%Y%m%d%H00", $this->endTimestamp);
+        	$this->fetchUrl .= "endTime/$endTimestampFormattedForZkb/";
+        }
 
         $urlPieces = explode("/", $this->fetchUrl);
 
@@ -380,15 +386,25 @@ class ZKBFetch
         $this->rawData = array();
         
         // remember the timestamp we started with
-        $this->startTimestamp = $this->lastKillTimestamp;
-        
+        $this->startTimestamp = $this->lastKillTimestamp - ($this->lastKillTimestamp % 3600);
+        if(time() > $this->startTimestamp + 86400)
+        {
+        	$this->endTimestamp = $this->startTimestamp + 86400;
+        }
+        else
+        {
+        	$this->endTimestamp = null;
+        }
+
+       // var_dump($this->startTimestamp); var_dump($this->lastKillTimestamp); var_dump($this->lastKillTimestamp % 3600); die();
+        EDKError::log(" start timestamp = ".strftime("%Y-%m-%d %H:%M:%S", $this->startTimestamp));
         // calculate the timestamp of the next full hour, starting at the time of the last kill;
         // this is the timestamp we want to reach at least
         if($this->startTimestamp)
         {
             $nextFullHourTimestamp = $this->startTimestamp+1 + (3600 - (($this->startTimestamp+1) % 3600));
         }
-        
+        EDKError::log(" next full hour timestamp = ".strftime("%Y-%m-%d %H:%M:%S", $nextFullHourTimestamp));
         // apply negative offset
         if(isset($this->killTimestampOffset) && is_numeric($this->killTimestampOffset) && isset($this->startTimestamp) && is_numeric($this->startTimestamp))
         {
@@ -405,6 +421,7 @@ class ZKBFetch
         {
             // validate and build the URL
             $this->validateUrl();
+            EDKError::log(" fetch url = ". $this->fetchUrl);
             // check if the fetch URL is the same as for the last cycle
             if($fetchUrlPreviousCycle == $this->fetchUrl)
             {
@@ -465,9 +482,10 @@ class ZKBFetch
                 if(!is_null($this->lastKillTimestamp))
                 {
                     $this->setLastKillTimestamp($this->lastKillTimestamp);
+                    //EDKError::log("set lastKillTimestamp = ".strftime("%Y-%m-%d %H:%M:%S", $this->lastKillTimestamp));
                 }
             }
-            
+            EDKError::log(" lastKillTimestamp = ".strftime("%Y-%m-%d %H:%M:%S", $this->lastKillTimestamp));
             // no timestamp given at all
             if($this->startTimestamp == NULL || $nextFullHourTimestamp == NULL)
             {
@@ -486,7 +504,21 @@ class ZKBFetch
             $this->pageNumber++;
             // remember the URL we used during this cycle
             $fetchUrlPreviousCycle = $this->fetchUrl;
-        }  while(count($this->rawData) > 1 && $this->lastKillTimestamp <= $nextFullHourTimestamp);
+        }  while(count($this->rawData) > 0 && $this->lastKillTimestamp <= $nextFullHourTimestamp);
+        
+        EDKError::log(" lastKillTimestamp = ".strftime("%Y-%m-%d %H:%M:%S", $this->lastKillTimestamp));
+        EDKError::log(" # kills in last fetch = ".count($this->rawData));
+        if($this->lastKillTimestamp <= $nextFullHourTimestamp) $bool = 'true'; else $bool = 'false';
+        EDKError::log(strftime("%Y-%m-%d %H:%M:%S", $this->lastKillTimestamp)." <= ".strftime("%Y-%m-%d %H:%M:%S", $nextFullHourTimestamp)."=".$bool);
+
+        // we did not get any new data, but technically should continue fetching --> advance the last kill timestamp one day
+        if(count($this->rawData) == 0 && $this->lastKillTimestamp <= $nextFullHourTimestamp && time() > $this->startTimestamp + 86400)
+        {
+        	// advance
+        	$this->setLastKillTimestamp($this->startTimestamp + 86400);
+        	EDKError::log("setting last kill timestamp to ".strftime("%Y-%m-%d %H:%M:%S", $this->startTimestamp + 86400));
+        }
+        
     }
     
     
