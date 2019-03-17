@@ -1025,6 +1025,13 @@ class Kill extends Cacheable
      */
     function isClassified()
     {
+        // if the kill does not have an ID, it is not posted yet!
+    	// That implies that this method was called while posting the kill,
+    	// so we should grant full access.
+    	if(!$this->id)
+    	{
+    		return false;
+    	}
         if (config::get('kill_classified')) {
             if (user::role('classified_see')) {
                 return false;
