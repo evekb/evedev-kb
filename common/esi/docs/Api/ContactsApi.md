@@ -5,14 +5,14 @@ All URIs are relative to *https://esi.evetech.net*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**deleteCharactersCharacterIdContacts**](ContactsApi.md#deleteCharactersCharacterIdContacts) | **DELETE** /v2/characters/{character_id}/contacts/ | Delete contacts
-[**getAlliancesAllianceIdContacts**](ContactsApi.md#getAlliancesAllianceIdContacts) | **GET** /v1/alliances/{alliance_id}/contacts/ | Get alliance contacts
+[**getAlliancesAllianceIdContacts**](ContactsApi.md#getAlliancesAllianceIdContacts) | **GET** /v2/alliances/{alliance_id}/contacts/ | Get alliance contacts
 [**getAlliancesAllianceIdContactsLabels**](ContactsApi.md#getAlliancesAllianceIdContactsLabels) | **GET** /v1/alliances/{alliance_id}/contacts/labels/ | Get alliance contact labels
-[**getCharactersCharacterIdContacts**](ContactsApi.md#getCharactersCharacterIdContacts) | **GET** /v1/characters/{character_id}/contacts/ | Get contacts
+[**getCharactersCharacterIdContacts**](ContactsApi.md#getCharactersCharacterIdContacts) | **GET** /v2/characters/{character_id}/contacts/ | Get contacts
 [**getCharactersCharacterIdContactsLabels**](ContactsApi.md#getCharactersCharacterIdContactsLabels) | **GET** /v1/characters/{character_id}/contacts/labels/ | Get contact labels
-[**getCorporationsCorporationIdContacts**](ContactsApi.md#getCorporationsCorporationIdContacts) | **GET** /v1/corporations/{corporation_id}/contacts/ | Get corporation contacts
+[**getCorporationsCorporationIdContacts**](ContactsApi.md#getCorporationsCorporationIdContacts) | **GET** /v2/corporations/{corporation_id}/contacts/ | Get corporation contacts
 [**getCorporationsCorporationIdContactsLabels**](ContactsApi.md#getCorporationsCorporationIdContactsLabels) | **GET** /v1/corporations/{corporation_id}/contacts/labels/ | Get corporation contact labels
-[**postCharactersCharacterIdContacts**](ContactsApi.md#postCharactersCharacterIdContacts) | **POST** /v1/characters/{character_id}/contacts/ | Add contacts
-[**putCharactersCharacterIdContacts**](ContactsApi.md#putCharactersCharacterIdContacts) | **PUT** /v1/characters/{character_id}/contacts/ | Edit contacts
+[**postCharactersCharacterIdContacts**](ContactsApi.md#postCharactersCharacterIdContacts) | **POST** /v2/characters/{character_id}/contacts/ | Add contacts
+[**putCharactersCharacterIdContacts**](ContactsApi.md#putCharactersCharacterIdContacts) | **PUT** /v2/characters/{character_id}/contacts/ | Edit contacts
 
 
 # **deleteCharactersCharacterIdContacts**
@@ -73,7 +73,7 @@ void (empty response body)
 
 Get alliance contacts
 
-Return contacts of an alliance  ---  This route is cached for up to 300 seconds  --- Warning: This route has an upgrade available.  --- [Diff of the upcoming changes](https://esi.evetech.net/diff/latest/dev/#GET-/alliances/{alliance_id}/contacts/)
+Return contacts of an alliance  ---  This route is cached for up to 300 seconds
 
 ### Example
 ```php
@@ -183,7 +183,7 @@ Name | Type | Description  | Notes
 
 Get contacts
 
-Return contacts of a character  ---  This route is cached for up to 300 seconds  --- Warning: This route has an upgrade available.  --- [Diff of the upcoming changes](https://esi.evetech.net/diff/latest/dev/#GET-/characters/{character_id}/contacts/)
+Return contacts of a character  ---  This route is cached for up to 300 seconds
 
 ### Example
 ```php
@@ -293,7 +293,7 @@ Name | Type | Description  | Notes
 
 Get corporation contacts
 
-Return contacts of a corporation  ---  This route is cached for up to 300 seconds  --- Warning: This route has an upgrade available.  --- [Diff of the upcoming changes](https://esi.evetech.net/diff/latest/dev/#GET-/corporations/{corporation_id}/contacts/)
+Return contacts of a corporation  ---  This route is cached for up to 300 seconds
 
 ### Example
 ```php
@@ -399,11 +399,11 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **postCharactersCharacterIdContacts**
-> int[] postCharactersCharacterIdContacts($character_id, $contact_ids, $standing, $datasource, $label_id, $token, $watched)
+> int[] postCharactersCharacterIdContacts($character_id, $contact_ids, $standing, $datasource, $label_ids, $token, $watched)
 
 Add contacts
 
-Bulk add contacts with same settings  ---  Warning: This route has an upgrade available.  --- [Diff of the upcoming changes](https://esi.evetech.net/diff/latest/dev/#POST-/characters/{character_id}/contacts/)
+Bulk add contacts with same settings  ---
 
 ### Example
 ```php
@@ -418,12 +418,12 @@ $character_id = 56; // int | An EVE character ID
 $contact_ids = array(new int[]()); // int[] | A list of contacts
 $standing = 3.4; // float | Standing for the contact
 $datasource = "tranquility"; // string | The server name you would like data from
-$label_id = 0; // int | Add a custom label to the new contact
+$label_ids = array(56); // int[] | Add custom labels to the new contact
 $token = "token_example"; // string | Access token to use if unable to set a header
 $watched = false; // bool | Whether the contact should be watched, note this is only effective on characters
 
 try {
-    $result = $api_instance->postCharactersCharacterIdContacts($character_id, $contact_ids, $standing, $datasource, $label_id, $token, $watched);
+    $result = $api_instance->postCharactersCharacterIdContacts($character_id, $contact_ids, $standing, $datasource, $label_ids, $token, $watched);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling ContactsApi->postCharactersCharacterIdContacts: ', $e->getMessage(), PHP_EOL;
@@ -439,7 +439,7 @@ Name | Type | Description  | Notes
  **contact_ids** | **int[]**| A list of contacts |
  **standing** | **float**| Standing for the contact |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
- **label_id** | **int**| Add a custom label to the new contact | [optional] [default to 0]
+ **label_ids** | [**int[]**](../Model/int.md)| Add custom labels to the new contact | [optional]
  **token** | **string**| Access token to use if unable to set a header | [optional]
  **watched** | **bool**| Whether the contact should be watched, note this is only effective on characters | [optional] [default to false]
 
@@ -459,11 +459,11 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../README.md#documentation-for-models) [[Back to README]](../../README.md)
 
 # **putCharactersCharacterIdContacts**
-> putCharactersCharacterIdContacts($character_id, $contact_ids, $standing, $datasource, $label_id, $token, $watched)
+> putCharactersCharacterIdContacts($character_id, $contact_ids, $standing, $datasource, $label_ids, $token, $watched)
 
 Edit contacts
 
-Bulk edit contacts with same settings  ---  Warning: This route has an upgrade available.  --- [Diff of the upcoming changes](https://esi.evetech.net/diff/latest/dev/#PUT-/characters/{character_id}/contacts/)
+Bulk edit contacts with same settings  ---
 
 ### Example
 ```php
@@ -478,12 +478,12 @@ $character_id = 56; // int | An EVE character ID
 $contact_ids = array(new int[]()); // int[] | A list of contacts
 $standing = 3.4; // float | Standing for the contact
 $datasource = "tranquility"; // string | The server name you would like data from
-$label_id = 0; // int | Add a custom label to the contact, use 0 for clearing label
+$label_ids = array(56); // int[] | Add custom labels to the contact
 $token = "token_example"; // string | Access token to use if unable to set a header
 $watched = false; // bool | Whether the contact should be watched, note this is only effective on characters
 
 try {
-    $api_instance->putCharactersCharacterIdContacts($character_id, $contact_ids, $standing, $datasource, $label_id, $token, $watched);
+    $api_instance->putCharactersCharacterIdContacts($character_id, $contact_ids, $standing, $datasource, $label_ids, $token, $watched);
 } catch (Exception $e) {
     echo 'Exception when calling ContactsApi->putCharactersCharacterIdContacts: ', $e->getMessage(), PHP_EOL;
 }
@@ -498,7 +498,7 @@ Name | Type | Description  | Notes
  **contact_ids** | **int[]**| A list of contacts |
  **standing** | **float**| Standing for the contact |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
- **label_id** | **int**| Add a custom label to the contact, use 0 for clearing label | [optional] [default to 0]
+ **label_ids** | [**int[]**](../Model/int.md)| Add custom labels to the contact | [optional]
  **token** | **string**| Access token to use if unable to set a header | [optional]
  **watched** | **bool**| Whether the contact should be watched, note this is only effective on characters | [optional] [default to false]
 

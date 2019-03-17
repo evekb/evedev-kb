@@ -7,6 +7,7 @@ Name | Type | Description | Notes
 **escrow** | **double** | For buy orders, the amount of ISK in escrow | [optional] 
 **is_buy_order** | **bool** | True if the order is a bid (buy) order | [optional] 
 **issued** | [**\DateTime**](\DateTime.md) | Date and time when this order was issued | 
+**issued_by** | **int** | The character who issued this order | 
 **location_id** | **int** | ID of the location where order was placed | 
 **min_volume** | **int** | For buy orders, the minimum quantity that will be accepted in a matching sell order | [optional] 
 **order_id** | **int** | Unique order ID | 

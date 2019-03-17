@@ -33,7 +33,7 @@ $api_instance = new Swagger\Client\Api\IndustryApi();
 $character_id = 56; // int | An EVE character ID
 $datasource = "tranquility"; // string | The server name you would like data from
 $if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
-$include_completed = true; // bool | Whether retrieve completed character industry jobs as well
+$include_completed = true; // bool | Whether to retrieve completed character industry jobs. Only includes jobs from the past 90 days
 $token = "token_example"; // string | Access token to use if unable to set a header
 
 try {
@@ -52,7 +52,7 @@ Name | Type | Description  | Notes
  **character_id** | **int**| An EVE character ID |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
  **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
- **include_completed** | **bool**| Whether retrieve completed character industry jobs as well | [optional]
+ **include_completed** | **bool**| Whether to retrieve completed character industry jobs. Only includes jobs from the past 90 days | [optional]
  **token** | **string**| Access token to use if unable to set a header | [optional]
 
 ### Return type
@@ -131,7 +131,7 @@ Name | Type | Description  | Notes
 
 Moon extraction timers
 
-Extraction timers for all moon chunks being extracted by refineries belonging to a corporation.  ---  This route is cached for up to 1800 seconds  --- Requires one of the following EVE corporation role(s): Structure_manager
+Extraction timers for all moon chunks being extracted by refineries belonging to a corporation.  ---  This route is cached for up to 1800 seconds  --- Requires one of the following EVE corporation role(s): Station_Manager
 
 ### Example
 ```php
@@ -301,7 +301,7 @@ Name | Type | Description  | Notes
 
 List corporation industry jobs
 
-List industry jobs run by a corporation  ---  This route is cached for up to 300 seconds  --- Requires one of the following EVE corporation role(s): FactoryManager
+List industry jobs run by a corporation  ---  This route is cached for up to 300 seconds  --- Requires one of the following EVE corporation role(s): Factory_Manager
 
 ### Example
 ```php
@@ -315,7 +315,7 @@ $api_instance = new Swagger\Client\Api\IndustryApi();
 $corporation_id = 56; // int | An EVE corporation ID
 $datasource = "tranquility"; // string | The server name you would like data from
 $if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
-$include_completed = false; // bool | Whether retrieve completed industry jobs as well
+$include_completed = false; // bool | Whether to retrieve completed corporation industry jobs. Only includes jobs from the past 90 days
 $page = 1; // int | Which page of results to return
 $token = "token_example"; // string | Access token to use if unable to set a header
 
@@ -335,7 +335,7 @@ Name | Type | Description  | Notes
  **corporation_id** | **int**| An EVE corporation ID |
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
  **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
- **include_completed** | **bool**| Whether retrieve completed industry jobs as well | [optional] [default to false]
+ **include_completed** | **bool**| Whether to retrieve completed corporation industry jobs. Only includes jobs from the past 90 days | [optional] [default to false]
  **page** | **int**| Which page of results to return | [optional] [default to 1]
  **token** | **string**| Access token to use if unable to set a header | [optional]
 

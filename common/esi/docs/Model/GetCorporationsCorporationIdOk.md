@@ -16,6 +16,7 @@ Name | Type | Description | Notes
 **tax_rate** | **float** | tax_rate number | 
 **ticker** | **string** | the short name of the corporation | 
 **url** | **string** | url string | [optional] 
+**war_eligible** | **bool** | war_eligible boolean | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

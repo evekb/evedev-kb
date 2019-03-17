@@ -24,7 +24,7 @@ require_once(__DIR__ . '/vendor/autoload.php');
 $api_instance = new Swagger\Client\Api\WarsApi();
 $datasource = "tranquility"; // string | The server name you would like data from
 $if_none_match = "if_none_match_example"; // string | ETag from a previous request. A 304 will be returned if this matches the current ETag
-$max_war_id = 56; // int | Only return wars with ID smaller than this.
+$max_war_id = 56; // int | Only return wars with ID smaller than this
 
 try {
     $result = $api_instance->getWars($datasource, $if_none_match, $max_war_id);
@@ -41,7 +41,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **datasource** | **string**| The server name you would like data from | [optional] [default to tranquility]
  **if_none_match** | **string**| ETag from a previous request. A 304 will be returned if this matches the current ETag | [optional]
- **max_war_id** | **int**| Only return wars with ID smaller than this. | [optional]
+ **max_war_id** | **int**| Only return wars with ID smaller than this | [optional]
 
 ### Return type
 
