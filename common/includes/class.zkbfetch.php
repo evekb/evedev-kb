@@ -387,14 +387,6 @@ class ZKBFetch
         
         // remember the timestamp we started with
         $this->startTimestamp = $this->lastKillTimestamp - ($this->lastKillTimestamp % 3600);
-        if(time() > $this->startTimestamp + 86400)
-        {
-        	$this->endTimestamp = $this->startTimestamp + 86400;
-        }
-        else
-        {
-        	$this->endTimestamp = null;
-        }
 
        // var_dump($this->startTimestamp); var_dump($this->lastKillTimestamp); var_dump($this->lastKillTimestamp % 3600); die();
         EDKError::log(" start timestamp = ".strftime("%Y-%m-%d %H:%M:%S", $this->startTimestamp));
@@ -410,6 +402,10 @@ class ZKBFetch
         {
             $this->startTimestamp -= $this->killTimestampOffset*3600;
         }
+        
+        // the zKB API now requires endTimestamp to be set if startTimestamp is used
+        // The endTimestamp must be set AFTER the negative kill timestamp offset has been applied to the startTimestamp!
+		$this->endTimestamp = $this->startTimestamp + 86400;
         
         // initialize fetch counter
         $cyclesFetched = 0;

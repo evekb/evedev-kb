@@ -41,6 +41,6 @@ define('KB_CCP_DB_DATE', 'Nov 13, 2018');
 /** the version of IDFeed used by this killboard, gets reported to clients */
 define('ID_FEED_VERSION', 1.6);
 /** the version of zKBFetch used by this killboard */
-define('ZKB_FETCH_VERSION', 1.4);
+define('ZKB_FETCH_VERSION', 1.5);
 /** user agent */
 define('EDK_USER_AGENT', 'Eve Development Killboard '.KB_VERSION.', Forums: http://evekb.org/forum Contact: Salvoxia <salvoxia@blindfish.info>');
