@@ -118,7 +118,7 @@ class pContractDetail extends pageAssembly
         $klist = $this->contract->getKillList();
         $llist = $this->contract->getLossList();
         $killsummary = new KillSummaryTable($klist, $llist);
-        if ($view == "") $killsummary->setFilter(false);
+        if ($this->view == "") $killsummary->setFilter(false);
 
         return $killsummary->generate();
     }
