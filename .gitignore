@@ -21,6 +21,9 @@ cache/error.log
 cache/evecentral/
 cache/img
 cache/update
+cache/esi
+!cache/esi/.htaccess
+cache/killadded.mk
 
 # IDE/Editor temporary files
 *~
