@@ -36,7 +36,7 @@ class pSsoRegistration extends pageAssembly
         $this->page = new Page('Register for ESI kill fetching');
         $this->page->addHeader('<meta name="robots" content="index, nofollow" />');
         
-        if (null === config::get('cfg_sso_client_id') || null === config::get('cfg_sso_client_id') || config::get('cfg_sso_client_id') == '' || config::get('cfg_sso_secret') == '' ) 
+        if (null === config::get('cfg_sso_client_id') || null === config::get('cfg_sso_secret') || config::get('cfg_sso_client_id') == '' || config::get('cfg_sso_secret') == '' ) 
         {
             $this->errorMessage .= "The Board owner has to enter a developer app key in order to register via SSO.";
         }
