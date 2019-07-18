@@ -35,11 +35,13 @@ class pageAssembly
             }
 
             $text = $this->call($object['callback']);
+            usort($object['filter'], array(&$this, 'prioSortHelper'));
             foreach ($object['filter'] as $callback) {
                 $text = $this->callFilter($callback['callback'], $text);
             }
             $output .= $text;
 
+            usort($object['addBehind'], array(&$this, 'prioSortHelper'));
             foreach ($object['addBehind'] as $callback) {
                 $output .= $this->call($callback['callback']);
             }
