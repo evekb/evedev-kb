@@ -484,7 +484,8 @@ class Item extends Cacheable
             $effectInserts = array();
             foreach($dogmaEffects AS $dogmaEffect)
             {
-                $effectInserts[] = "(".$typeId.", ".$query->escape($dogmaEffect->getEffectId()).",  ".(int) $dogmaEffect->getIsDefault().")";
+                $isDefault = $dogmaEffect->getIsDefault() ? 'true' : 'false';
+                $effectInserts[] = "(".$typeId.", ".$query->escape($dogmaEffect->getEffectId()).",  '".$isDefault."')";
             }
 
             if(count($effectInserts) > 0) 
