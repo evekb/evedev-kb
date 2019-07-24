@@ -14,6 +14,7 @@ Name | Type | Description | Notes
 **name** | **string** | name string | 
 **race_id** | **int** | race_id integer | 
 **security_status** | **float** | security_status number | [optional] 
+**title** | **string** | The individual title of the character | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

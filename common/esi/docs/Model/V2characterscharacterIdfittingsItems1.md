@@ -1,9 +1,9 @@
-# V1characterscharacterIdfittingsItems1
+# V2characterscharacterIdfittingsItems1
 
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**flag** | **int** | flag integer | 
+**flag** | **string** | Fitting location for the item. Entries placed in &#39;Invalid&#39; will be discarded. If this leaves the fitting with nothing, it will cause an error. | 
 **quantity** | **int** | quantity integer | 
 **type_id** | **int** | type_id integer | 
 

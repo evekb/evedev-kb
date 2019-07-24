@@ -5,7 +5,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **description** | **string** | description string | 
 **fitting_id** | **int** | fitting_id integer | 
-**items** | [**\Swagger\Client\Model\V1characterscharacterIdfittingsItems[]**](V1characterscharacterIdfittingsItems.md) | items array | 
+**items** | [**\Swagger\Client\Model\V2characterscharacterIdfittingsItems[]**](V2characterscharacterIdfittingsItems.md) | items array | 
 **name** | **string** | name string | 
 **ship_type_id** | **int** | ship_type_id integer | 
 
