@@ -17,6 +17,8 @@ class cache
 {
 
     private static $cacheName = null;
+    // default page name, updated in cache::check(), used in cache::generate()
+    private static $page = null; 
     protected static $reinforced_enable_threshold = 10;
     protected static $reinforced_disable_threshold = 5;
     protected static $reinforced_prob = 20;
@@ -27,7 +29,7 @@ class cache
      * @param string $page The current page
      * @return boolean
      */
-    protected static function shouldCache($page = '')
+    protected static function shouldCache($page)
     {
         // never cache for admins
         if (session::isAdmin() || session::isCachingForciblyDisabled()) {
@@ -41,7 +43,7 @@ class cache
         $cacheignore = explode(',', config::get('cache_ignore'));
         if (config::get('cache_enabled')
                 && count($_POST) == 0
-                && !($page != '' && in_array($page, $cacheignore))) {
+                && !(isset($page) && $page != '' && in_array($page, $cacheignore))) {
             return true;
         }
         return false;
@@ -54,6 +56,8 @@ class cache
      */
     public static function check($page)
     {
+        self::$page = $page;  // store $page value for cache::generate()
+
         // Set an old expiry date to discourage the browser from trying to
         // cache the page.
         if ($page != 'mapview' && $page != 'sig') {
@@ -143,12 +147,14 @@ class cache
     /**
      * Generate the cache for the current page.
      */
-    public static function generate($page = null)
+    public static function generate()
     {
+        $page = self::$page;  // Equals null unless cache::check() was called
+
         if (!is_string($page)) {
             $page = null;
         }
-        if (cache::shouldCache()) {
+        if (cache::shouldCache($page)) {  // check caching for particular page
             $usegz = config::get('cfg_compress')
                     && !ini_get('zlib.output_compression');
             $cachefile = cache::genCacheName();
