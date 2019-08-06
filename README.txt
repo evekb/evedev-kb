@@ -1,5 +1,5 @@
 -------------------------------------------
-Eve Development Network Killboard v4.4.2.0
+Eve Development Network Killboard v4.4.3.0
 -------------------------------------------
 
 // REQUIREMENTS
@@ -27,6 +27,28 @@ o/ EVE Development Network
 VERSION HISTORY
 ===============
 
+v4.4.3.0
+Features:
+Updated EDK to 4.4.3.0 and CCPDB to July 2019 1.0.20190625
+Updated ESI client with _latest on 2019-07-24
+
+Enhancements:
+Code cleanup for compatibility with PHP 7.2
+Updated NPC corporation detection
+ESI Client: Force cURL to use IPv4 address resolution
+Sort by priority 'filter' and 'addBehind' page assembly items
+
+Bugfixes:
+Fix: Fixed possible SQL error when fetching unknown items from ESI
+Fix: ZKBFetch must use startTimestamp AND endTimestamp
+Fix: Post kills within the classification time frame
+ZKBFetch: Fix for fetching kill history from zKillboard
+ESI: Standardized HTTP response headers with lower case
+Fix for kills containing attackers with alliance ID, but without weapon type or character ID
+Fixed cURL handle used after closed when there is an error.
+Fixed missing use in pilot_detail page.
+
+-------------------------------------------
 v4.4.2.0
 Features:
 Updated EDK to 4.4.2.0 and CCPDB to Onslaught 1.0.20181113
