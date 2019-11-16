@@ -66,30 +66,33 @@ class imageURL
             switch ($type) {
                 case 'Character':
                 case 'Pilot':
-                    $url .= "/Character/{$id}_{$size}.jpg";
+                    $url .= "/characters/{$id}/portrait?size={$size}";
                     break;
                 case 'Corporation':
-                case 'Alliance':
                     // Check for NPC alliances recorded as corps.
                     if ($id > 500000 && $id < 500021) {
-                        $url .= "/Alliance/{$id}_{$size}.png";
+                        $url .= "/alliances/{$id}/logo?size={$size}";
                     } else {
-                        $url .= "/$type/{$id}_{$size}.png";
+                        $url .= "/corporations/{$id}/logo?size={$size}";
                     }
+                    break;
+                case 'Alliance':
+                    $url .= "/alliances/{$id}/logo?size={$size}";
                     break;
                 case 'Type':
                 case 'InventoryType':
                 case 'Ship':
+                    $url .= "/types/${id}";
                     if ($size > 64 && $type == 'Ship')
-                        $url .= "/Render/{$id}_{$size}.png";
+                        $url .= "/render?size={$size}";
                     else
-                        $url .= "/InventoryType/{$id}_{$size}.png";
+                        $url .= "/icon?size={$size}";
                     break;
                 case 'Render':
-                    $url .= "/Render/{$id}_{$size}.png";
+                    $url .= "/types/{$id}/render?size={$size}";
                     break;
                 default:
-                    $url .= "/{$type}/{$id}_{$size}.png";
+                    $url .= "/types/{$id}/render?size={$size}";
                     break;
             }
         } else {
