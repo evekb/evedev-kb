@@ -273,15 +273,24 @@ class thumb
     }
     function fetchImage($type = 'Character', $size = 128)
     {
-        if($type == 'pilot') $type = 'Character';
-        elseif($type == 'corp') $type = 'Corporation';
-        elseif($type == 'alliance') $type = 'Alliance';
+        if($type == 'pilot') $type = 'characters';
+        elseif($type == 'corp') $type = 'corporations';
+        elseif($type == 'alliance') $type = 'alliances';
+        else $type = 'types';
 
         if($this->encoding == 'jpeg') $ext = 'jpg';
         else $ext = 'png';
 
-        if($type != 'Character' && $type != 'Corporation' && $type != 'Alliance') return false;
-        $url = IMG_SERVER."/".$type."/".$this->id."_".$size.".".$ext;
+        if($type != 'characters' && $type != 'corporations' && $type != 'alliances') return false;
+        $url = IMG_SERVER."/".$type."/".$this->id;
+        if ($type == 'characters')
+        {
+            $url .= "portrait?size=${size}";
+        }
+        else
+        {
+            $url .= "logo?size=${size}";
+        }
         if (function_exists('curl_init'))
         {
             // in case of a dead eve server we only want to wait 2 seconds
