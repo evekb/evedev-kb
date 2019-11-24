@@ -192,7 +192,7 @@ class thumb
         // no image found in the image folder, or the cache, so let's make it.
         else
         {
-            $img = $this->fetchImage('Corporation', 128);
+            $img = $this->fetchImage('corp', 128);
             if($this->size == 128 && $img) return true;
         }
         if ($img)
