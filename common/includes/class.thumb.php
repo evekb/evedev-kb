@@ -285,11 +285,11 @@ class thumb
         $url = IMG_SERVER."/".$type."/".$this->id;
         if ($type == 'characters')
         {
-            $url .= "portrait?size=${size}";
+            $url .= "/portrait?size=${size}";
         }
         else
         {
-            $url .= "logo?size=${size}";
+            $url .= "/logo?size=${size}";
         }
         if (function_exists('curl_init'))
         {
