@@ -117,7 +117,7 @@ class CacheHandlerHashedRedis extends CacheHandlerHashed
         global $redis;
 
         $hash = self::hash($key.$location);
-        return $redis->delete($hash);
+        return $redis->del($hash);
     }
     /**
      * Return the age of the given cache file.
