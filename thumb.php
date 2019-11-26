@@ -269,7 +269,25 @@ function fetchImage($id, $type = 'Character', $size = 128, $ext = "jpg")
     require_once('common/includes/globals.php');
     require_once("common/includes/class.cachehandler.php");
 
-    $url = IMG_SERVER."/".$type."/".$id."_".$size.".".$ext;
+    $url = IMG_SERVER;
+    switch ($type) {
+        case 'Alliance':
+            $url .= "/aliances/${id}/logo";
+            break;
+        case 'Character':
+            $url .= "characters/${id}/portrait?size=${size}";
+            break;
+        case 'Corporation':
+            $url .= "/corporations/${id}/logo?size=${size}";
+            break;
+        default:
+            $url .= "/types/${id}";
+            if ($size > 64)
+                $url .= "/render?size=${size}";
+            else
+                $url .= "/icon?size=${size}";
+            break;
+    }
     if(function_exists('curl_init'))
     {
         // in case of a dead eve server we only want to wait 2 seconds
