@@ -432,7 +432,7 @@ class Item extends Cacheable
         $typeName = $typeInfo->getName();
         if($typeName == NULL)
         {
-            $typeName = "Unknown Item ".$typeId;
+            $typeName = "Unknown Type ".$typeId;
         }
 
         $description = $typeInfo->getDescription();
