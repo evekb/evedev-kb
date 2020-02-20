@@ -33,6 +33,7 @@ cache/killadded.mk
 .cache
 .project
 .settings
+.idea
 
 # IIS7 
 web.config
