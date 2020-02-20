@@ -21,7 +21,7 @@ define('KB_QUERYCACHEDIR', KB_CACHEDIR . '/SQL');
 /** URL where to find EDK update information */
 define('KB_UPDATE_URL', 'http://evekb.org/downloads');
 /** base URL for the image server */
-define('IMG_SERVER', "https://imageserver.eveonline.com");
+define('IMG_SERVER', "https://images.evetech.net");
 /** data source for ESI calls */
 define('ESI_DATA_SOURCE', 'tranquility');
 /** SOO OAuth base URL */
@@ -31,7 +31,7 @@ define('OAUTH_BASE_URL', 'https://login.eveonline.com/oauth');
  * current version: major.minor.sub.ccpDBupdateNo
  * even numbers for minor = development version
  */
-define('KB_VERSION', '4.4.3.0');
+define('KB_VERSION', '4.4.4.0');
 /** release name */
 define('KB_RELEASE', '(July 2019 1.0)');
 /** version of the SDE used to produce the current static database */
