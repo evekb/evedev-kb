@@ -66,7 +66,7 @@ class imageURL
             switch ($type) {
                 case 'Character':
                 case 'Pilot':
-                    $url .= "/Character/{$id}_{$size}.jpg";
+                    $url .= "/characters/{$id}/portrait?size={$size}";
                     break;
                 case 'Corporation':
                 case 'Alliance':
