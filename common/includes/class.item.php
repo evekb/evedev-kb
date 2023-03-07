@@ -420,7 +420,7 @@ class Item extends Cacheable
             $typeName = "Unknown Type ".$typeId;
 
             $query = new DBPreparedQuery();
-            $query->prepare('INSERT INTO kb3_invtypes (`typeID`, `typeName`) VALUES (?, ?)');
+            $query->prepare("INSERT INTO kb3_invtypes (`typeID`, `typeName`, `description`) VALUES (?, ?, '')");
             $types = 'is';
             $arr2 = array(&$types, &$typeId, &$typeName);
             $query->bind_params($arr2);
