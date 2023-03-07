@@ -126,7 +126,7 @@ class ItemList
         }
 
         if (count($this->destroyedIDarray) || count($this->droppedIDarray)) {
-            $sql .= "group by itd.itd_itm_id, itd.itd_itl_id, itd.itd_singleton "
+            $sql .= "GROUP BY itd.itd_itm_id, itd.itd_itl_id, itd.itd_singleton, dl.value, te.effectID, dl.attributeID "
                     ."order by itd.itd_itl_id ";
         }
 
