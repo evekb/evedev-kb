@@ -21,7 +21,7 @@ define('KB_QUERYCACHEDIR', KB_CACHEDIR . '/SQL');
 /** URL where to find EDK update information */
 define('KB_UPDATE_URL', 'http://evekb.org/downloads');
 /** base URL for the image server */
-define('IMG_SERVER', "https://imageserver.eveonline.com");
+define('IMG_SERVER', "https://images.evetech.net");
 /** data source for ESI calls */
 define('ESI_DATA_SOURCE', 'tranquility');
 /** SOO OAuth base URL */
