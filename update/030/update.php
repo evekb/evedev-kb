@@ -10,7 +10,7 @@ function update030()
     if (CURRENT_DB_UPDATE < "030") {
         $qry = DBFactory::getDBQuery(true);
 
-        $sql = 'ALTER IGNORE TABLE kb3_mails ADD COLUMN kll_crest_hash CHAR(40) DEFAULT NULL';
+        $sql = 'ALTER TABLE kb3_mails ADD COLUMN kll_crest_hash CHAR(40) DEFAULT NULL';
         $qry->execute($sql);
 
         config::set("DBUpdate", "030");
