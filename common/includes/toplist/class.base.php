@@ -445,7 +445,7 @@ class TopList_Base
 
         if (count($this->systems_))
         {
-            $this->sql_ .= $op." kll.kll_system_id IN ( ".implode($this->systems_, ",").") ";
+            $this->sql_ .= $op." kll.kll_system_id IN ( ".implode(",", $this->systems_).") ";
             $op = " AND ";
         }
 
