@@ -372,9 +372,6 @@ class xajaxArgumentManager
             $this->aArgs = $_GET['xjxargs'];
         }
         
-        if (1 == get_magic_quotes_gpc())
-            array_walk($this->aArgs, array(&$this, 'argumentStripSlashes'));
-        
         array_walk($this->aArgs, array(&$this, 'argumentDecodeXML'));
     }
     
