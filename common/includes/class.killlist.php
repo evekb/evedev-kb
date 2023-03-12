@@ -185,7 +185,7 @@ class KillList
             {
                 if (!$this->orderby_)
                 {
-                    // make sure ind.ind_timestamp is in select list 
+                    # make sure ind.ind_timestamp is in select list (also ina.ina_timestamp if it is used) 
                     if($this->comb_plt_ || ($this->comb_crp_ && $this->comb_all_)) {
                         $sql .= " order by ind.ind_timestamp desc";
                     }
@@ -305,9 +305,13 @@ class KillList
 
             $this->sqlinner_ = $this->makeKllQuery($startdate, $enddate);
 
-	    // Patching group by clause on newer mysql versions
-	    if ($this->ordered_ && !$this->orderby_ && (($this->inv_plt_ || ($this->inv_crp_ && $this->inv_all_)))) {
-                $this->addExpression("ind.ind_timestamp");
+            // Patching group by clause on newer mysql versions
+            if ($this->ordered_ && !$this->orderby_) {
+                if (($this->inv_plt_ || ($this->inv_crp_ && $this->inv_all_))) {
+                    $this->addExpression("ind.ind_timestamp");
+                } elseif($this->inv_all_) {
+                    $this->addExpression("ina.ina_timestamp");
+                }
             }
 
             if (!count($this->groupby_) && ($this->comments_ || $this->involved_))
@@ -534,7 +538,7 @@ class KillList
                 // System filter
                 if (count($this->systems_))
                 {
-                    $this->sql_ .= $sqlwhereop." kll.kll_system_id in ( ".implode($this->systems_, ",").")";
+                    $this->sql_ .= $sqlwhereop." kll.kll_system_id in ( ".implode(",", $this->systems_).")";
                     $sqlwhereop = ' AND ';
                 }
 
@@ -578,12 +582,12 @@ class KillList
                     $this->sql_ .= $sqlwhereop." shp.shp_class in ( ".implode(",", $this->vic_scl_id_)." ) ";
                     $sqlwhereop = ' AND ';
                 }
-                                // included ship type filter
-                                if (count($this->vic_sc_id_))
-                                {
-                                        $this->sql_ .= $sqlwhereop." kll.kll_ship_id in ( ".implode(",", $this->vic_sc_id_)." ) ";
+                // included ship type filter
+                if (count($this->vic_sc_id_))
+                {
+                    $this->sql_ .= $sqlwhereop." kll.kll_ship_id in ( ".implode(",", $this->vic_sc_id_)." ) ";
                     $sqlwhereop = ' AND ';
-                                }
+                }
                 event::call('killlist_where_loss', $this->sql_);
                 if ($this->ordered_)
                 {
@@ -603,24 +607,32 @@ class KillList
                 $this->sqlouterbottom_ .= " GROUP BY list.kll_id, list.fbcrp_name, fball_name";
 
                 // fix group by in newer mysql versions
-                if ($this->ordered_ && !$this->orderby_ && (($this->inv_plt_ || ($this->inv_crp_ && $this->inv_all_)))) {
-                    $this->sqlouterbottom_ .= ", list.ind_timestamp";
+                if ($this->ordered_ && !$this->orderby_) {
+                    if (($this->inv_plt_ || ($this->inv_crp_ && $this->inv_all_))) {
+                        $this->sqlouterbottom_ .= ", list.ind_timestamp";
+                    } elseif ($this->inv_all_) {
+                        $this->sqlouterbottom_ .= ", list.ina_timestamp";
+                    }
                 }
 
                 // Outer query also needs to be ordered, if there's an order
-                if ($this->ordered_)
-                {
+                if ($this->ordered_) {
                     if (!$this->orderby_) $this->sqlouterbottom_ .= " order by kll_timestamp desc";
                     else $this->sqlouterbottom_ .= " order by ".$this->orderby_;
                 }
             }
             // If the killlist will be split then only return kills in the range needed.
-            if ($this->limit_) $this->sql_ .= " limit ".$this->limit_." OFFSET ".$this->offset_;
+            if ($this->limit_) {
+                $this->sql_ .= " limit ".$this->limit_." OFFSET ".$this->offset_;
+            }
             elseif ($this->plimit_)
             {
                 $splitq = DBFactory::getDBQuery();
-                $ssql = 'SELECT DISTINCT kll_id, ind.ind_timestamp FROM '.$this->sqlinner_.$this->sql_;
-                $splitq->execute($ssql);
+                if (($this->inv_plt_ || ($this->inv_crp_ && $this->inv_all_))) {
+                    $ssql = 'SELECT DISTINCT kll_id, ind.ind_timestamp FROM '.$this->sqlinner_.$this->sql_;
+                } elseif($this->inv_all_) {
+                    $ssql = 'SELECT DISTINCT kll_id, ina.ina_timestamp FROM '.$this->sqlinner_.$this->sql_;
+                }
 
                 $this->count_ = $splitq->recordCount();
                 $this->sql_ .= " limit ".$this->plimit_." OFFSET ".$this->poffset_;
