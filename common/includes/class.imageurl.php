@@ -83,7 +83,7 @@ class imageURL
                     if ($size > 64 && $type == 'Ship')
                         $url .= "/Render/{$id}_{$size}.png";
                     else
-                        $url .= "/InventoryType/{$id}_{$size}.png";
+                        $url .= "/types/{$id}/icon";
                     break;
                 case 'Render':
                     $url .= "/Render/{$id}_{$size}.png";

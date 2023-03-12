@@ -141,7 +141,7 @@ class CorporationApi
         }
 
         // parse inputs
-        $resourcePath = "/v4/corporations/{corporation_id}/";
+        $resourcePath = "/v5/corporations/{corporation_id}/";
         $httpBody = '';
         $queryParams = array();
         $headerParams = array();

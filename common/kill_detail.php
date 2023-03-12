@@ -328,17 +328,17 @@ class pKillDetail extends pageAssembly
                 $i_id = $item->getID();
                 $i_usedgroup = $item->get_used_launcher_group();
                                 
-                                // Nanite Repair Paste for ancillary armor repairers is a special snowflake
-                                // there are no type attributes indicating a used group
-                                // if item is nanite repair paste
-                                if($i_id == 28668) 
-                                {
-                                    // ancillary armor repairers
-                                    $i_usedgroup = 1199;
-                                }
+                // Nanite Repair Paste for ancillary armor repairers is a special snowflake
+                // there are no type attributes indicating a used group
+                // if item is nanite repair paste
+                if($i_id == 28668) 
+                {
+                    // ancillary armor repairers
+                    $i_usedgroup = 1199;
+                }
 
                 // BPCs
-                                $bpc = false;
+                $bpc = false;
                 if($dropped->getSingleton() == InventoryFlag::$SINGLETON_COPY) {
                     $i_name = $i_name." (Copy)";
                     $value = $formatted = 0;
@@ -357,11 +357,11 @@ class pKillDetail extends pageAssembly
                     'bpc' => $bpc
                 );
                                 
-                                // Generate Ship DNA array
-                                $this->items[$i_location][] = array (
-                                    'item' => $i_id,
-                                    'qty' => $i_qty
-                                );
+                // Generate Ship DNA array
+                $this->items[$i_location][] = array (
+                    'item' => $i_id,
+                    'qty' => $i_qty
+                );
 
                 //Fitting -KE, add dropped items to the list
                 if (($i_location != InventoryFlag::$CARGO )&& ($i_location != InventoryFlag::$DRONE_BAY)) {

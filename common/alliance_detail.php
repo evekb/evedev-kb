@@ -68,7 +68,7 @@ class pAllianceDetail extends pageAssembly
         $this->queue("stats");
         $this->queue("summaryTable");
         $this->queue("killList");
-                $this->queue("metaTags");
+        $this->queue("metaTags");
     }
 
     /**
@@ -114,6 +114,7 @@ class pAllianceDetail extends pageAssembly
                 exit;
             }
         } else {
+		# at this point you can call $this->alliance->getName()
             $this->alliance = Cacheable::factory('Alliance', $this->all_id);
             $this->all_external_id = $this->alliance->getExternalID();
         }
@@ -199,8 +200,10 @@ class pAllianceDetail extends pageAssembly
 
         // Use alliance ID if we have it
         if (!$this->alliance->getExternalID()) 
-        {
-            $allianceID = ESI_Helpers::getExternalIdForEntity($this->alliance->getName(), 'alliance');
+	{
+            // The search API no longer works. 
+            // This would now have to query /universe/ids/<name> for the alliance
+            // $allianceID = ESI_Helpers::getExternalIdForEntity($this->alliance->getName(), 'alliance');
             if(isset($allianceID))
             {
                 $this->alliance->setExternalID($allianceID);
@@ -229,7 +232,6 @@ class pAllianceDetail extends pageAssembly
 
             else 
             {
-                
                 $EdkEsi = new ESI();
                 $AllianceApi = new AllianceApi($EdkEsi);
                 $AllianceDetails = $AllianceApi->getAlliancesAllianceId($this->alliance->getExternalID(), $EdkEsi->getDataSource());
@@ -901,7 +903,8 @@ class pAllianceDetail extends pageAssembly
         $metaTagDescription = $this->alliance->getName();
         if($this->allianceDetails)
         {
-            $metaTagDescription .= " [" . $this->allianceDetails['shortName'] . "] (" . $this->allianceDetails['memberCount'] . " Members in " . count($this->allianceDetails['memberCorps']) . " Corps)";
+            $memberCount = $this->allianceDetails['memberCorps'] == null ? 0 : count($this->allianceDetails['memberCorps']);
+            $metaTagDescription .= " [" . $this->allianceDetails['shortName'] . "] (" . $this->allianceDetails['memberCount'] . " Members in " . $memberCount . " Corps)";
         }
         $metaTagDescription .= " has " . $this->kill_summary->getTotalKills() . " kills and " . $this->kill_summary->getTotalLosses() . " losses (Efficiency: ".$this->efficiency."%) at " . config::get('cfg_kbtitle');
 
